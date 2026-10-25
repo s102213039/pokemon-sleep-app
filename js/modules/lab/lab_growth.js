@@ -423,12 +423,12 @@
 
               <!-- 里程碑快速按鈕 -->
               <div class="lab-growth-milestones-row">
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 30 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(30)" title="${isEN ? 'Lv.30 Unlock 2nd Ingredient' : 'Lv.30 解鎖二階食材'}">Lv.30 <span class="milestone-chip-note">(${isEN ? '2nd Ingr' : '二階食材'})</span></button>
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 50 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(50)" title="${isEN ? 'Lv.50 Unlock 3rd Sub-Skill' : 'Lv.50 解鎖三副技能'}">Lv.50 <span class="milestone-chip-note">(${isEN ? '3rd Sub' : '三副技能'})</span></button>
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 60 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(60)" title="${isEN ? 'Lv.60 Unlock 3rd Ingredient' : 'Lv.60 解鎖三階食材'}">Lv.60 <span class="milestone-chip-note">(${isEN ? '3rd Ingr' : '三階食材'})</span></button>
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 70 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(70)" title="${isEN ? 'Lv.70 Current Level Cap' : 'Lv.70 目前等級上限'}">Lv.70 <span class="milestone-chip-note">(${isEN ? 'Cur. Cap' : '目前上限'})</span></button>
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 80 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(80)" title="${isEN ? 'Lv.80 Unlock 4th Sub-Skill / Sim' : 'Lv.80 解鎖四副技能 / 模擬'}">Lv.80 <span class="milestone-chip-note">(${isEN ? '4th Sub' : '四副技能'})</span></button>
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 100 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(100)" title="${isEN ? 'Lv.100 Max Level Graduation' : 'Lv.100 五階滿等畢業'}">Lv.100 <span class="milestone-chip-note">(${isEN ? 'Max Lv' : '滿等畢業'})</span></button>
+                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 30 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(30)">Lv.30</button>
+                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 50 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(50)">Lv.50</button>
+                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 60 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(60)">Lv.60</button>
+                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 70 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(70)">Lv.70</button>
+                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 80 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(80)">Lv.80</button>
+                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 100 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(100)">Lv.100</button>
               </div>
             </div>
 

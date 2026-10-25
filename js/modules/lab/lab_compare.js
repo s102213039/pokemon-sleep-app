@@ -318,12 +318,12 @@
     // ── 基準等級切換橫列 ──
     const benchmarkLevels = [
       { id: 'box', label: isEN ? 'Box Lv' : '各自等級', title: isEN ? 'Use each Pokemon\'s box level' : '使用每隻寶可夢各自倉儲等級' },
-      { id: '30', label: `Lv.30 (${isEN ? 'Ingr.2' : '二階食材'})`, title: isEN ? 'Lv.30: Unlocks 2nd ingredient' : 'Lv.30：解鎖第2食材' },
-      { id: '50', label: `Lv.50 (${isEN ? 'Sub.3' : '三副技能'})`, title: isEN ? 'Lv.50: Unlocks 3rd sub-skill' : 'Lv.50：解鎖第3副技能' },
-      { id: '60', label: `Lv.60 (${isEN ? 'Ingr.3' : '三階食材'})`, title: isEN ? 'Lv.60: Unlocks 3rd ingredient' : 'Lv.60：解鎖第3食材' },
-      { id: '70', label: `Lv.70 (${isEN ? 'Cap' : '目前上限'})`, title: isEN ? 'Lv.70: Current in-game maximum level cap' : 'Lv.70：目前遊戲等級上限' },
-      { id: '80', label: `Lv.80 (${isEN ? 'Sub.4' : '四副技能'})`, title: isEN ? 'Lv.80: Unlocks 4th sub-skill (Sim)' : 'Lv.80：解鎖第4副技能 (模擬)' },
-      { id: '100', label: `Lv.100 (${isEN ? 'Max' : '滿等畢業'})`, title: isEN ? 'Lv.100: Max level graduation with all 5 sub-skills' : 'Lv.100：五階滿等畢業 (全開模擬)' }
+      { id: '30', label: 'Lv.30', title: isEN ? 'Lv.30: Unlocks 2nd ingredient' : 'Lv.30：解鎖第2食材' },
+      { id: '50', label: 'Lv.50', title: isEN ? 'Lv.50: Unlocks 3rd sub-skill' : 'Lv.50：解鎖第3副技能' },
+      { id: '60', label: 'Lv.60', title: isEN ? 'Lv.60: Unlocks 3rd ingredient' : 'Lv.60：解鎖第3食材' },
+      { id: '70', label: 'Lv.70', title: isEN ? 'Lv.70: Current in-game maximum level cap' : 'Lv.70：目前遊戲等級上限' },
+      { id: '80', label: 'Lv.80', title: isEN ? 'Lv.80: Unlocks 4th sub-skill (Sim)' : 'Lv.80：解鎖第4副技能 (模擬)' },
+      { id: '100', label: 'Lv.100', title: isEN ? 'Lv.100: Max level graduation with all 5 sub-skills' : 'Lv.100：五階滿等畢業 (全開模擬)' }
     ];
     const benchmarkBarHtml = `
       <div class="lab-compare-benchmark-row">
