@@ -2231,6 +2231,64 @@ function registerTier4Part4() {
     assert(!growthJsCode.includes('★') && !growthJsCode.includes('☆'), 'lab_growth.js must contain zero star glyphs per Rule 10');
     assert(!growthCssCode.includes('★') && !growthCssCode.includes('☆'), 'lab_growth.css must contain zero star glyphs per Rule 10');
   });
+
+  // Test 238: Recipe Completeness (78 Recipes), Official Lv.70 Cap & Granular Target Level Milestones (30/50/60/70/80/100)
+  test('Tier 4 - Real-World Application Scenarios', 'Recipe Completeness (78 Recipes), Official Lv.70 Cap & Granular Target Level Milestones (30/50/60/70/80/100)', () => {
+    // 1. Verify 78 official recipes in AppraisalLab and TARGET_TOP_RECIPES
+    const AppraisalLab = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'));
+    const targetRecipes = AppraisalLab.getAllTargetRecipes();
+    assertEquals(targetRecipes.length, 78, 'AppraisalLab must contain all 78 official recipes');
+
+    const curries = targetRecipes.filter(r => (r.category || '').includes('咖哩') || (r.category || '').toLowerCase().includes('curry'));
+    const salads = targetRecipes.filter(r => (r.category || '').includes('沙拉') || (r.category || '').toLowerCase().includes('salad'));
+    const desserts = targetRecipes.filter(r => (r.category || '').includes('甜點') || (r.category || '').toLowerCase().includes('dessert'));
+    assertEquals(curries.length, 25, 'Must contain exactly 25 Curries/Stews');
+    assertEquals(salads.length, 26, 'Must contain exactly 26 Salads');
+    assertEquals(desserts.length, 27, 'Must contain exactly 27 Desserts/Drinks');
+
+    // Verify recipes.json integrity matches
+    const recipesJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'recipes.json'), 'utf8'));
+    assertEquals(recipesJson.length, 78, 'data/recipes.json must contain 78 recipes');
+
+    // 2. Official Level Cap (Lv.70) in Pokédex & App
+    const pokedexModalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'pokedex', 'pokedex_modal.js'), 'utf8');
+    assert(pokedexModalCode.includes('lv > 70'), 'pokedex_modal.js must define unreleased as lv > 70');
+    assert(pokedexModalCode.includes('lv === 70'), 'pokedex_modal.js must define cap as lv === 70');
+    assert(pokedexModalCode.includes('[10, 25, 30, 50, 60, 70]'), 'pokedex_modal.js must include Lv.70 as released milestone');
+    assert(!pokedexModalCode.includes('const isCap = lv === 60;'), 'Lv.60 must not be labeled as level cap');
+
+    const pokedexCtrlCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'pokedex', 'pokedex_detail_ctrl.js'), 'utf8');
+    assert(!pokedexCtrlCode.includes('pokedexModalState.level > 60'), 'pokedex_detail_ctrl.js must not mark Lv.61-70 as unreleased');
+    assert(pokedexCtrlCode.includes('pokedexModalState.level > 70'), 'pokedex_detail_ctrl.js must mark only > 70 as unreleased');
+
+    // 3. Granular Target Level Milestones (30, 50, 60, 70, 80, 100) in Growth Lab
+    const growthJsCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'lab', 'lab_growth.js'), 'utf8');
+    assert(growthJsCode.includes('setGrowthMilestone(30)'), 'Growth Lab must include Lv.30 milestone');
+    assert(growthJsCode.includes('setGrowthMilestone(50)'), 'Growth Lab must include Lv.50 milestone');
+    assert(growthJsCode.includes('setGrowthMilestone(60)'), 'Growth Lab must include Lv.60 milestone');
+    assert(growthJsCode.includes('setGrowthMilestone(70)'), 'Growth Lab must include Lv.70 milestone');
+    assert(growthJsCode.includes('setGrowthMilestone(80)'), 'Growth Lab must include Lv.80 milestone');
+    assert(growthJsCode.includes('setGrowthMilestone(100)'), 'Growth Lab must include Lv.100 milestone');
+    assert(growthJsCode.includes('min="2" max="100"'), 'Target level slider must reach max 100');
+
+    // Verify Growth calculation to Lv.100
+    const costTo100 = AppraisalLab.calculateGrowthCost(1, 100, 1.0, 'normal');
+    assertEquals(costTo100.expNeeded, 215000, 'Lv.1 to Lv.100 total EXP must equal 215,000');
+    assertEquals(costTo100.shardsNeeded, 680000, 'Lv.1 to Lv.100 total Shards must equal 680,000');
+    assertEquals(costTo100.candiesNeeded, 8600, 'Lv.1 to Lv.100 total Candies must equal 8,600');
+
+    // 4. Compare Lab Granular Benchmark Levels
+    const compareJsCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'lab', 'lab_compare.js'), 'utf8');
+    assert(compareJsCode.includes("id: '70'"), 'lab_compare.js must support Lv.70 benchmark');
+    assert(compareJsCode.includes("id: '80'"), 'lab_compare.js must support Lv.80 benchmark');
+    assert(compareJsCode.includes("id: '100'"), 'lab_compare.js must support Lv.100 benchmark');
+
+    // 5. Wiki Sleep EXP Calculator Target Levels
+    const wikiMainCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_main.js'), 'utf8');
+    assert(wikiMainCode.includes('value="70"'), 'wiki_main.js must support Lv.70 target');
+    assert(wikiMainCode.includes('value="80"'), 'wiki_main.js must support Lv.80 target');
+    assert(wikiMainCode.includes('value="100"'), 'wiki_main.js must support Lv.100 target');
+  });
 }
 
 module.exports = { registerTier4Part4 };

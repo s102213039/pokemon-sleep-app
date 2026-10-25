@@ -133,7 +133,7 @@ function renderPokedexDetailModalContent() {
             <div class="box-form-group box-full-width pokedex-level-ctrl-group">
               <div class="pokedex-level-header-row">
                 <div class="pokedex-level-header-left">
-                  <label class="box-form-label" for="pokedex-level-slider" style="margin-bottom:0;">${t('pokedex.level_slider', '等級設定')} (<span class="pokedex-val-badge font-bold" id="pokedex-level-val-badge">Lv. <span id="pokedex-level-val-text">${pokedexModalState.level}</span><span id="pokedex-level-unreleased-tag" class="pokedex-unreleased-pill ${pokedexModalState.level > 60 ? '' : 'hidden'}">${t('pokedex.unreleased', '尚未開放')}</span></span>)</label>
+                  <label class="box-form-label" for="pokedex-level-slider" style="margin-bottom:0;">${t('pokedex.level_slider', '等級設定')} (<span class="pokedex-val-badge font-bold" id="pokedex-level-val-badge">Lv. <span id="pokedex-level-val-text">${pokedexModalState.level}</span><span id="pokedex-level-unreleased-tag" class="pokedex-unreleased-pill ${pokedexModalState.level > 70 ? '' : 'hidden'}">${t('pokedex.unreleased', '尚未開放')}</span></span>)</label>
                   <button type="button" class="pokedex-btn-preset preset-god" onclick="window.PokemonApp.applyPokedexGodPreset()" title="${t('pokedex.preset_god', '畢業神配置')}">${t('pokedex.preset_god', '畢業神配置')}</button>
                 </div>
                 <div class="pokedex-level-header-right">
@@ -157,11 +157,21 @@ function renderPokedexDetailModalContent() {
                     const allMilestones = [10, 25, 30, 50, 60, 70, 80, 100];
                     // 紅色不可滑動區間（低於最低進化等級）不展示快捷等級圖釘，亦不額外插入重疊門檻圖釘
                     const pins = allMilestones.filter(lv => lv >= minEvoLvl);
+                    const unlockNotes = {
+                      10: isEN ? '1st Sub-Skill' : '解鎖第1副技能',
+                      25: isEN ? '2nd Sub-Skill' : '解鎖第2副技能',
+                      30: isEN ? '2nd Ingredient' : '解鎖第2食材',
+                      50: isEN ? '3rd Sub-Skill' : '解鎖第3副技能',
+                      60: isEN ? '3rd Ingredient' : '解鎖第3食材',
+                      70: isEN ? 'Current Level Cap' : '目前等級上限',
+                      80: isEN ? '4th Sub-Skill / Sim' : '解鎖第4副技能 / 模擬',
+                      100: isEN ? '5th Sub-Skill / Max' : '五階滿等畢業 / 模擬'
+                    };
                     return pins.map(lv => {
                       const pct = ((lv - 1) / 99) * 100;
-                      const isReleasedMilestone = [10, 25, 30, 50, 60].includes(lv);
-                      const isUnreleased = lv > 60;
-                      const isCap = lv === 60;
+                      const isReleasedMilestone = [10, 25, 30, 50, 60, 70].includes(lv);
+                      const isUnreleased = lv > 70;
+                      const isCap = lv === 70;
                       const isActive = pokedexModalState.level === lv;
                       const classes = ['pokedex-track-pin-btn', 'pin-milestone'];
                       if (isActive) classes.push('active');
@@ -169,7 +179,9 @@ function renderPokedexDetailModalContent() {
                       if (isUnreleased) classes.push('pin-unreleased');
 
                       let tooltip = `Lv.${lv}`;
-                      if (isUnreleased) {
+                      if (unlockNotes[lv]) {
+                        tooltip += ` (${unlockNotes[lv]})`;
+                      } else if (isUnreleased) {
                         tooltip = `Lv.${lv} (${isEN ? 'Unreleased in game / Simulation only' : '遊戲尚未開放 / 模擬'})`;
                       } else if (isCap) {
                         tooltip = `Lv.${lv} (${isEN ? 'Current Level Cap' : '目前等級上限'})`;
@@ -569,7 +581,7 @@ function updatePokedexModalAppraisalLive() {
   }
   const unreleasedTag = document.getElementById('pokedex-level-unreleased-tag');
   if (unreleasedTag) {
-    if (pokedexModalState.level > 60) {
+    if (pokedexModalState.level > 70) {
       unreleasedTag.classList.remove('hidden');
     } else {
       unreleasedTag.classList.add('hidden');

@@ -3618,16 +3618,22 @@
     let target = parseInt(targetLvInput.value, 10) || 30;
 
     if (cur < 1) cur = 1;
-    if (cur > 79) cur = 79;
+    if (cur > 99) cur = 99;
     if (target < 2) target = 30;
-    if (target > 80) target = 80;
+    if (target > 100) target = 100;
+
+    function getCumulativeExpAt(lv) {
+      if (lv <= 80) return cumulativeExp[lv] || 0;
+      const exp80 = cumulativeExp[80] || 120262;
+      return Math.round(exp80 + ((lv - 80) / 20) * (215000 - exp80));
+    }
 
     // 經驗值類型: 600型 1.0 / 900型(準神) 1.5 / 1080型(神獸) 1.8 / 1320型(幻) 2.2
     // ponytail: 累計值乘倍率四捨五入, 與 Pokebip/WikiWiki 實表誤差 <=1 EXP; 要逐點精準需內嵌三張實表
     const expTypeSelect = document.getElementById('calc-sleep-exp-type');
     const expTypeMult = parseFloat(expTypeSelect ? expTypeSelect.value : 1.0) || 1.0;
-    const curExp = Math.round(cumulativeExp[cur] * expTypeMult);
-    const targetExp = Math.round(cumulativeExp[target] * expTypeMult);
+    const curExp = Math.round(getCumulativeExpAt(cur) * expTypeMult);
+    const targetExp = Math.round(getCumulativeExpAt(target) * expTypeMult);
     const baseExpNeeded = Math.max(0, targetExp - curExp);
 
     let dailyExp = 100;
@@ -9185,17 +9191,18 @@
                 <div class="calc-form-row calc-form-row-levels">
                   <div class="calc-field-group calc-field-cur">
                     <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current:' : '目前等級:'}</label>
-                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="79" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
+                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="99" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
                   </div>
 
                   <div class="calc-field-group calc-field-target">
                     <label class="calc-label" for="calc-sleep-target-lv">${isEN ? 'Target:' : '目標等級:'}</label>
                     <select id="calc-sleep-target-lv" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
-                      <option value="30">Lv.30</option>
-                      <option value="50">Lv.50</option>
-                      <option value="60">Lv.60</option>
-                      <option value="70">Lv.70</option>
-                      <option value="80">Lv.80</option>
+                      <option value="30">Lv.30 (${isEN ? '2nd Ingr' : '二階食材'})</option>
+                      <option value="50">Lv.50 (${isEN ? '3rd Sub-Skill' : '三副技能'})</option>
+                      <option value="60">Lv.60 (${isEN ? '3rd Ingr' : '三階食材'})</option>
+                      <option value="70">Lv.70 (${isEN ? 'Current Cap' : '目前等級上限'})</option>
+                      <option value="80">Lv.80 (${isEN ? '4th Sub-Skill' : '四副技能'})</option>
+                      <option value="100">Lv.100 (${isEN ? '5th Sub-Skill / Max' : '五階滿等畢業'})</option>
                     </select>
                   </div>
                 </div>

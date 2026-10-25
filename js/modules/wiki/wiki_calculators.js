@@ -489,16 +489,22 @@
     let target = parseInt(targetLvInput.value, 10) || 30;
 
     if (cur < 1) cur = 1;
-    if (cur > 79) cur = 79;
+    if (cur > 99) cur = 99;
     if (target < 2) target = 30;
-    if (target > 80) target = 80;
+    if (target > 100) target = 100;
+
+    function getCumulativeExpAt(lv) {
+      if (lv <= 80) return cumulativeExp[lv] || 0;
+      const exp80 = cumulativeExp[80] || 120262;
+      return Math.round(exp80 + ((lv - 80) / 20) * (215000 - exp80));
+    }
 
     // 經驗值類型: 600型 1.0 / 900型(準神) 1.5 / 1080型(神獸) 1.8 / 1320型(幻) 2.2
     // ponytail: 累計值乘倍率四捨五入, 與 Pokebip/WikiWiki 實表誤差 <=1 EXP; 要逐點精準需內嵌三張實表
     const expTypeSelect = document.getElementById('calc-sleep-exp-type');
     const expTypeMult = parseFloat(expTypeSelect ? expTypeSelect.value : 1.0) || 1.0;
-    const curExp = Math.round(cumulativeExp[cur] * expTypeMult);
-    const targetExp = Math.round(cumulativeExp[target] * expTypeMult);
+    const curExp = Math.round(getCumulativeExpAt(cur) * expTypeMult);
+    const targetExp = Math.round(getCumulativeExpAt(target) * expTypeMult);
     const baseExpNeeded = Math.max(0, targetExp - curExp);
 
     let dailyExp = 100;

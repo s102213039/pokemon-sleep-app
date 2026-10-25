@@ -616,17 +616,18 @@
                 <div class="calc-form-row calc-form-row-levels">
                   <div class="calc-field-group calc-field-cur">
                     <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current:' : '目前等級:'}</label>
-                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="79" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
+                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="99" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
                   </div>
 
                   <div class="calc-field-group calc-field-target">
                     <label class="calc-label" for="calc-sleep-target-lv">${isEN ? 'Target:' : '目標等級:'}</label>
                     <select id="calc-sleep-target-lv" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
-                      <option value="30">Lv.30</option>
-                      <option value="50">Lv.50</option>
-                      <option value="60">Lv.60</option>
-                      <option value="70">Lv.70</option>
-                      <option value="80">Lv.80</option>
+                      <option value="30">Lv.30 (${isEN ? '2nd Ingr' : '二階食材'})</option>
+                      <option value="50">Lv.50 (${isEN ? '3rd Sub-Skill' : '三副技能'})</option>
+                      <option value="60">Lv.60 (${isEN ? '3rd Ingr' : '三階食材'})</option>
+                      <option value="70">Lv.70 (${isEN ? 'Current Cap' : '目前等級上限'})</option>
+                      <option value="80">Lv.80 (${isEN ? '4th Sub-Skill' : '四副技能'})</option>
+                      <option value="100">Lv.100 (${isEN ? '5th Sub-Skill / Max' : '五階滿等畢業'})</option>
                     </select>
                   </div>
                 </div>

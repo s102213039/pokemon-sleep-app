@@ -5,6 +5,18 @@
     if (typeof window !== 'undefined' && Array.isArray(window.allRecipes) && window.allRecipes.length > 0) {
       return window.allRecipes;
     }
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const cached = localStorage.getItem('pksleep_cache_recipes_json');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            window.__RECIPES_CACHE__ = parsed;
+            return parsed;
+          }
+        }
+      }
+    } catch (e) {}
     return TARGET_TOP_RECIPES;
   }
 

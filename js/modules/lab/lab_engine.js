@@ -811,6 +811,9 @@
     const costTo30 = calculateMilestoneCost(currentLv, 30, nature);
     const costTo50 = calculateMilestoneCost(currentLv, 50, nature);
     const costTo60 = calculateMilestoneCost(currentLv, 60, nature);
+    const costTo70 = calculateMilestoneCost(currentLv, 70, nature);
+    const costTo80 = calculateMilestoneCost(currentLv, 80, nature);
+    const costTo100 = calculateMilestoneCost(currentLv, 100, nature);
 
     return {
       scores: {
@@ -834,7 +837,10 @@
       costs: {
         to30: costTo30,
         to50: costTo50,
-        to60: costTo60
+        to60: costTo60,
+        to70: costTo70,
+        to80: costTo80,
+        to100: costTo100
       }
     };
   }

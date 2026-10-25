@@ -353,7 +353,7 @@ function applyPokedexResetPreset() {
   if (valText) valText.textContent = pokedexModalState.level;
   updateSliderProgressFill(pokedexModalState.level);
   if (unreleasedTag) {
-    if (pokedexModalState.level > 60) {
+    if (pokedexModalState.level > 70) {
       unreleasedTag.classList.remove('hidden');
     } else {
       unreleasedTag.classList.add('hidden');
@@ -406,7 +406,7 @@ function setPokedexModalLevel(val) {
   if (valText) valText.textContent = pokedexModalState.level;
   updateSliderProgressFill(pokedexModalState.level);
   if (unreleasedTag) {
-    if (pokedexModalState.level > 60) {
+    if (pokedexModalState.level > 70) {
       unreleasedTag.classList.remove('hidden');
     } else {
       unreleasedTag.classList.add('hidden');
@@ -610,7 +610,7 @@ function updatePokedexSubskillUI() {
       const isActive = slotNum === pokedexActiveSubskillSlot;
       const skName = subskills[idx] || '';
       const isLevelReached = currentLevel >= lvl;
-      const isUnreleasedSlot = lvl > 60;
+      const isUnreleasedSlot = lvl > 70;
       const isEffectActive = isLevelReached;
 
       let badgeHtml = '';

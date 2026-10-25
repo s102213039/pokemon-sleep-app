@@ -36,8 +36,10 @@
     { lv: 30, shards: 14500 },
     { lv: 50, shards: 48000 },
     { lv: 60, shards: 110000 },
+    { lv: 70, shards: 200000 },
     { lv: 75, shards: 260000 },
-    { lv: 80, shards: 380000 }
+    { lv: 80, shards: 380000 },
+    { lv: 100, shards: 680000 }
   ];
 
   /* 銀色技能種子升級階梯映射表 */
@@ -61,7 +63,7 @@
   const LEGENDARY_NAMES = ['雷公', '炎帝', '水君', 'Raikou', 'Entei', 'Suicune'];
 
   function getGrowthCumulativeShards(level) {
-    const lv = Math.max(1, Math.min(80, parseInt(level, 10) || 1));
+    const lv = Math.max(1, Math.min(100, parseInt(level, 10) || 1));
     for (let i = 0; i < GROWTH_SHARD_MILESTONES.length - 1; i++) {
       const cur = GROWTH_SHARD_MILESTONES[i];
       const next = GROWTH_SHARD_MILESTONES[i + 1];
@@ -91,12 +93,20 @@
     return 'normal';
   }
 
-  function calculateGrowthCost(fromLv, targetLv, curveMult, expMod) {
-    const cur = Math.max(1, Math.min(79, parseInt(fromLv, 10) || 1));
-    let tgt = Math.max(cur, Math.min(80, parseInt(targetLv, 10) || cur));
+  function getCumulativeExp(level) {
+    const lv = Math.max(1, Math.min(100, parseInt(level, 10) || 1));
+    if (lv <= 80) return GROWTH_CUMULATIVE_EXP[lv] || 0;
+    // Lv.81 - Lv.100 平滑內插至 215,000 EXP (五階滿等畢業)
+    const exp80 = GROWTH_CUMULATIVE_EXP[80] || 120262;
+    return Math.round(exp80 + ((lv - 80) / 20) * (215000 - exp80));
+  }
 
-    const curExp = Math.round((GROWTH_CUMULATIVE_EXP[cur] || 0) * curveMult);
-    const tgtExp = Math.round((GROWTH_CUMULATIVE_EXP[tgt] || 0) * curveMult);
+  function calculateGrowthCost(fromLv, targetLv, curveMult, expMod) {
+    const cur = Math.max(1, Math.min(99, parseInt(fromLv, 10) || 1));
+    let tgt = Math.max(cur, Math.min(100, parseInt(targetLv, 10) || cur));
+
+    const curExp = Math.round(getCumulativeExp(cur) * curveMult);
+    const tgtExp = Math.round(getCumulativeExp(tgt) * curveMult);
     const baseExpNeeded = Math.max(0, tgtExp - curExp);
 
     let expPerCandy = 25;
@@ -317,7 +327,9 @@
       if (growthState.fromLevel < 30) growthState.targetLevel = 30;
       else if (growthState.fromLevel < 50) growthState.targetLevel = 50;
       else if (growthState.fromLevel < 60) growthState.targetLevel = 60;
-      else growthState.targetLevel = 80;
+      else if (growthState.fromLevel < 70) growthState.targetLevel = 70;
+      else if (growthState.fromLevel < 80) growthState.targetLevel = 80;
+      else growthState.targetLevel = 100;
     }
 
     // 成長曲線乘數判定
@@ -401,20 +413,22 @@
                 <span class="lab-growth-range-label">${isEN ? 'Current Level' : '起始等級'}</span>
                 <span class="lab-growth-range-val">Lv.${growthState.fromLevel}</span>
               </div>
-              <input type="range" class="lab-growth-slider" min="1" max="79" value="${growthState.fromLevel}" oninput="window.AppraisalLab.setGrowthFromLevel(this.value)">
+              <input type="range" class="lab-growth-slider" min="1" max="99" value="${growthState.fromLevel}" oninput="window.AppraisalLab.setGrowthFromLevel(this.value)">
 
               <div class="lab-growth-range-display" style="margin-top:10px;">
                 <span class="lab-growth-range-label">${isEN ? 'Target Level' : '目標等級'}</span>
                 <span class="lab-growth-range-val">Lv.${growthState.targetLevel}</span>
               </div>
-              <input type="range" class="lab-growth-slider" min="2" max="80" value="${growthState.targetLevel}" oninput="window.AppraisalLab.setGrowthTargetLevel(this.value)">
+              <input type="range" class="lab-growth-slider" min="2" max="100" value="${growthState.targetLevel}" oninput="window.AppraisalLab.setGrowthTargetLevel(this.value)">
 
               <!-- 里程碑快速按鈕 -->
               <div class="lab-growth-milestones-row">
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 30 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(30)">Lv.30</button>
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 50 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(50)">Lv.50</button>
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 60 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(60)">Lv.60</button>
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 80 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(80)">Lv.80</button>
+                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 30 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(30)" title="${isEN ? 'Lv.30 Unlock 2nd Ingredient' : 'Lv.30 解鎖二階食材'}">Lv.30 <span class="milestone-chip-note">(${isEN ? '2nd Ingr' : '二階食材'})</span></button>
+                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 50 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(50)" title="${isEN ? 'Lv.50 Unlock 3rd Sub-Skill' : 'Lv.50 解鎖三副技能'}">Lv.50 <span class="milestone-chip-note">(${isEN ? '3rd Sub' : '三副技能'})</span></button>
+                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 60 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(60)" title="${isEN ? 'Lv.60 Unlock 3rd Ingredient' : 'Lv.60 解鎖三階食材'}">Lv.60 <span class="milestone-chip-note">(${isEN ? '3rd Ingr' : '三階食材'})</span></button>
+                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 70 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(70)" title="${isEN ? 'Lv.70 Current Level Cap' : 'Lv.70 目前等級上限'}">Lv.70 <span class="milestone-chip-note">(${isEN ? 'Cur. Cap' : '目前上限'})</span></button>
+                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 80 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(80)" title="${isEN ? 'Lv.80 Unlock 4th Sub-Skill / Sim' : 'Lv.80 解鎖四副技能 / 模擬'}">Lv.80 <span class="milestone-chip-note">(${isEN ? '4th Sub' : '四副技能'})</span></button>
+                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 100 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(100)" title="${isEN ? 'Lv.100 Max Level Graduation' : 'Lv.100 五階滿等畢業'}">Lv.100 <span class="milestone-chip-note">(${isEN ? 'Max Lv' : '滿等畢業'})</span></button>
               </div>
             </div>
 
@@ -524,22 +538,24 @@
       if (growthState.fromLevel < 30) growthState.targetLevel = 30;
       else if (growthState.fromLevel < 50) growthState.targetLevel = 50;
       else if (growthState.fromLevel < 60) growthState.targetLevel = 60;
-      else growthState.targetLevel = 80;
+      else if (growthState.fromLevel < 70) growthState.targetLevel = 70;
+      else if (growthState.fromLevel < 80) growthState.targetLevel = 80;
+      else growthState.targetLevel = 100;
     }
     updateLabUI();
   }
 
   function setGrowthFromLevel(val) {
-    const num = Math.max(1, Math.min(79, parseInt(val, 10) || 1));
+    const num = Math.max(1, Math.min(99, parseInt(val, 10) || 1));
     growthState.fromLevel = num;
     if (growthState.targetLevel <= num) {
-      growthState.targetLevel = Math.min(80, num + 1);
+      growthState.targetLevel = Math.min(100, num + 1);
     }
     updateLabUI();
   }
 
   function setGrowthTargetLevel(val) {
-    const num = Math.max(2, Math.min(80, parseInt(val, 10) || 30));
+    const num = Math.max(2, Math.min(100, parseInt(val, 10) || 30));
     growthState.targetLevel = num;
     if (growthState.fromLevel >= num) {
       growthState.fromLevel = Math.max(1, num - 1);

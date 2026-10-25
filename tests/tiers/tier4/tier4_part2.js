@@ -1337,11 +1337,15 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   const subskillRowHtml = mockElements.get('pokedex-subskill-slots-row').innerHTML;
   assert(subskillRowHtml.includes('等級不足'), 'Subskill slots row must include 等級不足 indicator for unreached levels');
 
-  // Toggle level > 60 and verify unreleased tag is active
-  PokemonApp.setPokedexModalLevel(70);
+  // Toggle level > 70 and verify unreleased tag is active for simulation levels (e.g. Lv.80)
+  PokemonApp.setPokedexModalLevel(80);
   const unreleasedTagEl = mockElements.get('pokedex-level-unreleased-tag');
   if (unreleasedTagEl) {
-    assert(!unreleasedTagEl.classList.contains('hidden'), 'Level 70 must make unreleased tag visible');
+    assert(!unreleasedTagEl.classList.contains('hidden'), 'Level 80 must make unreleased tag visible');
+  }
+  PokemonApp.setPokedexModalLevel(70);
+  if (unreleasedTagEl) {
+    assert(unreleasedTagEl.classList.contains('hidden'), 'Level 70 (current level cap) must hide unreleased tag');
   }
   PokemonApp.setPokedexModalLevel(50);
   if (unreleasedTagEl) {

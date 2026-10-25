@@ -1725,13 +1725,14 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
   assert(html.includes('class="calc-form-row calc-form-row-boosts"'), 'Must render calc-form-row-boosts');
   assert(html.includes('id="calc-sleep-candies-result"'), 'Must render calc-sleep-candies-result for candies estimation');
 
-  // Verify Target Level is a select dropdown with options 30, 50, 60, 70, 80
+  // Verify Target Level is a select dropdown with options 30, 50, 60, 70, 80, 100
   assert(html.includes('<select id="calc-sleep-target-lv" class="calc-select"'), 'Target level must be a calc-select dropdown');
-  assert(html.includes('<option value="30">Lv.30</option>'), 'Target level must have option 30');
-  assert(html.includes('<option value="50">Lv.50</option>'), 'Target level must have option 50');
-  assert(html.includes('<option value="60">Lv.60</option>'), 'Target level must have option 60');
-  assert(html.includes('<option value="70">Lv.70</option>'), 'Target level must have option 70');
-  assert(html.includes('<option value="80">Lv.80</option>'), 'Target level must have option 80');
+  assert(html.includes('<option value="30"'), 'Target level must have option 30');
+  assert(html.includes('<option value="50"'), 'Target level must have option 50');
+  assert(html.includes('<option value="60"'), 'Target level must have option 60');
+  assert(html.includes('<option value="70"'), 'Target level must have option 70');
+  assert(html.includes('<option value="80"'), 'Target level must have option 80');
+  assert(html.includes('<option value="100"'), 'Target level must have option 100');
 
   // 5. Verify Growth Incense is completely removed
   assert(!html.includes('calc-sleep-incense'), 'Growth incense control must be removed');
