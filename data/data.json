@@ -4436,14 +4436,33 @@
     "specialty": "技能",
     "sleep_type": "淺淺入夢",
     "carry": "13",
-    "ingredient_rate": "",
-    "skill_rate": "",
-    "interval": "",
+    "ingredient_rate": "15.00%",
+    "skill_rate": "4.70%",
+    "interval": "00:46:40",
     "main_skill": "料理強化S",
     "evo_req": "",
     "is_final": "",
     "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/200.png",
-    "ingredients": []
+    "ingredients": [
+      {
+        "name": "窩心洋芋",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      {
+        "name": "醒腦咖啡豆",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png",
+        "l30": "2",
+        "l60": "3"
+      },
+      {
+        "name": "好眠番茄",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png",
+        "l60": "4"
+      }
+    ]
   },
   {
     "id": "429",
@@ -4455,14 +4474,33 @@
     "specialty": "技能",
     "sleep_type": "淺淺入夢",
     "carry": "22",
-    "ingredient_rate": "",
-    "skill_rate": "",
-    "interval": "",
+    "ingredient_rate": "14.20%",
+    "skill_rate": "3.60%",
+    "interval": "00:40:00",
     "main_skill": "魔法火焰（料理躍進S）",
     "evo_req": "暗之石 + 80 糖",
     "is_final": "",
     "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/429.png",
-    "ingredients": []
+    "ingredients": [
+      {
+        "name": "窩心洋芋",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      {
+        "name": "醒腦咖啡豆",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png",
+        "l30": "2",
+        "l60": "3"
+      },
+      {
+        "name": "好眠番茄",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png",
+        "l60": "4"
+      }
+    ]
   },
   {
     "id": "213",
