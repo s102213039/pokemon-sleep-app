@@ -1,5 +1,207 @@
 [
   {
+    "id": "343537333535313639333033313031343531",
+    "url": "https://www.pokemonsleep.net/zh/news/343537333535313639333033313031343531/",
+    "date": "2026-11-04",
+    "category": "企劃",
+    "badge_key": "event",
+    "badge_label": "活動企劃",
+    "badge_color": "#f59e0b",
+    "title": "【企畫】「來什麼都吃光光！大餐週vol.1」",
+    "title_en": "[Campaign] \"來什麼都吃光光！大餐週vol.1\"",
+    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "debut_pokemon": [
+      "木棉球",
+      "風妖精",
+      "食材和食譜"
+    ],
+    "mid_rateup_pokemon": [
+      "木棉球",
+      "風妖精"
+    ],
+    "featured_pokemon": [],
+    "overview": "新料理也是來什麼都吃光光！大餐週！",
+    "highlights": [
+      "舉辦期間：11/16 (週一) 4:00 ～ 11/23 (週一) 3:59",
+      "任務期間：11/16 (週一) 4:00 ～ 11/23 (週一) 3:59",
+      "製作食譜裡含有 「一口堅果」 的料理時，從食譜指定的食材份量獲得的能量會變成 1.5倍 。",
+      "透過含有「一口堅果」的料理可獲得的能量倍率會根據 製作的料理和「一口堅果」的使用數量 而不同。",
+      "【機率中幅提升】木棉球、風妖精"
+    ],
+    "sections": [
+      {
+        "key": "schedule",
+        "title": "活動時間與營地",
+        "icon": "[Time]",
+        "items": [
+          "舉辦期間：11/16 (週一) 4:00 ～ 11/23 (週一) 3:59",
+          "任務期間：11/16 (週一) 4:00 ～ 11/23 (週一) 3:59",
+          "【適用營地】・所有營地"
+        ],
+        "title_en": "Event Schedule & Areas",
+        "items_en": [
+          "Event Period: 11/16 (Mon) 4:00 ～ 11/23 (Mon) 3:59",
+          "Mission Period: 11/16 (Mon) 4:00 ～ 11/23 (Mon) 3:59",
+          "[Areas] - All Areas"
+        ]
+      },
+      {
+        "key": "bonus",
+        "title": "核心獎勵與倍率加成",
+        "icon": "[Bonus]",
+        "items": [
+          "製作食譜裡含有 「一口堅果」 的料理時，從食譜指定的食材份量獲得的能量會變成 1.5倍 。",
+          "透過含有「一口堅果」的料理可獲得的能量倍率會根據 製作的料理和「一口堅果」的使用數量 而不同。",
+          "顯示於食譜一覽的料理能量變成1.5倍。",
+          "超過料理所需數量而額外加入的「一口堅果」能量變成1.5倍。",
+          "顯示於食譜一覽的料理能量倍率不變。"
+        ],
+        "title_en": "Core Bonuses & Multipliers",
+        "items_en": [
+          "製作食譜裡含有 \"一口堅果\" 的料理時，從食譜指定的食材份量獲得的能量會變成 1.5倍 。",
+          "透過含有\"一口堅果\"的料理可獲得的能量倍率會根據 製作的料理和\"一口堅果\"的使用數量 而不同。",
+          "顯示於食譜一覽的料理能量變成1.5倍。",
+          "超過料理所需數量而額外加入的\"一口堅果\"能量變成1.5倍。",
+          "顯示於食譜一覽的料理能量倍率不變。"
+        ]
+      },
+      {
+        "key": "rateup",
+        "title": "機率提升寶可夢",
+        "icon": "[RateUp]",
+        "items": [
+          "【機率中幅提升】木棉球、風妖精"
+        ],
+        "title_en": "Featured Rate-Up Pokemon",
+        "items_en": [
+          "[Medium Rate Up] 木棉球, 風妖精"
+        ]
+      }
+    ],
+    "content_preview": "NEW\n\n企劃\n\n2026/11/4\n2026/11/4 -->\n\n【企畫】「來什麼都吃光光！大餐週vol.1」\n\n概要\n\n新料理也是來什麼都吃光光！大餐週！\n\n本企畫為期1週，是 能輕鬆嘗試新登場的食材和食譜 的特別期間。\n\n自 11/16 (週一) 4:00 企畫登場起，除了新食材 「一口堅果」 ，還將追加 「咖哩、濃湯」、「沙拉」、「點心、飲料」的新食譜各1種 ！\n\n企畫期間，卡比獸想吃的料理會是 「所有料理！」 ，研究者 可製作所有的料理 。\n\n其中卡比獸似乎很喜歡會用到新食材「一口堅果」的料理。\n\n不僅如此，企畫期間專長為「食材」的幫手寶可夢還會在幫忙時 額外撿來 「一口堅果」。為了卡比獸，在各式各樣的料理中加進「一口堅果」吧！\n\n此外，還會更容易遇見會撿來製作新料理時所需的「一口堅果」的 木棉球、..."
+  },
+  {
+    "id": "343537333535313639323832313239393330",
+    "url": "https://www.pokemonsleep.net/zh/news/343537333535313639323832313239393330/",
+    "date": "2026-11-04",
+    "category": "通知",
+    "badge_key": "notice",
+    "badge_label": "重要通知",
+    "badge_color": "#8b5cf6",
+    "title": "【新登場】木棉球、 風妖精",
+    "title_en": "[New Debut] 木棉球, 風妖精",
+    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "debut_pokemon": [
+      "木棉球",
+      "風妖精"
+    ],
+    "mid_rateup_pokemon": [],
+    "featured_pokemon": [],
+    "overview": "或許是受到各位研究者持續進行睡眠研究的影響，有目擊報告指出在特定的營地附近發現了至今尚未遇見過的寶可夢的蹤影。",
+    "highlights": [
+      "開始出現的時間 2026/11/16 15:00",
+      "【適用營地】萌綠之島、 天青沙灘、 琥褐溪谷、 萌綠之島EX、 天青沙灘EX",
+      "登場寶可夢：木棉球（妖精屬性）、風妖精（妖精屬性）",
+      "睡眠類型：木棉球：安然入睡 · 風妖精：安然入睡"
+    ],
+    "sections": [
+      {
+        "key": "schedule",
+        "title": "活動時間與營地",
+        "icon": "[Time]",
+        "items": [
+          "開始出現的時間 2026/11/16 15:00",
+          "【適用營地】萌綠之島、 天青沙灘、 琥褐溪谷、 萌綠之島EX、 天青沙灘EX"
+        ],
+        "title_en": "Event Schedule & Areas",
+        "items_en": [
+          "開始出現的時間 2026/11/16 15:00",
+          "[Areas] Greengrass Isle, Cyan Beach, 琥褐溪谷, Greengrass IsleEX, Cyan BeachEX"
+        ]
+      },
+      {
+        "key": "debut",
+        "title": "新登場寶可夢情報",
+        "icon": "[Pokemon]",
+        "items": [
+          "登場寶可夢：木棉球（妖精屬性）、風妖精（妖精屬性）",
+          "睡眠類型：木棉球：安然入睡 · 風妖精：安然入睡"
+        ],
+        "title_en": "New Pokemon Debut",
+        "items_en": [
+          "登場寶可夢：木棉球（妖精屬性）, 風妖精（妖精屬性）",
+          "睡眠類型：木棉球：安然入睡 · 風妖精：安然入睡"
+        ]
+      }
+    ],
+    "content_preview": "NEW\n\n通知\n\n2026/11/4\n2026/11/4 -->\n\n【新登場】木棉球、 風妖精\n\n或許是受到各位研究者持續進行睡眠研究的影響，有目擊報告指出在特定的營地附近發現了至今尚未遇見過的寶可夢的蹤影。\n\n說不定很快也就能在睡眠研究時相遇了呢。\n\n能新遇見的寶可夢\n\n・木棉球（妖精屬性）\n\n・風妖精（妖精屬性）\n\n敬請期待！\n\n能新遇見的寶可夢的資訊\n\n開始出現的時間\n\n2026/11/16 15:00\n\n※自上述時間起可以使用該寶可夢的薰香。\n\n出現的營地\n\n萌綠之島、 天青沙灘、 琥褐溪谷、 萌綠之島EX、 天青沙灘EX\n\n※在天青沙灘EX，您會比在其他營地更容易遇見對象寶可夢。\n\n可遇見的睡眠類型\n\n木棉球：安然入睡\n\n風妖精：安然入睡"
+  },
+  {
+    "id": "343537363134323332373739373531343236",
+    "url": "https://www.pokemonsleep.net/zh/news/343537363134323332373739373531343236/",
+    "date": "2026-11-04",
+    "category": "通知",
+    "badge_key": "notice",
+    "badge_label": "重要通知",
+    "badge_color": "#8b5cf6",
+    "title": "【來獲得寶可夢的薰香＆沙布蕾吧！】備料週滿足包vol.1",
+    "title_en": "[Special Pack] Get Pokemon Incense & Biscuits! 備料週滿足包vol.1",
+    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
+    "featured_pokemon": [],
+    "overview": "商品裡裝有 能迎接在「備料週」登場的寶可夢成為夥伴的道具 。這些寶可夢 會幫忙撿來新料理所需的食材 ，歡迎選購。",
+    "highlights": [
+      "銷售期間： 2026/11/8 4:00 ～ 2026/11/17 3:59",
+      "萬能糖果S×3",
+      "「備料週滿足包S vol.1」（250鑽石） ：寶可沙布蕾×4、幸運薰香×1、萬能糖果S×3",
+      "「備料週滿足包M vol.1」（1,200鑽石） ：超級沙布蕾×6、寶可沙布蕾×6、石居蟹的薰香×1、南瓜精的薰香×1、萬能糖果M×2"
+    ],
+    "sections": [
+      {
+        "key": "schedule",
+        "title": "活動時間與營地",
+        "icon": "[Time]",
+        "items": [
+          "銷售期間： 2026/11/8 4:00 ～ 2026/11/17 3:59"
+        ],
+        "title_en": "Event Schedule & Areas",
+        "items_en": [
+          "Sales Period: 2026/11/8 4:00 ～ 2026/11/17 3:59"
+        ]
+      },
+      {
+        "key": "bonus",
+        "title": "核心獎勵與倍率加成",
+        "icon": "[Bonus]",
+        "items": [
+          "萬能糖果S×3"
+        ],
+        "title_en": "Core Bonuses & Multipliers",
+        "items_en": [
+          "Handy Candy S×3"
+        ]
+      },
+      {
+        "key": "shop",
+        "title": "禮包與商城道具包一覽",
+        "icon": "[Shop]",
+        "items": [
+          "「備料週滿足包S vol.1」（250鑽石） ：寶可沙布蕾×4、幸運薰香×1、萬能糖果S×3",
+          "「備料週滿足包M vol.1」（1,200鑽石） ：超級沙布蕾×6、寶可沙布蕾×6、石居蟹的薰香×1、南瓜精的薰香×1、萬能糖果M×2",
+          "「備料週滿足包L vol.1」（3,000鑽石） ：高級沙布蕾×3、超級沙布蕾×13、幸運薰香×4、大顎蟻的薰香×1、小貓怪的薰香×1、萬能糖果L×1"
+        ],
+        "title_en": "Bundles & Shop Items",
+        "items_en": [
+          "\"備料週滿足包S vol.1\" (250 Diamonds) ：Poké Biscuit×4, Luck Incense×1, Handy Candy S×3",
+          "\"備料週滿足包M vol.1\" (1,200 Diamonds) ：Great Biscuit×6, Poké Biscuit×6, 石居蟹的薰香×1, 南瓜精的薰香×1, Handy Candy M×2",
+          "\"備料週滿足包L vol.1\" (3,000 Diamonds) ：Ultra Biscuit×3, Great Biscuit×13, Luck Incense×4, 大顎蟻的薰香×1, 小貓怪的薰香×1, Handy Candy L×1"
+        ]
+      }
+    ],
+    "content_preview": "NEW\n\n通知\n\n2026/11/4\n2026/11/4 -->\n\n【來獲得寶可夢的薰香＆沙布蕾吧！】備料週滿足包vol.1\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n《Pokémon Sleep》將配合「備料週」推出「備料週滿足包vol.1」（S、M、L）！\n\n商品裡裝有 能迎接在「備料週」登場的寶可夢成為夥伴的道具 。這些寶可夢 會幫忙撿來新料理所需的食材 ，歡迎選購。\n\n趁機讓許多寶可夢成為夥伴並收集食材，預備迎接將在日後舉辦的「來什麼都吃光光！大餐週」吧！\n\n商品詳情\n\n銷售期間： 2026/11/8 4:00 ～ 2026/11/17 3:59\n\n商品一覽：\n\n「備料週滿足包S vol.1」（250鑽石）\n\n・寶可沙布蕾×4\n\n・幸運薰香×1\n\n・萬能糖果S×3\n\n※僅限購買 3次 。..."
+  },
+  {
     "id": "343537333337383034343630393136373338",
     "url": "https://www.pokemonsleep.net/zh/news/343537333337383034343630393136373338/",
     "date": "2026-10-30",
@@ -921,393 +1123,5 @@
       }
     ],
     "content_preview": "NEW\n\n通知\n\n2026/10/7\n2026/10/7 -->\n\n【來獲得午睡放鬆券吧！】寶可夢茁壯包vol.6\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n《Pokémon Sleep》將配合「寶可夢快快長大週」推出「寶可夢茁壯包vol.6」（S、M、L）！\n\n本商品裡裝有「 成長薰香 」、「 萬能糖果M 」等 能用來培育幫手寶可夢的道具 ，歡迎選購。\n\n此外，商品內容自本次起有所更新！\n\n在「寶可夢茁壯包L」裡裝有能在小卡比獸的午睡島使用的「 午睡放鬆券 」。\n\n使用這個票券多多獲得EXP，培育幫手寶可夢吧！\n\n商品詳情\n\n銷售期間： 2026/10/11 4:00 ～ 2026/10/20 3:59\n\n商品一覽：\n\n「寶可夢茁壯包S vol.6」（250鑽石）\n\n・寶可沙布蕾×3\n\n・成長..."
-  },
-  {
-    "id": "343531353831373736303538333834333931",
-    "url": "https://www.pokemonsleep.net/zh/news/343531353831373736303538333834333931/",
-    "date": "2026-10-05",
-    "category": "異常問題",
-    "badge_key": "notice",
-    "badge_label": "重要通知",
-    "badge_color": "#8b5cf6",
-    "title": "異常問題修復通知",
-    "title_en": "Bug Fixes Notification",
-    "overview_en": "Notification regarding known issues and recent bug fixes in the app.",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [],
-    "overview": "目前已修復了遊戲中發生的以下異常問題。",
-    "highlights": [
-      "異常問題修復通知",
-      "詳情請參閱官方公告內容與說明"
-    ],
-    "sections": [
-      {
-        "key": "general",
-        "title": "核心重點摘要",
-        "icon": "[Info]",
-        "items": [
-          "異常問題修復通知",
-          "詳情請參閱官方公告內容與說明"
-        ],
-        "title_en": "Core Highlights & Overview",
-        "items_en": [
-          "異常問題修復通知",
-          "詳情請參閱官方公告內容與說明"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n異常問題\n\n2026/10/5\n2026/10/5 -->\n\n異常問題修復通知\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n目前已修復了遊戲中發生的以下異常問題。\n\n問題位置\n\n畫面：\n\n睡眠研究\n\n問題內容\n\n會無法進行遊戲。\n\n（於特定條件下發生）\n\n修復進度\n\n已於更新伺服器時修復完畢。\n\n造成各位玩家的不便，我們深感抱歉。\n\n今後也請繼續支持《Pokémon Sleep》。"
-  },
-  {
-    "id": "343531353032323535363836383131363439",
-    "url": "https://www.pokemonsleep.net/zh/news/343531353032323535363836383131363439/",
-    "date": "2026-10-05",
-    "category": "異常問題",
-    "badge_key": "notice",
-    "badge_label": "重要通知",
-    "badge_color": "#8b5cf6",
-    "title": "異常問題通知",
-    "title_en": "Known Issues Notification",
-    "overview_en": "Notification regarding known issues and recent bug fixes in the app.",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [],
-    "overview": "目前已確認到遊戲中發生了以下異常問題。",
-    "highlights": [
-      "透過主技能獲得的食材數量變成1.5倍。"
-    ],
-    "sections": [
-      {
-        "key": "general",
-        "title": "核心重點摘要",
-        "icon": "[Info]",
-        "items": [
-          "透過主技能獲得的食材數量變成1.5倍。"
-        ],
-        "title_en": "Core Highlights & Overview",
-        "items_en": [
-          "透過主技能獲得的食材數量變成1.5倍。"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n異常問題\n\n2026/10/5\n2026/10/5 -->\n\n異常問題通知\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n目前已確認到遊戲中發生了以下異常問題。\n\n問題位置\n\n畫面：\n\n主畫面\n\n功能：\n\n活動獎勵\n\n・透過主技能獲得的食材數量變成1.5倍。\n\n對象主技能\n\n健美（料理輔助S）\n\n問題內容\n\n畫面顯示有異常問題。\n\n※不影響遊戲進行。\n\n修復進度\n\n預定於今後更新時修正。\n\n造成各位玩家的不便，我們深感抱歉。\n\n今後也請繼續支持《Pokémon Sleep》。"
-  },
-  {
-    "id": "343530343036393631373731343436323733",
-    "url": "https://www.pokemonsleep.net/zh/news/343530343036393631373731343436323733/",
-    "date": "2026-10-02",
-    "category": "異常問題",
-    "badge_key": "notice",
-    "badge_label": "重要通知",
-    "badge_color": "#8b5cf6",
-    "title": "異常問題通知",
-    "title_en": "Known Issues Notification",
-    "overview_en": "Notification regarding known issues and recent bug fixes in the app.",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [],
-    "overview": "目前已確認到遊戲中發生了以下異常問題。",
-    "highlights": [
-      "異常問題通知",
-      "詳情請參閱官方公告內容與說明"
-    ],
-    "sections": [
-      {
-        "key": "general",
-        "title": "核心重點摘要",
-        "icon": "[Info]",
-        "items": [
-          "異常問題通知",
-          "詳情請參閱官方公告內容與說明"
-        ],
-        "title_en": "Core Highlights & Overview",
-        "items_en": [
-          "異常問題通知",
-          "詳情請參閱官方公告內容與說明"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n異常問題\n\n2026/10/2\n2026/10/2 -->\n\n異常問題通知\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n目前已確認到遊戲中發生了以下異常問題。\n\n問題位置\n\n關於維護作業期間的睡眠測量\n\n睡眠研究\n\n問題內容\n\n有無法使用的功能。\n\n修復進度\n\n正在調查中。\n\n造成各位玩家的不便，我們深感抱歉。\n\n今後也請繼續支持《Pokémon Sleep》。"
-  },
-  {
-    "id": "343430333034343435353738383035323530",
-    "url": "https://www.pokemonsleep.net/zh/news/343430333034343435353738383035323530/",
-    "date": "2026-10-01",
-    "category": "企劃",
-    "badge_key": "event",
-    "badge_label": "活動企劃",
-    "badge_color": "#f59e0b",
-    "title": "【企畫】寶可夢快快長大週vol.6",
-    "title_en": "[Campaign] Pokemon Growth Week Vol. 6",
-    "overview_en": "Earn extra Sleep EXP and research candies during Pokemon Growth Week to quickly raise your helpers!",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [],
-    "overview": "睡得好的孩子長得快！快快長大週！",
-    "highlights": [
-      "舉辦期間：10/12 (週一) 4:00 ～ 10/19 (週一) 3:59",
-      "【適用營地】・所有營地",
-      "本企畫為期1週，是 睡眠EXP 和 糖果獲得量 都會增加的特別期間。",
-      "當天第1次睡眠研究後的 糖果獲得量變成1.5倍 。"
-    ],
-    "sections": [
-      {
-        "key": "schedule",
-        "title": "活動時間與營地",
-        "icon": "[Time]",
-        "items": [
-          "舉辦期間：10/12 (週一) 4:00 ～ 10/19 (週一) 3:59",
-          "【適用營地】・所有營地"
-        ],
-        "title_en": "Event Schedule & Areas",
-        "items_en": [
-          "Event Period: 10/12 (Mon) 4:00 ～ 10/19 (Mon) 3:59",
-          "[Areas] - All Areas"
-        ]
-      },
-      {
-        "key": "bonus",
-        "title": "核心獎勵與倍率加成",
-        "icon": "[Bonus]",
-        "items": [
-          "本企畫為期1週，是 睡眠EXP 和 糖果獲得量 都會增加的特別期間。",
-          "當天第1次睡眠研究後的 糖果獲得量變成1.5倍 。"
-        ],
-        "title_en": "Core Bonuses & Multipliers",
-        "items_en": [
-          "本企畫為期1週，是 睡眠EXP 和 糖果獲得量 都會增加的特別期間。",
-          "當天第1 time(s)睡眠研究後的 糖果獲得量變成1.5倍 。"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n企劃\n\n2026/10/1\n2026/10/1 -->\n\n【企畫】寶可夢快快長大週vol.6\n\n概要\n\n睡得好的孩子長得快！快快長大週！\n\n本企畫為期1週，是 睡眠EXP 和 糖果獲得量 都會增加的特別期間。\n\n睡飽睡足，培育心愛的幫手寶可夢們吧！\n\n【舉辦期間】\n\n・ 10/12 (週一) 4:00 ～ 10/19 (週一) 3:59\n\n【活動營地】\n\n・所有營地\n\n獎勵\n\n期間內在活動營地會發生下列效果。\n\n【所有日子】\n\n・幫手寶可夢的睡眠EXP： 1.5倍\n\n・當天第1次睡眠研究後的 糖果獲得量變成1.5倍 。\n\n注意事項\n\n・【重要】活動、企畫舉辦日期的切換時間為每日4:00。\n\n・獎勵僅適用於活動／企畫期間內開始測量的睡眠資料。\n\n・若將「活動／企畫開始前測量的睡眠資料」留到活動／企畫期間..."
-  },
-  {
-    "id": "343430333030373339373035373030333634",
-    "url": "https://www.pokemonsleep.net/zh/news/343430333030373339373035373030333634/",
-    "date": "2026-09-30",
-    "category": "通知",
-    "badge_key": "notice",
-    "badge_label": "重要通知",
-    "badge_color": "#8b5cf6",
-    "title": "【來獲得哎呀球菇的薰香吧！】料理週滿足包vol.3",
-    "title_en": "[Special Pack] Get Foongus Incense! Cooking Week Satisfaction Bundle Vol. 3",
-    "overview_en": "Cook delicious meals with extra pot capacity and earn bonus energy during Cooking Week!",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [],
-    "overview": "本商品裡裝有 專門迎接 哎呀球菇 成為夥伴並且培育牠的道具 ，歡迎選購。",
-    "highlights": [
-      "銷售期間： 2026/10/5 6:00 ～ 2026/10/13 3:59",
-      "萬能糖果S×4",
-      "「料理週滿足包Svol.3」（250鑽石） ：寶可沙布蕾×5、萬能糖果S×4、食材券S×1",
-      "「料理週滿足包Mvol.3」（1,200鑽石） ：超級沙布蕾×4、寶可沙布蕾×10、哎呀球菇的薰香×2、哎呀球菇的糖果×70"
-    ],
-    "sections": [
-      {
-        "key": "schedule",
-        "title": "活動時間與營地",
-        "icon": "[Time]",
-        "items": [
-          "銷售期間： 2026/10/5 6:00 ～ 2026/10/13 3:59"
-        ],
-        "title_en": "Event Schedule & Areas",
-        "items_en": [
-          "Sales Period: 2026/10/5 6:00 ～ 2026/10/13 3:59"
-        ]
-      },
-      {
-        "key": "bonus",
-        "title": "核心獎勵與倍率加成",
-        "icon": "[Bonus]",
-        "items": [
-          "萬能糖果S×4"
-        ],
-        "title_en": "Core Bonuses & Multipliers",
-        "items_en": [
-          "Handy Candy S×4"
-        ]
-      },
-      {
-        "key": "shop",
-        "title": "禮包與商城道具包一覽",
-        "icon": "[Shop]",
-        "items": [
-          "「料理週滿足包Svol.3」（250鑽石） ：寶可沙布蕾×5、萬能糖果S×4、食材券S×1",
-          "「料理週滿足包Mvol.3」（1,200鑽石） ：超級沙布蕾×4、寶可沙布蕾×10、哎呀球菇的薰香×2、哎呀球菇的糖果×70",
-          "「料理週滿足包Lvol.3」（3,000鑽石） ：高級沙布蕾×3、超級沙布蕾×10、主技能種子×1、哎呀球菇的薰香×4、哎呀球菇的糖果×100、食材券M×2"
-        ],
-        "title_en": "Bundles & Shop Items",
-        "items_en": [
-          "\"Cooking Week Satisfaction BundleSvol.3\" (250 Diamonds) ：Poké Biscuit×5, Handy Candy S×4, 食材券S×1",
-          "\"Cooking Week Satisfaction BundleMvol.3\" (1,200 Diamonds) ：Great Biscuit×4, Poké Biscuit×10, Foongus Incense×2, Foongus的糖果×70",
-          "\"Cooking Week Satisfaction BundleLvol.3\" (3,000 Diamonds) ：Ultra Biscuit×3, Great Biscuit×10, Main Skill Seed×1, Foongus Incense×4, Foongus的糖果×100, 食材券M×2"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n通知\n\n2026/9/30\n2026/9/30 -->\n\n【來獲得哎呀球菇的薰香吧！】料理週滿足包vol.3\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n《Pokémon Sleep》將配合「分量加大！料理週」推出「料理週滿足包vol.3」（S、M、L）！\n\n本商品裡裝有 專門迎接 哎呀球菇 成為夥伴並且培育牠的道具 ，歡迎選購。\n\n在哎呀球菇會登場的營地使用薰香，與牠相遇吧！\n\n商品詳情\n\n銷售期間： 2026/10/5 6:00 ～ 2026/10/13 3:59\n\n商品一覽：\n\n「料理週滿足包Svol.3」（250鑽石）\n\n・寶可沙布蕾×5\n\n・萬能糖果S×4\n\n・食材券S×1\n\n※僅限購買 3次 。\n\n「料理週滿足包Mvol.3」（1,200鑽石）\n\n・超級沙布蕾×4\n\n・寶可沙..."
-  },
-  {
-    "id": "343430333030373430303738393933343232",
-    "url": "https://www.pokemonsleep.net/zh/news/343430333030373430303738393933343232/",
-    "date": "2026-09-30",
-    "category": "通知",
-    "badge_key": "notice",
-    "badge_label": "重要通知",
-    "badge_color": "#8b5cf6",
-    "title": "【來獲得主技能種子（哎呀球菇）吧！】寶可夢培育包（哎呀球菇）vol.1",
-    "title_en": "[Special Pack] Get Main Skill Seed (Foongus)! Pokemon Growth Pack (Foongus) Vol. 1",
-    "overview_en": "Foongus and Amoonguss make their debut appearance in sleep research!",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [],
-    "overview": "商品裡裝有「 超級沙布蕾 」、「 哎呀球菇的糖果 」，以及「 主技能種子（哎呀球菇） 」等 能夠培育哎呀球菇的道具 。",
-    "highlights": [
-      "銷售期間： 2026/10/5 6:00 ～ 2026/10/13 3:59",
-      "商品裡裝有「 超級沙布蕾 」、「 哎呀球菇的糖果 」，以及「 主技能種子（哎呀球菇） 」等 能夠培育哎呀球菇的道具 。",
-      "「寶可夢培育包（哎呀球菇）vol.1」（1,200鑽石） ：超級沙布蕾×4、成長薰香×2、主技能種子（哎呀球菇）×1、哎呀球菇的糖果×70"
-    ],
-    "sections": [
-      {
-        "key": "schedule",
-        "title": "活動時間與營地",
-        "icon": "[Time]",
-        "items": [
-          "銷售期間： 2026/10/5 6:00 ～ 2026/10/13 3:59"
-        ],
-        "title_en": "Event Schedule & Areas",
-        "items_en": [
-          "Sales Period: 2026/10/5 6:00 ～ 2026/10/13 3:59"
-        ]
-      },
-      {
-        "key": "bonus",
-        "title": "核心獎勵與倍率加成",
-        "icon": "[Bonus]",
-        "items": [
-          "商品裡裝有「 超級沙布蕾 」、「 哎呀球菇的糖果 」，以及「 主技能種子（哎呀球菇） 」等 能夠培育哎呀球菇的道具 。"
-        ],
-        "title_en": "Core Bonuses & Multipliers",
-        "items_en": [
-          "商品裡裝有\" Great Biscuit \", \" Foongus的糖果 \"，以及\" Main Skill Seed（Foongus） \"等 能夠培育Foongus的道具 。"
-        ]
-      },
-      {
-        "key": "shop",
-        "title": "禮包與商城道具包一覽",
-        "icon": "[Shop]",
-        "items": [
-          "「寶可夢培育包（哎呀球菇）vol.1」（1,200鑽石） ：超級沙布蕾×4、成長薰香×2、主技能種子（哎呀球菇）×1、哎呀球菇的糖果×70"
-        ],
-        "title_en": "Bundles & Shop Items",
-        "items_en": [
-          "\"Pokemon Growth Pack（Foongus）vol.1\" (1,200 Diamonds) ：Great Biscuit×4, Growth Incense×2, Main Skill Seed（Foongus）×1, Foongus的糖果×70"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n通知\n\n2026/9/30\n2026/9/30 -->\n\n【來獲得主技能種子（哎呀球菇）吧！】寶可夢培育包（哎呀球菇）vol.1\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n《Pokémon Sleep》將配合 哎呀球菇 新登場，推出「寶可夢培育包（哎呀球菇）vol.1」！\n\n商品裡裝有「 超級沙布蕾 」、「 哎呀球菇的糖果 」，以及「 主技能種子（哎呀球菇） 」等 能夠培育哎呀球菇的道具 。\n\n※主技能種子（哎呀球菇）是一種可以對以下寶可夢使用的道具，使用後主技能等級會提升1級。您也可以選擇不使用，並在道具詳情畫面將此道具轉換成「哎呀球菇的糖果×70」。\n\n・哎呀球菇、 敗露球菇\n\n商品詳情\n\n銷售期間： 2026/10/5 6:00 ～ 2026/10/13 3:59\n\n商品一覽：..."
-  },
-  {
-    "id": "343430323735323935393936343737343435",
-    "url": "https://www.pokemonsleep.net/zh/news/343430323735323935393936343737343435/",
-    "date": "2026-09-28",
-    "category": "企劃",
-    "badge_key": "event",
-    "badge_label": "活動企劃",
-    "badge_color": "#f59e0b",
-    "title": "【企畫】「分量加大！料理週vol.3」",
-    "title_en": "[Campaign] Extra-Helpful Cooking Week Vol. 3",
-    "overview_en": "Cook delicious meals with extra pot capacity and earn bonus energy during Cooking Week!",
-    "debut_pokemon": [
-      "哎呀球菇",
-      "敗露球菇"
-    ],
-    "mid_rateup_pokemon": [
-      "哎呀球菇",
-      "敗露球菇"
-    ],
-    "featured_pokemon": [],
-    "overview": "大胃王也超滿足！「分量加大！料理週」！",
-    "highlights": [
-      "舉辦期間：10/5 (週一) 4:00 ～ 10/12 (週一) 3:59",
-      "任務期間：10/5 (週一) 4:00 ～ 10/12 (週一) 3:59",
-      "料理的最終能量為 1.25倍 （ 漂亮成功時為2.5倍，在週日漂亮成功時為3.75倍 ）。",
-      "可以使用期間限定的「 迷你糖果增強 」。",
-      "【機率中幅提升】哎呀球菇、敗露球菇"
-    ],
-    "sections": [
-      {
-        "key": "schedule",
-        "title": "活動時間與營地",
-        "icon": "[Time]",
-        "items": [
-          "舉辦期間：10/5 (週一) 4:00 ～ 10/12 (週一) 3:59",
-          "任務期間：10/5 (週一) 4:00 ～ 10/12 (週一) 3:59",
-          "【適用營地】・所有營地"
-        ],
-        "title_en": "Event Schedule & Areas",
-        "items_en": [
-          "Event Period: 10/5 (Mon) 4:00 ～ 10/12 (Mon) 3:59",
-          "Mission Period: 10/5 (Mon) 4:00 ～ 10/12 (Mon) 3:59",
-          "[Areas] - All Areas"
-        ]
-      },
-      {
-        "key": "bonus",
-        "title": "核心獎勵與倍率加成",
-        "icon": "[Bonus]",
-        "items": [
-          "料理的最終能量為 1.25倍 （ 漂亮成功時為2.5倍，在週日漂亮成功時為3.75倍 ）。",
-          "可以使用期間限定的「 迷你糖果增強 」。"
-        ],
-        "title_en": "Core Bonuses & Multipliers",
-        "items_en": [
-          "料理的最終能量為 1.25倍 （ 漂亮成功時為2.5倍，在週日漂亮成功時為3.75倍 ）。",
-          "可以使用期間限定的\" 迷你糖果增強 \"。"
-        ]
-      },
-      {
-        "key": "rateup",
-        "title": "機率提升寶可夢",
-        "icon": "[RateUp]",
-        "items": [
-          "【機率中幅提升】哎呀球菇、敗露球菇",
-          "【機率小幅提升】妙蛙種子、小火龍、傑尼龜、大蔥鴨、鬼斯、凱羅斯、百變怪、迷你龍、烏波、信使鳥、大嘴娃、可可多拉、小福蛋、花岩怪、不良蛙、萌虻、古月鳥、新葉喵、呆火鱷、走鯨"
-        ],
-        "title_en": "Featured Rate-Up Pokemon",
-        "items_en": [
-          "[Medium Rate Up] Foongus, Amoonguss",
-          "[Minor Rate Up] 妙蛙種子, 小火龍, 傑尼龜, 大蔥鴨, 鬼斯, 凱羅斯, 百變怪, 迷你龍, 烏波, 信使鳥, 大嘴娃, 可可多拉, 小福蛋, 花岩怪, 不良蛙, 萌虻, 古月鳥, 新葉喵, 呆火鱷, Cetoddle"
-        ]
-      },
-      {
-        "key": "islands",
-        "title": "各營地出現寶可夢一覽",
-        "icon": "[Camp]",
-        "items": [
-          "萌綠之島：妙蛙種子、小火龍、傑尼龜、大蔥鴨、鬼斯、凱羅斯、百變怪、烏波、信使鳥、大嘴娃、小福蛋、花岩怪、不良蛙、哎呀球菇、敗露球菇、萌虻、古月鳥、新葉喵、呆火鱷、走鯨",
-          "天青沙灘：傑尼龜、大蔥鴨、凱羅斯、百變怪、烏波、不良蛙、萌虻、古月鳥、呆火鱷",
-          "灰褐洞窟：小火龍、鬼斯、百變怪、呆火鱷",
-          "白花雪原：百變怪、信使鳥、小福蛋、花岩怪、古月鳥、走鯨",
-          "寶藍湖畔：妙蛙種子、百變怪、迷你龍、哎呀球菇、敗露球菇、新葉喵",
-          "黃金舊發電廠：大蔥鴨、鬼斯、百變怪、大嘴娃、可可多拉",
-          "琥褐溪谷：凱羅斯、百變怪、大嘴娃、小福蛋、花岩怪、哎呀球菇、敗露球菇",
-          "萌綠之島EX：妙蛙種子、小火龍、傑尼龜、大蔥鴨、凱羅斯、百變怪、信使鳥、大嘴娃、可可多拉、小福蛋、花岩怪、哎呀球菇、敗露球菇、萌虻、古月鳥、新葉喵、呆火鱷、走鯨"
-        ],
-        "title_en": "Applicable Research Areas",
-        "items_en": [
-          "Greengrass Isle：妙蛙種子, 小火龍, 傑尼龜, 大蔥鴨, 鬼斯, 凱羅斯, 百變怪, 烏波, 信使鳥, 大嘴娃, 小福蛋, 花岩怪, 不良蛙, Foongus, Amoonguss, 萌虻, 古月鳥, 新葉喵, 呆火鱷, Cetoddle",
-          "Cyan Beach：傑尼龜, 大蔥鴨, 凱羅斯, 百變怪, 烏波, 不良蛙, 萌虻, 古月鳥, 呆火鱷",
-          "灰褐洞窟：小火龍, 鬼斯, 百變怪, 呆火鱷",
-          "Snowdrop Tundra：百變怪, 信使鳥, 小福蛋, 花岩怪, 古月鳥, Cetoddle",
-          "寶藍Lapis Lakeside：妙蛙種子, 百變怪, 迷你龍, Foongus, Amoonguss, 新葉喵",
-          "Old Gold Power Plant：大蔥鴨, 鬼斯, 百變怪, 大嘴娃, 可可多拉",
-          "琥褐溪谷：凱羅斯, 百變怪, 大嘴娃, 小福蛋, 花岩怪, Foongus, Amoonguss",
-          "Greengrass IsleEX：妙蛙種子, 小火龍, 傑尼龜, 大蔥鴨, 凱羅斯, 百變怪, 信使鳥, 大嘴娃, 可可多拉, 小福蛋, 花岩怪, Foongus, Amoonguss, 萌虻, 古月鳥, 新葉喵, 呆火鱷, Cetoddle"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n企劃\n\n2026/9/28\n2026/9/28 -->\n\n【企畫】「分量加大！料理週vol.3」\n\n概要\n\n大胃王也超滿足！「分量加大！料理週」！\n\n本企畫為期一週，是 專長為「食材」的幫手寶可夢們會有亮眼表現 的特別期間。\n\n企畫期間能比平時更容易遇見 部分專長為「食材」的寶可夢 ，且鍋子的容量會變成 2倍 （ 週日則會變成4倍 ）。\n\n敬請期待！\n\n【舉辦期間】\n\n・ 10/5 (週一) 4:00 ～ 10/12 (週一) 3:59\n\n【活動營地】\n\n・所有營地\n\n【任務期間】\n\n・ 10/5 (週一) 4:00 ～ 10/12 (週一) 3:59\n\n獎勵\n\n期間內在活動營地會發生下列效果。\n\n【所有日子】\n\n・睡眠研究時， 特定寶可夢的出現機率提升 。\n\n・鍋子容量（可放的食材數量上限）變成 2..."
   }
 ]
