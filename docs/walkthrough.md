@@ -2539,3 +2539,30 @@
 - 執行極速測試套件 `npm run test:fast`：**156 / 156 Passed (0 Failed)**。
 - 執行全量 E2E 回歸測試 `npm test`：**279 / 279 Passed (0 Failed)**。
 
+---
+
+### [2026-11-06] 全域規範擴充：高階模型主導與異質多代理協作分工規範 (Rule XIII)
+
+#### 1. 背景與需求
+- 使用者要求建立 Markdown 規則，規定當使用高階智能模型（如 Gemini 4 Argon）時：
+  1. 自動開啟 `/teamwork` 多代理模式。
+  2. 高階模型（Argon）作為頂層架構師（Top Orchestrator / Architect），專注於系統架構、任務拆解、介面契約與核心關鍵演算法。
+  3. 常規程式碼新增、非核心檔案修改、樣板生成與測試驗證工作，一律調度便宜且高效的模型（Gemini 3.8 Flash，即 `Model: "flash"`）。
+  4. 確認技術可行性並全域規範化，未來使用高階模型時一律遵循此流程。
+
+#### 2. 可行性確認與機制說明
+- **平台原生支援**：Antigravity 內建之 `invoke_subagent` 支援 `Model: "flash"` / `"flash_lite"` / `"pro"` / `"inherit"`。
+- **異質協作模式**：
+  - 父 Agent 運行於高階模型（Argon / Pro）。
+  - 當遇到具體檔案修改與樣板生成時，呼叫 `invoke_subagent(TypeName: "self", Role: "Code Implementation Worker", Model: "flash", Prompt: "...")`。
+  - Flash 子代理完成後透過系統事件（Reactive Wakeup）喚醒父 Agent，無需輪詢。
+  - 父 Agent（Argon）進行差異審查、測試回歸與 Git 交付。
+  - 任務契約與互斥寫入邊界落盤於 `.agents/teamwork/` 或專案計畫文件，保證容錯與可恢復性。
+
+#### 3. 文件落盤更新
+- `~/.gemini/AGENTS.md`：新增第十三條「高階模型主導與異質多代理協作分工規範」。
+- `~/.gemini/GEMINI.md`：同步更新第七條至第十三條完整全域規範。
+- `~/.gemini/agent-docs/PROTOCOL.md`：新增第十一條（自動提交推送）與第十二條（異質多代理協作分工協議）。
+- `~/.gemini/agent-docs/projects/pokemon-sleep-app/`：同步更新專案紀錄。
+
+
