@@ -2490,7 +2490,7 @@ function registerTier4Part4() {
     const mismagius = dataJson.find(p => p.id === '429' || p.formatted_no === '429');
     assert(mismagius, 'Mismagius (#429) must exist in data.json');
     assertEquals(mismagius.name_cn, '夢妖魔', 'Mismagius Chinese name must be 夢妖魔');
-    assertEquals(mismagius.main_skill, '魔法火焰（料理躍進S）', 'Mismagius main skill must be 魔法火焰（料理躍進S）');
+    assertEquals(mismagius.main_skill, '魔法火焰', 'Mismagius main skill must be 魔法火焰 without parentheses');
     assertEquals(mismagius.is_final, '〇', 'Mismagius must be marked as final evolution is_final: 〇');
     assertEquals(mismagius.ingredient_rate, '14.20%', 'Mismagius ingredient rate must be 14.20%');
     assertEquals(mismagius.skill_rate, '3.60%', 'Mismagius skill rate must be 3.60%');
@@ -2498,8 +2498,8 @@ function registerTier4Part4() {
     assertEquals(mismagius.interval, '00:40:00', 'Mismagius interval must be 00:40:00');
 
     // Verify Special Skill & Icon Protection
-    assert(SPECIAL_SKILL_DETAILS['魔法火焰（料理躍進S）'], 'SPECIAL_SKILL_DETAILS must have 魔法火焰（料理躍進S）');
-    const mfHtml = renderSkillWithTooltip('魔法火焰（料理躍進S）');
+    assert(SPECIAL_SKILL_DETAILS['魔法火焰'], 'SPECIAL_SKILL_DETAILS must have 魔法火焰');
+    const mfHtml = renderSkillWithTooltip('魔法火焰');
     assert(mfHtml.includes('special-skill-badge'), '魔法火焰 must render special-skill-badge');
 
     const specialIconsJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'special_icons.json'), 'utf8'));

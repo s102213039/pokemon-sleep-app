@@ -309,15 +309,15 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Ho
   assert(typeof renderSkillWithTooltip === 'function', 'renderSkillWithTooltip function is missing');
 
   const specialSkills = [
-    '健美（料理輔助S）',
-    '月光（活力填充S）',
-    '樹果汁（活力全體療癒S）',
-    '精神擊破（樹果領域）',
-    '畫皮（樹果遽增）',
-    '新月祈禱（活力全體療癒S）',
-    '正電（食材獲取S）',
-    '負電（料理強化S）',
-    '魔法火焰（料理躍進S）'
+    '健美',
+    '月光',
+    '樹果汁',
+    '精神擊破',
+    '畫皮',
+    '新月祈禱',
+    '正電',
+    '負電',
+    '魔法火焰'
   ];
 
   specialSkills.forEach(skill => {
@@ -328,13 +328,12 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Ho
     assert(!html.includes('✨'), `Rendered badge for ${skill} must not include sparkle emoji`);
   });
 
-  const heracrossDetail = typeof SPECIAL_SKILL_DETAILS['健美（料理輔助S）'] === 'object'
-    ? SPECIAL_SKILL_DETAILS['健美（料理輔助S）']['zh-TW']
-    : SPECIAL_SKILL_DETAILS['健美（料理輔助S）'];
-  assertEquals(
-    heracrossDetail,
-    '隨機獲得多個食材，並提升下次料理漂亮成功（大成功）的機率。',
-    'Heracross skill description must match official in-game text'
+  const heracrossDetail = typeof SPECIAL_SKILL_DETAILS['健美'] === 'object'
+    ? SPECIAL_SKILL_DETAILS['健美']['zh-TW']
+    : SPECIAL_SKILL_DETAILS['健美'];
+  assert(
+    heracrossDetail.includes('食材獲取S') && heracrossDetail.includes('料理成功S'),
+    'Heracross skill description must clearly describe both Ingredient Magnet S and Tasty Chance S effects'
   );
 
   const pureBaseSkills = [

@@ -664,55 +664,109 @@ const BASE_SKILLS = [
   { key: '技能複製', label: '技能複製', label_en: 'Skill Copy' }
 ];
 
+const SPECIAL_SKILL_PREFIXES_ZH = [
+  '魔法火焰', '健美', '怪力鉗', '怪力钳', '超幸運', '新月祈禱', '月光', '樹果汁',
+  '正電', '負電', '禮物', '治癒波動', '蹭蹭臉頰', '蓄力', '夢魘',
+  '精神擊破', '流星群', '畫皮', '波導彈', '十項全能', '模仿', '變身'
+];
+
+const SPECIAL_SKILL_PREFIXES_EN = [
+  'Mystical Fire', 'Bulk Up', 'Hyper Cutter', 'Super Luck', 'Lunar Prayer', 'Moonlight', 'Berry Juice',
+  'Plus', 'Minus', 'Present', 'Heal Pulse', 'Nuzzle', 'Stockpile', 'Bad Dreams',
+  'Psystrike', 'Draco Meteor', 'Disguise', 'Aura Sphere', 'All-Rounder', 'Mimic', 'Transform'
+];
+
+function stripSpecialSkillParens(skillStr) {
+  if (!skillStr) return '';
+  const s = String(skillStr).trim().replace('怪力钳', '怪力鉗');
+  for (let i = 0; i < SPECIAL_SKILL_PREFIXES_ZH.length; i++) {
+    const pre = SPECIAL_SKILL_PREFIXES_ZH[i];
+    if (s === pre || s.startsWith(pre + '（') || s.startsWith(pre + ' (') || s.startsWith(pre + '(') || s.startsWith(pre + '[')) {
+      return pre === '怪力钳' ? '怪力鉗' : pre;
+    }
+  }
+  for (let i = 0; i < SPECIAL_SKILL_PREFIXES_EN.length; i++) {
+    const pre = SPECIAL_SKILL_PREFIXES_EN[i];
+    if (s.toLowerCase() === pre.toLowerCase() || s.toLowerCase().startsWith(pre.toLowerCase() + ' (') || s.toLowerCase().startsWith(pre.toLowerCase() + '(') || s.toLowerCase().startsWith(pre.toLowerCase() + ' [')) {
+      return pre;
+    }
+  }
+  return s;
+}
+
+if (typeof window !== 'undefined') {
+  window.stripSpecialSkillParens = stripSpecialSkillParens;
+}
+
 const COMPOSITE_SKILL_MAP = {
   // === 真正複合主技能 (True Composite Skills) ===
   // 健美：料理成功S (大成功機率提升) + 食材獲取S (隨機獲得食材) (赫拉克羅斯)
+  '健美': ['料理成功S', '食材獲取S'],
   '健美（料理輔助S）': ['料理成功S', '食材獲取S'],
   '健美 (料理輔助S)': ['料理成功S', '食材獲取S'],
   
   // 魔法火焰：料理強化S (擴大鍋容量) + 料理成功S (大成功機率提升) (夢妖魔)
+  '魔法火焰': ['料理強化S', '料理成功S'],
   '魔法火焰（料理躍進S）': ['料理強化S', '料理成功S'],
   '魔法火焰 (料理躍進S)': ['料理強化S', '料理成功S'],
   
   // 月光：活力填充S (自身活力) + 大成功時活力療癒S (隊友活力) (月亮伊布)
+  '月光': ['活力填充S', '活力療癒S'],
   '月光（活力填充S）': ['活力填充S', '活力療癒S'],
+  '月光（活力充填S）': ['活力填充S', '活力療癒S'],
   
   // 樹果汁：活力全體療癒S (全員活力) + 樹果汁道具活力療癒S (單隻活力) (壺壺)
+  '樹果汁': ['活力全體療癒S', '活力療癒S'],
   '樹果汁（活力全體療癒S）': ['活力全體療癒S', '活力療癒S'],
   
   // === 專屬命名與變體主技能 (Named Variant Skills) ===
   // 食材獲取系列
+  '正電': ['食材獲取S'],
   '正電（食材獲取S）': ['食材獲取S'],
+  '禮物': ['食材獲取S'],
   '禮物（食材獲取S）': ['食材獲取S'],
   
   // 料理強化系列
+  '負電': ['料理強化S'],
   '負電（料理強化S）': ['料理強化S'],
   
   // 食材精選系列
+  '超幸運': ['食材精選S'],
   '超幸運（食材精選S）': ['食材精選S'],
   '超幸運 (食材精選S)': ['食材精選S'],
+  '怪力鉗': ['食材精選S'],
+  '怪力钳': ['食材精選S'],
   '怪力鉗（食材精選S）': ['食材精選S'],
   '怪力鉗 (食材精選S)': ['食材精選S'],
   '怪力钳（食材精選S）': ['食材精選S'],
   '怪力钳 (食材精選S)': ['食材精選S'],
   
   // 活力療癒系列
+  '新月祈禱': ['活力全體療癒S'],
   '新月祈禱（活力全體療癒S）': ['活力全體療癒S'],
+  '治癒波動': ['活力療癒S'],
   '治癒波動（活力療癒S）': ['活力療癒S'],
+  '蹭蹭臉頰': ['活力療癒S'],
   '蹭蹭臉頰（活力療癒S）': ['活力療癒S'],
   
   // 能量填充系列
+  '蓄力': ['能量填充S'],
   '蓄力（能量填充S）': ['能量填充S'],
   '能量填充S（隨機）': ['能量填充S'],
+  '夢魘': ['能量填充M'],
   '夢魘（能量填充M）': ['能量填充M'],
   
   // 樹果遽增系列
+  '精神擊破': ['樹果遽增'],
   '精神擊破（樹果領域）': ['樹果遽增'],
+  '流星群': ['樹果遽增'],
   '流星群（樹果遽增）': ['樹果遽增'],
+  '畫皮': ['樹果遽增'],
   '畫皮（樹果遽增）': ['樹果遽增'],
   '樹果遽增?': ['樹果遽增'],
   
   // 夢之碎片系列
+  '波導彈': ['夢之碎片獲取S'],
   '波導彈（夢之碎片獲取S）': ['夢之碎片獲取S'],
   '夢之碎片獲取S（隨機）': ['夢之碎片獲取S'],
   
@@ -722,29 +776,44 @@ const COMPOSITE_SKILL_MAP = {
   '幫手加速（水）': ['幫手加速'],
   
   // 揮指 / 技能複製系列
+  '十項全能': ['揮指'],
   '十項全能（揮指）[可替換]': ['揮指'],
+  '模仿': ['技能複製'],
   '模仿（技能複製）': ['技能複製'],
+  '變身': ['技能複製'],
   '變身（技能複製）': ['技能複製']
 };
 
 /* ─── 特殊主技能官方詳細說明字典 (Special Main Skill Official In-Game Descriptions) ─ */
 const SPECIAL_SKILL_DETAILS = {
   // === 真正複合主技能 (True Composite Skills) ===
+  '健美': {
+    'zh-TW': '同時發動「食材獲取S」與「料理成功S」兩種效果：隨機獲得多個食材（4~11個），並提升下次料理漂亮成功（大成功）的機率（+1%~+5%）。',
+    'en-US': 'Combines Ingredient Magnet S and Tasty Chance S: gets 4~11 random ingredients and raises Extra Tasty rate of the next dish (+1%~+5%).'
+  },
   '健美（料理輔助S）': {
-    'zh-TW': '隨機獲得多個食材，並提升下次料理漂亮成功（大成功）的機率。',
-    'en-US': 'Gets a variety of ingredients, and slightly raises the Extra Tasty rate of the next dish cooked.'
+    'zh-TW': '同時發動「食材獲取S」與「料理成功S」兩種效果：隨機獲得多個食材（4~11個），並提升下次料理漂亮成功（大成功）的機率（+1%~+5%）。',
+    'en-US': 'Combines Ingredient Magnet S and Tasty Chance S: gets 4~11 random ingredients and raises Extra Tasty rate of the next dish (+1%~+5%).'
   },
   '健美 (料理輔助S)': {
-    'zh-TW': '隨機獲得多個食材，並提升下次料理漂亮成功（大成功）的機率。',
-    'en-US': 'Gets a variety of ingredients, and slightly raises the Extra Tasty rate of the next dish cooked.'
+    'zh-TW': '同時發動「食材獲取S」與「料理成功S」兩種效果：隨機獲得多個食材（4~11個），並提升下次料理漂亮成功（大成功）的機率（+1%~+5%）。',
+    'en-US': 'Combines Ingredient Magnet S and Tasty Chance S: gets 4~11 random ingredients and raises Extra Tasty rate of the next dish (+1%~+5%).'
+  },
+  '魔法火焰': {
+    'zh-TW': '同時發動「料理強化S」與「料理成功S」兩種效果：擴大下次料理時鍋子的容量上限（7~31個），並提升下次料理漂亮成功（大成功）的機率（+1%~+5%）。已提升的機率在料理漂亮成功或移動營地後重置。',
+    'en-US': 'Combines Cooking Power-Up S and Tasty Chance S: expands cooking pot size (+7~31) and raises Extra Tasty rate of the next dish (+1%~+5%). Rate resets upon Extra Tasty or changing campsites.'
   },
   '魔法火焰（料理躍進S）': {
-    'zh-TW': '擴大下次料理時鍋子的容量上限（7~31個），並稍微提升下次料理漂亮成功（大成功）的機率（+1%~+5%）。已提升的機率在料理漂亮成功或移動營地後重置。',
-    'en-US': 'Expands cooking pot size (+7~31), and slightly raises Extra Tasty rate of the next dish (+1%~+5%). Rate resets upon Extra Tasty or changing campsites.'
+    'zh-TW': '同時發動「料理強化S」與「料理成功S」兩種效果：擴大下次料理時鍋子的容量上限（7~31個），並提升下次料理漂亮成功（大成功）的機率（+1%~+5%）。已提升的機率在料理漂亮成功或移動營地後重置。',
+    'en-US': 'Combines Cooking Power-Up S and Tasty Chance S: expands cooking pot size (+7~31) and raises Extra Tasty rate of the next dish (+1%~+5%). Rate resets upon Extra Tasty or changing campsites.'
   },
   '魔法火焰 (料理躍進S)': {
-    'zh-TW': '擴大下次料理時鍋子的容量上限（7~31個），並稍微提升下次料理漂亮成功（大成功）的機率（+1%~+5%）。已提升的機率在料理漂亮成功或移動營地後重置。',
-    'en-US': 'Expands cooking pot size (+7~31), and slightly raises Extra Tasty rate of the next dish (+1%~+5%). Rate resets upon Extra Tasty or changing campsites.'
+    'zh-TW': '同時發動「料理強化S」與「料理成功S」兩種效果：擴大下次料理時鍋子的容量上限（7~31個），並提升下次料理漂亮成功（大成功）的機率（+1%~+5%）。已提升的機率在料理漂亮成功或移動營地後重置。',
+    'en-US': 'Combines Cooking Power-Up S and Tasty Chance S: expands cooking pot size (+7~31) and raises Extra Tasty rate of the next dish (+1%~+5%). Rate resets upon Extra Tasty or changing campsites.'
+  },
+  '月光': {
+    'zh-TW': '讓自己回復活力（12~43點）；若發生「漂亮成功」時，額外隨機讓隊伍中的 1 隻寶可夢回復活力（6~22點）。',
+    'en-US': 'Restores energy to self (12~43 pts). On Extra Tasty triggers, also restores energy to a random teammate (6~22 pts).'
   },
   '月光（活力充填S）': {
     'zh-TW': '讓自己回復活力（12~43點）；若發生「漂亮成功」時，額外隨機讓隊伍中的 1 隻寶可夢回復活力（6~22點）。',
@@ -762,6 +831,10 @@ const SPECIAL_SKILL_DETAILS = {
     'zh-TW': '讓自己回復活力（12~43點）；若發生「漂亮成功」時，額外隨機讓隊伍中的 1 隻寶可夢回復活力（6~22點）。',
     'en-US': 'Restores energy to self (12~43 pts). On Extra Tasty triggers, also restores energy to a random teammate (6~22 pts).'
   },
+  '樹果汁': {
+    'zh-TW': '讓幫手隊伍的所有寶可夢回復活力（5~18點），同時有機會額外獲得可讓單隻寶可夢回復 20 活力的「樹果汁」道具（最多持有 5 個）。',
+    'en-US': 'Restores energy to all teammates (5~18 pts), with a chance to obtain Berry Juice items (restores 20 energy, max 5).'
+  },
   '樹果汁（活力全體療癒S）': {
     'zh-TW': '讓幫手隊伍的所有寶可夢回復活力（5~18點），同時有機會額外獲得可讓單隻寶可夢回復 20 活力的「樹果汁」道具（最多持有 5 個）。',
     'en-US': 'Restores energy to all teammates (5~18 pts), with a chance to obtain Berry Juice items (restores 20 energy, max 5).'
@@ -772,6 +845,10 @@ const SPECIAL_SKILL_DETAILS = {
   },
 
   // === 專屬命名與變體主技能 (Named Variant Skills) ===
+  '正電': {
+    'zh-TW': '隨機獲得食材（5~18個）；若隊伍中還有 1 隻以上主技能是「正電」或「負電」的寶可夢，則發動時額外獲得 6~14 個食材。',
+    'en-US': 'Randomly obtains 5~18 ingredients. Obtains +6~14 bonus ingredients if teammates have Plus or Minus skills.'
+  },
   '正電（食材獲取S）': {
     'zh-TW': '隨機獲得食材（5~18個）；若隊伍中還有 1 隻以上主技能是「正電」或「負電」的寶可夢，則發動時額外獲得 6~14 個食材。',
     'en-US': 'Randomly obtains 5~18 ingredients. Obtains +6~14 bonus ingredients if teammates have Plus or Minus skills.'
@@ -780,6 +857,10 @@ const SPECIAL_SKILL_DETAILS = {
     'zh-TW': '隨機獲得食材（5~18個）；若隊伍中還有 1 隻以上主技能是「正電」或「負電」的寶可夢，則發動時額外獲得 6~14 個食材。',
     'en-US': 'Randomly obtains 5~18 ingredients. Obtains +6~14 bonus ingredients if teammates have Plus or Minus skills.'
   },
+  '負電': {
+    'zh-TW': '擴大下次料理時鍋子的容量上限（5~24個）；若隊伍中還有 1 隻以上主技能是「正電」或「負電」的寶可夢，發動時額外隨機讓隊伍中 1 隻寶可夢回復活力（8~35點）。',
+    'en-US': 'Expands cooking pot size (+5~24). If teammates have Plus or Minus, also restores 8~35 energy to a random teammate.'
+  },
   '負電（料理強化S）': {
     'zh-TW': '擴大下次料理時鍋子的容量上限（5~24個）；若隊伍中還有 1 隻以上主技能是「正電」或「負電」的寶可夢，發動時額外隨機讓隊伍中 1 隻寶可夢回復活力（8~35點）。',
     'en-US': 'Expands cooking pot size (+5~24). If teammates have Plus or Minus, also restores 8~35 energy to a random teammate.'
@@ -787,6 +868,10 @@ const SPECIAL_SKILL_DETAILS = {
   '負電 (料理強化S)': {
     'zh-TW': '擴大下次料理時鍋子的容量上限（5~24個）；若隊伍中還有 1 隻以上主技能是「正電」或「負電」的寶可夢，發動時額外隨機讓隊伍中 1 隻寶可夢回復活力（8~35點）。',
     'en-US': 'Expands cooking pot size (+5~24). If teammates have Plus or Minus, also restores 8~35 energy to a random teammate.'
+  },
+  '禮物': {
+    'zh-TW': '隨機獲得食材（4~17個）；有時除了食材之外，還會額外隨機獲得隊伍中 1 隻寶可夢的 4 顆糖果。',
+    'en-US': 'Randomly obtains 4~17 ingredients, and occasionally grants 4 candies for a random team member.'
   },
   '禮物（食材獲取S）': {
     'zh-TW': '隨機獲得食材（4~17個）；有時除了食材之外，還會額外隨機獲得隊伍中 1 隻寶可夢的 4 顆糖果。',
@@ -800,6 +885,10 @@ const SPECIAL_SKILL_DETAILS = {
     'zh-TW': '從發動寶可夢專屬的特定食材候選池中，隨機獲得其中 1 種食材（單一食材獲取量為 5~18 個）。',
     'en-US': 'Gets 1 ingredient type exclusively from this Pokémon\'s specific candidate pool (5~18 of a single ingredient).'
   },
+  '超幸運': {
+    'zh-TW': '從特定食材 (咖啡豆、大豆、豆肉、蘑菇) 中隨機獲得 1 種食材 (5~18個); 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片)。',
+    'en-US': 'Gets 1 ingredient type from specific ingredients (Coffee, Soybean, Sausage, Mushroom; 5~18 items); rarely crits for massive Dream Shards instead (up to 20,000).'
+  },
   '超幸運（食材精選S）': {
     'zh-TW': '從特定食材 (咖啡豆、大豆、豆肉、蘑菇) 中隨機獲得 1 種食材 (5~18個); 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片)。',
     'en-US': 'Gets 1 ingredient type from specific ingredients (Coffee, Soybean, Sausage, Mushroom; 5~18 items); rarely crits for massive Dream Shards instead (up to 20,000).'
@@ -807,6 +896,14 @@ const SPECIAL_SKILL_DETAILS = {
   '超幸運 (食材精選S)': {
     'zh-TW': '從特定食材 (咖啡豆、大豆、豆肉、蘑菇) 中隨機獲得 1 種食材 (5~18個); 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片)。',
     'en-US': 'Gets 1 ingredient type from specific ingredients (Coffee, Soybean, Sausage, Mushroom; 5~18 items); rarely crits for massive Dream Shards instead (up to 20,000).'
+  },
+  '怪力鉗': {
+    'zh-TW': '從特定食材 (洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個)。',
+    'en-US': 'Gets 1 ingredient type from specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
+  },
+  '怪力钳': {
+    'zh-TW': '從特定食材 (洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個)。',
+    'en-US': 'Gets 1 ingredient type from specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
   },
   '怪力鉗（食材精選S）': {
     'zh-TW': '從特定食材 (洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個)。',
@@ -824,6 +921,10 @@ const SPECIAL_SKILL_DETAILS = {
     'zh-TW': '從特定食材 (洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個)。',
     'en-US': 'Gets 1 ingredient type from specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
   },
+  '新月祈禱': {
+    'zh-TW': '讓幫手隊伍的所有寶可夢回復活力（3~11點），並額外獲得隊伍中所有寶可夢撿來的樹果（超能力屬性隊員越多，樹果數量越多）。',
+    'en-US': 'Restores energy to all teammates (3~11 pts) and gathers berries from them (more berries with more Psychic types).'
+  },
   '新月祈禱（活力全體療癒S）': {
     'zh-TW': '讓幫手隊伍的所有寶可夢回復活力（3~11點），並額外獲得隊伍中所有寶可夢撿來的樹果（超能力屬性隊員越多，樹果數量越多）。',
     'en-US': 'Restores energy to all teammates (3~11 pts) and gathers berries from them (more berries with more Psychic types).'
@@ -831,6 +932,10 @@ const SPECIAL_SKILL_DETAILS = {
   '新月祈禱 (活力全體療癒S)': {
     'zh-TW': '讓幫手隊伍的所有寶可夢回復活力（3~11點），並額外獲得隊伍中所有寶可夢撿來的樹果（超能力屬性隊員越多，樹果數量越多）。',
     'en-US': 'Restores energy to all teammates (3~11 pts) and gathers berries from them (more berries with more Psychic types).'
+  },
+  '治癒波動': {
+    'zh-TW': '隨機讓隊伍中的 2 隻寶可夢回復活力（6~22點），並讓牠們立刻完成 1~4 次幫忙（若隊伍中有拉帝歐斯，立即幫忙次數增加）。',
+    'en-US': 'Restores energy to 2 teammates (6~22 pts) and instantly performs 1~4 helps (more helps if Latios is on team).'
   },
   '治癒波動（活力療癒S）': {
     'zh-TW': '隨機讓隊伍中的 2 隻寶可夢回復活力（6~22點），並讓牠們立刻完成 1~4 次幫忙（若隊伍中有拉帝歐斯，立即幫忙次數增加）。',
@@ -840,6 +945,10 @@ const SPECIAL_SKILL_DETAILS = {
     'zh-TW': '隨機讓隊伍中的 2 隻寶可夢回復活力（6~22點），並讓牠們立刻完成 1~4 次幫忙（若隊伍中有拉帝歐斯，立即幫忙次數增加）。',
     'en-US': 'Restores energy to 2 teammates (6~22 pts) and instantly performs 1~4 helps (more helps if Latios is on team).'
   },
+  '蹭蹭臉頰': {
+    'zh-TW': '隨機讓隊伍中的 1 隻寶可夢回復活力（9~35點）；幸運時該寶可夢還會獲得「主技能發動獎勵」，可額外多發動 1 次主技能。',
+    'en-US': 'Restores energy to a teammate (9~35 pts); when lucky, grants a bonus main skill trigger to that Pokémon.'
+  },
   '蹭蹭臉頰（活力療癒S）': {
     'zh-TW': '隨機讓隊伍中的 1 隻寶可夢回復活力（9~35點）；幸運時該寶可夢還會獲得「主技能發動獎勵」，可額外多發動 1 次主技能。',
     'en-US': 'Restores energy to a teammate (9~35 pts); when lucky, grants a bonus main skill trigger to that Pokémon.'
@@ -847,6 +956,10 @@ const SPECIAL_SKILL_DETAILS = {
   '蹭蹭臉頰 (活力療癒S)': {
     'zh-TW': '隨機讓隊伍中的 1 隻寶可夢回復活力（9~35點）；幸運時該寶可夢還會獲得「主技能發動獎勵」，可額外多發動 1 次主技能。',
     'en-US': 'Restores energy to a teammate (9~35 pts); when lucky, grants a bonus main skill trigger to that Pokémon.'
+  },
+  '蓄力': {
+    'zh-TW': '隨機發動「蓄積」或「噴放」；連續蓄積次數越多，噴放時為卡比獸增加的能量就越多（最高達 90,940 能量）。',
+    'en-US': 'Stockpiles or spits energy; more consecutive stockpiles result in greater Snorlax Strength gained (up to 90,940).'
   },
   '蓄力（能量填充S）': {
     'zh-TW': '隨機發動「蓄積」或「噴放」；連續蓄積次數越多，噴放時為卡比獸增加的能量就越多（最高達 90,940 能量）。',
@@ -856,6 +969,10 @@ const SPECIAL_SKILL_DETAILS = {
     'zh-TW': '隨機發動「蓄積」或「噴放」；連續蓄積次數越多，噴放時為卡比獸增加的能量就越多（最高達 90,940 能量）。',
     'en-US': 'Stockpiles or spits energy; more consecutive stockpiles result in greater Snorlax Strength gained (up to 90,940).'
   },
+  '夢魘': {
+    'zh-TW': '固定增加大量卡比獸能量（2,640~18,515能量）；發動時會降低隊伍中「惡屬性以外」寶可夢的活力 12 點。',
+    'en-US': 'Significantly increases Snorlax Strength (2,640~18,515), but reduces energy of non-Dark type teammates by 12.'
+  },
   '夢魘（能量填充M）': {
     'zh-TW': '固定增加大量卡比獸能量（2,640~18,515能量）；發動時會降低隊伍中「惡屬性以外」寶可夢的活力 12 點。',
     'en-US': 'Significantly increases Snorlax Strength (2,640~18,515), but reduces energy of non-Dark type teammates by 12.'
@@ -863,6 +980,10 @@ const SPECIAL_SKILL_DETAILS = {
   '夢魘 (能量填充M)': {
     'zh-TW': '固定增加大量卡比獸能量（2,640~18,515能量）；發動時會降低隊伍中「惡屬性以外」寶可夢的活力 12 點。',
     'en-US': 'Significantly increases Snorlax Strength (2,640~18,515), but reduces energy of non-Dark type teammates by 12.'
+  },
+  '精神擊破': {
+    'zh-TW': '增加卡比獸能量（2,640~13,638點），並在營地展開「樹果領域」，期間透過芒芒果（超能力屬性）獲得的能量提升。',
+    'en-US': 'Increases Strength (2,640~13,638) and deploys a Berry Field, boosting energy gained from Mago Berries.'
   },
   '精神擊破（樹果領域）': {
     'zh-TW': '增加卡比獸能量（2,640~13,638點），並在營地展開「樹果領域」，期間透過芒芒果（超能力屬性）獲得的能量提升。',
@@ -872,6 +993,10 @@ const SPECIAL_SKILL_DETAILS = {
     'zh-TW': '增加卡比獸能量（2,640~13,638點），並在營地展開「樹果領域」，期間透過芒芒果（超能力屬性）獲得的能量提升。',
     'en-US': 'Increases Strength (2,640~13,638) and deploys a Berry Field, boosting energy gained from Mago Berries.'
   },
+  '流星群': {
+    'zh-TW': '獲得自己以及隊伍中寶可夢撿來的樹果（12~48顆，龍屬性隊員越多數量越多；若隊伍中有拉帝亞斯數量進一步增加）。',
+    'en-US': 'Gathers berries from self and teammates (12~48 berries; scales with Dragon types, increased if Latias is in party).'
+  },
   '流星群（樹果遽增）': {
     'zh-TW': '獲得自己以及隊伍中寶可夢撿來的樹果（12~48顆，龍屬性隊員越多數量越多；若隊伍中有拉帝亞斯數量進一步增加）。',
     'en-US': 'Gathers berries from self and teammates (12~48 berries; scales with Dragon types, increased if Latias is in party).'
@@ -879,6 +1004,10 @@ const SPECIAL_SKILL_DETAILS = {
   '流星群 (樹果遽增)': {
     'zh-TW': '獲得自己以及隊伍中寶可夢撿來的樹果（12~48顆，龍屬性隊員越多數量越多；若隊伍中有拉帝亞斯數量進一步增加）。',
     'en-US': 'Gathers berries from self and teammates (12~48 berries; scales with Dragon types, increased if Latias is in party).'
+  },
+  '畫皮': {
+    'zh-TW': '獲得一定數量的樹果（8~21顆），並額外獲得隊伍中寶可夢撿來的樹果；少數情況下會發生「漂亮成功」獲得 3 倍樹果。',
+    'en-US': 'Gathers berries from self and teammates (8~21 berries); rarely triggers Extra Tasty for 3x berries.'
   },
   '畫皮（樹果遽增）': {
     'zh-TW': '獲得一定數量的樹果（8~21顆），並額外獲得隊伍中寶可夢撿來的樹果；少數情況下會發生「漂亮成功」獲得 3 倍樹果。',
@@ -891,6 +1020,10 @@ const SPECIAL_SKILL_DETAILS = {
   '樹果遽增?': {
     'zh-TW': '揮舞巨錘爆發產出自身大量樹果。',
     'en-US': 'Swings a massive hammer to burst a large amount of own berries.'
+  },
+  '波導彈': {
+    'zh-TW': '獲得夢之碎片（240~2,500個），並同時增加卡比獸能量（200~2,042點）。',
+    'en-US': 'Gathers 240~2,500 Dream Shards while simultaneously increasing Snorlax Strength by 200~2,042.'
   },
   '波導彈（夢之碎片獲取S）': {
     'zh-TW': '獲得夢之碎片（240~2,500個），並同時增加卡比獸能量（200~2,042點）。',
@@ -924,6 +1057,10 @@ const SPECIAL_SKILL_DETAILS = {
     'zh-TW': '立即獲得隊伍中所有水屬性幫手寶可夢數次幫忙產出（隊伍中水屬性寶可夢種類越多，幫忙次數越多）。',
     'en-US': 'Instantly gathers helps from all Water helpers on the team (scales with number of distinct Water species).'
   },
+  '十項全能': {
+    'zh-TW': '發動設置的主技能效果，並額外獲得隊伍中 1 隻寶可夢的糖果；可使用「靈感種子」自由切換學習到的主技能。',
+    'en-US': 'Triggers equipped main skill and grants candy for a teammate; customizable via Inspiration Seeds.'
+  },
   '十項全能（揮指）[可替換]': {
     'zh-TW': '發動設置的主技能效果，並額外獲得隊伍中 1 隻寶可夢的糖果；可使用「靈感種子」自由切換學習到的主技能。',
     'en-US': 'Triggers equipped main skill and grants candy for a teammate; customizable via Inspiration Seeds.'
@@ -932,6 +1069,10 @@ const SPECIAL_SKILL_DETAILS = {
     'zh-TW': '發動設置的主技能效果，並額外獲得隊伍中 1 隻寶可夢的糖果；可使用「靈感種子」自由切換學習到的主技能。',
     'en-US': 'Triggers equipped main skill and grants candy for a teammate; customizable via Inspiration Seeds.'
   },
+  '模仿': {
+    'zh-TW': '隨機複製並發動隊伍中 1 隻隊友的主技能。',
+    'en-US': 'Copies and triggers the main skill used by a random teammate.'
+  },
   '模仿（技能複製）': {
     'zh-TW': '隨機複製並發動隊伍中 1 隻隊友的主技能。',
     'en-US': 'Copies and triggers the main skill used by a random teammate.'
@@ -939,6 +1080,10 @@ const SPECIAL_SKILL_DETAILS = {
   '模仿 (技能複製)': {
     'zh-TW': '隨機複製並發動隊伍中 1 隻隊友的主技能。',
     'en-US': 'Copies and triggers the main skill used by a random teammate.'
+  },
+  '變身': {
+    'zh-TW': '變身為隊友並隨機複製其技能產出與幫忙效果。',
+    'en-US': 'Transforms into a teammate, copying its skill and helping effects.'
   },
   '變身（技能複製）': {
     'zh-TW': '變身為隊友並隨機複製其技能產出與幫忙效果。',
@@ -1062,9 +1207,8 @@ function shortenSkillName(name) {
 
 function formatSkillNameHtml(displayName, isEN) {
   if (!displayName) return '';
-  // 移除 [可替換] / [Customizable] / [Custom]，並將所有全形 （） 統一轉為半形 ()
-  // 簡短化：活力全體療癒S -> 全體療癒S，夢之碎片 -> 夢碎
-  let cleaned = displayName
+  // 先將特殊主技能的括號去除，再處理基礎技能格式
+  let cleaned = stripSpecialSkillParens(displayName)
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
     .replace(/活力全體療癒S/g, '全體療癒S')
     .replace(/夢之碎片/g, '夢碎')
@@ -1109,15 +1253,18 @@ const HYPER_CUTTER_INGS = [
 function renderSkillWithTooltip(skillName, pkm) {
   if (!skillName) return '--';
   const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-  const displayName = (typeof window !== 'undefined' && window.I18N) ? window.I18N.getMainSkillName(skillName) : skillName;
+  const rawDisplayName = (typeof window !== 'undefined' && window.I18N) ? window.I18N.getMainSkillName(skillName) : skillName;
+  const displayName = stripSpecialSkillParens(rawDisplayName);
+  const strippedKey = stripSpecialSkillParens(skillName);
   const rawDetail = SPECIAL_SKILL_DETAILS[skillName] || 
+                    SPECIAL_SKILL_DETAILS[strippedKey] ||
                     SPECIAL_SKILL_DETAILS[skillName.replace(/\(/g, '（').replace(/\)/g, '）')] ||
                     SPECIAL_SKILL_DETAILS[skillName.replace(/（/g, '(').replace(/）/g, ')')];
   let detail = rawDetail ? (typeof rawDetail === 'object' ? (rawDetail[isEN ? 'en-US' : 'zh-TW'] || rawDetail['zh-TW']) : rawDetail) : '';
 
   let plainTitle = detail;
-  // 針對特定寶可夢的「食材精選S」系列，精簡直接顯示該寶可夢專屬食材池（單行純圖標，無冗長換行）
-  if (skillName && skillName.includes('食材精選')) {
+  // 針對特定寶可夢的「食材精選S」系列（含超幸運、怪力鉗），精簡直接顯示該寶可夢專屬食材池（單行純圖標，無冗長換行）
+  if (skillName && (skillName.includes('食材精選') || skillName.includes('超幸運') || skillName.includes('怪力'))) {
     let targetIngs = [];
     const isSuperLuck = skillName.includes('超幸運');
     const isHyperCutter = skillName.includes('怪力');
@@ -1171,7 +1318,7 @@ function renderSkillWithTooltip(skillName, pkm) {
   }
   
   const contentHtml = formatSkillNameHtml(displayName, isEN);
-  const cleanSkillKey = (skillName || '')
+  const cleanSkillKey = stripSpecialSkillParens(skillName || '')
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
     .replace(/活力全體療癒S/g, '全體療癒S')
     .replace(/夢之碎片/g, '夢碎')
@@ -1186,7 +1333,7 @@ function renderSkillWithTooltip(skillName, pkm) {
   if (isEN) {
     return `<span class="main-skill-text">${contentHtml}</span>`;
   }
-  let cleaned = displayName
+  let cleaned = stripSpecialSkillParens(displayName)
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
     .replace(/活力全體療癒S/g, '全體療癒S')
     .replace(/夢之碎片/g, '夢碎')
@@ -1197,10 +1344,13 @@ function renderSkillWithTooltip(skillName, pkm) {
 }
 
 function matchesSkill(pokemonSkill, targetBaseSkill) {
-  if (!pokemonSkill) return false;
+  if (!pokemonSkill || !targetBaseSkill) return false;
   if (pokemonSkill === targetBaseSkill) return true;
-  const mapped = COMPOSITE_SKILL_MAP[pokemonSkill];
-  if (mapped && mapped.includes(targetBaseSkill)) return true;
+  const cleanP = stripSpecialSkillParens(pokemonSkill);
+  const cleanT = stripSpecialSkillParens(targetBaseSkill);
+  if (cleanP === cleanT) return true;
+  const mapped = COMPOSITE_SKILL_MAP[pokemonSkill] || COMPOSITE_SKILL_MAP[cleanP];
+  if (mapped && (mapped.includes(targetBaseSkill) || mapped.includes(cleanT))) return true;
   return false;
 }
 
@@ -4732,12 +4882,15 @@ let pokedexActiveSubskillSlot = 1;
 let pokedexSubskillPaletteExpanded = false;
 
 function getPokedexMainSkillMaxLvl(skillName) {
+  if (typeof window !== 'undefined' && window.UserBox && typeof window.UserBox.getMainSkillMaxLevel === 'function') {
+    return window.UserBox.getMainSkillMaxLevel(skillName);
+  }
   if (!skillName) return 6;
-  if (skillName.includes('能量充填') || skillName.includes('Charge Strength')) return 7;
-  if (skillName.includes('食材獲取') || skillName.includes('Ingredient Magnet')) return 7;
-  if (skillName.includes('食材精選') || skillName.includes('Ingredient Draw')) return 7;
-  if (skillName.includes('夢之碎片') || skillName.includes('Dream Shard')) return 7;
-  if (skillName.includes('料理等級') || skillName.includes('Cooking Power')) return 7;
+  const s = String(skillName).trim();
+  if (s.includes('夢之碎片') || s.includes('波導彈') || s.includes('Dream Shard') || s.includes('Aura Sphere')) return 8;
+  if (s.includes('能量填充') || s.includes('能量充填') || s.includes('Charge Strength') || s.includes('蓄力') || s.includes('夢魘')) return 7;
+  if (s.includes('食材獲取') || s.includes('食材精選') || s.includes('Ingredient') || s.includes('怪力鉗') || s.includes('怪力钳') || s.includes('超幸運') || s.includes('正電') || s.includes('禮物')) return 7;
+  if (s.includes('料理強化') || s.includes('料理等級') || s.includes('Cooking Power') || s.includes('負電') || s.includes('魔法火焰') || s.includes('Mystical Fire') || s.includes('料理輔助') || s.includes('健美') || s.includes('Bulk Up') || s.includes('揮指') || s.includes('十項全能') || s.includes('Metronome') || s.includes('變身') || s.includes('模仿') || s.includes('幫手支援') || s.includes('Extra Helpful')) return 7;
   return 6;
 }
 
@@ -4902,9 +5055,9 @@ function isHealerSkillSpecialist(pkm) {
   if (!pkm) return false;
   const skill = pkm.main_skill || '';
   const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('活力全體療癒') || skill.includes('Energy for Everyone') || skill.includes('新月祈禱') || skill.includes('樹果汁') || skill.includes('治癒波動') || skill.includes('活力療癒') || skill.includes('活力氣場') || skill.includes('Energizing Cheer')) return true;
-  const healerNames = ['沙奈朵', '仙子伊布', '胖可丁', '巴布土撥', '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥', '克雷色利亞', '壺壺', '拉帝亞斯', '托戈德瑪爾',
-                       'Gardevoir', 'Sylveon', 'Wigglytuff', 'Pawmot', 'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo', 'Cresselia', 'Shuckle', 'Latias', 'Togedemaru'];
+  if (skill.includes('活力全體療癒') || skill.includes('Energy for Everyone') || skill.includes('新月祈禱') || skill.includes('樹果汁') || skill.includes('治癒波動') || skill.includes('蹭蹭臉頰') || skill.includes('活力療癒') || skill.includes('活力氣場') || skill.includes('Energizing Cheer')) return true;
+  const healerNames = ['沙奈朵', '仙子伊布', '胖可丁', '巴布土撥', '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥', '克雷色利亞', '壺壺', '拉帝亞斯', '托戈德瑪爾', '帕奇利茲',
+                       'Gardevoir', 'Sylveon', 'Wigglytuff', 'Pawmot', 'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo', 'Cresselia', 'Shuckle', 'Latias', 'Togedemaru', 'Pachirisu'];
   return healerNames.some(h => name.includes(h));
 }
 
@@ -4932,9 +5085,9 @@ function isPotExpanderSkillSpecialist(pkm) {
   if (!pkm) return false;
   const skill = pkm.main_skill || '';
   const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('料理強化') || skill.includes('Cooking Power') || skill.includes('負電')) return true;
-  const potNames = ['小磁怪', '三合一磁怪', '自爆磁怪', '火伊布', '冰伊布', '負電拍拍', '顫弦蠑螈',
-                    'Magnemite', 'Magneton', 'Magnezone', 'Flareon', 'Glaceon', 'Minun', 'Toxtricity'];
+  if (skill.includes('料理強化') || skill.includes('Cooking Power') || skill.includes('負電') || skill.includes('魔法火焰') || skill.includes('Mystical Fire')) return true;
+  const potNames = ['小磁怪', '三合一磁怪', '自爆磁怪', '火伊布', '冰伊布', '負電拍拍', '顫弦蠑螈', '夢妖魔',
+                    'Magnemite', 'Magneton', 'Magnezone', 'Flareon', 'Glaceon', 'Minun', 'Toxtricity', 'Mismagius'];
   return potNames.some(p => name.includes(p));
 }
 
@@ -4942,8 +5095,8 @@ function isExtraTastySkillSpecialist(pkm) {
   if (!pkm) return false;
   const skill = pkm.main_skill || '';
   const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('料理成功') || skill.includes('美味大成功') || skill.includes('Extra Tasty') || skill.includes('Tasty Chance')) return true;
-  const tastyNames = ['咚咚鼠', '海豹球（佳節）', '古月鳥', 'Dedenne', 'Spheal (Holiday)', 'Cramorant'];
+  if (skill.includes('料理成功') || skill.includes('美味大成功') || skill.includes('Extra Tasty') || skill.includes('Tasty Chance') || skill.includes('魔法火焰') || skill.includes('Mystical Fire') || skill.includes('健美') || skill.includes('Bulk Up')) return true;
+  const tastyNames = ['咚咚鼠', '海豹球（佳節）', '古月鳥', '夢妖魔', '赫拉克羅斯', 'Dedenne', 'Spheal (Holiday)', 'Cramorant', 'Mismagius', 'Heracross'];
   return tastyNames.some(t => name.includes(t));
 }
 
@@ -5439,7 +5592,7 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
   let valueText = '';
   let dailyTotal = 0;
 
-  // 1. 健美（料理輔助S）
+  // 1. 健美 (食材獲取S + 料理成功S)
   if (s.includes('健美') || s.includes('料理輔助') || s.includes('Bulk Up') || s.includes('Cooking Support')) {
     const ingTable = [6, 8, 11, 14, 17, 21, 24];
     const tastyTable = [1, 2, 2, 3, 3, 4, 5];
@@ -5448,7 +5601,7 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const dailyIng = dailyTriggers * ingVal;
     const dailyTasty = dailyTriggers * tastyVal;
     dailyTotal = dailyIng;
-    label = isEN ? 'Bulk Up (Cooking Support S)' : '健美（料理輔助S）';
+    label = isEN ? 'Bulk Up' : '健美';
     valueText = isEN 
       ? `+${dailyIng.toFixed(1)} ings & +${dailyTasty.toFixed(1)}% Tasty` 
       : `+${dailyIng.toFixed(1)} 顆食材 & +${dailyTasty.toFixed(1)}% 大成功率`;
@@ -5456,21 +5609,38 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
       ? `single: ${ingVal} ings, +${tastyVal}% Tasty` 
       : `單次: ${ingVal} 顆食材, +${tastyVal}% 大成功率`;
   }
-  // 2. 正電（食材獲取S）
+  // 1b. 魔法火焰 (料理強化S + 料理成功S)
+  else if (s.includes('魔法火焰') || s.includes('料理躍進') || s.includes('Mystical Fire') || s.includes('Cooking Advance')) {
+    const potTable = [7, 10, 12, 17, 22, 27, 31];
+    const tastyTable = [1, 2, 2, 3, 3, 4, 5];
+    const potVal = potTable[Math.min(lvlIdx, potTable.length - 1)];
+    const tastyVal = tastyTable[Math.min(lvlIdx, tastyTable.length - 1)];
+    const dailyPot = dailyTriggers * potVal;
+    const dailyTasty = dailyTriggers * tastyVal;
+    dailyTotal = dailyPot;
+    label = isEN ? 'Mystical Fire' : '魔法火焰';
+    valueText = isEN 
+      ? `+${dailyPot.toFixed(1)} Pot & +${dailyTasty.toFixed(1)}% Tasty` 
+      : `+${dailyPot.toFixed(1)} 鍋子容量 & +${dailyTasty.toFixed(1)}% 大成功率`;
+    singleText = isEN 
+      ? `single: +${potVal} Pot, +${tastyVal}% Tasty` 
+      : `單次: +${potVal} 容量, +${tastyVal}% 大成功率`;
+  }
+  // 2. 正電
   else if (s.includes('正電') || s.includes('Plus')) {
     const table = [5, 7, 9, 12, 14, 16, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Plus (Magnet S)' : '正電（食材獲取S）';
+    label = isEN ? 'Plus' : '正電';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'extra ings' : '顆額外食材'}`;
     singleText = `${isEN ? 'base' : '單次基準'} ${singleVal} ${isEN ? 'ings (+teammate bonus)' : '顆 (+同伴加成)'}`;
   }
-  // 3. 禮物（食材獲取S）
+  // 3. 禮物
   else if (s.includes('禮物') || s.includes('Present')) {
     const table = [4, 6, 8, 11, 13, 15, 17];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Present (Magnet S)' : '禮物（食材獲取S）';
+    label = isEN ? 'Present' : '禮物';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'extra ings' : '顆額外食材'}`;
     singleText = `${isEN ? 'base' : '單次基準'} ${singleVal} ${isEN ? 'ings (+candy chance)' : '顆 (+機率糖果)'}`;
   }
@@ -5479,25 +5649,25 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [6, 8, 11, 14, 17, 21, 24];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Magnet S' : (s.includes('（') ? s : '食材獲取S');
+    label = isEN ? 'Magnet S' : '食材獲取S';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'extra ings' : '顆額外食材'}`;
     singleText = `${isEN ? 'yield' : '單次'} ${singleVal} ${isEN ? 'ings' : '顆'}`;
   }
-  // 5. 怪力鉗（食材精選S）
+  // 5. 怪力鉗
   else if (s.includes('怪力鉗') || s.includes('怪力钳') || s.includes('Hyper Cutter')) {
     const table = [5, 6, 8, 11, 13, 16, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Hyper Cutter (Draw S)' : '怪力鉗（食材精選S）';
+    label = isEN ? 'Hyper Cutter' : '怪力鉗';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'selected ings' : '顆專屬食材'}`;
     singleText = `${isEN ? 'base' : '單次基準'} ${singleVal} ${isEN ? 'ings (crit 2x)' : '顆 (暴擊2倍)'}`;
   }
-  // 6. 超幸運（食材精選S）
+  // 6. 超幸運
   else if (s.includes('超幸運') || s.includes('Super Luck')) {
     const table = [5, 6, 8, 11, 13, 16, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Super Luck (Draw S)' : '超幸運（食材精選S）';
+    label = isEN ? 'Super Luck' : '超幸運';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'selected ings' : '顆專屬食材'}`;
     singleText = `${isEN ? 'base' : '單次基準'} ${singleVal} ${isEN ? 'ings (crit Shards)' : '顆 (暴擊碎片)'}`;
   }
@@ -5506,31 +5676,31 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [5, 6, 8, 11, 13, 16, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Draw S' : (s.includes('（') ? s : '食材精選S');
+    label = isEN ? 'Draw S' : '食材精選S';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'selected ings' : '顆專屬食材'}`;
     singleText = `${isEN ? 'yield' : '單次'} ${singleVal} ${isEN ? 'ings' : '顆'}`;
   }
-  // 8. 精神擊破（樹果領域）
+  // 8. 精神擊破
   else if (s.includes('精神擊破') || s.includes('Psystrike')) {
     const table = [2640, 3753, 5178, 7149, 9870, 13638, 18515];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Psystrike (Berry Field)' : '精神擊破（樹果領域）';
+    label = isEN ? 'Psystrike' : '精神擊破';
     valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Strength + Berry Field' : '點能量 + 樹果領域'}`;
     singleText = `${isEN ? 'base' : '單次'} ${singleVal.toLocaleString()} ${isEN ? 'Str + Field' : '能量 + 領域'}`;
   }
-  // 9. 能量填充M
+  // 9. 能量填充M / 夢魘
   else if (s.includes('能量填充M') || s.includes('Charge Str. M') || s.includes('Charge Strength M') || s.includes('夢魘') || s.includes('Bad Dreams')) {
     const isBadDreams = s.includes('夢魘') || s.includes('Bad Dreams');
     const table = isBadDreams ? [2640, 3753, 5178, 7149, 9870, 13638, 18515] : [880, 1251, 1726, 2383, 3290, 4546, 6409];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? (isBadDreams ? 'Bad Dreams M' : 'Charge Str. M') : (s.includes('（') ? s : '能量填充M');
+    label = isEN ? (isBadDreams ? 'Bad Dreams' : 'Charge Str. M') : (isBadDreams ? '夢魘' : '能量填充M');
     valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Strength' : '點能量'}`;
     singleText = `${isEN ? 'base' : '單次'} ${singleVal.toLocaleString()} ${isEN ? 'Str' : '能量'}`;
   }
-  // 10. 能量填充S
-  else if (s.includes('能量填充S') || s.includes('Charge Str. S') || s.includes('Charge Strength S')) {
+  // 10. 能量填充S / 蓄力
+  else if (s.includes('能量填充S') || s.includes('Charge Str. S') || s.includes('Charge Strength S') || s.includes('蓄力') || s.includes('Stockpile')) {
     if (s.includes('隨機') || s.includes('Random')) {
       const table = [500, 712, 982, 1354, 1870, 2583, 4015];
       singleVal = table[Math.min(lvlIdx, table.length - 1)];
@@ -5542,33 +5712,33 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
       const table = [600, 853, 1177, 1625, 2243, 3099, 4502];
       singleVal = table[Math.min(lvlIdx, table.length - 1)];
       dailyTotal = dailyTriggers * singleVal;
-      label = isEN ? 'Stockpile' : '蓄力（能量填充S）';
+      label = isEN ? 'Stockpile' : '蓄力';
       valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Base Strength' : '點基準能量'}`;
       singleText = `${isEN ? 'base' : '單次蓄力'} ${singleVal.toLocaleString()} ${isEN ? 'Str' : '能量'}`;
     } else {
       const table = [400, 569, 785, 1083, 1496, 2066, 3212];
       singleVal = table[Math.min(lvlIdx, table.length - 1)];
       dailyTotal = dailyTriggers * singleVal;
-      label = isEN ? 'Charge Str. S' : (s.includes('（') ? s : '能量填充S');
+      label = isEN ? 'Charge Str. S' : '能量填充S';
       valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Strength' : '點能量'}`;
       singleText = `${isEN ? 'base' : '單次'} ${singleVal.toLocaleString()} ${isEN ? 'Str' : '能量'}`;
     }
   }
-  // 11. 新月祈禱（活力全體療癒S）
+  // 11. 新月祈禱
   else if (s.includes('新月祈禱') || s.includes('Lunar Prayer')) {
     const table = [3, 4, 5, 7, 9, 11];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Lunar Prayer' : '新月祈禱（活力全體療癒S）';
+    label = isEN ? 'Lunar Prayer' : '新月祈禱';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Team Energy + Berries' : '點全員活力 + 樹果'}`;
     singleText = `${isEN ? 'single' : '單次'} ${singleVal} ${isEN ? 'pts (+Psychic team berries)' : '點 (+超能力樹果)'}`;
   }
-  // 12. 樹果汁（活力全體療癒S）
+  // 12. 樹果汁
   else if (s.includes('樹果汁') || s.includes('Berry Juice')) {
     const table = [5, 7, 9, 11, 15, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Berry Juice (E4E S)' : '樹果汁（活力全體療癒S）';
+    label = isEN ? 'Berry Juice' : '樹果汁';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Team Energy' : '點全員活力'}`;
     singleText = `${isEN ? 'single' : '單次全員'} ${singleVal} ${isEN ? 'pts (+item chance)' : '點 (+機率產樹果汁)'}`;
   }
@@ -5577,16 +5747,16 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [5, 7, 9, 11, 15, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'E4E S' : (s.includes('（') ? s : '活力全體療癒S');
+    label = isEN ? 'E4E S' : '活力全體療癒S';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Team Energy' : '點全員活力'}`;
     singleText = `${isEN ? 'heal' : '單次'} ${singleVal} ${isEN ? 'pts' : '點'}`;
   }
-  // 14. 月光（活力充填S）
+  // 14. 月光
   else if (s.includes('月光') || s.includes('Moonlight')) {
     const table = [12, 16, 21, 26, 33, 43];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Moonlight (Charge Energy S)' : '月光（活力充填S）';
+    label = isEN ? 'Moonlight' : '月光';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Self Energy' : '點自身活力'}`;
     singleText = `${isEN ? 'single' : '單次自身'} ${singleVal} ${isEN ? 'pts (+ally on Tasty)' : '點 (大成功額外補隊友)'}`;
   }
@@ -5595,25 +5765,25 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [12, 16, 21, 26, 33, 43];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Charge Energy S' : (s.includes('（') ? s : '活力充填S');
+    label = isEN ? 'Charge Energy S' : '活力充填S';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Self Energy' : '點自身活力'}`;
     singleText = `${isEN ? 'heal' : '單次'} ${singleVal} ${isEN ? 'pts' : '點'}`;
   }
-  // 16. 治癒波動（活力療癒S）
+  // 16. 治癒波動
   else if (s.includes('治癒波動') || s.includes('Heal Pulse')) {
     const table = [6, 8, 11, 14, 18, 22];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal * 2;
-    label = isEN ? 'Heal Pulse (Cheer S)' : '治癒波動（活力療癒S）';
+    label = isEN ? 'Heal Pulse' : '治癒波動';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Energy (2 Allies)' : '點隊友活力 (2隻)'}`;
     singleText = `${isEN ? 'single: ' : '單次: 各'}${singleVal} ${isEN ? 'pts to 2 allies' : '點 (共2隻)'}`;
   }
-  // 17. 蹭蹭臉頰（活力療癒S）
+  // 17. 蹭蹭臉頰
   else if (s.includes('蹭蹭臉頰') || s.includes('Nuzzle')) {
     const table = [9, 12, 16, 20, 26, 35];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Nuzzle (Cheer S)' : '蹭蹭臉頰（活力療癒S）';
+    label = isEN ? 'Nuzzle' : '蹭蹭臉頰';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Ally Energy' : '點隊友活力'}`;
     singleText = `${isEN ? 'single' : '單次'} ${singleVal} ${isEN ? 'pts (+bonus proc chance)' : '點 (+機率追加發動)'}`;
   }
@@ -5622,7 +5792,7 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [12, 15, 20, 25, 33, 44];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Energizing Cheer S' : (s.includes('（') ? s : '活力療癒S');
+    label = isEN ? 'Energizing Cheer S' : '活力療癒S';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Ally Energy' : '點隊友活力'}`;
     singleText = `${isEN ? 'heal' : '單次'} ${singleVal} ${isEN ? 'pts' : '點'}`;
   }
@@ -5644,17 +5814,18 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Ally Helps' : '次隊友幫忙'}`;
     singleText = `${isEN ? 'yield' : '單次'} ${singleVal} ${isEN ? 'helps' : '次'}`;
   }
-  // 21. 樹果遽增 (excluding 精神擊破)
-  else if (s.includes('樹果遽增') || s.includes('Berry Burst') || s.includes('流星群') || s.includes('畫皮')) {
+  // 21. 樹果遽增 / 流星群 / 畫皮 (excluding 精神擊破)
+  else if (s.includes('樹果遽增') || s.includes('Berry Burst') || s.includes('流星群') || s.includes('Draco Meteor') || s.includes('畫皮') || s.includes('Disguise')) {
     const isMimikyu = s.includes('畫皮') || s.includes('Disguise');
+    const isDraco = s.includes('流星群') || s.includes('Draco Meteor');
     const table = isMimikyu ? [12, 18, 23, 29, 35, 41] : [15, 22, 29, 36, 43, 50];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Berry Burst' : (s.includes('（') ? s : '樹果遽增');
+    label = isEN ? (isMimikyu ? 'Disguise' : (isDraco ? 'Draco Meteor' : 'Berry Burst')) : (isMimikyu ? '畫皮' : (isDraco ? '流星群' : '樹果遽增'));
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Extra Berries' : '顆額外樹果'}`;
     singleText = `${isEN ? 'approx' : '單次約'} ${singleVal} ${isEN ? 'berries' : '顆'}`;
   }
-  // 22. 波導彈（夢之碎片獲取S）
+  // 22. 波導彈
   else if (s.includes('波導彈') || s.includes('Aura Sphere')) {
     const shardTable = [240, 340, 480, 670, 920, 1260, 1800, 2500];
     const strTable = [200, 280, 396, 552, 758, 1038, 1482, 2042];
@@ -5663,7 +5834,7 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const dailyShard = dailyTriggers * singleShard;
     const dailyStr = dailyTriggers * singleStr;
     dailyTotal = dailyShard;
-    label = isEN ? 'Aura Sphere (Shards S)' : '波導彈（夢之碎片獲取S）';
+    label = isEN ? 'Aura Sphere' : '波導彈';
     valueText = isEN 
       ? `+${Math.round(dailyShard).toLocaleString()} shards & +${Math.round(dailyStr).toLocaleString()} Str` 
       : `+${Math.round(dailyShard).toLocaleString()} 碎片 & +${Math.round(dailyStr).toLocaleString()} 能量`;
@@ -5684,17 +5855,17 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
       const table = [240, 340, 480, 670, 920, 1260, 1800, 2500];
       singleVal = table[Math.min(lvlIdx, table.length - 1)];
       dailyTotal = dailyTriggers * singleVal;
-      label = isEN ? 'Dream Shards S' : (s.includes('（') ? s : '夢之碎片獲取S');
+      label = isEN ? 'Dream Shards S' : '夢之碎片獲取S';
       valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Dream Shards' : '個夢之碎片'}`;
       singleText = `${isEN ? 'yield' : '單次'} ${singleVal.toLocaleString()} ${isEN ? 'shards' : '碎片'}`;
     }
   }
-  // 24. 負電（料理強化S）
+  // 24. 負電
   else if (s.includes('負電') || s.includes('Minus')) {
     const table = [5, 7, 9, 12, 16, 20, 24];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Minus (Cooking Power Up S)' : '負電（料理強化S）';
+    label = isEN ? 'Minus' : '負電';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Pot Space' : '鍋子容量'}`;
     singleText = `${isEN ? 'single' : '單次'} +${singleVal} ${isEN ? 'cap (+energy heal)' : '容量 (+同伴回復)'}`;
   }
@@ -5703,24 +5874,26 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [7, 10, 12, 17, 22, 27, 31];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Cooking Power Up S' : (s.includes('（') ? s : '料理強化S');
+    label = isEN ? 'Cooking Power Up S' : '料理強化S';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Pot Space' : '鍋子容量'}`;
     singleText = `${isEN ? 'boost' : '單次'} +${singleVal} ${isEN ? 'capacity' : '容量'}`;
   }
-  // 26. 料理成功S (not including 健美)
+  // 26. 料理成功S (not including 健美 / 魔法火焰)
   else if (s.includes('料理成功') || s.includes('Tasty Chance')) {
     const table = [4, 5, 6, 7, 8, 10];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Tasty Chance S' : (s.includes('（') ? s : '料理成功S');
+    label = isEN ? 'Tasty Chance S' : '料理成功S';
     valueText = `+${dailyTotal.toFixed(1)}% ${isEN ? 'Tasty Chance' : '大成功機率'}`;
     singleText = `${isEN ? 'boost' : '單次'} +${singleVal}%`;
   }
   // 27. 揮指 / 模仿 / 變身 / 十項全能
-  else if (s.includes('揮指') || s.includes('Metronome') || s.includes('模仿') || s.includes('變身') || s.includes('十項全能')) {
+  else if (s.includes('揮指') || s.includes('Metronome') || s.includes('模仿') || s.includes('Mimic') || s.includes('變身') || s.includes('Transform') || s.includes('十項全能') || s.includes('All-Rounder')) {
     singleVal = 1;
     dailyTotal = dailyTriggers;
-    label = isEN ? 'Metronome' : (s.includes('變身') ? '變身' : (s.includes('模仿') ? '模仿' : '揮指'));
+    label = isEN
+      ? (s.includes('變身') || s.includes('Transform') ? 'Transform' : (s.includes('模仿') || s.includes('Mimic') ? 'Mimic' : (s.includes('十項全能') || s.includes('All-Rounder') ? 'All-Rounder' : 'Metronome')))
+      : (s.includes('變身') ? '變身' : (s.includes('模仿') ? '模仿' : (s.includes('十項全能') ? '十項全能' : '揮指')));
     valueText = isEN ? 'Random / Mimic Skill Effect' : '隨機/複製發動各類主技能';
     singleText = isEN ? 'variable' : '隨機觸發';
   } else if (s) {
@@ -6615,7 +6788,7 @@ function renderPokedexDetailModalContent() {
             <div class="box-form-group box-full-width box-form-row-inline box-mainskill-row pokedex-mainskill-ribbon-row">
               <div class="pokedex-inline-unit pokedex-mainskill-unit">
                 <label class="box-form-label box-form-inline-label" for="pokedex-poke-skill-level">${t('box.modal_main_skill_short', '主技能')}</label>
-                <span id="pokedex-poke-main-skill-name" class="box-mainskill-name-badge" title="${escapeHtml(modalSkillDesc)}">${escapeHtml(pkm.main_skill || '--')}</span>
+                <span id="pokedex-poke-main-skill-name" class="box-mainskill-name-badge" title="${escapeHtml(modalSkillDesc)}">${escapeHtml((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function') ? window.I18N.getMainSkillName(pkm.main_skill || '--') : (typeof stripSpecialSkillParens === 'function' ? stripSpecialSkillParens(pkm.main_skill || '--') : (pkm.main_skill || '--')))}</span>
                 <div class="box-mainskill-select-wrap">
                   <select id="pokedex-poke-skill-level" class="box-form-select box-mainskill-select pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalSkillLevel(this.value)">
                     ${Array.from({ length: maxSkillLvl }, (_, i) => i + 1).map(lvl => `

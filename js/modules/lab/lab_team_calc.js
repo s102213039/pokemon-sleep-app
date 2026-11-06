@@ -33,7 +33,7 @@
       });
       const base = findBasePkm(item.pokemonId || item.name);
       const skill = (base && (base.main_skill || (base.skill && base.skill.name))) || item.main_skill || '';
-      if (skill.includes('活力療癒') || skill.includes('能量充填') || skill.includes('Energizing')) {
+      if (skill.includes('活力療癒') || skill.includes('活力全體療癒') || skill.includes('能量充填') || skill.includes('Energizing') || skill.includes('新月祈禱') || skill.includes('樹果汁') || skill.includes('治癒波動') || skill.includes('蹭蹭臉頰')) {
         hasHealer = true;
       }
     });
@@ -235,7 +235,7 @@
       const isSkillSpec = spec.includes('技能') || spec === 'Skills';
 
       const mainSkill = (base.main_skill || (base.skill && base.skill.name)) || item.main_skill || '';
-      const isHealer = mainSkill.includes('活力療癒') || mainSkill.includes('活力全體療癒') || mainSkill.includes('Energy for Everyone');
+      const isHealer = mainSkill.includes('活力療癒') || mainSkill.includes('活力全體療癒') || mainSkill.includes('Energy for Everyone') || mainSkill.includes('新月祈禱') || mainSkill.includes('樹果汁') || mainSkill.includes('治癒波動') || mainSkill.includes('蹭蹭臉頰');
 
       const unlockedIngs = [
         item.ing1 || (base.ingredients && base.ingredients[0] ? base.ingredients[0].name : '')
@@ -333,7 +333,7 @@
     const healers = userBox.filter(p => {
       const b = findBasePkm(p.pokemonId || p.name);
       const sk = (b && (b.main_skill || (b.skill && b.skill.name))) || p.main_skill || '';
-      return sk.includes('活力療癒') || sk.includes('活力全體療癒') || sk.includes('Energy for Everyone');
+      return sk.includes('活力療癒') || sk.includes('活力全體療癒') || sk.includes('Energy for Everyone') || sk.includes('新月祈禱') || sk.includes('樹果汁') || sk.includes('治癒波動') || sk.includes('蹭蹭臉頰');
     });
 
     if (strategy === 'berries') {

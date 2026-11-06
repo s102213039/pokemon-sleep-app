@@ -173,7 +173,7 @@ test('Tier 1 - Feature Coverage', 'Wiki Database Integrity: wiki.js defines skil
   assert(wikiContent.includes('TRIGGER_CHANCE_MATRIX'), 'wiki.js missing TRIGGER_CHANCE_MATRIX');
   assert(wikiContent.includes('HELPING_SPEED_MATRIX'), 'wiki.js missing HELPING_SPEED_MATRIX');
   assert(wikiContent.includes('RATINGS_GUIDE_DATA'), 'wiki.js missing RATINGS_GUIDE_DATA');
-  assert(wikiContent.includes('蓄力（能量填充S）') || wikiContent.includes('蓄力 (能量填充S)'), 'wiki.js missing Charge Stock skill data');
+  assert(wikiContent.includes('name: "蓄力"') || wikiContent.includes('蓄力（能量填充S）') || wikiContent.includes('蓄力 (能量填充S)'), 'wiki.js missing Charge Stock skill data');
   assert(wikiContent.includes('幫手加速（屬性）') || wikiContent.includes('幫手加速 (屬性)'), 'wiki.js missing Helper Boost skill data');
   assert(wikiContent.includes('1.848'), 'wiki.js missing 1.848x trigger chance multiplier');
 });
@@ -339,20 +339,19 @@ test('Tier 1 - Feature Coverage', 'JS Logic: app.js contains state management, m
   assertEquals(PokemonApp.formatHelpInterval('01:00:00'), '60:00', 'formatHelpInterval(01:00:00) should be 60:00');
   assertEquals(PokemonApp.showNo, false, 'PokemonApp.showNo should default to false');
 
-  const mewRender = PokemonApp.renderSkillWithTooltip('十項全能（揮指）[可替換]');
+  const mewRender = PokemonApp.renderSkillWithTooltip('十項全能');
   assert(!mewRender.includes('[可替換]'), 'renderSkillWithTooltip should not include [可替換]');
-  assert(mewRender.includes('十項全能(揮指)'), 'renderSkillWithTooltip should format with halfwidth parentheses 十項全能(揮指)');
+  assert(mewRender.includes('<span class="skill-single-line">十項全能</span>'), 'renderSkillWithTooltip should display clean special skill name 十項全能 without parentheses');
 
-  const cressRender = PokemonApp.renderSkillWithTooltip('新月祈禱（活力全體療癒S）');
-  assert(!cressRender.includes('活力全體療癒S'), 'renderSkillWithTooltip should simplify 活力全體療癒S');
-  assert(cressRender.includes('全體療癒S)'), 'renderSkillWithTooltip should format with halfwidth parentheses 全體療癒S)');
+  const cressRender = PokemonApp.renderSkillWithTooltip('新月祈禱');
+  assert(!cressRender.includes('活力全體療癒S'), 'renderSkillWithTooltip should not append parenthesized base skill to 新月祈禱');
+  assert(cressRender.includes('<span class="skill-single-line">新月祈禱</span>'), 'renderSkillWithTooltip should display clean special skill name 新月祈禱 without parentheses');
 
   const shardRender = PokemonApp.renderSkillWithTooltip('夢之碎片獲取S');
   assertEquals(shardRender, '夢碎獲取S', 'renderSkillWithTooltip should format 夢之碎片獲取S as 夢碎獲取S');
 
-  const lucarioRender = PokemonApp.renderSkillWithTooltip('波導彈（夢之碎片獲取S）');
-  assert(!lucarioRender.includes('波導彈（夢之碎片') && !lucarioRender.includes('波導彈(夢之碎片'), 'renderSkillWithTooltip should shorten 夢之碎片 in 波導彈 skill name');
-  assert(lucarioRender.includes('波導彈(夢碎獲取S)'), 'renderSkillWithTooltip should format as 波導彈(夢碎獲取S)');
+  const lucarioRender = PokemonApp.renderSkillWithTooltip('波導彈');
+  assert(lucarioRender.includes('<span class="skill-single-line">波導彈</span>'), 'renderSkillWithTooltip should display clean special skill name 波導彈 without parentheses');
 });
 
 // Baseline Tests 11-23
@@ -567,8 +566,10 @@ test('Tier 1 - Feature Coverage', 'All 38+ Main Skill Variants & Aliases 100% En
   assert(I18N.getMainSkillName('料理成功S') === 'Tasty Chance S', '料理成功S should be Tasty Chance S');
   assert(I18N.getMainSkillName('活力療癒S') === 'Energizing Cheer S', '活力療癒S should be Energizing Cheer S');
   assert(I18N.getMainSkillName('料理強化S') === 'Cooking Power-Up S', '料理強化S should be Cooking Power-Up S');
-  assert(I18N.getMainSkillName('新月祈禱（活力全體療癒S）') === 'Lunar Prayer (Energy for Everyone S)', '新月祈禱 should be Lunar Prayer (Energy for Everyone S)');
-  assert(I18N.getMainSkillName('十項全能（揮指）[可替換]') === 'All-Rounder (Metronome) [Customizable]', '十項全能 should be All-Rounder (Metronome) [Customizable]');
+  assert(I18N.getMainSkillName('新月祈禱') === 'Lunar Prayer', '新月祈禱 should be Lunar Prayer');
+  assert(I18N.getMainSkillName('十項全能') === 'All-Rounder', '十項全能 should be All-Rounder');
+  assert(I18N.getMainSkillName('魔法火焰') === 'Mystical Fire', '魔法火焰 should be Mystical Fire');
+  assert(I18N.getMainSkillName('健美') === 'Bulk Up', '健美 should be Bulk Up');
 });
 
 

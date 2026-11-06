@@ -149,8 +149,8 @@
     const clean = String(name).trim();
     if (clean.includes('夢之碎片') || clean.includes('波導彈') || clean.includes('Dream Shard') || clean.includes('Aura Sphere')) return 8;
     if (clean.includes('能量填充') || clean.includes('Charge Strength') || clean.includes('蓄力') || clean.includes('夢魘')) return 7;
-    if (clean.includes('食材獲取') || clean.includes('食材精選') || clean.includes('Ingredient') || clean.includes('怪力钳') || clean.includes('超幸運') || clean.includes('正電') || clean.includes('禮物')) return 7;
-    if (clean.includes('料理強化') || clean.includes('Cooking Power') || clean.includes('負電') || clean.includes('料理輔助') || clean.includes('健美') || clean.includes('Bulk Up') || clean.includes('揮指') || clean.includes('十項全能') || clean.includes('Metronome') || clean.includes('變身') || clean.includes('模仿') || clean.includes('幫手支援') || clean.includes('Helper Support')) return 7;
+    if (clean.includes('食材獲取') || clean.includes('食材精選') || clean.includes('Ingredient') || clean.includes('怪力鉗') || clean.includes('怪力钳') || clean.includes('超幸運') || clean.includes('正電') || clean.includes('禮物')) return 7;
+    if (clean.includes('料理強化') || clean.includes('Cooking Power') || clean.includes('負電') || clean.includes('魔法火焰') || clean.includes('Mystical Fire') || clean.includes('料理躍進') || clean.includes('料理輔助') || clean.includes('健美') || clean.includes('Bulk Up') || clean.includes('揮指') || clean.includes('十項全能') || clean.includes('Metronome') || clean.includes('變身') || clean.includes('模仿') || clean.includes('幫手支援') || clean.includes('Helper Support')) return 7;
     return 6;
   }
 
@@ -240,9 +240,9 @@
     if (!pkm) return false;
     const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
     const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
-    if (skill.includes('活力全體療癒') || skill.includes('Energy for Everyone') || skill.includes('新月祈禱') || skill.includes('樹果汁') || skill.includes('治癒波動') || skill.includes('活力療癒') || skill.includes('活力氣場') || skill.includes('Energizing Cheer')) return true;
-    const healerNames = ['沙奈朵', '仙子伊布', '胖可丁', '巴布土撥', '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥', '克雷色利亞', '壺壺', '拉帝亞斯', '托戈德瑪爾',
-                         'Gardevoir', 'Sylveon', 'Wigglytuff', 'Pawmot', 'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo', 'Cresselia', 'Shuckle', 'Latias', 'Togedemaru'];
+    if (skill.includes('活力全體療癒') || skill.includes('Energy for Everyone') || skill.includes('新月祈禱') || skill.includes('樹果汁') || skill.includes('治癒波動') || skill.includes('蹭蹭臉頰') || skill.includes('活力療癒') || skill.includes('活力氣場') || skill.includes('Energizing Cheer')) return true;
+    const healerNames = ['沙奈朵', '仙子伊布', '胖可丁', '巴布土撥', '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥', '克雷色利亞', '壺壺', '拉帝亞斯', '托戈德瑪爾', '帕奇利茲',
+                         'Gardevoir', 'Sylveon', 'Wigglytuff', 'Pawmot', 'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo', 'Cresselia', 'Shuckle', 'Latias', 'Togedemaru', 'Pachirisu'];
     return healerNames.some(h => name.includes(h));
   }
 
@@ -273,9 +273,9 @@
     if (!pkm) return false;
     const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
     const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
-    if (skill.includes('料理強化') || skill.includes('Cooking Power') || skill.includes('負電')) return true;
-    const potNames = ['小磁怪', '三合一磁怪', '自爆磁怪', '火伊布', '冰伊布', '負電拍拍', '顫弦蠑螈',
-                      'Magnemite', 'Magneton', 'Magnezone', 'Flareon', 'Glaceon', 'Minun', 'Toxtricity'];
+    if (skill.includes('料理強化') || skill.includes('Cooking Power') || skill.includes('負電') || skill.includes('魔法火焰') || skill.includes('Mystical Fire')) return true;
+    const potNames = ['小磁怪', '三合一磁怪', '自爆磁怪', '火伊布', '冰伊布', '負電拍拍', '顫弦蠑螈', '夢妖魔',
+                      'Magnemite', 'Magneton', 'Magnezone', 'Flareon', 'Glaceon', 'Minun', 'Toxtricity', 'Mismagius'];
     return potNames.some(p => name.includes(p));
   }
 
@@ -284,8 +284,8 @@
     if (!pkm) return false;
     const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
     const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
-    if (skill.includes('料理成功') || skill.includes('美味大成功') || skill.includes('Extra Tasty') || skill.includes('Tasty Chance')) return true;
-    const tastyNames = ['咚咚鼠', '海豹球（佳節）', '古月鳥', 'Dedenne', 'Spheal (Holiday)', 'Cramorant'];
+    if (skill.includes('料理成功') || skill.includes('美味大成功') || skill.includes('Extra Tasty') || skill.includes('Tasty Chance') || skill.includes('魔法火焰') || skill.includes('Mystical Fire') || skill.includes('健美') || skill.includes('Bulk Up')) return true;
+    const tastyNames = ['咚咚鼠', '海豹球（佳節）', '古月鳥', '夢妖魔', '赫拉克羅斯', 'Dedenne', 'Spheal (Holiday)', 'Cramorant', 'Mismagius', 'Heracross'];
     return tastyNames.some(t => name.includes(t));
   }
 

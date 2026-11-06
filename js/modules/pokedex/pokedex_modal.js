@@ -209,7 +209,7 @@ function renderPokedexDetailModalContent() {
             <div class="box-form-group box-full-width box-form-row-inline box-mainskill-row pokedex-mainskill-ribbon-row">
               <div class="pokedex-inline-unit pokedex-mainskill-unit">
                 <label class="box-form-label box-form-inline-label" for="pokedex-poke-skill-level">${t('box.modal_main_skill_short', '主技能')}</label>
-                <span id="pokedex-poke-main-skill-name" class="box-mainskill-name-badge" title="${escapeHtml(modalSkillDesc)}">${escapeHtml(pkm.main_skill || '--')}</span>
+                <span id="pokedex-poke-main-skill-name" class="box-mainskill-name-badge" title="${escapeHtml(modalSkillDesc)}">${escapeHtml((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function') ? window.I18N.getMainSkillName(pkm.main_skill || '--') : (typeof stripSpecialSkillParens === 'function' ? stripSpecialSkillParens(pkm.main_skill || '--') : (pkm.main_skill || '--')))}</span>
                 <div class="box-mainskill-select-wrap">
                   <select id="pokedex-poke-skill-level" class="box-form-select box-mainskill-select pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalSkillLevel(this.value)">
                     ${Array.from({ length: maxSkillLvl }, (_, i) => i + 1).map(lvl => `

@@ -5,10 +5,14 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
-## 交接：2026-11-06 已完成（夢妖魔最終進化與雲端推送生效、盒子分頁下拉刷新誤觸根除、三層快取自動失效架構升级、新食材「一口堅果」與 3 道新料理及新寶可夢跨分頁動態同步）
+## 交接：2026-11-06 已完成（特殊主技能全面去除冗餘括號與修正怪異翻譯、夢妖魔最終進化與雲端推送生效、盒子分頁下拉刷新誤觸根除、三層快取自動失效架構升級）
 
-- **測試狀態**：`npm run test:fast` (156/156 PASS)、`tests/e2e_sync_and_multitab.js` (114/114 PASS)、`tests/test_challenger_m2_multitab_adversarial.js` (25/25 PASS) 及全部 PTR 手勢壓力測試 (36/36 PASS) 100% 通過（0 失敗）。
+- **測試狀態**：`npm run test:fast` (156/156 PASS) 與全量 `npm test` (279/279 PASS) 100% 通過（0 失敗）。
 - **核心功能與修復項目**：
+  0. **特殊主技能（21 種專屬/複合招式）全面移除括號與修正「料理成功S」官方翻譯**：
+     - 修正赫拉克羅斯 (`#214`) 主技能 `健美` 與夢妖魔 (`#429`) 主技能 `魔法火焰` 先前因外部試算表自創 `（料理輔助S）`、`（料理躍進S）` 導致的怪異翻譯，說明文字統一正名為官方主技能「**料理成功S**」複合「食材獲取S」/「料理強化S」。
+     - 全面去除 21 種特殊主技能名稱後方的括號（`魔法火焰`、`健美`、`怪力鉗`、`超幸運`、`新月祈禱`、`月光`、`樹果汁`、`正電`、`負電`、`禮物`、`治癒波動`、`蹭蹭臉頰`、`蓄力`、`夢魘`、`精神擊破`、`流星群`、`畫皮`、`波導彈`、`十項全能`、`模仿`、`變身`；英文對應 `Mystical Fire`, `Bulk Up`, `Hyper Cutter`, `Super Luck`, `Lunar Prayer`, `Moonlight`, `Berry Juice`, `Plus`, `Minus`, `Present`, `Heal Pulse`, `Nuzzle`, `Stockpile`, `Bad Dreams`, `Psystrike`, `Draco Meteor`, `Disguise`, `Aura Sphere`, `All-Rounder`, `Mimic`, `Transform`），涵蓋 `data/data.json`、`scripts/build_webapp_data.py`、圖鑑卡片/表格/彈窗、百科主技能頁面、倉庫與深度研究室及 `i18n` 字典。
+     - 於 `pokedex_calc.js` 補齊 `魔法火焰` 雙重效果試算（`+X.X 鍋子容量 & +Y.Y% 大成功率`），並將 `CACHE_SCHEMA_VERSION` 與 `sw.js` 升級至 `20261106_03` 自動清除舊版快取。
   1. **夢妖魔 (`#429`) 最終進化顯示與遠端未推送問題根除**：
      - 查明根本原因：先前本機修改自 `e6ec05b` (10月25日) 後未提交推送至 `origin/main`，且前端 `IndexedDB` 快取在 `localStorage` 清除後未同步刪除，導致舊版 `is_final: ""` 持續回填。
      - 完成 `data/data.json` 夢妖魔 `is_final: "〇"`、完整三段食材、專屬主技能 `魔法火焰（料理躍進S）`、本地頭像圖示與跨模組同步，並正式提交推送至 GitHub `origin/main`。

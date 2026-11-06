@@ -220,8 +220,8 @@
     const hasSkillBuff = nat && (nat.buffType === 'skill' || (nat.buff && (nat.buff.includes('主技能') || nat.buff.includes('Skill'))));
     const hasSkillDebuff = nat && (nat.debuffType === 'skill' || (nat.debuff && (nat.debuff.includes('主技能') || nat.debuff.includes('Skill'))));
 
-    const isHealer = ['活力療癒', '能量療癒', 'Energy for Everyone', 'Heal'].some(s => skillName.includes(s));
-    const isHighImpact = ['幫手加速', 'Helper Boost', '樹果遽增', 'Berry Burst', '料理大成功', 'Extra Tasty', '料理擴鍋', 'Cooking Power Up'].some(s => skillName.includes(s));
+    const isHealer = ['活力療癒', '能量療癒', 'Energy for Everyone', 'Heal', '新月祈禱', '樹果汁', '治癒波動', '蹭蹭臉頰'].some(s => skillName.includes(s));
+    const isHighImpact = ['幫手加速', 'Helper Boost', '樹果遽增', 'Berry Burst', '料理大成功', '料理成功', 'Extra Tasty', '料理擴鍋', '料理強化', 'Cooking Power Up', '精神擊破', '畫皮', '流星群', '魔法火焰', '健美', '負電'].some(s => skillName.includes(s));
 
     let roiGrade = 'B';
     let recommendation = '';

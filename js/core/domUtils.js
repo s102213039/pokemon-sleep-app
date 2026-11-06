@@ -157,7 +157,7 @@
   const MANIFEST_TIME_KEY = 'pksleep_cache_manifest_time';
   const FILE_HASH_PREFIX = 'pksleep_file_hash_';
   const CACHE_SCHEMA_KEY = 'pksleep_cache_schema_ver';
-  const CACHE_SCHEMA_VERSION = '20261106_02';
+  const CACHE_SCHEMA_VERSION = '20261106_03';
   const CHECK_COOLDOWN_MS = 60 * 1000; // 60 秒內同分頁不重複發起網路檢查，確保刷新時能即刻檢測最新 manifest
 
   let _inFlightManifestPromise = null;

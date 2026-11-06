@@ -634,7 +634,7 @@
           ? 'Features active "Skill Trigger M", significantly raising main skill activation frequency.'
           : '擁有已解鎖「技能機率提升M」，主技能發動頻率顯著提高。');
       } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
-        if (pkmData.main_skill && (pkmData.main_skill.includes('食材') || pkmData.main_skill.includes('Ingredient'))) {
+        if (pkmData.main_skill && (pkmData.main_skill.includes('食材') || pkmData.main_skill.includes('Ingredient') || pkmData.main_skill.includes('怪力鉗') || pkmData.main_skill.includes('超幸運') || pkmData.main_skill.includes('禮物') || pkmData.main_skill.includes('正電') || pkmData.main_skill.includes('健美'))) {
           pros.push(isEN
             ? 'Unlocked "Skill Trigger M" synergizes with ingredient-fetching main skill for bonus food supplies.'
             : '具備已解鎖「技能機率提升M」，輔助觸發食材獲取主技能，提供額外料理補給。');

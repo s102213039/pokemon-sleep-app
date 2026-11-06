@@ -359,7 +359,7 @@
       'box.guide_item2_title': '食材组合 (Lv.1 / 30 / 60)',
       'box.guide_item2_desc': '清晰显示三个等级之解锁食材图示与获得数量 (如 甜甜蜜x1, 品鲜蘑菇x1, 甜甜蜜x4)。',
       'box.guide_item3_title': '主技能信息',
-      'box.guide_item3_desc': '显示完整主技能名称 (如 健美 / 料理辅助S) 与目前技能等级 (如 Lv.7)。',
+      'box.guide_item3_desc': '显示完整主技能名称 (如 健美、料理成功S) 与目前技能等级 (如 Lv.7)。',
       'box.guide_item4_title': '副技能栏位 (全部 5 格)',
       'box.guide_item4_desc': '完整露出 Lv.10 至 Lv.80 共 5 个副技能方块按钮, 无选单或弹窗覆盖遮挡。',
       'box.upload_screenshots': '上传截图辨识',

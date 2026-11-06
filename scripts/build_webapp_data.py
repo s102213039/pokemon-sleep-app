@@ -68,6 +68,21 @@ def get_ing_icon(name):
         return f"https://www.serebii.net/pokemonsleep/ingredients/{key}.png"
     return ""
 
+SPECIAL_SKILL_PREFIXES = (
+    '魔法火焰', '健美', '怪力鉗', '超幸運', '新月祈禱', '月光', '樹果汁',
+    '正電', '負電', '禮物', '治癒波動', '蹭蹭臉頰', '蓄力', '夢魘',
+    '精神擊破', '流星群', '畫皮', '波導彈', '十項全能', '模仿', '變身'
+)
+
+def normalize_main_skill(skill_str):
+    if not skill_str:
+        return ""
+    s = str(skill_str).strip().replace('怪力钳', '怪力鉗')
+    for prefix in SPECIAL_SKILL_PREFIXES:
+        if s.startswith(prefix):
+            return prefix
+    return s
+
 def format_pct_fixed(val):
     if not val:
         return ""
@@ -138,15 +153,13 @@ for idx, r in enumerate(rows_ref):
     seconds_val = r[sync.REF_MAPPING['間隔'] - 1] if len(r) > (sync.REF_MAPPING['間隔'] - 1) else ""
     interval = sync.format_interval_str(seconds_val)
 
-    main_skill = sync.clean_val(r[sync.REF_MAPPING['主技能']])
-    if main_skill:
-        main_skill = main_skill.replace('怪力钳', '怪力鉗')
+    main_skill = normalize_main_skill(sync.clean_val(r[sync.REF_MAPPING['主技能']]))
     evo_req = sync.clean_val(r[sync.REF_MAPPING['進化需求']])
     is_final = sync.clean_val(r[sync.REF_MAPPING['最終']])
     if no == 429 or name_cn == '夢妖魔' or name_en == 'Mismagius':
         name_cn = '夢妖魔'
         is_final = '〇'
-        main_skill = '魔法火焰（料理躍進S）'
+        main_skill = '魔法火焰'
     if no == 94 or name_cn == '耿鬼':
         ing_rate = '16.60%'
 
@@ -221,11 +234,13 @@ for idx_p, p in enumerate(pokemons):
         for k in ("specialty", "sleep_type", "type", "carry", "ingredient_rate", "skill_rate", "interval", "main_skill", "evo_req"):
             if (not p.get(k) or p.get(k) == "--") and old_p.get(k):
                 p[k] = old_p[k]
+        p["main_skill"] = normalize_main_skill(p.get("main_skill", ""))
         if str(old_p.get("icon_url", "")).startswith("assets/"):
             p["icon_url"] = old_p["icon_url"]
 
 for pid_s, old_p in existing_by_id.items():
     if pid_s not in seen_ids:
+        old_p["main_skill"] = normalize_main_skill(old_p.get("main_skill", ""))
         pokemons.append(old_p)
 
 with open(out_file, "w", encoding="utf-8") as f:

@@ -8,7 +8,7 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
   let valueText = '';
   let dailyTotal = 0;
 
-  // 1. 健美（料理輔助S）
+  // 1. 健美 (食材獲取S + 料理成功S)
   if (s.includes('健美') || s.includes('料理輔助') || s.includes('Bulk Up') || s.includes('Cooking Support')) {
     const ingTable = [6, 8, 11, 14, 17, 21, 24];
     const tastyTable = [1, 2, 2, 3, 3, 4, 5];
@@ -17,7 +17,7 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const dailyIng = dailyTriggers * ingVal;
     const dailyTasty = dailyTriggers * tastyVal;
     dailyTotal = dailyIng;
-    label = isEN ? 'Bulk Up (Cooking Support S)' : '健美（料理輔助S）';
+    label = isEN ? 'Bulk Up' : '健美';
     valueText = isEN 
       ? `+${dailyIng.toFixed(1)} ings & +${dailyTasty.toFixed(1)}% Tasty` 
       : `+${dailyIng.toFixed(1)} 顆食材 & +${dailyTasty.toFixed(1)}% 大成功率`;
@@ -25,21 +25,38 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
       ? `single: ${ingVal} ings, +${tastyVal}% Tasty` 
       : `單次: ${ingVal} 顆食材, +${tastyVal}% 大成功率`;
   }
-  // 2. 正電（食材獲取S）
+  // 1b. 魔法火焰 (料理強化S + 料理成功S)
+  else if (s.includes('魔法火焰') || s.includes('料理躍進') || s.includes('Mystical Fire') || s.includes('Cooking Advance')) {
+    const potTable = [7, 10, 12, 17, 22, 27, 31];
+    const tastyTable = [1, 2, 2, 3, 3, 4, 5];
+    const potVal = potTable[Math.min(lvlIdx, potTable.length - 1)];
+    const tastyVal = tastyTable[Math.min(lvlIdx, tastyTable.length - 1)];
+    const dailyPot = dailyTriggers * potVal;
+    const dailyTasty = dailyTriggers * tastyVal;
+    dailyTotal = dailyPot;
+    label = isEN ? 'Mystical Fire' : '魔法火焰';
+    valueText = isEN 
+      ? `+${dailyPot.toFixed(1)} Pot & +${dailyTasty.toFixed(1)}% Tasty` 
+      : `+${dailyPot.toFixed(1)} 鍋子容量 & +${dailyTasty.toFixed(1)}% 大成功率`;
+    singleText = isEN 
+      ? `single: +${potVal} Pot, +${tastyVal}% Tasty` 
+      : `單次: +${potVal} 容量, +${tastyVal}% 大成功率`;
+  }
+  // 2. 正電
   else if (s.includes('正電') || s.includes('Plus')) {
     const table = [5, 7, 9, 12, 14, 16, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Plus (Magnet S)' : '正電（食材獲取S）';
+    label = isEN ? 'Plus' : '正電';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'extra ings' : '顆額外食材'}`;
     singleText = `${isEN ? 'base' : '單次基準'} ${singleVal} ${isEN ? 'ings (+teammate bonus)' : '顆 (+同伴加成)'}`;
   }
-  // 3. 禮物（食材獲取S）
+  // 3. 禮物
   else if (s.includes('禮物') || s.includes('Present')) {
     const table = [4, 6, 8, 11, 13, 15, 17];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Present (Magnet S)' : '禮物（食材獲取S）';
+    label = isEN ? 'Present' : '禮物';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'extra ings' : '顆額外食材'}`;
     singleText = `${isEN ? 'base' : '單次基準'} ${singleVal} ${isEN ? 'ings (+candy chance)' : '顆 (+機率糖果)'}`;
   }
@@ -48,25 +65,25 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [6, 8, 11, 14, 17, 21, 24];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Magnet S' : (s.includes('（') ? s : '食材獲取S');
+    label = isEN ? 'Magnet S' : '食材獲取S';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'extra ings' : '顆額外食材'}`;
     singleText = `${isEN ? 'yield' : '單次'} ${singleVal} ${isEN ? 'ings' : '顆'}`;
   }
-  // 5. 怪力鉗（食材精選S）
+  // 5. 怪力鉗
   else if (s.includes('怪力鉗') || s.includes('怪力钳') || s.includes('Hyper Cutter')) {
     const table = [5, 6, 8, 11, 13, 16, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Hyper Cutter (Draw S)' : '怪力鉗（食材精選S）';
+    label = isEN ? 'Hyper Cutter' : '怪力鉗';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'selected ings' : '顆專屬食材'}`;
     singleText = `${isEN ? 'base' : '單次基準'} ${singleVal} ${isEN ? 'ings (crit 2x)' : '顆 (暴擊2倍)'}`;
   }
-  // 6. 超幸運（食材精選S）
+  // 6. 超幸運
   else if (s.includes('超幸運') || s.includes('Super Luck')) {
     const table = [5, 6, 8, 11, 13, 16, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Super Luck (Draw S)' : '超幸運（食材精選S）';
+    label = isEN ? 'Super Luck' : '超幸運';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'selected ings' : '顆專屬食材'}`;
     singleText = `${isEN ? 'base' : '單次基準'} ${singleVal} ${isEN ? 'ings (crit Shards)' : '顆 (暴擊碎片)'}`;
   }
@@ -75,31 +92,31 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [5, 6, 8, 11, 13, 16, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Draw S' : (s.includes('（') ? s : '食材精選S');
+    label = isEN ? 'Draw S' : '食材精選S';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'selected ings' : '顆專屬食材'}`;
     singleText = `${isEN ? 'yield' : '單次'} ${singleVal} ${isEN ? 'ings' : '顆'}`;
   }
-  // 8. 精神擊破（樹果領域）
+  // 8. 精神擊破
   else if (s.includes('精神擊破') || s.includes('Psystrike')) {
     const table = [2640, 3753, 5178, 7149, 9870, 13638, 18515];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Psystrike (Berry Field)' : '精神擊破（樹果領域）';
+    label = isEN ? 'Psystrike' : '精神擊破';
     valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Strength + Berry Field' : '點能量 + 樹果領域'}`;
     singleText = `${isEN ? 'base' : '單次'} ${singleVal.toLocaleString()} ${isEN ? 'Str + Field' : '能量 + 領域'}`;
   }
-  // 9. 能量填充M
+  // 9. 能量填充M / 夢魘
   else if (s.includes('能量填充M') || s.includes('Charge Str. M') || s.includes('Charge Strength M') || s.includes('夢魘') || s.includes('Bad Dreams')) {
     const isBadDreams = s.includes('夢魘') || s.includes('Bad Dreams');
     const table = isBadDreams ? [2640, 3753, 5178, 7149, 9870, 13638, 18515] : [880, 1251, 1726, 2383, 3290, 4546, 6409];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? (isBadDreams ? 'Bad Dreams M' : 'Charge Str. M') : (s.includes('（') ? s : '能量填充M');
+    label = isEN ? (isBadDreams ? 'Bad Dreams' : 'Charge Str. M') : (isBadDreams ? '夢魘' : '能量填充M');
     valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Strength' : '點能量'}`;
     singleText = `${isEN ? 'base' : '單次'} ${singleVal.toLocaleString()} ${isEN ? 'Str' : '能量'}`;
   }
-  // 10. 能量填充S
-  else if (s.includes('能量填充S') || s.includes('Charge Str. S') || s.includes('Charge Strength S')) {
+  // 10. 能量填充S / 蓄力
+  else if (s.includes('能量填充S') || s.includes('Charge Str. S') || s.includes('Charge Strength S') || s.includes('蓄力') || s.includes('Stockpile')) {
     if (s.includes('隨機') || s.includes('Random')) {
       const table = [500, 712, 982, 1354, 1870, 2583, 4015];
       singleVal = table[Math.min(lvlIdx, table.length - 1)];
@@ -111,33 +128,33 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
       const table = [600, 853, 1177, 1625, 2243, 3099, 4502];
       singleVal = table[Math.min(lvlIdx, table.length - 1)];
       dailyTotal = dailyTriggers * singleVal;
-      label = isEN ? 'Stockpile' : '蓄力（能量填充S）';
+      label = isEN ? 'Stockpile' : '蓄力';
       valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Base Strength' : '點基準能量'}`;
       singleText = `${isEN ? 'base' : '單次蓄力'} ${singleVal.toLocaleString()} ${isEN ? 'Str' : '能量'}`;
     } else {
       const table = [400, 569, 785, 1083, 1496, 2066, 3212];
       singleVal = table[Math.min(lvlIdx, table.length - 1)];
       dailyTotal = dailyTriggers * singleVal;
-      label = isEN ? 'Charge Str. S' : (s.includes('（') ? s : '能量填充S');
+      label = isEN ? 'Charge Str. S' : '能量填充S';
       valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Strength' : '點能量'}`;
       singleText = `${isEN ? 'base' : '單次'} ${singleVal.toLocaleString()} ${isEN ? 'Str' : '能量'}`;
     }
   }
-  // 11. 新月祈禱（活力全體療癒S）
+  // 11. 新月祈禱
   else if (s.includes('新月祈禱') || s.includes('Lunar Prayer')) {
     const table = [3, 4, 5, 7, 9, 11];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Lunar Prayer' : '新月祈禱（活力全體療癒S）';
+    label = isEN ? 'Lunar Prayer' : '新月祈禱';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Team Energy + Berries' : '點全員活力 + 樹果'}`;
     singleText = `${isEN ? 'single' : '單次'} ${singleVal} ${isEN ? 'pts (+Psychic team berries)' : '點 (+超能力樹果)'}`;
   }
-  // 12. 樹果汁（活力全體療癒S）
+  // 12. 樹果汁
   else if (s.includes('樹果汁') || s.includes('Berry Juice')) {
     const table = [5, 7, 9, 11, 15, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Berry Juice (E4E S)' : '樹果汁（活力全體療癒S）';
+    label = isEN ? 'Berry Juice' : '樹果汁';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Team Energy' : '點全員活力'}`;
     singleText = `${isEN ? 'single' : '單次全員'} ${singleVal} ${isEN ? 'pts (+item chance)' : '點 (+機率產樹果汁)'}`;
   }
@@ -146,16 +163,16 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [5, 7, 9, 11, 15, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'E4E S' : (s.includes('（') ? s : '活力全體療癒S');
+    label = isEN ? 'E4E S' : '活力全體療癒S';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Team Energy' : '點全員活力'}`;
     singleText = `${isEN ? 'heal' : '單次'} ${singleVal} ${isEN ? 'pts' : '點'}`;
   }
-  // 14. 月光（活力充填S）
+  // 14. 月光
   else if (s.includes('月光') || s.includes('Moonlight')) {
     const table = [12, 16, 21, 26, 33, 43];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Moonlight (Charge Energy S)' : '月光（活力充填S）';
+    label = isEN ? 'Moonlight' : '月光';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Self Energy' : '點自身活力'}`;
     singleText = `${isEN ? 'single' : '單次自身'} ${singleVal} ${isEN ? 'pts (+ally on Tasty)' : '點 (大成功額外補隊友)'}`;
   }
@@ -164,25 +181,25 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [12, 16, 21, 26, 33, 43];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Charge Energy S' : (s.includes('（') ? s : '活力充填S');
+    label = isEN ? 'Charge Energy S' : '活力充填S';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Self Energy' : '點自身活力'}`;
     singleText = `${isEN ? 'heal' : '單次'} ${singleVal} ${isEN ? 'pts' : '點'}`;
   }
-  // 16. 治癒波動（活力療癒S）
+  // 16. 治癒波動
   else if (s.includes('治癒波動') || s.includes('Heal Pulse')) {
     const table = [6, 8, 11, 14, 18, 22];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal * 2;
-    label = isEN ? 'Heal Pulse (Cheer S)' : '治癒波動（活力療癒S）';
+    label = isEN ? 'Heal Pulse' : '治癒波動';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Energy (2 Allies)' : '點隊友活力 (2隻)'}`;
     singleText = `${isEN ? 'single: ' : '單次: 各'}${singleVal} ${isEN ? 'pts to 2 allies' : '點 (共2隻)'}`;
   }
-  // 17. 蹭蹭臉頰（活力療癒S）
+  // 17. 蹭蹭臉頰
   else if (s.includes('蹭蹭臉頰') || s.includes('Nuzzle')) {
     const table = [9, 12, 16, 20, 26, 35];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Nuzzle (Cheer S)' : '蹭蹭臉頰（活力療癒S）';
+    label = isEN ? 'Nuzzle' : '蹭蹭臉頰';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Ally Energy' : '點隊友活力'}`;
     singleText = `${isEN ? 'single' : '單次'} ${singleVal} ${isEN ? 'pts (+bonus proc chance)' : '點 (+機率追加發動)'}`;
   }
@@ -191,7 +208,7 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [12, 15, 20, 25, 33, 44];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Energizing Cheer S' : (s.includes('（') ? s : '活力療癒S');
+    label = isEN ? 'Energizing Cheer S' : '活力療癒S';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Ally Energy' : '點隊友活力'}`;
     singleText = `${isEN ? 'heal' : '單次'} ${singleVal} ${isEN ? 'pts' : '點'}`;
   }
@@ -213,17 +230,18 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Ally Helps' : '次隊友幫忙'}`;
     singleText = `${isEN ? 'yield' : '單次'} ${singleVal} ${isEN ? 'helps' : '次'}`;
   }
-  // 21. 樹果遽增 (excluding 精神擊破)
-  else if (s.includes('樹果遽增') || s.includes('Berry Burst') || s.includes('流星群') || s.includes('畫皮')) {
+  // 21. 樹果遽增 / 流星群 / 畫皮 (excluding 精神擊破)
+  else if (s.includes('樹果遽增') || s.includes('Berry Burst') || s.includes('流星群') || s.includes('Draco Meteor') || s.includes('畫皮') || s.includes('Disguise')) {
     const isMimikyu = s.includes('畫皮') || s.includes('Disguise');
+    const isDraco = s.includes('流星群') || s.includes('Draco Meteor');
     const table = isMimikyu ? [12, 18, 23, 29, 35, 41] : [15, 22, 29, 36, 43, 50];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Berry Burst' : (s.includes('（') ? s : '樹果遽增');
+    label = isEN ? (isMimikyu ? 'Disguise' : (isDraco ? 'Draco Meteor' : 'Berry Burst')) : (isMimikyu ? '畫皮' : (isDraco ? '流星群' : '樹果遽增'));
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Extra Berries' : '顆額外樹果'}`;
     singleText = `${isEN ? 'approx' : '單次約'} ${singleVal} ${isEN ? 'berries' : '顆'}`;
   }
-  // 22. 波導彈（夢之碎片獲取S）
+  // 22. 波導彈
   else if (s.includes('波導彈') || s.includes('Aura Sphere')) {
     const shardTable = [240, 340, 480, 670, 920, 1260, 1800, 2500];
     const strTable = [200, 280, 396, 552, 758, 1038, 1482, 2042];
@@ -232,7 +250,7 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const dailyShard = dailyTriggers * singleShard;
     const dailyStr = dailyTriggers * singleStr;
     dailyTotal = dailyShard;
-    label = isEN ? 'Aura Sphere (Shards S)' : '波導彈（夢之碎片獲取S）';
+    label = isEN ? 'Aura Sphere' : '波導彈';
     valueText = isEN 
       ? `+${Math.round(dailyShard).toLocaleString()} shards & +${Math.round(dailyStr).toLocaleString()} Str` 
       : `+${Math.round(dailyShard).toLocaleString()} 碎片 & +${Math.round(dailyStr).toLocaleString()} 能量`;
@@ -253,17 +271,17 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
       const table = [240, 340, 480, 670, 920, 1260, 1800, 2500];
       singleVal = table[Math.min(lvlIdx, table.length - 1)];
       dailyTotal = dailyTriggers * singleVal;
-      label = isEN ? 'Dream Shards S' : (s.includes('（') ? s : '夢之碎片獲取S');
+      label = isEN ? 'Dream Shards S' : '夢之碎片獲取S';
       valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Dream Shards' : '個夢之碎片'}`;
       singleText = `${isEN ? 'yield' : '單次'} ${singleVal.toLocaleString()} ${isEN ? 'shards' : '碎片'}`;
     }
   }
-  // 24. 負電（料理強化S）
+  // 24. 負電
   else if (s.includes('負電') || s.includes('Minus')) {
     const table = [5, 7, 9, 12, 16, 20, 24];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Minus (Cooking Power Up S)' : '負電（料理強化S）';
+    label = isEN ? 'Minus' : '負電';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Pot Space' : '鍋子容量'}`;
     singleText = `${isEN ? 'single' : '單次'} +${singleVal} ${isEN ? 'cap (+energy heal)' : '容量 (+同伴回復)'}`;
   }
@@ -272,24 +290,26 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [7, 10, 12, 17, 22, 27, 31];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Cooking Power Up S' : (s.includes('（') ? s : '料理強化S');
+    label = isEN ? 'Cooking Power Up S' : '料理強化S';
     valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Pot Space' : '鍋子容量'}`;
     singleText = `${isEN ? 'boost' : '單次'} +${singleVal} ${isEN ? 'capacity' : '容量'}`;
   }
-  // 26. 料理成功S (not including 健美)
+  // 26. 料理成功S (not including 健美 / 魔法火焰)
   else if (s.includes('料理成功') || s.includes('Tasty Chance')) {
     const table = [4, 5, 6, 7, 8, 10];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Tasty Chance S' : (s.includes('（') ? s : '料理成功S');
+    label = isEN ? 'Tasty Chance S' : '料理成功S';
     valueText = `+${dailyTotal.toFixed(1)}% ${isEN ? 'Tasty Chance' : '大成功機率'}`;
     singleText = `${isEN ? 'boost' : '單次'} +${singleVal}%`;
   }
   // 27. 揮指 / 模仿 / 變身 / 十項全能
-  else if (s.includes('揮指') || s.includes('Metronome') || s.includes('模仿') || s.includes('變身') || s.includes('十項全能')) {
+  else if (s.includes('揮指') || s.includes('Metronome') || s.includes('模仿') || s.includes('Mimic') || s.includes('變身') || s.includes('Transform') || s.includes('十項全能') || s.includes('All-Rounder')) {
     singleVal = 1;
     dailyTotal = dailyTriggers;
-    label = isEN ? 'Metronome' : (s.includes('變身') ? '變身' : (s.includes('模仿') ? '模仿' : '揮指'));
+    label = isEN
+      ? (s.includes('變身') || s.includes('Transform') ? 'Transform' : (s.includes('模仿') || s.includes('Mimic') ? 'Mimic' : (s.includes('十項全能') || s.includes('All-Rounder') ? 'All-Rounder' : 'Metronome')))
+      : (s.includes('變身') ? '變身' : (s.includes('模仿') ? '模仿' : (s.includes('十項全能') ? '十項全能' : '揮指')));
     valueText = isEN ? 'Random / Mimic Skill Effect' : '隨機/複製發動各類主技能';
     singleText = isEN ? 'variable' : '隨機觸發';
   } else if (s) {

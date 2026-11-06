@@ -2482,7 +2482,7 @@ SP 4,316
 
     const mawile = dataJson.find(p => String(p.id) === '303');
     assert(mawile, 'data.json must contain ID 303 (Mawile)');
-    assert(mawile.main_skill === '怪力鉗（食材精選S）', 'Mawile main skill must be Traditional Chinese 怪力鉗（食材精選S）');
+    assert(mawile.main_skill === '怪力鉗', 'Mawile main skill must be Traditional Chinese 怪力鉗 without parentheses');
     assert(!dataJson.some(p => p.main_skill && p.main_skill.includes('怪力钳')), 'data.json must not contain simplified 怪力钳');
 
     // 2. data/sleep_styles.json 100% coverage and parenthesis aliases

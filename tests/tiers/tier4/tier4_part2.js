@@ -210,7 +210,7 @@ SP 6,920
   assert(searchInput.value.includes('赫拉克羅斯'), 'Modal Pokémon input must display 赫拉克羅斯');
   assert(searchInput.value.includes('214'), 'Modal Pokémon input must display No.214');
   assertEquals(nameHidden.value, '赫拉克羅斯', 'Modal hidden name must be 赫拉克羅斯');
-  assertEquals(mainSkillEl.textContent, '健美（料理輔助S）', 'Modal main skill name badge must display 健美（料理輔助S）');
+  assertEquals(mainSkillEl.textContent, '健美', 'Modal main skill name badge must display 健美 without parentheses');
   assertEquals(levelInput.value, 52, 'Modal level input must be 52');
   assertEquals(natureSelect.value, '慎重', 'Modal nature select must be 慎重');
   assertEquals(ing1Hidden.value, '甜甜蜜', 'Modal Ing 1 must be 甜甜蜜');
@@ -2699,10 +2699,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     // 2. Verify Mawile skill typo fix in data.json
     const mawile = pkmData.find(p => p.id === '303' || p.name_cn === '大嘴娃' || p.name_en === 'Mawile');
     assert(mawile !== undefined, 'Mawile (#303) must exist in data.json');
-    assertEquals(mawile.main_skill, '怪力鉗（食材精選S）', 'Mawile main_skill must be Traditional Chinese 怪力鉗 (not 怪力钳)');
+    assertEquals(mawile.main_skill, '怪力鉗', 'Mawile main_skill must be Traditional Chinese 怪力鉗 without parentheses');
 
-    // 3. Verify getPokedexMainSkillYield for 健美（料理輔助S）
-    const bulkUpYield = PokemonApp.getPokedexMainSkillYield('健美（料理輔助S）', 1, 2.0, false);
+    // 3. Verify getPokedexMainSkillYield for 健美
+    const bulkUpYield = PokemonApp.getPokedexMainSkillYield('健美', 1, 2.0, false);
     assert(bulkUpYield.mainSkillValueText.includes('顆食材') && bulkUpYield.mainSkillValueText.includes('大成功率'), '健美 yield must include both ingredients and tasty chance');
     assertEquals(bulkUpYield.mainSkillValueText, '+12.0 顆食材 & +2.0% 大成功率', 'Lv1 健美 with 2 triggers should be 12.0 ings and 2.0% tasty');
     assert(bulkUpYield.mainSkillSingleText.includes('6 顆食材') && bulkUpYield.mainSkillSingleText.includes('+1% 大成功率'), '健美 Lv1 single should be 6 ings, +1% tasty');

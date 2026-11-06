@@ -11,8 +11,8 @@
  */
 
 // 歷史快取標記：用於 activate 事件自動清理歷史舊版快取 pksleep-img-cache-v1 與 pksleep-static-cache-v1
-const IMG_CACHE_NAME = 'pksleep-img-cache-v20261106_02';
-const STATIC_CACHE_NAME = 'pksleep-static-v20261106_02';
+const IMG_CACHE_NAME = 'pksleep-img-cache-v20261106_03';
+const STATIC_CACHE_NAME = 'pksleep-static-v20261106_03';
 const VALID_CACHES = [IMG_CACHE_NAME, STATIC_CACHE_NAME];
 
 self.addEventListener('install', (event) => {

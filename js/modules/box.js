@@ -1995,12 +1995,12 @@
     }
 
     // 3. 食材系列（獲取、精選、怪力鉗、超幸運、正電、禮物）：官方上限 Lv. 7
-    if (clean.includes('食材獲取') || clean.includes('食材精選') || clean.includes('Ingredient') || clean.includes('怪力钳') || clean.includes('超幸運') || clean.includes('正電') || clean.includes('禮物')) {
+    if (clean.includes('食材獲取') || clean.includes('食材精選') || clean.includes('Ingredient') || clean.includes('怪力鉗') || clean.includes('怪力钳') || clean.includes('超幸運') || clean.includes('正電') || clean.includes('禮物')) {
       return 7;
     }
 
-    // 4. 料理鍋系列：料理強化為 Lv. 7，料理成功為 Lv. 6
-    if (clean.includes('料理強化') || clean.includes('Cooking Power') || clean.includes('負電')) {
+    // 4. 料理鍋系列：料理強化 / 負電 / 魔法火焰 為 Lv. 7，料理成功為 Lv. 6
+    if (clean.includes('料理強化') || clean.includes('Cooking Power') || clean.includes('負電') || clean.includes('魔法火焰') || clean.includes('Mystical Fire') || clean.includes('料理躍進')) {
       return 7;
     }
     if (clean.includes('料理成功') || clean.includes('Extra Tasty')) {
@@ -2110,11 +2110,11 @@
 
     const skillName = p ? (p.main_skill || '--') : '--';
     if (skillEl) {
-      const displaySkillName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getSkillName === 'function') 
-        ? window.I18N.getSkillName(skillName) 
-        : skillName;
+      const displaySkillName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function') 
+        ? window.I18N.getMainSkillName(skillName) 
+        : (typeof window !== 'undefined' && typeof window.stripSpecialSkillParens === 'function' ? window.stripSpecialSkillParens(skillName) : skillName);
       skillEl.textContent = displaySkillName;
-      skillEl.setAttribute('title', skillName);
+      skillEl.setAttribute('title', displaySkillName);
     }
 
     if (skillLevelSelect) {
