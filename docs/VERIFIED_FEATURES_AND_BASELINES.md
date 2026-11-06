@@ -36,6 +36,8 @@
    - 當修改任何 `.js` 或 `.css` 檔案時，必須同步在 `index.html` 與 `app/index.html` 更新對應的版本查詢參數（如 `?v=20261020_01`），確保線上 GitHub Pages 使用者即時獲取最新檔案。
 5. **雙向共享文件同步鐵則**：
    - 修改任何專案文件後，必須同步更新 `docs/` 與全域 `~/.gemini/agent-docs/projects/pokemon-sleep-app/` 目錄。
+6. **修改完成強制自動推送 GitHub 鐵則 (Mandatory Commit & Push)**：
+   - 任何程式碼、資料或文件修改並通過測試驗證後，**必須自動執行 `git add`、`git commit` 與 `git push origin main`**，嚴禁將修改僅留在本機工作區而不推送至遠端。
 
 ---
 
