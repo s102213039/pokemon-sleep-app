@@ -159,7 +159,7 @@
       const islName = isEN ? isl.name_en : isl.name;
       return `
         <button type="button" class="island-tab-btn ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', false)" title="${islName}" aria-label="${islName}">
-          <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy">
+          <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
           <span class="island-tab-indicator"></span>
         </button>
       `;
@@ -173,7 +173,7 @@
       return `
         <button type="button" class="island-tab-btn island-tab-ex-item ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', true)" title="${islName}" aria-label="${islName}">
           <div class="island-tab-thumb-wrapper">
-            <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy">
+            <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
             <span class="island-tab-ex-tag">EX</span>
           </div>
           <span class="island-tab-indicator"></span>
@@ -197,7 +197,7 @@
         const typeLabel = isEN ? (window.I18N && window.I18N.getTypeName ? window.I18N.getTypeName(rawType) : rawType) : rawType;
         return `
           <div class="island-berry-chip island-berry-icon-only" title="${displayName} (${typeLabel})">
-            ${iconSrc ? `<img src="${iconSrc}" class="island-berry-icon" alt="${displayName}" loading="lazy">` : ''}
+            ${iconSrc ? `<img src="${iconSrc}" class="island-berry-icon" alt="${displayName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">` : ''}
           </div>
         `;
       }).join('');
@@ -467,7 +467,7 @@
     const sceneSrc = islandSceneSrc(island);
     return `
       <div class="island-scene-layer" aria-hidden="true">
-        <img class="island-scene-photo" src="${sceneSrc}" alt="">
+        <img class="island-scene-photo" src="${sceneSrc}" alt="" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
         <div class="island-scene-fade"></div>
       </div>
       <div class="island-nav-strip">

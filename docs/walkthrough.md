@@ -2565,4 +2565,43 @@
 - `~/.gemini/agent-docs/PROTOCOL.md`：新增第十一條（自動提交推送）與第十二條（異質多代理協作分工協議）。
 - `~/.gemini/agent-docs/projects/pokemon-sleep-app/`：同步更新專案紀錄。
 
+---
+
+### [2026-11-06] 全站圖片死圖修復與本地資源自主託管架構重構
+
+#### 1. 根本原因診斷與排查
+- **Service Worker 跨域 Opaque 回應快取污染**：
+  - 過去所有道具、島嶼、樹果、食材、料理與寶可夢頭像直接外鏈至 `https://www.serebii.net/...`。
+  - 瀏覽器跨域 `<img src="...">` 預設為 `no-cors`，當 Serebii 因頻繁請求回傳 403 / 429 限流或 503 時，瀏覽器回傳 `type: 'opaque'`（status 0）。
+  - `sw.js` 舊版邏輯快取了 `type === 'opaque'`，導致使用者本地 CacheStorage 永久快取錯誤黑屏/死圖，且 `fetch` 失敗時 `respondWith(undefined)` 觸發載入崩潰。
+- **外部圖床依賴脆弱性與 Serebii 上游 404**：
+  - 本地過去僅存在 #200 與 #429 兩張頭像，其餘 410 張圖片全數熱鏈 Serebii。
+  - Serebii 上游官方對於 #546 木棉球、#547 風妖精頭像，以及一口堅果新食材與 3 種堅果新料理回傳 HTTP 404，造成道具百科太陽之石對應寶可夢出現藍色死圖點。
+
+#### 2. 架構重構與實施方案
+- **全站靜態資源本地自主託管 (Self-Hosted Local Mirror)**：
+  - 撰寫 `scripts/sync_local_assets.js`，將全站 410 個外部圖床靜態資源完整鏡像下載至本地 `assets/`：
+    - `assets/items/`：37 項完整道具圖示（含單引號別名雙重備份）。
+    - `assets/berries/`：18 種樹果圖示。
+    - `assets/ingredients/`：20 種食材圖示（含一口堅果備援）。
+    - `assets/meals/`：83 種料理圖示（含 3 種一口堅果料理備援）。
+    - `assets/pokemon/icon/`：247 隻完整寶可夢頭像（#546、#547 自 PokeAPI 官方高清來源補齊）。
+    - `assets/islands/original/`：7 大營地原圖。
+- **Service Worker 本地同源鏡像優先與嚴格防護 (`sw.js`)**：
+  - 升級快取標籤至 `pksleep-img-cache-v20261106_04` 與 `pksleep-static-v20261106_04`。
+  - 實作 `mapSerebiiToLocalRelPath(url)`，在 Service Worker 層自動將任何 Serebii 圖床請求直接重定向至本地同源 `assets/` 鏡像。
+  - 嚴格快取驗證：僅在 `ok && status === 200 && type !== 'opaque'` 時寫入快取，徹底阻絕 Opaque 錯誤污染；網路離線時回傳安全 SVG 佔位圖，杜絕白屏中斷。
+- **通用圖片載入錯誤安全降級機制 (`pokedex_base.js` & `wiki_items.js` & `wiki_camps_render.js`)**：
+  - 實作 `mapExternalToLocalAsset` 與全域 Capture-Phase 錯誤攔截器 `window.addEventListener('error', ..., true)`。
+  - 道具百科、島嶼營地標籤、喜好樹果、營地背景與寶可夢頭像遇圖片載入失敗時，自動清除污染快取並瞬間切換至本地 `assets/` 鏡像。
+- **靜態資源版本標籤同步升級**：
+  - `index.html` 與 `app/index.html` 之 min.js / min.css 查詢字串同步升級至 `?v=20261106_04`，啟動時主動清理舊版歷史快取。
+
+#### 3. 測試與驗證結果
+- 執行 `node scripts/build_all.js` 與 `node scripts/build_prod.js` 完成 16 項資產壓縮。
+- 執行 `python3 scripts/generate_manifest.py` 重新生成資料雜湊。
+- `npm run test:fast`：**156 / 156 Passed (0 Failed)**。
+- Tier 4 快取與重要情境測試：**100% Passed**。
+
+
 

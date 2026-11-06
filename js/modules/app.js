@@ -159,11 +159,65 @@ function isFinalEvolution(p) {
 }
 
 /**
- * 寶可夢頭像載入錯誤安全降級 (Safe Fallback Loader)
- * 優先載入本地 assets/pokemon/icon/ 圖示；若仍失敗則降級為乾淨 SVG 向量圖，杜絕加載全身立繪大圖
+ * 將外部 Serebii 圖床網址映射為本地 assets/ 相對路徑
+ * 支援：pokemon/icon、items、itemdex/sprites、locations、berries、ingredients、meals、star.png
  */
-function handlePokemonIconError(img) {
+function mapExternalToLocalAsset(rawUrl) {
+  if (!rawUrl || typeof rawUrl !== 'string') return '';
+  let cleanUrl = rawUrl.split('?')[0].split('#')[0];
+  try {
+    cleanUrl = decodeURIComponent(cleanUrl);
+  } catch (e) {}
+  const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__)
+    ? window.__DATA_BASE_PATH__
+    : ((typeof window !== 'undefined' && window.location && window.location.pathname && window.location.pathname.includes('/app/')) ? '../' : '');
+
+  if (cleanUrl.includes('/pokemonsleep/pokemon/icon/')) {
+    const fn = cleanUrl.split('/pokemonsleep/pokemon/icon/')[1];
+    if (fn) return `${base}assets/pokemon/icon/${fn}`;
+  }
+  if (cleanUrl.includes('/pokemonsleep/items/')) {
+    const fn = cleanUrl.split('/pokemonsleep/items/')[1];
+    if (fn) return `${base}assets/items/${fn.replace(/'/g, '')}`;
+  }
+  if (cleanUrl.includes('/itemdex/sprites/')) {
+    const fn = cleanUrl.split('/itemdex/sprites/')[1];
+    if (fn) return `${base}assets/items/${fn.replace(/'/g, '')}`;
+  }
+  if (cleanUrl.includes('/pokemonsleep/locations/')) {
+    const fn = cleanUrl.split('/pokemonsleep/locations/')[1];
+    if (fn) {
+      const stem = fn.replace(/\.(jpg|jpeg|png|webp)$/i, '');
+      return `${base}assets/islands/original/${stem}-location.jpg`;
+    }
+  }
+  if (cleanUrl.includes('/pokemonsleep/berries/')) {
+    const fn = cleanUrl.split('/pokemonsleep/berries/')[1];
+    if (fn) return `${base}assets/berries/${fn}`;
+  }
+  if (cleanUrl.includes('/pokemonsleep/ingredients/')) {
+    const fn = cleanUrl.split('/pokemonsleep/ingredients/')[1];
+    if (fn) return `${base}assets/ingredients/${fn}`;
+  }
+  if (cleanUrl.includes('/pokemonsleep/meals/')) {
+    const fn = cleanUrl.split('/pokemonsleep/meals/')[1];
+    if (fn) return `${base}assets/meals/${fn}`;
+  }
+  if (cleanUrl.endsWith('/pokemonsleep/star.png')) {
+    return `${base}assets/star.png`;
+  }
+  return '';
+}
+
+/**
+ * 全站通用圖片載入錯誤安全降級 (Universal Asset Fallback Loader)
+ * 自動清除污染快取並優先切換至同源本地 assets/ 鏡像；若仍失敗則降級為乾淨 SVG 向量圖
+ */
+function handleAssetImageError(img) {
   if (!img) return;
+  const currentSrc = img.getAttribute ? (img.getAttribute('src') || img.src || '') : (img.src || '');
+  if (!currentSrc || currentSrc.startsWith('data:image/svg+xml')) return;
+
   if (typeof caches !== 'undefined' && img.src) {
     try {
       caches.keys().then(keys => {
@@ -175,10 +229,20 @@ function handlePokemonIconError(img) {
       }).catch(() => {});
     } catch (e) {}
   }
+
+  if (!img.dataset) img.dataset = {};
   if (!img.dataset.fb) {
     img.dataset.fb = '1';
+    if (img.style && img.style.opacity === '0.3') {
+      img.style.opacity = '';
+    }
+    const mappedLocal = mapExternalToLocalAsset(currentSrc) || mapExternalToLocalAsset(img.src || '');
+    if (mappedLocal) {
+      img.src = mappedLocal;
+      return;
+    }
     const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
-    const srcParts = (img.src || '').split('/');
+    const srcParts = (img.src || currentSrc || '').split('/');
     const rawFilename = srcParts[srcParts.length - 1] || '';
     const cleanFn = rawFilename.split('?')[0] || '';
     if (cleanFn) {
@@ -186,8 +250,17 @@ function handlePokemonIconError(img) {
       return;
     }
   }
+  img.dataset.fb = '2';
   img.src = DEFAULT_SVG_ICON;
   img.onerror = null;
+}
+
+/**
+ * 寶可夢頭像載入錯誤安全降級 (Safe Fallback Loader)
+ * 優先載入本地 assets/pokemon/icon/ 圖示；若仍失敗則降級為乾淨 SVG 向量圖，杜絕加載全身立繪大圖
+ */
+function handlePokemonIconError(img) {
+  handleAssetImageError(img);
 }
 
 // 全站統一掛載 window.getItemIcon 作為各分頁（圖鑑、倉庫、島嶼、深度研究室、道具百科）唯一寶可夢圖示來源
@@ -195,10 +268,38 @@ if (typeof window !== 'undefined') {
   window.getItemIcon = getIconUrl;
   window.isFinalEvolution = isFinalEvolution;
   window.handlePokemonIconError = handlePokemonIconError;
+  window.handleAssetImageError = handleAssetImageError;
+  window.mapExternalToLocalAsset = mapExternalToLocalAsset;
   if (!window.PokemonApp) window.PokemonApp = {};
   window.PokemonApp.getItemIcon = getIconUrl;
   window.PokemonApp.isFinalEvolution = isFinalEvolution;
   window.PokemonApp.handlePokemonIconError = handlePokemonIconError;
+  window.PokemonApp.handleAssetImageError = handleAssetImageError;
+  window.PokemonApp.mapExternalToLocalAsset = mapExternalToLocalAsset;
+
+  // 全域 Capture-Phase 圖片錯誤攔截器：確保全站所有分頁 (含未手動綁定 onerror 之道具、島嶼、樹果、食材、食譜) 一律自動降級至本地 assets/
+  if (typeof window.addEventListener === 'function' && !window.__PK_IMG_ERROR_GUARD__) {
+    window.__PK_IMG_ERROR_GUARD__ = true;
+    window.addEventListener('error', function (ev) {
+      const target = ev && ev.target;
+      if (target && target.tagName === 'IMG') {
+        handleAssetImageError(target);
+      }
+    }, true);
+  }
+
+  // 啟動時主動清除所有舊版或曾遭 Opaque 回應污染的歷史圖片快取 (pksleep-img-cache)
+  if (typeof caches !== 'undefined' && typeof caches.keys === 'function') {
+    try {
+      caches.keys().then(function (keys) {
+        keys.forEach(function (k) {
+          if ((k.startsWith('pksleep-img-cache') || k.startsWith('pksleep-static')) && !k.endsWith('20261106_04')) {
+            caches.delete(k).catch(function () {});
+          }
+        });
+      }).catch(function () {});
+    } catch (e) {}
+  }
 }
 
 function getItemHelpInterval(p) {

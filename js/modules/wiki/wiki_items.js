@@ -382,7 +382,7 @@
       <div class="wiki-item-card" data-item-id="${item.id}" onclick="window.WikiDB.openItemDetailModal('${item.id}')" role="button" tabindex="0">
         <div class="wiki-item-card-header">
           <div class="wiki-item-card-icon-wrap">
-            <img src="${iconUrl}" class="wiki-item-card-icon" alt="${name}" loading="lazy" onerror="this.style.opacity='0.3'" />
+            <img src="${iconUrl}" class="wiki-item-card-icon" alt="${name}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}else{this.style.opacity='0.3';}" />
           </div>
           <div class="wiki-item-card-title-group">
             <h4 class="wiki-item-card-name" title="${name}">${name}</h4>
@@ -558,7 +558,7 @@
           <div class="box-modal-header wiki-item-modal-header">
             <div class="wiki-item-modal-title-group">
               <div class="wiki-item-modal-icon-wrap" id="wiki-item-modal-icon-wrap">
-                <img id="wiki-item-modal-icon" class="wiki-item-modal-icon" src="" alt="Item" loading="lazy">
+                <img id="wiki-item-modal-icon" class="wiki-item-modal-icon" src="" alt="Item" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}else{this.style.opacity='0.3';}">
               </div>
               <div class="wiki-item-modal-heading">
                 <div class="wiki-item-modal-title-row">
@@ -603,6 +603,13 @@
     if (iconEl) {
       iconEl.src = iconUrl;
       iconEl.alt = name;
+      iconEl.onerror = function() {
+        if (typeof handleAssetImageError === 'function') {
+          handleAssetImageError(this);
+        } else {
+          this.style.opacity = '0.3';
+        }
+      };
     }
 
     const titleEl = modal.querySelector('#wiki-item-modal-title');

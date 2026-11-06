@@ -5746,7 +5746,7 @@
       const islName = isEN ? isl.name_en : isl.name;
       return `
         <button type="button" class="island-tab-btn ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', false)" title="${islName}" aria-label="${islName}">
-          <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy">
+          <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
           <span class="island-tab-indicator"></span>
         </button>
       `;
@@ -5760,7 +5760,7 @@
       return `
         <button type="button" class="island-tab-btn island-tab-ex-item ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', true)" title="${islName}" aria-label="${islName}">
           <div class="island-tab-thumb-wrapper">
-            <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy">
+            <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
             <span class="island-tab-ex-tag">EX</span>
           </div>
           <span class="island-tab-indicator"></span>
@@ -5784,7 +5784,7 @@
         const typeLabel = isEN ? (window.I18N && window.I18N.getTypeName ? window.I18N.getTypeName(rawType) : rawType) : rawType;
         return `
           <div class="island-berry-chip island-berry-icon-only" title="${displayName} (${typeLabel})">
-            ${iconSrc ? `<img src="${iconSrc}" class="island-berry-icon" alt="${displayName}" loading="lazy">` : ''}
+            ${iconSrc ? `<img src="${iconSrc}" class="island-berry-icon" alt="${displayName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">` : ''}
           </div>
         `;
       }).join('');
@@ -6054,7 +6054,7 @@
     const sceneSrc = islandSceneSrc(island);
     return `
       <div class="island-scene-layer" aria-hidden="true">
-        <img class="island-scene-photo" src="${sceneSrc}" alt="">
+        <img class="island-scene-photo" src="${sceneSrc}" alt="" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
         <div class="island-scene-fade"></div>
       </div>
       <div class="island-nav-strip">
@@ -7936,7 +7936,7 @@
       <div class="wiki-item-card" data-item-id="${item.id}" onclick="window.WikiDB.openItemDetailModal('${item.id}')" role="button" tabindex="0">
         <div class="wiki-item-card-header">
           <div class="wiki-item-card-icon-wrap">
-            <img src="${iconUrl}" class="wiki-item-card-icon" alt="${name}" loading="lazy" onerror="this.style.opacity='0.3'" />
+            <img src="${iconUrl}" class="wiki-item-card-icon" alt="${name}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}else{this.style.opacity='0.3';}" />
           </div>
           <div class="wiki-item-card-title-group">
             <h4 class="wiki-item-card-name" title="${name}">${name}</h4>
@@ -8112,7 +8112,7 @@
           <div class="box-modal-header wiki-item-modal-header">
             <div class="wiki-item-modal-title-group">
               <div class="wiki-item-modal-icon-wrap" id="wiki-item-modal-icon-wrap">
-                <img id="wiki-item-modal-icon" class="wiki-item-modal-icon" src="" alt="Item" loading="lazy">
+                <img id="wiki-item-modal-icon" class="wiki-item-modal-icon" src="" alt="Item" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}else{this.style.opacity='0.3';}">
               </div>
               <div class="wiki-item-modal-heading">
                 <div class="wiki-item-modal-title-row">
@@ -8157,6 +8157,13 @@
     if (iconEl) {
       iconEl.src = iconUrl;
       iconEl.alt = name;
+      iconEl.onerror = function() {
+        if (typeof handleAssetImageError === 'function') {
+          handleAssetImageError(this);
+        } else {
+          this.style.opacity = '0.3';
+        }
+      };
     }
 
     const titleEl = modal.querySelector('#wiki-item-modal-title');
