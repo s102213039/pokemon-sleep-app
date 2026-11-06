@@ -180,7 +180,9 @@
 
   function getRemainingEvolutions(pkm) {
     if (!pkm) return 0;
-    const isFinal = pkm.is_final === '〇' || pkm.is_final === 'O' || pkm.is_final === 'o' || pkm.is_final === true || pkm.is_final === '1';
+    const isFinal = (typeof isFinalEvolution === 'function')
+      ? isFinalEvolution(pkm)
+      : (pkm.is_final === '〇' || pkm.is_final === 'O' || pkm.is_final === 'o' || pkm.is_final === true || pkm.is_final === '1');
     if (isFinal) return 0;
     const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name;
     if (THREE_STAGE_BASE_NAMES.has(name)) return 2;

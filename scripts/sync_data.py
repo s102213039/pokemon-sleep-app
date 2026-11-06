@@ -160,88 +160,24 @@ def sync_to_user_google_sheet(data: list) -> bool:
 def sync_pokemon_data() -> bool:
     """
     同步寶可夢資料。
-    主要邏輯：對比現有 data.json 的 ID 清單，
-    嘗試補充新增寶可夢（只新增，不覆蓋現有資料）。
+    直接調用 build_webapp_data.py 由 Google Sheets 最新數據來源進行全量解析與重構，
+    確保包含食材清單、解鎖數量、食材率、技能率、幫忙間隔以及既有數值微調（如耿鬼 buff）均能即時同步。
     """
-    requests = try_import('requests')
-    if not requests:
-        log.error('請先安裝 requests: pip install requests')
-        return False
-
-    current = load_json(DATA_JSON)
-    existing_ids = {p.get('id') for p in current if p.get('id')}
-    log.info(f'現有寶可夢數量：{len(current)}')
-
-    # 嘗試從 Google Sheets CSV 取得最新清單
+    import subprocess
+    log.info('正在調用 build_webapp_data.py 全量重構寶可夢資料...')
+    cmd = [sys.executable, str(REPO_ROOT / 'scripts' / 'build_webapp_data.py')]
     try:
-        import csv
-        import io
-        resp = requests.get(GSHEETS_POKEMON_CSV, timeout=30)
-        resp.raise_for_status()
-        reader = csv.DictReader(io.StringIO(resp.text))
-        new_count = 0
-        for row in reader:
-            pid = row.get('id') or row.get('ID') or row.get('No.')
-            if not pid:
-                continue
-            try:
-                pid = int(pid)
-            except ValueError:
-                continue
-            if pid in existing_ids:
-                continue
-            name_cn = row.get('name_cn', row.get('中文名', ''))
-            if pid == 7054 or name_cn == '烏波（阿羅拉的樣子）':
-                name_cn = '烏波（帕底亞的樣子）'
-            main_skill = row.get('main_skill', '')
-            if '怪力钳' in main_skill:
-                main_skill = main_skill.replace('怪力钳', '怪力鉗')
-
-            # 新增寶可夢
-            new_entry = {
-                'id':             pid,
-                'formatted_no':   str(pid).zfill(4),
-                'name_cn':        name_cn,
-                'name_en':        row.get('name_en', row.get('英文名', '')),
-                'name_jp':        row.get('name_jp', ''),
-                'type':           row.get('type', row.get('屬性', '')),
-                'specialty':      row.get('specialty', row.get('得意', '')),
-                'carry':          row.get('carry', row.get('持有', '')),
-                'ingredient_rate':row.get('ingredient_rate', ''),
-                'skill_rate':     row.get('skill_rate', ''),
-                'interval':       row.get('interval', ''),
-                'main_skill':     main_skill,
-                'icon_url':       get_icon_url(pid, str(pid).zfill(4) if pid < 1000 else str(pid)),
-                'ingredients':    []  # 需另行補充食材資料
-            }
-            current.append(new_entry)
-            existing_ids.add(pid)
-            new_count += 1
-            log.info(f'  新增寶可夢：#{pid} {new_entry["name_cn"]}')
-
-        # 稽核並正規化既有資料
-        corrected_count = 0
-        for p in current:
-            if p.get('id') == 7054 and p.get('name_cn') != '烏波（帕底亞的樣子）':
-                p['name_cn'] = '烏波（帕底亞的樣子）'
-                corrected_count += 1
-            if '怪力钳' in p.get('main_skill', ''):
-                p['main_skill'] = p['main_skill'].replace('怪力钳', '怪力鉗')
-                corrected_count += 1
-
-        if new_count > 0 or corrected_count > 0:
-            current.sort(key=lambda p: p.get('id', 9999))
-            save_json(DATA_JSON, current)
-            log.info(f'[OK] 新增 {new_count} 隻寶可夢，校正 {corrected_count} 筆資料')
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        if res.returncode == 0:
+            log.info('[OK] 寶可夢資料庫成功重構並更新至 data/data.json')
+            current = load_json(DATA_JSON)
+            sync_to_user_google_sheet(current)
+            return True
         else:
-            log.info('[OK] 寶可夢資料無需更新')
-            
-        # 同步更新至用戶的 Google Sheet (如果有設定 GCP_SA_KEY)
-        sync_to_user_google_sheet(current)
-        return True
-
+            log.error(f'[ERROR] build_webapp_data.py 執行失敗: {res.stderr or res.stdout}')
+            return False
     except Exception as e:
-        log.error(f'[ERROR] 同步寶可夢資料失敗：{e}')
+        log.error(f'[ERROR] 執行 build_webapp_data.py 異常: {e}')
         return False
 
 
@@ -267,7 +203,8 @@ ING_MAP = {
     'greengrasscorn': {'name': '萌綠玉米', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png'},
     'rousingcoffee': {'name': '醒腦咖啡豆', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png'},
     'glossyavocado': {'name': '嫩亮酪梨', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png'},
-    'plumppumpkin': {'name': '沉甸甸南瓜', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png'}
+    'plumppumpkin': {'name': '沉甸甸南瓜', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png'},
+    'snackablenuts': {'name': '一口堅果', 'icon': 'assets/ingredients/snackablenuts.svg'}
 }
 
 NAME_CN_MAP = {
@@ -448,6 +385,12 @@ def sync_recipes_data() -> bool:
                 })
 
         if len(all_dishes) > 0:
+            existing_dishes = load_json(RECIPES_JSON)
+            seen_cn = {d.get('name_cn') for d in all_dishes if d.get('name_cn')}
+            seen_en = {str(d.get('name_en', '')).lower() for d in all_dishes if d.get('name_en')}
+            for ed in existing_dishes:
+                if ed.get('name_cn') not in seen_cn and str(ed.get('name_en', '')).lower() not in seen_en:
+                    all_dishes.append(ed)
             save_json(RECIPES_JSON, all_dishes)
             log.info(f'[OK] 成功同步 {len(all_dishes)} 道食譜至 recipes.json')
             return True

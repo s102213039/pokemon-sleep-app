@@ -840,6 +840,7 @@
     TOP_RECIPES_FOR_INGREDIENTS: TOP_RECIPES_FOR_INGREDIENTS,
     getPokemonLadderSpecialty: getPokemonLadderSpecialty,
     ISLANDS_DATA: ISLANDS_DATA,
+    SLEEP_STYLE_GOALS_DATA: SLEEP_STYLE_GOALS_DATA,
     selectIsland: selectIsland,
     toggleIslandExpertMode: toggleIslandExpertMode,
     filterIslandSleepType: filterIslandSleepType,

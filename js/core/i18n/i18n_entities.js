@@ -55,7 +55,8 @@
     '品鮮蘑菇': { 'zh-TW': '品鮮蘑菇', 'en-US': 'Tasty Mushroom' },
     '粗枝大蔥': { 'zh-TW': '粗枝大蔥', 'en-US': 'Large Leek' },
     '沉甸甸南瓜': { 'zh-TW': '沉甸甸南瓜', 'en-US': 'Plump Pumpkin' },
-    '美味尾巴': { 'zh-TW': '美味尾巴', 'en-US': 'Slowpoke Tail' }
+    '美味尾巴': { 'zh-TW': '美味尾巴', 'en-US': 'Slowpoke Tail' },
+    '一口堅果': { 'zh-TW': '一口堅果', 'zh-CN': '一口坚果', 'en-US': 'Snackable Nuts' }
   };
 
   // 樹果名稱官方英中對照 (18種屬性樹果全收錄)
@@ -217,6 +218,8 @@
     
     '健美（料理輔助S）': { 'zh-TW': '健美（料理輔助S）', 'en-US': 'Bulk Up (Cooking Assist S)' },
     '健美 (料理輔助S)': { 'zh-TW': '健美 (料理輔助S)', 'en-US': 'Bulk Up (Cooking Assist S)' },
+    '魔法火焰（料理躍進S）': { 'zh-TW': '魔法火焰（料理躍進S）', 'en-US': 'Mystical Fire (Cooking Advance S)' },
+    '魔法火焰 (料理躍進S)': { 'zh-TW': '魔法火焰 (料理躍進S)', 'en-US': 'Mystical Fire (Cooking Advance S)' },
     '樹果汁（活力全體療癒S）': { 'zh-TW': '樹果汁（活力全體療癒S）', 'en-US': 'Berry Juice (Energy for Everyone S)' },
     '樹果汁 (活力全體療癒S)': { 'zh-TW': '樹果汁 (活力全體療癒S)', 'en-US': 'Berry Juice (Energy for Everyone S)' },
     '禮物（食材獲取S）': { 'zh-TW': '禮物（食材獲取S）', 'en-US': 'Present (Ingredient Magnet S)' },

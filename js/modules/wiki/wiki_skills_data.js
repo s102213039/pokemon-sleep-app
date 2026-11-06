@@ -570,6 +570,22 @@
       unit_en: " Ingredients"
     },
     {
+      id: "mystical_fire_cooking_advance",
+      name: "魔法火焰（料理躍進S）",
+      name_en: "Mystical Fire (Cooking Advance S)",
+      icon: "",
+      category: "ingredient",
+      catName: "食材與料理",
+      desc: "擴大下次料理時鍋子的容量上限（7~31個），並稍微提升下次料理漂亮成功（大成功）的機率（+1%~+5%）。",
+      desc_en: "Expands cooking pot size (+7~31) and slightly raises Extra Tasty rate of next dish (+1%~+5%).",
+      maxLevel: 7,
+      values: [7, 10, 12, 17, 22, 27, 31],
+      specialNote: "夢妖魔專屬複合技能：擴鍋（+7, +10, +12, +17, +22, +27, +31）與大成功率提升（+1%, +2%, +2%, +3%, +3%, +4%, +5%），已提升的機率在料理漂亮成功或移動營地後重置。",
+      specialNote_en: "Mismagius signature: Expands pot capacity (+7~31) and stacks Extra Tasty rate (+1%~5%) until Extra Tasty or camp move.",
+      unit: " 個容量",
+      unit_en: " Pot Space"
+    },
+    {
       id: "aura_sphere_dream_shard",
       name: "波導彈（夢之碎片獲取S）",
       name_en: "Aura Sphere (Dream Shard Magnet S)",

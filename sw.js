@@ -10,10 +10,9 @@
  *    Supabase 雲端同步與 JSON 資料交由前端 DataCacheManager 透過 manifest.json 雜湊比對精準控制。
  */
 
-const IMG_CACHE_NAME = 'pksleep-img-cache-v1';
-const STATIC_CACHE_NAME = 'pksleep-static-v20261023_03';
-// 舊版快取標記：用於 activate 事件自動清理歷史舊版快取 pksleep-static-cache-v1
-const LEGACY_STATIC_CACHE = 'pksleep-static-cache-v1';
+// 歷史快取標記：用於 activate 事件自動清理歷史舊版快取 pksleep-img-cache-v1 與 pksleep-static-cache-v1
+const IMG_CACHE_NAME = 'pksleep-img-cache-v20261106_02';
+const STATIC_CACHE_NAME = 'pksleep-static-v20261106_02';
 const VALID_CACHES = [IMG_CACHE_NAME, STATIC_CACHE_NAME];
 
 self.addEventListener('install', (event) => {
@@ -115,37 +114,32 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. OCR 模型、字型檔與版本化資源快取
+  // 2. OCR 模型、字型檔、版本化靜態程式碼 (?v=...) 與 CDN 函式庫快取 (Cache-First 0ms 秒開)
   if (isStaticHeavyAsset(url)) {
     event.respondWith(
-      caches.open(STATIC_CACHE_NAME).then((cache) => {
-        const pathname = url.pathname.toLowerCase();
-        const isCode = pathname.endsWith('.css') || pathname.endsWith('.js');
-        // 對於 JS / CSS 程式碼：Network-First（網路優先確保獲取最新版，離線時回退快取）
-        if (isCode) {
-          return fetch(request, { cache: 'no-cache' })
-            .then((networkResponse) => {
-              if (networkResponse && networkResponse.status === 200) {
-                cache.put(request, networkResponse.clone()).catch(() => {});
-              }
-              return networkResponse;
-            })
-            .catch(() => cache.match(request));
-        }
-
-        // 對於 OCR 模型與字型檔：Cache-First 本地優先快取
-        return cache.match(request).then((cachedResponse) => {
+      caches.open(STATIC_CACHE_NAME).then((cache) =>
+        cache.match(request).then((cachedResponse) => {
           if (cachedResponse) {
             return cachedResponse;
           }
           return fetch(request).then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
+            if (
+              networkResponse &&
+              (networkResponse.status === 200 || networkResponse.type === 'opaque')
+            ) {
               cache.put(request, networkResponse.clone()).catch(() => {});
             }
             return networkResponse;
-          });
-        });
-      })
+          }).catch(() => cachedResponse);
+        })
+      )
     );
+    return;
+  }
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'PURGE_IMAGE_CACHE') {
+    caches.delete(IMG_CACHE_NAME).catch(() => {});
   }
 });

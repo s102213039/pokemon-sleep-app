@@ -68,6 +68,7 @@
       'pokedex.view_table': '表格',
       'pokedex.sort_id_asc': '全国图鉴编号 (正序)',
       'pokedex.sort_id_desc': '全国图鉴编号 (倒序)',
+      'pokedex.sort_id_newest': '新增宝可梦 (新到旧)',
       'pokedex.sort_carry_desc': '携带上限 (高到低)',
       'pokedex.sort_ingredient_desc': '食材几率 (高到低)',
       'pokedex.sort_skill_desc': '技能发动率 (高到低)',

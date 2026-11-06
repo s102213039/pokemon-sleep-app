@@ -272,7 +272,7 @@ pkmData.forEach(p => {
   }
 });
 
-assert(evoRecordsWithItems.length === 29, 'data/data.json has exactly 29 item-related evolution records (actual: ' + evoRecordsWithItems.length + ')');
+assert(evoRecordsWithItems.length === 30, 'data/data.json has exactly 30 item-related evolution records (actual: ' + evoRecordsWithItems.length + ')');
 
 // Build map of itemId -> Set of pokemon_ids in items.json
 const itemPkmMap = new Map();
@@ -300,7 +300,7 @@ evoRecordsWithItems.forEach(rec => {
   });
 });
 
-assert(evoCoverageFailures === 0, 'All 29 evolution records from data.json are mapped in items.json (unmapped: ' + evoCoverageFailures + ')');
+assert(evoCoverageFailures === 0, 'All 30 evolution records from data.json are mapped in items.json (unmapped: ' + evoCoverageFailures + ')');
 
 // Check dual-item evolution records specifically
 const slowking = evoRecordsWithItems.find(r => r.pkmId === '199');
@@ -311,8 +311,8 @@ const steelix = evoRecordsWithItems.find(r => r.pkmId === '208');
 assert(steelix && steelix.items.includes('金屬膜') && steelix.items.includes('聯繫繩'), 'Steelix (208) requires both Metal Coat and Linking Cord in data.json');
 assert(itemPkmMap.get('metal_coat').has('208') && itemPkmMap.get('linking_cord').has('208'), 'Steelix (208) is present in both metal_coat and linking_cord pokemon_ids');
 
-// Check prospective items (sun_stone, up_grade, dragon_scale)
-assert(itemPkmMap.get('sun_stone') && itemPkmMap.get('sun_stone').size === 0, 'sun_stone has empty pokemon_ids as prospective item');
+// Check prospective items (sun_stone now active with 546/547, up_grade, dragon_scale)
+assert(itemPkmMap.get('sun_stone') && itemPkmMap.get('sun_stone').has('547'), 'sun_stone includes Whimsicott (547) in pokemon_ids');
 assert(itemPkmMap.get('up_grade') && itemPkmMap.get('up_grade').size === 0, 'up_grade has empty pokemon_ids as prospective item');
 assert(itemPkmMap.get('dragon_scale') && itemPkmMap.get('dragon_scale').size === 0, 'dragon_scale has empty pokemon_ids as prospective item');
 

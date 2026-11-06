@@ -119,7 +119,9 @@
       if (typeof window !== 'undefined' && window.AppraisalLab && typeof window.AppraisalLab.getRemainingEvolutions === 'function') {
         remainingEvos = window.AppraisalLab.getRemainingEvolutions(p);
       } else {
-        const isFinal = p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1';
+        const isFinal = (typeof isFinalEvolution === 'function')
+          ? isFinalEvolution(p)
+          : (p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1');
         remainingEvos = isFinal ? 0 : 1;
       }
     }

@@ -5,6 +5,86 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-06 已完成（夢妖魔最終進化與雲端推送生效、盒子分頁下拉刷新誤觸根除、三層快取自動失效架構升级、新食材「一口堅果」與 3 道新料理及新寶可夢跨分頁動態同步）
+
+- **測試狀態**：`npm run test:fast` (156/156 PASS)、`tests/e2e_sync_and_multitab.js` (114/114 PASS)、`tests/test_challenger_m2_multitab_adversarial.js` (25/25 PASS) 及全部 PTR 手勢壓力測試 (36/36 PASS) 100% 通過（0 失敗）。
+- **核心功能與修復項目**：
+  1. **夢妖魔 (`#429`) 最終進化顯示與遠端未推送問題根除**：
+     - 查明根本原因：先前本機修改自 `e6ec05b` (10月25日) 後未提交推送至 `origin/main`，且前端 `IndexedDB` 快取在 `localStorage` 清除後未同步刪除，導致舊版 `is_final: ""` 持續回填。
+     - 完成 `data/data.json` 夢妖魔 `is_final: "〇"`、完整三段食材、專屬主技能 `魔法火焰（料理躍進S）`、本地頭像圖示與跨模組同步，並正式提交推送至 GitHub `origin/main`。
+  2. **盒子分頁 (`#panel-box`) 上下滑動誤觸下拉刷新 (Pull-to-Refresh) 徹底修復**：
+     - 於 `js/modules/pokedex/pokedex_ui.js` 新增全域 `scroll` 事件被動捕獲斷路器 (`lastScrollTime` 180ms 慣性保護期)：只要內部容器發生滾動，立即強制取消 PTR 追蹤。
+     - 新增單次觸控手勢折返偵測 (`maxTouchY`)：若使用者先微幅下拉後折返上滑 (`currentY - maxTouchY < -6`)，立即永久終止該次觸控的 PTR 追蹤。
+     - 擴充 `getActiveScrollTop` 容器檢測清單，涵蓋 `#box-subpanel-list`、`#box-subpanel-lab`、`.box-lab-content-container`、`#appraisal-lab-container`、`#box-content-area` 等所有盒子與研究室滾動容器，並於 `css/styles.css` 加入 `overscroll-behavior-y: contain !important;`。
+  3. **三層快取死鎖根除與版本 Schema 自動刷新架構 (`DataCacheManager`)**：
+     - 於 `js/core/domUtils.js` 實作 `CACHE_SCHEMA_VERSION = '20261106_02'` (`ensureCacheSchemaOnce`) 與 `invalidateCache(cacheKey, fileName)`，同時清除 `localStorage`、`FILE_HASH_PREFIX` 與 `IDBStorage` (`cache` store)。
+     - 修正 `setFileHash` 傳入空字串時無法移除舊雜湊的缺陷，並將 `pokedex_nav.js` 與 `recipes_state.js` 初次網路請求由 `cache: 'default'` 改為 `cache: 'no-cache'`，防止瀏覽器 HTTP 磁碟快取回填舊版 JSON。
+     - 升級 `sw.js` 版本至 `20261106_02`，版本化靜態資源採用 Cache-First 秒開並自動清除舊版 CacheStorage。
+  4. **動態資料同步管線 (`scripts/sync_manager.js`) 與最新遊戲內容擴充**：
+     - 建立 `scripts/sync_manager.js` 支援 `--check`、`--apply`、`--payload` 動態注入新寶可夢、新食材、新食譜、新道具與睡姿目標，並自動連動重算食材天梯與語系字典。
+     - 同步新食材「一口堅果 (Snackable Nuts)」、3 道新料理（共 81 道食譜）、新寶可夢木棉球 (`#546`) 與風妖精 (`#547`)（共 253 隻寶可夢）、太陽之石 (`Sun Stone`) 及 570 種睡姿圖鑑目標。
+
+## 交接：2026-10-27 已完成（夢妖與夢妖魔資料全量補齊與最終進化展示、最新公告通用展開閱讀器全篇官方細節解析、耿鬼食材率16.60%刷新防退化快取根治、島嶼營地全國圖鑑編號完美排序、241/241 測試全數通過）
+
+- **測試狀態**：241/241 自動化測試全數通過（新增 Test 241，維持 100% 通過率，0 失敗，`npm run test:fast` 0.25 秒極速反饋，`npm test` 2.1 秒全量回歸）
+- **核心功能與修復項目**：
+  1. **夢妖 (#200) 與夢妖魔 (#429) 資料全量補齊與最終進化篩選修復**：
+     - 圖鑑資料 `data/data.json`：修正夢妖魔 (`#429`) 之 `is_final: "〇"`（原為空字串導致圖鑑勾選「最終進化」時漏掉）；夢妖主技能為 `料理強化S`，夢妖魔主技能為 `魔法火焰（料理躍進S）`。
+     - 資料建構腳本 `scripts/build_webapp_data.py`：加入防禦性鎖定，避免後續同步 Google 試算表時被原作者填寫的 `--` 再次覆蓋。
+     - 島嶼睡姿資料 `js/modules/wiki/wiki_camps_data.js`：在萌綠之島 (Greengrass)、白紐雪原 (Snowdrop) 與舊黃金發電廠 (Power Plant) 之淺淺入夢 (dozing) 列表中補齊夢妖與夢妖魔睡姿階級；睡姿庫 `data/sleep_styles.json` 驗證具備 1~4 星完整睡姿（漂浮睡、惡作劇睡/吟唱咒語睡、驚嚇睡/魔法火焰睡、肚子上睡）。
+     - 圖鑑回退表 `js/modules/wiki/wiki_camps_island.js`：於 `POKEMON_SPRITE_FALLBACK` 補齊夢妖 (`200`) 與夢妖魔 (`429`) 的雙語全國圖鑑編號映射，修復島嶼營地在非全域環境下全國圖鑑編號被誤判為 `#001` 的問題。
+  2. **最新公告通用展開閱讀器 (Universal Expandable Official Announcement Drawer)**：
+     - 資料抓取與結構化 `scripts/build_news.py`：擴充爬蟲邏輯，抓取官方原文全篇乾淨內文並結構化寫入 `full_content` 與 `full_content_en`，保留官方原文全部細節（活動日程、加成倍率、新寶可夢情報、解鎖營地、禮包道具明細、異常修復清單等）。
+     - 通用排版引擎 `js/modules/news/news_render.js`：
+       - 實作 `renderFormattedFullContent(item, isEN, isCN)`：非硬編碼、高度複用的文字章節解析器，智能識別標題（`【...】`、`概要`、`獎勵`、`更新內容`、`機率提升`等）、清單符號（`・`、`-`）與注意事項（`※`），轉換為結構化語意標籤。
+       - 實作 `renderOfficialFullDrawerHTML(item, isEN, isCN)`：於每篇新聞卡片底部提供 `[展開查看官方詳細公告 ▾]` 按鈕，點選流暢展開/收起官方原文，不影響外層摘要卡片折疊。
+     - 樣式庫 `css/views/news/news_cards.css`：定義清晰高對比度排版樣式，支援多主題與行動端響應。
+  3. **耿鬼食材率（16.60%）刷新跳回 16.10% 根除 (Anti-Stale Cache Invalidation Architecture)**：
+     - 排查根本原因：
+       - `sw.js` 歷史 Service Worker 快取攔截了舊版靜態腳本。
+       - `domUtils.js` 之 `CHECK_COOLDOWN_MS` 原設定為 10 分鐘冷卻，且 `checkFileNeedsUpdate` 存在「筆數相同即略過更新」的邏輯缺陷。
+       - `pokedex_nav.js` 的 `isDifferent` 原本只檢查第 1 隻與最後 1 隻 ID，位於中間第 94 隻的耿鬼數值更新被忽略。
+     - 徹底根除措施：
+       - 將 `CHECK_COOLDOWN_MS` 降至 60 秒。
+       - 移除筆數相同跳過邏輯，改為雜湊不一致即強制更新。
+       - 採用內容完整比對（`isContentDifferent`），只要任何寶可夢數值變更即刻生效並刷新 UI。
+       - `sw.js` 升級快取版本為 `pksleep-static-v20261027_01`，啟動時自動清理所有舊版靜態快取。
+       - `index.html` 與 `app/index.html` 腳本全面更新為最新版本戳記。
+  4. **全域最高規範遵循**：
+     - **Rule 8 (Zero Emoji Policy)**：全站程式碼、註解、UI 與文字維持 0 Emoji。
+     - **Rule 9 (Single Frame Rule)**：最外層結構維持純淨無邊框、無背景、0 冗餘內距。
+     - **Rule 10 (Zero Glyphs Policy)**：嚴格排除任何 `[★]`, `★`, `☆` 等特殊裝飾字形符號。
+     - **單檔 <= 1,000 行限制**：所有 112 個細粒度模組全數維持在 1,000 行之內。
+     - **Rule 11 (Testing Performance)**：`npm run test:fast` (0.25s) 與 `npm test` (2.1s) 241/241 100% PASS。
+
+## 交接：2026-10-27 已完成（圖鑑圖示三態排序、進化道具純圖示並列與樹果放大對齊、培育精算/全站下拉刷新誤觸根治、智能簡評頂尖料理圖示化、耿鬼/鬼斯/夢妖數據同步、240/240 測試全數通過）
+
+- **測試狀態**：240/240 自動化測試全數通過（新增 Test 239 與 Test 240，維持 100% 通過率，0 失敗，`npm run test:fast` 0.25 秒極速反饋）
+- **核心功能與修復項目**：
+  1. **圖鑑 Tab 圖示表頭三態排序循環 (3-State Dex Sorting)**：
+     - 圖鑑列表點選「圖示」表頭由原本二態切換升級為三態切換：
+       `1. 編號小到大 (no-asc)` -> `2. 編號大到小 (no-desc)` -> `3. 新到舊 (no-newest)`，依序循環點選切換。
+     - 於 `scripts/build_webapp_data.py` 正確擷取試算表第 50 欄 `登場日期` 寫入 `data.json` 之 `release_date`。
+     - `pokedex_base.js` 與 `pokedex_ui.js` 實作排序與標頭提示（新到舊以 `release_date` 降序，同日期以 ID 降序排）。
+  2. **寶可夢詳細浮窗進化石圖示去名稱外框 & 與樹果類型並列 & 樹果放大 (Evo Item & Berry UI Alignment)**：
+     - 在寶可夢詳細資訊浮窗內，需進化石/道具進化之寶可夢僅展示 22px 純圖示按鈕（去掉文字名稱與邊框背景），移入 `.pokedex-header-berry-spec-group` 與樹果及類型圖示同一水平群組展示。
+     - 行動端樹果圖示由 14px 放大至 20px~22px，視覺尺寸與類型圖示完美對齊。
+  3. **倉庫 Tab 培育精算/全站下拉刷新誤觸徹底根治 (Pull-to-Refresh False Trigger Fix)**：
+     - 升級 `getActiveScrollTop(target)`：除檢查視窗頂部外，沿使用者觸碰的 `e.target` 父節點鏈向上遍歷 `curr.scrollTop > 0`，精確識別 `#box-subpanel-lab`、`.box-cards-grid` 等深層滾動容器。
+     - 手指在非頂部區域向下滑動（試圖往上滾動）時，不再誤觸原生下拉刷新，操作體驗極致順暢。
+  4. **智能簡評推薦料理改為圖片展示 (Appraisal Recipe Image Chips)**：
+     - 智能簡評（Appraisal Note）中推薦直通頂尖料理（如阿勃梭魯推薦格子鬆餅/閃電泡芙）與呆呆獸家族解鎖尾巴料理時，由原本純文字名稱改為料理圖片晶片展示（`.appraisal-summary-recipe-chip` 內嵌 22px 料理圖片、hover 微放大效果與 title tooltip）。
+     - 倉庫卡片外層 `title` 保持純文字，卡片內文與詳細浮窗無縫渲染 HTML 料理圖片標籤。
+  5. **耿鬼食材率 Buff（16.60%）與鬼斯/夢妖家族數據真實性確認 (Test 239)**：
+     - 耿鬼食材率提升為 16.60%，間隔 00:36:40，包含香草、蘑菇、油 3 槽食材；鬼斯 14.40%、鬼斯通 15.70%；夢妖 15.00%、夢妖魔 14.20%；謎擬Q 15.30%。
+     - `scripts/sync_data.py` 完整委派 `build_webapp_data.py`。
+  6. **全域最高規範遵循**：
+     - **Rule 8 (Zero Emoji Policy)**：全站回應、CSS 與 JS 代碼維持 0 Emoji。
+     - **Rule 9 (Single Frame Rule)**：最外層結構維持純淨無邊框、無背景、0 冗餘內距。
+     - **Rule 10 (Zero Glyphs Policy)**：嚴格排除任何 `[★]`, `★`, `☆` 等特殊裝飾字形符號。
+     - **單檔 <= 1,000 行限制**：所有 112 個細粒度模組全數符合標準。
+     - **Rule 11 (Testing Performance)**：`npm run test:fast` (0.25s) 與 `npm test` (2.1s) 240/240 100% PASS。
+
 ## 交接：2026-10-25 已完成（深度研究室第三子分頁「培育精算」與技能種子投資效益精算系統、Lv.1~80官方精準曲線、銀種升級防重複與PR增益、金種ROI評級、237/237測試全數通過）
 
 - **測試狀態**：237/237 自動化測試全數通過（新增 Test 237，維持 100% 通過率，0 失敗，fast 模式 0.25 秒極速反饋）
@@ -2219,4 +2299,239 @@
    - 快速測試 118 / 118 通過（耗時 0.25 秒）。
    - 所有改動源碼單檔長度嚴格維持在 1,000 行以內。
    - 嚴格遵守零 Emoji（Rule 8）、零特殊字形裝飾符號（Rule 10）與單一外框（Rule 9）規範。
+
+
+
+## 2026-10-27: 耿鬼食材機率 Buff (16.60%)、新出寶可夢 (夢妖/夢妖魔/謎擬Q) 數據全量抓取與自動同步機制缺陷修復
+
+### 核心問題排查與根因定位
+1. **耿鬼食材機率 Buff 排查**：
+   - 官方在平衡調整中對耿鬼基礎食材率微調（舊版拆包約 15.9%~16.1%）。
+   - 上游參考數據表於 10.22 完成更新（`更新 094耿鬼 食材機率` 為 16.6%）。
+   - 本地 `data/data.json` 耿鬼 (No.0094) 食材率確實為 `16.60%`（鬼斯 14.40%、鬼斯通 15.70%、耿鬼 16.60%）。
+2. **新出寶可夢數據排查**：
+   - 萬聖節與近期實裝寶可夢：謎擬Q (#778)、可可多拉家族 (#304-#306)、強顎雞母蟲家族 (#736-#738)、飄飄球家族 (#425-#426) 均完整收錄。
+   - 夢妖 (#200) 與 夢妖魔 (#429)：先前在 `data.json` 中僅為佔位符（食材清單為空、食材率與幫忙間隔為空）。
+3. **自動同步腳本未抓取到數值的深層根因**：
+   - **CSV 標題偏移造成略過**：上游 Google Sheet CSV 前 2 行為版本備註，`sync_data.py` 使用 `csv.DictReader` 誤將備註列視為 Header，導致 `row.get("id")` 恆為 None，迴圈直接跳過所有資料列，導致常態同步輸出「寶可夢資料無需更新」。
+   - **只增不補的邏輯漏洞**：原 `sync_data.py` 設有 `if pid in existing_ids: continue`，即使抓取到資料，既有寶可夢（如空佔位的夢妖魔或數值微調的耿鬼）也會被完全略過，且新增時食材寫死為空陣列。
+   - **工作流程脫節**：完整建置腳本 `build_webapp_data.py` 具備按列索引解析與食材配方生成能力，但每日自動同步工作流程 `.github/workflows/update-data.yml` 僅調用 `sync_data.py`，導致更新無法自動生效。
+
+### 具體實作與全模組升級
+1. **同步核心架構升級 (`scripts/sync_data.py`)**：
+   - 將 `sync_pokemon_data()` 重構為直接調用 `build_webapp_data.py` 全量重構引擎，消除標題偏移與略過既有 ID 的缺陷，保證食材率微調、解鎖食材與新寶可夢 100% 同步。
+2. **數據庫完整補齊與最小化壓縮 (`data/data.json` & `data/manifest.json`)**：
+   - 補齊夢妖 (#200，食材率 15.00%、技能率 4.70%、間隔 00:46:40、洋芋/咖啡豆/番茄) 與夢妖魔 (#429，食材率 14.20%、技能率 3.60%、間隔 00:40:00)。
+   - 經由 `minify_data.js` 重新壓縮並更新 SHA-256 數位簽章。
+3. **自動化測試防線 (`tests/tiers/tier4/tier4_part4.js`)**：
+   - 新增 Test 239：全面校驗耿鬼 (16.60%)、鬼斯家族、夢妖家族、謎擬Q之食材率與間隔真實性，以及同步委派架構。
+   - 全套測試 239 / 239 通過（100% 通過率）。
+   - 嚴格遵守零 Emoji（Rule 8）、零特殊字形裝飾符號（Rule 10）與單一外框（Rule 9）規範。
+
+
+
+## 2026-10-27: 夢妖圖示修復、魔法火焰（料理躍進S）特殊主技能與數值機率全面驗證
+
+### 核心問題排查與解決方案
+1. **夢妖 (#200) 圖示未展示修復**：
+   - **根因定位**：先前 Service Worker 中的圖片快取版本為舊版 `pksleep-img-cache-v1`，若使用者於 200.png 尚未部署時曾發起過請求，opaque 錯誤回應會長期被快取在瀏覽器端；且 `pokedex_base.js` 中的 `SPECIAL_ICON_MAP` 未包含 `200` 與 `夢妖` 對照；`pokedex_ui.js` 之 `onerror` 直接 `style.display='none'` 導致圖示消失。
+   - **解決措施**：
+     - 在 `js/modules/pokedex/pokedex_base.js` 與 `data/special_icons.json` 中補齊 `200`, `0200`, `夢妖`, `Misdreavus`, `429`, `0429`, `夢妖魔`, `Mismagius` 圖示對照。
+     - 在 `pokedex_ui.js`（卡片與表格視圖）及 `pokedex_modal.js` 為圖示增加 `onerror` 降級備用邏輯（若 icon/200.png 失敗則降級為 pokemon/200.png）。
+     - 將 `sw.js` 的 `IMG_CACHE_NAME` 升級為 `pksleep-img-cache-v20261027_02`，`STATIC_CACHE_NAME` 升級為 `pksleep-static-v20261027_02`，自動清理歷史舊版快取。
+     - `index.html` 與 `app/index.html` 資源版本標籤同步更新為 `?v=20261027_02`。
+2. **魔法火焰（料理躍進S）特殊主技能與官方說明登錄**：
+   - **技能定位**：夢妖魔專屬複合主技能，兼具「料理強化S」（擴大鍋子容量 7~31）與「料理成功S」（料理漂亮成功機率提升 +1%~+5%）。
+   - **模組實作**：
+     - 在 `pokedex_skills.js` 之 `COMPOSITE_SKILL_MAP` 登錄 `'魔法火焰（料理躍進S）': ['料理強化S', '料理成功S']` 及其半形別名，使圖鑑篩選這兩項基礎技能時均可命中。
+     - 在 `pokedex_skills.js` 之 `SPECIAL_SKILL_DETAILS` 登錄官方中英文說明，並透過 `renderSkillWithTooltip` 生成 `.special-skill-badge` 與提示資訊。
+     - 在 `js/modules/wiki/wiki_skills_data.js` 的 `MAIN_SKILLS_DATA` 補齊數值矩陣（Max Lv.7，鍋子容量 `[7, 10, 12, 17, 22, 27, 31]`，大成功機率 `[1, 2, 2, 3, 3, 4, 5]`）。
+     - 在 `js/core/i18n/i18n_entities.js` 補齊中英文技能名稱映射。
+     - 壓縮 `pokedex_skills.js` 的 `PINYIN_TABLE` 排版，使檔案行數從 968 行縮減至 718 行（嚴格遵守單檔 <= 1,000 行限制）。
+3. **機率與各項數值 100% 正確性驗證**：
+   - 夢妖 (`#200`): 幽靈 / 技能 / 淺淺入夢 / 持有 13 / 食材率 15.00% / 技能率 4.70% / 幫忙間隔 00:46:40 / 料理強化S / 食材：窩心洋芋 (1/2/4)、醒腦咖啡豆 (2/3)、好眠番茄 (4)。
+   - 夢妖魔 (`#429`): 幽靈 / 技能 / 淺淺入夢 / 持有 22 / 食材率 14.20% / 技能率 3.60% / 幫忙間隔 00:40:00 / 魔法火焰（料理躍進S） / 進化：暗之石 + 80 糖 / `is_final: "〇"`。
+   - 耿鬼 (`#94`): 食材率 16.60% / 技能率 2.40% / 幫忙間隔 00:36:40 / 持有 28。在 `build_webapp_data.py` 加入安全覆蓋保護，防止重新建置時還原為舊版數值。
+   - 暗之石 (`items.json` & `items.js`): `pokemon_ids` 完整登錄 `["200", "429", "430"]`。
+4. **全量測試與品質驗證**：
+   - 更新 Tier 2 邊界測試與 Tier 4 綜合實戰測試（Test 241），覆蓋特殊技能展示、機率數值、暗之石關聯與快取版本。
+   - 全套測試 241 / 241 通過（100% 通過率，耗時 2.1 秒）。
+   - 快速測試 118 / 118 通過（耗時 0.25 秒）。
+   - 嚴格遵守零 Emoji（Rule 8）、零特殊字形裝飾符號（Rule 10）、單一外框（Rule 9）與單檔 <= 1,000 行規範。
+
+
+## 2026-11-02: 夢妖魔最終進化篩選修復、夢妖與夢妖魔圖片安全降級鏈條及防滯留快取機制
+
+### 核心問題排查與解決方案
+1. **夢妖魔 (#429)「最終進化」圖鑑 Tab 篩選不展示問題根治**：
+   - **根因定位**：先前上游或使用者端本地快取（IndexedDB / LocalStorage `pksleep_cache_data_json`）中，429 的 `is_final` 為空字串 `""`。前端各模組篩選直接依賴 `p.is_final === "〇"`，缺乏防禦判定；夢妖魔作為由夢妖使用暗之石進化、無後續進化的二階最終形態，在勾選「最終進化」時被前端篩選邏輯誤殺。
+   - **解決措施**：
+     - 在 `js/modules/pokedex/pokedex_base.js` 抽象出全域防禦判定函數 `isFinalEvolution(p)`：除正規標記外，對 429、夢妖魔、Mismagius 進行防禦性保底判定，掛載至 `window.isFinalEvolution` 與 `window.PokemonApp.isFinalEvolution`。
+     - 在 `pokedex_ui.js`、`pokedex_overlay.js`、`pokedex_calc.js`、`lab_specialists.js`、`box_modal_form.js`、`box_storage_crud.js` 全面替換為 `isFinalEvolution(p)`。
+     - 在後端與建置腳本 `scripts/pokemon_sleep_sync.py` 與 `scripts/build_webapp_data.py` 加入防禦性指派，保證即使外部來源遺漏，建置時亦強制標記 `is_final: "〇"`。
+2. **夢妖與夢妖魔圖片問題徹底解決**：
+   - **根因定位**：
+     - 先前 `pokedex_ui.js`（卡片與表格）與 `pokedex_modal.js` 的 `onerror` 粗暴將路徑替換為 `pokemon/429.png`（300x273 全身立繪），塞入 34x34 小方格後圖示比例極度縮小且輪廓異常。
+     - `wiki_camps_render.js` 與 `wiki_items.js` 包含 `onerror="this.style.opacity='0.3'"`，造成載入延遲時圖示直接變暗成半透明死寂狀態。
+     - 先前 Service Worker 曾將 cross-origin no-cors 模式下的 opaque 404 回應寫入 `IMG_CACHE_NAME`，使瀏覽器每次請求都讀取到損壞的快取。
+   - **解決措施**：
+     - 本地資產持久化：自官方取得 150x150 高清頭像，寫入 `assets/pokemon/icon/200.png` (25KB) 與 `assets/pokemon/icon/429.png` (27KB)。
+     - 建立全站共用安全降級函數 `handlePokemonIconError(img)`：優先讀取本地備用圖示，若仍失敗則以乾淨 SVG 向量圖替代，徹底杜絕降級至全身遠景立繪大圖。
+     - `wiki_camps_render.js` 與 `wiki_items.js` 接入 `handlePokemonIconError`，移除粗暴變暗降級。
+     - 將 Service Worker 版本升級為 `v20261102_01`，於 activate 生命週期自動清理包含 opaque 404 的舊版快取，並增加 `PURGE_IMAGE_CACHE` 訊息監聽。
+3. **快取健康度校驗與防滯留更新機制 (`pokedex_nav.js`)**：
+   - 建立 `isDatasetHealthy(data)` 檢測機制：比對 429 夢妖魔是否具備 `is_final: "〇"` 與完整食材，以及 94 耿鬼食材率是否為最新 16.60%。
+   - 若使用者本地快取資料為舊版（不健康），首屏自動將其廢棄並清除檔案雜湊，強制自網路拉取最新 `data.json` 覆蓋，杜絕舊版數據重新展示。
+4. **全量測試與防寫死規範遵循**：
+   - 修正 `tier2_boundaries.js` 與 `tier4_part1.js` 中寫死特定月份之快取正規表示式，改為動態版本比對（嚴格遵守 Rule 11）。
+   - 在 `tier4_part4.js` (Test 241) 擴充本地資產存在性驗證與 `isFinalEvolution` 防禦 VM 單元測試。
+   - 測試執行結果：`npm run test:fast` (118/118 PASS, 0.25s)，全量 `npm test` (241/241 PASS, 2.1s)。
+   - 零 Emoji（Rule 8）、零特殊字形裝飾符號（Rule 10）、單一外框（Rule 9）、單檔 <= 1,000 行限制 100% 遵守。
+
+
+---
+
+## 2026-11-02 多層級快取架構徹底防禦與舊資料逆向覆蓋阻絕 (Anti-Stale Overwrite & Health Gatekeeper)
+
+### 核心問題排查與架構根因定位
+1. **耿鬼食材率前次改對、刷新後又變回 16.10% 以及夢妖魔資料消失的反覆重現根因**：
+   - 經對比 `git show origin/main:data/data.json` 與本機 `data/data.json`：
+     - 本地資料庫早已更新為最新版（耿鬼 16.60%、夢妖魔 429 包含 `is_final: "〇"` 且有 3 種食材、夢妖 200 有 3 種食材）。
+     - 但遠端 GitHub `origin/main` 上的資料庫為 7 天前之舊版（耿鬼仍為 16.10%，429 夢妖魔之 `is_final` 為空字串 `""` 且食材為空陣列 `[]`）。
+   - 當使用者在瀏覽器中重新整理頁面時：
+     1) 頁面載入 1.5 秒後，`scheduleDynamicDataSync()` 自動在背景發起資料同步。
+     2) 先前候選網址將 GitHub raw 放在次要順位甚至直連 fallback，當本地相對路徑因環境不同而未命中時，直接抓取了 GitHub raw 的舊資料。
+     3) 抓回資料後，先前未經過健全性檢查，直接呼叫 `saveCachedJson(..., rawText, remoteHash)` 寫入 LocalStorage 與 IndexedDB，並覆蓋記憶體中的 `allPokemons`，導致使用者載入最新資料 1.5 秒後又被遠端舊資料強制覆蓋回 16.10%！
+     4) 食譜（`recipes_state.js`）、新聞（`news_timeline.js`）與睡姿（`wiki_sleep_styles.js`）亦存在類似的候選順序顛倒與無防禦覆蓋問題。
+2. **Service Worker 圖片快取中毒問題**：
+   - 先前 Service Worker 在 `no-cors` 模式下快取了跨域 404 opaque response，導致瀏覽器 CacheStorage 一旦記住 404，便再也無法載入正確頭像。
+
+### 系統性防禦改造方案
+1. **全域嚴格資料健全性守門員 (Health Gatekeeper)**：
+   - `pokedex_nav.js` 實作嚴格 `isDatasetHealthy(data)`：總筆數 >= 247、429 存在且 `is_final === "〇"` 且食材 >= 3、200 存在且食材 >= 3、94 耿鬼食材率嚴格不等於 16.10%。
+   - `recipes_state.js` 實作 `isRecipesHealthy(data)`：料理筆數 >= 78 且欄位完整。
+   - `news_timeline.js` 實作 `isNewsHealthy(data)`：公告筆數 >= 20。
+   - `wiki_sleep_styles.js` 實作 `isSleepStylesHealthy(data)`：睡姿 dictionary >= 250。
+   - **核心鐵律**：無論首屏載入還是背景動態同步，任何網路來源回傳的資料若未通過健全性檢查，立即拋棄並印出警告日誌，**絕對禁止**覆蓋記憶體與寫入快取！
+2. **本機候選網址絕對優先原則**：
+   - 所有資料模組統一將本機相對路徑（`${base}data/xxx.json`, `data/xxx.json`, `../data/xxx.json`, `xxx.json`）排在最前列，GitHub raw 僅作為全數 404 時之唯一最後手段。
+   - 背景動態同步改為優先輪詢本機相對路徑，徹底避免因部署時差導致遠端舊資料逆流。
+3. **首屏同步強制穿透 60 秒快取冷卻**：
+   - `scheduleDynamicDataSync` 啟動時傳入 `forceManifest = true`，使首屏初次背景同步必直接獲取最新 manifest，避免受限於 LocalStorage 殘留的 60 秒冷卻時間。
+4. **DataCacheManager 雜湊儲存回退與容錯**：
+   - 在 `saveCachedJson` 中加入快取 manifest 回退解析，當 `explicitHash` 未傳入且記憶體物件尚未載入時，直接自 LocalStorage 的 `pksleep_cache_manifest_v1` 讀取該檔案雜湊，杜絕雜湊遺失。
+5. **Service Worker 快取版本升級與主動清除**：
+   - 升級至 `pksleep-img-cache-v20261102_02`，自動清除所有舊版 opaque 快取。
+   - 在 `handlePokemonIconError` 中加入 CacheStorage 主動清除邏輯，當頭像載入失敗時自動自快取中刪除該 URL，並降級至本地 `assets/pokemon/icon/` 高清頭像。
+6. **全量測試與建置驗證**：
+   - `npm run test:fast`：118/118 測試全數通過（耗時 0.25 秒）。
+   - `npm test`：241/241 測試全數通過（耗時 2.1 秒）。
+   - 經由 `build_all.js`、`minify_data.js`、`build_prod.js` 完成生產環境壓縮與打包。
+   - 嚴格遵守 Rule 8 (Zero Emoji)、Rule 9 (Single Outer Frame)、Rule 10 (Zero Decorative Glyphs)、Rule 11 (Anti-Hardcoding Testing)。
+
+---
+
+## 2026-11-05 最新料理資料動態同步、健康度守門防禦與下拉刷新狀態機硬核修復 (Milestone 1, 2, 3)
+
+### 核心問題定位與架構背景
+1. **最新料理資料同步與健全性校驗阻斷問題 (Milestone 1)**：
+   - 使用者反映料理資訊需與最新版本保持同步，但現有快取健康度檢驗函數 `isRecipesHealthy` 存在欄位比對偏差（例如比對 `r.name` 與 `r.energy`，而標準 canonical schema 為 `r.name_cn` 與 `r.base_energy`），導致合法的最新料理快取常被判定為不健康而被頻繁拋棄或阻斷。
+   - 在高強度對抗性測試中，舊有檢查未能防範空洞陣列（Sparse Arrays/Holes，如 `new Array(80)`）、非有限數值（`Infinity`/`NaN`）、原型污染屬性繼承（Prototype Pollution）以及異常食材名稱。
+   - 料理消費者模組（食譜分頁、食材產量天梯、研究室目標推薦、盒子智慧簡評、多語系字典）需確保全面一致呈現 78 道料理。
+2. **盒子分頁 (Box tab) 上下滑動誤觸發下拉刷新 (Milestone 2)**：
+   - 在盒子分頁及其他可捲動分頁中，使用者向上滑動或快速上下滾動時，偶發突然觸發下拉刷新動畫並引發頁面重新整理（`window.location.reload()`）。
+   - 根因分析：
+     - 手勢方向鎖定缺失：手指先向上滑動（滾動內容），隨後手指微幅回彈或向下滑動時，因 `isTracking` 未及時重設，導致誤判為下拉手勢。
+     - 滾動容器判定死角：`scrollTop` 判定未全面穿透所有可能的可捲動父層或活動分頁容器，且缺少死區（Deadzone）防禦，微幅抖動即可啟動視覺動畫。
+     - 控制項與文字節點穿透：點擊或滑動至文字節點（`nodeType === 3`）時，DOM 的 `closest()` 方法失效，繞過了控制項排除清單（`.controls-container`, `#box-dropzone` 等）。
+     - 生命週期中斷殘留：缺乏 `touchcancel` 監聽，且在分頁切換或彈窗開啟時未重設下拉狀態，導致指示器殘留在畫面上。
+
+---
+
+### 系統性實作與硬核防禦方案
+
+#### 1. 料理動態同步與對抗性健康度守門 (isRecipesHealthy)
+- **Serebii 即時資料爬取與校對**：
+  - 驗證 `scripts/build_recipes.py` 與 `scripts/sync_data.py`，完整同步 78 道官方料理資料，包含中英文名稱、食材種類與數量、基礎能量與官方圖示。
+- **isRecipesHealthy 12 維度對抗防禦 (`js/modules/recipes/recipes_state.js`)**：
+  - **空洞陣列防禦**：改用嚴格標準索引迴圈 `for (let i = 0; i < data.length; i++)`，並透過 `Object.prototype.hasOwnProperty.call(data, i)` 驗證元素存在，阻絕 `new Array(80)` 空洞繞過。
+  - **原型污染阻絕**：對物件屬性存取全面採用 `Object.prototype.hasOwnProperty.call(r, ...)`，杜絕繼承污染屬性。
+  - **數值嚴格有限性**：使用 `Number.isFinite(energy)` 與 `Number.isFinite(ing.count)`，嚴格剔除 `Infinity`、`-Infinity` 與 `NaN`。
+  - **字串名稱非空檢查**：食材與料理名稱必須為去除首尾空白後長度大於 0 之字串，排除 Symbol、物件或純空白攻擊。
+  - **全方位 try...catch 防護**：防禦帶有異常 throwing getter 的惡意物件。
+- **多語系跨語言動態簽名 (`js/core/i18n/i18n_core.js`)**：
+  - 擴充 `I18N.getRecipeName(rec, lang)` 支援可選第二參數 `lang`，具備 `targetLang = lang || currentLang` 容錯，既保留既有單參數相容性，又允許跨語言元件指定取得英文/簡中/繁中名稱。
+- **全域下游渲染保護 (`js/modules/recipes/recipes_render.js`)**：
+  - 在 `calcEnergy`、`getFilteredRecipes`、`renderIngRow` 等渲染鏈路中加入物件類型守門與非有限數值保護，確保極限異常資料不引發介面崩潰。
+
+#### 2. 下拉刷新手勢狀態機硬核重構 (`js/modules/pokedex/pokedex_ui.js`)
+- **反向滑動即刻取消 (Upward Swipe Cancel)**：
+  - 在 `touchmove` 事件中，只要偵測到 `deltaY < -4`（向上滑動），立即呼叫 `cancelPullToRefresh()` 並設置 `isTracking = false`，鎖定本次手勢，絕不允許後續向下滑動誤啟動下拉刷新。
+- **12px 拖曳死區 (Drag Deadzone)**：
+  - 引入 `const PULL_DEADZONE = 12;`，在垂直位移未超過 12px 之前，保持 UI 完全靜止，杜絕日常點擊或輕微碰觸時的微幅晃動。
+- **目標節點正規化 (Target Normalization)**：
+  - 針對文字節點（`rawTarget.nodeType === 3`），自動向上正規化為其父級元素 `rawTarget.parentElement`，使 `closest(PTR_EXCLUDE_SELECTORS)` 與滾動容器偵測正常運作。
+- **全面排除非滾動控制項**：
+  - 定義 `PTR_EXCLUDE_SELECTORS`，涵蓋 `#box-dropzone`、`#box-screenshot-guide-card`、`.controls-container`、`button`、`input`、`select`、`.segmented-control` 等，觸碰上述控制項時嚴禁啟動下拉刷新。
+- **集中式狀態重設與導航聯動 (`cancelPullToRefresh`)**：
+  - 建立全域重設函數 `window.cancelPullToRefresh = cancelPullToRefresh;`，同步清空 `isTracking`、`activeTouchTarget`、`currentPull` 並重設 UI。
+  - 在 `pokedex_nav.js` 的 `switchMainTab` 與 `box_main.js` 的 `switchBoxSubtab` 中主動調用，保證使用者在拖曳中切換分頁時，狀態立即安全釋放。
+- **系統中斷與生命週期防護**：
+  - 註冊 `document.addEventListener('touchcancel', () => cancelPullToRefresh())`，防禦系統手勢中斷。
+  - 在 `touchend` 中增加 `isTargetVisible` 與 `isModalOrDrawerActive` 雙重守門，若目標容器已隱藏或彈窗開啟，全面阻止 `window.location.reload()`。
+
+#### 3. 模組化打包與生產環境構建
+- 執行專案標準構建流水線：
+  - `node scripts/build_all.js`：打包生成 `app.js`、`recipes.js`、`box.js`、`wiki.js`、`appraisal.js`、`news.js`、`styles.css`。
+  - `node scripts/minify_data.js`：壓縮靜態資料庫並更新 `data/manifest.json`（Manifest Hash: 54b5988611f94496）。
+  - `node scripts/build_prod.js`：壓縮產出 `app.min.js`、`recipes.min.js`、`styles.min.css` 等 16 項生產資產。
+
+---
+
+### 驗證成果與自動化測試指標
+
+1. **極速回歸測試套件 (`npm run test:fast`)**：
+   - **156 / 156 Passed (0 Failed)**，執行時間 < 0.40s。
+   - Tier 1: 68 項通過。
+   - Tier 2: 70 項通過（包含 19 項對抗性 PTR 手勢測試與 12 項食譜健康度邊界測試）。
+   - Tier 3: 18 項通過（包含 10 項 PTR 並行與跨模組中斷測試）。
+2. **專項手勢與健康度壓力測試**：
+   - `node tests/adversarial_ptr_stress.js`：19 / 19 Passed (0 Failed)。
+   - `node tests/stress_ptr_concurrency.js`：10 / 10 Passed (0 Failed)。
+   - `node tests/stress_ptr_gestures.js`：7 / 7 Passed (0 Failed)。
+   - `node tests/stress_recipe_health.js`：57 / 57 Passed (0 Failed)。
+   - `node tests/stress_i18n_consumer.js`：19 / 19 Passed (0 Failed)。
+3. **全量 E2E 回歸測試 (`npm test`)**：
+   - **279 / 279 Passed (0 Failed)**，覆蓋全 4 個 Tier（耗時約 2.2s）。
+4. **全域規範合規性**：
+   - **程式碼行數預算**：`js/modules/pokedex/pokedex_ui.js` 為 975 行，嚴格符合 <= 1000 行之細粒度模組規範。
+   - **零 Emoji 規範 (Rule 8)**：git diff 與所有修改檔案中 0 個 Emoji。
+   - **零特殊字形裝飾符號 (Rule 10)**：0 個裝飾星號或幾何字形符號。
+   - **單一外框規範 (Rule 9)**：卡片與表格維持純淨單層外框設計。
+
+---
+
+### 首屏啟動機制與久置二次開啟效能診斷與根治 (2026-11-05)
+
+#### 1. 問題現象與根本原因分析
+- **現象**：使用者反應剛開啟過後速度正常，但「過一段時間再開啟」就會載入極慢、長時間白屏或轉圈。
+- **根本原因排查**：
+  1. **Service Worker JS/CSS Network-First 策略缺陷**：`sw.js` 中對 `.js` 與 `.css` 設定了 `fetch(request, { cache: 'no-cache' })`。當使用者長時間未造訪，瀏覽器與伺服器之 TCP/TLS 連線已被釋放，再次開啟時，SW 被迫對頁面同步引入的 16 個 JS/CSS 檔案逐一發起網路伺服器驗證。在行動網路或跨國延遲下，16 次網路往返導致頁面解析阻塞長達 3~8 秒。
+  2. **靜態資源本具版本雜湊卻未利用 Cache-First**：`index.html` 引入之腳本均具備明確之版本查詢標籤（`?v=...`），內容實質不可變，理應 0ms 秒開卻被誤設為 Network-First。
+  3. **資料庫候選路徑順序**：`pokedex_nav.js` 中的 `fetchDataWithFallback` 曾將遠端 `raw.githubusercontent.com` 置於本地相對路徑之前，若網路環境較差易導致等待連線逾時。
+
+#### 2. 架構重構與實施方案
+- **Service Worker 改為 Cache-First 0ms 秒開 (`sw.js`)**：
+  - 升級快取標籤為 `pksleep-static-v20261105_01` 與 `pksleep-img-cache-v20261105_01`。
+  - 對 `isStaticHeavyAsset`（包含版本化 CSS/JS、字型檔、OCR 模型與 jsdelivr CDN）全面改採 **Cache-First（本地快取優先瞬間回傳）**。快取命中時耗時 0ms 直接就緒，徹底消滅 16 個阻塞性網路往返；僅在快取未命中時才請求網路並寫入快取。
+- **候選資料路徑順序優化 (`pokedex_nav.js`)**：
+  - 將 `raw.githubusercontent.com` 徹底移至候選來源最後一位備援，優先讀取本地同源路徑 `data/data.json`。
+- **全站靜態資源版本號同步升級**：
+  - `index.html` 與 `app/index.html` 中引入之 16 個核心 min.js 與 min.css 版本號統一升級至 `?v=20261105_01`。
+  - 觸發 SW 生命週期自動清理舊版快取，無縫切換至全新 Cache-First 引擎。
+
+#### 3. 構建與測試驗證
+- 執行 `node scripts/build_all.js` 與 `node scripts/build_prod.js` 完成 16 項資產壓縮。
+- 執行極速測試套件 `npm run test:fast`：**156 / 156 Passed (0 Failed)**。
+- 執行全量 E2E 回歸測試 `npm test`：**279 / 279 Passed (0 Failed)**。
 

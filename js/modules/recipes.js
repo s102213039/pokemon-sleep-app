@@ -5,6 +5,75 @@
 (function () {
   'use strict';
 
+  function isRecipesHealthy(data) {
+    try {
+      if (!Array.isArray(data) || data.length < 78) return false;
+      const hasOwn = Object.prototype.hasOwnProperty;
+      for (let i = 0; i < data.length; i++) {
+        if (!hasOwn.call(data, i)) return false;
+        const r = data[i];
+        if (!r || typeof r !== 'object') return false;
+
+        // Identity validation: must have own string property with non-whitespace content
+        let name = null;
+        if (hasOwn.call(r, 'name_cn') && typeof r.name_cn === 'string' && r.name_cn.trim()) {
+          name = r.name_cn;
+        } else if (hasOwn.call(r, 'name') && typeof r.name === 'string' && r.name.trim()) {
+          name = r.name;
+        } else {
+          return false;
+        }
+
+        // Category validation: must be own string property with non-whitespace content
+        if (!hasOwn.call(r, 'category') || typeof r.category !== 'string' || !r.category.trim()) {
+          return false;
+        }
+
+        // Energy validation: must have own finite positive number
+        let energy = null;
+        if (hasOwn.call(r, 'base_energy') && typeof r.base_energy !== 'undefined') {
+          energy = r.base_energy;
+        } else if (hasOwn.call(r, 'energy')) {
+          energy = r.energy;
+        } else {
+          return false;
+        }
+        if (typeof energy !== 'number' || !Number.isFinite(energy) || energy <= 0) return false;
+
+        // Ingredients array validation
+        if (!hasOwn.call(r, 'ingredients') || !Array.isArray(r.ingredients) || r.ingredients.length === 0) {
+          return false;
+        }
+
+        for (let j = 0; j < r.ingredients.length; j++) {
+          if (!hasOwn.call(r.ingredients, j)) return false;
+          const ing = r.ingredients[j];
+          if (!ing || typeof ing !== 'object') return false;
+          if (!hasOwn.call(ing, 'name') || typeof ing.name !== 'string' || !ing.name.trim()) {
+            return false;
+          }
+          if (!hasOwn.call(ing, 'count') || typeof ing.count !== 'number' || !Number.isFinite(ing.count) || ing.count <= 0) {
+            return false;
+          }
+        }
+      }
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    window.isRecipesHealthy = isRecipesHealthy;
+    if (!window.RecipesApp) {
+      window.RecipesApp = {};
+    }
+    window.RecipesApp.isRecipesHealthy = isRecipesHealthy;
+  }
+  if (typeof global !== 'undefined') {
+    global.isRecipesHealthy = isRecipesHealthy;
+  }
+
   function initRecipesModule() {
 
   /* ─── 狀態變數 ──────────────────────────────────────── */
@@ -181,18 +250,20 @@
     // 1. 優先自本機快取瞬間載入 (Cache-First 0ms 秒開：IndexedDB / LocalStorage)，背景再由 manifest 檢查是否需更新
     try {
       if (typeof window !== 'undefined') {
+        let cachedData = null;
         if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
-          const cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_RECIPES_JSON);
-          if (Array.isArray(cachedData) && cachedData.length > 0) {
-            return cachedData;
-          }
+          cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_RECIPES_JSON);
         } else if (window.localStorage) {
           const cachedText = window.localStorage.getItem(CACHE_KEY_RECIPES_JSON);
           if (cachedText) {
-            const cachedData = JSON.parse(cachedText);
-            if (Array.isArray(cachedData) && cachedData.length > 0) {
-              return cachedData;
-            }
+            cachedData = JSON.parse(cachedText);
+          }
+        }
+        if (Array.isArray(cachedData) && cachedData.length > 0) {
+          if (isRecipesHealthy(cachedData)) {
+            return cachedData;
+          } else if (window.DataCacheManager && typeof window.DataCacheManager.invalidateCache === 'function') {
+            window.DataCacheManager.invalidateCache(CACHE_KEY_RECIPES_JSON, 'recipes.json');
           }
         }
       }
@@ -201,12 +272,12 @@
     const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
     const defaultCandidates = [
       `${base}data/recipes.json`,
-      `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json`,
       `data/recipes.json`,
       `../data/recipes.json`,
       `${base}recipes.json`,
       `recipes.json`,
-      `../recipes.json`
+      `../recipes.json`,
+      `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json`
     ];
     const rawUrls = customUrls.length > 0 ? customUrls : defaultCandidates;
     const cleanUrls = Array.from(new Set(rawUrls.filter(Boolean).map(u => u.split('?')[0])));
@@ -219,10 +290,14 @@
 
       for (const url of uniqueUrls) {
         try {
-          const res = await fetch(url, { cache: attempt === 1 ? 'default' : 'no-store' });
+          const res = await fetch(url, { cache: attempt === 1 ? 'no-cache' : 'no-store' });
           if (res && res.ok) {
             const text = await res.text();
             const parsed = JSON.parse(text);
+            if (!isRecipesHealthy(parsed)) {
+              console.warn('[Recipe Engine] 候選來源返回之食譜未通過健全性檢查，跳過：', url);
+              continue;
+            }
             try {
               if (typeof window !== 'undefined' && window.localStorage) {
                 try {
@@ -285,23 +360,45 @@
         let remoteHash = '';
         if (window.DataCacheManager && typeof window.DataCacheManager.checkFileNeedsUpdate === 'function') {
           const check = await window.DataCacheManager.checkFileNeedsUpdate('recipes.json', CACHE_KEY_RECIPES_JSON, forceManifest);
-          if (!check.needsUpdate && Array.isArray(allRecipes) && allRecipes.length > 0) {
+          if (!check.needsUpdate && Array.isArray(allRecipes) && allRecipes.length >= 78) {
             return;
           }
           remoteHash = check.remoteHash || '';
         }
 
         const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
-        const liveUrl = `${base}data/recipes.json?v=${remoteHash || Date.now()}`;
-        let res = await fetch(liveUrl, { cache: 'no-cache' }).catch(() => null);
-        if (!res || !res.ok) {
-          const fallbackRawUrl = `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json?t=${Date.now()}`;
-          res = await fetch(fallbackRawUrl, { cache: 'no-store' });
+        const syncCandidates = [
+          `${base}data/recipes.json?v=${remoteHash || Date.now()}`,
+          `data/recipes.json?v=${remoteHash || Date.now()}`,
+          `../data/recipes.json?v=${remoteHash || Date.now()}`,
+          `${base}recipes.json?v=${remoteHash || Date.now()}`,
+          `recipes.json?v=${remoteHash || Date.now()}`,
+          `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json?t=${Date.now()}`
+        ];
+        const uniqueSyncUrls = Array.from(new Set(syncCandidates));
+        let res = null;
+        let rawText = '';
+        let freshData = null;
+
+        for (const url of uniqueSyncUrls) {
+          try {
+            const r = await fetch(url, { cache: 'no-cache' });
+            if (r && r.ok) {
+              const txt = await r.text();
+              const json = JSON.parse(txt);
+              if (isRecipesHealthy(json)) {
+                res = r;
+                rawText = txt;
+                freshData = json;
+                break;
+              } else {
+                console.warn('[Recipe Engine] 同步來源回傳食譜未通過健全性檢查，跳過：', url);
+              }
+            }
+          } catch (e) {}
         }
-        if (!res || !res.ok) return;
-        const rawText = await res.text();
-        const freshData = JSON.parse(rawText);
-        if (!Array.isArray(freshData) || freshData.length === 0) return;
+
+        if (!res || !freshData) return;
 
         if (window.DataCacheManager) {
           window.DataCacheManager.saveCachedJson(CACHE_KEY_RECIPES_JSON, 'recipes.json', rawText, remoteHash);
@@ -313,11 +410,14 @@
         }
 
         const currentLen = Array.isArray(allRecipes) ? allRecipes.length : 0;
-        const isDifferent = currentLen !== freshData.length ||
-          (freshData.length > 0 && allRecipes.length > 0 && (
-            freshData[0].name !== allRecipes[0].name ||
-            freshData[freshData.length - 1].name !== allRecipes[allRecipes.length - 1].name
-          ));
+        let isDifferent = true;
+        if (currentLen === freshData.length && currentLen > 0) {
+          try {
+            isDifferent = JSON.stringify(freshData) !== JSON.stringify(allRecipes);
+          } catch (e) {
+            isDifferent = true;
+          }
+        }
 
         if (isDifferent || !currentLen) {
           console.log(`[Recipe Engine] 動態連線取得最新食譜料理 (${freshData.length} 道)，正在原地更新...`);
@@ -339,7 +439,7 @@
       }
     }
 
-    setTimeout(() => runSyncCheck(false), 1800);
+    setTimeout(() => runSyncCheck(true), 1800);
     setInterval(() => runSyncCheck(false), 30 * 60 * 1000);
     if (typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', () => {
@@ -352,10 +452,10 @@
 
   fetchRecipesWithFallback(
     (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/recipes.json`,
-    `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json`,
     `data/recipes.json`,
     `../data/recipes.json`,
-    `recipes.json`
+    `recipes.json`,
+    `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json`
   )
     .then(data => {
       allRecipes = data;
@@ -409,7 +509,9 @@
     };
     const catCounts  = { '咖哩': 0, '沙拉': 0, '甜點': 0 };
     for (let i = 0; i < allRecipes.length; i++) {
-      const c = allRecipes[i].category;
+      const r = allRecipes[i];
+      if (!r || typeof r !== 'object') continue;
+      const c = r.category;
       if (catCounts[c] !== undefined) catCounts[c]++;
     }
 
@@ -647,7 +749,9 @@
     if (!ingredientPickerContainer) return;
     const ingMap = new Map();
     allRecipes.forEach(r => {
+      if (!r || typeof r !== 'object' || !Array.isArray(r.ingredients)) return;
       r.ingredients.forEach(ing => {
+        if (!ing || typeof ing !== 'object' || typeof ing.name !== 'string' || !ing.name.trim()) return;
         if (!ingMap.has(ing.name)) ingMap.set(ing.name, ing.icon || '');
       });
     });
@@ -830,8 +934,9 @@
   /* ─── 能量計算 (含食譜等級、多餘食材追加擴鍋、島嶼加成與活動加成) ──────────────────────── */
   function calcEnergy(base, level, islandBonusPct, eventBonusMult = 1.0, extraCount = potExpansion, extraUnitEnergy = 100) {
     // 1. 食譜等級加成（僅乘在食譜本體需求食材上，追加食材不享等級加成）
+    const validBase        = (typeof base === 'number' && Number.isFinite(base)) ? base : 0;
     const lvMultiplier     = 1 + (getLevelBonus(level) / 100);
-    const recipeBaseWithLv = base * lvMultiplier;
+    const recipeBaseWithLv = validBase * lvMultiplier;
 
     // 2. 多餘食材追加能量（依官方機制，預設以每個 100 點基礎能量計算）
     const validExtraCount  = Math.max(0, Number(extraCount) || 0);
@@ -854,12 +959,14 @@
     const selectedIngArr  = hasSelectedIngs ? [...selectedIngredients] : null;
 
     const filtered = allRecipes.filter(recipe => {
+      if (!recipe || typeof recipe !== 'object') return false;
       if (selectedCategory !== 'ALL' && recipe.category !== selectedCategory) return false;
       if (minBonus > 0 && (recipe.bonus_pct || 0) < minBonus) return false;
       if (minPot   > 0 && (recipe.pot_size   || 0) < minPot)  return false;
       if (!recipe._ingNameSet) {
-        recipe._ingNameSet = new Set(recipe.ingredients.map(i => i.name));
-        recipe._searchStr = ((recipe.name_cn || '') + ' ' + (recipe.name_en || '') + ' ' + recipe.ingredients.map(i => i.name).join(' ')).toLowerCase();
+        const ings = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+        recipe._ingNameSet = new Set(ings.filter(i => i && typeof i.name === 'string').map(i => i.name));
+        recipe._searchStr = ((recipe.name_cn || '') + ' ' + (recipe.name_en || '') + ' ' + ings.filter(i => i && typeof i.name === 'string').map(i => i.name).join(' ')).toLowerCase();
       }
       if (currentSearch && !recipe._searchStr.includes(currentSearch)) return false;
       if (hasSelectedIngs) {
@@ -891,12 +998,12 @@
     }
 
     return filtered.sort((a, b) => {
-      if (sortOption === 'energy-desc')  return b._cachedEnergy - a._cachedEnergy;
-      if (sortOption === 'energy-asc')   return a._cachedEnergy - b._cachedEnergy;
-      if (sortOption === 'pot-asc')      return a.pot_size - b.pot_size;
-      if (sortOption === 'pot-desc')     return b.pot_size - a.pot_size;
+      if (sortOption === 'energy-desc')  return (Number.isFinite(b._cachedEnergy) ? b._cachedEnergy : 0) - (Number.isFinite(a._cachedEnergy) ? a._cachedEnergy : 0);
+      if (sortOption === 'energy-asc')   return (Number.isFinite(a._cachedEnergy) ? a._cachedEnergy : 0) - (Number.isFinite(b._cachedEnergy) ? b._cachedEnergy : 0);
+      if (sortOption === 'pot-asc')      return (a.pot_size || 0) - (b.pot_size || 0);
+      if (sortOption === 'pot-desc')     return (b.pot_size || 0) - (a.pot_size || 0);
       if (sortOption === 'bonus-desc')   return (b.bonus_pct || 0) - (a.bonus_pct || 0);
-      if (sortOption === 'name-asc')     return a.name_cn.localeCompare(b.name_cn, 'zh-TW');
+      if (sortOption === 'name-asc')     return (a.name_cn || a.name || '').localeCompare(b.name_cn || b.name || '', 'zh-TW');
       return 0;
     });
   }
@@ -922,13 +1029,17 @@
   }
 
   function renderIngRow(ingredients) {
+    const list = Array.isArray(ingredients) ? ingredients : [];
     return `<div class="recipe-ing-row">
-      ${ingredients.map(i => {
-        const ingDisplayName = window.I18N ? window.I18N.getIngredientName(i.name) : i.name;
+      ${list.map(i => {
+        if (!i || typeof i !== 'object') return '';
+        const rawName = typeof i.name === 'string' ? i.name : (typeof i.name !== 'symbol' ? String(i.name || '') : '');
+        const ingDisplayName = (window.I18N && rawName) ? window.I18N.getIngredientName(rawName) : rawName;
+        const count = (typeof i.count === 'number' && Number.isFinite(i.count)) ? i.count : 0;
         return `
-        <div class="recipe-ing-chip" title="${ingDisplayName} × ${i.count}">
-          ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy">` : ''}
-          <span class="recipe-ing-count">×${i.count}</span>
+        <div class="recipe-ing-chip" title="${ingDisplayName} × ${count}">
+          ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+          <span class="recipe-ing-count">×${count}</span>
         </div>
       `;
       }).join('')}
@@ -1249,7 +1360,7 @@
               return `
               <tr>
                 <td style="vertical-align:middle;text-align:center;">
-                  <img src="${r.icon}" width="52" height="52" alt="${primaryName}" loading="lazy"
+                  <img src="${r.icon}" width="52" height="52" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';"
                     style="border-radius:10px;object-fit:contain;background:var(--bg-card-inner);padding:4px;border:1px solid var(--border-color);display:block;margin:0 auto;">
                 </td>
                 <td class="recipe-name-cell" style="vertical-align:middle;">
@@ -1333,7 +1444,7 @@
           return `
           <div class="pokemon-card recipe-desktop-card">
             <div class="card-header" style="align-items:center;margin-bottom:6px;">
-              <img class="card-icon" src="${r.icon}" alt="${primaryName}" style="width:48px;height:48px;border-radius:10px;object-fit:contain;background:var(--bg-card-inner);padding:2px;border:1px solid var(--border-color);">
+              <img class="card-icon" src="${r.icon}" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';" style="width:48px;height:48px;border-radius:10px;object-fit:contain;background:var(--bg-card-inner);padding:2px;border:1px solid var(--border-color);">
               <div class="card-title-group" style="flex:1;min-width:0;">
                 <h3 class="pokemon-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px;margin-bottom:3px;">${primaryName}</h3>
                 <div style="display:flex;gap:6px;align-items:center;">
@@ -1373,12 +1484,15 @@
 
             <div class="recipe-desktop-ings">
               <div class="recipe-ing-row compact-4-row">
-                ${r.ingredients.map(i => {
-                  const ingDisplayName = window.I18N ? window.I18N.getIngredientName(i.name) : i.name;
+                ${(Array.isArray(r.ingredients) ? r.ingredients : []).map(i => {
+                  if (!i || typeof i !== 'object') return '';
+                  const rawName = typeof i.name === 'string' ? i.name : (typeof i.name !== 'symbol' ? String(i.name || '') : '');
+                  const ingDisplayName = (window.I18N && rawName) ? window.I18N.getIngredientName(rawName) : rawName;
+                  const count = (typeof i.count === 'number' && Number.isFinite(i.count)) ? i.count : 0;
                   return `
-                  <div class="recipe-ing-chip compact-chip" title="${ingDisplayName} × ${i.count}">
-                    ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy">` : ''}
-                    <span class="recipe-ing-count">×${i.count}</span>
+                  <div class="recipe-ing-chip compact-chip" title="${ingDisplayName} × ${count}">
+                    ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+                    <span class="recipe-ing-count">×${count}</span>
                   </div>
                 `;
                 }).join('')}
@@ -1398,6 +1512,7 @@
       },
       calcEnergy: calcEnergy,
       getLevelBonus: getLevelBonus,
+      isRecipesHealthy: isRecipesHealthy,
       getPotExpansion: function() { return potExpansion; },
       setPotExpansion: function(val) {
         potExpansion = Math.min(700, Math.max(0, Number(val) || 0));
@@ -1408,9 +1523,30 @@
     };
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initRecipesModule);
-  } else {
-    initRecipesModule();
+  if (typeof window !== 'undefined') {
+    window.isRecipesHealthy = isRecipesHealthy;
+    if (!window.RecipesApp) {
+      window.RecipesApp = {};
+    }
+    window.RecipesApp.isRecipesHealthy = isRecipesHealthy;
+  }
+
+  if (typeof global !== 'undefined') {
+    global.isRecipesHealthy = isRecipesHealthy;
+  }
+
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initRecipesModule);
+    } else {
+      initRecipesModule();
+    }
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      isRecipesHealthy: isRecipesHealthy,
+      RecipesApp: (typeof window !== 'undefined' && window.RecipesApp) ? window.RecipesApp : { isRecipesHealthy: isRecipesHealthy }
+    };
   }
 })();

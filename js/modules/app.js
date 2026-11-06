@@ -50,7 +50,15 @@ const SPECIAL_ICON_MAP = {
   '顫弦蠑螈（高調的樣子）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849.png',
   '顫弦蠑螈 (高調的樣子)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849.png',
   '南瓜精': 'https://www.serebii.net/pokemonsleep/pokemon/icon/710.png',
-  '南瓜怪人': 'https://www.serebii.net/pokemonsleep/pokemon/icon/711.png'
+  '南瓜怪人': 'https://www.serebii.net/pokemonsleep/pokemon/icon/711.png',
+  '200': 'https://www.serebii.net/pokemonsleep/pokemon/icon/200.png',
+  '0200': 'https://www.serebii.net/pokemonsleep/pokemon/icon/200.png',
+  '夢妖': 'https://www.serebii.net/pokemonsleep/pokemon/icon/200.png',
+  'Misdreavus': 'https://www.serebii.net/pokemonsleep/pokemon/icon/200.png',
+  '429': 'https://www.serebii.net/pokemonsleep/pokemon/icon/429.png',
+  '0429': 'https://www.serebii.net/pokemonsleep/pokemon/icon/429.png',
+  '夢妖魔': 'https://www.serebii.net/pokemonsleep/pokemon/icon/429.png',
+  'Mismagius': 'https://www.serebii.net/pokemonsleep/pokemon/icon/429.png'
 };
 
 function getIconUrl(p) {
@@ -132,11 +140,65 @@ function getIconUrl(p) {
   return DEFAULT_SVG_ICON;
 }
 
+/**
+ * 判定寶可夢是否為最終進化形態 (Final Evolution)
+ * 具備上游資料防禦：即便上游 data.json is_final 暫時標記遺漏，亦能依據寶可夢 ID / 名稱 / 進化狀態精準判定
+ */
+function isFinalEvolution(p) {
+  if (!p) return false;
+  if (p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1') {
+    return true;
+  }
+  const idStr = String(p.id || p.formatted_no || p.pokemonId || '');
+  if (idStr === '429' || idStr === '0429') return true;
+  const name = p.name_cn || (typeof p.name === 'string' ? p.name : (p.name && p.name.cn ? p.name.cn : ''));
+  if (name === '夢妖魔') return true;
+  const nameEn = (p.name_en || (p.name && p.name.en ? p.name.en : '')).toLowerCase();
+  if (nameEn === 'mismagius') return true;
+  return false;
+}
+
+/**
+ * 寶可夢頭像載入錯誤安全降級 (Safe Fallback Loader)
+ * 優先載入本地 assets/pokemon/icon/ 圖示；若仍失敗則降級為乾淨 SVG 向量圖，杜絕加載全身立繪大圖
+ */
+function handlePokemonIconError(img) {
+  if (!img) return;
+  if (typeof caches !== 'undefined' && img.src) {
+    try {
+      caches.keys().then(keys => {
+        keys.forEach(k => {
+          if (k.includes('pksleep-img-cache')) {
+            caches.open(k).then(c => c.delete(img.src)).catch(() => {});
+          }
+        });
+      }).catch(() => {});
+    } catch (e) {}
+  }
+  if (!img.dataset.fb) {
+    img.dataset.fb = '1';
+    const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
+    const srcParts = (img.src || '').split('/');
+    const rawFilename = srcParts[srcParts.length - 1] || '';
+    const cleanFn = rawFilename.split('?')[0] || '';
+    if (cleanFn) {
+      img.src = `${base}assets/pokemon/icon/${cleanFn}`;
+      return;
+    }
+  }
+  img.src = DEFAULT_SVG_ICON;
+  img.onerror = null;
+}
+
 // 全站統一掛載 window.getItemIcon 作為各分頁（圖鑑、倉庫、島嶼、深度研究室、道具百科）唯一寶可夢圖示來源
 if (typeof window !== 'undefined') {
   window.getItemIcon = getIconUrl;
+  window.isFinalEvolution = isFinalEvolution;
+  window.handlePokemonIconError = handlePokemonIconError;
   if (!window.PokemonApp) window.PokemonApp = {};
   window.PokemonApp.getItemIcon = getIconUrl;
+  window.PokemonApp.isFinalEvolution = isFinalEvolution;
+  window.PokemonApp.handlePokemonIconError = handlePokemonIconError;
 }
 
 function getItemHelpInterval(p) {
@@ -254,7 +316,7 @@ function parseTableSort(sortKey) {
   if (i <= 0) return { col: null, dir: null };
   const col = sortKey.slice(0, i);
   const dir = sortKey.slice(i + 1);
-  if (!SORT_GETTERS[col] || (dir !== 'asc' && dir !== 'desc')) return { col: null, dir: null };
+  if (!SORT_GETTERS[col] || (dir !== 'asc' && dir !== 'desc' && dir !== 'newest')) return { col: null, dir: null };
   return { col, dir };
 }
 
@@ -265,7 +327,9 @@ function nextColumnSort(currentSort, col) {
 
   if (targetCol === 'no') {
     if (parsed.col === 'no') {
-      return parsed.dir === 'asc' ? 'no-desc' : 'no-asc';
+      if (parsed.dir === 'asc') return 'no-desc';
+      if (parsed.dir === 'desc') return 'no-newest';
+      return 'no-asc';
     }
     return 'no-asc';
   }
@@ -283,6 +347,17 @@ function nextColumnSort(currentSort, col) {
 function sortPokemonList(list, sortKey) {
   const out = [...(list || [])];
   const { col, dir } = parseTableSort(sortKey);
+  if (col === 'no' && dir === 'newest') {
+    out.sort((a, b) => {
+      const dateA = a.release_date || '';
+      const dateB = b.release_date || '';
+      if (dateA !== dateB) {
+        return dateB.localeCompare(dateA); // Newest release date first
+      }
+      return getItemNo(b) - getItemNo(a); // Newer/higher ID first
+    });
+    return out;
+  }
   const getter = col && SORT_GETTERS[col];
   if (!getter) return out;
   const mul = dir === 'desc' ? -1 : 1;
@@ -593,6 +668,11 @@ const COMPOSITE_SKILL_MAP = {
   // === 真正複合主技能 (True Composite Skills) ===
   // 健美：料理成功S (大成功機率提升) + 食材獲取S (隨機獲得食材) (赫拉克羅斯)
   '健美（料理輔助S）': ['料理成功S', '食材獲取S'],
+  '健美 (料理輔助S)': ['料理成功S', '食材獲取S'],
+  
+  // 魔法火焰：料理強化S (擴大鍋容量) + 料理成功S (大成功機率提升) (夢妖魔)
+  '魔法火焰（料理躍進S）': ['料理強化S', '料理成功S'],
+  '魔法火焰 (料理躍進S)': ['料理強化S', '料理成功S'],
   
   // 月光：活力填充S (自身活力) + 大成功時活力療癒S (隊友活力) (月亮伊布)
   '月光（活力填充S）': ['活力填充S', '活力療癒S'],
@@ -657,6 +737,14 @@ const SPECIAL_SKILL_DETAILS = {
   '健美 (料理輔助S)': {
     'zh-TW': '隨機獲得多個食材，並提升下次料理漂亮成功（大成功）的機率。',
     'en-US': 'Gets a variety of ingredients, and slightly raises the Extra Tasty rate of the next dish cooked.'
+  },
+  '魔法火焰（料理躍進S）': {
+    'zh-TW': '擴大下次料理時鍋子的容量上限（7~31個），並稍微提升下次料理漂亮成功（大成功）的機率（+1%~+5%）。已提升的機率在料理漂亮成功或移動營地後重置。',
+    'en-US': 'Expands cooking pot size (+7~31), and slightly raises Extra Tasty rate of the next dish (+1%~+5%). Rate resets upon Extra Tasty or changing campsites.'
+  },
+  '魔法火焰 (料理躍進S)': {
+    'zh-TW': '擴大下次料理時鍋子的容量上限（7~31個），並稍微提升下次料理漂亮成功（大成功）的機率（+1%~+5%）。已提升的機率在料理漂亮成功或移動營地後重置。',
+    'en-US': 'Expands cooking pot size (+7~31), and slightly raises Extra Tasty rate of the next dish (+1%~+5%). Rate resets upon Extra Tasty or changing campsites.'
   },
   '月光（活力充填S）': {
     'zh-TW': '讓自己回復活力（12~43點）；若發生「漂亮成功」時，額外隨機讓隊伍中的 1 隻寶可夢回復活力（6~22點）。',
@@ -1118,357 +1206,94 @@ function matchesSkill(pokemonSkill, targetBaseSkill) {
 
 /* ─── 智慧寬鬆搜尋引擎 (Phonetic Pinyin / Subsequence / Typo-tolerant Fuzzy Search) ─── */
 const PINYIN_TABLE = [
-  ['a', '啊阿'],
-  ['ai', '艾愛矮哀埃礙癌呆'],
-  ['an', '安暗按案岸'],
-  ['ang', '昂'],
-  ['ao', '奧熬襖傲敖'],
-  ['ba', '巴拔把吧霸八罷扒靶疤爸叭'],
-  ['bai', '白百擺敗拜柏'],
-  ['ban', '班般搬板版半伴辦'],
-  ['bang', '幫榜膀棒邦'],
-  ['bao', '包寶保報爆暴抱飽胞薄豹寶寶'],
-  ['bei', '北被備背貝悲杯倍碑輩'],
-  ['ben', '本奔苯笨'],
-  ['beng', '崩蹦繃'],
-  ['bi', '比必皮閉壁幣避碧筆鼻彼畢匕'],
-  ['bian', '邊變編扁遍便辯變'],
-  ['biao', '標表飆鏢'],
-  ['bie', '別鱉憋'],
-  ['bin', '賓濱彬冰'],
-  ['bing', '冰兵並病柄餅'],
-  ['bo', '波播撥伯薄泊勃駁脖渤'],
-  ['bu', '布不步部補捕怖埠哺簿'],
-  ['cai', '才采彩菜裁財材'],
-  ['cao', '草操槽曹'],
-  ['chan', '產單纏禪顫懺'],
-  ['chang', '長常場唱廠昌暢倡嘗'],
-  ['chao', '超潮朝炒巢抄'],
-  ['chen', '陳晨沉趁辰臣'],
-  ['cheng', '城成承程盛稱撐誠呈懲'],
-  ['chong', '蟲重沖充崇寵'],
-  ['chou', '愁抽臭仇醜籌綢'],
-  ['chu', '初出除處觸楚儲畜廚'],
-  ['chuan', '穿船川傳串喘'],
-  ['chui', '吹垂槌'],
-  ['chun', '春純春唇蠢'],
-  ['ci', '刺次磁詞慈此辭賜雌瓷'],
-  ['cong', '蔥從聰叢匆'],
-  ['cui', '翠催脆摧'],
-  ['cun', '村存寸'],
-  ['cuo', '錯措撮'],
-  ['da', '大達搭答打塔'],
-  ['dai', '呆帶待袋代貸戴怠逮'],
-  ['dan', '蛋單但擔淡丹彈膽誕'],
-  ['dang', '當擋黨盪蕩檔'],
-  ['dao', '刀導島倒道盜稻到'],
-  ['de', '德得的地'],
-  ['deng', '燈等登鄧鄧'],
-  ['di', '低地第底弟帝敵笛遞滴蒂提'],
-  ['dian', '電點店顛典甸墊殿典顛'],
-  ['diao', '雕吊釣掉調雕'],
-  ['die', '蝶跌疊碟爹諜'],
-  ['ding', '丁定頂訂盯釘鼎'],
-  ['dong', '咚東冬動洞棟凍懂動'],
-  ['dou', '豆都斗逗兜陡'],
-  ['du', '嘟讀度獨毒都杜肚渡督堵睹'],
-  ['duan', '段短斷鍛緞'],
-  ['dui', '隊對堆'],
-  ['dun', '盾頓噸頓敦鈍蹲'],
-  ['duo', '朵舵多墮躲惰奪剁哆墮'],
-  ['e', '顎惡額鵝俄餓鵝俄厄鱷'],
-  ['en', '恩'],
-  ['er', '爾耳兒二而貳餌'],
-  ['fa', '發法伐罰乏'],
-  ['fan', '反犯范凡繁泛翻煩販'],
-  ['fang', '方房防放訪芳仿仿'],
-  ['fei', '飛非肥費廢菲匪沸'],
-  ['fen', '分份紛粉奮憤糞忿酚'],
-  ['feng', '風峰封豐瘋鋒奉逢鳳蜂'],
-  ['fu', '福負服副復富父婦符扶伏浮幅輔覆腐蝠'],
-  ['ga', '嘎咖尬噶'],
-  ['gai', '該改概蓋鈣'],
-  ['gan', '乾甘敢趕感竿肝幹'],
-  ['gang', '鋼綱岡崗剛港扛缸釭'],
-  ['gao', '高告搞稿膏羔'],
-  ['ge', '哥格各歌割閣隔個革葛戈'],
-  ['geng', '耿梗更耕庚'],
-  ['gong', '公工共功攻宮供恭拱貢弓'],
-  ['gou', '勾狗購溝夠構鉤構'],
-  ['gu', '古骨谷孤鼓故固古顧姑咕辜'],
-  ['gua', '瓜掛刮寡'],
-  ['guai', '怪拐乖'],
-  ['guan', '關管觀官館冠罐貫慣'],
-  ['guang', '光廣逛'],
-  ['gui', '鬼龜規貴歸軌桂跪硅櫃瑰'],
-  ['guo', '果過國郭鍋裹果'],
-  ['ha', '哈蛤'],
-  ['hai', '海害孩還骸'],
-  ['han', '含漢韓汗喊寒涵旱撼'],
-  ['hao', '浩耗好好號豪毫壕濠'],
-  ['he', '河合何和盒赫褐鶴核荷喝賀涸'],
-  ['hei', '黑嘿'],
-  ['hong', '紅轟烘弘虹宏鴻洪'],
-  ['hou', '猴侯喉厚後吼猴'],
-  ['hu', '壺湖呼護互弧胡虎忽蝴乎核琥'],
-  ['hua', '花華滑化話畫劃'],
-  ['huan', '歡環緩換幻患還煥荒喚'],
-  ['huang', '黃皇晃慌荒謊煌簧皇'],
-  ['hui', '灰揮回會毀繪慧恢輝惠悔晦徽'],
-  ['hun', '魂混昏婚葷'],
-  ['huo', '火夥伙獲惑活或貨霍獲火焰'],
-  ['ji', '基吉擊機雞積極集計記季技既際濟寂祭幾己寄繼紀擠脊棘姬緝嫉畸稽飢肌'],
-  ['jia', '加假甲家夾佳駕架稼價嘉枷夾'],
-  ['jian', '箭劍健件見間建鑑漸剪檢減堅尖兼監煎揀艱'],
-  ['jiang', '匠江將姜獎講降醬僵殭薑僵'],
-  ['jiao', '交角焦郊腳覺校叫教膠矯澆狡繳'],
-  ['jie', '傑結截節接街階介借解姐捷潔竭藉'],
-  ['jin', '金今進近僅斤緊勁錦巾禁晉筋浸'],
-  ['jing', '精經晶驚井景警鏡競境京敬淨靜睛莖荊鯨'],
-  ['jiu', '九酒久救舊就究糾救韭糾'],
-  ['ju', '巨劇具聚局居橘懼拒矩沮據桔駒拘舉鋸菊'],
-  ['juan', '卷圈捐倦絹眷'],
-  ['jue', '決絕覺掘爵嚼訣'],
-  ['jun', '君軍均菌俊郡駿鈞'],
-  ['ka', '卡咖咯佧喀卡'],
-  ['kai', '凱開慨楷鎧'],
-  ['kan', '看砍刊勘坎檻'],
-  ['kang', '康抗慷炕糠'],
-  ['ke', '可克客刻科課顆渴殼柯瞌苛顆克'],
-  ['kong', '恐空孔控'],
-  ['kou', '口扣寇叩'],
-  ['ku', '苦哭庫酷窟骷'],
-  ['kua', '跨夸垮誇'],
-  ['kuai', '快筷塊會膾'],
-  ['kuan', '寬款'],
-  ['kuang', '況狂曠框礦筐'],
-  ['kui', '虧愧奎葵魁饋匱'],
-  ['kun', '困昆捆坤'],
-  ['kuo', '闊擴括廓'],
-  ['la', '拉辣蠟喇落拉啦落臘'],
-  ['lai', '萊來賴萊賴賚'],
-  ['lan', '藍蘭覽懶爛欄籃攬藍覽纜'],
-  ['lang', '狼浪郎朗廊莨'],
-  ['lao', '老勞落牢撈酪姥'],
-  ['le', '勒樂了肋'],
-  ['lei', '雷磊累蕾擂類淚羸'],
-  ['li', '利力立例麗李離理歷莉裡厘黎粒璃哩笠靂栗勵歷'],
-  ['lian', '連聯練臉鍊憐鏈蓮聯鐮廉'],
-  ['liang', '亮量輛良涼樑梁兩糧'],
-  ['liao', '療料瞭僚廖撩寥燎'],
-  ['lie', '烈列裂劣獵咧'],
-  ['lin', '林臨鱗林麟淋吝嶙磷'],
-  ['ling', '令另領零鈴靈凌玲齡陵菱令'],
-  ['liu', '六流留柳溜瘤硫餾榴'],
-  ['long', '龍隆籠聾弄隴瓏瀧籠'],
-  ['lou', '樓漏陋摟簍'],
-  ['lu', '路陸錄鹿露魯盧爐魯碌路蘆賂鲁'],
-  ['lun', '輪論倫崙輪輪倫'],
-  ['luo', '羅洛落絡螺裸邏落'],
-  ['lv', '綠律旅率屢鋁履濾綠'],
-  ['ma', '嗎媽馬麻碼瑪罵麻瑪'],
-  ['mai', '買賣邁麥脈埋'],
-  ['man', '滿慢曼漫瞞蠻蔓饅'],
-  ['mang', '芒忙盲莽茫'],
-  ['mao', '貓毛矛帽茂冒貌錨毛'],
-  ['me', '麼'],
-  ['mei', '沒每妹美枚妹梅媒眉魅昧'],
-  ['men', '門們悶捫'],
-  ['meng', '夢蒙猛萌盟懵濛朦虻'],
-  ['mi', '迷咪米密蜜祕祕咪秘謎'],
-  ['mian', '面免綿棉緬免眠免面'],
-  ['miao', '妙秒苗描喵瞄渺眇苗'],
-  ['min', '敏民敏皿憫憫'],
-  ['ming', '明名命鳴冥銘'],
-  ['mo', '魔磨摸模膜末莫墨默漠陌抹歿沫模'],
-  ['mou', '謀某牟眸'],
-  ['mu', '木目母墓幕幕睦穆募牧'],
-  ['na', '拿那納娜哪鈉鈉'],
-  ['nai', '奈耐奶奶乃奈奈'],
-  ['nan', '南難男喃'],
-  ['nao', '腦鬧惱鬧'],
-  ['ne', '呢哪'],
-  ['nei', '內餒'],
-  ['nen', '嫩'],
-  ['neng', '能'],
-  ['ni', '泥你擬逆匿尼泥倪旎膩'],
-  ['nian', '年念黏碾念'],
-  ['niao', '鳥尿蔦'],
-  ['nie', '聶捏涅鎳'],
-  ['ning', '寧凝檸擰嚀'],
-  ['niu', '牛扭紐鈕狃'],
-  ['nong', '農濃弄農儂'],
-  ['nu', '怒奴努弩'],
-  ['nv', '女奴'],
-  ['nuan', '暖'],
-  ['nuo', '挪諾懦糯'],
-  ['ou', '歐偶嘔歐鷗藕'],
-  ['pa', '怕爬趴啪耙'],
-  ['pai', '拍排牌派拍'],
-  ['pan', '盤判盼叛潘畔'],
-  ['pang', '胖旁膀磅仿'],
-  ['pao', '炮跑泡袍砲'],
-  ['pei', '配陪培培佩沛賠呸'],
-  ['pen', '噴盆盼判噴'],
-  ['peng', '朋碰澎彭蓬膨棚棚'],
-  ['pi', '皮批披疲匹屁痞霹匹皮'],
-  ['pian', '片篇便偏片'],
-  ['piao', '票漂飄嫖瓢飄'],
-  ['pin', '品貧拼頻貧'],
-  ['ping', '平瓶評屏萍憑萍'],
-  ['po', '破婆魄頗迫坡珀破'],
-  ['pou', '剖'],
-  ['pu', '普撲鋪僕蒲埔瀑葡鋪譜'],
-  ['qi', '七奇旗起其期氣器妻齊汽漆欺戚騎乞歧泣琪'],
-  ['qian', '前千牽遷千鉛潛錢乾淺欠簽'],
-  ['qiang', '強槍牆腔強搶薔鏘彊'],
-  ['qiao', '巧橋悄敲巧雀殼俏殼鍬僑鞘巧'],
-  ['qie', '切茄且妾怯'],
-  ['qin', '琴親勤禽侵琴寢欽芹琴'],
-  ['qing', '青晴清情輕傾頃慶請蜻清'],
-  ['qiu', '丘秋求球仇囚鰍酋蚯鍬'],
-  ['qu', '去區取曲趣屈趨驅蛆軀'],
-  ['quan', '全拳泉權券勸犬圈拳'],
-  ['que', '確卻雀缺瘸雀鵲'],
-  ['qun', '群裙群'],
-  ['ran', '然燃染然'],
-  ['rang', '讓嚷壤讓'],
-  ['rao', '繞擾饒'],
-  ['re', '熱惹'],
-  ['ren', '人人認任忍刃仁韌任'],
-  ['ri', '日'],
-  ['rong', '蓉絨榮容融溶茸蠑榕戎'],
-  ['rou', '肉柔揉揉'],
-  ['ru', '如入汝乳儒辱褥'],
-  ['ruan', '軟阮'],
-  ['rui', '瑞銳蕊芮'],
-  ['run', '潤閏潤'],
-  ['ruo', '弱若若'],
-  ['sa', '撒薩灑'],
-  ['sai', '賽塞腮塞'],
-  ['san', '三散散傘參'],
-  ['sang', '桑喪嗓'],
-  ['se', '色色澀瑟嗇'],
-  ['sen', '森森'],
-  ['seng', '僧'],
-  ['sha', '沙殺砂紗傻廈煞鯊沙'],
-  ['shan', '山珊扇善單閃衫珊膳煽訕'],
-  ['shang', '上商傷賞尚裳晌'],
-  ['shao', '少燒稍哨勺紹燒'],
-  ['she', '蛇射設捨舌奢社涉攝捨'],
-  ['shen', '身深神什甚申伸審滲慎腎神'],
-  ['sheng', '聲生升勝繩聖盛牲笙省聖'],
-  ['shi', '食石時十實識始使市是事示視式室試世勢士獅師詩失施濕拾蝕矢誓屎飾史逝釋'],
-  ['shou', '手首守受授壽瘦獸獸'],
-  ['shu', '鼠屬署書樹數術輸叔殊熟暑舒束述蜀梳贖梳'],
-  ['shua', '刷耍'],
-  ['shuai', '摔率帥衰'],
-  ['shuan', '栓拴栓'],
-  ['shuang', '雙霜爽雙'],
-  ['shui', '水睡稅水'],
-  ['shun', '順瞬吮'],
-  ['shuo', '說爍朔碩'],
-  ['si', '斯思絲司私死四寺似肆撕飼斯'],
-  ['song', '松送宋誦聳鬆頌'],
-  ['sou', '搜艘嗽颼'],
-  ['su', '速素宿塑俗肅蘇訴溯縮訴速'],
-  ['suan', '算酸蒜'],
-  ['sui', '隨歲碎遂隧隨穗'],
-  ['sun', '孫損筍筍'],
-  ['suo', '所鎖索梭縮瑣娑梭'],
-  ['ta', '他她它踏塔塌獺塔獺'],
-  ['tai', '太泰胎台苔態抬臺泰'],
-  ['tan', '談探坦炭攤灘潭壇貪檀痰'],
-  ['tang', '堂唐糖湯躺燙趟堂塘搪'],
-  ['tao', '桃逃淘陶套討濤討桃'],
-  ['te', '特忒'],
-  ['teng', '騰疼藤謄'],
-  ['ti', '體題踢提替涕剃惕梯啼蹄蒂'],
-  ['tian', '天田甜添填田舔恬天'],
-  ['tiao', '條跳挑調挑'],
-  ['tie', '鐵貼帖鐵'],
-  ['ting', '聽庭停廳挺廷蜓婷霆'],
-  ['tong', '同童通痛銅桐桶統彤筒瞳同'],
-  ['tou', '頭投偷透頭'],
-  ['tu', '土圖兔途吐突徒塗凸土'],
-  ['tuan', '團團揣'],
-  ['tui', '推退腿褪'],
-  ['tun', '吞屯臀囤吞'],
-  ['tuo', '托脫妥駝鴕唾托拖托陀陀'],
-  ['wa', '蛙娃哇挖瓦窪媧襪蛙'],
-  ['wai', '外歪'],
-  ['wan', '萬玩完晚碗彎宛挽腕頑蔓萬'],
-  ['wang', '王望往網亡妄忘旺網王'],
-  ['wei', '尾為位微危味未微委衛唯偉圍違唯維畏胃緯偽威'],
-  ['wen', '文問聞紋溫穩吻蚊紊玟紋'],
-  ['weng', '翁甕嗡'],
-  ['wo', '我窩握臥窩握渦'],
-  ['wu', '無五物舞物屋武午舞誤悟伍污霧烏巫侮鳥務'],
-  ['xi', '西希西夕析吸息洗細喜稀戲繫息惜隙吸蟋膝席稀習蜥'],
-  ['xia', '夏下峽蝦瞎嚇俠匣轄'],
-  ['xian', '仙先線現限鮮險顯縣掀閑閒咸弦銜餡纖腺憲仙'],
-  ['xiang', '相象向像想鄉香響享降箱祥翔巷鑲項'],
-  ['xiao', '小消笑效校銷囂嘯霄宵蕭硝曉梟小'],
-  ['xie', '些寫謝鞋協邪血寫洩屑斜歇諧謝蟹'],
-  ['xin', '新心辛信新薪芯馨欣信'],
-  ['xing', '行性形星幸型醒興杏腥杏幸'],
-  ['xiong', '胸雄熊兇兄兇熊雄'],
-  ['xiu', '休秀修袖羞臭宿鏽'],
-  ['xu', '許需須序虛續緒蓄敘徐婿徐'],
-  ['xuan', '玄選旋宣懸炫旋眩絃選'],
-  ['xue', '雪穴學靴血削學雪'],
-  ['xun', '尋訓訊迅循旬熏詢尋'],
-  ['ya', '牙押崖涯雅牙啞壓芽鴨訝蚜亞雅鴉'],
-  ['yan', '炎焰眼岩言顏研演驗厭演宴嚴煙艷鹽延沿雁燕鹽眼岩'],
-  ['yang', '樣羊楊洋揚漾仰養氧陽央秧樣'],
-  ['yao', '要腰搖藥咬遙耀妖窯謠搖曜鑰'],
-  ['ye', '葉頁夜野也業爺液冶咽夜葉'],
-  ['yi', '伊依一衣醫異易意義益譯億役抑翼議疑怡姨乙亦屹移儀宜遺倚矣抑藝裔蟻蜴'],
-  ['yin', '音陰引印隱銀因飲引音殷吟寅蔭'],
-  ['ying', '影應英映硬嬰鷹迎盈熒螢櫻贏營穎鷹嬰'],
-  ['yo', '喲'],
-  ['yong', '勇泳永用湧詠蛹擁庸臃湧勇'],
-  ['you', '幼友有由右遊又油優誘幽悠郵尤游'],
-  ['yu', '魚雨語玉育遇魚羽於預域余宇郁域娛遇羽鬱魚禦語怨'],
-  ['yuan', '螈原圓源園員遠院願元援淵袁冤緣員猿螈'],
-  ['yue', '月岳越躍悅約樂閱鑰躍月'],
-  ['yun', '運雲勻允暈韻孕運勻員'],
-  ['za', '雜砸咋'],
-  ['zai', '在再載災仔栽哉'],
-  ['zan', '讚暫贊簪'],
-  ['zang', '髒藏葬'],
-  ['zao', '早造藻燥噪糟棗造'],
-  ['ze', '則責擇澤嘖'],
-  ['zei', '賊'],
-  ['zen', '怎'],
-  ['zeng', '增贈憎'],
-  ['zha', '炸扎查榨閘詐眨'],
-  ['zhai', '宅摘窄債寨齋'],
-  ['zhan', '顫站戰佔斬展沾粘詹盞戰氈顫'],
-  ['zhang', '張章丈掌長障帳脹彰'],
-  ['zhao', '沼照找爪兆趙召沼招罩肇'],
-  ['zhe', '這著遮折者蜇哲蔗者著'],
-  ['zhen', '真陣針震鎮診枕針甄震'],
-  ['zheng', '正爭整政證征蒸掙睜正'],
-  ['zhi', '智隻指枝支知製直值質執治志制至址紙植殖脂蜘織稚炙'],
-  ['zhong', '種中鐘重終眾忠腫衷踵種'],
-  ['zhou', '周洲舟咒晝宙粥皺軸咒'],
-  ['zhu', '竹主著住助注珠株諸祝豬煮逐燭築著竺'],
-  ['zhua', '抓爪'],
-  ['zhuai', '拽'],
-  ['zhuan', '專轉傳磚撰賺轉'],
-  ['zhuang', '壯裝撞莊狀妝幢壯'],
-  ['zhui', '追錐墜綴贅'],
-  ['zhun', '準准'],
-  ['zhuo', '著捉桌卓濁酌琢灼啄著'],
-  ['zi', '子紫字自姿咨資仔滋諮姊子'],
-  ['zong', '總棕宗縱縱鬃縱'],
-  ['zou', '走奏揍走'],
-  ['zu', '組族足阻租卒祖足詛'],
-  ['zuan', '鑽纂'],
-  ['zui', '嘴最罪醉嘴'],
-  ['zun', '尊遵'],
-  ['zuo', '做作坐座左昨佐琢']
+  ['a', '啊阿'], ['ai', '艾愛矮哀埃礙癌呆'], ['an', '安暗按案岸'], ['ang', '昂'],
+  ['ao', '奧熬襖傲敖'], ['ba', '巴拔把吧霸八罷扒靶疤爸叭'], ['bai', '白百擺敗拜柏'], ['ban', '班般搬板版半伴辦'],
+  ['bang', '幫榜膀棒邦'], ['bao', '包寶保報爆暴抱飽胞薄豹寶寶'], ['bei', '北被備背貝悲杯倍碑輩'], ['ben', '本奔苯笨'],
+  ['beng', '崩蹦繃'], ['bi', '比必皮閉壁幣避碧筆鼻彼畢匕'], ['bian', '邊變編扁遍便辯變'], ['biao', '標表飆鏢'],
+  ['bie', '別鱉憋'], ['bin', '賓濱彬冰'], ['bing', '冰兵並病柄餅'], ['bo', '波播撥伯薄泊勃駁脖渤'],
+  ['bu', '布不步部補捕怖埠哺簿'], ['cai', '才采彩菜裁財材'], ['cao', '草操槽曹'], ['chan', '產單纏禪顫懺'],
+  ['chang', '長常場唱廠昌暢倡嘗'], ['chao', '超潮朝炒巢抄'], ['chen', '陳晨沉趁辰臣'], ['cheng', '城成承程盛稱撐誠呈懲'],
+  ['chong', '蟲重沖充崇寵'], ['chou', '愁抽臭仇醜籌綢'], ['chu', '初出除處觸楚儲畜廚'], ['chuan', '穿船川傳串喘'],
+  ['chui', '吹垂槌'], ['chun', '春純春唇蠢'], ['ci', '刺次磁詞慈此辭賜雌瓷'], ['cong', '蔥從聰叢匆'],
+  ['cui', '翠催脆摧'], ['cun', '村存寸'], ['cuo', '錯措撮'], ['da', '大達搭答打塔'],
+  ['dai', '呆帶待袋代貸戴怠逮'], ['dan', '蛋單但擔淡丹彈膽誕'], ['dang', '當擋黨盪蕩檔'], ['dao', '刀導島倒道盜稻到'],
+  ['de', '德得的地'], ['deng', '燈等登鄧鄧'], ['di', '低地第底弟帝敵笛遞滴蒂提'], ['dian', '電點店顛典甸墊殿典顛'],
+  ['diao', '雕吊釣掉調雕'], ['die', '蝶跌疊碟爹諜'], ['ding', '丁定頂訂盯釘鼎'], ['dong', '咚東冬動洞棟凍懂動'],
+  ['dou', '豆都斗逗兜陡'], ['du', '嘟讀度獨毒都杜肚渡督堵睹'], ['duan', '段短斷鍛緞'], ['dui', '隊對堆'],
+  ['dun', '盾頓噸頓敦鈍蹲'], ['duo', '朵舵多墮躲惰奪剁哆墮'], ['e', '顎惡額鵝俄餓鵝俄厄鱷'], ['en', '恩'],
+  ['er', '爾耳兒二而貳餌'], ['fa', '發法伐罰乏'], ['fan', '反犯范凡繁泛翻煩販'], ['fang', '方房防放訪芳仿仿'],
+  ['fei', '飛非肥費廢菲匪沸'], ['fen', '分份紛粉奮憤糞忿酚'], ['feng', '風峰封豐瘋鋒奉逢鳳蜂'], ['fu', '福負服副復富父婦符扶伏浮幅輔覆腐蝠'],
+  ['ga', '嘎咖尬噶'], ['gai', '該改概蓋鈣'], ['gan', '乾甘敢趕感竿肝幹'], ['gang', '鋼綱岡崗剛港扛缸釭'],
+  ['gao', '高告搞稿膏羔'], ['ge', '哥格各歌割閣隔個革葛戈'], ['geng', '耿梗更耕庚'], ['gong', '公工共功攻宮供恭拱貢弓'],
+  ['gou', '勾狗購溝夠構鉤構'], ['gu', '古骨谷孤鼓故固古顧姑咕辜'], ['gua', '瓜掛刮寡'], ['guai', '怪拐乖'],
+  ['guan', '關管觀官館冠罐貫慣'], ['guang', '光廣逛'], ['gui', '鬼龜規貴歸軌桂跪硅櫃瑰'], ['guo', '果過國郭鍋裹果'],
+  ['ha', '哈蛤'], ['hai', '海害孩還骸'], ['han', '含漢韓汗喊寒涵旱撼'], ['hao', '浩耗好好號豪毫壕濠'],
+  ['he', '河合何和盒赫褐鶴核荷喝賀涸'], ['hei', '黑嘿'], ['hong', '紅轟烘弘虹宏鴻洪'], ['hou', '猴侯喉厚後吼猴'],
+  ['hu', '壺湖呼護互弧胡虎忽蝴乎核琥'], ['hua', '花華滑化話畫劃'], ['huan', '歡環緩換幻患還煥荒喚'], ['huang', '黃皇晃慌荒謊煌簧皇'],
+  ['hui', '灰揮回會毀繪慧恢輝惠悔晦徽'], ['hun', '魂混昏婚葷'], ['huo', '火夥伙獲惑活或貨霍獲火焰'], ['ji', '基吉擊機雞積極集計記季技既際濟寂祭幾己寄繼紀擠脊棘姬緝嫉畸稽飢肌'],
+  ['jia', '加假甲家夾佳駕架稼價嘉枷夾'], ['jian', '箭劍健件見間建鑑漸剪檢減堅尖兼監煎揀艱'], ['jiang', '匠江將姜獎講降醬僵殭薑僵'], ['jiao', '交角焦郊腳覺校叫教膠矯澆狡繳'],
+  ['jie', '傑結截節接街階介借解姐捷潔竭藉'], ['jin', '金今進近僅斤緊勁錦巾禁晉筋浸'], ['jing', '精經晶驚井景警鏡競境京敬淨靜睛莖荊鯨'], ['jiu', '九酒久救舊就究糾救韭糾'],
+  ['ju', '巨劇具聚局居橘懼拒矩沮據桔駒拘舉鋸菊'], ['juan', '卷圈捐倦絹眷'], ['jue', '決絕覺掘爵嚼訣'], ['jun', '君軍均菌俊郡駿鈞'],
+  ['ka', '卡咖咯佧喀卡'], ['kai', '凱開慨楷鎧'], ['kan', '看砍刊勘坎檻'], ['kang', '康抗慷炕糠'],
+  ['ke', '可克客刻科課顆渴殼柯瞌苛顆克'], ['kong', '恐空孔控'], ['kou', '口扣寇叩'], ['ku', '苦哭庫酷窟骷'],
+  ['kua', '跨夸垮誇'], ['kuai', '快筷塊會膾'], ['kuan', '寬款'], ['kuang', '況狂曠框礦筐'],
+  ['kui', '虧愧奎葵魁饋匱'], ['kun', '困昆捆坤'], ['kuo', '闊擴括廓'], ['la', '拉辣蠟喇落拉啦落臘'],
+  ['lai', '萊來賴萊賴賚'], ['lan', '藍蘭覽懶爛欄籃攬藍覽纜'], ['lang', '狼浪郎朗廊莨'], ['lao', '老勞落牢撈酪姥'],
+  ['le', '勒樂了肋'], ['lei', '雷磊累蕾擂類淚羸'], ['li', '利力立例麗李離理歷莉裡厘黎粒璃哩笠靂栗勵歷'], ['lian', '連聯練臉鍊憐鏈蓮聯鐮廉'],
+  ['liang', '亮量輛良涼樑梁兩糧'], ['liao', '療料瞭僚廖撩寥燎'], ['lie', '烈列裂劣獵咧'], ['lin', '林臨鱗林麟淋吝嶙磷'],
+  ['ling', '令另領零鈴靈凌玲齡陵菱令'], ['liu', '六流留柳溜瘤硫餾榴'], ['long', '龍隆籠聾弄隴瓏瀧籠'], ['lou', '樓漏陋摟簍'],
+  ['lu', '路陸錄鹿露魯盧爐魯碌路蘆賂鲁'], ['lun', '輪論倫崙輪輪倫'], ['luo', '羅洛落絡螺裸邏落'], ['lv', '綠律旅率屢鋁履濾綠'],
+  ['ma', '嗎媽馬麻碼瑪罵麻瑪'], ['mai', '買賣邁麥脈埋'], ['man', '滿慢曼漫瞞蠻蔓饅'], ['mang', '芒忙盲莽茫'],
+  ['mao', '貓毛矛帽茂冒貌錨毛'], ['me', '麼'], ['mei', '沒每妹美枚妹梅媒眉魅昧'], ['men', '門們悶捫'],
+  ['meng', '夢蒙猛萌盟懵濛朦虻'], ['mi', '迷咪米密蜜祕祕咪秘謎'], ['mian', '面免綿棉緬免眠免面'], ['miao', '妙秒苗描喵瞄渺眇苗'],
+  ['min', '敏民敏皿憫憫'], ['ming', '明名命鳴冥銘'], ['mo', '魔磨摸模膜末莫墨默漠陌抹歿沫模'], ['mou', '謀某牟眸'],
+  ['mu', '木目母墓幕幕睦穆募牧'], ['na', '拿那納娜哪鈉鈉'], ['nai', '奈耐奶奶乃奈奈'], ['nan', '南難男喃'],
+  ['nao', '腦鬧惱鬧'], ['ne', '呢哪'], ['nei', '內餒'], ['nen', '嫩'],
+  ['neng', '能'], ['ni', '泥你擬逆匿尼泥倪旎膩'], ['nian', '年念黏碾念'], ['niao', '鳥尿蔦'],
+  ['nie', '聶捏涅鎳'], ['ning', '寧凝檸擰嚀'], ['niu', '牛扭紐鈕狃'], ['nong', '農濃弄農儂'],
+  ['nu', '怒奴努弩'], ['nv', '女奴'], ['nuan', '暖'], ['nuo', '挪諾懦糯'],
+  ['ou', '歐偶嘔歐鷗藕'], ['pa', '怕爬趴啪耙'], ['pai', '拍排牌派拍'], ['pan', '盤判盼叛潘畔'],
+  ['pang', '胖旁膀磅仿'], ['pao', '炮跑泡袍砲'], ['pei', '配陪培培佩沛賠呸'], ['pen', '噴盆盼判噴'],
+  ['peng', '朋碰澎彭蓬膨棚棚'], ['pi', '皮批披疲匹屁痞霹匹皮'], ['pian', '片篇便偏片'], ['piao', '票漂飄嫖瓢飄'],
+  ['pin', '品貧拼頻貧'], ['ping', '平瓶評屏萍憑萍'], ['po', '破婆魄頗迫坡珀破'], ['pou', '剖'],
+  ['pu', '普撲鋪僕蒲埔瀑葡鋪譜'], ['qi', '七奇旗起其期氣器妻齊汽漆欺戚騎乞歧泣琪'], ['qian', '前千牽遷千鉛潛錢乾淺欠簽'], ['qiang', '強槍牆腔強搶薔鏘彊'],
+  ['qiao', '巧橋悄敲巧雀殼俏殼鍬僑鞘巧'], ['qie', '切茄且妾怯'], ['qin', '琴親勤禽侵琴寢欽芹琴'], ['qing', '青晴清情輕傾頃慶請蜻清'],
+  ['qiu', '丘秋求球仇囚鰍酋蚯鍬'], ['qu', '去區取曲趣屈趨驅蛆軀'], ['quan', '全拳泉權券勸犬圈拳'], ['que', '確卻雀缺瘸雀鵲'],
+  ['qun', '群裙群'], ['ran', '然燃染然'], ['rang', '讓嚷壤讓'], ['rao', '繞擾饒'],
+  ['re', '熱惹'], ['ren', '人人認任忍刃仁韌任'], ['ri', '日'], ['rong', '蓉絨榮容融溶茸蠑榕戎'],
+  ['rou', '肉柔揉揉'], ['ru', '如入汝乳儒辱褥'], ['ruan', '軟阮'], ['rui', '瑞銳蕊芮'],
+  ['run', '潤閏潤'], ['ruo', '弱若若'], ['sa', '撒薩灑'], ['sai', '賽塞腮塞'],
+  ['san', '三散散傘參'], ['sang', '桑喪嗓'], ['se', '色色澀瑟嗇'], ['sen', '森森'],
+  ['seng', '僧'], ['sha', '沙殺砂紗傻廈煞鯊沙'], ['shan', '山珊扇善單閃衫珊膳煽訕'], ['shang', '上商傷賞尚裳晌'],
+  ['shao', '少燒稍哨勺紹燒'], ['she', '蛇射設捨舌奢社涉攝捨'], ['shen', '身深神什甚申伸審滲慎腎神'], ['sheng', '聲生升勝繩聖盛牲笙省聖'],
+  ['shi', '食石時十實識始使市是事示視式室試世勢士獅師詩失施濕拾蝕矢誓屎飾史逝釋'], ['shou', '手首守受授壽瘦獸獸'], ['shu', '鼠屬署書樹數術輸叔殊熟暑舒束述蜀梳贖梳'], ['shua', '刷耍'],
+  ['shuai', '摔率帥衰'], ['shuan', '栓拴栓'], ['shuang', '雙霜爽雙'], ['shui', '水睡稅水'],
+  ['shun', '順瞬吮'], ['shuo', '說爍朔碩'], ['si', '斯思絲司私死四寺似肆撕飼斯'], ['song', '松送宋誦聳鬆頌'],
+  ['sou', '搜艘嗽颼'], ['su', '速素宿塑俗肅蘇訴溯縮訴速'], ['suan', '算酸蒜'], ['sui', '隨歲碎遂隧隨穗'],
+  ['sun', '孫損筍筍'], ['suo', '所鎖索梭縮瑣娑梭'], ['ta', '他她它踏塔塌獺塔獺'], ['tai', '太泰胎台苔態抬臺泰'],
+  ['tan', '談探坦炭攤灘潭壇貪檀痰'], ['tang', '堂唐糖湯躺燙趟堂塘搪'], ['tao', '桃逃淘陶套討濤討桃'], ['te', '特忒'],
+  ['teng', '騰疼藤謄'], ['ti', '體題踢提替涕剃惕梯啼蹄蒂'], ['tian', '天田甜添填田舔恬天'], ['tiao', '條跳挑調挑'],
+  ['tie', '鐵貼帖鐵'], ['ting', '聽庭停廳挺廷蜓婷霆'], ['tong', '同童通痛銅桐桶統彤筒瞳同'], ['tou', '頭投偷透頭'],
+  ['tu', '土圖兔途吐突徒塗凸土'], ['tuan', '團團揣'], ['tui', '推退腿褪'], ['tun', '吞屯臀囤吞'],
+  ['tuo', '托脫妥駝鴕唾托拖托陀陀'], ['wa', '蛙娃哇挖瓦窪媧襪蛙'], ['wai', '外歪'], ['wan', '萬玩完晚碗彎宛挽腕頑蔓萬'],
+  ['wang', '王望往網亡妄忘旺網王'], ['wei', '尾為位微危味未微委衛唯偉圍違唯維畏胃緯偽威'], ['wen', '文問聞紋溫穩吻蚊紊玟紋'], ['weng', '翁甕嗡'],
+  ['wo', '我窩握臥窩握渦'], ['wu', '無五物舞物屋武午舞誤悟伍污霧烏巫侮鳥務'], ['xi', '西希西夕析吸息洗細喜稀戲繫息惜隙吸蟋膝席稀習蜥'], ['xia', '夏下峽蝦瞎嚇俠匣轄'],
+  ['xian', '仙先線現限鮮險顯縣掀閑閒咸弦銜餡纖腺憲仙'], ['xiang', '相象向像想鄉香響享降箱祥翔巷鑲項'], ['xiao', '小消笑效校銷囂嘯霄宵蕭硝曉梟小'], ['xie', '些寫謝鞋協邪血寫洩屑斜歇諧謝蟹'],
+  ['xin', '新心辛信新薪芯馨欣信'], ['xing', '行性形星幸型醒興杏腥杏幸'], ['xiong', '胸雄熊兇兄兇熊雄'], ['xiu', '休秀修袖羞臭宿鏽'],
+  ['xu', '許需須序虛續緒蓄敘徐婿徐'], ['xuan', '玄選旋宣懸炫旋眩絃選'], ['xue', '雪穴學靴血削學雪'], ['xun', '尋訓訊迅循旬熏詢尋'],
+  ['ya', '牙押崖涯雅牙啞壓芽鴨訝蚜亞雅鴉'], ['yan', '炎焰眼岩言顏研演驗厭演宴嚴煙艷鹽延沿雁燕鹽眼岩'], ['yang', '樣羊楊洋揚漾仰養氧陽央秧樣'], ['yao', '要腰搖藥咬遙耀妖窯謠搖曜鑰'],
+  ['ye', '葉頁夜野也業爺液冶咽夜葉'], ['yi', '伊依一衣醫異易意義益譯億役抑翼議疑怡姨乙亦屹移儀宜遺倚矣抑藝裔蟻蜴'], ['yin', '音陰引印隱銀因飲引音殷吟寅蔭'], ['ying', '影應英映硬嬰鷹迎盈熒螢櫻贏營穎鷹嬰'],
+  ['yo', '喲'], ['yong', '勇泳永用湧詠蛹擁庸臃湧勇'], ['you', '幼友有由右遊又油優誘幽悠郵尤游'], ['yu', '魚雨語玉育遇魚羽於預域余宇郁域娛遇羽鬱魚禦語怨'],
+  ['yuan', '螈原圓源園員遠院願元援淵袁冤緣員猿螈'], ['yue', '月岳越躍悅約樂閱鑰躍月'], ['yun', '運雲勻允暈韻孕運勻員'], ['za', '雜砸咋'],
+  ['zai', '在再載災仔栽哉'], ['zan', '讚暫贊簪'], ['zang', '髒藏葬'], ['zao', '早造藻燥噪糟棗造'],
+  ['ze', '則責擇澤嘖'], ['zei', '賊'], ['zen', '怎'], ['zeng', '增贈憎'],
+  ['zha', '炸扎查榨閘詐眨'], ['zhai', '宅摘窄債寨齋'], ['zhan', '顫站戰佔斬展沾粘詹盞戰氈顫'], ['zhang', '張章丈掌長障帳脹彰'],
+  ['zhao', '沼照找爪兆趙召沼招罩肇'], ['zhe', '這著遮折者蜇哲蔗者著'], ['zhen', '真陣針震鎮診枕針甄震'], ['zheng', '正爭整政證征蒸掙睜正'],
+  ['zhi', '智隻指枝支知製直值質執治志制至址紙植殖脂蜘織稚炙'], ['zhong', '種中鐘重終眾忠腫衷踵種'], ['zhou', '周洲舟咒晝宙粥皺軸咒'], ['zhu', '竹主著住助注珠株諸祝豬煮逐燭築著竺'],
+  ['zhua', '抓爪'], ['zhuai', '拽'], ['zhuan', '專轉傳磚撰賺轉'], ['zhuang', '壯裝撞莊狀妝幢壯'],
+  ['zhui', '追錐墜綴贅'], ['zhun', '準准'], ['zhuo', '著捉桌卓濁酌琢灼啄著'], ['zi', '子紫字自姿咨資仔滋諮姊子'],
+  ['zong', '總棕宗縱縱鬃縱'], ['zou', '走奏揍走'], ['zu', '組族足阻租卒祖足詛'], ['zuan', '鑽纂'],
+  ['zui', '嘴最罪醉嘴'], ['zun', '尊遵'], ['zuo', '做作坐座左昨佐琢']
 ];
 
 const CHAR_TO_PINYIN = {};
@@ -2166,7 +1991,9 @@ Object.assign(PokemonApp, {
 
       // 僅最終進化篩選 (Only Final Evolution)
       if (this.onlyFinal) {
-        const isFinal = p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1';
+        const isFinal = (typeof isFinalEvolution === 'function')
+          ? isFinalEvolution(p)
+          : (p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1');
         if (!isFinal) return false;
       }
 
@@ -2665,6 +2492,9 @@ if (typeof document !== 'undefined') {
       const VALID_BOX_SUBTABS = ['list', 'lab'];
 
       function switchMainTab(target) {
+        if (typeof window !== 'undefined' && typeof window.cancelPullToRefresh === 'function') {
+          try { window.cancelPullToRefresh(); } catch (e) {}
+        }
         if (target === 'pokedex') target = 'pokemon';
         if (!VALID_MAIN_TABS.includes(target)) target = 'pokemon';
         try {
@@ -3051,22 +2881,51 @@ if (typeof document !== 'undefined') {
     const CACHE_KEY_DATA_JSON = 'pksleep_cache_data_json';
     const CACHE_KEY_DATA_JSON_TIME = 'pksleep_cache_data_json_time';
 
+    function isDatasetHealthy(data) {
+      if (!Array.isArray(data) || data.length < 247) return false;
+      const p429 = data.find(p => p && (String(p.id) === '429' || String(p.formatted_no) === '429'));
+      if (!p429 || !p429.is_final || !Array.isArray(p429.ingredients) || p429.ingredients.length === 0) {
+        return false;
+      }
+      const p200 = data.find(p => p && (String(p.id) === '200' || String(p.formatted_no) === '200'));
+      if (!p200 || !Array.isArray(p200.ingredients) || p200.ingredients.length === 0) {
+        return false;
+      }
+      const p94 = data.find(p => p && (String(p.id) === '94' || String(p.formatted_no) === '094'));
+      if (!p94 || p94.ingredient_rate === '16.10%') {
+        return false;
+      }
+      return true;
+    }
+
     const fetchDataWithFallback = async (...customUrls) => {
       // 1. 優先自本機快取瞬間載入 (Cache-First 0ms 秒開：IndexedDB / LocalStorage)，背景再由 manifest 檢查是否需更新
       try {
         if (typeof window !== 'undefined') {
+          let cachedData = null;
           if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
-            const cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_DATA_JSON);
-            if (Array.isArray(cachedData) && cachedData.length > 0) {
-              return cachedData;
-            }
+            cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_DATA_JSON);
           } else if (window.localStorage) {
             const cachedText = window.localStorage.getItem(CACHE_KEY_DATA_JSON);
             if (cachedText) {
-              const cachedData = JSON.parse(cachedText);
-              if (Array.isArray(cachedData) && cachedData.length > 0) {
-                return cachedData;
-              }
+              cachedData = JSON.parse(cachedText);
+            }
+          }
+          if (Array.isArray(cachedData) && cachedData.length > 0) {
+            if (isDatasetHealthy(cachedData)) {
+              return cachedData;
+            } else {
+              console.warn('[Data Engine] 檢測到本地快取資料為舊版（缺少夢妖魔完整資料或耿鬼未更新），立即廢棄並強制由網路重新載入最新資料庫！');
+              try {
+                if (window.DataCacheManager && typeof window.DataCacheManager.invalidateCache === 'function') {
+                  window.DataCacheManager.invalidateCache(CACHE_KEY_DATA_JSON, 'data.json');
+                } else {
+                  if (window.localStorage) window.localStorage.removeItem(CACHE_KEY_DATA_JSON);
+                  if (window.DataCacheManager && typeof window.DataCacheManager.setFileHash === 'function') {
+                    window.DataCacheManager.setFileHash('data.json', '');
+                  }
+                }
+              } catch (e) {}
             }
           }
         }
@@ -3075,12 +2934,12 @@ if (typeof document !== 'undefined') {
       const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
       const defaultCandidates = [
         `${base}data/data.json`,
-        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json`,
         `data/data.json`,
         `../data/data.json`,
         `${base}data.json`,
         `data.json`,
-        `../data.json`
+        `../data.json`,
+        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json`
       ];
       const rawUrls = customUrls.length > 0 ? customUrls : defaultCandidates;
       const cleanUrls = Array.from(new Set(rawUrls.filter(Boolean).map(u => u.split('?')[0])));
@@ -3093,10 +2952,14 @@ if (typeof document !== 'undefined') {
 
         for (const url of uniqueUrls) {
           try {
-            const res = await fetch(url, { cache: attempt === 1 ? 'default' : 'no-store' });
+            const res = await fetch(url, { cache: attempt === 1 ? 'no-cache' : 'no-store' });
             if (res && res.ok) {
               const text = await res.text();
               const parsed = JSON.parse(text);
+              if (!isDatasetHealthy(parsed)) {
+                console.warn('[Data Engine] 候選來源返回之資料庫未通過健全性檢查（缺少夢妖魔或耿鬼數值為舊版），跳過此來源：', url);
+                continue;
+              }
               try {
                 if (typeof window !== 'undefined' && window.localStorage) {
                   try {
@@ -3126,7 +2989,7 @@ if (typeof document !== 'undefined') {
         if (typeof window !== 'undefined') {
           if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
             const cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_DATA_JSON);
-            if (Array.isArray(cachedData) && cachedData.length > 0) {
+            if (Array.isArray(cachedData) && cachedData.length > 0 && isDatasetHealthy(cachedData)) {
               console.warn('[Data Engine] 網路請求暫時失敗，已自動自本機離線快取載入 data.json (' + cachedData.length + ' 筆資料)');
               return cachedData;
             }
@@ -3134,7 +2997,7 @@ if (typeof document !== 'undefined') {
             const cachedText = window.localStorage.getItem(CACHE_KEY_DATA_JSON);
             if (cachedText) {
               const cachedData = JSON.parse(cachedText);
-              if (Array.isArray(cachedData) && cachedData.length > 0) {
+              if (Array.isArray(cachedData) && cachedData.length > 0 && isDatasetHealthy(cachedData)) {
                 console.warn('[Data Engine] 網路請求暫時失敗，已自動自本機離線快取載入 data.json (' + cachedData.length + ' 筆資料)');
                 return cachedData;
               }
@@ -3159,23 +3022,46 @@ if (typeof document !== 'undefined') {
           let remoteHash = '';
           if (window.DataCacheManager && typeof window.DataCacheManager.checkFileNeedsUpdate === 'function') {
             const check = await window.DataCacheManager.checkFileNeedsUpdate('data.json', CACHE_KEY_DATA_JSON, forceManifest);
-            if (!check.needsUpdate && Array.isArray(allPokemons) && allPokemons.length > 0) {
+            const isCurrentHealthy = isDatasetHealthy(allPokemons);
+            if (!check.needsUpdate && isCurrentHealthy && Array.isArray(allPokemons) && allPokemons.length > 0) {
               return;
             }
             remoteHash = check.remoteHash || '';
           }
 
           const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
-          const liveUrl = `${base}data/data.json?v=${remoteHash || Date.now()}`;
-          let res = await fetch(liveUrl, { cache: 'no-cache' }).catch(() => null);
-          if (!res || !res.ok) {
-            const fallbackRawUrl = `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json?t=${Date.now()}`;
-            res = await fetch(fallbackRawUrl, { cache: 'no-store' });
+          const syncCandidates = [
+            `${base}data/data.json?v=${remoteHash || Date.now()}`,
+            `data/data.json?v=${remoteHash || Date.now()}`,
+            `../data/data.json?v=${remoteHash || Date.now()}`,
+            `${base}data.json?v=${remoteHash || Date.now()}`,
+            `data.json?v=${remoteHash || Date.now()}`,
+            `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json?t=${Date.now()}`
+          ];
+          const uniqueSyncUrls = Array.from(new Set(syncCandidates));
+          let res = null;
+          let rawText = '';
+          let freshData = null;
+
+          for (const url of uniqueSyncUrls) {
+            try {
+              const r = await fetch(url, { cache: 'no-cache' });
+              if (r && r.ok) {
+                const txt = await r.text();
+                const json = JSON.parse(txt);
+                if (isDatasetHealthy(json)) {
+                  res = r;
+                  rawText = txt;
+                  freshData = json;
+                  break;
+                } else {
+                  console.warn('[Data Engine] 同步候選網址返回資料未通過健全性檢查，跳過：', url);
+                }
+              }
+            } catch (e) {}
           }
-          if (!res || !res.ok) return;
-          const rawText = await res.text();
-          const freshData = JSON.parse(rawText);
-          if (!Array.isArray(freshData) || freshData.length === 0) return;
+
+          if (!res || !freshData) return;
 
           if (window.DataCacheManager) {
             window.DataCacheManager.saveCachedJson(CACHE_KEY_DATA_JSON, 'data.json', rawText, remoteHash);
@@ -3187,12 +3073,14 @@ if (typeof document !== 'undefined') {
           }
 
           const currentLen = Array.isArray(allPokemons) ? allPokemons.length : 0;
-          const isDifferent = currentLen !== freshData.length ||
-            (freshData.length > 0 && allPokemons.length > 0 && (
-              freshData[0].id !== allPokemons[0].id ||
-              freshData[freshData.length - 1].id !== allPokemons[allPokemons.length - 1].id ||
-              freshData[0].name_cn !== allPokemons[0].name_cn
-            ));
+          let isDifferent = true;
+          if (currentLen === freshData.length && currentLen > 0) {
+            try {
+              isDifferent = JSON.stringify(freshData) !== JSON.stringify(allPokemons);
+            } catch (e) {
+              isDifferent = true;
+            }
+          }
 
           if (isDifferent || !currentLen) {
             console.log(`[Data Engine] 動態連線取得最新寶可夢資料庫 (${freshData.length} 筆)，正在原地更新...`);
@@ -3220,8 +3108,8 @@ if (typeof document !== 'undefined') {
         }
       }
 
-      // 網頁執行後透過輕量級 manifest.json 檢查雜湊是否變更 (10分鐘內共享單一請求)
-      setTimeout(() => runSyncCheck(false), 1500);
+      // 網頁執行後透過輕量級 manifest.json 強制檢查雜湊是否變更
+      setTimeout(() => runSyncCheck(true), 1500);
       // 每 30 分鐘定期背景檢查 manifest
       setInterval(() => runSyncCheck(false), 30 * 60 * 1000);
       // 使用者切回分頁時透過具備 10 分鐘冷卻節流的 manifest 檢查
@@ -3236,10 +3124,10 @@ if (typeof document !== 'undefined') {
 
     fetchDataWithFallback(
       (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/data.json`,
-      `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json`,
       `data/data.json`,
       `../data/data.json`,
-      `data.json`
+      `data.json`,
+      `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json`
     )
       .then(data => {
         allPokemons = data;
@@ -3861,7 +3749,9 @@ if (typeof document !== 'undefined') {
 
         // 僅最終進化篩選 (Only Final Evolution)
         if (onlyFinal) {
-          const isFinal = p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1';
+          const isFinal = (typeof isFinalEvolution === 'function')
+            ? isFinalEvolution(p)
+            : (p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1');
           if (!isFinal) return false;
         }
 
@@ -3903,10 +3793,27 @@ if (typeof document !== 'undefined') {
 
     function sortableTh(col, label, cls) {
       const parsed = parseTableSort(currentSort);
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       const on = parsed.col === col;
-      const arrow = on ? (parsed.dir === 'desc' ? '▼' : '▲') : '';
-      const aria = on ? (parsed.dir === 'desc' ? 'descending' : 'ascending') : 'none';
-      return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}">${label}${arrow ? `<span class="sort-arrow" aria-hidden="true">${arrow}</span>` : ''}</th>`;
+      let arrow = '';
+      let aria = 'none';
+      let titleTip = '';
+      if (on) {
+        if (parsed.dir === 'newest') {
+          arrow = isEN ? ' (New)' : ' (新)';
+          aria = 'other';
+          titleTip = isEN ? 'Sorted: Newest to Oldest' : '排序：新增寶可夢（新到舊）';
+        } else if (parsed.dir === 'desc') {
+          arrow = '▼';
+          aria = 'descending';
+          titleTip = isEN ? 'Sorted: Descending' : '排序：大到小';
+        } else {
+          arrow = '▲';
+          aria = 'ascending';
+          titleTip = isEN ? 'Sorted: Ascending' : '排序：小到大';
+        }
+      }
+      return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}" ${titleTip ? `title="${titleTip}"` : ''}>${label}${arrow ? `<span class="sort-arrow" aria-hidden="true">${arrow}</span>` : ''}</th>`;
     }
 
     function renderUI() {
@@ -3963,7 +3870,7 @@ if (typeof document !== 'undefined') {
             return `
             <div class="pokemon-card">
               <div class="card-header">
-                ${iconUrl ? `<img class="pokemon-icon" src="${iconUrl}" alt="${pkmName}" loading="lazy" onerror="this.style.display='none';" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">` : ''}
+                ${iconUrl ? `<img class="pokemon-icon" src="${iconUrl}" alt="${pkmName}" loading="lazy" onerror="handlePokemonIconError(this)" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">` : ''}
                 <div class="card-title-group" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">
                   <div class="pokemon-no">No.${p.formatted_no}</div>
                   <div class="pokemon-name" style="white-space:nowrap;">${pkmName}</div>
@@ -4071,7 +3978,7 @@ if (typeof document !== 'undefined') {
                 <tr>
                   ${isShowNo ? `<td class="td-no">${p.formatted_no}</td>` : ''}
                   <td class="td-icon">
-                    ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" class="table-icon" alt="${pkmName}" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}" loading="lazy" onerror="this.style.display='none';" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;">` : ''}
+                    ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" class="table-icon" alt="${pkmName}" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}" loading="lazy" onerror="handlePokemonIconError(this)" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;">` : ''}
                   </td>
                   <td class="td-name pokemon-name-cell" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">${pkmName}</td>
                   <td class="td-berry">${berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}" loading="lazy" onerror="this.style.display='none';">` : `<span class="berry-name-text">${berryName}</span>`}</td>
@@ -4474,22 +4381,102 @@ if (typeof document !== 'undefined') {
       let isTracking = false;
       let isRefreshing = false;
       let currentPull = 0;
+      let activeTouchTarget = null;
       const PULL_THRESHOLD = 64;
       const MAX_PULL = 84;
 
-      function getActiveScrollTop() {
+      function isTargetVisible(el) {
+        if (!el) return false;
+        if (el.offsetParent === null) {
+          if (typeof window.getComputedStyle === 'function') {
+            const s = window.getComputedStyle(el);
+            if (s && s.position === 'fixed' && s.display !== 'none') {
+              // position: fixed element may have offsetParent === null while visible
+            } else {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        }
+        let curr = el;
+        while (curr && curr !== document.body && curr !== document.documentElement) {
+          if (curr.style && curr.style.display === 'none') return false;
+          if (typeof window.getComputedStyle === 'function') {
+            const s = window.getComputedStyle(curr);
+            if (s && s.display === 'none') return false;
+          }
+          curr = curr.parentElement;
+        }
+        return true;
+      }
+
+      let lastScrollTime = 0;
+      let maxTouchY = 0;
+
+      function cancelPullToRefresh() {
+        isTracking = false;
+        activeTouchTarget = null;
+        currentPull = 0;
+        updatePtrUI(0);
+      }
+      PokemonApp.cancelPullToRefresh = cancelPullToRefresh;
+      window.cancelPullToRefresh = cancelPullToRefresh;
+
+      if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+        document.addEventListener('scroll', () => {
+          lastScrollTime = Date.now();
+          if (isTracking) {
+            cancelPullToRefresh();
+          }
+        }, { capture: true, passive: true });
+      }
+
+      const PTR_EXCLUDE_SELECTORS =
+        '.sidebar-bookmark-handle, .sidebar-fab-btn, .box-fab-container, .box-fab-btn, ' +
+        '.bottom-dock, .mobile-bottom-dock, .bottom-dock-nav, .dock-item, ' +
+        '.app-header, .mobile-app-header, ' +
+        '#pokedex-detail-modal, .pokedex-modal-backdrop, .pokedex-modal-dialog, .pokedex-modal-body, ' +
+        '.pokemon-filter-sidebar, .recipe-filter-sidebar, .box-filter-sidebar, .ladder-fixed-sidebar, ' +
+        '.sidebar-backdrop, .modal-overlay, .subskill-sheet-modal, .appraisal-modal-overlay, .appraisal-modal-backdrop, ' +
+        '#settings-modal, #box-edit-modal, #box-delete-confirm-modal, #ladder-recipe-modal, #box-guide-lightbox-modal, .box-guide-lightbox-backdrop, ' +
+        '.box-subnav-bar, .box-subnav-item, #panel-box .controls-container, .controls-container, .mobile-controls-container, .box-top-banner, ' +
+        '#box-dropzone, .box-dropzone, #box-screenshot-guide-card, .search-filter-row, ' +
+        '.box-auth-overlay, #box-scanner-status, #box-toast-container';
+
+      function getActiveScrollTop(target) {
         const winScroll = window.pageYOffset || (document.documentElement ? document.documentElement.scrollTop : 0) || (document.body ? document.body.scrollTop : 0) || 0;
         if (winScroll > 0) return winScroll;
 
-        // 若當前在特定 tab 且內部表格/容器有滾動，檢查該滾動容器
-        const activeTableContainer = document.querySelector('.mobile-h5-app.pokemon-active .pokemon-table-container, .mobile-h5-app.pokemon-active .table-container');
-        if (activeTableContainer && activeTableContainer.scrollTop > 0) {
-          return activeTableContainer.scrollTop;
+        // 1. 深度搜尋 touch target 的所有祖先元素，只要任何容器有滾動即視為未在頂部
+        const rawTarget = target;
+        const targetEl = (rawTarget && rawTarget.nodeType === 3) ? rawTarget.parentElement : rawTarget;
+        if (targetEl && targetEl.nodeType === 1) {
+          let curr = targetEl;
+          while (curr && curr !== document.body && curr !== document.documentElement) {
+            if (curr.scrollTop && curr.scrollTop > 0) {
+              return curr.scrollTop;
+            }
+            curr = curr.parentElement;
+          }
         }
 
-        const activePanel = document.querySelector('.mobile-h5-app .view-panel:not([style*="display: none"]):not([style*="display:none"])');
-        if (activePanel && activePanel.scrollTop > 0) {
-          return activePanel.scrollTop;
+        // 2. 檢測全域所有已知可滾動面板與容器（包含倉庫、深度研究室、培育精算、圖鑑、食譜、百科等）
+        const candidateContainers = document.querySelectorAll(
+          '#box-subpanel-lab, #box-subpanel-list, .box-lab-content-container, #appraisal-lab-container, .appraisal-lab-standalone-panel, .box-subpanel-view, .box-content-container, #box-content-area, .box-main-content, .box-cards-grid, .box-grid, ' +
+          '.lab-growth-container, #panel-box .table-container, .pokemon-table-container, .table-container, ' +
+          '.wiki-table-wrapper, #wiki-content-area, .wiki-layout-main, ' +
+          '#recipe-content-area, .recipe-cards-grid, #content-area, ' +
+          '#panel-box, #panel-pokemon, #panel-recipes, #panel-wiki, #panel-news, ' +
+          '.mobile-h5-app .view-panel:not([style*="display: none"]):not([style*="display:none"])'
+        );
+        for (let i = 0; i < candidateContainers.length; i++) {
+          const el = candidateContainers[i];
+          if (el && el.scrollTop && el.scrollTop > 0) {
+            if (el.offsetParent !== null || (typeof window.getComputedStyle === 'function' && window.getComputedStyle(el).display !== 'none')) {
+              return el.scrollTop;
+            }
+          }
         }
         return 0;
       }
@@ -4535,63 +4522,51 @@ if (typeof document !== 'undefined') {
 
       document.addEventListener('touchstart', (e) => {
         if (isRefreshing || !e.touches || !e.touches[0]) return;
+        const rawTarget = e.target;
+        const target = (rawTarget && rawTarget.nodeType === 3) ? rawTarget.parentElement : rawTarget;
+
         if (isModalOrDrawerActive()) {
-          isTracking = false;
+          cancelPullToRefresh();
           touchStartY = e.touches[0].clientY;
           touchStartX = e.touches[0].clientX;
           return;
         }
-        // 嚴格判定：只有在最頂部時才允許判斷觸發下拉刷新
-        if (getActiveScrollTop() > 2) {
-          isTracking = false;
+        // 嚴格判定：若剛發生容器滾動 (< 180ms 慣性期) 或未在最頂部，拒絕啟動下拉刷新
+        if ((Date.now() - lastScrollTime) < 180 || getActiveScrollTop(target) > 0) {
+          cancelPullToRefresh();
           return;
         }
 
         // 避免在開啟的側邊欄、彈窗、懸浮按鈕或導覽列內誤觸發全頁下拉刷新
-        const target = e.target;
-        if (target && target.closest && target.closest(
-          '.sidebar-bookmark-handle, .sidebar-fab-btn, .box-fab-container, .box-fab-btn, ' +
-          '.bottom-dock, .mobile-bottom-dock, .bottom-dock-nav, .dock-item, ' +
-          '.app-header, .mobile-app-header, ' +
-          '#pokedex-detail-modal, .pokedex-modal-backdrop, .pokedex-modal-dialog, .pokedex-modal-body, ' +
-          '.pokemon-filter-sidebar, .recipe-filter-sidebar, .box-filter-sidebar, .ladder-fixed-sidebar, ' +
-          '.sidebar-backdrop, .modal-overlay, .subskill-sheet-modal, .appraisal-modal-overlay, .appraisal-modal-backdrop, ' +
-          '#settings-modal, #box-edit-modal, #box-delete-confirm-modal, #ladder-recipe-modal, #box-guide-lightbox-modal, .box-guide-lightbox-backdrop'
-        )) {
-          isTracking = false;
+        if (target && target.closest && target.closest(PTR_EXCLUDE_SELECTORS)) {
+          cancelPullToRefresh();
           return;
         }
 
         isTracking = true;
+        activeTouchTarget = target;
         touchStartY = e.touches[0].clientY;
         touchStartX = e.touches[0].clientX;
+        maxTouchY = touchStartY;
         currentPull = 0;
-        ptrEl.classList.remove('ptr-refreshing');
-        ptrEl.style.transition = 'none';
+        updatePtrUI(0);
+        if (ptrEl) {
+          ptrEl.classList.remove('ptr-refreshing');
+          ptrEl.style.transition = 'none';
+        }
       }, { passive: true });
 
       document.addEventListener('touchmove', (e) => {
         if (!isTracking || isRefreshing || !e.touches || !e.touches[0]) return;
-        const targetEl = e.target;
-        if (targetEl && targetEl.closest && targetEl.closest(
-          '.sidebar-bookmark-handle, .sidebar-fab-btn, .box-fab-container, .box-fab-btn, ' +
-          '.bottom-dock, .mobile-bottom-dock, .bottom-dock-nav, .dock-item, ' +
-          '.app-header, .mobile-app-header'
-        )) {
-          isTracking = false;
-          if (currentPull > 0) {
-            currentPull = 0;
-            updatePtrUI(0);
-          }
+        const rawTargetEl = e.target;
+        const targetEl = (rawTargetEl && rawTargetEl.nodeType === 3) ? rawTargetEl.parentElement : rawTargetEl;
+        if (targetEl && targetEl.closest && targetEl.closest(PTR_EXCLUDE_SELECTORS)) {
+          cancelPullToRefresh();
           return;
         }
         if (isModalOrDrawerActive()) {
-          isTracking = false;
-          if (currentPull > 0) {
-            currentPull = 0;
-            updatePtrUI(0);
-          }
-          const t = e.target;
+          cancelPullToRefresh();
+          const t = targetEl;
           const scrollable = t && t.closest ? t.closest('.sidebar-scrollable-content, .pokedex-modal-body, .box-modal-body, .settings-modal-body, .ladder-recipe-modal-body, .appraisal-modal-body, .box-guide-lightbox-dialog') : null;
           if (!scrollable || scrollable.scrollTop <= 0) {
             if (e.touches[0].clientY > touchStartY && e.cancelable) {
@@ -4600,25 +4575,34 @@ if (typeof document !== 'undefined') {
           }
           return;
         }
+
+        // 任何時刻只要發生內部滾動或離開最頂部，立即斷開下拉刷新追蹤
+        if ((Date.now() - lastScrollTime) < 180 || getActiveScrollTop(targetEl) > 0) {
+          cancelPullToRefresh();
+          return;
+        }
+
         const currentY = e.touches[0].clientY;
         const currentX = e.touches[0].clientX;
         const deltaY = currentY - touchStartY;
         const deltaX = currentX - touchStartX;
 
-        // 若為向上滑動或橫向左右滑動，立即取消並還原
-        if (deltaY <= 0 || Math.abs(deltaX) > deltaY) {
+        if (currentY > maxTouchY) {
+          maxTouchY = currentY;
+        }
+
+        // 若為向上滑動 (deltaY < -4)、單次手勢中折返上滑 (currentY - maxTouchY < -6)、或橫向左右滑動，永久終止本次觸控追蹤
+        if (deltaY < -4 || (currentY - maxTouchY) < -6 || Math.abs(deltaX) > deltaY) {
+          cancelPullToRefresh();
+          return;
+        }
+
+        // 下拉未達 12px 防抖死區前，不啟動 UI 位移變換
+        if (deltaY < 12) {
           if (currentPull > 0) {
             currentPull = 0;
             updatePtrUI(0);
           }
-          return;
-        }
-
-        // 再次確認是否仍在最頂部
-        if (getActiveScrollTop() > 2) {
-          isTracking = false;
-          currentPull = 0;
-          updatePtrUI(0);
           return;
         }
 
@@ -4627,9 +4611,18 @@ if (typeof document !== 'undefined') {
         updatePtrUI(currentPull);
       }, { passive: false });
 
+      document.addEventListener('touchcancel', () => {
+        cancelPullToRefresh();
+      }, { passive: true });
+
       document.addEventListener('touchend', () => {
         if (!isTracking || isRefreshing) return;
         isTracking = false;
+
+        if (isModalOrDrawerActive() || !isTargetVisible(activeTouchTarget)) {
+          cancelPullToRefresh();
+          return;
+        }
 
         if (currentPull >= PULL_THRESHOLD) {
           // 達到下拉刷新閥值：鎖定展示旋轉動畫並執行刷新
@@ -4651,8 +4644,11 @@ if (typeof document !== 'undefined') {
           updatePtrUI(0);
         }
         currentPull = 0;
+        activeTouchTarget = null;
       }, { passive: true });
 
+      window.cancelPullToRefresh = cancelPullToRefresh;
+      PokemonApp.cancelPullToRefresh = cancelPullToRefresh;
       window.initPullToRefresh = initPullToRefresh;
       PokemonApp.initPullToRefresh = initPullToRefresh;
     }
@@ -4662,6 +4658,7 @@ if (typeof document !== 'undefined') {
     initPullToRefresh();
     PokemonApp.initBackToTop = initBackToTop;
     PokemonApp.initPullToRefresh = initPullToRefresh;
+    PokemonApp.cancelPullToRefresh = window.cancelPullToRefresh;
   });
 }
 
@@ -6205,7 +6202,7 @@ function renderPokedexEvoItemChipsHTML(pkm) {
     const tip = isEN
       ? `Evolution Item: ${item.name} (Click for encyclopedia details)`
       : `進化道具：${item.name}（點擊查看百科詳情）`;
-    return `<button type="button" class="pokedex-evo-item-btn" data-evo-item-id="${item.id}" onclick="window.WikiDB && typeof window.WikiDB.openItemDetailModal === 'function' ? window.WikiDB.openItemDetailModal('${item.id}') : (window.openItemDetailModal && window.openItemDetailModal('${item.id}'))" title="${escapeHtml(tip)}" aria-label="${escapeHtml(tip)}">${item.icon_url ? `<img src="${item.icon_url}" class="pokedex-evo-item-icon" alt="${escapeHtml(item.name)}" loading="lazy">` : ''}<span class="pokedex-evo-item-name font-bold">${escapeHtml(item.name)}</span></button>`;
+    return `<button type="button" class="pokedex-evo-item-btn pokedex-evo-item-icon-only" data-evo-item-id="${item.id}" onclick="window.WikiDB && typeof window.WikiDB.openItemDetailModal === 'function' ? window.WikiDB.openItemDetailModal('${item.id}') : (window.openItemDetailModal && window.openItemDetailModal('${item.id}'))" title="${escapeHtml(tip)}" aria-label="${escapeHtml(tip)}">${item.icon_url ? `<img src="${item.icon_url}" class="pokedex-evo-item-icon" alt="${escapeHtml(item.name)}" loading="lazy">` : ''}</button>`;
   }).join('');
 }
 
@@ -6236,7 +6233,9 @@ function renderPokedexRibbonOptionsHTML(pkm, currentRibbon) {
     if (typeof window !== 'undefined' && window.AppraisalLab && typeof window.AppraisalLab.getRemainingEvolutions === 'function') {
       remainingEvos = window.AppraisalLab.getRemainingEvolutions(pkm);
     } else {
-      const isFinal = pkm.is_final === '〇' || pkm.is_final === 'O' || pkm.is_final === 'o' || pkm.is_final === true || pkm.is_final === '1';
+      const isFinal = (typeof isFinalEvolution === 'function')
+        ? isFinalEvolution(pkm)
+        : (pkm.is_final === '〇' || pkm.is_final === 'O' || pkm.is_final === 'o' || pkm.is_final === true || pkm.is_final === '1');
       remainingEvos = isFinal ? 0 : 1;
     }
   }
@@ -6463,15 +6462,15 @@ function renderPokedexDetailModalContent() {
       <div class="box-modal-header pokedex-modal-header">
         <div class="pokedex-modal-header-main">
           <div class="box-modal-title pokedex-modal-title">
-            ${iconUrl ? `<img src="${iconUrl}" class="pokedex-header-avatar" alt="${escapeHtml(pkmName)}" loading="lazy">` : ''}
+            ${iconUrl ? `<img src="${iconUrl}" class="pokedex-header-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="handlePokemonIconError(this)">` : ''}
             <div class="pokedex-header-info">
               <div class="pokedex-header-no">No.${pkm.formatted_no || ''}</div>
               <div class="pokedex-header-name-row">
                 <span class="pokedex-header-pkm-name font-bold">${escapeHtml(pkmName)}</span>
-                ${renderPokedexEvoItemChipsHTML(pkm)}
               </div>
             </div>
             <div class="pokedex-header-tags pokedex-header-berry-spec-group">
+              ${renderPokedexEvoItemChipsHTML(pkm)}
               <span class="pokedex-tag pokedex-tag-berry" title="${escapeHtml(berryName)}">
                 ${berry.icon ? `<img src="${berry.icon}" class="pokedex-berry-icon-img" alt="${escapeHtml(berryName)}" title="${escapeHtml(berryName)}" loading="lazy">` : ''}
               </span>

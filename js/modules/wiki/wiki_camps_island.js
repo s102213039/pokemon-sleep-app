@@ -366,7 +366,11 @@
     "哎呀球菇": "590",
     "敗露球菇": "591",
     "Foongus": "590",
-    "Amoonguss": "591"
+    "Amoonguss": "591",
+    "夢妖": "200",
+    "夢妖魔": "429",
+    "Misdreavus": "200",
+    "Mismagius": "429"
   };
 
   function getPokemonAvatarUrl(pOrName, name_en) {

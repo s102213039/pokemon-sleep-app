@@ -131,6 +131,11 @@
     `;
   }
 
+  function stripHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/<[^>]+>/g, '').trim();
+  }
+
   function renderBoxGrid(list, container) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     container.innerHTML = `
@@ -156,7 +161,7 @@
           const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';
 
           return `
-            <div class="box-card" data-uid="${p.uid}" title="${escapeHtml(prInfo.summaryNote || '')}">
+            <div class="box-card" data-uid="${p.uid}" title="${escapeHtml(stripHtml(prInfo.summaryNote || ''))}">
               <div class="box-card-header">
                 <div class="box-card-img-wrap">
                   ${iconUrl ? `<img src="${iconUrl}" alt="${escapeHtml(pkmDisplayName)}" class="box-card-icon" onerror="this.style.display='none';">` : ''}
@@ -261,9 +266,9 @@
 
               <!-- 智能簡評摘要 (直通頂尖料理精選) -->
               ${prInfo.summaryNote ? `
-                <div class="box-card-summary" title="${escapeHtml(prInfo.summaryNote)}">
+                <div class="box-card-summary" title="${escapeHtml(stripHtml(prInfo.summaryNote))}">
                   <span class="box-card-summary-label">${isEN ? 'Appraisal Note:' : '智能簡評：'}</span>
-                  <span class="box-card-summary-text">${escapeHtml(prInfo.summaryNote)}</span>
+                  <span class="box-card-summary-text">${prInfo.summaryNote}</span>
                 </div>
               ` : ''}
             </div>
@@ -315,7 +320,7 @@
               const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';
 
               return `
-                <tr data-uid="${p.uid}" title="${escapeHtml(prInfo.summaryNote || '')}">
+                <tr data-uid="${p.uid}" title="${escapeHtml(stripHtml(prInfo.summaryNote || ''))}">
                   <td class="td-icon" style="text-align:center;">
                     <div class="table-icon-wrapper" style="margin:0 auto;width:34px;height:34px;">
                       ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="table-icon" onerror="this.style.display='none';">` : ''}

@@ -56,15 +56,15 @@ function renderPokedexDetailModalContent() {
       <div class="box-modal-header pokedex-modal-header">
         <div class="pokedex-modal-header-main">
           <div class="box-modal-title pokedex-modal-title">
-            ${iconUrl ? `<img src="${iconUrl}" class="pokedex-header-avatar" alt="${escapeHtml(pkmName)}" loading="lazy">` : ''}
+            ${iconUrl ? `<img src="${iconUrl}" class="pokedex-header-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="handlePokemonIconError(this)">` : ''}
             <div class="pokedex-header-info">
               <div class="pokedex-header-no">No.${pkm.formatted_no || ''}</div>
               <div class="pokedex-header-name-row">
                 <span class="pokedex-header-pkm-name font-bold">${escapeHtml(pkmName)}</span>
-                ${renderPokedexEvoItemChipsHTML(pkm)}
               </div>
             </div>
             <div class="pokedex-header-tags pokedex-header-berry-spec-group">
+              ${renderPokedexEvoItemChipsHTML(pkm)}
               <span class="pokedex-tag pokedex-tag-berry" title="${escapeHtml(berryName)}">
                 ${berry.icon ? `<img src="${berry.icon}" class="pokedex-berry-icon-img" alt="${escapeHtml(berryName)}" title="${escapeHtml(berryName)}" loading="lazy">` : ''}
               </span>

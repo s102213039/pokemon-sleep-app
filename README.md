@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue?style=for-the-badge&logo=github)](https://s102213039.github.io/pokemon-sleep-app/)
-[![Tests](https://img.shields.io/badge/Tests-227%2F227%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
+[![Tests](https://img.shields.io/badge/Tests-279%2F279%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
 [![Bilingual](https://img.shields.io/badge/Language-繁體中文%20%7C%20English-orange?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
 [![Themes](https://img.shields.io/badge/Themes-4%20Themes%20(Dark%2FLight)-purple?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
@@ -29,7 +29,9 @@
 ---
 
 ### 2. 料理食譜計算與模擬器 (Recipes & Pot Simulator)
-- **78 道官方食譜全收錄**：涵蓋咖哩/濃湯、沙拉、甜點/飲料三大料理類別。
+- **78 道官方食譜全收錄與動態同步**：涵蓋咖哩/濃湯、沙拉、甜點/飲料三大料理類別，具備 Serebii 動態爬取與雙向同步機制，保證 100% 官方資料對齊。
+- **嚴格資料健全性守門 (isRecipesHealthy)**：具備深度防禦檢查，抵禦空洞陣列 (Sparse Array)、非有限數值 (Infinity/NaN)、原型污染 (Prototype Pollution) 與異常食材名稱，確保快取資料永遠健康可靠。
+- **全域跨模組一致呈現**：食譜分頁、食材天梯榜、研究室目標推薦、倉庫智慧評價與多語系字典 (繁中/簡中/英文) 全面即時聯動。
 - **雙向食材篩選器**：
   - **包含食材**：指定料理必須含有的食材（支援「含任一」或「全部符合」）。
   - **排除食材**：隱藏含有特定不需要食材的食譜。
@@ -95,6 +97,11 @@
 ### 7. 行動端專屬介面 (Mobile H5 App)
 - 專屬入口網址 `app/index.html`，具備 5 大導航 Dock（圖鑑、食譜、百科、倉庫、消息）。
 - 底部抽屜式篩選（Bottom Sheet）、自適應安全區域（Safe Area Insets）與智慧防回彈滾動。
+- **高韌性下拉刷新狀態機 (Hardened Pull-to-Refresh Engine)**：
+  - **反向滑動即刻取消**：向上滑動（`deltaY < -4`）立即終止手勢追蹤，徹底杜絕快速上下捲動後的幽靈下拉刷新。
+  - **12px 拖曳死區與容器捲動精準判定**：手勢未達 12px 保持靜止；嚴格要求容器 `scrollTop === 0`，非最頂部時全面阻斷。
+  - **控制項與文字節點排除**：盒子工具列（`.controls-container`）、上傳拖放區（`#box-dropzone`）與引導卡（含內部 TextNode 節點）全面排除觸發。
+  - **中斷安全與導航聯動**：監聽系統 `touchcancel` 事件，並在 Dock 分頁切換、盒子子分頁切換或彈窗開啟時自動調用 `cancelPullToRefresh()`，徹底杜絕 UI 殘留與異常刷新。
 
 ---
 
@@ -154,28 +161,31 @@ graph TD
 
 ## 本地開發與自動化測試 (Testing)
 
-本專案內建一套獨立的 **236 項全自動化測試套件**，涵蓋資料庫完整性、公式精確度、OCR 多錨點辨識、i18n 雙語翻譯、雙端路徑跳轉、評測演算法、樹果遽增 BFS 協同、生產環境資料壓縮、原生 IndexedDB 快取驗證與各島嶼營地。詳細測試架構與反饋原則請參考 [docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md)。
+本專案內建一套獨立的 **279 項全自動化測試套件**，涵蓋資料庫完整性、公式精確度、OCR 多錨點辨識、i18n 雙語翻譯、雙端路徑跳轉、評測演算法、樹果遽增 BFS 協同、生產環境資料壓縮、原生 IndexedDB 快取驗證、食譜健康防禦、下拉刷新狀態機與各島嶼營地。詳細測試架構與反饋原則請參考 [docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md)。
 
 ### 常用命令 (Commands)
 ```bash
 # 確保已安裝 Node.js (v18+)
 
-# 1. 日常開發推薦：極速執行 Tier 1~3 (118 項，僅 0.25 秒)
+# 1. 日常開發推薦：極速執行 Tier 1~3 (156 項，僅 < 0.4 秒)
 npm run test:fast
 
-# 2. 完整回歸驗證：全量 236 項測試 (約 2.1 秒)
+# 2. 完整回歸驗證：全量 279 項測試 (約 2.2 秒)
 npm test
 
-# 3. 關鍵字過濾單元測試 (數毫秒)
-node tests/run_tests.js -g "OCR"
-node tests/run_tests.js -g "Amber"
+# 3. 專項手勢與食譜健康度壓力測試
+node tests/adversarial_ptr_stress.js    # 19 項 PTR 對抗手勢測試
+node tests/stress_ptr_concurrency.js     # 10 項 PTR 並行與跨模組中斷測試
+node tests/stress_ptr_gestures.js        # 7 項 PTR 基礎手勢合成測試
+node tests/stress_recipe_health.js       # 57 項食譜健康度與原型污染測試
+node tests/stress_i18n_consumer.js       # 19 項 i18n 跨語系簽名測試
 
 # 4. 指定單一或組合 Tier
-npm run test:tier1    # 0.08 秒
-npm run test:tier4    # 1.80 秒
+npm run test:tier1    # Tier 1 基礎覆蓋
+npm run test:tier4    # Tier 4 真實情境整合
 node tests/run_tests.js --tier=2,3
 
-# 5. 一鍵打包所有 CSS 與 JS 子模組 (約 16ms)
+# 5. 一鍵打包所有 CSS 與 JS 子模組 (約 25ms)
 npm run build:all
 
 # 6. 資料庫維護雙模式
@@ -184,10 +194,10 @@ npm run data:minify   # 壓回生產極致壓縮格式並自動更新 manifest.j
 ```
 
 ### 測試覆蓋階層
-- **Tier 1 - Feature Coverage (67 項)**：資料集結構、公式計算、食譜加成、主技能矩陣、主題色系、H5 入口完整性、回到頂部按鈕結構。
-- **Tier 2 - Boundary Cases (43 項)**：空搜尋、大小寫不敏感、多選交集、等級邊界 (Lv.1~80)、鍋子容量上下限、副技能防重複選擇、進化等級防禦。
-- **Tier 3 - Cross-Feature (8 項)**：多維度複合篩選、主題語言聯動切換、Dock 導航持久化、睡飽飽獎章抵扣結算。
-- **Tier 4 - Real-World Scenarios (118 項)**：雙端真實工作流、OCR 全量解析校準（102x 提速）、嚴格評測雙軌定級、樹果遽增 BFS 爆發、傳說神獸團隊協同、目標料理導向組隊、生產資料壓縮、原生 IndexedDB 0ms 秒開與琥褐溪谷營地驗證。
+- **Tier 1 - Feature Coverage (68 項)**：資料集結構、公式計算、食譜加成、主技能矩陣、主題色系、H5 入口完整性、回到頂部按鈕結構。
+- **Tier 2 - Boundary Cases (70 項)**：空搜尋、大小寫不敏感、多選交集、等級邊界 (Lv.1~80)、鍋子容量上下限、副技能防重複選擇、進化等級防禦、19 項 PTR 嚴苛手勢與死區邊界、12 項食譜健康邊界。
+- **Tier 3 - Cross-Feature (18 項)**：多維度複合篩選、主題語言聯動切換、Dock 導航持久化、睡飽飽獎章抵扣結算、10 項 PTR 跨模組導航切換與並行中斷。
+- **Tier 4 - Real-World Scenarios (123 項)**：雙端真實工作流、OCR 全量解析校準（102x 提速）、嚴格評測雙軌定級、樹果遽增 BFS 爆發、傳說神獸團隊協同、目標料理導向組隊、生產資料壓縮、原生 IndexedDB 0ms 秒開與琥褐溪谷營地驗證。
 
 > 完整開發、擴充資料庫與模組化建構流程，請參閱 **[docs/MAINTENANCE_AND_DEVELOPMENT_GUIDE.md](docs/MAINTENANCE_AND_DEVELOPMENT_GUIDE.md)**。
 

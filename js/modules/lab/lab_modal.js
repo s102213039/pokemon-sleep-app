@@ -372,7 +372,7 @@
             <!-- 智能簡評欄 (嵌入式膠囊標籤) -->
             <div class="appraisal-summary-bar">
               <span class="appraisal-summary-label">${isEN ? 'Appraisal Note' : '智能簡評'}</span>
-              <span class="appraisal-summary-text">${escapeHtml(summaryNote)}</span>
+              <span class="appraisal-summary-text">${summaryNote}</span>
             </div>
           </div>
         </div>
@@ -546,7 +546,7 @@
               <!-- 中部：PR 智能簡評欄 (嵌入式膠囊標籤，不佔用內容展示空間) -->
               <div class="appraisal-summary-bar">
                 <span class="appraisal-summary-label">${isEN ? 'Appraisal Note' : '智能簡評'}</span>
-                <span class="appraisal-summary-text">${escapeHtml(summaryNote)}</span>
+                <span class="appraisal-summary-text">${summaryNote}</span>
               </div>
 
               <!-- 下方：專長深度點評與優缺點 (在智能簡評下方，同樣長度) -->

@@ -690,7 +690,9 @@ def parse_article(url):
         "overview": ai_result["overview"],
         "highlights": ai_result["highlights"],
         "sections": ai_result["sections"],
-        "content_preview": preview
+        "content_preview": preview,
+        "full_content": clean_text,
+        "full_content_en": en_data.get('clean_text_en') if en_data else ""
     }
 
 def fetch_english_counterpart(zh_url):

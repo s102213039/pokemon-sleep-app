@@ -493,6 +493,9 @@
   }
 
   function switchBoxSubtab(tab) {
+    if (typeof window !== 'undefined' && typeof window.cancelPullToRefresh === 'function') {
+      try { window.cancelPullToRefresh(); } catch (e) {}
+    }
     if (!VALID_BOX_SUBTABS.includes(tab)) tab = 'list';
     if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
       window.scrollTo(0, 0);

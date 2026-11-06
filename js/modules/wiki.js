@@ -570,6 +570,22 @@
       unit_en: " Ingredients"
     },
     {
+      id: "mystical_fire_cooking_advance",
+      name: "魔法火焰（料理躍進S）",
+      name_en: "Mystical Fire (Cooking Advance S)",
+      icon: "",
+      category: "ingredient",
+      catName: "食材與料理",
+      desc: "擴大下次料理時鍋子的容量上限（7~31個），並稍微提升下次料理漂亮成功（大成功）的機率（+1%~+5%）。",
+      desc_en: "Expands cooking pot size (+7~31) and slightly raises Extra Tasty rate of next dish (+1%~+5%).",
+      maxLevel: 7,
+      values: [7, 10, 12, 17, 22, 27, 31],
+      specialNote: "夢妖魔專屬複合技能：擴鍋（+7, +10, +12, +17, +22, +27, +31）與大成功率提升（+1%, +2%, +2%, +3%, +3%, +4%, +5%），已提升的機率在料理漂亮成功或移動營地後重置。",
+      specialNote_en: "Mismagius signature: Expands pot capacity (+7~31) and stacks Extra Tasty rate (+1%~5%) until Extra Tasty or camp move.",
+      unit: " 個容量",
+      unit_en: " Pot Space"
+    },
+    {
       id: "aura_sphere_dream_shard",
       name: "波導彈（夢之碎片獲取S）",
       name_en: "Aura Sphere (Dream Shard Magnet S)",
@@ -1270,7 +1286,8 @@
     { id: "mushroom", name: "品鮮蘑菇", enName: "Tasty Mushroom", energy: 167, icon: "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" },
     { id: "leek", name: "粗枝大蔥", enName: "Large Leek", energy: 185, icon: "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" },
     { id: "pumpkin", name: "沉甸甸南瓜", enName: "Plump Pumpkin", energy: 250, icon: "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png" },
-    { id: "tail", name: "美味尾巴", enName: "Slowpoke Tail", energy: 342, icon: "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png" }
+    { id: "tail", name: "美味尾巴", enName: "Slowpoke Tail", energy: 342, icon: "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png" },
+    { id: "snackablenuts", name: "一口堅果", enName: "Snackable Nuts", energy: 162, icon: "https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png" }
   ];
 
   // --- 5. Lv.60 視覺橫向天梯座標圖資料庫 (Image 2 實體化 - Coordinate Ladder Data) ---
@@ -2038,7 +2055,8 @@
     mushroom: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 31, type: '咖哩', type_en: 'Curry', energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', secondary: '大塊滿滿熱水沙拉 (27)', secondary_en: 'Scald Chunky Salad (27)' },
     leek: { name: '居合斬壽喜燒咖哩', name_en: 'Cut Sukiyaki Curry', need: 27, type: '咖哩', type_en: 'Curry', energy: 20655, icon: 'https://www.serebii.net/pokemonsleep/meals/cutsukiyakicurry.png', secondary: '電光香料可樂 (20)', secondary_en: 'Zing Zap Spiced Cola (20)' },
     pumpkin: { name: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', need: 20, type: '沙拉', type_en: 'Salad', energy: 25356, icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png', secondary: '心跳加速鬼面鬆餅 (18)', secondary_en: 'Scary Face Pancakes (18)' },
-    tail: { name: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', need: 10, type: '沙拉', type_en: 'Salad', energy: 8169, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png', secondary: '炙燒尾肉咖哩 (8)', secondary_en: 'Grilled Tail Curry (8)' }
+    tail: { name: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', need: 10, type: '沙拉', type_en: 'Salad', energy: 8169, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png', secondary: '炙燒尾肉咖哩 (8)', secondary_en: 'Grilled Tail Curry (8)' },
+    snackablenuts: { name: '極致酪梨堅果盛宴沙拉', name_en: 'Supreme Avocado Nut Feast Salad', need: 24, type: '沙拉', type_en: 'Salad', energy: 28950, icon: 'https://www.serebii.net/pokemonsleep/meals/supremeavocadonutfeastsalad.png', secondary: '頂級尾巴豆香堅果蛋糕 (16)', secondary_en: 'Grand Tail Soy Nut Cake (16)' }
   };
 
   // 食材天梯各分類前 7 高基礎能量之頂級大菜 (咖哩、沙拉、甜點三大類各 7 種)
@@ -2520,7 +2538,7 @@
           <div class="ladder-recipe-card ${isCurrent ? 'selected' : ''}" onclick="window.WikiDB.selectLadderHighlightRecipe('${r.name_cn}')" role="button" tabindex="0">
             <div class="recipe-card-top">
               <span class="recipe-card-rank">${rIdx + 1}</span>
-              <img src="${r.icon}" class="recipe-card-icon" alt="${displayName}">
+              <img src="${r.icon}" class="recipe-card-icon" alt="${displayName}" onerror="this.style.opacity='0.3';">
               <div class="recipe-card-meta">
                 <div class="recipe-card-name-row">
                   <span class="recipe-card-name">${displayName}</span>
@@ -2538,7 +2556,7 @@
                 const ingDisplayName = isEN ? ((window.I18N && window.I18N.getIngredientName(ing.name)) || ing.name) : ing.name;
                 return `
                   <span class="recipe-card-ing-chip" title="${ingDisplayName}">
-                    <img src="${ing.icon}" class="recipe-card-ing-icon" alt="${ingDisplayName}">
+                    <img src="${ing.icon}" class="recipe-card-ing-icon" alt="${ingDisplayName}" onerror="this.style.display='none';">
                     <span class="ing-chip-count">×${ing.count}</span>
                   </span>
                 `;
@@ -3942,17 +3960,19 @@
       const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
       const candidates = [
         `${base}data/sleep_styles.json`,
-        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/sleep_styles.json`,
         `data/sleep_styles.json`,
-        `../data/sleep_styles.json`
+        `../data/sleep_styles.json`,
+        `${base}sleep_styles.json`,
+        `sleep_styles.json`,
+        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/sleep_styles.json`
       ];
 
       let remoteHash = '';
       if (typeof window !== 'undefined' && window.DataCacheManager && typeof window.DataCacheManager.checkFileNeedsUpdate === 'function') {
         try {
-          const check = await window.DataCacheManager.checkFileNeedsUpdate('sleep_styles.json', CACHE_KEY_SLEEP_STYLES_JSON);
+          const check = await window.DataCacheManager.checkFileNeedsUpdate('sleep_styles.json', CACHE_KEY_SLEEP_STYLES_JSON, true);
           remoteHash = check.remoteHash || '';
-          if (dynamicSleepStyles && !check.needsUpdate) {
+          if (dynamicSleepStyles && Object.keys(dynamicSleepStyles).length >= 250 && !check.needsUpdate) {
             return;
           }
         } catch (e) {}
@@ -3964,7 +3984,7 @@
           if (res && res.ok) {
             const rawText = await res.text();
             const data = JSON.parse(rawText);
-            if (data && data.byName) {
+            if (data && data.byName && Object.keys(data.byName).length >= 250) {
               dynamicSleepStyles = data.byName;
               _sleepStyleCacheHasDyn = false;
               try {
@@ -4212,30 +4232,12 @@
         { rank: "Master 20", energy: 3245795 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "920,000"
-              },
-              {
-                      "count": 5,
-                      "power": "2,060,000"
-              },
-              {
-                      "count": 6,
-                      "power": "4,500,000"
-              },
-              {
-                      "count": 7,
-                      "power": "8,320,000"
-              },
-              {
-                      "count": 8,
-                      "power": "19,500,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "920,000" },
+              { "count": 5, "power": "2,060,000" },
+              { "count": 6, "power": "4,500,000" },
+              { "count": 7, "power": "8,320,000" },
+              { "count": 8, "power": "19,500,000" }
       ],
       spawns: {
         dozing: [
@@ -4299,6 +4301,8 @@
           { name: "土王", name_en: "Clodsire", type: "毒", s1: "Master 2", s2: "Master 6", s3: "-", s4: "Master 7" },
           { name: "哎呀球菇", name_en: "Foongus", type: "毒", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
           { name: "敗露球菇", name_en: "Amoonguss", type: "毒", s1: "Ultra 4", s2: "Master 2", s3: "-", s4: "Master 1" },
+          { name: "夢妖", name_en: "Misdreavus", type: "幽靈", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
+          { name: "夢妖魔", name_en: "Mismagius", type: "幽靈", s1: "Master 9", s2: "Master 13", s3: "-", s4: "Master 14" },
         ],
         snoozing: [
           { name: "小火龍", name_en: "Charmander", type: "火", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" },
@@ -4468,30 +4472,12 @@
         { rank: "Master 20", energy: 3732664 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "1,150,000"
-              },
-              {
-                      "count": 5,
-                      "power": "2,570,000"
-              },
-              {
-                      "count": 6,
-                      "power": "5,620,000"
-              },
-              {
-                      "count": 7,
-                      "power": "10,400,000"
-              },
-              {
-                      "count": 8,
-                      "power": "24,400,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "1,150,000" },
+              { "count": 5, "power": "2,570,000" },
+              { "count": 6, "power": "5,620,000" },
+              { "count": 7, "power": "10,400,000" },
+              { "count": 8, "power": "24,400,000" }
       ],
       spawns: {
         dozing: [
@@ -4579,30 +4565,12 @@
         { rank: "Master 20", energy: 4219534 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "1,430,000"
-              },
-              {
-                      "count": 5,
-                      "power": "3,190,000"
-              },
-              {
-                      "count": 6,
-                      "power": "6,980,000"
-              },
-              {
-                      "count": 7,
-                      "power": "12,900,000"
-              },
-              {
-                      "count": 8,
-                      "power": "30,200,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "1,430,000" },
+              { "count": 5, "power": "3,190,000" },
+              { "count": 6, "power": "6,980,000" },
+              { "count": 7, "power": "12,900,000" },
+              { "count": 8, "power": "30,200,000" }
       ],
       spawns: {
         dozing: [
@@ -4693,30 +4661,12 @@
         { rank: "Master 20", energy: 4706403 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "1,840,000"
-              },
-              {
-                      "count": 5,
-                      "power": "4,120,000"
-              },
-              {
-                      "count": 6,
-                      "power": "9,000,000"
-              },
-              {
-                      "count": 7,
-                      "power": "16,640,000"
-              },
-              {
-                      "count": 8,
-                      "power": "39,000,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "1,840,000" },
+              { "count": 5, "power": "4,120,000" },
+              { "count": 6, "power": "9,000,000" },
+              { "count": 7, "power": "16,640,000" },
+              { "count": 8, "power": "39,000,000" }
       ],
       spawns: {
         dozing: [
@@ -4733,6 +4683,8 @@
           { name: "烏鴉頭頭", name_en: "Honchkrow", type: "惡", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" },
           { name: "花岩怪", name_en: "Spiritomb", type: "惡", s1: "Ultra 4", s2: "Master 3", s3: "Master 9", s4: "Master 4" },
           { name: "瑪狃拉", name_en: "Weavile", type: "惡", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" },
+          { name: "夢妖", name_en: "Misdreavus", type: "幽靈", s1: "Great 1", s2: "Great 5", s3: "Master 1", s4: "Ultra 1" },
+          { name: "夢妖魔", name_en: "Mismagius", type: "幽靈", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" },
         ],
         snoozing: [
           { name: "小拉達", name_en: "Rattata", type: "一般", s1: "Basic 1", s2: "Basic 1", s3: "Great 1", s4: "Great 1" },
@@ -4798,30 +4750,12 @@
         { rank: "Master 20", energy: 5193272 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "2,440,000"
-              },
-              {
-                      "count": 5,
-                      "power": "5,460,000"
-              },
-              {
-                      "count": 6,
-                      "power": "11,920,000"
-              },
-              {
-                      "count": 7,
-                      "power": "22,040,000"
-              },
-              {
-                      "count": 8,
-                      "power": "51,670,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "2,440,000" },
+              { "count": 5, "power": "5,460,000" },
+              { "count": 6, "power": "11,920,000" },
+              { "count": 7, "power": "22,040,000" },
+              { "count": 8, "power": "51,670,000" }
       ],
       spawns: {
         dozing: [
@@ -4913,30 +4847,12 @@
         { rank: "Master 20", energy: 6674166 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "3,130,000"
-              },
-              {
-                      "count": 5,
-                      "power": "7,000,000"
-              },
-              {
-                      "count": 6,
-                      "power": "15,300,000"
-              },
-              {
-                      "count": 7,
-                      "power": "28,290,000"
-              },
-              {
-                      "count": 8,
-                      "power": "66,300,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "3,130,000" },
+              { "count": 5, "power": "7,000,000" },
+              { "count": 6, "power": "15,300,000" },
+              { "count": 7, "power": "28,290,000" },
+              { "count": 8, "power": "66,300,000" }
       ],
       spawns: {
         dozing: [
@@ -4958,6 +4874,8 @@
           { name: "蟲電寶", name_en: "Charjabug", type: "蟲", s1: "Great 1", s2: "Great 5", s3: "Master 1", s4: "Ultra 1" },
           { name: "鍬農炮蟲", name_en: "Vikavolt", type: "蟲", s1: "Master 4", s2: "Master 8", s3: "Master 14", s4: "Master 9" },
           { name: "謎擬Q", name_en: "Mimikyu", type: "幽靈", s1: "Great 5", s2: "Ultra 4", s3: "Master 5", s4: "Ultra 5" },
+          { name: "夢妖", name_en: "Misdreavus", type: "幽靈", s1: "Basic 2", s2: "Great 1", s3: "Ultra 2", s4: "Great 2" },
+          { name: "夢妖魔", name_en: "Mismagius", type: "幽靈", s1: "Great 5", s2: "Ultra 4", s3: "Master 5", s4: "Ultra 5" },
         ],
         snoozing: [
           { name: "皮卡丘", name_en: "Pikachu", type: "電", s1: "Basic 1", s2: "Basic 1", s3: "Great 1", s4: "Great 1" },
@@ -5022,30 +4940,12 @@
         { rank: "Master 20", energy: 8528976 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "3,860,000"
-              },
-              {
-                      "count": 5,
-                      "power": "8,650,000"
-              },
-              {
-                      "count": 6,
-                      "power": "18,900,000"
-              },
-              {
-                      "count": 7,
-                      "power": "34,940,000"
-              },
-              {
-                      "count": 8,
-                      "power": "81,900,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "3,860,000" },
+              { "count": 5, "power": "8,650,000" },
+              { "count": 6, "power": "18,900,000" },
+              { "count": 7, "power": "34,940,000" },
+              { "count": 8, "power": "81,900,000" }
       ],
       spawns: {
         dozing: [
@@ -5108,6 +5008,21 @@
   const STORAGE_KEY_ISLAND_ID = 'pksleep_active_island_id';
   const STORAGE_KEY_ISLAND_EXPERT = 'pksleep_active_island_expert';
   const STORAGE_KEY_ISLAND_SLEEP_TYPE = 'pksleep_active_island_sleep_type';
+
+  // --- 9. 睡姿圖鑑目標資料庫 (Sleep Dex Goals DB) ---
+  const SLEEP_STYLE_GOALS_DATA = [
+    {
+      goal: 570,
+      title: '睡姿圖鑑目標 570 種',
+      title_en: '570 Sleep Styles Goal',
+      rewardText: '解鎖料理鍋容量擴充 (最大 84 格)',
+      rewardText_en: 'Unlock Cooking Pot Expansion (Max 84)',
+      diamonds: 200,
+      unlockedPotSize: 84,
+      upgradeShardCost: 1450000
+    }
+  ];
+
 
 
   function getSavedIslandId() {
@@ -5478,7 +5393,11 @@
     "哎呀球菇": "590",
     "敗露球菇": "591",
     "Foongus": "590",
-    "Amoonguss": "591"
+    "Amoonguss": "591",
+    "夢妖": "200",
+    "夢妖魔": "429",
+    "Misdreavus": "200",
+    "Mismagius": "429"
   };
 
   function getPokemonAvatarUrl(pOrName, name_en) {
@@ -6080,7 +5999,7 @@
           <tr data-sleep-type="${p.sleepType || ''}">
             <td style="vertical-align:middle; text-align:center; padding:3px 4px;">
               <div class="island-pkm-item island-pkm-icon-only" title="${tooltipText}">
-                <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${tooltipText}" loading="lazy" onerror="this.style.opacity='0.3';">
+                <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${tooltipText}" loading="lazy" onerror="if(typeof handlePokemonIconError==='function'){handlePokemonIconError(this);}else{this.style.opacity='0.5';}">
               </div>
             </td>
             <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${renderIslandSleepCell(p, 1, p.s1)}</td>
@@ -7992,7 +7911,7 @@
           : (p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`);
         return `
           <div class="wiki-item-evo-chip" title="${escapeHtml(pkmName)}">
-            <img src="${iconUrl}" class="wiki-item-evo-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="this.style.opacity='0.3'" />
+            <img src="${iconUrl}" class="wiki-item-evo-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="if(typeof handlePokemonIconError==='function'){handlePokemonIconError(this);}else{this.style.opacity='0.5';}" />
           </div>
         `;
       }).join('');
@@ -8394,7 +8313,7 @@
                 <button type="button" class="wiki-item-pkm-card"
                   onclick="window.WikiDB.navigateToPokemonDex('${targetId}'); if (window.PokemonApp && window.PokemonApp.openPokemonDetailModal) { window.PokemonApp.openPokemonDetailModal('${targetId}'); }"
                   title="${isEN ? 'View ' + escapeHtml(pkmName) + ' in Pokédex' : '查看 ' + escapeHtml(pkmName) + ' 圖鑑評測'}">
-                  <img src="${pkmIcon}" class="wiki-item-pkm-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="this.style.opacity='0.3'" />
+                  <img src="${pkmIcon}" class="wiki-item-pkm-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="if(typeof handlePokemonIconError==='function'){handlePokemonIconError(this);}else{this.style.opacity='0.5';}" />
                   <div class="wiki-item-pkm-info">
                     <span class="wiki-item-pkm-no font-mono">No.${pkmNo}</span>
                     <span class="wiki-item-pkm-name">${escapeHtml(pkmName)}</span>
@@ -9415,6 +9334,7 @@
     TOP_RECIPES_FOR_INGREDIENTS: TOP_RECIPES_FOR_INGREDIENTS,
     getPokemonLadderSpecialty: getPokemonLadderSpecialty,
     ISLANDS_DATA: ISLANDS_DATA,
+    SLEEP_STYLE_GOALS_DATA: SLEEP_STYLE_GOALS_DATA,
     selectIsland: selectIsland,
     toggleIslandExpertMode: toggleIslandExpertMode,
     filterIslandSleepType: filterIslandSleepType,

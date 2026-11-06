@@ -31,6 +31,7 @@ const {
   dataPath,
   dataset
 } = require('../test_harness');
+const { registerPtrConcurrencyTests } = require('../stress_ptr_concurrency');
 
 function registerTier3Tests() {
   console.log('--- Tier 3 - Cross-Feature Combinations ---');
@@ -382,6 +383,7 @@ test('Tier 3 - Cross-Feature Combinations', 'Island Selection, Sleep Type Filter
   assert(!mockPanel.innerHTML.includes('長翅鷗'), 'Slumbering filter should not show Dozing Pokemon Wingull');
 });
 
+  registerPtrConcurrencyTests('Tier 3 - Cross-Feature Combinations');
 }
 
 module.exports = { registerTier3Tests };

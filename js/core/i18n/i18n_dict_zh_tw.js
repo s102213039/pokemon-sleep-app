@@ -68,6 +68,7 @@
       'pokedex.view_table': '表格',
       'pokedex.sort_id_asc': '全國圖鑑編號 (正序)',
       'pokedex.sort_id_desc': '全國圖鑑編號 (倒序)',
+      'pokedex.sort_id_newest': '新增寶可夢 (新到舊)',
       'pokedex.sort_carry_desc': '攜帶上限 (高到低)',
       'pokedex.sort_ingredient_desc': '食材機率 (高到低)',
       'pokedex.sort_skill_desc': '技能發動率 (高到低)',

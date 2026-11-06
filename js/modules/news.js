@@ -30,6 +30,10 @@
   /* ─── 載入新聞資料 ───────────────────────────────────── */
   const CACHE_KEY_NEWS_JSON = 'pksleep_cache_news_json';
 
+  function isNewsHealthy(data) {
+    return Array.isArray(data) && data.length >= 20;
+  }
+
   function scheduleDynamicNewsSync() {
     if (typeof window === 'undefined' || typeof fetch === 'undefined') return;
     // 網頁載入執行時，透過輕量級 manifest.json 檢查雜湊是否有更新
@@ -37,40 +41,69 @@
       try {
         let remoteHash = '';
         if (window.DataCacheManager && typeof window.DataCacheManager.checkFileNeedsUpdate === 'function') {
-          const check = await window.DataCacheManager.checkFileNeedsUpdate('news.json', CACHE_KEY_NEWS_JSON, false);
-          if (!check.needsUpdate && Array.isArray(allNews) && allNews.length > 0) {
+          const check = await window.DataCacheManager.checkFileNeedsUpdate('news.json', CACHE_KEY_NEWS_JSON, true);
+          if (!check.needsUpdate && Array.isArray(allNews) && allNews.length >= 20) {
             return;
           }
           remoteHash = check.remoteHash || '';
         }
 
         const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
-        const liveUrl = `${base}data/news.json?v=${remoteHash || Date.now()}`;
-        let res = await fetch(liveUrl, { cache: 'no-cache' }).catch(() => null);
-        if (!res || !res.ok) {
-          const fallbackRawUrl = `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/news.json?t=${Date.now()}`;
-          res = await fetch(fallbackRawUrl, { cache: 'no-store' });
+        const syncCandidates = [
+          `${base}data/news.json?v=${remoteHash || Date.now()}`,
+          `data/news.json?v=${remoteHash || Date.now()}`,
+          `../data/news.json?v=${remoteHash || Date.now()}`,
+          `${base}news.json?v=${remoteHash || Date.now()}`,
+          `news.json?v=${remoteHash || Date.now()}`,
+          `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/news.json?t=${Date.now()}`
+        ];
+        const uniqueSyncUrls = Array.from(new Set(syncCandidates));
+        let res = null;
+        let rawText = '';
+        let freshData = null;
+
+        for (const url of uniqueSyncUrls) {
+          try {
+            const r = await fetch(url, { cache: 'no-cache' });
+            if (r && r.ok) {
+              const txt = await r.text();
+              const json = JSON.parse(txt);
+              if (isNewsHealthy(json)) {
+                res = r;
+                rawText = txt;
+                freshData = json;
+                break;
+              } else {
+                console.warn('[News Engine] 同步來源回傳公告未通過健全性檢查，跳過：', url);
+              }
+            }
+          } catch (e) {}
         }
-        if (!res || !res.ok) return;
-        const rawText = await res.text();
-        const freshData = JSON.parse(rawText);
-        if (Array.isArray(freshData) && freshData.length > 0) {
-          if (window.DataCacheManager) {
-            window.DataCacheManager.saveCachedJson(CACHE_KEY_NEWS_JSON, 'news.json', rawText, remoteHash);
-          } else if (window.localStorage) {
-            try {
-              window.localStorage.setItem(CACHE_KEY_NEWS_JSON, rawText);
-            } catch (e) {}
+
+        if (!res || !freshData) return;
+
+        if (window.DataCacheManager) {
+          window.DataCacheManager.saveCachedJson(CACHE_KEY_NEWS_JSON, 'news.json', rawText, remoteHash);
+        } else if (window.localStorage) {
+          try {
+            window.localStorage.setItem(CACHE_KEY_NEWS_JSON, rawText);
+          } catch (e) {}
+        }
+        const currentLen = Array.isArray(allNews) ? allNews.length : 0;
+        let hasUpdate = true;
+        if (currentLen === freshData.length && currentLen > 0) {
+          try {
+            hasUpdate = JSON.stringify(freshData) !== JSON.stringify(allNews);
+          } catch (e) {
+            hasUpdate = true;
           }
-          const currentIds = new Set(allNews.map(n => n.id));
-          const hasUpdate = freshData.length !== allNews.length || freshData.some(n => !currentIds.has(n.id));
-          if (hasUpdate) {
-            allNews = freshData;
-            renderEventTimeline();
-            initCategoryTags();
-            renderNews();
-            console.log('[News Engine] 動態連線取得最新官方公告完成，已自動更新至最新資料 (' + freshData.length + ' 筆)');
-          }
+        }
+        if (hasUpdate) {
+          allNews = freshData;
+          renderEventTimeline();
+          initCategoryTags();
+          renderNews();
+          console.log('[News Engine] 動態連線取得最新官方公告完成，已自動更新至最新資料 (' + freshData.length + ' 筆)');
         }
       } catch (e) {}
     }, 1500);
@@ -88,7 +121,7 @@
             const cachedText = window.localStorage.getItem(CACHE_KEY_NEWS_JSON);
             if (cachedText) cachedData = JSON.parse(cachedText);
           }
-          if (Array.isArray(cachedData) && cachedData.length > 0) {
+          if (Array.isArray(cachedData) && cachedData.length > 0 && isNewsHealthy(cachedData)) {
             allNews = cachedData;
             renderEventTimeline();
             initCategoryTags();
@@ -103,12 +136,12 @@
       const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
       const defaultCandidates = [
         `${base}data/news.json`,
-        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/news.json`,
         `data/news.json`,
         `../data/news.json`,
         `${base}news.json`,
         `news.json`,
-        `../news.json`
+        `../news.json`,
+        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/news.json`
       ];
       const cleanUrls = Array.from(new Set(defaultCandidates.filter(Boolean).map(u => u.split('?')[0])));
 
@@ -828,6 +861,88 @@
     });
   }
 
+  /* ─── 官方詳細公告展開抽屜渲染器 (Reusable Official Announcement Reader) ─── */
+  function renderFormattedFullContent(item, isEN, isCN) {
+    let content = isEN && item.full_content_en ? item.full_content_en : (item.full_content || item.content_preview || '');
+    if (!content || !content.trim()) return '';
+    if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') {
+      content = window.I18N.toSimplified(content);
+    }
+
+    const lines = content.split('\n');
+    const htmlChunks = [];
+    let inList = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) {
+        if (inList) {
+          htmlChunks.push('</ul>');
+          inList = false;
+        }
+        continue;
+      }
+
+      // 檢查是否為章節標題
+      const isHeading = (line.startsWith('【') && line.endsWith('】')) ||
+        /^(?:概要|獎勵|奖励|更新內容|更新内容|其他|修正的異常問題|修正的异常问题|機率提升|概率提升|任務期間|任务期间|舉辦期間|举办期间|活動營地|活动营地|特徵|特征|注意|注意事項|注意事项|商品詳細|商品详细|能新遇見的寶可夢|能新遇见的宝可梦|能新遇見的寶可夢的資訊|能新遇见的宝可梦的资讯|開始出現的時間|开始出现的时间|出現的營地|出现的营地|可遇見的睡眠類型|可遇见的睡眠类型|主技能|主技能名稱|主技能名称|技能效果|關於EX模式時的獎勵|关于EX模式时的奖励)\b/.test(line);
+
+      const isBullet = line.startsWith('・') || line.startsWith('- ') || line.startsWith('* ');
+      const isNote = line.startsWith('※') || line.startsWith('*');
+
+      if (isHeading) {
+        if (inList) {
+          htmlChunks.push('</ul>');
+          inList = false;
+        }
+        htmlChunks.push(`<h4 class="news-full-heading">${escapeHtml(line)}</h4>`);
+      } else if (isBullet) {
+        if (!inList) {
+          htmlChunks.push('<ul class="news-full-list">');
+          inList = true;
+        }
+        const bulletText = line.replace(/^[・\-\*]\s*/, '');
+        htmlChunks.push(`<li>${escapeHtml(bulletText)}</li>`);
+      } else if (isNote) {
+        if (inList) {
+          htmlChunks.push('</ul>');
+          inList = false;
+        }
+        htmlChunks.push(`<p class="news-full-note">${escapeHtml(line)}</p>`);
+      } else {
+        if (inList) {
+          htmlChunks.push('</ul>');
+          inList = false;
+        }
+        htmlChunks.push(`<p class="news-full-para">${escapeHtml(line)}</p>`);
+      }
+    }
+
+    if (inList) {
+      htmlChunks.push('</ul>');
+    }
+
+    return htmlChunks.join('');
+  }
+
+  function renderOfficialFullDrawerHTML(item, isEN, isCN) {
+    const rawContent = isEN && item.full_content_en ? item.full_content_en : (item.full_content || item.content_preview || '');
+    if (!rawContent || !rawContent.trim()) return '';
+
+    const btnLabel = isEN ? 'View Official Full Details' : (isCN ? '展开查看官方详细公告' : '展開查看官方詳細公告');
+    return `
+      <div class="news-official-full-drawer">
+        <button type="button" class="news-full-toggle-btn" data-news-id="${item.id}" aria-expanded="false" title="${btnLabel}">
+          <span class="news-toggle-text">${btnLabel}</span>
+          <span class="news-toggle-arrow">▾</span>
+        </button>
+        <div class="news-full-content-body hidden" id="news-full-${item.id}">
+          ${renderFormattedFullContent(item, isEN, isCN)}
+        </div>
+      </div>
+    `;
+  }
+
   /* ─── 渲染新聞列表 (折疊式 Accordion 卡片) ─────────────── */
   function renderNews() {
     if (!newsListContainer) return;
@@ -988,10 +1103,39 @@
 
           <div class="news-accordion-body">
             ${aiSectionsHTML}
+            ${renderOfficialFullDrawerHTML(item, isEN, isCN)}
           </div>
         </article>
       `;
     }).join('');
+
+    // 點選詳細公告展開按鈕（獨立開合，不觸發外層卡片折疊）
+    newsListContainer.querySelectorAll('.news-full-toggle-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-news-id');
+        const bodyEl = document.getElementById(`news-full-${id}`);
+        if (!bodyEl) return;
+        const isCollapsed = bodyEl.classList.contains('hidden');
+        if (isCollapsed) {
+          bodyEl.classList.remove('hidden');
+          btn.classList.add('active');
+          btn.setAttribute('aria-expanded', 'true');
+          const textEl = btn.querySelector('.news-toggle-text');
+          const arrowEl = btn.querySelector('.news-toggle-arrow');
+          if (textEl) textEl.textContent = isEN ? 'Collapse Official Details' : (isCN ? '收起官方详细公告' : '收起官方詳細公告');
+          if (arrowEl) arrowEl.textContent = '▴';
+        } else {
+          bodyEl.classList.add('hidden');
+          btn.classList.remove('active');
+          btn.setAttribute('aria-expanded', 'false');
+          const textEl = btn.querySelector('.news-toggle-text');
+          const arrowEl = btn.querySelector('.news-toggle-arrow');
+          if (textEl) textEl.textContent = isEN ? 'View Official Full Details' : (isCN ? '展开查看官方详细公告' : '展開查看官方詳細公告');
+          if (arrowEl) arrowEl.textContent = '▾';
+        }
+      });
+    });
 
     // 點選整個卡片直接展開與隱藏
     newsListContainer.querySelectorAll('.news-accordion-card').forEach(card => {

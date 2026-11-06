@@ -426,8 +426,10 @@
 
       // 2. 僅最終進化篩選
       if (boxOnlyFinal) {
-        const isFinal = (base && (base.is_final === '〇' || base.is_final === 'O' || base.is_final === 'o' || base.is_final === true || base.is_final === '1')) ||
-          p.is_final === true || p.is_final === '〇';
+        const isFinal = (typeof isFinalEvolution === 'function')
+          ? (isFinalEvolution(base) || isFinalEvolution(p))
+          : ((base && (base.is_final === '〇' || base.is_final === 'O' || base.is_final === 'o' || base.is_final === true || base.is_final === '1')) ||
+            p.is_final === true || p.is_final === '〇');
         if (!isFinal) return false;
       }
 

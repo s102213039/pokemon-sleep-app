@@ -68,7 +68,14 @@ test('Tier 1 - Feature Coverage', 'Dataset Integrity: recipes.json exists and co
   assert(fs.existsSync(recipesPath), 'recipes.json does not exist');
   const recipes = JSON.parse(fs.readFileSync(recipesPath, 'utf8'));
   assert(Array.isArray(recipes), 'recipes.json is not an array');
-  assert(recipes.length === 78, `recipes.json count is ${recipes.length}, expected 78`);
+  assert(recipes.length >= 78, `recipes.json count is ${recipes.length}, expected >= 78`);
+  const manifestPath = path.join(WORKSPACE_ROOT, 'data', 'manifest.json');
+  if (fs.existsSync(manifestPath)) {
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    if (manifest.files && manifest.files['recipes.json']) {
+      assertEquals(recipes.length, manifest.files['recipes.json'].count, 'recipes.json count must match manifest.json count');
+    }
+  }
 
   const validCategories = new Set(['咖哩', '沙拉', '甜點']);
   recipes.forEach((r, idx) => {
@@ -88,6 +95,34 @@ test('Tier 1 - Feature Coverage', 'Dataset Integrity: recipes.json exists and co
       assert(ing.icon && ing.icon.startsWith('http'), `Recipe ${r.name_cn} ingredient icon missing/invalid`);
     });
   });
+});
+
+
+test('Tier 1 - Feature Coverage', 'Recipe Health Engine: isRecipesHealthy validates data/recipes.json and candidate payloads', () => {
+  const recipesJsPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js');
+  assert(fs.existsSync(recipesJsPath), 'recipes.js does not exist');
+  const recipesModule = require(recipesJsPath);
+  assert(typeof recipesModule.isRecipesHealthy === 'function', 'recipes.js must export isRecipesHealthy');
+  const isRecipesHealthy = recipesModule.isRecipesHealthy;
+
+  const recipesPath = path.join(WORKSPACE_ROOT, 'data', 'recipes.json');
+  const recipes = JSON.parse(fs.readFileSync(recipesPath, 'utf8'));
+
+  // 1. Production recipes.json must pass health check
+  assert(isRecipesHealthy(recipes) === true, 'Production data/recipes.json must pass isRecipesHealthy');
+
+  // 2. Canonical payload format (name_cn, category, base_energy, ingredients)
+  const canonicalPayload = recipes.slice(0, 78);
+  assert(isRecipesHealthy(canonicalPayload) === true, 'Canonical payload with name_cn and base_energy must pass');
+
+  // 3. Legacy/external payload format (name, category, energy, ingredients)
+  const legacyPayload = recipes.slice(0, 78).map(r => ({
+    name: r.name_cn,
+    category: r.category,
+    energy: r.base_energy,
+    ingredients: r.ingredients
+  }));
+  assert(isRecipesHealthy(legacyPayload) === true, 'Legacy/external payload with name and energy must pass');
 });
 
 
@@ -152,7 +187,7 @@ test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js match
     '特選蘋果': 90, '哞哞鮮奶': 98, '萌綠大豆': 100, '甜甜蜜': 101, '豆製肉': 103,
     '暖暖薑': 109, '好眠番茄': 110, '特選蛋': 115, '純粹油': 121, '窩心洋芋': 124,
     '火辣香草': 130, '萌綠玉米': 140, '放鬆可可': 151, '醒腦咖啡豆': 153, '嫩亮酪梨': 162,
-    '品鮮蘑菇': 167, '粗枝大蔥': 185, '沉甸甸南瓜': 250, '美味尾巴': 342
+    '品鮮蘑菇': 167, '粗枝大蔥': 185, '沉甸甸南瓜': 250, '美味尾巴': 342, '一口堅果': 162
   };
   const SEREbii_BERRY_LV1 = {
     '椰木果': 24, '木子果': 24, '異奇果': 25, '檬果': 26, '桃桃果': 26, '芒念果': 26,
@@ -171,7 +206,7 @@ test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js match
   const ings = parseEntries(ingBlock[1]);
   const berries = parseEntries(berryBlock[1]);
 
-  assertEquals(ings.length, 19, 'INGREDIENT_VALUES_DATA should have 19 entries');
+  assertEquals(ings.length, 20, 'INGREDIENT_VALUES_DATA should have 20 entries');
   assertEquals(berries.length, 18, 'BERRY_VALUES_DATA should have 18 entries');
 
   ings.forEach(({ name, energy }) => {
@@ -191,7 +226,7 @@ test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js match
   assert(ladderBlock, 'LV60_COORDINATE_LADDER_DATA not found');
   const ladderEnergies = [...ladderBlock[1].matchAll(/"energy": (\d+)/g)].map(m => +m[1]).sort((a,b)=>a-b);
   const ingEnergies = Object.values(SEREbii_ING).sort((a,b)=>a-b);
-  assertEquals(ladderEnergies.length, 19, 'LV60 ladder should cover all 19 ingredients');
+  assertEquals(ladderEnergies.length, 20, 'LV60 ladder should cover all 20 ingredients');
   assertEquals(ladderEnergies.join(','), ingEnergies.join(','), 'Ladder ingredient energies should match INGREDIENT_VALUES_DATA');
 
   assert(!wikiContent.includes('energy: 200') && !wikiContent.match(/"energy": 200/), 'Residual pumpkin energy 200 should not exist');
@@ -1347,7 +1382,7 @@ test('Tier 1 - Feature Coverage', 'Ingredient Ladder Universal Simplified Recipe
   assertEquals(xxcCount, 108, 'Ingredient C track entries must be unified into universal XXC (108 variants)');
   assertEquals(aaxCount, 115, 'Pos A dual ingredients must be unified into universal AAX (115 variants)');
   assertEquals(abaCount, 115, 'ABA combinations must be 115 variants for Pos A pokemons with Lv.60 A');
-  assertEquals(aaaCount, 115, 'AAA combinations must be 115 variants');
+  assertEquals(aaaCount, 116, 'AAA combinations must be 116 variants');
   assertEquals(abbCount, 115, 'ABB combinations must be 115 variants');
 
   // Verify specific Skeledirge calculations on Apple track
@@ -2305,7 +2340,8 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     assert(parsedNoAsc.col === 'no', 'parseTableSort must parse no column');
     assert(parsedNoAsc.dir === 'asc', 'parseTableSort must parse asc direction');
     assert(app.nextColumnSort('no-asc', 'no') === 'no-desc', 'nextColumnSort must toggle no-asc to no-desc');
-    assert(app.nextColumnSort('no-desc', 'no') === 'no-asc', 'nextColumnSort must toggle no-desc to no-asc');
+    assert(app.nextColumnSort('no-desc', 'no') === 'no-newest', 'nextColumnSort must toggle no-desc to no-newest');
+    assert(app.nextColumnSort('no-newest', 'no') === 'no-asc', 'nextColumnSort must cycle no-newest back to no-asc');
 
     // 1.1 Pokédex 3-State Sorting (State 1: default dir -> State 2: reverse dir -> State 3: reset to default no-asc)
     assert(app.nextColumnSort('no-asc', 'carry') === 'carry-desc', 'Pokédex carry click 1 must enter carry-desc');

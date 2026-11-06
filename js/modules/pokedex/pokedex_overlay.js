@@ -195,7 +195,9 @@ Object.assign(PokemonApp, {
 
       // 僅最終進化篩選 (Only Final Evolution)
       if (this.onlyFinal) {
-        const isFinal = p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1';
+        const isFinal = (typeof isFinalEvolution === 'function')
+          ? isFinalEvolution(p)
+          : (p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1');
         if (!isFinal) return false;
       }
 

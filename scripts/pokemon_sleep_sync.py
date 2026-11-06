@@ -747,6 +747,8 @@ def main():
             
             row_cells[19] = (clean_val(r[REF_MAPPING['進化需求']]), None)
             row_cells[20] = (clean_val(r[REF_MAPPING['最終']]), None)
+            if no == 429 or clean_val(r[REF_MAPPING['寶可夢']]) == '夢妖魔':
+                row_cells[20] = ('〇', None)
         else:
             orig_row = entry['original_row']
             orig_row_padded = orig_row + [""] * (21 - len(orig_row))

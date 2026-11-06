@@ -97,30 +97,12 @@
         { rank: "Master 20", energy: 3245795 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "920,000"
-              },
-              {
-                      "count": 5,
-                      "power": "2,060,000"
-              },
-              {
-                      "count": 6,
-                      "power": "4,500,000"
-              },
-              {
-                      "count": 7,
-                      "power": "8,320,000"
-              },
-              {
-                      "count": 8,
-                      "power": "19,500,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "920,000" },
+              { "count": 5, "power": "2,060,000" },
+              { "count": 6, "power": "4,500,000" },
+              { "count": 7, "power": "8,320,000" },
+              { "count": 8, "power": "19,500,000" }
       ],
       spawns: {
         dozing: [
@@ -184,6 +166,8 @@
           { name: "土王", name_en: "Clodsire", type: "毒", s1: "Master 2", s2: "Master 6", s3: "-", s4: "Master 7" },
           { name: "哎呀球菇", name_en: "Foongus", type: "毒", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
           { name: "敗露球菇", name_en: "Amoonguss", type: "毒", s1: "Ultra 4", s2: "Master 2", s3: "-", s4: "Master 1" },
+          { name: "夢妖", name_en: "Misdreavus", type: "幽靈", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
+          { name: "夢妖魔", name_en: "Mismagius", type: "幽靈", s1: "Master 9", s2: "Master 13", s3: "-", s4: "Master 14" },
         ],
         snoozing: [
           { name: "小火龍", name_en: "Charmander", type: "火", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" },
@@ -353,30 +337,12 @@
         { rank: "Master 20", energy: 3732664 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "1,150,000"
-              },
-              {
-                      "count": 5,
-                      "power": "2,570,000"
-              },
-              {
-                      "count": 6,
-                      "power": "5,620,000"
-              },
-              {
-                      "count": 7,
-                      "power": "10,400,000"
-              },
-              {
-                      "count": 8,
-                      "power": "24,400,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "1,150,000" },
+              { "count": 5, "power": "2,570,000" },
+              { "count": 6, "power": "5,620,000" },
+              { "count": 7, "power": "10,400,000" },
+              { "count": 8, "power": "24,400,000" }
       ],
       spawns: {
         dozing: [
@@ -464,30 +430,12 @@
         { rank: "Master 20", energy: 4219534 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "1,430,000"
-              },
-              {
-                      "count": 5,
-                      "power": "3,190,000"
-              },
-              {
-                      "count": 6,
-                      "power": "6,980,000"
-              },
-              {
-                      "count": 7,
-                      "power": "12,900,000"
-              },
-              {
-                      "count": 8,
-                      "power": "30,200,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "1,430,000" },
+              { "count": 5, "power": "3,190,000" },
+              { "count": 6, "power": "6,980,000" },
+              { "count": 7, "power": "12,900,000" },
+              { "count": 8, "power": "30,200,000" }
       ],
       spawns: {
         dozing: [
@@ -578,30 +526,12 @@
         { rank: "Master 20", energy: 4706403 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "1,840,000"
-              },
-              {
-                      "count": 5,
-                      "power": "4,120,000"
-              },
-              {
-                      "count": 6,
-                      "power": "9,000,000"
-              },
-              {
-                      "count": 7,
-                      "power": "16,640,000"
-              },
-              {
-                      "count": 8,
-                      "power": "39,000,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "1,840,000" },
+              { "count": 5, "power": "4,120,000" },
+              { "count": 6, "power": "9,000,000" },
+              { "count": 7, "power": "16,640,000" },
+              { "count": 8, "power": "39,000,000" }
       ],
       spawns: {
         dozing: [
@@ -618,6 +548,8 @@
           { name: "烏鴉頭頭", name_en: "Honchkrow", type: "惡", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" },
           { name: "花岩怪", name_en: "Spiritomb", type: "惡", s1: "Ultra 4", s2: "Master 3", s3: "Master 9", s4: "Master 4" },
           { name: "瑪狃拉", name_en: "Weavile", type: "惡", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" },
+          { name: "夢妖", name_en: "Misdreavus", type: "幽靈", s1: "Great 1", s2: "Great 5", s3: "Master 1", s4: "Ultra 1" },
+          { name: "夢妖魔", name_en: "Mismagius", type: "幽靈", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" },
         ],
         snoozing: [
           { name: "小拉達", name_en: "Rattata", type: "一般", s1: "Basic 1", s2: "Basic 1", s3: "Great 1", s4: "Great 1" },
@@ -683,30 +615,12 @@
         { rank: "Master 20", energy: 5193272 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "2,440,000"
-              },
-              {
-                      "count": 5,
-                      "power": "5,460,000"
-              },
-              {
-                      "count": 6,
-                      "power": "11,920,000"
-              },
-              {
-                      "count": 7,
-                      "power": "22,040,000"
-              },
-              {
-                      "count": 8,
-                      "power": "51,670,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "2,440,000" },
+              { "count": 5, "power": "5,460,000" },
+              { "count": 6, "power": "11,920,000" },
+              { "count": 7, "power": "22,040,000" },
+              { "count": 8, "power": "51,670,000" }
       ],
       spawns: {
         dozing: [
@@ -798,30 +712,12 @@
         { rank: "Master 20", energy: 6674166 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "3,130,000"
-              },
-              {
-                      "count": 5,
-                      "power": "7,000,000"
-              },
-              {
-                      "count": 6,
-                      "power": "15,300,000"
-              },
-              {
-                      "count": 7,
-                      "power": "28,290,000"
-              },
-              {
-                      "count": 8,
-                      "power": "66,300,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "3,130,000" },
+              { "count": 5, "power": "7,000,000" },
+              { "count": 6, "power": "15,300,000" },
+              { "count": 7, "power": "28,290,000" },
+              { "count": 8, "power": "66,300,000" }
       ],
       spawns: {
         dozing: [
@@ -843,6 +739,8 @@
           { name: "蟲電寶", name_en: "Charjabug", type: "蟲", s1: "Great 1", s2: "Great 5", s3: "Master 1", s4: "Ultra 1" },
           { name: "鍬農炮蟲", name_en: "Vikavolt", type: "蟲", s1: "Master 4", s2: "Master 8", s3: "Master 14", s4: "Master 9" },
           { name: "謎擬Q", name_en: "Mimikyu", type: "幽靈", s1: "Great 5", s2: "Ultra 4", s3: "Master 5", s4: "Ultra 5" },
+          { name: "夢妖", name_en: "Misdreavus", type: "幽靈", s1: "Basic 2", s2: "Great 1", s3: "Ultra 2", s4: "Great 2" },
+          { name: "夢妖魔", name_en: "Mismagius", type: "幽靈", s1: "Great 5", s2: "Ultra 4", s3: "Master 5", s4: "Ultra 5" },
         ],
         snoozing: [
           { name: "皮卡丘", name_en: "Pikachu", type: "電", s1: "Basic 1", s2: "Basic 1", s3: "Great 1", s4: "Great 1" },
@@ -907,30 +805,12 @@
         { rank: "Master 20", energy: 8528976 }
       ],
       drowsyPowerSpawns: [
-              {
-                      "count": 3,
-                      "power": "0+"
-              },
-              {
-                      "count": 4,
-                      "power": "3,860,000"
-              },
-              {
-                      "count": 5,
-                      "power": "8,650,000"
-              },
-              {
-                      "count": 6,
-                      "power": "18,900,000"
-              },
-              {
-                      "count": 7,
-                      "power": "34,940,000"
-              },
-              {
-                      "count": 8,
-                      "power": "81,900,000"
-              }
+              { "count": 3, "power": "0+" },
+              { "count": 4, "power": "3,860,000" },
+              { "count": 5, "power": "8,650,000" },
+              { "count": 6, "power": "18,900,000" },
+              { "count": 7, "power": "34,940,000" },
+              { "count": 8, "power": "81,900,000" }
       ],
       spawns: {
         dozing: [
@@ -993,4 +873,19 @@
   const STORAGE_KEY_ISLAND_ID = 'pksleep_active_island_id';
   const STORAGE_KEY_ISLAND_EXPERT = 'pksleep_active_island_expert';
   const STORAGE_KEY_ISLAND_SLEEP_TYPE = 'pksleep_active_island_sleep_type';
+
+  // --- 9. 睡姿圖鑑目標資料庫 (Sleep Dex Goals DB) ---
+  const SLEEP_STYLE_GOALS_DATA = [
+    {
+      goal: 570,
+      title: '睡姿圖鑑目標 570 種',
+      title_en: '570 Sleep Styles Goal',
+      rewardText: '解鎖料理鍋容量擴充 (最大 84 格)',
+      rewardText_en: 'Unlock Cooking Pot Expansion (Max 84)',
+      diamonds: 200,
+      unlockedPotSize: 84,
+      upgradeShardCost: 1450000
+    }
+  ];
+
 

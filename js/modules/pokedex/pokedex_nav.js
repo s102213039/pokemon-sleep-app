@@ -54,6 +54,9 @@
       const VALID_BOX_SUBTABS = ['list', 'lab'];
 
       function switchMainTab(target) {
+        if (typeof window !== 'undefined' && typeof window.cancelPullToRefresh === 'function') {
+          try { window.cancelPullToRefresh(); } catch (e) {}
+        }
         if (target === 'pokedex') target = 'pokemon';
         if (!VALID_MAIN_TABS.includes(target)) target = 'pokemon';
         try {
@@ -440,22 +443,51 @@
     const CACHE_KEY_DATA_JSON = 'pksleep_cache_data_json';
     const CACHE_KEY_DATA_JSON_TIME = 'pksleep_cache_data_json_time';
 
+    function isDatasetHealthy(data) {
+      if (!Array.isArray(data) || data.length < 247) return false;
+      const p429 = data.find(p => p && (String(p.id) === '429' || String(p.formatted_no) === '429'));
+      if (!p429 || !p429.is_final || !Array.isArray(p429.ingredients) || p429.ingredients.length === 0) {
+        return false;
+      }
+      const p200 = data.find(p => p && (String(p.id) === '200' || String(p.formatted_no) === '200'));
+      if (!p200 || !Array.isArray(p200.ingredients) || p200.ingredients.length === 0) {
+        return false;
+      }
+      const p94 = data.find(p => p && (String(p.id) === '94' || String(p.formatted_no) === '094'));
+      if (!p94 || p94.ingredient_rate === '16.10%') {
+        return false;
+      }
+      return true;
+    }
+
     const fetchDataWithFallback = async (...customUrls) => {
       // 1. 優先自本機快取瞬間載入 (Cache-First 0ms 秒開：IndexedDB / LocalStorage)，背景再由 manifest 檢查是否需更新
       try {
         if (typeof window !== 'undefined') {
+          let cachedData = null;
           if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
-            const cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_DATA_JSON);
-            if (Array.isArray(cachedData) && cachedData.length > 0) {
-              return cachedData;
-            }
+            cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_DATA_JSON);
           } else if (window.localStorage) {
             const cachedText = window.localStorage.getItem(CACHE_KEY_DATA_JSON);
             if (cachedText) {
-              const cachedData = JSON.parse(cachedText);
-              if (Array.isArray(cachedData) && cachedData.length > 0) {
-                return cachedData;
-              }
+              cachedData = JSON.parse(cachedText);
+            }
+          }
+          if (Array.isArray(cachedData) && cachedData.length > 0) {
+            if (isDatasetHealthy(cachedData)) {
+              return cachedData;
+            } else {
+              console.warn('[Data Engine] 檢測到本地快取資料為舊版（缺少夢妖魔完整資料或耿鬼未更新），立即廢棄並強制由網路重新載入最新資料庫！');
+              try {
+                if (window.DataCacheManager && typeof window.DataCacheManager.invalidateCache === 'function') {
+                  window.DataCacheManager.invalidateCache(CACHE_KEY_DATA_JSON, 'data.json');
+                } else {
+                  if (window.localStorage) window.localStorage.removeItem(CACHE_KEY_DATA_JSON);
+                  if (window.DataCacheManager && typeof window.DataCacheManager.setFileHash === 'function') {
+                    window.DataCacheManager.setFileHash('data.json', '');
+                  }
+                }
+              } catch (e) {}
             }
           }
         }
@@ -464,12 +496,12 @@
       const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
       const defaultCandidates = [
         `${base}data/data.json`,
-        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json`,
         `data/data.json`,
         `../data/data.json`,
         `${base}data.json`,
         `data.json`,
-        `../data.json`
+        `../data.json`,
+        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json`
       ];
       const rawUrls = customUrls.length > 0 ? customUrls : defaultCandidates;
       const cleanUrls = Array.from(new Set(rawUrls.filter(Boolean).map(u => u.split('?')[0])));
@@ -482,10 +514,14 @@
 
         for (const url of uniqueUrls) {
           try {
-            const res = await fetch(url, { cache: attempt === 1 ? 'default' : 'no-store' });
+            const res = await fetch(url, { cache: attempt === 1 ? 'no-cache' : 'no-store' });
             if (res && res.ok) {
               const text = await res.text();
               const parsed = JSON.parse(text);
+              if (!isDatasetHealthy(parsed)) {
+                console.warn('[Data Engine] 候選來源返回之資料庫未通過健全性檢查（缺少夢妖魔或耿鬼數值為舊版），跳過此來源：', url);
+                continue;
+              }
               try {
                 if (typeof window !== 'undefined' && window.localStorage) {
                   try {
@@ -515,7 +551,7 @@
         if (typeof window !== 'undefined') {
           if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
             const cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_DATA_JSON);
-            if (Array.isArray(cachedData) && cachedData.length > 0) {
+            if (Array.isArray(cachedData) && cachedData.length > 0 && isDatasetHealthy(cachedData)) {
               console.warn('[Data Engine] 網路請求暫時失敗，已自動自本機離線快取載入 data.json (' + cachedData.length + ' 筆資料)');
               return cachedData;
             }
@@ -523,7 +559,7 @@
             const cachedText = window.localStorage.getItem(CACHE_KEY_DATA_JSON);
             if (cachedText) {
               const cachedData = JSON.parse(cachedText);
-              if (Array.isArray(cachedData) && cachedData.length > 0) {
+              if (Array.isArray(cachedData) && cachedData.length > 0 && isDatasetHealthy(cachedData)) {
                 console.warn('[Data Engine] 網路請求暫時失敗，已自動自本機離線快取載入 data.json (' + cachedData.length + ' 筆資料)');
                 return cachedData;
               }
@@ -548,23 +584,46 @@
           let remoteHash = '';
           if (window.DataCacheManager && typeof window.DataCacheManager.checkFileNeedsUpdate === 'function') {
             const check = await window.DataCacheManager.checkFileNeedsUpdate('data.json', CACHE_KEY_DATA_JSON, forceManifest);
-            if (!check.needsUpdate && Array.isArray(allPokemons) && allPokemons.length > 0) {
+            const isCurrentHealthy = isDatasetHealthy(allPokemons);
+            if (!check.needsUpdate && isCurrentHealthy && Array.isArray(allPokemons) && allPokemons.length > 0) {
               return;
             }
             remoteHash = check.remoteHash || '';
           }
 
           const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
-          const liveUrl = `${base}data/data.json?v=${remoteHash || Date.now()}`;
-          let res = await fetch(liveUrl, { cache: 'no-cache' }).catch(() => null);
-          if (!res || !res.ok) {
-            const fallbackRawUrl = `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json?t=${Date.now()}`;
-            res = await fetch(fallbackRawUrl, { cache: 'no-store' });
+          const syncCandidates = [
+            `${base}data/data.json?v=${remoteHash || Date.now()}`,
+            `data/data.json?v=${remoteHash || Date.now()}`,
+            `../data/data.json?v=${remoteHash || Date.now()}`,
+            `${base}data.json?v=${remoteHash || Date.now()}`,
+            `data.json?v=${remoteHash || Date.now()}`,
+            `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json?t=${Date.now()}`
+          ];
+          const uniqueSyncUrls = Array.from(new Set(syncCandidates));
+          let res = null;
+          let rawText = '';
+          let freshData = null;
+
+          for (const url of uniqueSyncUrls) {
+            try {
+              const r = await fetch(url, { cache: 'no-cache' });
+              if (r && r.ok) {
+                const txt = await r.text();
+                const json = JSON.parse(txt);
+                if (isDatasetHealthy(json)) {
+                  res = r;
+                  rawText = txt;
+                  freshData = json;
+                  break;
+                } else {
+                  console.warn('[Data Engine] 同步候選網址返回資料未通過健全性檢查，跳過：', url);
+                }
+              }
+            } catch (e) {}
           }
-          if (!res || !res.ok) return;
-          const rawText = await res.text();
-          const freshData = JSON.parse(rawText);
-          if (!Array.isArray(freshData) || freshData.length === 0) return;
+
+          if (!res || !freshData) return;
 
           if (window.DataCacheManager) {
             window.DataCacheManager.saveCachedJson(CACHE_KEY_DATA_JSON, 'data.json', rawText, remoteHash);
@@ -576,12 +635,14 @@
           }
 
           const currentLen = Array.isArray(allPokemons) ? allPokemons.length : 0;
-          const isDifferent = currentLen !== freshData.length ||
-            (freshData.length > 0 && allPokemons.length > 0 && (
-              freshData[0].id !== allPokemons[0].id ||
-              freshData[freshData.length - 1].id !== allPokemons[allPokemons.length - 1].id ||
-              freshData[0].name_cn !== allPokemons[0].name_cn
-            ));
+          let isDifferent = true;
+          if (currentLen === freshData.length && currentLen > 0) {
+            try {
+              isDifferent = JSON.stringify(freshData) !== JSON.stringify(allPokemons);
+            } catch (e) {
+              isDifferent = true;
+            }
+          }
 
           if (isDifferent || !currentLen) {
             console.log(`[Data Engine] 動態連線取得最新寶可夢資料庫 (${freshData.length} 筆)，正在原地更新...`);
@@ -609,8 +670,8 @@
         }
       }
 
-      // 網頁執行後透過輕量級 manifest.json 檢查雜湊是否變更 (10分鐘內共享單一請求)
-      setTimeout(() => runSyncCheck(false), 1500);
+      // 網頁執行後透過輕量級 manifest.json 強制檢查雜湊是否變更
+      setTimeout(() => runSyncCheck(true), 1500);
       // 每 30 分鐘定期背景檢查 manifest
       setInterval(() => runSyncCheck(false), 30 * 60 * 1000);
       // 使用者切回分頁時透過具備 10 分鐘冷卻節流的 manifest 檢查
@@ -625,10 +686,10 @@
 
     fetchDataWithFallback(
       (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/data.json`,
-      `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json`,
       `data/data.json`,
       `../data/data.json`,
-      `data.json`
+      `data.json`,
+      `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json`
     )
       .then(data => {
         allPokemons = data;

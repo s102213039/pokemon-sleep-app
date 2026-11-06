@@ -23,7 +23,8 @@
     "build:prod": "node scripts/build_prod.js",
     "build": "node scripts/build_all.js && node scripts/build_prod.js",
     "data:minify": "node scripts/minify_data.js",
-    "data:format": "node scripts/format_data.js"
+    "data:format": "node scripts/format_data.js",
+    "sync:data": "node scripts/sync_manager.js"
   },
   "repository": {
     "type": "git",

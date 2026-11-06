@@ -180,7 +180,9 @@
 
   function getRemainingEvolutions(pkm) {
     if (!pkm) return 0;
-    const isFinal = pkm.is_final === '〇' || pkm.is_final === 'O' || pkm.is_final === 'o' || pkm.is_final === true || pkm.is_final === '1';
+    const isFinal = (typeof isFinalEvolution === 'function')
+      ? isFinalEvolution(pkm)
+      : (pkm.is_final === '〇' || pkm.is_final === 'O' || pkm.is_final === 'o' || pkm.is_final === true || pkm.is_final === '1');
     if (isFinal) return 0;
     const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name;
     if (THREE_STAGE_BASE_NAMES.has(name)) return 2;
@@ -1418,7 +1420,10 @@ const TARGET_TOP_RECIPES = [
     { name_cn: '土王閃電泡芙', name_en: 'Clodsire Eclair', category: '甜點', pot_size: 102, base_energy: 20885, icon: 'https://www.serebii.net/pokemonsleep/meals/clodsireeclair.png', ingredients: [{ name: '放鬆可可', count: 30 }, { name: '哞哞鮮奶', count: 26 }, { name: '醒腦咖啡豆', count: 24 }, { name: '甜甜蜜', count: 22 }] },
     { name_cn: '心跳加速鬼面鬆餅', name_en: 'Scary Face Pancakes', category: '甜點', pot_size: 103, base_energy: 24354, icon: 'https://www.serebii.net/pokemonsleep/meals/scaryfacepancakes.png', ingredients: [{ name: '沉甸甸南瓜', count: 18 }, { name: '特選蛋', count: 24 }, { name: '甜甜蜜', count: 32 }, { name: '好眠番茄', count: 29 }] },
     { name_cn: '青草攪拌器冰沙', name_en: 'Leaf Tornado Smoothie', category: '甜點', pot_size: 48, base_energy: 8165, icon: 'https://www.serebii.net/pokemonsleep/meals/leaftornadosmoothie.png', ingredients: [{ name: '嫩亮酪梨', count: 18 }, { name: '好眠番茄', count: 16 }, { name: '哞哞鮮奶', count: 14 }] },
-    { name_cn: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', category: '甜點', pot_size: 115, base_energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', ingredients: [{ name: '甜甜蜜', count: 38 }, { name: '萌綠玉米', count: 28 }, { name: '純粹油', count: 28 }, { name: '放鬆可可', count: 21 }] }
+    { name_cn: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', category: '甜點', pot_size: 115, base_energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', ingredients: [{ name: '甜甜蜜', count: 38 }, { name: '萌綠玉米', count: 28 }, { name: '純粹油', count: 28 }, { name: '放鬆可可', count: 21 }] },
+    { name_cn: '豐收堅果南瓜濃湯', name_en: 'Bountiful Nut & Pumpkin Stew', category: '咖哩', pot_size: 39, base_energy: 6420, icon: 'https://www.serebii.net/pokemonsleep/meals/bountifulnutpumpkinstew.png', ingredients: [{ name: '一口堅果', count: 12 }, { name: '萌綠玉米', count: 14 }, { name: '沉甸甸南瓜', count: 13 }] },
+    { name_cn: '極致酪梨堅果盛宴沙拉', name_en: 'Supreme Avocado Nut Feast Salad', category: '沙拉', pot_size: 121, base_energy: 28950, icon: 'https://www.serebii.net/pokemonsleep/meals/supremeavocadonutfeastsalad.png', ingredients: [{ name: '一口堅果', count: 24 }, { name: '嫩亮酪梨', count: 30 }, { name: '好眠番茄', count: 32 }, { name: '暖暖薑', count: 35 }] },
+    { name_cn: '頂級尾巴豆香堅果蛋糕', name_en: 'Grand Tail Soy Nut Cake', category: '甜點', pot_size: 91, base_energy: 21840, icon: 'https://www.serebii.net/pokemonsleep/meals/grandtailsoynutcake.png', ingredients: [{ name: '一口堅果', count: 16 }, { name: '萌綠大豆', count: 20 }, { name: '特選蛋', count: 30 }, { name: '美味尾巴', count: 25 }] }
   ];
 
   function getAllTargetRecipes() {
@@ -1467,6 +1472,22 @@ const TARGET_TOP_RECIPES = [
 
   const _sigRecipeRecCache = Object.create(null);
 
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('recipes-data-updated', function() {
+      for (const k in _sigRecipeRecCache) {
+        delete _sigRecipeRecCache[k];
+      }
+    });
+  }
+
+  function formatSummaryRecipeChip(rec, isEnMode) {
+    if (!rec) return '';
+    const name = isEnMode ? (rec.name_en || rec.name_cn) : (rec.name_cn || rec.name_en);
+    const icon = rec.icon || rec.icon_url || '';
+    if (!icon) return isEnMode ? `"${name}"` : `『${name}』`;
+    return `<span class="appraisal-summary-recipe-chip" title="${name}"><img src="${icon}" class="appraisal-summary-recipe-icon" alt="${name}" loading="lazy" onerror="this.style.display='none'; if (this.nextElementSibling) { this.nextElementSibling.style.position='static'; this.nextElementSibling.style.clip='auto'; this.nextElementSibling.style.width='auto'; this.nextElementSibling.style.height='auto'; }"><span class="sr-only">${name}</span></span>`;
+  }
+
   function getSignatureRecipeRecommendations(ingredients, isEN) {
     if (!ingredients || !Array.isArray(ingredients) || ingredients.length === 0) return '';
     const normIngs = Array.from(new Set(
@@ -1509,6 +1530,7 @@ const TARGET_TOP_RECIPES = [
       const score = (recipe.base_energy || 0) + multiMatchBonus + (matchRequired * 40) + tailBonus;
 
       return {
+        recipe: recipe,
         name_cn: recipe.name_cn,
         name_en: recipe.name_en,
         matchCount: matchCount,
@@ -1526,15 +1548,18 @@ const TARGET_TOP_RECIPES = [
     const top1 = scored[0];
     const top2 = scored.length > 1 ? scored[1] : null;
 
+    const chip1 = formatSummaryRecipeChip(top1.recipe, isEN);
+    const chip2 = top2 ? formatSummaryRecipeChip(top2.recipe, isEN) : '';
+
     let res = '';
     if (top2 && top2.name_cn !== top1.name_cn) {
       res = isEN
-        ? `Target recipes: prime pipeline for "${top1.name_en}" & "${top2.name_en}".`
-        : `直通頂尖料理『${top1.name_cn}』與『${top2.name_cn}』關鍵供料。`;
+        ? `Target recipes: prime pipeline for ${chip1} & ${chip2}.`
+        : `直通頂尖料理 ${chip1} 與 ${chip2} 關鍵供料。`;
     } else {
       res = isEN
-        ? `Target recipe: prime pipeline for "${top1.name_en}".`
-        : `直通頂尖料理『${top1.name_cn}』關鍵供料。`;
+        ? `Target recipe: prime pipeline for ${chip1}.`
+        : `直通頂尖料理 ${chip1} 關鍵供料。`;
     }
     _sigRecipeRecCache[cacheKey] = res;
     return res;
@@ -1626,9 +1651,13 @@ const TARGET_TOP_RECIPES = [
     // 1. 呆呆獸家族 (核心戰略使命：解鎖美味尾巴)
     if (isSlowpoke) {
       if (hasTailLv30) {
+        const slowpokeTailSalad = findTargetRecipe('呆呆獸尾巴的胡椒沙拉');
+        const grilledTailCurry = findTargetRecipe('炙燒尾肉咖哩');
+        const chip1 = formatSummaryRecipeChip(slowpokeTailSalad, isEN);
+        const chip2 = formatSummaryRecipeChip(grilledTailCurry, isEN);
         return isEN
-          ? 'Strategic Unlock Specialist: Lv.30 unlocks "Slowpoke Tail", fulfilling the primary strategic mission of unlocking the highest-energy ingredient in Pokémon Sleep! Direct pipeline for "Slowpoke Tail Pepper Salad" & "Grilled Tail Curry".'
-          : '戰略解鎖專門手：Lv.30 精準解鎖「美味尾巴」，圓滿達成全遊戲最高能量食材之戰略開圖使命！直通頂尖料理『呆呆獸尾巴的胡椒沙拉』與『炙燒尾肉咖哩』關鍵供料，解鎖後可常駐作為後備庫存手。';
+          ? `Strategic Unlock Specialist: Lv.30 unlocks "Slowpoke Tail", fulfilling the primary strategic mission of unlocking the highest-energy ingredient in Pokémon Sleep! Direct pipeline for ${chip1} & ${chip2}.`
+          : `戰略解鎖專門手：Lv.30 精準解鎖「美味尾巴」，圓滿達成全遊戲最高能量食材之戰略開圖使命！直通頂尖料理 ${chip1} 與 ${chip2} 關鍵供料，解鎖後可常駐作為後備庫存手。`;
       } else {
         return isEN
           ? 'Fatal Strategic Flaw: Lv.30 fails to roll "Slowpoke Tail", missing the essential strategic unlock value of the Slowpoke family.'
@@ -2492,7 +2521,7 @@ const TARGET_TOP_RECIPES = [
             <!-- 智能簡評欄 (嵌入式膠囊標籤) -->
             <div class="appraisal-summary-bar">
               <span class="appraisal-summary-label">${isEN ? 'Appraisal Note' : '智能簡評'}</span>
-              <span class="appraisal-summary-text">${escapeHtml(summaryNote)}</span>
+              <span class="appraisal-summary-text">${summaryNote}</span>
             </div>
           </div>
         </div>
@@ -2666,7 +2695,7 @@ const TARGET_TOP_RECIPES = [
               <!-- 中部：PR 智能簡評欄 (嵌入式膠囊標籤，不佔用內容展示空間) -->
               <div class="appraisal-summary-bar">
                 <span class="appraisal-summary-label">${isEN ? 'Appraisal Note' : '智能簡評'}</span>
-                <span class="appraisal-summary-text">${escapeHtml(summaryNote)}</span>
+                <span class="appraisal-summary-text">${summaryNote}</span>
               </div>
 
               <!-- 下方：專長深度點評與優缺點 (在智能簡評下方，同樣長度) -->

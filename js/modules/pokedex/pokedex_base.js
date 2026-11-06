@@ -50,7 +50,15 @@ const SPECIAL_ICON_MAP = {
   '顫弦蠑螈（高調的樣子）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849.png',
   '顫弦蠑螈 (高調的樣子)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849.png',
   '南瓜精': 'https://www.serebii.net/pokemonsleep/pokemon/icon/710.png',
-  '南瓜怪人': 'https://www.serebii.net/pokemonsleep/pokemon/icon/711.png'
+  '南瓜怪人': 'https://www.serebii.net/pokemonsleep/pokemon/icon/711.png',
+  '200': 'https://www.serebii.net/pokemonsleep/pokemon/icon/200.png',
+  '0200': 'https://www.serebii.net/pokemonsleep/pokemon/icon/200.png',
+  '夢妖': 'https://www.serebii.net/pokemonsleep/pokemon/icon/200.png',
+  'Misdreavus': 'https://www.serebii.net/pokemonsleep/pokemon/icon/200.png',
+  '429': 'https://www.serebii.net/pokemonsleep/pokemon/icon/429.png',
+  '0429': 'https://www.serebii.net/pokemonsleep/pokemon/icon/429.png',
+  '夢妖魔': 'https://www.serebii.net/pokemonsleep/pokemon/icon/429.png',
+  'Mismagius': 'https://www.serebii.net/pokemonsleep/pokemon/icon/429.png'
 };
 
 function getIconUrl(p) {
@@ -132,11 +140,65 @@ function getIconUrl(p) {
   return DEFAULT_SVG_ICON;
 }
 
+/**
+ * 判定寶可夢是否為最終進化形態 (Final Evolution)
+ * 具備上游資料防禦：即便上游 data.json is_final 暫時標記遺漏，亦能依據寶可夢 ID / 名稱 / 進化狀態精準判定
+ */
+function isFinalEvolution(p) {
+  if (!p) return false;
+  if (p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1') {
+    return true;
+  }
+  const idStr = String(p.id || p.formatted_no || p.pokemonId || '');
+  if (idStr === '429' || idStr === '0429') return true;
+  const name = p.name_cn || (typeof p.name === 'string' ? p.name : (p.name && p.name.cn ? p.name.cn : ''));
+  if (name === '夢妖魔') return true;
+  const nameEn = (p.name_en || (p.name && p.name.en ? p.name.en : '')).toLowerCase();
+  if (nameEn === 'mismagius') return true;
+  return false;
+}
+
+/**
+ * 寶可夢頭像載入錯誤安全降級 (Safe Fallback Loader)
+ * 優先載入本地 assets/pokemon/icon/ 圖示；若仍失敗則降級為乾淨 SVG 向量圖，杜絕加載全身立繪大圖
+ */
+function handlePokemonIconError(img) {
+  if (!img) return;
+  if (typeof caches !== 'undefined' && img.src) {
+    try {
+      caches.keys().then(keys => {
+        keys.forEach(k => {
+          if (k.includes('pksleep-img-cache')) {
+            caches.open(k).then(c => c.delete(img.src)).catch(() => {});
+          }
+        });
+      }).catch(() => {});
+    } catch (e) {}
+  }
+  if (!img.dataset.fb) {
+    img.dataset.fb = '1';
+    const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
+    const srcParts = (img.src || '').split('/');
+    const rawFilename = srcParts[srcParts.length - 1] || '';
+    const cleanFn = rawFilename.split('?')[0] || '';
+    if (cleanFn) {
+      img.src = `${base}assets/pokemon/icon/${cleanFn}`;
+      return;
+    }
+  }
+  img.src = DEFAULT_SVG_ICON;
+  img.onerror = null;
+}
+
 // 全站統一掛載 window.getItemIcon 作為各分頁（圖鑑、倉庫、島嶼、深度研究室、道具百科）唯一寶可夢圖示來源
 if (typeof window !== 'undefined') {
   window.getItemIcon = getIconUrl;
+  window.isFinalEvolution = isFinalEvolution;
+  window.handlePokemonIconError = handlePokemonIconError;
   if (!window.PokemonApp) window.PokemonApp = {};
   window.PokemonApp.getItemIcon = getIconUrl;
+  window.PokemonApp.isFinalEvolution = isFinalEvolution;
+  window.PokemonApp.handlePokemonIconError = handlePokemonIconError;
 }
 
 function getItemHelpInterval(p) {
@@ -254,7 +316,7 @@ function parseTableSort(sortKey) {
   if (i <= 0) return { col: null, dir: null };
   const col = sortKey.slice(0, i);
   const dir = sortKey.slice(i + 1);
-  if (!SORT_GETTERS[col] || (dir !== 'asc' && dir !== 'desc')) return { col: null, dir: null };
+  if (!SORT_GETTERS[col] || (dir !== 'asc' && dir !== 'desc' && dir !== 'newest')) return { col: null, dir: null };
   return { col, dir };
 }
 
@@ -265,7 +327,9 @@ function nextColumnSort(currentSort, col) {
 
   if (targetCol === 'no') {
     if (parsed.col === 'no') {
-      return parsed.dir === 'asc' ? 'no-desc' : 'no-asc';
+      if (parsed.dir === 'asc') return 'no-desc';
+      if (parsed.dir === 'desc') return 'no-newest';
+      return 'no-asc';
     }
     return 'no-asc';
   }
@@ -283,6 +347,17 @@ function nextColumnSort(currentSort, col) {
 function sortPokemonList(list, sortKey) {
   const out = [...(list || [])];
   const { col, dir } = parseTableSort(sortKey);
+  if (col === 'no' && dir === 'newest') {
+    out.sort((a, b) => {
+      const dateA = a.release_date || '';
+      const dateB = b.release_date || '';
+      if (dateA !== dateB) {
+        return dateB.localeCompare(dateA); // Newest release date first
+      }
+      return getItemNo(b) - getItemNo(a); // Newer/higher ID first
+    });
+    return out;
+  }
   const getter = col && SORT_GETTERS[col];
   if (!getter) return out;
   const mul = dir === 'desc' ? -1 : 1;

@@ -771,7 +771,7 @@ function renderPokedexEvoItemChipsHTML(pkm) {
     const tip = isEN
       ? `Evolution Item: ${item.name} (Click for encyclopedia details)`
       : `進化道具：${item.name}（點擊查看百科詳情）`;
-    return `<button type="button" class="pokedex-evo-item-btn" data-evo-item-id="${item.id}" onclick="window.WikiDB && typeof window.WikiDB.openItemDetailModal === 'function' ? window.WikiDB.openItemDetailModal('${item.id}') : (window.openItemDetailModal && window.openItemDetailModal('${item.id}'))" title="${escapeHtml(tip)}" aria-label="${escapeHtml(tip)}">${item.icon_url ? `<img src="${item.icon_url}" class="pokedex-evo-item-icon" alt="${escapeHtml(item.name)}" loading="lazy">` : ''}<span class="pokedex-evo-item-name font-bold">${escapeHtml(item.name)}</span></button>`;
+    return `<button type="button" class="pokedex-evo-item-btn pokedex-evo-item-icon-only" data-evo-item-id="${item.id}" onclick="window.WikiDB && typeof window.WikiDB.openItemDetailModal === 'function' ? window.WikiDB.openItemDetailModal('${item.id}') : (window.openItemDetailModal && window.openItemDetailModal('${item.id}'))" title="${escapeHtml(tip)}" aria-label="${escapeHtml(tip)}">${item.icon_url ? `<img src="${item.icon_url}" class="pokedex-evo-item-icon" alt="${escapeHtml(item.name)}" loading="lazy">` : ''}</button>`;
   }).join('');
 }
 
@@ -802,7 +802,9 @@ function renderPokedexRibbonOptionsHTML(pkm, currentRibbon) {
     if (typeof window !== 'undefined' && window.AppraisalLab && typeof window.AppraisalLab.getRemainingEvolutions === 'function') {
       remainingEvos = window.AppraisalLab.getRemainingEvolutions(pkm);
     } else {
-      const isFinal = pkm.is_final === '〇' || pkm.is_final === 'O' || pkm.is_final === 'o' || pkm.is_final === true || pkm.is_final === '1';
+      const isFinal = (typeof isFinalEvolution === 'function')
+        ? isFinalEvolution(pkm)
+        : (pkm.is_final === '〇' || pkm.is_final === 'O' || pkm.is_final === 'o' || pkm.is_final === true || pkm.is_final === '1');
       remainingEvos = isFinal ? 0 : 1;
     }
   }

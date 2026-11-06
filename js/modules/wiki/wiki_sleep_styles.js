@@ -27,17 +27,19 @@
       const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
       const candidates = [
         `${base}data/sleep_styles.json`,
-        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/sleep_styles.json`,
         `data/sleep_styles.json`,
-        `../data/sleep_styles.json`
+        `../data/sleep_styles.json`,
+        `${base}sleep_styles.json`,
+        `sleep_styles.json`,
+        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/sleep_styles.json`
       ];
 
       let remoteHash = '';
       if (typeof window !== 'undefined' && window.DataCacheManager && typeof window.DataCacheManager.checkFileNeedsUpdate === 'function') {
         try {
-          const check = await window.DataCacheManager.checkFileNeedsUpdate('sleep_styles.json', CACHE_KEY_SLEEP_STYLES_JSON);
+          const check = await window.DataCacheManager.checkFileNeedsUpdate('sleep_styles.json', CACHE_KEY_SLEEP_STYLES_JSON, true);
           remoteHash = check.remoteHash || '';
-          if (dynamicSleepStyles && !check.needsUpdate) {
+          if (dynamicSleepStyles && Object.keys(dynamicSleepStyles).length >= 250 && !check.needsUpdate) {
             return;
           }
         } catch (e) {}
@@ -49,7 +51,7 @@
           if (res && res.ok) {
             const rawText = await res.text();
             const data = JSON.parse(rawText);
-            if (data && data.byName) {
+            if (data && data.byName && Object.keys(data.byName).length >= 250) {
               dynamicSleepStyles = data.byName;
               _sleepStyleCacheHasDyn = false;
               try {

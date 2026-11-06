@@ -1,91 +1,109 @@
-# E2E Test Suite & Infrastructure Ready: Items & Incense Encyclopedia
+# E2E Test Suite & Infrastructure Ready: Pokemon Sleep Dynamic Data Scan & Sync System
 
-Generated: 2026-10-13T19:55:00Z  
-Status: All Milestones Implemented & Test 217 Integrated (217 / 217 Tests Passing)  
-Primary Suite Runner: `tests/run_tests.js`  
-Standalone Test 217 Probe: `tests/test_217_items_encyclopedia.js`  
+Generated: 2026-11-05T17:26:00Z  
+Status: All 4 Tiers Implemented & Verified (114 / 114 Tests Passing in 38ms)  
+Primary Standalone Suite Runner: `tests/e2e_sync_and_multitab.js`  
+Global Regression Suite Runner: `tests/run_tests.js`  
 
 ---
 
 ## 1. Test Execution Commands
 
-Run full regression test suite (217 tests):
+Run full standalone E2E test suite (114 tests, Tiers 1-4):
 ```bash
-rtk node tests/run_tests.js
+rtk node tests/e2e_sync_and_multitab.js
 ```
 
-Run standalone Test 217 probe (Diagnostic Mode):
+Run fast mode E2E test suite (108 tests, Tiers 1-3 in <30ms):
 ```bash
-rtk node tests/test_217_items_encyclopedia.js
+rtk node tests/e2e_sync_and_multitab.js --fast
 ```
 
-Run standalone Test 217 probe (Strict Assertion Mode):
+Run specific test tier:
 ```bash
-rtk node tests/test_217_items_encyclopedia.js --strict
+rtk node tests/e2e_sync_and_multitab.js --tier=1
+rtk node tests/e2e_sync_and_multitab.js --tier=2
+rtk node tests/e2e_sync_and_multitab.js --tier=3
+rtk node tests/e2e_sync_and_multitab.js --tier=4
+```
+
+Run targeted tests matching pattern:
+```bash
+rtk node tests/e2e_sync_and_multitab.js --grep="Curry"
+rtk node tests/e2e_sync_and_multitab.js --grep="Whimsicott"
+```
+
+Run full project automated regression test suites:
+```bash
+rtk npm run test:fast    # 156 / 156 tests passing in ~1.0s
+rtk npm test             # 279 / 279 tests passing in ~2.6s
 ```
 
 ---
 
 ## 2. Test Coverage Summary Table (Tiers 1 - 4)
 
-| Test Tier | Description | Active Test Count | Target Count | Suite Pass Rate |
-|-----------|-------------|:-----------------:|:------------:|:---------------:|
-| Tier 1 | Feature Coverage | 64 | 64 | 64 / 64 (100%) |
-| Tier 2 | Boundary & Corner Cases | 43 | 43 | 43 / 43 (100%) |
-| Tier 3 | Cross-Feature Combinations | 8 | 8 | 8 / 8 (100%) |
-| Tier 4 | Real-World Application Scenarios | 102 | 102 | 102 / 102 (100%) |
-| **TOTAL** | **Full Automated Test Suite** | **217** | **217** | **217 / 217 (100%)** |
+| Test Tier | Description | Active Test Count | Target Count | Suite Pass Rate | Execution Time |
+|-----------|-------------|:-----------------:|:------------:|:---------------:|:--------------:|
+| Tier 1 | Feature Coverage (F1 to F15) | 75 | >= 75 | 75 / 75 (100%) | ~24ms |
+| Tier 2 | Boundary & Corner Cases (B1 to B25) | 25 | >= 25 | 25 / 25 (100%) | ~7ms |
+| Tier 3 | Cross-Feature Combinations (C1 to C8) | 8 | >= 8 | 8 / 8 (100%) | ~4ms |
+| Tier 4 | Real-World Application Scenarios (S1 to S6) | 6 | >= 6 | 6 / 6 (100%) | ~3ms |
+| **TOTAL** | **Full Automated E2E Suite** | **114** | **>= 114** | **114 / 114 (100%)** | **38ms** |
 
 ---
 
 ## 3. Feature Inventory & Test Verification Checklist
 
-Mapping all 18 features from `PROJECT.md` against test specifications and verification outcomes:
+Mapping all 15 system features from `TEST_INFRA.md` and `PROJECT.md` against test coverage and verification results:
 
-| # | Feature Name | Milestone | Status | Verification Criteria & Test Coverage |
-|---|--------------|:---------:|:------:|---------------------------------------|
-| 1 | Items Master JSON Schema | M1 | Verified Complete | Validates 118 canonical items in `data/items.json` and `js/modules/wiki.js` with required schema keys (`id`, `category`, `name`, `icon_url`, `description`, `sleep_points`, `pokemon_ids`). |
-| 2 | Multilingual Localization | M1 | Verified Complete | Validates complete localization across `zh-TW`, `zh-CN`, and `en-US` for names and descriptions with zero missing locale keys. |
-| 3 | Serebii CDN Sprite URLs | M1 | Verified Complete | Validates high-resolution sprite URLs for all 118 items and incenses. |
-| 4 | Shop Pricing & Acquisition | M1 | Verified Complete | Validates sleep point costs (regular/premium limits, e.g. Evolution Stones 1,400pt, Linking Cord 1,400pt, Main Skill Seed) and acquisition methods. |
-| 5 | Evolution Target Mapping | M1 | Verified Complete | Validates mapping of 15+ evolution items to target Pokémon species IDs (e.g. Thunder Stone to Raichu/Jolteon, Linking Cord to Gengar/Machamp/Golem/Alakazam, Metal Coat to Steelix). |
-| 6 | Wiki Subtab Registration | M2 | Verified Complete | Validates `'items'` is included in `VALID_WIKI_SUBTABS` across `app.js` and `wiki.js`, navigation tab renders with `data-subtab="items"`. |
-| 7 | Wiki Subpanel Container | M2 | Verified Complete | Validates presence of container `#wiki-subpanel-items` inside `.wiki-main-container`. |
-| 8 | Horizontal Category Filter | M2 | Verified Complete | Validates 7 horizontal filter pills (`all`, `evolution`, `pokemon_incense`, `functional_incense`, `training`, `biscuit`, `supply`). |
-| 9 | Multilingual Search Bar | M2 | Verified Complete | Validates search input `#wiki-items-search-input` supporting instant query by item name, effect, and associated Pokémon name in zh-TW, zh-CN, and en-US. |
-| 10 | Item Cards Grid Layout | M2 | Verified Complete | Validates `.wiki-item-card-grid` responsive card grid rendering cards with icon, localized title, category badge, and effect text. |
-| 11 | Multi-Theme & Mobile CSS | M2 | Verified Complete | Validates CSS tokens in `css/styles.css` supporting Midnight, Onyx, Dawn, and Emerald themes across desktop and mobile H5 views. |
-| 12 | Item Detail Modal | M3 | Verified Complete | Validates `#wiki-item-detail-modal` popup displaying full item specs, sleep point shop costs, obtaining channels, and associated Pokémon avatars. |
-| 13 | Item -> Dex Navigation | M3 | Verified Complete | Validates clicking an associated Pokémon in `#wiki-item-detail-modal` calls `window.PokemonApp.openPokemonDetailModal(pokemon)`. |
-| 14 | Dex -> Item Navigation | M3 | Verified Complete | Validates clicking an evolution item chip (`.pokedex-evo-item-btn`) in `#pokedex-detail-modal` calls `window.WikiDB.openItemDetailModal(itemId)`. |
-| 15 | Overlay Lifecycle Hooks | M3 | Verified Complete | Validates registration in `MOBILE_OVERLAY_IDS` and smooth open/close transitions via `prepareOverlayOpen` and `animateOverlayClose`. |
-| 16 | E2E Test 217 Suite | M4 | Verified Complete | Validates integration probe `tests/test_217_items_encyclopedia.js` covering all 24 diagnostic assertions. |
-| 17 | Adversarial Hardening | M4 | Verified Complete | Validates special regex character escaping in search, whitespace tolerance, unknown ID lookups, and boundary resilience. |
-| 18 | Final Verification & Deploy | M4 | Verified Complete | Validates full suite pass (217 / 217), Zero Emoji strict compliance, Single Frame Rule compliance, and Dropdown Layout compliance. |
+| # | Feature Name | Requirement | Coverage Across Tiers | Status | Verification Scope |
+|---|--------------|:-----------:|:---------------------:|:------:|-------------------|
+| F1 | Dynamic Sync CLI Runner & Coordinator | R1 | Tier 1 (5), Tier 2 (2), Tier 3 (1), Tier 4 (1) | VERIFIED | Validates CLI command existence, `--mode=preview/full`, `--dry-run`, non-zero exit codes on failure, orchestrator module contracts. |
+| F2 | Official Announcement Scanner | R1 | Tier 1 (5), Tier 2 (3), Tier 3 (1), Tier 4 (1) | VERIFIED | Scans `data/news.json`, detects Ver 3.9.0 notice, extracts prospective ingredient (一口堅果), 3 recipes (39, 121, 91), and 570 style goal. |
+| F3 | Serebii & RaenonX Ingestion | R1 | Tier 1 (5), Tier 2 (1), Tier 3 (1), Tier 4 (1) | VERIFIED | Verifies mapping schemas for 20th ingredient slot, recipe payload schemas, Fairy/Snoozing/Ingredient traits, Sun Stone item linking, HTTPS assets. |
+| F4 | Defensive Health Gate & Atomic Writer | R1 | Tier 1 (5), Tier 2 (7), Tier 3 (1), Tier 4 (1) | VERIFIED | Validates `isRecipesHealthy` and `isDatasetHealthy`, checks atomic temp write and swap protocol, rejects poisoned payloads prior to disk mutations. |
+| F5 | New Ingredient: 一口堅果 (Snackable Nuts) | R2 | Tier 1 (5), Tier 2 (1), Tier 3 (1), Tier 4 (2) | VERIFIED | Accommodates 20th ingredient in schema, validates Ladder Lv60 capacity, recipe supply links, base energy calculations, bilingual lookup. |
+| F6 | 3 New Recipes (Curry 39, Salad 121, Dessert 91) | R2 | Tier 1 (5), Tier 2 (2), Tier 3 (1), Tier 4 (1) | VERIFIED | Validates pot size invariants (`pot_size === sum(ingredients)`), pot threshold bonus percentages (35%, 78%), and non-regression on existing 78 recipes. |
+| F7 | New Pokemon (Cottonee #546, Whimsicott #547) | R2 | Tier 1 (5), Tier 2 (3), Tier 3 (1), Tier 4 (1) | VERIFIED | Ingests National Dex #546 & #547, Fairy type, Snoozing sleep type, Ingredient specialty, Sun Stone evolution requirement, and trilingual names. |
+| F8 | Sun Stone Evolution Linkage | R2 | Tier 1 (5), Tier 2 (1), Tier 3 (1), Tier 4 (1) | VERIFIED | Ingests Whimsicott (547) in `items.json` `pokemon_ids`, verifies 1,400pt cost, and establishes bidirectional navigation between Dex and Item modals. |
+| F9 | Sleep Styles for Cottonee & Whimsicott | R2 | Tier 1 (5), Tier 2 (0), Tier 3 (0), Tier 4 (1) | VERIFIED | Verifies 1-star, 2-star, 3-star, and 4-star sleep style entries in `data/sleep_styles.json`, Snoozing session affinity, and Greengrass Isle spawn distribution. |
+| F10 | 570 Sleep Styles Goal & Pot Expansion | R2 | Tier 1 (5), Tier 2 (2), Tier 3 (1), Tier 4 (1) | VERIFIED | Ingests 570 style milestone in `wiki_camps_data.js`, unlocks pot capacity 84 expansion, updates goal progression percentages and bounds. |
+| F11 | Frontend Static Dictionaries & i18n | R2 | Tier 1 (5), Tier 2 (2), Tier 3 (1), Tier 4 (2) | VERIFIED | Updates `POKEMON_NAMES`, `INGREDIENT_NAMES`, `INGREDIENT_ICONS`, `INGREDIENT_VALUES_DATA`, verifies English, Traditional Chinese, and Japanese fallback. |
+| F12 | Top Meta & Appraisal Lab Integration | R2 | Tier 1 (5), Tier 2 (0), Tier 3 (1), Tier 4 (1) | VERIFIED | Validates addition of the 3 new recipes to `TARGET_TOP_RECIPES` and ingredient reverse mappings, invalidating appraisal lab summary cache on data sync. |
+| F13 | Manifest SHA-256 Consistency | R2, R3 | Tier 1 (5), Tier 2 (1), Tier 3 (1), Tier 4 (1) | VERIFIED | Validates `data/manifest.json` SHA-256 hash calculation, byte length tracking, record count consistency, and automated hash invalidation on content updates. |
+| F14 | Anti-Regression Guard | R3 | Tier 1 (5), Tier 2 (0), Tier 3 (0), Tier 4 (1) | VERIFIED | Ensures `npm run test:fast` (156 tests) and `npm test` (279 tests) pass with zero errors, updating invariant fixtures without breaking existing tests. |
+| F15 | Multi-Page Visual & Interaction Parity | R3 | Tier 1 (5), Tier 2 (0), Tier 3 (1), Tier 4 (5) | VERIFIED | Validates desktop and mobile document structure, Pokedex card grid and detail modals, Cooking view category filters, Ladder Lv60 view, and Island Camps view. |
 
 ---
 
-## 4. Quality & Compliance Contracts
+## 4. Real-World Application Scenarios (Tier 4 Breakdown)
+
+| Scenario | Objective | Features Exercised | Result |
+|---|---|---|:---:|
+| S1 | **Full Sync Execution & Manifest Invalidation Check**: Executes simulated dynamic sync workflow, detects prospective data, verifies health check pass, validates atomic update simulation, and confirms manifest SHA-256 hash invalidation. | F1, F2, F3, F4, F13 | PASSED |
+| S2 | **End-to-End Pokedex View & Search for Cottonee / Whimsicott**: Simulates Pokedex controller initialization, queries for new Pokemon by name/number, toggles table/grid view, opens detail modal, and verifies Sun Stone item link. | F7, F8, F9, F11, F15 | PASSED |
+| S3 | **End-to-End Cooking Calculation for 121-Pot Salad with 一口堅果**: Exercises cooking controller state, activates 84-pot expansion with Good Camp Ticket (126 capacity), selects 121-pot salad, and verifies tasty multipliers and energy calculation. | F5, F6, F11, F12, F15 | PASSED |
+| S4 | **Ingredient Ladder & Wiki Values Render for 20th Ingredient**: Renders Ingredient Ladder Lv60 view with 20th slot, verifies recipe supply mapping for all 3 prospective dishes, and validates bilingual display. | F5, F11, F15 | PASSED |
+| S5 | **Island Camps & 570 Sleep Style Goal Unlock Verification**: Evaluates camp milestone progression with 570 styles goal, confirms 84-pot expansion unlock, and verifies progress bar percentage calculation. | F10, F15 | PASSED |
+| S6 | **Full Automated Test Regression Run & Quality Policy Audit**: Audits codebase for Zero Emoji policy compliance, Zero Decorative Glyph compliance, and confirms zero regressions across existing test suites. | F14, F13 | PASSED |
+
+---
+
+## 5. Quality & Compliance Contracts
 
 1. **Zero Emoji Policy**:
-   - Strictly enforced across all datasets, UI strings, JavaScript code, CSS styles, and markdown documentation.
-   - Unicode emoji regex `/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u` returns zero matches.
-2. **Single Frame Rule**:
-   - Outer container `#wiki-subpanel-items` and modal dialog wrappers have `border: none; background: transparent; padding: 0;`.
-   - Eliminates redundant nested double borders.
-3. **Dropdown Selection Arrow Layout Rules**:
-   - Any dropdown select element uses `padding-right: 36px !important;` and `background-position: right 18px center !important;`.
-   - Dropdown option menus align directly beneath the selection box.
-4. **Multi-Theme Support**:
-   - Full palette support for Midnight, Onyx, Dawn, and Emerald.
-
----
-
-## 5. Milestone 4 Completion & Verification Log
-
-- **Test 217 Integrated**: Appended directly after Test 216 in `tests/run_tests.js` under `Tier 4 - Real-World Application Scenarios`.
-- **Assertion Coverage**: 24 diagnostic checks spanning Master Data Engine, Wiki Subpanel, Search & Filter, Item Detail Modal, Bidirectional Dex Linkage, and Quality Compliance.
-- **Suite Result**:
-  - `rtk node tests/run_tests.js` -> `TOTAL RESULT: 217 / 217 Passed (0 Failed)`.
-  - Tier 4 Passed: `102 Passed, 0 Failed`.
-  - Exit Code: `0`.
+   - Strictly enforced across all test code, markdown files, command logs, and test reporting.
+   - Verified via automated unicode regex scan: 0 emoji violations.
+2. **Zero Decorative Glyph Policy**:
+   - No decorative star characters or decorative symbol prefixes allowed in test outputs, badges, or strings.
+   - Verified via automated character code check: 0 glyph violations.
+3. **Anti-Hardcoding & Portable Path Resolution**:
+   - Path resolution in `tests/e2e_sync_and_multitab.js` strictly utilizes `path.resolve(__dirname, '..')`.
+   - Zero hardcoded local machine paths.
+4. **Fast Performance & Flexible CLI Argument Parsing**:
+   - Complete 114-test suite completes in ~38ms.
+   - Fast mode (`--fast`) executes 108 tests in ~29ms.
+   - Supports `--fast`, `--skip-tier4`, `--tier=1,2,3`, `-t 1`, and `--grep="pattern"`.
+5. **Defensive Health Gates**:
+   - `isRecipesHealthy` and `isDatasetHealthy` prevent corrupt or incomplete payloads from entering master data files.

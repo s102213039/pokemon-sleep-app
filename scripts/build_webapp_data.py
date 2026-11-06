@@ -39,6 +39,7 @@ INGREDIENT_ICON_MAP = {
     "醒腦咖啡豆": "rousingcoffee",
     "沉甸甸南瓜": "plumppumpkin",
     "嫩亮酪梨": "glossyavocado",
+    "一口堅果": "snackablenuts",
     # Alternate / legacy translations
     "大蔥大人": "largeleek",
     "美夢蘑菇": "tastymushroom",
@@ -110,6 +111,9 @@ for idx, r in enumerate(rows_ref):
         name_en = 'Pikachu (Captain)'
     if no == 7054 or name_en == 'Wooper (Paldea Form)':
         name_cn = '烏波（帕底亞的樣子）'
+    if no == 429 or name_cn == '夢妖魔' or name_en == 'Mismagius':
+        name_cn = '夢妖魔'
+        is_final = '〇'
 
     sleep_type = r[6].strip() if len(r) > 6 else ""
     type_attr = r[7].strip() if len(r) > 7 else ""
@@ -139,8 +143,15 @@ for idx, r in enumerate(rows_ref):
         main_skill = main_skill.replace('怪力钳', '怪力鉗')
     evo_req = sync.clean_val(r[sync.REF_MAPPING['進化需求']])
     is_final = sync.clean_val(r[sync.REF_MAPPING['最終']])
+    if no == 429 or name_cn == '夢妖魔' or name_en == 'Mismagius':
+        name_cn = '夢妖魔'
+        is_final = '〇'
+        main_skill = '魔法火焰（料理躍進S）'
+    if no == 94 or name_cn == '耿鬼':
+        ing_rate = '16.60%'
 
     icon_no = sync.format_no(no)
+    release_date = r[50].strip() if len(r) > 50 else ""
 
     pid_str = str(no)
     if pid_str in special_map:
@@ -175,6 +186,7 @@ for idx, r in enumerate(rows_ref):
         "main_skill": main_skill,
         "evo_req": evo_req,
         "is_final": is_final,
+        "release_date": release_date,
         "icon_url": icon_url,
         "ingredients": ingredients
     }
@@ -183,8 +195,41 @@ for idx, r in enumerate(rows_ref):
 target_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
 out_file = os.path.join(target_dir, "data.json")
 
+# Non-destructive merge with existing data.json:
+# 1. Preserve complete fields (ingredients, icon_url, is_final, rates) if sheet row is incomplete
+# 2. Preserve newly added / pre-release Pokemon (e.g. #546 Cottonee, #547 Whimsicott) not yet in sheet
+existing_by_id = {}
+if os.path.exists(out_file):
+    try:
+        with open(out_file, "r", encoding="utf-8") as ef:
+            for ep in json.load(ef):
+                if ep and "id" in ep:
+                    existing_by_id[str(ep["id"])] = ep
+    except Exception:
+        pass
+
+seen_ids = set()
+for idx_p, p in enumerate(pokemons):
+    pid_s = str(p.get("id"))
+    seen_ids.add(pid_s)
+    old_p = existing_by_id.get(pid_s)
+    if old_p:
+        if not p.get("ingredients") and old_p.get("ingredients"):
+            p["ingredients"] = old_p["ingredients"]
+        if not p.get("is_final") and old_p.get("is_final"):
+            p["is_final"] = old_p["is_final"]
+        for k in ("specialty", "sleep_type", "type", "carry", "ingredient_rate", "skill_rate", "interval", "main_skill", "evo_req"):
+            if (not p.get(k) or p.get(k) == "--") and old_p.get(k):
+                p[k] = old_p[k]
+        if str(old_p.get("icon_url", "")).startswith("assets/"):
+            p["icon_url"] = old_p["icon_url"]
+
+for pid_s, old_p in existing_by_id.items():
+    if pid_s not in seen_ids:
+        pokemons.append(old_p)
+
 with open(out_file, "w", encoding="utf-8") as f:
-    json.dump(pokemons, f, ensure_ascii=False, indent=2)
+    json.dump(pokemons, f, ensure_ascii=False, separators=(",", ":"))
 
 print(f"Successfully exported {len(pokemons)} pokemons to {out_file}")
 

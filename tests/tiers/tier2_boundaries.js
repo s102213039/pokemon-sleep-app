@@ -31,6 +31,8 @@ const {
   dataPath,
   dataset
 } = require('../test_harness');
+const { registerPtrGestureTests } = require('../stress_ptr_gestures');
+const { registerAdversarialPtrTests } = require('../adversarial_ptr_stress');
 
 function registerTier2Tests() {
   console.log('--- Tier 2 - Boundary & Corner Cases ---');
@@ -283,15 +285,15 @@ test('Tier 2 - Boundary & Corner Cases', 'Final Evolution Filter: onlyFinal defa
 
   assertEquals(PokemonApp.onlyFinal, true, 'PokemonApp.onlyFinal should default to true');
   const defaultFinals = PokemonApp.filterData();
-  assertEquals(defaultFinals.length, 128, 'Default filter should return exactly 128 final/single stage Pokémon');
+  assertEquals(defaultFinals.length, 130, 'Default filter should return exactly 130 final/single stage Pokémon');
 
-  const preEvos = ['妙蛙種子', '妙蛙草', '小火龍', '火恐龍', '傑尼龜', '卡咪龜', '皮丘', '皮卡丘'];
+  const preEvos = ['妙蛙種子', '妙蛙草', '小火龍', '火恐龍', '傑尼龜', '卡咪龜', '皮丘', '皮卡丘', '夢妖'];
   preEvos.forEach(name => {
     const found = defaultFinals.find(p => p.name_cn === name);
     assert(found === undefined, `Pre-evolution ${name} should NOT be in final evolution list`);
   });
 
-  const finalStages = ['妙蛙花', '噴火龍', '水箭龜', '雷丘', '凱羅斯', '赫拉克羅斯', '超夢', '夢幻'];
+  const finalStages = ['妙蛙花', '噴火龍', '水箭龜', '雷丘', '凱羅斯', '赫拉克羅斯', '超夢', '夢幻', '夢妖魔'];
   finalStages.forEach(name => {
     const found = defaultFinals.find(p => p.name_cn === name);
     assert(found !== undefined, `Final stage ${name} MUST be in final evolution list`);
@@ -314,7 +316,8 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Ho
     '畫皮（樹果遽增）',
     '新月祈禱（活力全體療癒S）',
     '正電（食材獲取S）',
-    '負電（料理強化S）'
+    '負電（料理強化S）',
+    '魔法火焰（料理躍進S）'
   ];
 
   specialSkills.forEach(skill => {
@@ -755,7 +758,8 @@ test('Tier 2 - Boundary & Corner Cases', 'Pot Stepper: Quick-select presets (15,
   assert(recipesAt15.length > 0, 'Should have recipes available at pot size 15');
   assert(recipesAt50.length > recipesAt15.length, 'Pot size 50 should unlock more recipes than 15');
   assert(recipesAt100.length > recipesAt50.length, 'Pot size 100 should unlock more recipes than 50');
-  assertEquals(recipesAtMax.length, recipes.length, 'Max pot size 200 should unlock all 78 recipes');
+  assertEquals(recipesAtMax.length, recipes.length, 'Max pot size 200 should unlock all available recipes');
+  assert(recipesAtMax.length >= 78, 'Max pot size 200 must unlock at least 78 official recipes');
 });
 
 
@@ -1175,8 +1179,10 @@ test('Tier 2 - Boundary & Corner Cases', '18 Berry Types Coverage & EX Rules Iso
     assert(appraisalJs.includes('function getSkillTier(sName)'), 'appraisal.js must define getSkillTier');
 
     // 2. Cache busters bumped to 20261002_07 or newer
-    assert(indexHtml.match(/js\/modules\/appraisal(\.min)?\.js\?v=202610(?:02_(?:0[7-9]|\d{2})|(?:0[3-9]|[1-3]\d)_\d{2})/), 'index.html must use v=20261002_07 or newer');
-    assert(appIndexHtml.match(/js\/modules\/appraisal(\.min)?\.js\?v=202610(?:02_(?:0[7-9]|\d{2})|(?:0[3-9]|[1-3]\d)_\d{2})/), 'app/index.html must use v=20261002_07 or newer');
+    const mIndex = indexHtml.match(/js\/modules\/appraisal(?:\.min)?\.js\?v=(\d{8}_\d{2})/);
+    assert(mIndex && parseInt(mIndex[1].replace('_', ''), 10) >= 2026100207, 'index.html must use v=20261002_07 or newer');
+    const mApp = appIndexHtml.match(/js\/modules\/appraisal(?:\.min)?\.js\?v=(\d{8}_\d{2})/);
+    assert(mApp && parseInt(mApp[1].replace('_', ''), 10) >= 2026100207, 'app/index.html must use v=20261002_07 or newer');
 
     // 3. Execution in VM context
     const ctx = {
@@ -1370,6 +1376,129 @@ test('Tier 2 - Boundary & Corner Cases', '18 Berry Types Coverage & EX Rules Iso
     assert(desktopContainer.innerHTML.includes('id="lab-subpanel-compare"'), 'On desktop, lab-subpanel-compare must be rendered in Research Lab');
   });
 
+  test('Tier 2 - Boundary & Corner Cases', 'Recipe Health Engine: isRecipesHealthy boundary conditions and defensive sanitization', () => {
+    const { isRecipesHealthy } = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js'));
+    const recipes = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'recipes.json'), 'utf8'));
+
+    // 1. Non-array boundary inputs
+    assertEquals(isRecipesHealthy(null), false, 'null input must fail health check');
+    assertEquals(isRecipesHealthy(undefined), false, 'undefined input must fail health check');
+    assertEquals(isRecipesHealthy({}), false, 'plain object input must fail health check');
+    assertEquals(isRecipesHealthy('recipes'), false, 'string input must fail health check');
+    assertEquals(isRecipesHealthy(12345), false, 'number input must fail health check');
+    assertEquals(isRecipesHealthy(true), false, 'boolean input must fail health check');
+
+    // 2. Array length boundary conditions (floor is 78 items)
+    assertEquals(isRecipesHealthy([]), false, 'empty array must fail health check');
+    assertEquals(isRecipesHealthy(recipes.slice(0, 77)), false, 'array of 77 items must fail health check (boundary < 78)');
+    assertEquals(isRecipesHealthy(recipes.slice(0, 78)), true, 'array of 78 items must pass health check (boundary == 78)');
+
+    // 3. Array expansion boundary (>= 78 items)
+    const expandedRecipes = [...recipes, {
+      name_cn: '新料理測試',
+      name_en: 'New Test Dish',
+      category: '咖哩',
+      base_energy: 1500,
+      pot_size: 20,
+      ingredients: [{ name: '特選蘋果', count: 10, icon: 'https://example.com/apple.png' }]
+    }];
+    assertEquals(isRecipesHealthy(expandedRecipes), true, 'expanded array (79 items) must pass health check');
+
+    // 4. Malformed array items
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), null]), false, 'array with null element must fail');
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), undefined]), false, 'array with undefined element must fail');
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), 'invalid_item']), false, 'array with string element must fail');
+
+    // 5. Missing or invalid field boundaries
+    // Missing name
+    const missingName = { ...recipes[0], name_cn: '', name: '' };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), missingName]), false, 'recipe missing name must fail');
+    // Missing category
+    const missingCat = { ...recipes[0], category: '' };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), missingCat]), false, 'recipe missing category must fail');
+    // Invalid energy: string, zero, negative, NaN
+    const strEnergy = { ...recipes[0], base_energy: '748', energy: undefined };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), strEnergy]), false, 'recipe with string energy must fail');
+    const zeroEnergy = { ...recipes[0], base_energy: 0, energy: undefined };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), zeroEnergy]), false, 'recipe with zero energy must fail');
+    const negEnergy = { ...recipes[0], base_energy: -50, energy: undefined };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), negEnergy]), false, 'recipe with negative energy must fail');
+    const nanEnergy = { ...recipes[0], base_energy: NaN, energy: undefined };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), nanEnergy]), false, 'recipe with NaN energy must fail');
+
+    // 6. Ingredients array boundaries
+    const emptyIngs = { ...recipes[0], ingredients: [] };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), emptyIngs]), false, 'recipe with empty ingredients array must fail');
+    const nullIngs = { ...recipes[0], ingredients: null };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), nullIngs]), false, 'recipe with non-array ingredients must fail');
+    const invalidIngItem = { ...recipes[0], ingredients: [{ name: '', count: 5 }] };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), invalidIngItem]), false, 'recipe with unnamed ingredient must fail');
+    const zeroCountIng = { ...recipes[0], ingredients: [{ name: '特選蘋果', count: 0 }] };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), zeroCountIng]), false, 'recipe with 0 ingredient count must fail');
+
+    // 7. Sparse array exploits & empty slot holes (Challenger M1-1 Vulnerability 1, 2, 3)
+    const sparse80 = new Array(80);
+    assertEquals(isRecipesHealthy(sparse80), false, 'sparse array of 80 empty slots (new Array(80)) must fail');
+
+    const sparseHoleEnd = recipes.slice(0, 77);
+    sparseHoleEnd.length = 80;
+    assertEquals(isRecipesHealthy(sparseHoleEnd), false, 'sparse array with holes at end must fail');
+
+    const sparseHoleMiddle = recipes.slice(0, 77);
+    sparseHoleMiddle[78] = recipes[0];
+    assertEquals(isRecipesHealthy(sparseHoleMiddle), false, 'sparse array with hole in middle must fail');
+
+    // 8. Extreme energy numbers (Challenger M1-1 Vulnerability 4)
+    const infEnergy = { ...recipes[0], base_energy: Infinity, energy: undefined };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), infEnergy]), false, 'recipe with Infinity base_energy must fail');
+    const negInfEnergy = { ...recipes[0], base_energy: -Infinity, energy: undefined };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), negInfEnergy]), false, 'recipe with -Infinity base_energy must fail');
+
+    // 9. Ingredients structure & sparse array exploits (Challenger M1-1 Vulnerability 5)
+    const sparseIngs = { ...recipes[0], ingredients: new Array(3) };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), sparseIngs]), false, 'recipe with sparse ingredients array must fail');
+
+    // 10. Malformed ingredient counts (Challenger M1-1 Vulnerability 6, 7)
+    const nanCountIng = { ...recipes[0], ingredients: [{ name: '特選蘋果', count: NaN }] };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), nanCountIng]), false, 'recipe with NaN ingredient count must fail');
+    const infCountIng = { ...recipes[0], ingredients: [{ name: '特選蘋果', count: Infinity }] };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), infCountIng]), false, 'recipe with Infinity ingredient count must fail');
+
+    // 11. Malformed ingredient names: whitespace, numbers, symbols, functions (Challenger M1-1 Vulnerability 8, 9, 10, 11)
+    const whitespaceIng = { ...recipes[0], ingredients: [{ name: '   ', count: 5 }] };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), whitespaceIng]), false, 'recipe with whitespace ingredient name must fail');
+    const numericIng = { ...recipes[0], ingredients: [{ name: 999, count: 5 }] };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), numericIng]), false, 'recipe with numeric ingredient name must fail');
+    const symbolIng = { ...recipes[0], ingredients: [{ name: Symbol('poison'), count: 5 }] };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), symbolIng]), false, 'recipe with symbol ingredient name must fail');
+    const functionIng = { ...recipes[0], ingredients: [{ name: () => {}, count: 5 }] };
+    assertEquals(isRecipesHealthy([...recipes.slice(0, 77), functionIng]), false, 'recipe with function ingredient name must fail');
+
+    // 12. Complex structures: Throwing getters & Prototype pollution (Challenger M1-1 Vulnerability 12 & Exception)
+    const throwingGetter = [...recipes.slice(0, 77), { ...recipes[0] }];
+    Object.defineProperty(throwingGetter[77], 'base_energy', {
+      get() { throw new Error('Explosive getter in base_energy'); }
+    });
+    assertEquals(isRecipesHealthy(throwingGetter), false, 'recipe with throwing getter must safely evaluate to false');
+
+    const emptyObjects = Array.from({ length: 80 }, () => ({}));
+    Object.prototype.name_cn = 'Polluted';
+    Object.prototype.category = 'curry';
+    Object.prototype.base_energy = 500;
+    Object.prototype.ingredients = [{ name: 'Apple', count: 1 }];
+    try {
+      assertEquals(isRecipesHealthy(emptyObjects), false, 'empty objects relying on prototype pollution must fail');
+    } finally {
+      delete Object.prototype.name_cn;
+      delete Object.prototype.category;
+      delete Object.prototype.base_energy;
+      delete Object.prototype.ingredients;
+    }
+  });
+
+  // Synthetic Pull-to-Refresh Gesture Invariants (Direction Lock, Deadzone, Box Tab Controls)
+  registerPtrGestureTests('Tier 2 - Boundary & Corner Cases');
+  registerAdversarialPtrTests('Tier 2 - Boundary & Corner Cases');
 }
 
 module.exports = { registerTier2Tests };

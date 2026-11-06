@@ -1071,8 +1071,10 @@
 
       // 2. 僅最終進化篩選
       if (boxOnlyFinal) {
-        const isFinal = (base && (base.is_final === '〇' || base.is_final === 'O' || base.is_final === 'o' || base.is_final === true || base.is_final === '1')) ||
-          p.is_final === true || p.is_final === '〇';
+        const isFinal = (typeof isFinalEvolution === 'function')
+          ? (isFinalEvolution(base) || isFinalEvolution(p))
+          : ((base && (base.is_final === '〇' || base.is_final === 'O' || base.is_final === 'o' || base.is_final === true || base.is_final === '1')) ||
+            p.is_final === true || p.is_final === '〇');
         if (!isFinal) return false;
       }
 
@@ -1451,6 +1453,11 @@
     `;
   }
 
+  function stripHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/<[^>]+>/g, '').trim();
+  }
+
   function renderBoxGrid(list, container) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     container.innerHTML = `
@@ -1476,7 +1483,7 @@
           const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';
 
           return `
-            <div class="box-card" data-uid="${p.uid}" title="${escapeHtml(prInfo.summaryNote || '')}">
+            <div class="box-card" data-uid="${p.uid}" title="${escapeHtml(stripHtml(prInfo.summaryNote || ''))}">
               <div class="box-card-header">
                 <div class="box-card-img-wrap">
                   ${iconUrl ? `<img src="${iconUrl}" alt="${escapeHtml(pkmDisplayName)}" class="box-card-icon" onerror="this.style.display='none';">` : ''}
@@ -1581,9 +1588,9 @@
 
               <!-- 智能簡評摘要 (直通頂尖料理精選) -->
               ${prInfo.summaryNote ? `
-                <div class="box-card-summary" title="${escapeHtml(prInfo.summaryNote)}">
+                <div class="box-card-summary" title="${escapeHtml(stripHtml(prInfo.summaryNote))}">
                   <span class="box-card-summary-label">${isEN ? 'Appraisal Note:' : '智能簡評：'}</span>
-                  <span class="box-card-summary-text">${escapeHtml(prInfo.summaryNote)}</span>
+                  <span class="box-card-summary-text">${prInfo.summaryNote}</span>
                 </div>
               ` : ''}
             </div>
@@ -1635,7 +1642,7 @@
               const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';
 
               return `
-                <tr data-uid="${p.uid}" title="${escapeHtml(prInfo.summaryNote || '')}">
+                <tr data-uid="${p.uid}" title="${escapeHtml(stripHtml(prInfo.summaryNote || ''))}">
                   <td class="td-icon" style="text-align:center;">
                     <div class="table-icon-wrapper" style="margin:0 auto;width:34px;height:34px;">
                       ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="table-icon" onerror="this.style.display='none';">` : ''}
@@ -1917,7 +1924,9 @@
       if (typeof window !== 'undefined' && window.AppraisalLab && typeof window.AppraisalLab.getRemainingEvolutions === 'function') {
         remainingEvos = window.AppraisalLab.getRemainingEvolutions(p);
       } else {
-        const isFinal = p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1';
+        const isFinal = (typeof isFinalEvolution === 'function')
+          ? isFinalEvolution(p)
+          : (p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1');
         remainingEvos = isFinal ? 0 : 1;
       }
     }
@@ -4872,6 +4881,9 @@
   }
 
   function switchBoxSubtab(tab) {
+    if (typeof window !== 'undefined' && typeof window.cancelPullToRefresh === 'function') {
+      try { window.cancelPullToRefresh(); } catch (e) {}
+    }
     if (!VALID_BOX_SUBTABS.includes(tab)) tab = 'list';
     if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
       window.scrollTo(0, 0);

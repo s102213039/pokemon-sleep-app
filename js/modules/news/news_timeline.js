@@ -30,6 +30,10 @@
   /* ─── 載入新聞資料 ───────────────────────────────────── */
   const CACHE_KEY_NEWS_JSON = 'pksleep_cache_news_json';
 
+  function isNewsHealthy(data) {
+    return Array.isArray(data) && data.length >= 20;
+  }
+
   function scheduleDynamicNewsSync() {
     if (typeof window === 'undefined' || typeof fetch === 'undefined') return;
     // 網頁載入執行時，透過輕量級 manifest.json 檢查雜湊是否有更新
@@ -37,40 +41,69 @@
       try {
         let remoteHash = '';
         if (window.DataCacheManager && typeof window.DataCacheManager.checkFileNeedsUpdate === 'function') {
-          const check = await window.DataCacheManager.checkFileNeedsUpdate('news.json', CACHE_KEY_NEWS_JSON, false);
-          if (!check.needsUpdate && Array.isArray(allNews) && allNews.length > 0) {
+          const check = await window.DataCacheManager.checkFileNeedsUpdate('news.json', CACHE_KEY_NEWS_JSON, true);
+          if (!check.needsUpdate && Array.isArray(allNews) && allNews.length >= 20) {
             return;
           }
           remoteHash = check.remoteHash || '';
         }
 
         const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
-        const liveUrl = `${base}data/news.json?v=${remoteHash || Date.now()}`;
-        let res = await fetch(liveUrl, { cache: 'no-cache' }).catch(() => null);
-        if (!res || !res.ok) {
-          const fallbackRawUrl = `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/news.json?t=${Date.now()}`;
-          res = await fetch(fallbackRawUrl, { cache: 'no-store' });
+        const syncCandidates = [
+          `${base}data/news.json?v=${remoteHash || Date.now()}`,
+          `data/news.json?v=${remoteHash || Date.now()}`,
+          `../data/news.json?v=${remoteHash || Date.now()}`,
+          `${base}news.json?v=${remoteHash || Date.now()}`,
+          `news.json?v=${remoteHash || Date.now()}`,
+          `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/news.json?t=${Date.now()}`
+        ];
+        const uniqueSyncUrls = Array.from(new Set(syncCandidates));
+        let res = null;
+        let rawText = '';
+        let freshData = null;
+
+        for (const url of uniqueSyncUrls) {
+          try {
+            const r = await fetch(url, { cache: 'no-cache' });
+            if (r && r.ok) {
+              const txt = await r.text();
+              const json = JSON.parse(txt);
+              if (isNewsHealthy(json)) {
+                res = r;
+                rawText = txt;
+                freshData = json;
+                break;
+              } else {
+                console.warn('[News Engine] 同步來源回傳公告未通過健全性檢查，跳過：', url);
+              }
+            }
+          } catch (e) {}
         }
-        if (!res || !res.ok) return;
-        const rawText = await res.text();
-        const freshData = JSON.parse(rawText);
-        if (Array.isArray(freshData) && freshData.length > 0) {
-          if (window.DataCacheManager) {
-            window.DataCacheManager.saveCachedJson(CACHE_KEY_NEWS_JSON, 'news.json', rawText, remoteHash);
-          } else if (window.localStorage) {
-            try {
-              window.localStorage.setItem(CACHE_KEY_NEWS_JSON, rawText);
-            } catch (e) {}
+
+        if (!res || !freshData) return;
+
+        if (window.DataCacheManager) {
+          window.DataCacheManager.saveCachedJson(CACHE_KEY_NEWS_JSON, 'news.json', rawText, remoteHash);
+        } else if (window.localStorage) {
+          try {
+            window.localStorage.setItem(CACHE_KEY_NEWS_JSON, rawText);
+          } catch (e) {}
+        }
+        const currentLen = Array.isArray(allNews) ? allNews.length : 0;
+        let hasUpdate = true;
+        if (currentLen === freshData.length && currentLen > 0) {
+          try {
+            hasUpdate = JSON.stringify(freshData) !== JSON.stringify(allNews);
+          } catch (e) {
+            hasUpdate = true;
           }
-          const currentIds = new Set(allNews.map(n => n.id));
-          const hasUpdate = freshData.length !== allNews.length || freshData.some(n => !currentIds.has(n.id));
-          if (hasUpdate) {
-            allNews = freshData;
-            renderEventTimeline();
-            initCategoryTags();
-            renderNews();
-            console.log('[News Engine] 動態連線取得最新官方公告完成，已自動更新至最新資料 (' + freshData.length + ' 筆)');
-          }
+        }
+        if (hasUpdate) {
+          allNews = freshData;
+          renderEventTimeline();
+          initCategoryTags();
+          renderNews();
+          console.log('[News Engine] 動態連線取得最新官方公告完成，已自動更新至最新資料 (' + freshData.length + ' 筆)');
         }
       } catch (e) {}
     }, 1500);
@@ -88,7 +121,7 @@
             const cachedText = window.localStorage.getItem(CACHE_KEY_NEWS_JSON);
             if (cachedText) cachedData = JSON.parse(cachedText);
           }
-          if (Array.isArray(cachedData) && cachedData.length > 0) {
+          if (Array.isArray(cachedData) && cachedData.length > 0 && isNewsHealthy(cachedData)) {
             allNews = cachedData;
             renderEventTimeline();
             initCategoryTags();
@@ -103,12 +136,12 @@
       const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
       const defaultCandidates = [
         `${base}data/news.json`,
-        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/news.json`,
         `data/news.json`,
         `../data/news.json`,
         `${base}news.json`,
         `news.json`,
-        `../news.json`
+        `../news.json`,
+        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/news.json`
       ];
       const cleanUrls = Array.from(new Set(defaultCandidates.filter(Boolean).map(u => u.split('?')[0])));
 

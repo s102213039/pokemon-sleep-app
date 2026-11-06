@@ -156,11 +156,14 @@
   const MANIFEST_CACHE_KEY = 'pksleep_cache_manifest_v1';
   const MANIFEST_TIME_KEY = 'pksleep_cache_manifest_time';
   const FILE_HASH_PREFIX = 'pksleep_file_hash_';
-  const CHECK_COOLDOWN_MS = 10 * 60 * 1000; // 10 分鐘內不重複發起網路檢查
+  const CACHE_SCHEMA_KEY = 'pksleep_cache_schema_ver';
+  const CACHE_SCHEMA_VERSION = '20261106_02';
+  const CHECK_COOLDOWN_MS = 60 * 1000; // 60 秒內同分頁不重複發起網路檢查，確保刷新時能即刻檢測最新 manifest
 
   let _inFlightManifestPromise = null;
   let _memoryManifest = null;
   let _lastManifestFetchTs = 0;
+  let _schemaMigrationPromise = null;
 
   function getStorage() {
     try {
@@ -169,6 +172,39 @@
     } catch (e) {}
     return null;
   }
+
+  function ensureCacheSchemaOnce() {
+    const store = getStorage();
+    if (!store) return;
+    try {
+      const currentSchema = store.getItem(CACHE_SCHEMA_KEY);
+      if (currentSchema === CACHE_SCHEMA_VERSION) return;
+      const keysToRemove = [
+        'pksleep_cache_data_json',
+        'pksleep_cache_data_json_time',
+        'pksleep_cache_recipes_json',
+        'pksleep_cache_recipes_json_time',
+        MANIFEST_CACHE_KEY,
+        MANIFEST_TIME_KEY,
+        FILE_HASH_PREFIX + 'data.json',
+        FILE_HASH_PREFIX + 'recipes.json',
+        FILE_HASH_PREFIX + 'items.json',
+        FILE_HASH_PREFIX + 'ladder_lv60.json'
+      ];
+      for (let i = 0; i < keysToRemove.length; i++) {
+        try {
+          store.removeItem(keysToRemove[i]);
+        } catch (e) {}
+      }
+      store.setItem(CACHE_SCHEMA_KEY, CACHE_SCHEMA_VERSION);
+      const idb = (typeof global !== 'undefined' && global.IDBStorage) || (typeof window !== 'undefined' && window.IDBStorage);
+      if (idb && typeof idb.clear === 'function') {
+        _schemaMigrationPromise = idb.clear('cache').catch(() => {});
+      }
+    } catch (e) {}
+  }
+
+  ensureCacheSchemaOnce();
 
   function getRecordCount(parsed) {
     if (!parsed) return 0;
@@ -186,6 +222,8 @@
     MANIFEST_CACHE_KEY,
     MANIFEST_TIME_KEY,
     FILE_HASH_PREFIX,
+    CACHE_SCHEMA_KEY,
+    CACHE_SCHEMA_VERSION,
     CHECK_COOLDOWN_MS,
 
     getFileHash: function (fileName) {
@@ -200,10 +238,35 @@
 
     setFileHash: function (fileName, hash) {
       const store = getStorage();
-      if (!store || !fileName || !hash) return;
+      if (!store || !fileName) return;
       try {
-        store.setItem(FILE_HASH_PREFIX + fileName, String(hash));
+        if (!hash) {
+          store.removeItem(FILE_HASH_PREFIX + fileName);
+        } else {
+          store.setItem(FILE_HASH_PREFIX + fileName, String(hash));
+        }
       } catch (e) {}
+    },
+
+    invalidateCache: function (cacheKey, fileName) {
+      const store = getStorage();
+      if (store) {
+        try {
+          if (cacheKey) {
+            store.removeItem(cacheKey);
+            store.removeItem(cacheKey + '_time');
+          }
+          if (fileName) {
+            store.removeItem(FILE_HASH_PREFIX + fileName);
+          }
+        } catch (e) {}
+      }
+      const idb = (typeof global !== 'undefined' && global.IDBStorage) || (typeof window !== 'undefined' && window.IDBStorage);
+      if (idb && typeof idb.delete === 'function' && cacheKey) {
+        try {
+          idb.delete(cacheKey, 'cache').catch(() => {});
+        } catch (e) {}
+      }
     },
 
     markFileUpdated: function (fileName, hash) {
@@ -223,6 +286,12 @@
     },
 
     getCachedJsonAsync: async function (cacheKey) {
+      if (_schemaMigrationPromise) {
+        try {
+          await _schemaMigrationPromise;
+        } catch (e) {}
+        _schemaMigrationPromise = null;
+      }
       const idb = (typeof global !== 'undefined' && global.IDBStorage) || (typeof window !== 'undefined' && window.IDBStorage);
       if (idb && typeof idb.get === 'function') {
         try {
@@ -248,9 +317,17 @@
         try {
           store.setItem(cacheKey + '_time', String(Date.now()));
         } catch (e) {}
-        const hashToSave = explicitHash ||
+        let hashToSave = explicitHash ||
           (_memoryManifest && _memoryManifest.files && _memoryManifest.files[fileName] && _memoryManifest.files[fileName].hash) ||
           '';
+        if (!hashToSave && store) {
+          try {
+            const cachedM = JSON.parse(store.getItem(MANIFEST_CACHE_KEY) || '{}');
+            if (cachedM && cachedM.files && cachedM.files[fileName]) {
+              hashToSave = cachedM.files[fileName].hash;
+            }
+          } catch (e) {}
+        }
         if (fileName && hashToSave) {
           try {
             store.setItem(FILE_HASH_PREFIX + fileName, String(hashToSave));
@@ -377,12 +454,7 @@
         return { needsUpdate: false, remoteHash, cachedData };
       }
 
-      // 若舊版快取尚未紀錄 hash，但筆數與 manifest 完全吻合，直接認領該 hash 免重抓
-      if (!localHash && fileMeta && fileMeta.count && getRecordCount(cachedData) === fileMeta.count) {
-        this.setFileHash(fileName, remoteHash);
-        return { needsUpdate: false, remoteHash, cachedData };
-      }
-
+      // 雜湊不一致或本機無雜湊時，一律標記為需要更新，杜絕舊資料滯留
       return { needsUpdate: true, remoteHash, cachedData };
     },
 

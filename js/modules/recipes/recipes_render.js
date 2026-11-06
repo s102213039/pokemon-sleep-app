@@ -1,7 +1,8 @@
   function calcEnergy(base, level, islandBonusPct, eventBonusMult = 1.0, extraCount = potExpansion, extraUnitEnergy = 100) {
     // 1. 食譜等級加成（僅乘在食譜本體需求食材上，追加食材不享等級加成）
+    const validBase        = (typeof base === 'number' && Number.isFinite(base)) ? base : 0;
     const lvMultiplier     = 1 + (getLevelBonus(level) / 100);
-    const recipeBaseWithLv = base * lvMultiplier;
+    const recipeBaseWithLv = validBase * lvMultiplier;
 
     // 2. 多餘食材追加能量（依官方機制，預設以每個 100 點基礎能量計算）
     const validExtraCount  = Math.max(0, Number(extraCount) || 0);
@@ -24,12 +25,14 @@
     const selectedIngArr  = hasSelectedIngs ? [...selectedIngredients] : null;
 
     const filtered = allRecipes.filter(recipe => {
+      if (!recipe || typeof recipe !== 'object') return false;
       if (selectedCategory !== 'ALL' && recipe.category !== selectedCategory) return false;
       if (minBonus > 0 && (recipe.bonus_pct || 0) < minBonus) return false;
       if (minPot   > 0 && (recipe.pot_size   || 0) < minPot)  return false;
       if (!recipe._ingNameSet) {
-        recipe._ingNameSet = new Set(recipe.ingredients.map(i => i.name));
-        recipe._searchStr = ((recipe.name_cn || '') + ' ' + (recipe.name_en || '') + ' ' + recipe.ingredients.map(i => i.name).join(' ')).toLowerCase();
+        const ings = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+        recipe._ingNameSet = new Set(ings.filter(i => i && typeof i.name === 'string').map(i => i.name));
+        recipe._searchStr = ((recipe.name_cn || '') + ' ' + (recipe.name_en || '') + ' ' + ings.filter(i => i && typeof i.name === 'string').map(i => i.name).join(' ')).toLowerCase();
       }
       if (currentSearch && !recipe._searchStr.includes(currentSearch)) return false;
       if (hasSelectedIngs) {
@@ -61,12 +64,12 @@
     }
 
     return filtered.sort((a, b) => {
-      if (sortOption === 'energy-desc')  return b._cachedEnergy - a._cachedEnergy;
-      if (sortOption === 'energy-asc')   return a._cachedEnergy - b._cachedEnergy;
-      if (sortOption === 'pot-asc')      return a.pot_size - b.pot_size;
-      if (sortOption === 'pot-desc')     return b.pot_size - a.pot_size;
+      if (sortOption === 'energy-desc')  return (Number.isFinite(b._cachedEnergy) ? b._cachedEnergy : 0) - (Number.isFinite(a._cachedEnergy) ? a._cachedEnergy : 0);
+      if (sortOption === 'energy-asc')   return (Number.isFinite(a._cachedEnergy) ? a._cachedEnergy : 0) - (Number.isFinite(b._cachedEnergy) ? b._cachedEnergy : 0);
+      if (sortOption === 'pot-asc')      return (a.pot_size || 0) - (b.pot_size || 0);
+      if (sortOption === 'pot-desc')     return (b.pot_size || 0) - (a.pot_size || 0);
       if (sortOption === 'bonus-desc')   return (b.bonus_pct || 0) - (a.bonus_pct || 0);
-      if (sortOption === 'name-asc')     return a.name_cn.localeCompare(b.name_cn, 'zh-TW');
+      if (sortOption === 'name-asc')     return (a.name_cn || a.name || '').localeCompare(b.name_cn || b.name || '', 'zh-TW');
       return 0;
     });
   }
@@ -92,13 +95,17 @@
   }
 
   function renderIngRow(ingredients) {
+    const list = Array.isArray(ingredients) ? ingredients : [];
     return `<div class="recipe-ing-row">
-      ${ingredients.map(i => {
-        const ingDisplayName = window.I18N ? window.I18N.getIngredientName(i.name) : i.name;
+      ${list.map(i => {
+        if (!i || typeof i !== 'object') return '';
+        const rawName = typeof i.name === 'string' ? i.name : (typeof i.name !== 'symbol' ? String(i.name || '') : '');
+        const ingDisplayName = (window.I18N && rawName) ? window.I18N.getIngredientName(rawName) : rawName;
+        const count = (typeof i.count === 'number' && Number.isFinite(i.count)) ? i.count : 0;
         return `
-        <div class="recipe-ing-chip" title="${ingDisplayName} × ${i.count}">
-          ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy">` : ''}
-          <span class="recipe-ing-count">×${i.count}</span>
+        <div class="recipe-ing-chip" title="${ingDisplayName} × ${count}">
+          ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+          <span class="recipe-ing-count">×${count}</span>
         </div>
       `;
       }).join('')}
@@ -419,7 +426,7 @@
               return `
               <tr>
                 <td style="vertical-align:middle;text-align:center;">
-                  <img src="${r.icon}" width="52" height="52" alt="${primaryName}" loading="lazy"
+                  <img src="${r.icon}" width="52" height="52" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';"
                     style="border-radius:10px;object-fit:contain;background:var(--bg-card-inner);padding:4px;border:1px solid var(--border-color);display:block;margin:0 auto;">
                 </td>
                 <td class="recipe-name-cell" style="vertical-align:middle;">
@@ -503,7 +510,7 @@
           return `
           <div class="pokemon-card recipe-desktop-card">
             <div class="card-header" style="align-items:center;margin-bottom:6px;">
-              <img class="card-icon" src="${r.icon}" alt="${primaryName}" style="width:48px;height:48px;border-radius:10px;object-fit:contain;background:var(--bg-card-inner);padding:2px;border:1px solid var(--border-color);">
+              <img class="card-icon" src="${r.icon}" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';" style="width:48px;height:48px;border-radius:10px;object-fit:contain;background:var(--bg-card-inner);padding:2px;border:1px solid var(--border-color);">
               <div class="card-title-group" style="flex:1;min-width:0;">
                 <h3 class="pokemon-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px;margin-bottom:3px;">${primaryName}</h3>
                 <div style="display:flex;gap:6px;align-items:center;">
@@ -543,12 +550,15 @@
 
             <div class="recipe-desktop-ings">
               <div class="recipe-ing-row compact-4-row">
-                ${r.ingredients.map(i => {
-                  const ingDisplayName = window.I18N ? window.I18N.getIngredientName(i.name) : i.name;
+                ${(Array.isArray(r.ingredients) ? r.ingredients : []).map(i => {
+                  if (!i || typeof i !== 'object') return '';
+                  const rawName = typeof i.name === 'string' ? i.name : (typeof i.name !== 'symbol' ? String(i.name || '') : '');
+                  const ingDisplayName = (window.I18N && rawName) ? window.I18N.getIngredientName(rawName) : rawName;
+                  const count = (typeof i.count === 'number' && Number.isFinite(i.count)) ? i.count : 0;
                   return `
-                  <div class="recipe-ing-chip compact-chip" title="${ingDisplayName} × ${i.count}">
-                    ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy">` : ''}
-                    <span class="recipe-ing-count">×${i.count}</span>
+                  <div class="recipe-ing-chip compact-chip" title="${ingDisplayName} × ${count}">
+                    ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+                    <span class="recipe-ing-count">×${count}</span>
                   </div>
                 `;
                 }).join('')}
@@ -568,6 +578,7 @@
       },
       calcEnergy: calcEnergy,
       getLevelBonus: getLevelBonus,
+      isRecipesHealthy: isRecipesHealthy,
       getPotExpansion: function() { return potExpansion; },
       setPotExpansion: function(val) {
         potExpansion = Math.min(700, Math.max(0, Number(val) || 0));
@@ -578,9 +589,30 @@
     };
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initRecipesModule);
-  } else {
-    initRecipesModule();
+  if (typeof window !== 'undefined') {
+    window.isRecipesHealthy = isRecipesHealthy;
+    if (!window.RecipesApp) {
+      window.RecipesApp = {};
+    }
+    window.RecipesApp.isRecipesHealthy = isRecipesHealthy;
+  }
+
+  if (typeof global !== 'undefined') {
+    global.isRecipesHealthy = isRecipesHealthy;
+  }
+
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initRecipesModule);
+    } else {
+      initRecipesModule();
+    }
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      isRecipesHealthy: isRecipesHealthy,
+      RecipesApp: (typeof window !== 'undefined' && window.RecipesApp) ? window.RecipesApp : { isRecipesHealthy: isRecipesHealthy }
+    };
   }
 })();

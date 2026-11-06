@@ -297,13 +297,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Sub-skills
 test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 End-to-End User Journey (Entry -> Dock Nav -> Dex -> Cook -> Wiki -> Box -> News)', () => {
   PokemonApp.init([...dataset]);
   PokemonApp.onlyFinal = true;
-  assertEquals(PokemonApp.filterData().length, 128, 'Step 1: Pokedex starts with 128 final stage Pokemon');
+  assertEquals(PokemonApp.filterData().length, 130, 'Step 1: Pokedex starts with 130 final stage Pokemon');
 
   PokemonApp.currentSearch = '皮卡丘';
   const pikachuMatch = PokemonApp.filterData();
   assert(pikachuMatch.length >= 1, 'Step 2: Found Pikachu in search');
   PokemonApp.currentSearch = '';
-  assertEquals(PokemonApp.filterData().length, 128, 'Step 2: Cleared search restores 128 items');
+  assertEquals(PokemonApp.filterData().length, 130, 'Step 2: Cleared search restores 130 items');
 
   const recipes = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'recipes.json'), 'utf8'));
   const curry57 = recipes.filter(r => r.category === '咖哩' && r.pot_size <= 57);
@@ -333,7 +333,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 End-to-End User Jou
 test('Tier 4 - Real-World Application Scenarios', 'Desktop Baseline User Session Workflow Preservation', () => {
   PokemonApp.init([...dataset]);
   PokemonApp.onlyFinal = true;
-  assertEquals(PokemonApp.filterData().length, 128, 'Desktop: 128 final stage Pokemon');
+  assertEquals(PokemonApp.filterData().length, 130, 'Desktop: 130 final stage Pokemon');
 
   PokemonApp.onlyFinal = false;
   assertEquals(PokemonApp.filterData().length, dataset.length, 'Desktop: 247 total items when onlyFinal=false');
@@ -826,10 +826,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(/css\/styles(\.min)?\.css\?v=(20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
-  assert(/js\/modules\/wiki(\.min)?\.js\?v=(20260907_8|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(indexHtml), 'index.html wiki.js must have valid cache buster');
-  assert(/css\/styles(\.min)?\.css\?v=(20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
-  assert(/js\/modules\/wiki(\.min)?\.js\?v=(20260907_8|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(appIndexHtml), 'app/index.html wiki.js must have valid cache buster');
+  assert(/css\/styles(\.min)?\.css\?v=(?:20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+|2026(?:1[0-2]|\d{2})\d{2}_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
+  assert(/js\/modules\/wiki(\.min)?\.js\?v=(?:20260907_8|2026091[89]_\d+|202609[23]\d_\d+|2026(?:1[0-2]|\d{2})\d{2}_\d+)/.test(indexHtml), 'index.html wiki.js must have valid cache buster');
+  assert(/css\/styles(\.min)?\.css\?v=(?:20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+|2026(?:1[0-2]|\d{2})\d{2}_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
+  assert(/js\/modules\/wiki(\.min)?\.js\?v=(?:20260907_8|2026091[89]_\d+|202609[23]\d_\d+|2026(?:1[0-2]|\d{2})\d{2}_\d+)/.test(appIndexHtml), 'app/index.html wiki.js must have valid cache buster');
 });
 
 

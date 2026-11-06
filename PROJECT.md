@@ -1,91 +1,77 @@
-# Project: Pokémon Sleep Items & Incense Encyclopedia
+# Project: Pokemon Sleep Dynamic Data Scan and Sync System
 
 ## Architecture
-The Items & Incense Encyclopedia is structured into four core layers:
-1. **Master Data Engine Layer**:
-   - `data/items.json` and in-memory cache `window.ITEMS_DATA` (embedded in `js/data/items.js` / `js/modules/wiki.js`).
-   - Standard schema: `id`, `category`, `name` (zh-TW, zh-CN, en-US), `icon_url`, `description`, `effects`, `sleep_points` (regular, premium, monthly limits), `diamonds`, `acquisition`, and `pokemon_ids`.
-   - Comprehensive collection: 118 items (17 evolution stones/items, 6 functional incenses, 9 training & skill items, 10 catching & camping supplies, and 76 verified Pokemon species incenses).
-2. **Wiki Subpanel UI & Search/Filter Layer**:
-   - Navigation subtab `items` added to `VALID_WIKI_SUBTABS` in `js/modules/app.js` and `js/modules/wiki.js`.
-   - Subpanel container `#wiki-subpanel-items` inside `.wiki-main-container`.
-   - Search bar (`#wiki-items-search-input`) supporting multilingual keywords and Pokemon names.
-   - Horizontal category filter pills (`all`, `evolution`, `pokemon_incense`, `functional_incense`, `training`, `biscuit`, `supply`).
-   - Single Frame Rule compliant item cards grid (`.wiki-item-card-grid`).
-   - Theme styling supporting all 4 themes (Midnight, Onyx, Dawn, Emerald) plus high-contrast modes.
-3. **Modal & Bidirectional Dex Linkage Layer**:
-   - Item Detail Modal (`#wiki-item-detail-modal`) registered in `MOBILE_OVERLAY_IDS` and managed via `prepareOverlayOpen` / `animateOverlayClose`.
-   - Displays full item specs, sleep point shop pricing, and associated Pokemon avatars.
-   - Clicking Pokemon avatars opens `#pokedex-detail-modal` via `window.PokemonApp.openPokemonDetailModal(pkm)`.
-   - In `#pokedex-detail-modal`, Pokemon requiring evolution items render interactive item chips that call `window.WikiDB.openItemDetailModal(itemId)`.
-4. **Automated Verification & E2E Testing Layer**:
-   - Test 217 added to `tests/run_tests.js` in Tier 4, validating dataset integrity, UI rendering, category filtering, multilingual search, bidirectional linkage, Zero Emoji compliance, and Single Frame styling.
-   - Target: 217 / 217 tests passing (0 failures).
+The Pokemon Sleep WebApp architecture is a static-first Single Page Application with modular ES6 components, bundled via esbuild into production assets (`js/modules/app.min.js`, `js/modules/recipes.min.js`, etc.).
+Master data resides in `/data/*.json` and is guarded by:
+1. `DataCacheManager` with SHA-256 manifest checking (`data/manifest.json`), IndexedDB fallback, and service worker caching.
+2. Modular rendering controllers (`pokedex/`, `recipes/`, `wiki/`, `lab/`, `camps/`).
+3. Defensive health predicates (`isRecipesHealthy`, `isDatasetHealthy`).
+4. Dual-mode sync pipeline (`scripts/sync_manager.js`, `scripts/sync_data.py`, `scripts/build_recipes.py`, `scripts/build_news.py`, `scripts/generate_manifest.py`).
 
-## Code Layout
-- `data/items.json`: Canonical static item master dataset (118 items).
-- `js/data/items.js` (or inline in `js/modules/wiki.js`): In-memory item data definitions for offline & VM test support.
-- `js/modules/wiki.js`: Wiki subpanel rendering, subtab switching, category filtering, search mechanics, item modal lifecycle.
-- `js/modules/app.js`: Subtab registration in main router, overlay registry, Pokédex modal evolution chip rendering.
-- `js/core/i18n.js`: Localized item names and UI strings.
-- `css/styles.css`: Subpanel, cards, filter pills, modal, and responsive H5 styles across all 4 themes.
-- `index.html` & `app/index.html`: Desktop and mobile HTML containers for modals and subpanels.
-- `tests/run_tests.js`: Test runner with integration Test 217.
+The Dynamic Data Scan and Sync System introduces a unified CLI command (`npm run sync:data` via `scripts/sync_manager.js`) to:
+- Detect and scan official announcements and external reference sources (Serebii / RaenonX).
+- Automatically parse prospective or finalized content (ingredients, recipes, Pokemon, sleep goals).
+- Validate incoming records with schema and integrity checks.
+- Atomically update `/data/*.json` and mirrored CommonJS data files.
+- Recompute deterministic SHA-256 hashes for `data/manifest.json`.
+- Synchronize frontend dictionary linkages (i18n names, top meta recipes, evolution items).
+- Maintain 100% test pass rate with zero regressions.
 
 ## Feature Inventory
 | # | Feature | Description | Milestone | Source |
 |---|---------|-------------|-----------|--------|
-| 1 | Items Master JSON Schema | Canonical dataset for all 118 items | M1 | ORIGINAL_REQUEST R1, Spec Miner |
-| 2 | Multilingual Localization | zh-TW, zh-CN, and en-US strings for all items | M1 | ORIGINAL_REQUEST R1, Spec Miner |
-| 3 | Serebii CDN Sprite URLs | High-resolution validated sprite assets for items & incenses | M1 | Spec Miner |
-| 4 | Shop Pricing & Acquisition | Sleep points (regular/premium limits) and sources | M1 | ORIGINAL_REQUEST R1, Spec Miner |
-| 5 | Evolution Target Mapping | Mapping evolution items to evolved Pokemon IDs | M1 | ORIGINAL_REQUEST R1, Spec Miner |
-| 6 | Wiki Subtab Registration | Subtab 'items' added to router and navigation | M2 | ORIGINAL_REQUEST R2, Explorer 1 |
-| 7 | Wiki Subpanel Container | #wiki-subpanel-items container and layout | M2 | ORIGINAL_REQUEST R2, Explorer 1 |
-| 8 | Horizontal Category Filter | Filter pills for 7 item categories | M2 | ORIGINAL_REQUEST R2, Explorer 1 |
-| 9 | Multilingual Search Bar | Real-time search by name, effect, or Pokemon name | M2 | ORIGINAL_REQUEST R2, Explorer 1 |
-| 10 | Item Cards Grid Layout | Clean single-frame responsive cards grid | M2 | ORIGINAL_REQUEST R2, Explorer 1 |
-| 11 | Multi-Theme & Mobile CSS | Styling for 4 themes, mobile drawer/bottom sheet | M2 | ORIGINAL_REQUEST R4, Explorer 1 |
-| 12 | Item Detail Modal | #wiki-item-detail-modal popup with full stats & pricing | M3 | ORIGINAL_REQUEST R3, Explorer 1 |
-| 13 | Item -> Dex Navigation | Clicking associated Pokemon opens Pokedex modal | M3 | ORIGINAL_REQUEST R3, Spec Miner |
-| 14 | Dex -> Item Navigation | Clickable evolution item chips in Pokedex modal | M3 | ORIGINAL_REQUEST R3, Spec Miner |
-| 15 | Overlay Lifecycle Hooks | Registration in MOBILE_OVERLAY_IDS and smooth animation | M3 | Explorer 1 |
-| 16 | E2E Test 217 Suite | Integration test in tests/run_tests.js | M4 (E2E) | ORIGINAL_REQUEST AC, Explorer 2 |
-| 17 | Adversarial Hardening | Negative tests, edge cases, regression check | M4 | Project Pattern |
-| 18 | Final Verification & Deploy | 217/217 pass, git commit, push, update shared docs | M4 | System Prompt |
+| 1 | Dynamic Sync CLI & Coordinator | Unified CLI script (`npm run sync:data` / `scripts/sync_manager.js`) coordinating news scan, external scraping, data transform, and manifest update | M1 (DONE) | Survey 1 |
+| 2 | Official Announcement Scanner | Parser scanning official `data/news.json` announcements for upcoming previews (ingredients, recipes, goals) | M1 (DONE) | Survey 1 |
+| 3 | Serebii & RaenonX Integration | Scraper/parser updating exact recipe ingredient counts, base energies, and Pokemon stats | M1 (DONE) | Survey 1 |
+| 4 | Defensive Health Gate & Atomic Writer | Pre-write validator enforcing `isRecipesHealthy` and schema validity with atomic file write | M1 (DONE) | Survey 1 |
+| 5 | New Ingredient: 一口堅果 (Snackable Nuts) | 20th ingredient record in `data/ladder_lv60.json`, `js/data/ladder_data.js`, and i18n dictionaries | M2 | Survey 2 |
+| 6 | 3 New Official Recipes | Bountiful Nut & Pumpkin Stew (Curry 39), Supreme Avocado Nut Feast Salad (Salad 121), Grand Tail Soy Nut Cake (Dessert 91) in `data/recipes.json` | M2 | Survey 2 |
+| 7 | New Pokemon: 木棉球 & 風妖精 | National Dex #546 Cottonee and #547 Whimsicott in `data/data.json` with Fairy type, ingredient specialty, snoozing sleep type | M2 | Survey 2 |
+| 8 | Evolution Item Sun Stone Linkage | Link `sun_stone` in `data/items.json` to Whimsicott (#547) | M2 | Survey 2 |
+| 9 | Sleep Styles for Cottonee & Whimsicott | 1-4 star sleep style definitions in `data/sleep_styles.json` | M2 | Survey 2 |
+| 10 | 570 Sleep Styles Goal & Pot Expansion | Add 570 sleep style goal to camp milestones (`wiki_camps_data.js`) unlocking 84-pot expansion | M2 | Survey 2 |
+| 11 | Frontend Static Dictionaries Sync | Update `i18n_core.js` (POKEMON_NAMES, INGREDIENT_ICONS), `i18n_entities.js` (INGREDIENT_NAMES), and `wiki_skills_matrix.js` (INGREDIENT_VALUES_DATA) | M2 | Survey 3 |
+| 12 | Top Meta & Appraisal Lab Integration | Update `TARGET_TOP_RECIPES` and `TOP_RECIPES_FOR_INGREDIENTS` with the 3 new recipes | M2 | Survey 3 |
+| 13 | Manifest SHA-256 Synchronization | Recalculate deterministic hashes, file sizes, and record counts in `data/manifest.json` | M2 | Survey 1 & 3 |
+| 14 | E2E & Fast Regression Guard | Ensure `npm run test:fast` (0.25s) and `npm test` pass 100%, updating invariant fixtures in `tests/stress_recipe_consumers_adversarial.js` and `tests/test_challenger_m1_1.js` | M3 | Survey 3 |
+| 15 | Multi-Page Visual & Interaction Parity | Verify Pokedex, Cooking, Ladder, and Wiki pages render new items seamlessly without runtime errors | M3 | Survey 3 |
+| 16 | Comprehensive E2E Testing Suite | Tier 1-4 opaque-box test suite verifying dynamic sync, multi-page data rendering, and anti-regression | M4 (E2E) | Dual Track |
 
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
-|---|------|-------|-------------|--------|
-| M1 | Master Data Engine | `data/items.json`, data fallback, i18n entries, evolution mappings | none | DONE |
-| M2 | Wiki Subpanel & Search | Wiki subtab, #wiki-subpanel-items, search, filter pills, card grid, CSS themes | M1 | DONE |
-| M3 | Detail Modal & Dex Linkage | #wiki-item-detail-modal, bidirectional navigation between Dex and Items | M1, M2 | DONE |
-| M4 | E2E Test Suite & Hardening | Test 217 implementation, 217/217 tests pass, adversarial audit, push & shared docs | M1, M2, M3 | DONE |
+|---|------|-------|--------------|--------|
+| M1 | Dynamic Data Scan & Sync Infrastructure | Implement unified CLI sync runner (`scripts/sync_manager.js`, `package.json: sync:data`), official news preview scanner, and defensive validation gate | none | DONE |
+| M2 | Multi-Tab Data Ingestion & Integration | Ingest Snackable Nuts, 3 recipes, Cottonee/Whimsicott, Sun Stone linkage, sleep styles, 570 goal, and dictionary mappings; update manifest | M1 | DONE |
+| M3 | Anti-Regression, Bundle Sync & Verification | Synchronize production bundles (`npm run build:prod`), synchronize test invariants, ensure 100% passing tests on fast and full suites | M2 | DONE |
+| M4 | Final Milestone: E2E Test Suite Pass & Adversarial Hardening | Pass 100% E2E test suite (Tiers 1-4), adversarial test hardening (Tier 5) | M3 | DONE |
 
 ## Interface Contracts
-### Master Data -> Wiki & App
-- `window.ITEMS_DATA`: Array of 118 item objects conforming to `ItemMasterRecord`.
-- Item schema:
-  - `id`: string (e.g. `thunder_stone`, `incense_bulbasaur`, `poke_biscuit`)
-  - `category`: `"evolution" | "pokemon_incense" | "functional_incense" | "training" | "biscuit" | "supply"`
-  - `name`: `{ "zh-TW": string, "zh-CN": string, "en-US": string }`
-  - `icon_url`: string
-  - `description`: `{ "zh-TW": string, "zh-CN": string, "en-US": string }`
-  - `sleep_points`: `{ regular: number | null, premium: number | null, limit_regular?: string, limit_premium?: string }`
-  - `acquisition`: `{ "zh-TW": string[], "zh-CN": string[], "en-US": string[] }`
-  - `pokemon_ids`: string[]
 
-### Wiki Subpanel -> Item Modal
-- `window.WikiDB.openItemDetailModal(itemId)`: Opens `#wiki-item-detail-modal` populated with data for `itemId`.
-- `window.WikiDB.closeItemDetailModal()`: Dismisses modal with smooth exit animation.
+### CLI Sync Interface: `npm run sync:data`
+- Execution: `node scripts/sync_manager.js [options]`
+- Options:
+  - `--mode=preview`: Scans `data/news.json` for prospective announcements and generates preview records.
+  - `--mode=full`: Full sync combining news scan, Serebii scraping, and manifest recalculation.
+  - `--dry-run`: Validates changes against health predicates without writing to disk.
+- Return Code: 0 on success, non-zero on validation failure.
 
-### Bidirectional Linkage: Items <-> Pokédex
-- Item Modal -> Dex: Inside `#wiki-item-detail-modal`, clicking an associated Pokemon card calls:
-  `window.PokemonApp.openPokemonDetailModal(targetPokemonObject)`.
-- Dex -> Item Modal: Inside `#pokedex-detail-modal`, when a Pokemon requires an evolution item, rendering an interactive chip `<button class="pokedex-evo-item-btn" onclick="window.WikiDB.openItemDetailModal('${matchedItemId}')">${itemName}</button>`.
+### Data Schemas & Invariants
+- `data/recipes.json`:
+  - `pot_size === sum(ingredients.map(i => i.count))`
+  - `isRecipesHealthy(recipes) === true`
+  - `bonus_pct` matches pot size threshold tiers.
+- `data/data.json`:
+  - `isDatasetHealthy(dataset) === true`
+  - Required fields: `id`, `formatted_no`, `name_cn`, `name_en`, `name_jp`, `type`, `specialty`, `sleep_type`, `carry`, `ingredient_rate`, `skill_rate`, `interval`, `main_skill`, `evo_req`, `is_final`, `release_date`, `icon_url`, `ingredients`.
+- `data/manifest.json`:
+  - `files[fileName].hash === sha256(rawBytes).slice(0, 16)`
+  - `files[fileName].size === rawBytes.length`
+  - `files[fileName].count === jsonRecords.length`
 
-## Design & UI Constraints
-- Zero Emoji Policy: Absolutely NO EMOJIS in code, comments, UI text, or markdown. Use SVG or ASCII tokens (e.g. `[✓]`, `[!]`, `✕`).
-- Single Frame Rule: Outer containers (`#wiki-subpanel-items`, modal containers) have `border: none; background: transparent; padding: 0;`.
-- Dropdown arrow styling: `padding-right: 36px !important; background-position: right 18px center !important;` with downward menu opening.
-- Themes: Midnight, Onyx, Dawn, Emerald styling using CSS custom properties.
+## Code Layout
+- `scripts/`: Data fetching, synchronization, and manifest scripts (`sync_manager.js`, `sync_data.py`, `build_recipes.py`, `build_news.py`, `generate_manifest.py`, `format_data.js`, `minify_data.js`, `build_prod.js`).
+- `data/`: Master JSON databases (`data.json`, `recipes.json`, `items.json`, `news.json`, `sleep_styles.json`, `ladder_lv60.json`, `manifest.json`).
+- `js/data/`: Mirrored CommonJS datasets (`items.js`, `ladder_data.js`).
+- `js/core/`: Common utilities and i18n (`domUtils.js`, `DataCacheManager.js`, `i18n/i18n_core.js`, `i18n/i18n_entities.js`).
+- `js/modules/`: Application view controllers (`pokedex/`, `recipes/`, `wiki/`, `lab/`, `camps/`).
+- `tests/`: Automated test suite (`run_tests.js`, `tiers/tier1_coverage.js`, `tiers/tier2_boundary.js`, `tiers/tier3_combinations.js`, `tiers/tier4/*.js`, `e2e_sync_and_multitab.js`).

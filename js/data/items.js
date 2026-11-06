@@ -278,18 +278,24 @@
     "acquisition": {
       "zh-TW": [
         "一般睡眠點數交換所 (1,400pt)",
-        "預備收錄道具"
+        "達成特定睡眠研究成就",
+        "活動挑戰報酬"
       ],
       "zh-CN": [
         "一般睡眠点数交换所 (1,400pt)",
-        "预备收录道具"
+        "达成特定睡眠研究成就",
+        "活动挑战报酬"
       ],
       "en-US": [
         "Regular Sleep Point Exchange (1,400pt)",
-        "Prospective Item"
+        "Specific Sleep Research Milestones",
+        "Event Challenge Rewards"
       ]
     },
-    "pokemon_ids": []
+    "pokemon_ids": [
+      "546",
+      "547"
+    ]
   },
   {
     "id": "ice_stone",
@@ -431,6 +437,8 @@
       ]
     },
     "pokemon_ids": [
+      "200",
+      "429",
       "430"
     ]
   },

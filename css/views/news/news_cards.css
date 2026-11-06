@@ -325,11 +325,25 @@
 }
 
 .pokedex-berry-icon-img {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
   vertical-align: middle;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+.pokedex-header-berry-spec-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  vertical-align: middle;
+}
+
+.pokedex-header-berry-spec-group .pokedex-berry-icon-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  vertical-align: middle;
 }
 
 .pokedex-tag-spec {
@@ -647,4 +661,105 @@
   text-shadow: 0 0 10px currentColor;
   min-width: 38px;
   text-align: center;
+}
+
+/* ─── 官方詳細公告展開抽屜 (Official Announcement Expandable Reader) ─── */
+.news-official-full-drawer {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-color-subtle, rgba(255, 255, 255, 0.1));
+}
+
+.news-full-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-blue, #38bdf8);
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.news-full-toggle-btn:hover {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: rgba(56, 189, 248, 0.45);
+  color: #7dd3fc;
+}
+
+.news-full-toggle-btn.active {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+.news-toggle-arrow {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.news-full-content-body {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: var(--bg-card-inner, rgba(15, 23, 42, 0.5));
+  border-radius: 8px;
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text-primary, #cbd5e1);
+  animation: newsFullFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.news-full-content-body.hidden {
+  display: none !important;
+}
+
+@keyframes newsFullFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.news-full-heading {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--accent-blue, #38bdf8);
+  margin: 12px 0 6px 0;
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.18);
+}
+
+.news-full-heading:first-child {
+  margin-top: 0;
+}
+
+.news-full-para {
+  margin: 0 0 8px 0;
+  color: var(--text-primary, #cbd5e1);
+}
+
+.news-full-note {
+  margin: 4px 0 8px 0;
+  color: var(--text-muted, #94a3b8);
+  font-size: 12px;
+}
+
+.news-full-list {
+  margin: 4px 0 10px 18px;
+  padding: 0;
+  list-style-type: disc;
+}
+
+.news-full-list li {
+  margin-bottom: 3px;
+  color: var(--text-primary, #cbd5e1);
 }

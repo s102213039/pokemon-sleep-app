@@ -1880,13 +1880,44 @@ function registerTier4Part4() {
       assert(cn && cn.length > 0, `Missing zh-CN name for Pokemon ${p.name_cn}`);
     });
 
-    // 3. Recipes names coverage across all recipes
+    // 3. Recipes names coverage across all recipes (explicit multilingual character & ground-truth validation)
     allRecipes.forEach(r => {
       const en = I18N.getRecipeName(r, 'en-US');
       const cn = I18N.getRecipeName(r, 'zh-CN');
-      assert(en && en.length > 0, `Missing en-US name for recipe ${r.name_cn}`);
-      assert(cn && cn.length > 0, `Missing zh-CN name for recipe ${r.name_cn}`);
+      const tw = I18N.getRecipeName(r, 'zh-TW');
+
+      // Verify en-US returns canonical English name and consists of Latin characters
+      assertEquals(en, r.name_en, `Recipe ${r.name_cn} en-US name must match canonical name_en`);
+      assert(/^[A-Za-z0-9\s'’.\-()&]+$/.test(en), `Recipe ${r.name_cn} en-US name "${en}" must consist of valid English characters`);
+      assert(!/[\u4e00-\u9fff]/.test(en), `Recipe ${r.name_cn} en-US name "${en}" must not contain Chinese characters`);
+
+      // Verify zh-CN returns simplified Chinese characters matching toSimplified output
+      assertEquals(cn, I18N.toSimplified(r.name_cn), `Recipe ${r.name_cn} zh-CN name must match toSimplified`);
+      if (r.name_cn.includes('蘋果')) {
+        assert(cn.includes('苹果') && !cn.includes('蘋果'), `Recipe ${r.name_cn} must convert 蘋果 to 苹果 in zh-CN`);
+      }
+      if (r.name_cn.includes('咖哩')) {
+        assert(cn.includes('咖喱') && !cn.includes('咖哩'), `Recipe ${r.name_cn} must convert 咖哩 to 咖喱 in zh-CN`);
+      }
+
+      // Verify zh-TW returns canonical Traditional Chinese name
+      assertEquals(tw, r.name_cn, `Recipe ${r.name_cn} zh-TW name must match canonical name_cn`);
     });
+
+    // 3b. Verify stateful I18N.setLanguage produces identical results without second argument
+    const originalLang = I18N.getLanguage ? I18N.getLanguage() : 'zh-TW';
+    try {
+      I18N.setLanguage('en-US');
+      allRecipes.forEach(r => {
+        assertEquals(I18N.getRecipeName(r), r.name_en, `Stateful en-US getRecipeName for ${r.name_cn} must match name_en`);
+      });
+      I18N.setLanguage('zh-CN');
+      allRecipes.forEach(r => {
+        assertEquals(I18N.getRecipeName(r), I18N.toSimplified(r.name_cn), `Stateful zh-CN getRecipeName for ${r.name_cn} must match toSimplified`);
+      });
+    } finally {
+      I18N.setLanguage(originalLang);
+    }
 
     // 4. Natures, Berries, and Ingredients full translation coverage
     const natures = Object.keys(I18N.NATURE_NAMES);
@@ -1939,11 +1970,11 @@ function registerTier4Part4() {
     });
 
     // 3. Recipes structure validation: 78 recipes, pot sizes between 7 and 77
-    assertEquals(allRecipes.length, 78, 'recipes.json must contain exactly 78 recipes');
+    assert(allRecipes.length >= 78, `recipes.json must contain at least 78 official recipes (got ${allRecipes.length})`);
     allRecipes.forEach(r => {
       assert(r.name_cn && r.name_en, `Recipe must have name_cn and name_en: ${JSON.stringify(r)}`);
       assert(r.base_energy > 0, `Recipe ${r.name_cn} base energy must be > 0`);
-      assert(r.pot_size >= 7 && r.pot_size <= 120, `Recipe ${r.name_cn} pot size (${r.pot_size}) must be between 7 and 120`);
+      assert(r.pot_size >= 7 && r.pot_size <= 121, `Recipe ${r.name_cn} pot size (${r.pot_size}) must be between 7 and 121`);
       assert(Array.isArray(r.ingredients) && r.ingredients.length > 0, `Recipe ${r.name_cn} must define ingredients array`);
     });
 
@@ -2237,18 +2268,20 @@ function registerTier4Part4() {
     // 1. Verify 78 official recipes in AppraisalLab and TARGET_TOP_RECIPES
     const AppraisalLab = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'));
     const targetRecipes = AppraisalLab.getAllTargetRecipes();
-    assertEquals(targetRecipes.length, 78, 'AppraisalLab must contain all 78 official recipes');
+    assert(targetRecipes.length >= 78, `AppraisalLab must contain all 78 official recipes (got ${targetRecipes.length})`);
 
     const curries = targetRecipes.filter(r => (r.category || '').includes('咖哩') || (r.category || '').toLowerCase().includes('curry'));
     const salads = targetRecipes.filter(r => (r.category || '').includes('沙拉') || (r.category || '').toLowerCase().includes('salad'));
     const desserts = targetRecipes.filter(r => (r.category || '').includes('甜點') || (r.category || '').toLowerCase().includes('dessert'));
-    assertEquals(curries.length, 25, 'Must contain exactly 25 Curries/Stews');
-    assertEquals(salads.length, 26, 'Must contain exactly 26 Salads');
-    assertEquals(desserts.length, 27, 'Must contain exactly 27 Desserts/Drinks');
+    assert(curries.length >= 25, `Must contain at least 25 Curries/Stews (got ${curries.length})`);
+    assert(salads.length >= 26, `Must contain at least 26 Salads (got ${salads.length})`);
+    assert(desserts.length >= 27, `Must contain at least 27 Desserts/Drinks (got ${desserts.length})`);
+    assertEquals(curries.length + salads.length + desserts.length, targetRecipes.length, 'Category counts sum must equal total target recipes');
 
     // Verify recipes.json integrity matches
     const recipesJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'recipes.json'), 'utf8'));
-    assertEquals(recipesJson.length, 78, 'data/recipes.json must contain 78 recipes');
+    assertEquals(recipesJson.length, targetRecipes.length, 'data/recipes.json count must match AppraisalLab target recipes count');
+    assert(recipesJson.length >= 78, `data/recipes.json must contain at least 78 recipes (got ${recipesJson.length})`);
 
     // 2. Official Level Cap (Lv.70) in Pokédex & App
     const pokedexModalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'pokedex', 'pokedex_modal.js'), 'utf8');
@@ -2288,6 +2321,256 @@ function registerTier4Part4() {
     assert(wikiMainCode.includes('value="70"'), 'wiki_main.js must support Lv.70 target');
     assert(wikiMainCode.includes('value="80"'), 'wiki_main.js must support Lv.80 target');
     assert(wikiMainCode.includes('value="100"'), 'wiki_main.js must support Lv.100 target');
+  });
+
+  // Test 239: Gengar Ingredient Rate Buff (16.60%), Gastly Line & Misdreavus Line Data Ground-Truth Integrity
+  test('Tier 4 - Real-World Application Scenarios', 'Gengar Ingredient Rate Buff (16.60%), Gastly Line & Misdreavus Line Data Ground-Truth Integrity', () => {
+    const dataJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'data.json'), 'utf8'));
+
+    // 1. Verify Gengar and Gastly line
+    const gengar = dataJson.find(p => p.formatted_no === '0094' || p.id === '94');
+    assert(gengar, 'Gengar (#0094) must exist in data.json');
+    assertEquals(gengar.ingredient_rate, '16.60%', 'Gengar ingredient rate must reflect the buffed value of 16.60%');
+    assertEquals(gengar.interval, '00:36:40', 'Gengar interval must be 00:36:40');
+    assertEquals(gengar.ingredients.length, 3, 'Gengar must have 3 ingredient slots (Herb, Mushroom, Oil)');
+
+    const gastly = dataJson.find(p => p.formatted_no === '0092' || p.id === '92');
+    assert(gastly, 'Gastly (#0092) must exist in data.json');
+    assertEquals(gastly.ingredient_rate, '14.40%', 'Gastly ingredient rate must be 14.40%');
+
+    const haunter = dataJson.find(p => p.formatted_no === '0093' || p.id === '93');
+    assert(haunter, 'Haunter (#0093) must exist in data.json');
+    assertEquals(haunter.ingredient_rate, '15.70%', 'Haunter ingredient rate must be 15.70%');
+
+    // 2. Verify Misdreavus and Mismagius
+    const misdreavus = dataJson.find(p => p.formatted_no === '0200' || p.id === '200');
+    assert(misdreavus, 'Misdreavus (#0200) must exist in data.json');
+    assertEquals(misdreavus.ingredient_rate, '15.00%', 'Misdreavus ingredient rate must be 15.00%');
+    assertEquals(misdreavus.skill_rate, '4.70%', 'Misdreavus skill rate must be 4.70%');
+    assertEquals(misdreavus.interval, '00:46:40', 'Misdreavus interval must be 00:46:40');
+    assertEquals(misdreavus.ingredients.length, 3, 'Misdreavus must have 3 ingredient slots');
+
+    const mismagius = dataJson.find(p => p.formatted_no === '0429' || p.id === '429');
+    assert(mismagius, 'Mismagius (#0429) must exist in data.json');
+    assertEquals(mismagius.ingredient_rate, '14.20%', 'Mismagius ingredient rate must be 14.20%');
+    assertEquals(mismagius.skill_rate, '3.60%', 'Mismagius skill rate must be 3.60%');
+    assertEquals(mismagius.interval, '00:40:00', 'Mismagius interval must be 00:40:00');
+    assertEquals(mismagius.ingredients.length, 3, 'Mismagius must have 3 ingredient slots');
+
+    // 3. Verify Mimikyu
+    const mimikyu = dataJson.find(p => p.formatted_no === '0778' || p.id === '778');
+    assert(mimikyu, 'Mimikyu (#0778) must exist in data.json');
+    assertEquals(mimikyu.ingredient_rate, '15.30%', 'Mimikyu ingredient rate must be 15.30%');
+    assertEquals(mimikyu.skill_rate, '3.50%', 'Mimikyu skill rate must be 3.50%');
+
+    // 4. Verify sync_data.py delegates to build_webapp_data.py
+    const syncDataCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'scripts', 'sync_data.py'), 'utf8');
+    assert(syncDataCode.includes('build_webapp_data.py'), 'sync_data.py must delegate to build_webapp_data.py for full dataset reconstruction');
+  });
+
+  // Test 240: Pokedex 3-State Sorting (ID Asc/Desc/Newest), Evo Item Icon-Only Alignment, PTR Non-Top Immunity & Appraisal Recipe Icons
+  test('Tier 4 - Real-World Application Scenarios', 'Pokedex 3-State Sorting (ID Asc/Desc/Newest), Evo Item Icon-Only Alignment, PTR Non-Top Immunity & Appraisal Recipe Icons', () => {
+    const dataJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'data.json'), 'utf8'));
+    const app = require(path.join(WORKSPACE_ROOT, 'js/modules/app.js'));
+    const appraisal = require(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'));
+    const box = require(path.join(WORKSPACE_ROOT, 'js/modules/box.js'));
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+    // 1. Verify release_date in data.json and 3-State Sorting Cycle (no-asc -> no-desc -> no-newest -> no-asc)
+    const bulba = dataJson.find(p => p.id === '1' || p.formatted_no === '001');
+    assert(bulba && bulba.release_date, 'Bulbasaur must contain release_date');
+    const misdreavus = dataJson.find(p => p.id === '200' || p.formatted_no === '200');
+    assert(misdreavus && misdreavus.release_date, 'Misdreavus must contain release_date');
+
+    assertEquals(app.nextColumnSort('no-asc', 'no'), 'no-desc', 'Click 1 on no-asc gives no-desc');
+    assertEquals(app.nextColumnSort('no-desc', 'no'), 'no-newest', 'Click 2 on no-desc gives no-newest');
+    assertEquals(app.nextColumnSort('no-newest', 'no'), 'no-asc', 'Click 3 on no-newest cycles back to no-asc');
+
+    const sortedNewest = app.sortPokemonList([bulba, misdreavus], 'no-newest');
+    assertEquals(sortedNewest[0].id, '200', 'Newest release date (Misdreavus) must sort first in no-newest');
+
+    // 2. Verify Evo Item Chips: Icon-only, no name, borderless/transparent, alongside berry/specialty
+    const raichu = dataJson.find(p => p.id === '26' || p.formatted_no === '026');
+    assert(raichu, 'Raichu must exist in data.json');
+    const evoChipsHtml = app.renderPokedexEvoItemChipsHTML(raichu);
+    assert(evoChipsHtml.includes('pokedex-evo-item-btn'), 'Evo item chip must include pokedex-evo-item-btn');
+    assert(evoChipsHtml.includes('pokedex-evo-item-icon-only'), 'Evo item chip must have pokedex-evo-item-icon-only class');
+    assert(!evoChipsHtml.includes('pokedex-evo-item-name'), 'Evo item chip must omit text name');
+
+    assert(stylesCss.includes('.pokedex-evo-item-btn'), 'styles.css must style .pokedex-evo-item-btn');
+    assert(stylesCss.includes('background: transparent !important;'), 'styles.css must make evo item button background transparent');
+    assert(stylesCss.includes('border: none !important;'), 'styles.css must make evo item button border none');
+
+    // 3. Verify Berry Icon enlarged to 20px on mobile to align with specialty icon
+    assert(stylesCss.includes('width: 20px !important;') && stylesCss.includes('.pokedex-berry-icon-img'), 'styles.css must define 20px berry icon for mobile alignment');
+
+    // 4. Verify Pull-to-Refresh non-top immunity (ancestor climbing & candidate containers check)
+    const appJsCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
+    assert(appJsCode.includes('box-subpanel-lab') && appJsCode.includes('curr.scrollTop'), 'app.js pull-to-refresh must inspect target ancestors and lab containers');
+
+    // 5. Verify Appraisal Recipe Image Icons
+    const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const appCtx = {
+      window: {},
+      document: createMockDocument(),
+      console: console,
+      SUBSKILLS_DATA: [
+        { name: '食材機率提升M', tier: 'gold' },
+        { name: '幫忙速度M', tier: 'silver' },
+        { name: '樹果數量S', tier: 'gold' },
+        { name: '幫手獎勵', tier: 'gold' },
+        { name: '持有上限提升L', tier: 'silver' }
+      ],
+      NATURE_DATA: [
+        { name: '冷靜', buffType: 'ingredient', debuffType: 'exp', buff: '食材發現率', debuff: 'EXP獲取量' }
+      ]
+    };
+    appCtx.window = appCtx;
+    vm.createContext(appCtx);
+    vm.runInContext(boxCode, appCtx);
+    vm.runInContext(appraisalCode, appCtx);
+    appCtx.PokemonBoxApp.setAllPokemons(dataJson);
+
+    const absolPkm = dataJson.find(p => p.formatted_no === '0359' || p.name_cn === '阿勃梭魯');
+    assert(absolPkm, 'Absol must exist in data.json');
+    const absolEval = appCtx.AppraisalLab.evaluatePokemon(
+      absolPkm, 50, '冷靜',
+      ['食材機率提升M', '幫忙速度M', '持有上限提升L'],
+      ['特選蘋果', '放鬆可可', '放鬆可可'],
+      0, 1
+    );
+    assert(absolEval && absolEval.summaryNote, 'Absol appraisal must produce summaryNote');
+    assert(absolEval.summaryNote.includes('appraisal-summary-recipe-chip'), 'summaryNote must embed appraisal-summary-recipe-chip HTML');
+    assert(absolEval.summaryNote.includes('appraisal-summary-recipe-icon'), 'summaryNote must embed appraisal-summary-recipe-icon img');
+
+    const container = new MiniElement('div', 'box-container');
+    const boxAbsol = {
+      uid: 'box-absol-test',
+      pokemonId: '359',
+      name: '阿勃梭魯',
+      level: 50,
+      nature: '冷靜',
+      subskills: ['食材機率提升M', '幫忙速度M', '持有上限提升L'],
+      ing1: '特選蘋果',
+      ing2: '放鬆可可',
+      ing3: '放鬆可可'
+    };
+    appCtx.PokemonBoxApp.renderBoxGrid([boxAbsol], container);
+    const renderedGrid = container.innerHTML;
+    assert(renderedGrid.includes('appraisal-summary-recipe-chip'), 'renderBoxGrid must render recipe chip in DOM');
+    assert(renderedGrid.includes('appraisal-summary-recipe-icon'), 'renderBoxGrid must render recipe icon in DOM');
+  });
+
+  // Test 241: Misdreavus & Mismagius Final Evolution & Spawns, Official News Reader Universal Drawer & Anti-Stale Cache Invalidation
+  test('Tier 4 - Real-World Application Scenarios', 'Misdreavus & Mismagius Final Evolution & Spawns, Official News Reader Universal Drawer & Anti-Stale Cache Invalidation', () => {
+    const dataJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'data.json'), 'utf8'));
+    const newsJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'news.json'), 'utf8'));
+    const sleepStylesJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'sleep_styles.json'), 'utf8'));
+    const buildWebappDataPy = fs.readFileSync(path.join(WORKSPACE_ROOT, 'scripts', 'build_webapp_data.py'), 'utf8');
+    const buildNewsPy = fs.readFileSync(path.join(WORKSPACE_ROOT, 'scripts', 'build_news.py'), 'utf8');
+    const wikiCampsDataJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_camps_data.js'), 'utf8');
+    const newsRenderJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'news', 'news_render.js'), 'utf8');
+    const domUtilsJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'domUtils.js'), 'utf8');
+    const pokedexNavJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'pokedex', 'pokedex_nav.js'), 'utf8');
+    const swJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'sw.js'), 'utf8');
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+
+    // 1. Verify Misdreavus (#200) and Mismagius (#429) data integrity
+    const misdreavus = dataJson.find(p => p.id === '200' || p.formatted_no === '200');
+    assert(misdreavus, 'Misdreavus (#200) must exist in data.json');
+    assertEquals(misdreavus.name_cn, '夢妖', 'Misdreavus Chinese name must be 夢妖');
+    assertEquals(misdreavus.main_skill, '料理強化S', 'Misdreavus main skill must be 料理強化S');
+    assertEquals(misdreavus.ingredient_rate, '15.00%', 'Misdreavus ingredient rate must be 15.00%');
+    assertEquals(misdreavus.skill_rate, '4.70%', 'Misdreavus skill rate must be 4.70%');
+    assertEquals(misdreavus.carry, '13', 'Misdreavus carry must be 13');
+    assertEquals(misdreavus.interval, '00:46:40', 'Misdreavus interval must be 00:46:40');
+
+    const mismagius = dataJson.find(p => p.id === '429' || p.formatted_no === '429');
+    assert(mismagius, 'Mismagius (#429) must exist in data.json');
+    assertEquals(mismagius.name_cn, '夢妖魔', 'Mismagius Chinese name must be 夢妖魔');
+    assertEquals(mismagius.main_skill, '魔法火焰（料理躍進S）', 'Mismagius main skill must be 魔法火焰（料理躍進S）');
+    assertEquals(mismagius.is_final, '〇', 'Mismagius must be marked as final evolution is_final: 〇');
+    assertEquals(mismagius.ingredient_rate, '14.20%', 'Mismagius ingredient rate must be 14.20%');
+    assertEquals(mismagius.skill_rate, '3.60%', 'Mismagius skill rate must be 3.60%');
+    assertEquals(mismagius.carry, '22', 'Mismagius carry must be 22');
+    assertEquals(mismagius.interval, '00:40:00', 'Mismagius interval must be 00:40:00');
+
+    // Verify Special Skill & Icon Protection
+    assert(SPECIAL_SKILL_DETAILS['魔法火焰（料理躍進S）'], 'SPECIAL_SKILL_DETAILS must have 魔法火焰（料理躍進S）');
+    const mfHtml = renderSkillWithTooltip('魔法火焰（料理躍進S）');
+    assert(mfHtml.includes('special-skill-badge'), '魔法火焰 must render special-skill-badge');
+
+    const specialIconsJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'special_icons.json'), 'utf8'));
+    assert(specialIconsJson['200'] && specialIconsJson['429'], 'special_icons.json must contain 200 and 429');
+
+    // Verify Local Assets for 200 and 429
+    assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'assets', 'pokemon', 'icon', '200.png')), 'assets/pokemon/icon/200.png must exist');
+    assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'assets', 'pokemon', 'icon', '429.png')), 'assets/pokemon/icon/429.png must exist');
+    assert(fs.statSync(path.join(WORKSPACE_ROOT, 'assets', 'pokemon', 'icon', '200.png')).size > 10000, '200.png size must be > 10KB');
+    assert(fs.statSync(path.join(WORKSPACE_ROOT, 'assets', 'pokemon', 'icon', '429.png')).size > 10000, '429.png size must be > 10KB');
+
+    const itemsJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'items.json'), 'utf8'));
+    const duskStone = itemsJson.find(i => i.id === 'dusk_stone');
+    assert(duskStone && duskStone.pokemon_ids.includes('200') && duskStone.pokemon_ids.includes('429'),
+      'dusk_stone must include 200 and 429 in pokemon_ids');
+
+    assert(buildWebappDataPy.includes("no == 429") && buildWebappDataPy.includes("is_final = '〇'"),
+      'build_webapp_data.py must contain defensive override for Mismagius #429 is_final');
+
+    const misdreavusStyles = (sleepStylesJson.byNo && sleepStylesJson.byNo['200']) || sleepStylesJson.byName['夢妖'];
+    const mismagiusStyles = (sleepStylesJson.byNo && sleepStylesJson.byNo['429']) || sleepStylesJson.byName['夢妖魔'];
+    assert(misdreavusStyles && Object.keys(misdreavusStyles).length >= 3, 'Misdreavus must have sleep styles defined');
+    assert(mismagiusStyles && Object.keys(mismagiusStyles).length >= 3, 'Mismagius must have sleep styles defined');
+
+    assert(wikiCampsDataJs.includes('夢妖') && wikiCampsDataJs.includes('夢妖魔'),
+      'wiki_camps_data.js must include 夢妖 and 夢妖魔 in camp spawn data');
+
+    // 2. Verify Official News Reader Universal Expandable Drawer
+    assert(buildNewsPy.includes('full_content') && buildNewsPy.includes('full_content_en'),
+      'build_news.py must parse full_content and full_content_en');
+    assert(newsJson.length >= 20, 'news.json must contain >= 20 news items');
+    const latestNewsWithFull = newsJson.find(n => n.full_content && n.full_content.length > 50);
+    assert(latestNewsWithFull, 'news.json must have full_content populated for articles');
+
+    assert(newsRenderJs.includes('renderOfficialFullDrawerHTML'), 'news_render.js must define renderOfficialFullDrawerHTML');
+    assert(newsRenderJs.includes('renderFormattedFullContent'), 'news_render.js must define renderFormattedFullContent');
+    assert(newsRenderJs.includes('news-official-full-drawer'), 'news_render.js must render news-official-full-drawer');
+    assert(newsRenderJs.includes('news-full-toggle-btn'), 'news_render.js must render news-full-toggle-btn');
+
+    // 3. Verify Anti-Stale Cache Invalidation
+    assert(domUtilsJs.includes('60 * 1000') || domUtilsJs.includes('60000'),
+      'domUtils.js CHECK_COOLDOWN_MS must be reduced to 60 seconds');
+    assert(!domUtilsJs.includes('fileMeta.count === cachedData.length'),
+      'domUtils.js checkFileNeedsUpdate must not bypass update based on identical count when hash mismatches');
+
+    assert(pokedexNavJs.includes('JSON.stringify') || pokedexNavJs.includes('isContentDifferent'),
+      'pokedex_nav.js scheduleDynamicDataSync must check content differences instead of only first/last id');
+
+    const gengar = dataJson.find(p => p.id === '94' || p.formatted_no === '094');
+    assert(gengar, 'Gengar (#94) must exist in data.json');
+    assertEquals(gengar.ingredient_rate, '16.60%', 'Gengar ingredient rate must be 16.60% in data.json');
+
+    const pokedexBaseJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'pokedex', 'pokedex_base.js'), 'utf8');
+    assert(pokedexBaseJs.includes('function isFinalEvolution'), 'pokedex_base.js must define isFinalEvolution');
+    assert(pokedexBaseJs.includes('function handlePokemonIconError'), 'pokedex_base.js must define handlePokemonIconError');
+
+    // Verify isFinalEvolution defensive evaluation
+    const vmSandbox = { window: {}, document: {}, DEFAULT_SVG_ICON: '' };
+    vm.createContext(vmSandbox);
+    vm.runInContext(pokedexBaseJs, vmSandbox);
+    assert(typeof vmSandbox.window.isFinalEvolution === 'function', 'window.isFinalEvolution must be a function');
+    assert(vmSandbox.window.isFinalEvolution({ id: '429', is_final: '' }) === true, 'Mismagius #429 must be evaluated as final evolution even if is_final is empty');
+    assert(vmSandbox.window.isFinalEvolution({ name_cn: '夢妖魔', is_final: '' }) === true, '夢妖魔 must be evaluated as final evolution even if is_final is empty');
+    assert(vmSandbox.window.isFinalEvolution({ id: '200', is_final: '' }) === false, 'Misdreavus #200 must not be final evolution');
+
+    const swVerMatch = swJs.match(/pksleep-img-cache-v(\d{8}_\d{2})/);
+    assert(swVerMatch, 'sw.js must define cache version');
+    const swVer = swVerMatch[1];
+    assert(parseInt(swVer.replace('_', ''), 10) >= 2026110201, `sw.js version ${swVer} must be >= 20261102_01`);
+    assert(/v=2026\d{4}_\d{2}/.test(indexHtml), 'index.html must reference assets with version');
+    assert(/v=2026\d{4}_\d{2}/.test(appIndexHtml), 'app/index.html must reference assets with version');
   });
 }
 

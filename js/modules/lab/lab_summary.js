@@ -44,6 +44,22 @@
 
   const _sigRecipeRecCache = Object.create(null);
 
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('recipes-data-updated', function() {
+      for (const k in _sigRecipeRecCache) {
+        delete _sigRecipeRecCache[k];
+      }
+    });
+  }
+
+  function formatSummaryRecipeChip(rec, isEnMode) {
+    if (!rec) return '';
+    const name = isEnMode ? (rec.name_en || rec.name_cn) : (rec.name_cn || rec.name_en);
+    const icon = rec.icon || rec.icon_url || '';
+    if (!icon) return isEnMode ? `"${name}"` : `『${name}』`;
+    return `<span class="appraisal-summary-recipe-chip" title="${name}"><img src="${icon}" class="appraisal-summary-recipe-icon" alt="${name}" loading="lazy" onerror="this.style.display='none'; if (this.nextElementSibling) { this.nextElementSibling.style.position='static'; this.nextElementSibling.style.clip='auto'; this.nextElementSibling.style.width='auto'; this.nextElementSibling.style.height='auto'; }"><span class="sr-only">${name}</span></span>`;
+  }
+
   function getSignatureRecipeRecommendations(ingredients, isEN) {
     if (!ingredients || !Array.isArray(ingredients) || ingredients.length === 0) return '';
     const normIngs = Array.from(new Set(
@@ -86,6 +102,7 @@
       const score = (recipe.base_energy || 0) + multiMatchBonus + (matchRequired * 40) + tailBonus;
 
       return {
+        recipe: recipe,
         name_cn: recipe.name_cn,
         name_en: recipe.name_en,
         matchCount: matchCount,
@@ -103,15 +120,18 @@
     const top1 = scored[0];
     const top2 = scored.length > 1 ? scored[1] : null;
 
+    const chip1 = formatSummaryRecipeChip(top1.recipe, isEN);
+    const chip2 = top2 ? formatSummaryRecipeChip(top2.recipe, isEN) : '';
+
     let res = '';
     if (top2 && top2.name_cn !== top1.name_cn) {
       res = isEN
-        ? `Target recipes: prime pipeline for "${top1.name_en}" & "${top2.name_en}".`
-        : `直通頂尖料理『${top1.name_cn}』與『${top2.name_cn}』關鍵供料。`;
+        ? `Target recipes: prime pipeline for ${chip1} & ${chip2}.`
+        : `直通頂尖料理 ${chip1} 與 ${chip2} 關鍵供料。`;
     } else {
       res = isEN
-        ? `Target recipe: prime pipeline for "${top1.name_en}".`
-        : `直通頂尖料理『${top1.name_cn}』關鍵供料。`;
+        ? `Target recipe: prime pipeline for ${chip1}.`
+        : `直通頂尖料理 ${chip1} 關鍵供料。`;
     }
     _sigRecipeRecCache[cacheKey] = res;
     return res;
@@ -203,9 +223,13 @@
     // 1. 呆呆獸家族 (核心戰略使命：解鎖美味尾巴)
     if (isSlowpoke) {
       if (hasTailLv30) {
+        const slowpokeTailSalad = findTargetRecipe('呆呆獸尾巴的胡椒沙拉');
+        const grilledTailCurry = findTargetRecipe('炙燒尾肉咖哩');
+        const chip1 = formatSummaryRecipeChip(slowpokeTailSalad, isEN);
+        const chip2 = formatSummaryRecipeChip(grilledTailCurry, isEN);
         return isEN
-          ? 'Strategic Unlock Specialist: Lv.30 unlocks "Slowpoke Tail", fulfilling the primary strategic mission of unlocking the highest-energy ingredient in Pokémon Sleep! Direct pipeline for "Slowpoke Tail Pepper Salad" & "Grilled Tail Curry".'
-          : '戰略解鎖專門手：Lv.30 精準解鎖「美味尾巴」，圓滿達成全遊戲最高能量食材之戰略開圖使命！直通頂尖料理『呆呆獸尾巴的胡椒沙拉』與『炙燒尾肉咖哩』關鍵供料，解鎖後可常駐作為後備庫存手。';
+          ? `Strategic Unlock Specialist: Lv.30 unlocks "Slowpoke Tail", fulfilling the primary strategic mission of unlocking the highest-energy ingredient in Pokémon Sleep! Direct pipeline for ${chip1} & ${chip2}.`
+          : `戰略解鎖專門手：Lv.30 精準解鎖「美味尾巴」，圓滿達成全遊戲最高能量食材之戰略開圖使命！直通頂尖料理 ${chip1} 與 ${chip2} 關鍵供料，解鎖後可常駐作為後備庫存手。`;
       } else {
         return isEN
           ? 'Fatal Strategic Flaw: Lv.30 fails to roll "Slowpoke Tail", missing the essential strategic unlock value of the Slowpoke family.'

@@ -10,7 +10,9 @@
 
         // 僅最終進化篩選 (Only Final Evolution)
         if (onlyFinal) {
-          const isFinal = p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1';
+          const isFinal = (typeof isFinalEvolution === 'function')
+            ? isFinalEvolution(p)
+            : (p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1');
           if (!isFinal) return false;
         }
 
@@ -52,10 +54,27 @@
 
     function sortableTh(col, label, cls) {
       const parsed = parseTableSort(currentSort);
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       const on = parsed.col === col;
-      const arrow = on ? (parsed.dir === 'desc' ? '▼' : '▲') : '';
-      const aria = on ? (parsed.dir === 'desc' ? 'descending' : 'ascending') : 'none';
-      return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}">${label}${arrow ? `<span class="sort-arrow" aria-hidden="true">${arrow}</span>` : ''}</th>`;
+      let arrow = '';
+      let aria = 'none';
+      let titleTip = '';
+      if (on) {
+        if (parsed.dir === 'newest') {
+          arrow = isEN ? ' (New)' : ' (新)';
+          aria = 'other';
+          titleTip = isEN ? 'Sorted: Newest to Oldest' : '排序：新增寶可夢（新到舊）';
+        } else if (parsed.dir === 'desc') {
+          arrow = '▼';
+          aria = 'descending';
+          titleTip = isEN ? 'Sorted: Descending' : '排序：大到小';
+        } else {
+          arrow = '▲';
+          aria = 'ascending';
+          titleTip = isEN ? 'Sorted: Ascending' : '排序：小到大';
+        }
+      }
+      return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}" ${titleTip ? `title="${titleTip}"` : ''}>${label}${arrow ? `<span class="sort-arrow" aria-hidden="true">${arrow}</span>` : ''}</th>`;
     }
 
     function renderUI() {
@@ -112,7 +131,7 @@
             return `
             <div class="pokemon-card">
               <div class="card-header">
-                ${iconUrl ? `<img class="pokemon-icon" src="${iconUrl}" alt="${pkmName}" loading="lazy" onerror="this.style.display='none';" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">` : ''}
+                ${iconUrl ? `<img class="pokemon-icon" src="${iconUrl}" alt="${pkmName}" loading="lazy" onerror="handlePokemonIconError(this)" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">` : ''}
                 <div class="card-title-group" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">
                   <div class="pokemon-no">No.${p.formatted_no}</div>
                   <div class="pokemon-name" style="white-space:nowrap;">${pkmName}</div>
@@ -220,7 +239,7 @@
                 <tr>
                   ${isShowNo ? `<td class="td-no">${p.formatted_no}</td>` : ''}
                   <td class="td-icon">
-                    ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" class="table-icon" alt="${pkmName}" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}" loading="lazy" onerror="this.style.display='none';" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;">` : ''}
+                    ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" class="table-icon" alt="${pkmName}" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}" loading="lazy" onerror="handlePokemonIconError(this)" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;">` : ''}
                   </td>
                   <td class="td-name pokemon-name-cell" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">${pkmName}</td>
                   <td class="td-berry">${berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}" loading="lazy" onerror="this.style.display='none';">` : `<span class="berry-name-text">${berryName}</span>`}</td>
@@ -623,22 +642,102 @@
       let isTracking = false;
       let isRefreshing = false;
       let currentPull = 0;
+      let activeTouchTarget = null;
       const PULL_THRESHOLD = 64;
       const MAX_PULL = 84;
 
-      function getActiveScrollTop() {
+      function isTargetVisible(el) {
+        if (!el) return false;
+        if (el.offsetParent === null) {
+          if (typeof window.getComputedStyle === 'function') {
+            const s = window.getComputedStyle(el);
+            if (s && s.position === 'fixed' && s.display !== 'none') {
+              // position: fixed element may have offsetParent === null while visible
+            } else {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        }
+        let curr = el;
+        while (curr && curr !== document.body && curr !== document.documentElement) {
+          if (curr.style && curr.style.display === 'none') return false;
+          if (typeof window.getComputedStyle === 'function') {
+            const s = window.getComputedStyle(curr);
+            if (s && s.display === 'none') return false;
+          }
+          curr = curr.parentElement;
+        }
+        return true;
+      }
+
+      let lastScrollTime = 0;
+      let maxTouchY = 0;
+
+      function cancelPullToRefresh() {
+        isTracking = false;
+        activeTouchTarget = null;
+        currentPull = 0;
+        updatePtrUI(0);
+      }
+      PokemonApp.cancelPullToRefresh = cancelPullToRefresh;
+      window.cancelPullToRefresh = cancelPullToRefresh;
+
+      if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+        document.addEventListener('scroll', () => {
+          lastScrollTime = Date.now();
+          if (isTracking) {
+            cancelPullToRefresh();
+          }
+        }, { capture: true, passive: true });
+      }
+
+      const PTR_EXCLUDE_SELECTORS =
+        '.sidebar-bookmark-handle, .sidebar-fab-btn, .box-fab-container, .box-fab-btn, ' +
+        '.bottom-dock, .mobile-bottom-dock, .bottom-dock-nav, .dock-item, ' +
+        '.app-header, .mobile-app-header, ' +
+        '#pokedex-detail-modal, .pokedex-modal-backdrop, .pokedex-modal-dialog, .pokedex-modal-body, ' +
+        '.pokemon-filter-sidebar, .recipe-filter-sidebar, .box-filter-sidebar, .ladder-fixed-sidebar, ' +
+        '.sidebar-backdrop, .modal-overlay, .subskill-sheet-modal, .appraisal-modal-overlay, .appraisal-modal-backdrop, ' +
+        '#settings-modal, #box-edit-modal, #box-delete-confirm-modal, #ladder-recipe-modal, #box-guide-lightbox-modal, .box-guide-lightbox-backdrop, ' +
+        '.box-subnav-bar, .box-subnav-item, #panel-box .controls-container, .controls-container, .mobile-controls-container, .box-top-banner, ' +
+        '#box-dropzone, .box-dropzone, #box-screenshot-guide-card, .search-filter-row, ' +
+        '.box-auth-overlay, #box-scanner-status, #box-toast-container';
+
+      function getActiveScrollTop(target) {
         const winScroll = window.pageYOffset || (document.documentElement ? document.documentElement.scrollTop : 0) || (document.body ? document.body.scrollTop : 0) || 0;
         if (winScroll > 0) return winScroll;
 
-        // 若當前在特定 tab 且內部表格/容器有滾動，檢查該滾動容器
-        const activeTableContainer = document.querySelector('.mobile-h5-app.pokemon-active .pokemon-table-container, .mobile-h5-app.pokemon-active .table-container');
-        if (activeTableContainer && activeTableContainer.scrollTop > 0) {
-          return activeTableContainer.scrollTop;
+        // 1. 深度搜尋 touch target 的所有祖先元素，只要任何容器有滾動即視為未在頂部
+        const rawTarget = target;
+        const targetEl = (rawTarget && rawTarget.nodeType === 3) ? rawTarget.parentElement : rawTarget;
+        if (targetEl && targetEl.nodeType === 1) {
+          let curr = targetEl;
+          while (curr && curr !== document.body && curr !== document.documentElement) {
+            if (curr.scrollTop && curr.scrollTop > 0) {
+              return curr.scrollTop;
+            }
+            curr = curr.parentElement;
+          }
         }
 
-        const activePanel = document.querySelector('.mobile-h5-app .view-panel:not([style*="display: none"]):not([style*="display:none"])');
-        if (activePanel && activePanel.scrollTop > 0) {
-          return activePanel.scrollTop;
+        // 2. 檢測全域所有已知可滾動面板與容器（包含倉庫、深度研究室、培育精算、圖鑑、食譜、百科等）
+        const candidateContainers = document.querySelectorAll(
+          '#box-subpanel-lab, #box-subpanel-list, .box-lab-content-container, #appraisal-lab-container, .appraisal-lab-standalone-panel, .box-subpanel-view, .box-content-container, #box-content-area, .box-main-content, .box-cards-grid, .box-grid, ' +
+          '.lab-growth-container, #panel-box .table-container, .pokemon-table-container, .table-container, ' +
+          '.wiki-table-wrapper, #wiki-content-area, .wiki-layout-main, ' +
+          '#recipe-content-area, .recipe-cards-grid, #content-area, ' +
+          '#panel-box, #panel-pokemon, #panel-recipes, #panel-wiki, #panel-news, ' +
+          '.mobile-h5-app .view-panel:not([style*="display: none"]):not([style*="display:none"])'
+        );
+        for (let i = 0; i < candidateContainers.length; i++) {
+          const el = candidateContainers[i];
+          if (el && el.scrollTop && el.scrollTop > 0) {
+            if (el.offsetParent !== null || (typeof window.getComputedStyle === 'function' && window.getComputedStyle(el).display !== 'none')) {
+              return el.scrollTop;
+            }
+          }
         }
         return 0;
       }
@@ -684,63 +783,51 @@
 
       document.addEventListener('touchstart', (e) => {
         if (isRefreshing || !e.touches || !e.touches[0]) return;
+        const rawTarget = e.target;
+        const target = (rawTarget && rawTarget.nodeType === 3) ? rawTarget.parentElement : rawTarget;
+
         if (isModalOrDrawerActive()) {
-          isTracking = false;
+          cancelPullToRefresh();
           touchStartY = e.touches[0].clientY;
           touchStartX = e.touches[0].clientX;
           return;
         }
-        // 嚴格判定：只有在最頂部時才允許判斷觸發下拉刷新
-        if (getActiveScrollTop() > 2) {
-          isTracking = false;
+        // 嚴格判定：若剛發生容器滾動 (< 180ms 慣性期) 或未在最頂部，拒絕啟動下拉刷新
+        if ((Date.now() - lastScrollTime) < 180 || getActiveScrollTop(target) > 0) {
+          cancelPullToRefresh();
           return;
         }
 
         // 避免在開啟的側邊欄、彈窗、懸浮按鈕或導覽列內誤觸發全頁下拉刷新
-        const target = e.target;
-        if (target && target.closest && target.closest(
-          '.sidebar-bookmark-handle, .sidebar-fab-btn, .box-fab-container, .box-fab-btn, ' +
-          '.bottom-dock, .mobile-bottom-dock, .bottom-dock-nav, .dock-item, ' +
-          '.app-header, .mobile-app-header, ' +
-          '#pokedex-detail-modal, .pokedex-modal-backdrop, .pokedex-modal-dialog, .pokedex-modal-body, ' +
-          '.pokemon-filter-sidebar, .recipe-filter-sidebar, .box-filter-sidebar, .ladder-fixed-sidebar, ' +
-          '.sidebar-backdrop, .modal-overlay, .subskill-sheet-modal, .appraisal-modal-overlay, .appraisal-modal-backdrop, ' +
-          '#settings-modal, #box-edit-modal, #box-delete-confirm-modal, #ladder-recipe-modal, #box-guide-lightbox-modal, .box-guide-lightbox-backdrop'
-        )) {
-          isTracking = false;
+        if (target && target.closest && target.closest(PTR_EXCLUDE_SELECTORS)) {
+          cancelPullToRefresh();
           return;
         }
 
         isTracking = true;
+        activeTouchTarget = target;
         touchStartY = e.touches[0].clientY;
         touchStartX = e.touches[0].clientX;
+        maxTouchY = touchStartY;
         currentPull = 0;
-        ptrEl.classList.remove('ptr-refreshing');
-        ptrEl.style.transition = 'none';
+        updatePtrUI(0);
+        if (ptrEl) {
+          ptrEl.classList.remove('ptr-refreshing');
+          ptrEl.style.transition = 'none';
+        }
       }, { passive: true });
 
       document.addEventListener('touchmove', (e) => {
         if (!isTracking || isRefreshing || !e.touches || !e.touches[0]) return;
-        const targetEl = e.target;
-        if (targetEl && targetEl.closest && targetEl.closest(
-          '.sidebar-bookmark-handle, .sidebar-fab-btn, .box-fab-container, .box-fab-btn, ' +
-          '.bottom-dock, .mobile-bottom-dock, .bottom-dock-nav, .dock-item, ' +
-          '.app-header, .mobile-app-header'
-        )) {
-          isTracking = false;
-          if (currentPull > 0) {
-            currentPull = 0;
-            updatePtrUI(0);
-          }
+        const rawTargetEl = e.target;
+        const targetEl = (rawTargetEl && rawTargetEl.nodeType === 3) ? rawTargetEl.parentElement : rawTargetEl;
+        if (targetEl && targetEl.closest && targetEl.closest(PTR_EXCLUDE_SELECTORS)) {
+          cancelPullToRefresh();
           return;
         }
         if (isModalOrDrawerActive()) {
-          isTracking = false;
-          if (currentPull > 0) {
-            currentPull = 0;
-            updatePtrUI(0);
-          }
-          const t = e.target;
+          cancelPullToRefresh();
+          const t = targetEl;
           const scrollable = t && t.closest ? t.closest('.sidebar-scrollable-content, .pokedex-modal-body, .box-modal-body, .settings-modal-body, .ladder-recipe-modal-body, .appraisal-modal-body, .box-guide-lightbox-dialog') : null;
           if (!scrollable || scrollable.scrollTop <= 0) {
             if (e.touches[0].clientY > touchStartY && e.cancelable) {
@@ -749,25 +836,34 @@
           }
           return;
         }
+
+        // 任何時刻只要發生內部滾動或離開最頂部，立即斷開下拉刷新追蹤
+        if ((Date.now() - lastScrollTime) < 180 || getActiveScrollTop(targetEl) > 0) {
+          cancelPullToRefresh();
+          return;
+        }
+
         const currentY = e.touches[0].clientY;
         const currentX = e.touches[0].clientX;
         const deltaY = currentY - touchStartY;
         const deltaX = currentX - touchStartX;
 
-        // 若為向上滑動或橫向左右滑動，立即取消並還原
-        if (deltaY <= 0 || Math.abs(deltaX) > deltaY) {
+        if (currentY > maxTouchY) {
+          maxTouchY = currentY;
+        }
+
+        // 若為向上滑動 (deltaY < -4)、單次手勢中折返上滑 (currentY - maxTouchY < -6)、或橫向左右滑動，永久終止本次觸控追蹤
+        if (deltaY < -4 || (currentY - maxTouchY) < -6 || Math.abs(deltaX) > deltaY) {
+          cancelPullToRefresh();
+          return;
+        }
+
+        // 下拉未達 12px 防抖死區前，不啟動 UI 位移變換
+        if (deltaY < 12) {
           if (currentPull > 0) {
             currentPull = 0;
             updatePtrUI(0);
           }
-          return;
-        }
-
-        // 再次確認是否仍在最頂部
-        if (getActiveScrollTop() > 2) {
-          isTracking = false;
-          currentPull = 0;
-          updatePtrUI(0);
           return;
         }
 
@@ -776,9 +872,18 @@
         updatePtrUI(currentPull);
       }, { passive: false });
 
+      document.addEventListener('touchcancel', () => {
+        cancelPullToRefresh();
+      }, { passive: true });
+
       document.addEventListener('touchend', () => {
         if (!isTracking || isRefreshing) return;
         isTracking = false;
+
+        if (isModalOrDrawerActive() || !isTargetVisible(activeTouchTarget)) {
+          cancelPullToRefresh();
+          return;
+        }
 
         if (currentPull >= PULL_THRESHOLD) {
           // 達到下拉刷新閥值：鎖定展示旋轉動畫並執行刷新
@@ -800,8 +905,11 @@
           updatePtrUI(0);
         }
         currentPull = 0;
+        activeTouchTarget = null;
       }, { passive: true });
 
+      window.cancelPullToRefresh = cancelPullToRefresh;
+      PokemonApp.cancelPullToRefresh = cancelPullToRefresh;
       window.initPullToRefresh = initPullToRefresh;
       PokemonApp.initPullToRefresh = initPullToRefresh;
     }
@@ -811,6 +919,7 @@
     initPullToRefresh();
     PokemonApp.initBackToTop = initBackToTop;
     PokemonApp.initPullToRefresh = initPullToRefresh;
+    PokemonApp.cancelPullToRefresh = window.cancelPullToRefresh;
   });
 }
 

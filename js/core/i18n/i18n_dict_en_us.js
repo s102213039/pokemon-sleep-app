@@ -68,6 +68,7 @@
       'pokedex.view_table': 'Table',
       'pokedex.sort_id_asc': 'No. (Asc)',
       'pokedex.sort_id_desc': 'No. (Desc)',
+      'pokedex.sort_id_newest': 'Newest Additions',
       'pokedex.sort_carry_desc': 'Carry (Desc)',
       'pokedex.sort_ingredient_desc': 'Ing. Rate (Desc)',
       'pokedex.sort_skill_desc': 'Skill Rate (Desc)',

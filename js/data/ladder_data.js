@@ -10299,6 +10299,32 @@
         ]
       }
     ]
+  },
+  {
+    "id": "snackablenuts",
+    "name": "一口堅果",
+    "enName": "Snackable Nuts",
+    "energy": 162,
+    "icon": "https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png",
+    "pokemon": [
+      {
+        "name": "風妖精",
+        "specialty": "食材",
+        "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/547.png",
+        "recipe": "AAA",
+        "count": 90,
+        "note": "AAA 一口堅果 純種產出",
+        "isTop": true,
+        "variants": [
+          {
+            "recipe": "AAA",
+            "count": 90,
+            "note": "AAA 一口堅果 純種產出",
+            "isTop": true
+          }
+        ]
+      }
+    ]
   }
 ];
   // 舊版清單資料
