@@ -157,9 +157,12 @@
     const normalNavHtml = ISLANDS_DATA.map(isl => {
       const isActive = !isExpert && isl.id === currentIslandId;
       const islName = isEN ? isl.name_en : isl.name;
+      const thumbSrc = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
+        ? (window.mapExternalToLocalAsset(isl.image) || isl.image)
+        : isl.image;
       return `
         <button type="button" class="island-tab-btn ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', false)" title="${islName}" aria-label="${islName}">
-          <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
+          <img src="${thumbSrc}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
           <span class="island-tab-indicator"></span>
         </button>
       `;
@@ -170,10 +173,13 @@
       const isActive = isExpert && isl.id === currentIslandId;
       const baseName = isEN ? isl.name_en : isl.name;
       const islName = baseName + ' EX';
+      const thumbSrc = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
+        ? (window.mapExternalToLocalAsset(isl.image) || isl.image)
+        : isl.image;
       return `
         <button type="button" class="island-tab-btn island-tab-ex-item ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', true)" title="${islName}" aria-label="${islName}">
           <div class="island-tab-thumb-wrapper">
-            <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
+            <img src="${thumbSrc}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
             <span class="island-tab-ex-tag">EX</span>
           </div>
           <span class="island-tab-indicator"></span>

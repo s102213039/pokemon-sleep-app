@@ -267,53 +267,6 @@ async function main() {
 
   console.log(`Download phase finished. Downloaded: ${downloadedCount}, Failed/404: ${failedTasks.length}`);
 
-  // Handle known 404 fallbacks by copying local valid assets
-  console.log('Resolving fallback assets...');
-
-  // 1) assets/ingredients/snackablenuts.png
-  const snackableNutsPath = path.join(ROOT_DIR, 'assets/ingredients/snackablenuts.png');
-  if (!fs.existsSync(snackableNutsPath) || fs.statSync(snackableNutsPath).size <= 200) {
-    const coffeePath = path.join(ROOT_DIR, 'assets/ingredients/rousingcoffee.png');
-    const cacaoPath = path.join(ROOT_DIR, 'assets/ingredients/soothingcacao.png');
-    const src = fs.existsSync(coffeePath) ? coffeePath : cacaoPath;
-    if (fs.existsSync(src)) {
-      fs.copyFileSync(src, snackableNutsPath);
-      console.log(`Copied fallback for snackablenuts.png from ${path.basename(src)}`);
-    }
-  }
-
-  // 2) assets/meals/bountifulnutpumpkinstew.png
-  const stewPath = path.join(ROOT_DIR, 'assets/meals/bountifulnutpumpkinstew.png');
-  if (!fs.existsSync(stewPath) || fs.statSync(stewPath).size <= 200) {
-    const srcStew = path.join(ROOT_DIR, 'assets/meals/limbercornstew.png');
-    if (fs.existsSync(srcStew)) {
-      fs.copyFileSync(srcStew, stewPath);
-      console.log(`Copied fallback for bountifulnutpumpkinstew.png from limbercornstew.png`);
-    }
-  }
-
-  // 3) assets/meals/supremeavocadonutfeastsalad.png
-  const saladPath = path.join(ROOT_DIR, 'assets/meals/supremeavocadonutfeastsalad.png');
-  if (!fs.existsSync(saladPath) || fs.statSync(saladPath).size <= 200) {
-    const srcSalad = path.join(ROOT_DIR, 'assets/meals/snowcloakcaesarsalad.png');
-    if (fs.existsSync(srcSalad)) {
-      fs.copyFileSync(srcSalad, saladPath);
-      console.log(`Copied fallback for supremeavocadonutfeastsalad.png from snowcloakcaesarsalad.png`);
-    }
-  }
-
-  // 4) assets/meals/grandtailsoynutcake.png
-  const cakePath = path.join(ROOT_DIR, 'assets/meals/grandtailsoynutcake.png');
-  if (!fs.existsSync(cakePath) || fs.statSync(cakePath).size <= 200) {
-    const srcCake = path.join(ROOT_DIR, 'assets/meals/warmmovafluffycorndonut.png');
-    const srcCake2 = path.join(ROOT_DIR, "assets/meals/neroli'srestorativetea.png");
-    const src = fs.existsSync(srcCake) ? srcCake : srcCake2;
-    if (fs.existsSync(src)) {
-      fs.copyFileSync(src, cakePath);
-      console.log(`Copied fallback for grandtailsoynutcake.png from ${path.basename(src)}`);
-    }
-  }
-
   // Ensure king's rock double-copy
   const kingsRockClean = path.join(ROOT_DIR, 'assets/items/kingsrock.png');
   const kingsRockQuote = path.join(ROOT_DIR, "assets/items/king'srock.png");

@@ -1291,8 +1291,7 @@
     { id: "mushroom", name: "品鮮蘑菇", enName: "Tasty Mushroom", energy: 167, icon: "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" },
     { id: "leek", name: "粗枝大蔥", enName: "Large Leek", energy: 185, icon: "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" },
     { id: "pumpkin", name: "沉甸甸南瓜", enName: "Plump Pumpkin", energy: 250, icon: "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png" },
-    { id: "tail", name: "美味尾巴", enName: "Slowpoke Tail", energy: 342, icon: "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png" },
-    { id: "snackablenuts", name: "一口堅果", enName: "Snackable Nuts", energy: 162, icon: "https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png" }
+    { id: "tail", name: "美味尾巴", enName: "Slowpoke Tail", energy: 342, icon: "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png" }
   ];
 
   // --- 5. Lv.60 視覺橫向天梯座標圖資料庫 (Image 2 實體化 - Coordinate Ladder Data) ---
@@ -2060,8 +2059,7 @@
     mushroom: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 31, type: '咖哩', type_en: 'Curry', energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', secondary: '大塊滿滿熱水沙拉 (27)', secondary_en: 'Scald Chunky Salad (27)' },
     leek: { name: '居合斬壽喜燒咖哩', name_en: 'Cut Sukiyaki Curry', need: 27, type: '咖哩', type_en: 'Curry', energy: 20655, icon: 'https://www.serebii.net/pokemonsleep/meals/cutsukiyakicurry.png', secondary: '電光香料可樂 (20)', secondary_en: 'Zing Zap Spiced Cola (20)' },
     pumpkin: { name: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', need: 20, type: '沙拉', type_en: 'Salad', energy: 25356, icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png', secondary: '心跳加速鬼面鬆餅 (18)', secondary_en: 'Scary Face Pancakes (18)' },
-    tail: { name: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', need: 10, type: '沙拉', type_en: 'Salad', energy: 8169, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png', secondary: '炙燒尾肉咖哩 (8)', secondary_en: 'Grilled Tail Curry (8)' },
-    snackablenuts: { name: '極致酪梨堅果盛宴沙拉', name_en: 'Supreme Avocado Nut Feast Salad', need: 24, type: '沙拉', type_en: 'Salad', energy: 28950, icon: 'https://www.serebii.net/pokemonsleep/meals/supremeavocadonutfeastsalad.png', secondary: '頂級尾巴豆香堅果蛋糕 (16)', secondary_en: 'Grand Tail Soy Nut Cake (16)' }
+    tail: { name: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', need: 10, type: '沙拉', type_en: 'Salad', energy: 8169, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png', secondary: '炙燒尾肉咖哩 (8)', secondary_en: 'Grilled Tail Curry (8)' }
   };
 
   // 食材天梯各分類前 7 高基礎能量之頂級大菜 (咖哩、沙拉、甜點三大類各 7 種)
@@ -5744,9 +5742,12 @@
     const normalNavHtml = ISLANDS_DATA.map(isl => {
       const isActive = !isExpert && isl.id === currentIslandId;
       const islName = isEN ? isl.name_en : isl.name;
+      const thumbSrc = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
+        ? (window.mapExternalToLocalAsset(isl.image) || isl.image)
+        : isl.image;
       return `
         <button type="button" class="island-tab-btn ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', false)" title="${islName}" aria-label="${islName}">
-          <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
+          <img src="${thumbSrc}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
           <span class="island-tab-indicator"></span>
         </button>
       `;
@@ -5757,10 +5758,13 @@
       const isActive = isExpert && isl.id === currentIslandId;
       const baseName = isEN ? isl.name_en : isl.name;
       const islName = baseName + ' EX';
+      const thumbSrc = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
+        ? (window.mapExternalToLocalAsset(isl.image) || isl.image)
+        : isl.image;
       return `
         <button type="button" class="island-tab-btn island-tab-ex-item ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', true)" title="${islName}" aria-label="${islName}">
           <div class="island-tab-thumb-wrapper">
-            <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
+            <img src="${thumbSrc}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
             <span class="island-tab-ex-tag">EX</span>
           </div>
           <span class="island-tab-indicator"></span>
@@ -7930,7 +7934,10 @@
       `;
     }
 
-    const iconUrl = item.icon_url || '';
+    const rawIcon = item.icon_url || '';
+    const iconUrl = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
+      ? (window.mapExternalToLocalAsset(rawIcon) || rawIcon)
+      : rawIcon;
 
     return `
       <div class="wiki-item-card" data-item-id="${item.id}" onclick="window.WikiDB.openItemDetailModal('${item.id}')" role="button" tabindex="0">
@@ -8100,7 +8107,10 @@
     const effectsText = getItemLocalizedEffects(item, isEN, isCN);
     const descText = getItemFlavorDescription(item, isEN, isCN);
     const channels = getItemAcquisitionList(item, isEN, isCN);
-    const iconUrl = item.icon_url || '';
+    const rawIcon = item.icon_url || '';
+    const iconUrl = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
+      ? (window.mapExternalToLocalAsset(rawIcon) || rawIcon)
+      : rawIcon;
 
     // If modal inner elements are missing, generate full markup skeleton
     if (typeof modal.querySelector === 'function' && !modal.querySelector('#wiki-item-modal-body')) {

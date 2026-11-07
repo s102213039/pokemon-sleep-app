@@ -297,13 +297,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Sub-skills
 test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 End-to-End User Journey (Entry -> Dock Nav -> Dex -> Cook -> Wiki -> Box -> News)', () => {
   PokemonApp.init([...dataset]);
   PokemonApp.onlyFinal = true;
-  assertEquals(PokemonApp.filterData().length, 130, 'Step 1: Pokedex starts with 130 final stage Pokemon');
+  assertEquals(PokemonApp.filterData().length, 129, 'Step 1: Pokedex starts with 129 final stage Pokemon');
 
   PokemonApp.currentSearch = '皮卡丘';
   const pikachuMatch = PokemonApp.filterData();
   assert(pikachuMatch.length >= 1, 'Step 2: Found Pikachu in search');
   PokemonApp.currentSearch = '';
-  assertEquals(PokemonApp.filterData().length, 130, 'Step 2: Cleared search restores 130 items');
+  assertEquals(PokemonApp.filterData().length, 129, 'Step 2: Cleared search restores 129 items');
 
   const recipes = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'recipes.json'), 'utf8'));
   const curry57 = recipes.filter(r => r.category === '咖哩' && r.pot_size <= 57);
@@ -333,7 +333,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 End-to-End User Jou
 test('Tier 4 - Real-World Application Scenarios', 'Desktop Baseline User Session Workflow Preservation', () => {
   PokemonApp.init([...dataset]);
   PokemonApp.onlyFinal = true;
-  assertEquals(PokemonApp.filterData().length, 130, 'Desktop: 130 final stage Pokemon');
+  assertEquals(PokemonApp.filterData().length, 129, 'Desktop: 129 final stage Pokemon');
 
   PokemonApp.onlyFinal = false;
   assertEquals(PokemonApp.filterData().length, dataset.length, 'Desktop: 247 total items when onlyFinal=false');

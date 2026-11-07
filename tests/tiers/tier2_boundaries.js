@@ -285,7 +285,7 @@ test('Tier 2 - Boundary & Corner Cases', 'Final Evolution Filter: onlyFinal defa
 
   assertEquals(PokemonApp.onlyFinal, true, 'PokemonApp.onlyFinal should default to true');
   const defaultFinals = PokemonApp.filterData();
-  assertEquals(defaultFinals.length, 130, 'Default filter should return exactly 130 final/single stage Pokémon');
+  assertEquals(defaultFinals.length, 129, 'Default filter should return exactly 129 final/single stage Pokémon');
 
   const preEvos = ['妙蛙種子', '妙蛙草', '小火龍', '火恐龍', '傑尼龜', '卡咪龜', '皮丘', '皮卡丘', '夢妖'];
   preEvos.forEach(name => {

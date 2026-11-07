@@ -376,7 +376,10 @@
       `;
     }
 
-    const iconUrl = item.icon_url || '';
+    const rawIcon = item.icon_url || '';
+    const iconUrl = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
+      ? (window.mapExternalToLocalAsset(rawIcon) || rawIcon)
+      : rawIcon;
 
     return `
       <div class="wiki-item-card" data-item-id="${item.id}" onclick="window.WikiDB.openItemDetailModal('${item.id}')" role="button" tabindex="0">
@@ -546,7 +549,10 @@
     const effectsText = getItemLocalizedEffects(item, isEN, isCN);
     const descText = getItemFlavorDescription(item, isEN, isCN);
     const channels = getItemAcquisitionList(item, isEN, isCN);
-    const iconUrl = item.icon_url || '';
+    const rawIcon = item.icon_url || '';
+    const iconUrl = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
+      ? (window.mapExternalToLocalAsset(rawIcon) || rawIcon)
+      : rawIcon;
 
     // If modal inner elements are missing, generate full markup skeleton
     if (typeof modal.querySelector === 'function' && !modal.querySelector('#wiki-item-modal-body')) {

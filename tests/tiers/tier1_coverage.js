@@ -187,7 +187,7 @@ test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js match
     '特選蘋果': 90, '哞哞鮮奶': 98, '萌綠大豆': 100, '甜甜蜜': 101, '豆製肉': 103,
     '暖暖薑': 109, '好眠番茄': 110, '特選蛋': 115, '純粹油': 121, '窩心洋芋': 124,
     '火辣香草': 130, '萌綠玉米': 140, '放鬆可可': 151, '醒腦咖啡豆': 153, '嫩亮酪梨': 162,
-    '品鮮蘑菇': 167, '粗枝大蔥': 185, '沉甸甸南瓜': 250, '美味尾巴': 342, '一口堅果': 162
+    '品鮮蘑菇': 167, '粗枝大蔥': 185, '沉甸甸南瓜': 250, '美味尾巴': 342
   };
   const SEREbii_BERRY_LV1 = {
     '椰木果': 24, '木子果': 24, '異奇果': 25, '檬果': 26, '桃桃果': 26, '芒念果': 26,
@@ -206,7 +206,7 @@ test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js match
   const ings = parseEntries(ingBlock[1]);
   const berries = parseEntries(berryBlock[1]);
 
-  assertEquals(ings.length, 20, 'INGREDIENT_VALUES_DATA should have 20 entries');
+  assertEquals(ings.length, 19, 'INGREDIENT_VALUES_DATA should have 19 entries');
   assertEquals(berries.length, 18, 'BERRY_VALUES_DATA should have 18 entries');
 
   ings.forEach(({ name, energy }) => {
@@ -226,7 +226,7 @@ test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js match
   assert(ladderBlock, 'LV60_COORDINATE_LADDER_DATA not found');
   const ladderEnergies = [...ladderBlock[1].matchAll(/"energy": (\d+)/g)].map(m => +m[1]).sort((a,b)=>a-b);
   const ingEnergies = Object.values(SEREbii_ING).sort((a,b)=>a-b);
-  assertEquals(ladderEnergies.length, 20, 'LV60 ladder should cover all 20 ingredients');
+  assertEquals(ladderEnergies.length, 19, 'LV60 ladder should cover all 19 ingredients');
   assertEquals(ladderEnergies.join(','), ingEnergies.join(','), 'Ladder ingredient energies should match INGREDIENT_VALUES_DATA');
 
   assert(!wikiContent.includes('energy: 200') && !wikiContent.match(/"energy": 200/), 'Residual pumpkin energy 200 should not exist');
@@ -1383,7 +1383,7 @@ test('Tier 1 - Feature Coverage', 'Ingredient Ladder Universal Simplified Recipe
   assertEquals(xxcCount, 108, 'Ingredient C track entries must be unified into universal XXC (108 variants)');
   assertEquals(aaxCount, 115, 'Pos A dual ingredients must be unified into universal AAX (115 variants)');
   assertEquals(abaCount, 115, 'ABA combinations must be 115 variants for Pos A pokemons with Lv.60 A');
-  assertEquals(aaaCount, 116, 'AAA combinations must be 116 variants');
+  assertEquals(aaaCount, 115, 'AAA combinations must be 115 variants');
   assertEquals(abbCount, 115, 'ABB combinations must be 115 variants');
 
   // Verify specific Skeledirge calculations on Apple track
