@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "manifestHash": "bd8643ebf84cd072",
-  "updatedAt": "2026-11-07T10:37:50Z",
+  "manifestHash": "b4fbab965db0833a",
+  "updatedAt": "2026-11-07T10:38:39Z",
   "files": {
     "data.json": {
       "hash": "35e9a0a1861a7956",
@@ -14,8 +14,8 @@
       "count": 78
     },
     "news.json": {
-      "hash": "5469637ca4ea598a",
-      "size": 156695,
+      "hash": "7bb716dbb459bd48",
+      "size": 156718,
       "count": 25
     },
     "sleep_styles.json": {
