@@ -464,7 +464,15 @@
       try {
         const isSubApp = location.pathname && location.pathname.includes('/app/');
         const swUrl = isSubApp ? '../sw.js' : 'sw.js';
-        navigator.serviceWorker.register(swUrl).then(function (reg) {
+        const hadController = !!navigator.serviceWorker.controller;
+        let reloaded = false;
+        navigator.serviceWorker.addEventListener('controllerchange', function () {
+          // 新版 Service Worker 接管後（舊快取已清除），自動重載一次以載入最新版本
+          if (!hadController || reloaded) return;
+          reloaded = true;
+          try { location.reload(); } catch (e) {}
+        });
+        navigator.serviceWorker.register(swUrl, { updateViaCache: 'none' }).then(function (reg) {
           if (reg && typeof reg.update === 'function') {
             reg.update();
           }
