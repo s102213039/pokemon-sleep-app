@@ -44,6 +44,16 @@
 }
 
 /* Pure Text Skill Name Tag (Zero Icons / Zero Glyphs / Zero Emojis) */
+.clickable-skill-header {
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.clickable-skill-header:hover {
+  transform: scale(1.04);
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.35));
+}
+
 .skill-track-name-tag {
   display: inline-flex;
   align-items: center;

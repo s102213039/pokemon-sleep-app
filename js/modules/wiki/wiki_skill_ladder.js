@@ -4,6 +4,7 @@
 
   let skillLadderSearchQuery = '';
   let skillLadderTop15Only = true;
+  let skillLadderFinalOnly = false;
   let skillLadderSortOrder = 'DEFAULT';
   let skillLadderSpecialtyFilter = 'ALL';
   let isSkillLadderSpeedM = false;
@@ -202,6 +203,32 @@
     return skillLadderTop15Only;
   }
 
+  function isPokemonSkillLadderFinalEvo(p) {
+    if (!p) return false;
+    const raw = p.is_final !== undefined && p.is_final !== null ? p.is_final : p.isFinal;
+    if (raw === '〇' || raw === 'O' || raw === 'o' || raw === true || raw === '1' || raw === 1) return true;
+    const base = (typeof POKEMON_SKILLS_BASELINE_DATA !== 'undefined' && Array.isArray(POKEMON_SKILLS_BASELINE_DATA))
+      ? POKEMON_SKILLS_BASELINE_DATA.find(item => (item.id && String(item.id) === String(p.id)) || (item.name_cn && item.name_cn === (p.name_cn || p.name)))
+      : null;
+    if (base && (base.is_final === '〇' || base.is_final === 'O' || base.is_final === 'o' || base.is_final === true || base.is_final === '1')) {
+      return true;
+    }
+    return false;
+  }
+
+  function toggleSkillLadderFinalOnly(enabled) {
+    skillLadderFinalOnly = enabled !== undefined ? !!enabled : !skillLadderFinalOnly;
+    const switches = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('#skill-ladder-final-only-switch')
+      : [];
+    switches.forEach(s => { s.checked = skillLadderFinalOnly; });
+    refreshSkillCoordinateLadder();
+  }
+
+  function getSkillLadderFinalOnly() {
+    return skillLadderFinalOnly;
+  }
+
   function setSkillLadderSortOrder(order) {
     skillLadderSortOrder = order || 'DEFAULT';
     const btns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
@@ -287,6 +314,7 @@
   function resetSkillLadderFilters() {
     skillLadderSearchQuery = '';
     skillLadderTop15Only = true;
+    skillLadderFinalOnly = false;
     skillLadderSortOrder = 'DEFAULT';
     skillLadderSpecialtyFilter = 'ALL';
     isSkillLadderSpeedM = false;
@@ -315,6 +343,11 @@
       : [];
     switches.forEach(s => { s.checked = true; });
 
+    const finalSwitches = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('#skill-ladder-final-only-switch')
+      : [];
+    finalSwitches.forEach(s => { s.checked = false; });
+
     const sortBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
       ? document.querySelectorAll('[data-skill-sort-order]')
       : [];
@@ -336,6 +369,7 @@
     if (skillLadderSpecialtyFilter && skillLadderSpecialtyFilter !== 'ALL') count++;
     if (skillLadderSortOrder && skillLadderSortOrder !== 'DEFAULT') count++;
     if (!skillLadderTop15Only) count++;
+    if (skillLadderFinalOnly) count++;
     if (isSkillLadderSpeedM || isSkillLadderSpeedS || isSkillLadderSkillM || isSkillLadderSkillS) count++;
     if (skillLadderNatureSpeed || skillLadderNatureSkill) count++;
 
@@ -435,4 +469,211 @@
     if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
     const popover = document.getElementById('skill-ladder-energy-help-popover');
     if (popover) popover.style.display = 'none';
+  }
+
+  function openSkillRankingModal(trackId) {
+    if (!trackId) return;
+    const isEN = typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function' && window.I18N.getLanguage() === 'en-US';
+    const trackDef = (typeof SKILL_TRACK_DEFINITIONS !== 'undefined' && Array.isArray(SKILL_TRACK_DEFINITIONS))
+      ? SKILL_TRACK_DEFINITIONS.find(t => t.id === trackId)
+      : null;
+    if (!trackDef) return;
+
+    const trackName = isEN ? trackDef.name_en : trackDef.name;
+    const trackDesc = isEN ? trackDef.desc_en : trackDef.desc;
+    const allPkm = getAllSkillPokemonList();
+
+    const matchingPokemon = allPkm.filter(p => {
+      if (!p || isExcludedSkill(p.main_skill)) return false;
+      const tracks = getSkillTracks(p.main_skill);
+      if (!tracks.includes(trackId)) return false;
+
+      if (skillLadderFinalOnly && !isPokemonSkillLadderFinalEvo(p)) return false;
+
+      const spec = p.specialty || '';
+      if (skillLadderSpecialtyFilter === 'SKILL' && !spec.includes('技能') && spec !== 'Skills' && spec !== 'Skill') return false;
+      if (skillLadderSpecialtyFilter === 'BERRY' && !spec.includes('樹果') && spec !== 'Berries' && spec !== 'Berry') return false;
+      if (skillLadderSpecialtyFilter === 'INGREDIENT' && !spec.includes('食材') && spec !== 'Ingredients' && spec !== 'Ingredient') return false;
+
+      if (skillLadderSearchQuery) {
+        const q = skillLadderSearchQuery.toLowerCase().trim();
+        let matched = false;
+        if (typeof matchesLadderSearch === 'function') {
+          matched = matchesLadderSearch(p.name_cn || p.name, p.name_en, q);
+        }
+        if (!matched) {
+          const nCn = (p.name_cn || p.name || '').toLowerCase();
+          const nEn = (p.name_en || '').toLowerCase();
+          const nJp = (p.name_jp || '').toLowerCase();
+          const pId = String(p.id || '');
+          const pNo = String(p.formatted_no || '');
+          const isNum = (/^\d+$/).test(q);
+          const numMatch = isNum && (parseInt(pId, 10) === parseInt(q, 10) || pId === q || pNo === q || pNo === q.padStart(3, '0') || pId.padStart(3, '0') === q.padStart(3, '0'));
+          matched = nCn.includes(q) || nEn.includes(q) || (nJp && nJp.includes(q)) || !!numMatch;
+        }
+        if (!matched) return false;
+      }
+      return true;
+    });
+
+    const rankingList = matchingPokemon.map(p => {
+      const calcRes = getPokemonSkillLadderProcs(p);
+      if (!calcRes) return null;
+
+      const specStr = p.specialty || '技能';
+      const specKey = (specStr.includes('樹果') || specStr === 'Berries') ? 'berry'
+        : (specStr.includes('食材') || specStr === 'Ingredients') ? 'ingredient'
+        : 'skill';
+      const specDisplay = isEN
+        ? (specKey === 'berry' ? 'Berries' : specKey === 'ingredient' ? 'Ingredients' : 'Skills')
+        : (specKey === 'berry' ? '樹果型' : specKey === 'ingredient' ? '食材型' : '技能型');
+
+      const pkmDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function' && window.I18N.getPokemonName(p.name_cn || p.name)) || p.name_en || p.name_cn) : (p.name_cn || p.name);
+      const skillName = p.main_skill || '';
+      const skillDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function' && window.I18N.getMainSkillName(skillName)) || skillName) : skillName;
+      const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
+
+      return {
+        name: p.name_cn || p.name,
+        pkmDisplayName,
+        iconUrl,
+        procs: calcRes.procs,
+        displayProcs: calcRes.procs.toFixed(2),
+        finalRatePct: (calcRes.finalSkillRate * 100).toFixed(2),
+        helpsDisplay: (calcRes.helps12h != null ? calcRes.helps12h : (43200 / calcRes.idealIntervalSec)).toFixed(1),
+        specKey,
+        specDisplay,
+        skillDisplayName
+      };
+    }).filter(Boolean);
+
+    rankingList.sort((a, b) => b.procs - a.procs);
+
+    let currentDenseRank = 0;
+    let lastProcsStr = null;
+    const rankedList = rankingList.map(item => {
+      if (lastProcsStr === null || item.displayProcs !== lastProcsStr) {
+        currentDenseRank++;
+        lastProcsStr = item.displayProcs;
+      }
+      return {
+        ...item,
+        rank: currentDenseRank
+      };
+    });
+
+    if (typeof document === 'undefined' || typeof document.getElementById !== 'function') return rankedList;
+
+    let modal = document.getElementById('wiki-skill-ranking-modal');
+    if (!modal && typeof document.createElement === 'function') {
+      modal = document.createElement('div');
+      modal.id = 'wiki-skill-ranking-modal';
+      modal.className = 'ing-rank-modal-overlay modal-overlay';
+      if (document.body && typeof document.body.appendChild === 'function') {
+        document.body.appendChild(modal);
+      }
+    }
+    if (!modal) return rankedList;
+
+    const esc = typeof escapeHtml === 'function' ? escapeHtml : function (s) {
+      return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    };
+
+    const itemsHTML = rankedList.length === 0 ? `
+      <div class="ing-rank-empty">
+        <p>${isEN ? 'No Pokémon matched current skill ladder filter conditions.' : '當前篩選條件下查無符合之寶可夢。'}</p>
+      </div>
+    ` : `
+      <div class="ing-rank-list">
+        ${rankedList.map(item => {
+          const rank = item.rank;
+          const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : 'rank-other'));
+          return `
+            <div class="ing-rank-card ${rankClass}" title="${esc(item.pkmDisplayName)} (${esc(item.skillDisplayName)}) · ${item.displayProcs} ${isEN ? 'procs/12h' : '次/12h'}">
+              <div class="ing-rank-left">
+                <div class="ing-rank-num ${rankClass}">
+                  #${rank}
+                </div>
+                <div class="ing-rank-avatar-box ${rankClass}">
+                  <img src="${item.iconUrl}" class="ing-rank-avatar-img" alt="${esc(item.pkmDisplayName)}" loading="lazy">
+                </div>
+                <div class="skill-rank-meta-col" style="display:flex;flex-direction:column;gap:1px;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
+                    <span class="font-bold text-primary" style="font-size:12.5px;">${esc(item.pkmDisplayName)}</span>
+                    <span class="node-specialty-tag specialty-${item.specKey}" style="font-size:9.5px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,0.08);color:var(--accent-color, #38bdf8);">${esc(item.specDisplay)}</span>
+                  </div>
+                  <span class="text-secondary" style="font-size:10.5px;">${esc(item.skillDisplayName)}</span>
+                </div>
+              </div>
+              <div class="ing-rank-right">
+                <span class="ing-rank-yield-line"><span class="ing-rank-yield-num">${item.displayProcs}</span><span class="ing-rank-yield-unit">${isEN ? ' /12h' : ' 次/12h'}</span></span>
+                <span class="ing-rank-split-line" style="font-size:10px;color:var(--text-muted);" title="${isEN ? 'Final Skill Rate / 12h Helps' : '最終技能機率 / 日間 12h 幫忙次數'}">
+                  ${item.finalRatePct}% · ${item.helpsDisplay}${isEN ? 'h' : '次'}
+                </span>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+
+    modal.innerHTML = `
+      <div class="ing-rank-dialog" onclick="event.stopPropagation()">
+        <div class="ing-rank-header">
+          <div class="ing-rank-title-group">
+            <div class="ing-rank-header-text">
+              <div class="ing-rank-header-title">
+                <span class="skill-track-name-tag" style="background:${trackDef.bgColor}; color:${trackDef.color}; border: 1px solid ${trackDef.color}40; max-width:none; font-size:12.5px; padding:3px 10px;">
+                  ${esc(trackName)}
+                </span>
+              </div>
+              <div class="ing-rank-header-sub">
+                <span>${esc(trackDesc)} · ${isEN ? 'Lv.60 Ideal Energy (0.45x)' : 'Lv.60 滿活力 (0.45x)'} · ${rankedList.length} ${isEN ? 'Pokémon' : '隻寶可夢'}</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="ing-rank-close-btn" onclick="window.WikiDB.closeSkillRankingModal()" title="${isEN ? 'Close' : '關閉'}" aria-label="Close">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="ing-rank-body">
+          ${itemsHTML}
+        </div>
+      </div>
+    `;
+
+    if (typeof window !== 'undefined' && typeof window.prepareOverlayOpen === 'function') {
+      window.prepareOverlayOpen(modal);
+    }
+    modal.style.display = 'flex';
+    modal.onclick = closeSkillRankingModal;
+
+    if (typeof document.addEventListener === 'function') {
+      const handleEsc = (e) => {
+        if (e.key === 'Escape') {
+          closeSkillRankingModal();
+          if (typeof document.removeEventListener === 'function') {
+            document.removeEventListener('keydown', handleEsc);
+          }
+        }
+      };
+      document.addEventListener('keydown', handleEsc);
+    }
+    return rankedList;
+  }
+
+  function closeSkillRankingModal() {
+    if (typeof document === 'undefined' || typeof document.getElementById !== 'function') return;
+    const modal = document.getElementById('wiki-skill-ranking-modal');
+    if (!modal) return;
+    const wipe = () => { modal.innerHTML = ''; };
+    if (typeof window !== 'undefined' && typeof window.animateOverlayClose === 'function') {
+      window.animateOverlayClose(modal, wipe);
+    } else {
+      modal.style.display = 'none';
+      wipe();
+    }
   }

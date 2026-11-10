@@ -400,6 +400,34 @@ console.log('\n[Suite 6] Tooltip Formatting & Seconds Boundary Handling');
   assert(html.includes('預估 12h 發動：') || html.includes('Est. 12h Triggers:'), 'Tooltip contains 12h triggers label');
   assert(html.includes('滿活力間隔 (0.45x)：') || html.includes('Ideal Interval (0.45x):'), 'Tooltip contains ideal interval label');
 
+  // Verify formula note is removed from tooltip and Est. 12h Triggers is at the bottom
+  assert(!html.includes('計算公式：43200 / (有效間隔 * 0.45) * 最終技能機率'), 'Tooltip removes bottom formula text (zh)');
+  assert(!html.includes('Formula: 43200 / (effectiveInterval * 0.45) * finalSkillRate'), 'Tooltip removes bottom formula text (en)');
+  const breakdownIdx = html.indexOf('tooltip-yield-breakdown');
+  const detailIdx = html.indexOf('預估 12h 發動：');
+  assert(breakdownIdx > 0 && detailIdx > breakdownIdx, 'Est. 12h Triggers is positioned below tooltip-yield-breakdown at bottom of tooltip');
+
+  // Verify Final Evolution Only switch & filtering
+  const sidebarHtml = sandbox.renderSkillLadderSidebar('', false, 'skills_ladder');
+  assert(sidebarHtml.includes('id="skill-ladder-final-only-switch"'), 'Sidebar contains Final Evolution switch');
+  assertEquals(sandbox.getSkillLadderFinalOnly(), false, 'Final Evolution filter defaults to false');
+  sandbox.toggleSkillLadderTop15(false);
+  const allHtml = sandbox.renderSkillCoordinateLadder();
+  assert(allHtml.includes('data-pkm="拉魯拉絲"'), 'Without Final Evolution filter, pre-evolution Ralts is included');
+  sandbox.toggleSkillLadderFinalOnly(true);
+  assertEquals(sandbox.getSkillLadderFinalOnly(), true, 'Final Evolution filter toggles to true');
+  const finalHtml = sandbox.renderSkillCoordinateLadder();
+  assert(!finalHtml.includes('data-pkm="拉魯拉絲"'), 'Final Evolution filter excludes pre-evolution Ralts');
+  assert(finalHtml.includes('data-pkm="沙奈朵"'), 'Final Evolution filter retains final evolution Gardevoir');
+  sandbox.toggleSkillLadderFinalOnly(false);
+  sandbox.toggleSkillLadderTop15(true);
+
+  // Verify clickable track header & openSkillRankingModal
+  assert(html.includes('window.WikiDB.openSkillRankingModal('), 'Track header includes onclick handler for openSkillRankingModal');
+  const rankedEnergyAll = sandbox.openSkillRankingModal('energy_all');
+  assert(Array.isArray(rankedEnergyAll) && rankedEnergyAll.length > 0, 'openSkillRankingModal returns ranked list for energy_all');
+  assert(rankedEnergyAll[0].rank === 1, 'Top ranked Pokemon has rank 1');
+
   // Verify that "60秒" or "60s" never appears in intervals
   assert(!html.includes('60秒'), 'Tooltip interval formatting never displays 60秒');
   assert(!html.includes('60s'), 'Tooltip interval formatting never displays 60s');

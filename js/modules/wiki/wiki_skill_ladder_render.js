@@ -27,6 +27,8 @@
         const tracks = getSkillTracks(p.main_skill);
         if (!tracks.includes(trackId)) return false;
 
+        if (typeof skillLadderFinalOnly !== 'undefined' && skillLadderFinalOnly && typeof isPokemonSkillLadderFinalEvo === 'function' && !isPokemonSkillLadderFinalEvo(p)) return false;
+
         const spec = p.specialty || '';
         if (skillLadderSpecialtyFilter === 'SKILL' && !spec.includes('技能') && spec !== 'Skills' && spec !== 'Skill') return false;
         if (skillLadderSpecialtyFilter === 'BERRY' && !spec.includes('樹果') && spec !== 'Berries' && spec !== 'Berry') return false;
@@ -165,7 +167,7 @@
               } else {
                 const head = currentCluster[0];
                 const prev = currentCluster[currentCluster.length - 1];
-                if (Math.abs(prev.procs - n.procs) <= 0.20 && Math.abs(head.procs - n.procs) <= 0.45) {
+                if (Math.abs(prev.procs - n.procs) <= 0.30 && Math.abs(head.procs - n.procs) <= 0.65) {
                   currentCluster.push(n);
                 } else {
                   clusters.push(currentCluster);
@@ -187,7 +189,11 @@
 
             return `
               <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''}" data-skill-track="${track.id}">
-                <div class="ladder-track-header skill-ladder-track-header" title="${_escapeHtml(trackName)} · ${_escapeHtml(trackDesc)}">
+                <div class="ladder-track-header skill-ladder-track-header clickable-skill-header"
+                     onclick="window.WikiDB.openSkillRankingModal('${track.id}')"
+                     role="button"
+                     tabindex="0"
+                     title="${_escapeHtml(trackName)} · ${_escapeHtml(trackDesc)} · ${isEN ? 'Click to view rankings' : '點擊查看發動次數排名'}">
                   <span class="skill-track-name-tag" style="background:${track.bgColor}; color:${track.color}; border: 1px solid ${track.color}40;">
                     ${_escapeHtml(trackName)}
                   </span>
@@ -209,7 +215,7 @@
 
                       let offsetPx = 0;
                       if (groupSize > 1) {
-                        const staggerStep = groupSize >= 6 ? 16 : (groupSize >= 4 ? 20 : 24);
+                        const staggerStep = groupSize >= 7 ? 30 : (groupSize >= 4 ? 36 : 42);
                         // nodes is sorted descending, so itemIdx = 0 has highest procs and shifts right (+),
                         // while itemIdx = groupSize - 1 has lowest procs and shifts left (-)
                         offsetPx = Math.round(((groupSize - 1) / 2 - itemIdx) * staggerStep);
@@ -243,10 +249,6 @@
                               ${node.isTopNode ? (isEN ? 'Top 1 ' : 'TOP 1 ') : ''}${_escapeHtml(node.pkmDisplayName)}
                               <span class="node-specialty-tag specialty-${node.specialtyKey}" style="margin-left: 6px; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); color: var(--accent-color, #38bdf8);">${node.specialtyDisplay}</span>
                             </div>
-                            <div class="tooltip-detail">
-                              ${isEN ? 'Est. 12h Triggers: ' : '預估 12h 發動：'}
-                              <span class="text-success font-bold">${node.displayCount} ${isEN ? 'procs/12h' : '次/12h'}</span>
-                            </div>
                             <div class="tooltip-yield-breakdown">
                               <div class="breakdown-row">
                                 <span class="breakdown-label">${isEN ? 'Main Skill:' : '主技能：'}</span>
@@ -269,8 +271,9 @@
                                 <span class="breakdown-val">${helpsDisplay} ${isEN ? 'helps' : '次'}</span>
                               </div>
                             </div>
-                            <div class="tooltip-note" style="margin-top: 6px; font-size: 11px; line-height: 1.4; color: var(--text-secondary);">
-                              ${isEN ? 'Formula: 43200 / (effectiveInterval * 0.45) * finalSkillRate' : '計算公式：43200 / (有效間隔 * 0.45) * 最終技能機率'}
+                            <div class="tooltip-detail" style="margin-top: 6px;">
+                              ${isEN ? 'Est. 12h Triggers: ' : '預估 12h 發動：'}
+                              <span class="text-success font-bold">${node.displayCount} ${isEN ? 'procs/12h' : '次/12h'}</span>
                             </div>
                           </div>
                         </div>
@@ -399,6 +402,11 @@
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Specialty Type' : '寶可夢專長'}</span>
+              <label class="ladder-top15-switch-label" title="${isEN ? 'Show Final Evolution Only' : '僅保留最終進化寶可夢'}">
+                <input type="checkbox" id="skill-ladder-final-only-switch" class="ladder-switch-input" ${(typeof getSkillLadderFinalOnly === 'function' ? getSkillLadderFinalOnly() : false) ? 'checked' : ''} onchange="window.WikiDB.toggleSkillLadderFinalOnly(this.checked)">
+                <span class="ladder-switch-slider"></span>
+                <span class="ladder-switch-text">${isEN ? 'Final Evo' : '最終進化'}</span>
+              </label>
             </div>
             <div class="sidebar-skills-list">
               <button type="button" class="tag-btn ${(typeof getSkillLadderSpecialtyFilter === 'function' && getSkillLadderSpecialtyFilter() === 'ALL') ? 'active' : ''}" data-skill-specialty-filter="ALL" onclick="window.WikiDB.setSkillLadderSpecialtyFilter('ALL')">${isEN ? 'All' : '全部'}</button>
@@ -448,6 +456,11 @@
       clearSkillLadderSearch: clearSkillLadderSearch,
       toggleSkillLadderTop15: toggleSkillLadderTop15,
       getSkillLadderTop15Only: getSkillLadderTop15Only,
+      toggleSkillLadderFinalOnly: typeof toggleSkillLadderFinalOnly === 'function' ? toggleSkillLadderFinalOnly : null,
+      getSkillLadderFinalOnly: typeof getSkillLadderFinalOnly === 'function' ? getSkillLadderFinalOnly : null,
+      isPokemonSkillLadderFinalEvo: typeof isPokemonSkillLadderFinalEvo === 'function' ? isPokemonSkillLadderFinalEvo : null,
+      openSkillRankingModal: typeof openSkillRankingModal === 'function' ? openSkillRankingModal : null,
+      closeSkillRankingModal: typeof closeSkillRankingModal === 'function' ? closeSkillRankingModal : null,
       setSkillLadderSortOrder: setSkillLadderSortOrder,
       getSkillLadderSortOrder: getSkillLadderSortOrder,
       setSkillLadderSpecialtyFilter: setSkillLadderSpecialtyFilter,
