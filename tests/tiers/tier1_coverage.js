@@ -2778,6 +2778,95 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     // 6. Zero Decorative Glyphs: no star glyphs
     assert(!fullHtml.includes('★') && !fullHtml.includes('☆'), 'Skill ladder must contain ZERO decorative star glyphs');
   });
+
+  test('Tier 1 - Feature Coverage', 'Skill Ladder Adversarial: Special Skill Track Routing, Proximity Clustering & Dynamic Data Fallback', () => {
+    const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    const mockStorage = new Map([['pksleep_lang', 'zh-TW']]);
+    let coordinateInner = '';
+    const ctx = {
+      localStorage: {
+        getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+        setItem: (k, v) => mockStorage.set(k, String(v)),
+        removeItem: (k) => mockStorage.delete(k)
+      },
+      window: {
+        localStorage: {
+          getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+          setItem: (k, v) => mockStorage.set(k, String(v)),
+          removeItem: (k) => mockStorage.delete(k)
+        },
+        addEventListener: () => {},
+        I18N: { getLanguage: () => 'zh-TW', getPokemonName: (s) => s, getMainSkillName: (s) => s }
+      },
+      document: {
+        body: { classList: { contains: () => false } },
+        documentElement: { setAttribute: () => {} },
+        getElementById: (id) => {
+          if (id === 'wiki-skill-ladder-coordinate') {
+            return {
+              get innerHTML() { return coordinateInner; },
+              set innerHTML(v) { coordinateInner = v; }
+            };
+          }
+          return null;
+        },
+        querySelectorAll: () => [],
+        createElement: () => ({ setAttribute: () => {}, innerHTML: '', className: '', id: '', style: {} }),
+        addEventListener: () => {}
+      },
+      console: console
+    };
+    ctx.window.window = ctx.window;
+    ctx.window.document = ctx.document;
+    vm.createContext(ctx);
+    vm.runInContext(wikiJs, ctx);
+
+    const WikiDB = ctx.window.WikiDB;
+
+    // 1. Verify specific skill track mappings
+    const compTracks = WikiDB.COMPOSITE_SKILL_TRACKS;
+    assert(compTracks['月光'] && compTracks['月光'].includes('energy_single'), 'Moonlight / 月光 must route to energy_single');
+    assert(compTracks['Moonlight'] && compTracks['Moonlight'].includes('energy_single'), 'Moonlight (EN) must route to energy_single');
+    assert(compTracks['怪力鉗'] && compTracks['怪力鉗'].includes('ingredient'), 'Hyper Cutter / 怪力鉗 must route to ingredient');
+    assert(compTracks['怪力鉗'].includes('cooking_chance'), 'Hyper Cutter / 怪力鉗 must route to cooking_chance');
+    assert(compTracks['流星群'] && compTracks['流星群'].includes('berry_burst'), 'Draco Meteor / 流星群 must route to berry_burst');
+    assert(compTracks['畫皮'] && compTracks['畫皮'].includes('berry_burst'), 'Disguise / 畫皮 must route to berry_burst');
+    assert(compTracks['畫皮'].includes('cooking_chance'), 'Disguise / 畫皮 must route to cooking_chance');
+
+    // Verify English aliases routing
+    assert(compTracks['Bulk Up'] && compTracks['Bulk Up'].includes('ingredient') && compTracks['Bulk Up'].includes('cooking_chance'), 'Bulk Up routes to ingredient & cooking_chance');
+    assert(compTracks['Nuzzle'] && compTracks['Nuzzle'].includes('energy_single') && compTracks['Nuzzle'].includes('helper_boost'), 'Nuzzle routes to energy_single & helper_boost');
+    assert(compTracks['Heal Pulse'] && compTracks['Heal Pulse'].includes('energy_single') && compTracks['Heal Pulse'].includes('helper_boost'), 'Heal Pulse routes to energy_single & helper_boost');
+    assert(compTracks['Berry Juice'] && compTracks['Berry Juice'].includes('energy_all') && compTracks['Berry Juice'].includes('energy_single'), 'Berry Juice routes to energy_all & energy_single');
+
+    // 2. Verify standalone renderSkillLadderSidebar invocation without global currentWikiSubTab
+    const renderSource = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_skill_ladder_render.js'), 'utf8');
+    const sandboxIsolated = {
+      window: {
+        WikiDB: {},
+        getCurrentSubTab: () => 'skills_ladder',
+        I18N: { getLanguage: () => 'zh-TW' }
+      },
+      document: {
+        body: { classList: { contains: () => false } }
+      }
+    };
+    sandboxIsolated.window.window = sandboxIsolated.window;
+    vm.createContext(sandboxIsolated);
+    vm.runInContext(renderSource, sandboxIsolated);
+    assert(typeof sandboxIsolated.renderSkillLadderSidebar === 'function', 'renderSkillLadderSidebar must be defined');
+    const isolatedHtml = sandboxIsolated.renderSkillLadderSidebar('', false);
+    assert(isolatedHtml.includes('id="skill-ladder-filter-sidebar"'), 'Isolated sidebar call must render successfully without ReferenceError');
+
+    // 3. Verify proximity cluster grouping in rendered HTML
+    const ladderHtml = WikiDB.renderSkillCoordinateLadder();
+    assert(ladderHtml.includes('node-in-cluster'), 'Rendered ladder must support and apply node-in-cluster for clustered nodes');
+    assert(ladderHtml.includes('calc('), 'Clustered nodes must have offsetPx calculated via calc(pos% + offsetPx)');
+
+    // 4. Verify dynamic Pokemon list fallback in getAllSkillPokemonList
+    const baselineList = WikiDB.POKEMON_SKILLS_BASELINE_DATA;
+    assert(Array.isArray(baselineList) && baselineList.length >= 251, 'Baseline dataset must contain >= 251 species');
+  });
 }
 
 module.exports = { registerTier1Tests };

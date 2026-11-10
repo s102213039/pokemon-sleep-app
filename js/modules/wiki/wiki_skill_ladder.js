@@ -54,6 +54,17 @@
   }
 
   function getAllSkillPokemonList() {
+    if (typeof window !== 'undefined') {
+      if (window.PokemonApp && Array.isArray(window.PokemonApp.allPokemons) && window.PokemonApp.allPokemons.length > 0) {
+        return window.PokemonApp.allPokemons;
+      }
+      if (Array.isArray(window.allPokemons) && window.allPokemons.length > 0) {
+        return window.allPokemons;
+      }
+      if (Array.isArray(window.allPokemon) && window.allPokemon.length > 0) {
+        return window.allPokemon;
+      }
+    }
     return POKEMON_SKILLS_BASELINE_DATA;
   }
 

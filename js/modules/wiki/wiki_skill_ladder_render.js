@@ -3,7 +3,7 @@
   // =========================================================================
 
   function renderSkillCoordinateLadder() {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isEN = typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function' && window.I18N.getLanguage() === 'en-US';
     const allPkm = getAllSkillPokemonList();
 
     let globalMaxProcs = 4.0;
@@ -47,9 +47,9 @@
           ? (specKey === 'berry' ? 'Berries' : specKey === 'ingredient' ? 'Ingredients' : 'Skills')
           : (specKey === 'berry' ? '樹果型' : specKey === 'ingredient' ? '食材型' : '技能型');
 
-        const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name_cn || p.name)) || p.name_en || p.name_cn) : (p.name_cn || p.name);
+        const pkmDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function' && window.I18N.getPokemonName(p.name_cn || p.name)) || p.name_en || p.name_cn) : (p.name_cn || p.name);
         const skillName = p.main_skill || '';
-        const skillDisplayName = isEN ? ((window.I18N && window.I18N.getMainSkillName(skillName)) || skillName) : skillName;
+        const skillDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function' && window.I18N.getMainSkillName(skillName)) || skillName) : skillName;
         const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 
         return {
@@ -139,11 +139,31 @@
             if (minTrackCount > maxVal) minTrackCount = minVal;
             const leadPct = getPosPct(minTrackCount);
 
-            const countGroups = {};
+            const clusters = [];
+            let currentCluster = [];
             nodes.forEach(n => {
-              const k = n.procs.toFixed(1);
-              if (!countGroups[k]) countGroups[k] = [];
-              countGroups[k].push(n);
+              if (currentCluster.length === 0) {
+                currentCluster.push(n);
+              } else {
+                const prev = currentCluster[currentCluster.length - 1];
+                if (Math.abs(prev.procs - n.procs) <= 0.12) {
+                  currentCluster.push(n);
+                } else {
+                  clusters.push(currentCluster);
+                  currentCluster = [n];
+                }
+              }
+            });
+            if (currentCluster.length > 0) clusters.push(currentCluster);
+
+            const nodeClusterMap = new Map();
+            clusters.forEach(cluster => {
+              cluster.forEach((nodeItem, cIdx) => {
+                nodeClusterMap.set(nodeItem, {
+                  groupSize: cluster.length,
+                  itemIdx: cIdx
+                });
+              });
             });
 
             return `
@@ -171,10 +191,9 @@
 
                   <div class="ladder-nodes-container">
                     ${nodes.map((node, nodeIdx) => {
-                      const groupKey = node.procs.toFixed(1);
-                      const group = countGroups[groupKey] || [node];
-                      const groupSize = group.length;
-                      const itemIdx = group.indexOf(node);
+                      const clusterInfo = nodeClusterMap.get(node) || { groupSize: 1, itemIdx: 0 };
+                      const groupSize = clusterInfo.groupSize;
+                      const itemIdx = clusterInfo.itemIdx;
 
                       let offsetPx = 0;
                       if (groupSize > 1) {
@@ -279,10 +298,11 @@
     `;
   }
 
-  function renderSkillLadderSidebar(initialSkillLadderCollapsed, isEN) {
+  function renderSkillLadderSidebar(initialSkillLadderCollapsed, isEN, subTab) {
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    const currentSubTab = subTab || (typeof currentWikiSubTab !== 'undefined' ? currentWikiSubTab : (typeof window !== 'undefined' && typeof window.getCurrentSubTab === 'function' ? window.getCurrentSubTab() : 'skills_ladder'));
     return `
-      <aside id="skill-ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialSkillLadderCollapsed}" style="${currentWikiSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Skill Filters' : '技能天梯篩選器'}">
+      <aside id="skill-ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialSkillLadderCollapsed}" style="${currentSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Skill Filters' : '技能天梯篩選器'}">
         ${!isMobileH5 ? `
           <button type="button" id="skill-ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleSkillLadderSidebar(true)" title="${isEN ? 'Expand Filter' : '展開技能天梯篩選側邊欄'}" aria-label="${isEN ? 'Expand Filter' : '展開技能天梯篩選側邊欄'}">
             <span class="bookmark-icon">

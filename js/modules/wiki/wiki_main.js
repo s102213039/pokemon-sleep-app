@@ -252,7 +252,7 @@
         </div>
       </aside>
 
-      ${typeof renderSkillLadderSidebar === 'function' ? renderSkillLadderSidebar(initialSkillLadderCollapsed, isEN) : ''}
+      ${typeof renderSkillLadderSidebar === 'function' ? renderSkillLadderSidebar(initialSkillLadderCollapsed, isEN, currentWikiSubTab) : ''}
 
       <div class="wiki-main-container">
         <!-- 二級子分頁導航 (Sub-tabs) - 精簡無大標題橫幅 -->

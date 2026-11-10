@@ -202,6 +202,8 @@
     {"id":"491","name_cn":"達克萊伊","name_en":"Darkrai","specialty":"全部","interval":"00:48:20","skill_rate":"2.30%","main_skill":"夢魘","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/491.png"},
     {"id":"517","name_cn":"食夢夢","name_en":"Munna","specialty":"樹果","interval":"01:35:00","skill_rate":"4.30%","main_skill":"夢之碎片獲取S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/517.png"},
     {"id":"518","name_cn":"夢夢蝕","name_en":"Musharna","specialty":"樹果","interval":"00:46:40","skill_rate":"4.10%","main_skill":"夢之碎片獲取S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/518.png"},
+    {"id":"546","name_cn":"木棉球","name_en":"Cottonee","specialty":"食材","interval":"","skill_rate":"","main_skill":"","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/546.png"},
+    {"id":"547","name_cn":"風妖精","name_en":"Whimsicott","specialty":"食材","interval":"","skill_rate":"","main_skill":"","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/547.png"},
     {"id":"557","name_cn":"石居蟹","name_en":"Dwebble","specialty":"技能","interval":"01:11:40","skill_rate":"5.40%","main_skill":"食材精選S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/557.png"},
     {"id":"558","name_cn":"岩殿居蟹","name_en":"Crustle","specialty":"技能","interval":"00:53:20","skill_rate":"6.40%","main_skill":"食材精選S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/558.png"},
     {"id":"590","name_cn":"哎呀球菇","name_en":"Foongus","specialty":"食材","interval":"01:35:00","skill_rate":"3.50%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/590.png"},
@@ -361,18 +363,43 @@
   ];
 
   const COMPOSITE_SKILL_TRACKS = {
+    // 官方複合主技能與專屬技能多軌道映射
     '正電': ['ingredient', 'helper_boost'],
+    'Plus': ['ingredient', 'helper_boost'],
     '負電': ['cooking_pot', 'energy_single'],
+    'Minus': ['cooking_pot', 'energy_single'],
     '禮物': ['ingredient', 'dream_shards'],
+    'Present': ['ingredient', 'dream_shards'],
     '健美': ['ingredient', 'cooking_chance'],
+    'Bulk Up': ['ingredient', 'cooking_chance'],
     '魔法火焰': ['cooking_pot', 'cooking_chance'],
+    'Mystical Fire': ['cooking_pot', 'cooking_chance'],
     '蹭蹭臉頰': ['energy_single', 'helper_boost'],
+    'Nuzzle': ['energy_single', 'helper_boost'],
     '治癒波動': ['energy_single', 'helper_boost'],
+    'Heal Pulse': ['energy_single', 'helper_boost'],
     '樹果汁': ['energy_all', 'energy_single'],
+    'Berry Juice': ['energy_all', 'energy_single'],
     '波導彈': ['charge_energy', 'dream_shards'],
+    'Aura Sphere': ['charge_energy', 'dream_shards'],
     '新月祈禱': ['energy_all', 'berry_burst'],
+    'Lunar Prayer': ['energy_all', 'berry_burst'],
     '精神擊破': ['charge_energy', 'berry_burst'],
-    '超幸運': ['ingredient', 'dream_shards']
+    'Psystrike': ['charge_energy', 'berry_burst'],
+    '超幸運': ['ingredient', 'dream_shards'],
+    'Super Luck': ['ingredient', 'dream_shards'],
+    '怪力鉗': ['ingredient', 'cooking_chance'],
+    'Hyper Cutter': ['ingredient', 'cooking_chance'],
+    '月光': ['energy_single'],
+    'Moonlight': ['energy_single'],
+    '流星群': ['berry_burst'],
+    'Draco Meteor': ['berry_burst'],
+    '畫皮': ['berry_burst', 'cooking_chance'],
+    'Disguise': ['berry_burst', 'cooking_chance'],
+    '蓄力': ['charge_energy'],
+    'Stockpile': ['charge_energy'],
+    '夢魘': ['charge_energy'],
+    'Bad Dreams': ['charge_energy']
   };
 
   function getSkillTracks(mainSkill) {
@@ -380,17 +407,17 @@
     const s = String(mainSkill).trim();
 
     for (const [compName, tracks] of Object.entries(COMPOSITE_SKILL_TRACKS)) {
-      if (s === compName || s.startsWith(compName + '（') || s.startsWith(compName + '(')) {
+      if (s === compName || s.startsWith(compName + '（') || s.startsWith(compName + '(') || s.startsWith(compName + ' ')) {
         return tracks;
       }
     }
 
     if (s.includes('能量填充') || s.includes('Charge Strength')) return ['charge_energy'];
-    if (s.includes('活力療癒全體') || s.includes('活力全體') || s.includes('Energy for Everyone')) return ['energy_all'];
-    if (s.includes('活力療癒S') || s.includes('活力填充') || s.includes('活力應援') || s.includes('Energy Cheer') || s.includes('Charge Energy')) return ['energy_single'];
+    if (s.includes('活力全體') || s.includes('活力療癒全體') || s.includes('Energy for Everyone')) return ['energy_all'];
+    if (s.includes('活力療癒') || s.includes('活力填充') || s.includes('活力充填') || s.includes('活力應援') || s.includes('Energy Cheer') || s.includes('Charge Energy')) return ['energy_single'];
     if (s.includes('料理強化') || s.includes('Cooking Power-up')) return ['cooking_pot'];
-    if (s.includes('美味機會') || s.includes('料理成功') || s.includes('Tasty Chance')) return ['cooking_chance'];
-    if (s.includes('幫手支援') || s.includes('幫手獎勵') || s.includes('幫手加速') || s.includes('Helper Boost') || s.includes('Extra Helpful')) return ['helper_boost'];
+    if (s.includes('料理成功') || s.includes('美味機會') || s.includes('Tasty Chance')) return ['cooking_chance'];
+    if (s.includes('幫手支援') || s.includes('幫手加速') || s.includes('幫手獎勵') || s.includes('Helper Boost') || s.includes('Extra Helpful')) return ['helper_boost'];
     if (s.includes('夢之碎片') || s.includes('Dream Shard')) return ['dream_shards'];
     if (s.includes('食材獲取') || s.includes('食材精選') || s.includes('Ingredient Magnet') || s.includes('Ingredient Draw')) return ['ingredient'];
     if (s.includes('樹果遽增') || s.includes('Berry Burst')) return ['berry_burst'];

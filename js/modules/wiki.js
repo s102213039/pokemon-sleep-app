@@ -7323,6 +7323,8 @@
     {"id":"491","name_cn":"達克萊伊","name_en":"Darkrai","specialty":"全部","interval":"00:48:20","skill_rate":"2.30%","main_skill":"夢魘","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/491.png"},
     {"id":"517","name_cn":"食夢夢","name_en":"Munna","specialty":"樹果","interval":"01:35:00","skill_rate":"4.30%","main_skill":"夢之碎片獲取S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/517.png"},
     {"id":"518","name_cn":"夢夢蝕","name_en":"Musharna","specialty":"樹果","interval":"00:46:40","skill_rate":"4.10%","main_skill":"夢之碎片獲取S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/518.png"},
+    {"id":"546","name_cn":"木棉球","name_en":"Cottonee","specialty":"食材","interval":"","skill_rate":"","main_skill":"","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/546.png"},
+    {"id":"547","name_cn":"風妖精","name_en":"Whimsicott","specialty":"食材","interval":"","skill_rate":"","main_skill":"","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/547.png"},
     {"id":"557","name_cn":"石居蟹","name_en":"Dwebble","specialty":"技能","interval":"01:11:40","skill_rate":"5.40%","main_skill":"食材精選S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/557.png"},
     {"id":"558","name_cn":"岩殿居蟹","name_en":"Crustle","specialty":"技能","interval":"00:53:20","skill_rate":"6.40%","main_skill":"食材精選S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/558.png"},
     {"id":"590","name_cn":"哎呀球菇","name_en":"Foongus","specialty":"食材","interval":"01:35:00","skill_rate":"3.50%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/590.png"},
@@ -7482,18 +7484,43 @@
   ];
 
   const COMPOSITE_SKILL_TRACKS = {
+    // 官方複合主技能與專屬技能多軌道映射
     '正電': ['ingredient', 'helper_boost'],
+    'Plus': ['ingredient', 'helper_boost'],
     '負電': ['cooking_pot', 'energy_single'],
+    'Minus': ['cooking_pot', 'energy_single'],
     '禮物': ['ingredient', 'dream_shards'],
+    'Present': ['ingredient', 'dream_shards'],
     '健美': ['ingredient', 'cooking_chance'],
+    'Bulk Up': ['ingredient', 'cooking_chance'],
     '魔法火焰': ['cooking_pot', 'cooking_chance'],
+    'Mystical Fire': ['cooking_pot', 'cooking_chance'],
     '蹭蹭臉頰': ['energy_single', 'helper_boost'],
+    'Nuzzle': ['energy_single', 'helper_boost'],
     '治癒波動': ['energy_single', 'helper_boost'],
+    'Heal Pulse': ['energy_single', 'helper_boost'],
     '樹果汁': ['energy_all', 'energy_single'],
+    'Berry Juice': ['energy_all', 'energy_single'],
     '波導彈': ['charge_energy', 'dream_shards'],
+    'Aura Sphere': ['charge_energy', 'dream_shards'],
     '新月祈禱': ['energy_all', 'berry_burst'],
+    'Lunar Prayer': ['energy_all', 'berry_burst'],
     '精神擊破': ['charge_energy', 'berry_burst'],
-    '超幸運': ['ingredient', 'dream_shards']
+    'Psystrike': ['charge_energy', 'berry_burst'],
+    '超幸運': ['ingredient', 'dream_shards'],
+    'Super Luck': ['ingredient', 'dream_shards'],
+    '怪力鉗': ['ingredient', 'cooking_chance'],
+    'Hyper Cutter': ['ingredient', 'cooking_chance'],
+    '月光': ['energy_single'],
+    'Moonlight': ['energy_single'],
+    '流星群': ['berry_burst'],
+    'Draco Meteor': ['berry_burst'],
+    '畫皮': ['berry_burst', 'cooking_chance'],
+    'Disguise': ['berry_burst', 'cooking_chance'],
+    '蓄力': ['charge_energy'],
+    'Stockpile': ['charge_energy'],
+    '夢魘': ['charge_energy'],
+    'Bad Dreams': ['charge_energy']
   };
 
   function getSkillTracks(mainSkill) {
@@ -7501,17 +7528,17 @@
     const s = String(mainSkill).trim();
 
     for (const [compName, tracks] of Object.entries(COMPOSITE_SKILL_TRACKS)) {
-      if (s === compName || s.startsWith(compName + '（') || s.startsWith(compName + '(')) {
+      if (s === compName || s.startsWith(compName + '（') || s.startsWith(compName + '(') || s.startsWith(compName + ' ')) {
         return tracks;
       }
     }
 
     if (s.includes('能量填充') || s.includes('Charge Strength')) return ['charge_energy'];
-    if (s.includes('活力療癒全體') || s.includes('活力全體') || s.includes('Energy for Everyone')) return ['energy_all'];
-    if (s.includes('活力療癒S') || s.includes('活力填充') || s.includes('活力應援') || s.includes('Energy Cheer') || s.includes('Charge Energy')) return ['energy_single'];
+    if (s.includes('活力全體') || s.includes('活力療癒全體') || s.includes('Energy for Everyone')) return ['energy_all'];
+    if (s.includes('活力療癒') || s.includes('活力填充') || s.includes('活力充填') || s.includes('活力應援') || s.includes('Energy Cheer') || s.includes('Charge Energy')) return ['energy_single'];
     if (s.includes('料理強化') || s.includes('Cooking Power-up')) return ['cooking_pot'];
-    if (s.includes('美味機會') || s.includes('料理成功') || s.includes('Tasty Chance')) return ['cooking_chance'];
-    if (s.includes('幫手支援') || s.includes('幫手獎勵') || s.includes('幫手加速') || s.includes('Helper Boost') || s.includes('Extra Helpful')) return ['helper_boost'];
+    if (s.includes('料理成功') || s.includes('美味機會') || s.includes('Tasty Chance')) return ['cooking_chance'];
+    if (s.includes('幫手支援') || s.includes('幫手加速') || s.includes('幫手獎勵') || s.includes('Helper Boost') || s.includes('Extra Helpful')) return ['helper_boost'];
     if (s.includes('夢之碎片') || s.includes('Dream Shard')) return ['dream_shards'];
     if (s.includes('食材獲取') || s.includes('食材精選') || s.includes('Ingredient Magnet') || s.includes('Ingredient Draw')) return ['ingredient'];
     if (s.includes('樹果遽增') || s.includes('Berry Burst')) return ['berry_burst'];
@@ -7575,6 +7602,17 @@
   }
 
   function getAllSkillPokemonList() {
+    if (typeof window !== 'undefined') {
+      if (window.PokemonApp && Array.isArray(window.PokemonApp.allPokemons) && window.PokemonApp.allPokemons.length > 0) {
+        return window.PokemonApp.allPokemons;
+      }
+      if (Array.isArray(window.allPokemons) && window.allPokemons.length > 0) {
+        return window.allPokemons;
+      }
+      if (Array.isArray(window.allPokemon) && window.allPokemon.length > 0) {
+        return window.allPokemon;
+      }
+    }
     return POKEMON_SKILLS_BASELINE_DATA;
   }
 
@@ -7872,7 +7910,7 @@
   // =========================================================================
 
   function renderSkillCoordinateLadder() {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isEN = typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function' && window.I18N.getLanguage() === 'en-US';
     const allPkm = getAllSkillPokemonList();
 
     let globalMaxProcs = 4.0;
@@ -7916,9 +7954,9 @@
           ? (specKey === 'berry' ? 'Berries' : specKey === 'ingredient' ? 'Ingredients' : 'Skills')
           : (specKey === 'berry' ? '樹果型' : specKey === 'ingredient' ? '食材型' : '技能型');
 
-        const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name_cn || p.name)) || p.name_en || p.name_cn) : (p.name_cn || p.name);
+        const pkmDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function' && window.I18N.getPokemonName(p.name_cn || p.name)) || p.name_en || p.name_cn) : (p.name_cn || p.name);
         const skillName = p.main_skill || '';
-        const skillDisplayName = isEN ? ((window.I18N && window.I18N.getMainSkillName(skillName)) || skillName) : skillName;
+        const skillDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function' && window.I18N.getMainSkillName(skillName)) || skillName) : skillName;
         const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 
         return {
@@ -8008,11 +8046,31 @@
             if (minTrackCount > maxVal) minTrackCount = minVal;
             const leadPct = getPosPct(minTrackCount);
 
-            const countGroups = {};
+            const clusters = [];
+            let currentCluster = [];
             nodes.forEach(n => {
-              const k = n.procs.toFixed(1);
-              if (!countGroups[k]) countGroups[k] = [];
-              countGroups[k].push(n);
+              if (currentCluster.length === 0) {
+                currentCluster.push(n);
+              } else {
+                const prev = currentCluster[currentCluster.length - 1];
+                if (Math.abs(prev.procs - n.procs) <= 0.12) {
+                  currentCluster.push(n);
+                } else {
+                  clusters.push(currentCluster);
+                  currentCluster = [n];
+                }
+              }
+            });
+            if (currentCluster.length > 0) clusters.push(currentCluster);
+
+            const nodeClusterMap = new Map();
+            clusters.forEach(cluster => {
+              cluster.forEach((nodeItem, cIdx) => {
+                nodeClusterMap.set(nodeItem, {
+                  groupSize: cluster.length,
+                  itemIdx: cIdx
+                });
+              });
             });
 
             return `
@@ -8040,10 +8098,9 @@
 
                   <div class="ladder-nodes-container">
                     ${nodes.map((node, nodeIdx) => {
-                      const groupKey = node.procs.toFixed(1);
-                      const group = countGroups[groupKey] || [node];
-                      const groupSize = group.length;
-                      const itemIdx = group.indexOf(node);
+                      const clusterInfo = nodeClusterMap.get(node) || { groupSize: 1, itemIdx: 0 };
+                      const groupSize = clusterInfo.groupSize;
+                      const itemIdx = clusterInfo.itemIdx;
 
                       let offsetPx = 0;
                       if (groupSize > 1) {
@@ -8148,10 +8205,11 @@
     `;
   }
 
-  function renderSkillLadderSidebar(initialSkillLadderCollapsed, isEN) {
+  function renderSkillLadderSidebar(initialSkillLadderCollapsed, isEN, subTab) {
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    const currentSubTab = subTab || (typeof currentWikiSubTab !== 'undefined' ? currentWikiSubTab : (typeof window !== 'undefined' && typeof window.getCurrentSubTab === 'function' ? window.getCurrentSubTab() : 'skills_ladder'));
     return `
-      <aside id="skill-ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialSkillLadderCollapsed}" style="${currentWikiSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Skill Filters' : '技能天梯篩選器'}">
+      <aside id="skill-ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialSkillLadderCollapsed}" style="${currentSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Skill Filters' : '技能天梯篩選器'}">
         ${!isMobileH5 ? `
           <button type="button" id="skill-ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleSkillLadderSidebar(true)" title="${isEN ? 'Expand Filter' : '展開技能天梯篩選側邊欄'}" aria-label="${isEN ? 'Expand Filter' : '展開技能天梯篩選側邊欄'}">
             <span class="bookmark-icon">
@@ -9946,7 +10004,7 @@
         </div>
       </aside>
 
-      ${typeof renderSkillLadderSidebar === 'function' ? renderSkillLadderSidebar(initialSkillLadderCollapsed, isEN) : ''}
+      ${typeof renderSkillLadderSidebar === 'function' ? renderSkillLadderSidebar(initialSkillLadderCollapsed, isEN, currentWikiSubTab) : ''}
 
       <div class="wiki-main-container">
         <!-- 二級子分頁導航 (Sub-tabs) - 精簡無大標題橫幅 -->
