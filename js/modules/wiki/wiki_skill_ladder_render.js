@@ -145,8 +145,9 @@
               if (currentCluster.length === 0) {
                 currentCluster.push(n);
               } else {
+                const head = currentCluster[0];
                 const prev = currentCluster[currentCluster.length - 1];
-                if (Math.abs(prev.procs - n.procs) <= 0.12) {
+                if (Math.abs(prev.procs - n.procs) <= 0.12 && Math.abs(head.procs - n.procs) <= 0.25) {
                   currentCluster.push(n);
                 } else {
                   clusters.push(currentCluster);
@@ -197,8 +198,10 @@
 
                       let offsetPx = 0;
                       if (groupSize > 1) {
-                        const staggerStep = groupSize >= 6 ? 14 : 18;
-                        offsetPx = Math.round((itemIdx - (groupSize - 1) / 2) * staggerStep);
+                        const staggerStep = groupSize >= 6 ? 12 : (groupSize >= 4 ? 15 : 18);
+                        // nodes is sorted descending, so itemIdx = 0 has highest procs and shifts right (+),
+                        // while itemIdx = groupSize - 1 has lowest procs and shifts left (-)
+                        offsetPx = Math.round(((groupSize - 1) / 2 - itemIdx) * staggerStep);
                       }
 
                       const basePosPct = parseFloat(getPosPct(node.procs));
@@ -443,7 +446,9 @@
       POKEMON_SKILLS_BASELINE_DATA: typeof POKEMON_SKILLS_BASELINE_DATA !== 'undefined' ? POKEMON_SKILLS_BASELINE_DATA : [],
       SKILL_TRACK_DEFINITIONS: typeof SKILL_TRACK_DEFINITIONS !== 'undefined' ? SKILL_TRACK_DEFINITIONS : [],
       COMPOSITE_SKILL_TRACKS: typeof COMPOSITE_SKILL_TRACKS !== 'undefined' ? COMPOSITE_SKILL_TRACKS : {},
-      getPokemonSkillLadderProcs: typeof getPokemonSkillLadderProcs === 'function' ? getPokemonSkillLadderProcs : null
+      getPokemonSkillLadderProcs: typeof getPokemonSkillLadderProcs === 'function' ? getPokemonSkillLadderProcs : null,
+      isExcludedSkill: typeof isExcludedSkill === 'function' ? isExcludedSkill : null,
+      getSkillTracks: typeof getSkillTracks === 'function' ? getSkillTracks : null
     };
 
     if (wikiExport && typeof wikiExport === 'object') {

@@ -35,8 +35,9 @@
     const idealIntervalSec = effectiveIntervalSec * 0.45;
 
     let baseRate = 0.03;
-    if (pkm.skill_rate) {
-      const parsedRate = parseFloat(pkm.skill_rate) / 100;
+    const rawRate = pkm.skill_rate || pkm.skillRate;
+    if (rawRate !== undefined && rawRate !== null) {
+      const parsedRate = typeof rawRate === 'number' && rawRate <= 1 ? rawRate : parseFloat(rawRate) / 100;
       if (!isNaN(parsedRate) && parsedRate > 0) baseRate = parsedRate;
     }
     const subskillRateBonus = (isSkillLadderSkillM ? 0.36 : 0) + (isSkillLadderSkillS ? 0.18 : 0);
@@ -271,7 +272,6 @@
   }
 
   function updateSkillLadderActiveFilterBadge() {
-    const badge = document.getElementById('skill-ladder-sidebar-bookmark-badge');
     let count = 0;
     if (skillLadderSearchQuery && skillLadderSearchQuery.trim()) count++;
     if (skillLadderSpecialtyFilter && skillLadderSpecialtyFilter !== 'ALL') count++;
@@ -280,12 +280,29 @@
     if (isSkillLadderSpeedM || isSkillLadderSpeedS || isSkillLadderSkillM || isSkillLadderSkillS) count++;
     if (skillLadderNatureSpeed || skillLadderNatureSkill) count++;
 
-    if (badge) {
-      if (count > 0) {
-        badge.textContent = count;
-        badge.style.display = 'inline-flex';
-      } else {
-        badge.style.display = 'none';
+    const badges = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('#skill-ladder-sidebar-bookmark-badge')
+      : [];
+    if (badges && badges.length > 0) {
+      badges.forEach(badge => {
+        if (count > 0) {
+          badge.textContent = count;
+          badge.style.display = 'inline-flex';
+        } else {
+          badge.style.display = 'none';
+        }
+      });
+    } else {
+      const badge = (typeof document !== 'undefined' && typeof document.getElementById === 'function')
+        ? document.getElementById('skill-ladder-sidebar-bookmark-badge')
+        : null;
+      if (badge) {
+        if (count > 0) {
+          badge.textContent = count;
+          badge.style.display = 'inline-flex';
+        } else {
+          badge.style.display = 'none';
+        }
       }
     }
   }

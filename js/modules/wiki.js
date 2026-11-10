@@ -7525,6 +7525,7 @@
 
   function getSkillTracks(mainSkill) {
     if (!mainSkill) return [];
+    if (isExcludedSkill(mainSkill)) return [];
     const s = String(mainSkill).trim();
 
     for (const [compName, tracks] of Object.entries(COMPOSITE_SKILL_TRACKS)) {
@@ -7543,7 +7544,7 @@
     if (s.includes('食材獲取') || s.includes('食材精選') || s.includes('Ingredient Magnet') || s.includes('Ingredient Draw')) return ['ingredient'];
     if (s.includes('樹果遽增') || s.includes('Berry Burst')) return ['berry_burst'];
 
-    return ['charge_energy'];
+    return [];
   }
 
   // =========================================================================
@@ -7583,8 +7584,9 @@
     const idealIntervalSec = effectiveIntervalSec * 0.45;
 
     let baseRate = 0.03;
-    if (pkm.skill_rate) {
-      const parsedRate = parseFloat(pkm.skill_rate) / 100;
+    const rawRate = pkm.skill_rate || pkm.skillRate;
+    if (rawRate !== undefined && rawRate !== null) {
+      const parsedRate = typeof rawRate === 'number' && rawRate <= 1 ? rawRate : parseFloat(rawRate) / 100;
       if (!isNaN(parsedRate) && parsedRate > 0) baseRate = parsedRate;
     }
     const subskillRateBonus = (isSkillLadderSkillM ? 0.36 : 0) + (isSkillLadderSkillS ? 0.18 : 0);
@@ -7819,7 +7821,6 @@
   }
 
   function updateSkillLadderActiveFilterBadge() {
-    const badge = document.getElementById('skill-ladder-sidebar-bookmark-badge');
     let count = 0;
     if (skillLadderSearchQuery && skillLadderSearchQuery.trim()) count++;
     if (skillLadderSpecialtyFilter && skillLadderSpecialtyFilter !== 'ALL') count++;
@@ -7828,12 +7829,29 @@
     if (isSkillLadderSpeedM || isSkillLadderSpeedS || isSkillLadderSkillM || isSkillLadderSkillS) count++;
     if (skillLadderNatureSpeed || skillLadderNatureSkill) count++;
 
-    if (badge) {
-      if (count > 0) {
-        badge.textContent = count;
-        badge.style.display = 'inline-flex';
-      } else {
-        badge.style.display = 'none';
+    const badges = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('#skill-ladder-sidebar-bookmark-badge')
+      : [];
+    if (badges && badges.length > 0) {
+      badges.forEach(badge => {
+        if (count > 0) {
+          badge.textContent = count;
+          badge.style.display = 'inline-flex';
+        } else {
+          badge.style.display = 'none';
+        }
+      });
+    } else {
+      const badge = (typeof document !== 'undefined' && typeof document.getElementById === 'function')
+        ? document.getElementById('skill-ladder-sidebar-bookmark-badge')
+        : null;
+      if (badge) {
+        if (count > 0) {
+          badge.textContent = count;
+          badge.style.display = 'inline-flex';
+        } else {
+          badge.style.display = 'none';
+        }
       }
     }
   }
@@ -8052,8 +8070,9 @@
               if (currentCluster.length === 0) {
                 currentCluster.push(n);
               } else {
+                const head = currentCluster[0];
                 const prev = currentCluster[currentCluster.length - 1];
-                if (Math.abs(prev.procs - n.procs) <= 0.12) {
+                if (Math.abs(prev.procs - n.procs) <= 0.12 && Math.abs(head.procs - n.procs) <= 0.25) {
                   currentCluster.push(n);
                 } else {
                   clusters.push(currentCluster);
@@ -8104,8 +8123,10 @@
 
                       let offsetPx = 0;
                       if (groupSize > 1) {
-                        const staggerStep = groupSize >= 6 ? 14 : 18;
-                        offsetPx = Math.round((itemIdx - (groupSize - 1) / 2) * staggerStep);
+                        const staggerStep = groupSize >= 6 ? 12 : (groupSize >= 4 ? 15 : 18);
+                        // nodes is sorted descending, so itemIdx = 0 has highest procs and shifts right (+),
+                        // while itemIdx = groupSize - 1 has lowest procs and shifts left (-)
+                        offsetPx = Math.round(((groupSize - 1) / 2 - itemIdx) * staggerStep);
                       }
 
                       const basePosPct = parseFloat(getPosPct(node.procs));
@@ -8350,7 +8371,9 @@
       POKEMON_SKILLS_BASELINE_DATA: typeof POKEMON_SKILLS_BASELINE_DATA !== 'undefined' ? POKEMON_SKILLS_BASELINE_DATA : [],
       SKILL_TRACK_DEFINITIONS: typeof SKILL_TRACK_DEFINITIONS !== 'undefined' ? SKILL_TRACK_DEFINITIONS : [],
       COMPOSITE_SKILL_TRACKS: typeof COMPOSITE_SKILL_TRACKS !== 'undefined' ? COMPOSITE_SKILL_TRACKS : {},
-      getPokemonSkillLadderProcs: typeof getPokemonSkillLadderProcs === 'function' ? getPokemonSkillLadderProcs : null
+      getPokemonSkillLadderProcs: typeof getPokemonSkillLadderProcs === 'function' ? getPokemonSkillLadderProcs : null,
+      isExcludedSkill: typeof isExcludedSkill === 'function' ? isExcludedSkill : null,
+      getSkillTracks: typeof getSkillTracks === 'function' ? getSkillTracks : null
     };
 
     if (wikiExport && typeof wikiExport === 'object') {

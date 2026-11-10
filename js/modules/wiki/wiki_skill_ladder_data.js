@@ -404,6 +404,7 @@
 
   function getSkillTracks(mainSkill) {
     if (!mainSkill) return [];
+    if (isExcludedSkill(mainSkill)) return [];
     const s = String(mainSkill).trim();
 
     for (const [compName, tracks] of Object.entries(COMPOSITE_SKILL_TRACKS)) {
@@ -422,5 +423,5 @@
     if (s.includes('食材獲取') || s.includes('食材精選') || s.includes('Ingredient Magnet') || s.includes('Ingredient Draw')) return ['ingredient'];
     if (s.includes('樹果遽增') || s.includes('Berry Burst')) return ['berry_burst'];
 
-    return ['charge_energy'];
+    return [];
   }

@@ -2823,7 +2823,7 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
 
     const WikiDB = ctx.window.WikiDB;
 
-    // 1. Verify specific skill track mappings
+    // 1. Verify specific skill track mappings and exclusions
     const compTracks = WikiDB.COMPOSITE_SKILL_TRACKS;
     assert(compTracks['月光'] && compTracks['月光'].includes('energy_single'), 'Moonlight / 月光 must route to energy_single');
     assert(compTracks['Moonlight'] && compTracks['Moonlight'].includes('energy_single'), 'Moonlight (EN) must route to energy_single');
@@ -2839,7 +2839,34 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     assert(compTracks['Heal Pulse'] && compTracks['Heal Pulse'].includes('energy_single') && compTracks['Heal Pulse'].includes('helper_boost'), 'Heal Pulse routes to energy_single & helper_boost');
     assert(compTracks['Berry Juice'] && compTracks['Berry Juice'].includes('energy_all') && compTracks['Berry Juice'].includes('energy_single'), 'Berry Juice routes to energy_all & energy_single');
 
-    // 2. Verify standalone renderSkillLadderSidebar invocation without global currentWikiSubTab
+    // Verify getSkillTracks and isExcludedSkill exports and excluded skill handling
+    assert(typeof WikiDB.isExcludedSkill === 'function', 'WikiDB.isExcludedSkill must be exported');
+    assert(typeof WikiDB.getSkillTracks === 'function', 'WikiDB.getSkillTracks must be exported');
+    assert(WikiDB.isExcludedSkill('揮指'), '揮指 must be excluded');
+    assert(WikiDB.isExcludedSkill('Metronome'), 'Metronome must be excluded');
+    assert(WikiDB.isExcludedSkill('模仿'), '模仿 must be excluded');
+    assert(WikiDB.isExcludedSkill('變身'), '變身 must be excluded');
+    assert(WikiDB.isExcludedSkill('十項全能'), '十項全能 must be excluded');
+    assert(!WikiDB.isExcludedSkill('能量填充S'), '能量填充S must not be excluded');
+    assertEquals(WikiDB.getSkillTracks('揮指').length, 0, 'getSkillTracks for 揮指 must be empty');
+    assertEquals(WikiDB.getSkillTracks('Metronome').length, 0, 'getSkillTracks for Metronome must be empty');
+    assertEquals(WikiDB.getSkillTracks('模仿').length, 0, 'getSkillTracks for 模仿 must be empty');
+    assertEquals(WikiDB.getSkillTracks('變身').length, 0, 'getSkillTracks for 變身 must be empty');
+    assertEquals(WikiDB.getSkillTracks('十項全能').length, 0, 'getSkillTracks for 十項全能 must be empty');
+    assertEquals(WikiDB.getSkillTracks('NonExistentCustomSkill').length, 0, 'getSkillTracks for unknown skill must be empty');
+
+    // 2. Verify getPokemonSkillLadderProcs calculation and decimal fraction compatibility
+    const procFn = WikiDB.getPokemonSkillLadderProcs;
+    assert(typeof procFn === 'function', 'getPokemonSkillLadderProcs must be exported');
+    const pkmStrRate = { interval: '00:40:00', skill_rate: '4.20%' };
+    const pkmDecRate = { interval: '00:40:00', skillRate: 0.042 };
+    const resStr = procFn(pkmStrRate);
+    const resDec = procFn(pkmDecRate);
+    assert(Math.abs(resStr.procs - resDec.procs) < 0.001, 'Decimal fraction skillRate must yield identical procs to string percent');
+    const resNull = procFn({ name: 'FallbackPkm' });
+    assert(resNull && resNull.procs > 0, 'Missing interval and skill_rate must use safe baselines without error');
+
+    // 3. Verify standalone renderSkillLadderSidebar invocation without global currentWikiSubTab
     const renderSource = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_skill_ladder_render.js'), 'utf8');
     const sandboxIsolated = {
       window: {
@@ -2858,12 +2885,26 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     const isolatedHtml = sandboxIsolated.renderSkillLadderSidebar('', false);
     assert(isolatedHtml.includes('id="skill-ladder-filter-sidebar"'), 'Isolated sidebar call must render successfully without ReferenceError');
 
-    // 3. Verify proximity cluster grouping in rendered HTML
+    // 4. Verify proximity cluster grouping and offset direction in rendered HTML
     const ladderHtml = WikiDB.renderSkillCoordinateLadder();
     assert(ladderHtml.includes('node-in-cluster'), 'Rendered ladder must support and apply node-in-cluster for clustered nodes');
     assert(ladderHtml.includes('calc('), 'Clustered nodes must have offsetPx calculated via calc(pos% + offsetPx)');
 
-    // 4. Verify dynamic Pokemon list fallback in getAllSkillPokemonList
+    // 5. Verify rapid filter toggling with active search
+    WikiDB.onSkillLadderSearch('皮卡丘');
+    assertEquals(WikiDB.getSkillLadderSearchQuery(), '皮卡丘', 'Search query active');
+    WikiDB.toggleSkillLadderSubskill('SPEED_M');
+    WikiDB.toggleSkillLadderSubskill('SKILL_M');
+    WikiDB.toggleSkillLadderNatureFilter('SPEED');
+    assertEquals(WikiDB.getSkillLadderNature(), 'SPEED', 'Nature speed active');
+    WikiDB.toggleSkillLadderNatureFilter('SKILL');
+    assertEquals(WikiDB.getSkillLadderNature(), 'SKILL', 'Nature skill switched and mutually exclusive with speed');
+    WikiDB.resetSkillLadderFilters();
+    assertEquals(WikiDB.getSkillLadderSearchQuery(), '', 'Search query cleared after reset');
+    assertEquals(WikiDB.getSkillLadderNature(), 'NONE', 'Nature cleared after reset');
+    assertEquals(WikiDB.getSkillLadderTop15Only(), true, 'Top 15 restored after reset');
+
+    // 6. Verify dynamic Pokemon list fallback in getAllSkillPokemonList
     const baselineList = WikiDB.POKEMON_SKILLS_BASELINE_DATA;
     assert(Array.isArray(baselineList) && baselineList.length >= 251, 'Baseline dataset must contain >= 251 species');
   });
