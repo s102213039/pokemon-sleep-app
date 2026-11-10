@@ -1347,7 +1347,7 @@
   }));
 
   const STORAGE_KEY_WIKI_SUBTAB = 'pksleep_active_wiki_subtab';
-  const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'values', 'ratings', 'islands', 'items'];
+  const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'skills_ladder', 'values', 'ratings', 'islands', 'items'];
 
   const STORAGE_KEY_SKILLS_CATEGORY = 'pksleep_wiki_skills_category';
   const VALID_SKILLS_CATEGORIES = ['all', 'energy', 'energy_heal', 'ingredient', 'special', 'shards'];
@@ -1462,7 +1462,7 @@
     ));
 
     if (isMobileH5) {
-      if (isWikiMainActive && targetTab === 'ingredients') {
+      if (isWikiMainActive && (targetTab === 'ingredients' || targetTab === 'skills_ladder')) {
         document.body.classList.add('ladder-active');
       } else {
         document.body.classList.remove('ladder-active');
@@ -1521,6 +1521,10 @@
         ladderHandle.style.opacity = '0';
         ladderHandle.style.pointerEvents = 'none';
       }
+    }
+
+    if (typeof handleSkillLadderSubTabSwitch === 'function') {
+      handleSkillLadderSubTabSwitch(targetTab, isWikiMainActive, isMobileH5);
     }
 
     const ladderRecipeFab = document.getElementById('ladder-recipe-highlight-fab');
@@ -2373,10 +2377,7 @@
       pot_size: 33,
       base_energy: 7483,
       icon: 'https://www.serebii.net/pokemonsleep/meals/grilledtailcurry.png',
-      ingredients: [
-        { name: '美味尾巴', count: 8, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' },
-        { name: '火辣香草', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }
-      ]
+      ingredients: [{ name: '美味尾巴', count: 8, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }]
     },
     {
       name_cn: '呆呆獸尾巴的胡椒沙拉',
@@ -2385,25 +2386,18 @@
       pot_size: 35,
       base_energy: 8169,
       icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png',
-      ingredients: [
-        { name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' },
-        { name: '火辣香草', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' },
-        { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }
-      ]
+      ingredients: [{ name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }]
     }
   ];
 
   const ALL_TOP_CATEGORY_RECIPES = [
-    ...TOP_RECIPES_BY_CATEGORY.curry,
-    ...TOP_RECIPES_BY_CATEGORY.salad,
-    ...TOP_RECIPES_BY_CATEGORY.dessert,
-    ...TAIL_FEATURED_RECIPES
+    ...TOP_RECIPES_BY_CATEGORY.curry, ...TOP_RECIPES_BY_CATEGORY.salad,
+    ...TOP_RECIPES_BY_CATEGORY.dessert, ...TAIL_FEATURED_RECIPES
   ];
 
   if (typeof window !== 'undefined') {
     window.ALL_TOP_CATEGORY_RECIPES = ALL_TOP_CATEGORY_RECIPES;
   }
-
 
   function getLadderDishIcon(dishName) {
     if (!dishName) return '';
@@ -7125,6 +7119,1190 @@
   }
 
 
+  // =========================================================================
+  // 主技能天梯基礎數據 (Main Skill Ladder Data)
+  // =========================================================================
+
+  const POKEMON_SKILLS_BASELINE_DATA = [
+    {"id":"1","name_cn":"妙蛙種子","name_en":"Bulbasaur","specialty":"食材","interval":"01:13:20","skill_rate":"1.90%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/001.png"},
+    {"id":"2","name_cn":"妙蛙草","name_en":"Ivysaur","specialty":"食材","interval":"00:55:00","skill_rate":"1.90%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/002.png"},
+    {"id":"3","name_cn":"妙蛙花","name_en":"Venusaur","specialty":"食材","interval":"00:46:40","skill_rate":"2.10%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/003.png"},
+    {"id":"4","name_cn":"小火龍","name_en":"Charmander","specialty":"食材","interval":"00:58:20","skill_rate":"1.10%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/004.png"},
+    {"id":"5","name_cn":"火恐龍","name_en":"Charmeleon","specialty":"食材","interval":"00:50:00","skill_rate":"1.60%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/005.png"},
+    {"id":"6","name_cn":"噴火龍","name_en":"Charizard","specialty":"食材","interval":"00:40:00","skill_rate":"1.60%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/006.png"},
+    {"id":"7","name_cn":"傑尼龜","name_en":"Squirtle","specialty":"食材","interval":"01:15:00","skill_rate":"2.00%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/007.png"},
+    {"id":"8","name_cn":"卡咪龜","name_en":"Wartortle","specialty":"食材","interval":"00:56:40","skill_rate":"2.00%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/008.png"},
+    {"id":"9","name_cn":"水箭龜","name_en":"Blastoise","specialty":"食材","interval":"00:46:40","skill_rate":"2.10%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/009.png"},
+    {"id":"10","name_cn":"綠毛蟲","name_en":"Caterpie","specialty":"樹果","interval":"01:13:20","skill_rate":"0.80%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/010.png"},
+    {"id":"11","name_cn":"鐵甲蛹","name_en":"Metapod","specialty":"樹果","interval":"01:10:00","skill_rate":"1.80%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/011.png"},
+    {"id":"12","name_cn":"巴大蝶","name_en":"Butterfree","specialty":"樹果","interval":"00:41:40","skill_rate":"1.40%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/012.png"},
+    {"id":"19","name_cn":"小拉達","name_en":"Rattata","specialty":"樹果","interval":"01:21:40","skill_rate":"3.00%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/019.png"},
+    {"id":"20","name_cn":"拉達","name_en":"Raticate","specialty":"樹果","interval":"00:49:10","skill_rate":"3.00%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/020.png"},
+    {"id":"23","name_cn":"阿柏蛇","name_en":"Ekans","specialty":"樹果","interval":"01:23:20","skill_rate":"3.30%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/023.png"},
+    {"id":"24","name_cn":"阿柏怪","name_en":"Arbok","specialty":"樹果","interval":"00:56:40","skill_rate":"5.70%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/024.png"},
+    {"id":"172","name_cn":"皮丘","name_en":"Pichu","specialty":"樹果","interval":"01:11:40","skill_rate":"2.30%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/172.png"},
+    {"id":"25","name_cn":"皮卡丘","name_en":"Pikachu","specialty":"樹果","interval":"00:45:00","skill_rate":"2.10%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/025.png"},
+    {"id":"9001","name_cn":"皮卡丘（萬聖節）","name_en":"Pikachu (Halloween)","specialty":"樹果","interval":"00:41:40","skill_rate":"2.80%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png"},
+    {"id":"9002","name_cn":"皮卡丘（佳節）","name_en":"Pikachu (Holiday)","specialty":"技能","interval":"00:41:40","skill_rate":"4.20%","main_skill":"夢之碎片獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png"},
+    {"id":"9007","name_cn":"皮卡丘（船長）","name_en":"Pikachu (Captain)","specialty":"樹果","interval":"00:41:40","skill_rate":"1.80%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png"},
+    {"id":"26","name_cn":"雷丘","name_en":"Raichu","specialty":"樹果","interval":"00:36:40","skill_rate":"3.20%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/026.png"},
+    {"id":"27","name_cn":"穿山鼠","name_en":"Sandshrew","specialty":"技能","interval":"01:28:20","skill_rate":"4.60%","main_skill":"食材精選S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/027.png"},
+    {"id":"28","name_cn":"穿山王","name_en":"Sandslash","specialty":"技能","interval":"00:46:40","skill_rate":"4.30%","main_skill":"食材精選S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/028.png"},
+    {"id":"173","name_cn":"皮寶寶","name_en":"Cleffa","specialty":"樹果","interval":"01:33:20","skill_rate":"3.40%","main_skill":"揮指","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/173.png"},
+    {"id":"35","name_cn":"皮皮","name_en":"Clefairy","specialty":"樹果","interval":"01:06:40","skill_rate":"4.00%","main_skill":"揮指","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/035.png"},
+    {"id":"36","name_cn":"皮可西","name_en":"Clefable","specialty":"樹果","interval":"00:46:40","skill_rate":"3.60%","main_skill":"揮指","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/036.png"},
+    {"id":"37","name_cn":"六尾","name_en":"Vulpix","specialty":"樹果","interval":"01:18:20","skill_rate":"3.20%","main_skill":"活力療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/037.png"},
+    {"id":"7006","name_cn":"六尾（阿羅拉的樣子）","name_en":"Vulpix (Alolan Form)","specialty":"樹果","interval":"01:33:20","skill_rate":"2.80%","main_skill":"幫手支援S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/037-alolanvulpix.png"},
+    {"id":"38","name_cn":"九尾","name_en":"Ninetales","specialty":"樹果","interval":"00:43:20","skill_rate":"2.90%","main_skill":"活力療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/038.png"},
+    {"id":"7007","name_cn":"九尾（阿羅拉的樣子）","name_en":"Ninetales (Alolan Form)","specialty":"樹果","interval":"00:48:20","skill_rate":"2.80%","main_skill":"幫手支援S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png"},
+    {"id":"174","name_cn":"寶寶丁","name_en":"Igglybuff","specialty":"技能","interval":"01:26:40","skill_rate":"3.80%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/174.png"},
+    {"id":"39","name_cn":"胖丁","name_en":"Jigglypuff","specialty":"技能","interval":"01:05:00","skill_rate":"4.30%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/039.png"},
+    {"id":"40","name_cn":"胖可丁","name_en":"Wigglytuff","specialty":"技能","interval":"00:48:20","skill_rate":"4.00%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/040.png"},
+    {"id":"50","name_cn":"地鼠","name_en":"Diglett","specialty":"食材","interval":"01:11:40","skill_rate":"2.10%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/050.png"},
+    {"id":"51","name_cn":"三地鼠","name_en":"Dugtrio","specialty":"食材","interval":"00:44:10","skill_rate":"2.00%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/051.png"},
+    {"id":"52","name_cn":"喵喵","name_en":"Meowth","specialty":"技能","interval":"01:13:20","skill_rate":"4.20%","main_skill":"夢之碎片獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/052.png"},
+    {"id":"53","name_cn":"貓老大","name_en":"Persian","specialty":"技能","interval":"00:46:40","skill_rate":"4.40%","main_skill":"夢之碎片獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/053.png"},
+    {"id":"54","name_cn":"可達鴨","name_en":"Psyduck","specialty":"技能","interval":"01:30:00","skill_rate":"12.60%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/054.png"},
+    {"id":"55","name_cn":"哥達鴨","name_en":"Golduck","specialty":"技能","interval":"00:56:40","skill_rate":"12.50%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/055.png"},
+    {"id":"56","name_cn":"猴怪","name_en":"Mankey","specialty":"樹果","interval":"01:10:00","skill_rate":"2.20%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/056.png"},
+    {"id":"57","name_cn":"火爆猴","name_en":"Primeape","specialty":"樹果","interval":"00:46:40","skill_rate":"2.40%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/057.png"},
+    {"id":"58","name_cn":"卡蒂狗","name_en":"Growlithe","specialty":"技能","interval":"01:11:40","skill_rate":"5.00%","main_skill":"幫手支援S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/058.png"},
+    {"id":"59","name_cn":"風速狗","name_en":"Arcanine","specialty":"技能","interval":"00:41:40","skill_rate":"4.90%","main_skill":"幫手支援S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/059.png"},
+    {"id":"69","name_cn":"喇叭芽","name_en":"Bellsprout","specialty":"食材","interval":"01:26:40","skill_rate":"3.90%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/069.png"},
+    {"id":"70","name_cn":"口呆花","name_en":"Weepinbell","specialty":"食材","interval":"01:03:20","skill_rate":"4.00%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/070.png"},
+    {"id":"71","name_cn":"大食花","name_en":"Victreebel","specialty":"食材","interval":"00:46:40","skill_rate":"3.90%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/071.png"},
+    {"id":"74","name_cn":"小拳石","name_en":"Geodude","specialty":"食材","interval":"01:35:00","skill_rate":"5.20%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/074.png"},
+    {"id":"75","name_cn":"隆隆石","name_en":"Graveler","specialty":"食材","interval":"01:06:40","skill_rate":"4.80%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/075.png"},
+    {"id":"76","name_cn":"隆隆岩","name_en":"Golem","specialty":"食材","interval":"00:51:40","skill_rate":"5.20%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/076.png"},
+    {"id":"79","name_cn":"呆呆獸","name_en":"Slowpoke","specialty":"技能","interval":"01:35:00","skill_rate":"7.80%","main_skill":"活力療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/079.png"},
+    {"id":"80","name_cn":"呆殼獸","name_en":"Slowbro","specialty":"技能","interval":"01:03:20","skill_rate":"8.00%","main_skill":"活力療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/080.png"},
+    {"id":"199","name_cn":"呆呆王","name_en":"Slowking","specialty":"技能","interval":"00:56:40","skill_rate":"8.70%","main_skill":"活力療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/199.png"},
+    {"id":"81","name_cn":"小磁怪","name_en":"Magnemite","specialty":"技能","interval":"01:36:40","skill_rate":"6.40%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/081.png"},
+    {"id":"82","name_cn":"三合一磁怪","name_en":"Magneton","specialty":"技能","interval":"01:06:40","skill_rate":"6.30%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/082.png"},
+    {"id":"462","name_cn":"自爆磁怪","name_en":"Magnezone","specialty":"技能","interval":"00:51:40","skill_rate":"6.20%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/462.png"},
+    {"id":"83","name_cn":"大蔥鴨","name_en":"Farfetch'd","specialty":"食材","interval":"00:50:00","skill_rate":"4.30%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/083.png"},
+    {"id":"84","name_cn":"嘟嘟","name_en":"Doduo","specialty":"樹果","interval":"01:03:20","skill_rate":"2.00%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/084.png"},
+    {"id":"85","name_cn":"嘟嘟利","name_en":"Dodrio","specialty":"樹果","interval":"00:38:20","skill_rate":"2.00%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/085.png"},
+    {"id":"92","name_cn":"鬼斯","name_en":"Gastly","specialty":"食材","interval":"01:03:20","skill_rate":"1.50%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/092.png"},
+    {"id":"93","name_cn":"鬼斯通","name_en":"Haunter","specialty":"食材","interval":"00:50:00","skill_rate":"2.20%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/093.png"},
+    {"id":"94","name_cn":"耿鬼","name_en":"Gengar","specialty":"食材","interval":"00:36:40","skill_rate":"2.40%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/094.png"},
+    {"id":"95","name_cn":"大岩蛇","name_en":"Onix","specialty":"樹果","interval":"00:51:40","skill_rate":"2.30%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/095.png"},
+    {"id":"208","name_cn":"大綱蛇","name_en":"Steelix","specialty":"樹果","interval":"00:50:00","skill_rate":"3.20%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/208.png"},
+    {"id":"104","name_cn":"卡拉卡拉","name_en":"Cubone","specialty":"樹果","interval":"01:20:00","skill_rate":"4.40%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/104.png"},
+    {"id":"105","name_cn":"嘎啦嘎啦","name_en":"Marowak","specialty":"樹果","interval":"00:55:00","skill_rate":"4.50%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/105.png"},
+    {"id":"440","name_cn":"小福蛋","name_en":"Happiny","specialty":"食材","interval":"01:30:00","skill_rate":"1.30%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/440.png"},
+    {"id":"113","name_cn":"吉利蛋","name_en":"Chansey","specialty":"食材","interval":"00:55:00","skill_rate":"2.30%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/113.png"},
+    {"id":"242","name_cn":"幸福蛋","name_en":"Blissey","specialty":"食材","interval":"00:51:40","skill_rate":"2.30%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/242.png"},
+    {"id":"115","name_cn":"袋獸","name_en":"Kangaskhan","specialty":"食材","interval":"00:44:10","skill_rate":"3.20%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/115.png"},
+    {"id":"439","name_cn":"魔尼尼","name_en":"Mime Jr.","specialty":"食材","interval":"01:11:40","skill_rate":"3.20%","main_skill":"模仿","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/439.png"},
+    {"id":"122","name_cn":"魔牆人偶","name_en":"Mr. Mime","specialty":"食材","interval":"00:46:40","skill_rate":"3.90%","main_skill":"模仿","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/122.png"},
+    {"id":"127","name_cn":"凱羅斯","name_en":"Pinsir","specialty":"食材","interval":"00:40:00","skill_rate":"3.10%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/127.png"},
+    {"id":"132","name_cn":"百變怪","name_en":"Ditto","specialty":"食材","interval":"00:58:20","skill_rate":"3.60%","main_skill":"變身","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/132.png"},
+    {"id":"133","name_cn":"伊布","name_en":"Eevee","specialty":"技能","interval":"01:01:40","skill_rate":"5.50%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/133.png"},
+    {"id":"9004","name_cn":"伊布（佳節）","name_en":"Eevee (Holiday)","specialty":"樹果","interval":"00:51:40","skill_rate":"3.20%","main_skill":"夢之碎片獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png"},
+    {"id":"9005","name_cn":"伊布（萬聖節）","name_en":"Eevee (Halloween)","specialty":"技能","interval":"00:53:20","skill_rate":"4.60%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png"},
+    {"id":"134","name_cn":"水伊布","name_en":"Vaporeon","specialty":"技能","interval":"00:51:40","skill_rate":"6.10%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/134.png"},
+    {"id":"135","name_cn":"雷伊布","name_en":"Jolteon","specialty":"技能","interval":"00:36:40","skill_rate":"3.90%","main_skill":"幫手支援S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/135.png"},
+    {"id":"136","name_cn":"火伊布","name_en":"Flareon","specialty":"技能","interval":"00:45:00","skill_rate":"5.20%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/136.png"},
+    {"id":"196","name_cn":"太陽伊布","name_en":"Espeon","specialty":"技能","interval":"00:40:00","skill_rate":"4.40%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/196.png"},
+    {"id":"197","name_cn":"月亮伊布","name_en":"Umbreon","specialty":"技能","interval":"00:53:20","skill_rate":"10.10%","main_skill":"月光","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/197.png"},
+    {"id":"470","name_cn":"葉伊布","name_en":"Leafeon","specialty":"技能","interval":"00:50:00","skill_rate":"6.90%","main_skill":"活力療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/470.png"},
+    {"id":"471","name_cn":"冰伊布","name_en":"Glaceon","specialty":"技能","interval":"00:53:20","skill_rate":"6.30%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/471.png"},
+    {"id":"700","name_cn":"仙子伊布","name_en":"Sylveon","specialty":"技能","interval":"00:43:20","skill_rate":"4.00%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/700.png"},
+    {"id":"147","name_cn":"迷你龍","name_en":"Dratini","specialty":"食材","interval":"01:23:20","skill_rate":"2.00%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/147.png"},
+    {"id":"148","name_cn":"哈克龍","name_en":"Dragonair","specialty":"食材","interval":"01:03:20","skill_rate":"2.50%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/148.png"},
+    {"id":"149","name_cn":"快龍","name_en":"Dragonite","specialty":"食材","interval":"00:43:20","skill_rate":"2.60%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/149.png"},
+    {"id":"150","name_cn":"超夢","name_en":"Mewtwo","specialty":"技能","interval":"00:38:20","skill_rate":"2.90%","main_skill":"精神擊破","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/150.png"},
+    {"id":"151","name_cn":"夢幻","name_en":"Mew","specialty":"全部","interval":"00:48:20","skill_rate":"4.00%","main_skill":"十項全能","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/151.png"},
+    {"id":"152","name_cn":"菊草葉","name_en":"Chikorita","specialty":"樹果","interval":"01:13:20","skill_rate":"3.90%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/152.png"},
+    {"id":"153","name_cn":"月桂葉","name_en":"Bayleef","specialty":"樹果","interval":"00:55:00","skill_rate":"3.80%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/153.png"},
+    {"id":"154","name_cn":"大竺葵","name_en":"Meganium","specialty":"樹果","interval":"00:46:40","skill_rate":"4.60%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/154.png"},
+    {"id":"155","name_cn":"火球鼠","name_en":"Cyndaquil","specialty":"樹果","interval":"00:58:20","skill_rate":"2.10%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/155.png"},
+    {"id":"156","name_cn":"火岩鼠","name_en":"Quilava","specialty":"樹果","interval":"00:50:00","skill_rate":"4.10%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/156.png"},
+    {"id":"157","name_cn":"火爆獸","name_en":"Typhlosion","specialty":"樹果","interval":"00:40:00","skill_rate":"3.90%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/157.png"},
+    {"id":"158","name_cn":"小鋸鱷","name_en":"Totodile","specialty":"樹果","interval":"01:15:00","skill_rate":"2.20%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/158.png"},
+    {"id":"159","name_cn":"藍鱷","name_en":"Croconaw","specialty":"樹果","interval":"00:56:40","skill_rate":"5.20%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/159.png"},
+    {"id":"160","name_cn":"大力鱷","name_en":"Feraligatr","specialty":"樹果","interval":"00:46:40","skill_rate":"5.50%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/160.png"},
+    {"id":"175","name_cn":"波克比","name_en":"Togepi","specialty":"技能","interval":"01:20:00","skill_rate":"4.90%","main_skill":"揮指","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/175.png"},
+    {"id":"176","name_cn":"波克基古","name_en":"Togetic","specialty":"技能","interval":"01:03:20","skill_rate":"5.60%","main_skill":"揮指","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/176.png"},
+    {"id":"468","name_cn":"波克基斯","name_en":"Togekiss","specialty":"技能","interval":"00:43:20","skill_rate":"5.30%","main_skill":"揮指","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/468.png"},
+    {"id":"177","name_cn":"天然雀","name_en":"Natu","specialty":"樹果","interval":"01:15:00","skill_rate":"1.60%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/177.png"},
+    {"id":"178","name_cn":"天然鳥","name_en":"Xatu","specialty":"樹果","interval":"00:41:40","skill_rate":"2.50%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/178.png"},
+    {"id":"179","name_cn":"咩利羊","name_en":"Mareep","specialty":"技能","interval":"01:16:40","skill_rate":"4.70%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/179.png"},
+    {"id":"180","name_cn":"茸茸羊","name_en":"Flaaffy","specialty":"技能","interval":"00:55:00","skill_rate":"4.60%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/180.png"},
+    {"id":"181","name_cn":"電龍","name_en":"Ampharos","specialty":"技能","interval":"00:41:40","skill_rate":"4.70%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/181.png"},
+    {"id":"438","name_cn":"盆才怪","name_en":"Bonsly","specialty":"技能","interval":"01:45:00","skill_rate":"6.10%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/438.png"},
+    {"id":"185","name_cn":"樹才怪","name_en":"Sudowoodo","specialty":"技能","interval":"01:06:40","skill_rate":"7.20%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/185.png"},
+    {"id":"194","name_cn":"烏波","name_en":"Wooper","specialty":"食材","interval":"01:38:20","skill_rate":"3.80%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/194.png"},
+    {"id":"7054","name_cn":"烏波（帕底亞的樣子）","name_en":"Wooper (Paldea Form)","specialty":"食材","interval":"01:46:40","skill_rate":"5.60%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png"},
+    {"id":"195","name_cn":"沼王","name_en":"Quagsire","specialty":"食材","interval":"00:56:40","skill_rate":"3.20%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/195.png"},
+    {"id":"980","name_cn":"土王","name_en":"Clodsire","specialty":"食材","interval":"00:58:20","skill_rate":"5.50%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/980.png"},
+    {"id":"198","name_cn":"黑暗鴉","name_en":"Murkrow","specialty":"技能","interval":"01:00:00","skill_rate":"6.20%","main_skill":"超幸運","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/198.png"},
+    {"id":"430","name_cn":"烏鴉頭頭","name_en":"Honchkrow","specialty":"技能","interval":"00:53:20","skill_rate":"6.70%","main_skill":"超幸運","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/430.png"},
+    {"id":"360","name_cn":"小果然","name_en":"Wynaut","specialty":"技能","interval":"01:36:40","skill_rate":"7.40%","main_skill":"活力療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/360.png"},
+    {"id":"202","name_cn":"果然翁","name_en":"Wobbuffet","specialty":"技能","interval":"00:58:20","skill_rate":"8.20%","main_skill":"活力療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/202.png"},
+    {"id":"200","name_cn":"夢妖","name_en":"Misdreavus","specialty":"技能","interval":"00:46:40","skill_rate":"4.70%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/200.png"},
+    {"id":"429","name_cn":"夢妖魔","name_en":"Mismagius","specialty":"技能","interval":"00:40:00","skill_rate":"3.60%","main_skill":"魔法火焰","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/429.png"},
+    {"id":"213","name_cn":"壺壺","name_en":"Shuckle","specialty":"技能","interval":"01:00:00","skill_rate":"5.90%","main_skill":"樹果汁","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/213.png"},
+    {"id":"214","name_cn":"赫拉克羅斯","name_en":"Heracross","specialty":"技能","interval":"00:38:20","skill_rate":"4.70%","main_skill":"健美","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/214.png"},
+    {"id":"215","name_cn":"狃拉","name_en":"Sneasel","specialty":"樹果","interval":"00:53:20","skill_rate":"1.90%","main_skill":"料理成功S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/215.png"},
+    {"id":"461","name_cn":"瑪狃拉","name_en":"Weavile","specialty":"樹果","interval":"00:45:00","skill_rate":"1.80%","main_skill":"料理成功S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/461.png"},
+    {"id":"225","name_cn":"信使鳥","name_en":"Delibird","specialty":"食材","interval":"00:41:40","skill_rate":"3.00%","main_skill":"禮物","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/225.png"},
+    {"id":"228","name_cn":"戴魯比","name_en":"Houndour","specialty":"樹果","interval":"01:21:40","skill_rate":"3.70%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/228.png"},
+    {"id":"229","name_cn":"黑魯加","name_en":"Houndoom","specialty":"樹果","interval":"00:55:00","skill_rate":"4.00%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/229.png"},
+    {"id":"243","name_cn":"雷公","name_en":"Raikou","specialty":"技能","interval":"00:35:00","skill_rate":"1.90%","main_skill":"幫手加速（電）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/243.png"},
+    {"id":"244","name_cn":"炎帝","name_en":"Entei","specialty":"技能","interval":"00:40:00","skill_rate":"2.30%","main_skill":"幫手加速（火）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/244.png"},
+    {"id":"245","name_cn":"水君","name_en":"Suicune","specialty":"技能","interval":"00:45:00","skill_rate":"2.60%","main_skill":"幫手加速（水）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/245.png"},
+    {"id":"246","name_cn":"幼基拉斯","name_en":"Larvitar","specialty":"食材","interval":"01:20:00","skill_rate":"4.10%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/246.png"},
+    {"id":"247","name_cn":"沙基拉斯","name_en":"Pupitar","specialty":"食材","interval":"01:00:00","skill_rate":"4.50%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/247.png"},
+    {"id":"248","name_cn":"班基拉斯","name_en":"Tyranitar","specialty":"食材","interval":"00:45:00","skill_rate":"5.20%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/248.png"},
+    {"id":"252","name_cn":"木守宮","name_en":"Treecko","specialty":"技能","interval":"01:15:00","skill_rate":"3.50%","main_skill":"樹果遽增","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/252.png"},
+    {"id":"253","name_cn":"森林蜥蜴","name_en":"Grovyle","specialty":"技能","interval":"00:55:00","skill_rate":"3.50%","main_skill":"樹果遽增","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/253.png"},
+    {"id":"254","name_cn":"蜥蜴王","name_en":"Sceptile","specialty":"技能","interval":"00:38:20","skill_rate":"3.00%","main_skill":"樹果遽增","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/254.png"},
+    {"id":"255","name_cn":"火稚雞","name_en":"Torchic","specialty":"樹果","interval":"01:11:40","skill_rate":"4.40%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/255.png"},
+    {"id":"256","name_cn":"力壯雞","name_en":"Combusken","specialty":"樹果","interval":"00:56:40","skill_rate":"5.20%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/256.png"},
+    {"id":"257","name_cn":"火焰雞","name_en":"Blaziken","specialty":"樹果","interval":"00:43:20","skill_rate":"4.90%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/257.png"},
+    {"id":"258","name_cn":"水躍魚","name_en":"Mudkip","specialty":"樹果","interval":"01:18:20","skill_rate":"2.40%","main_skill":"料理成功S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/258.png"},
+    {"id":"259","name_cn":"沼躍魚","name_en":"Marshtomp","specialty":"樹果","interval":"00:58:20","skill_rate":"2.70%","main_skill":"料理成功S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/259.png"},
+    {"id":"260","name_cn":"巨沼怪","name_en":"Swampert","specialty":"樹果","interval":"00:46:40","skill_rate":"3.40%","main_skill":"料理成功S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/260.png"},
+    {"id":"280","name_cn":"拉魯拉絲","name_en":"Ralts","specialty":"技能","interval":"01:20:00","skill_rate":"4.30%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/280.png"},
+    {"id":"281","name_cn":"奇鲁莉安","name_en":"Kirlia","specialty":"技能","interval":"00:58:20","skill_rate":"4.30%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/281.png"},
+    {"id":"282","name_cn":"沙奈朵","name_en":"Gardevoir","specialty":"技能","interval":"00:40:00","skill_rate":"4.20%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/282.png"},
+    {"id":"475","name_cn":"艾路雷朵","name_en":"Gallade","specialty":"技能","interval":"00:40:00","skill_rate":"5.40%","main_skill":"幫手支援S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/475.png"},
+    {"id":"287","name_cn":"懶人獺","name_en":"Slakoth","specialty":"樹果","interval":"01:21:40","skill_rate":"1.90%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/287.png"},
+    {"id":"288","name_cn":"過動猿","name_en":"Vigoroth","specialty":"樹果","interval":"00:53:20","skill_rate":"1.50%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/288.png"},
+    {"id":"289","name_cn":"請假王","name_en":"Slaking","specialty":"樹果","interval":"01:00:00","skill_rate":"6.70%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/289.png"},
+    {"id":"302","name_cn":"勾魂眼","name_en":"Sableye","specialty":"技能","interval":"01:00:00","skill_rate":"6.80%","main_skill":"夢之碎片獲取S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/302.png"},
+    {"id":"303","name_cn":"大嘴娃","name_en":"Mawile","specialty":"食材","interval":"00:53:20","skill_rate":"3.80%","main_skill":"怪力鉗","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/303.png"},
+    {"id":"304","name_cn":"可可多拉","name_en":"Aron","specialty":"食材","interval":"01:35:00","skill_rate":"4.60%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/304.png"},
+    {"id":"305","name_cn":"可多拉","name_en":"Lairon","specialty":"食材","interval":"01:10:00","skill_rate":"4.80%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/305.png"},
+    {"id":"306","name_cn":"波士可多拉","name_en":"Aggron","specialty":"食材","interval":"00:50:00","skill_rate":"5.20%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/306.png"},
+    {"id":"311","name_cn":"正電拍拍","name_en":"Plusle","specialty":"技能","interval":"00:40:00","skill_rate":"4.90%","main_skill":"正電","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/311.png"},
+    {"id":"312","name_cn":"負電拍拍","name_en":"Minun","specialty":"技能","interval":"00:40:00","skill_rate":"4.90%","main_skill":"負電","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/312.png"},
+    {"id":"316","name_cn":"溶食獸","name_en":"Gulpin","specialty":"技能","interval":"01:38:20","skill_rate":"6.30%","main_skill":"夢之碎片獲取S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/316.png"},
+    {"id":"317","name_cn":"吞食獸","name_en":"Swalot","specialty":"技能","interval":"00:58:20","skill_rate":"7.00%","main_skill":"夢之碎片獲取S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/317.png"},
+    {"id":"328","name_cn":"大顎蟻","name_en":"Trapinch","specialty":"食材","interval":"01:23:20","skill_rate":"3.10%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/328.png"},
+    {"id":"329","name_cn":"超音波幼蟲","name_en":"Vibrava","specialty":"食材","interval":"01:01:40","skill_rate":"3.40%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/329.png"},
+    {"id":"330","name_cn":"沙漠蜻蜓","name_en":"Flygon","specialty":"食材","interval":"00:45:00","skill_rate":"3.90%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/330.png"},
+    {"id":"333","name_cn":"青綿鳥","name_en":"Swablu","specialty":"樹果","interval":"01:10:00","skill_rate":"3.20%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/333.png"},
+    {"id":"334","name_cn":"七夕青鳥","name_en":"Altaria","specialty":"樹果","interval":"00:58:20","skill_rate":"6.10%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/334.png"},
+    {"id":"353","name_cn":"怨影娃娃","name_en":"Shuppet","specialty":"樹果","interval":"01:05:00","skill_rate":"2.60%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/353.png"},
+    {"id":"354","name_cn":"詛咒娃娃","name_en":"Banette","specialty":"樹果","interval":"00:43:20","skill_rate":"3.30%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/354.png"},
+    {"id":"359","name_cn":"阿勃梭魯","name_en":"Absol","specialty":"食材","interval":"00:49:10","skill_rate":"3.80%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/359.png"},
+    {"id":"363","name_cn":"海豹球","name_en":"Spheal","specialty":"樹果","interval":"01:33:20","skill_rate":"2.30%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/363.png"},
+    {"id":"9006","name_cn":"海豹球（佳節）","name_en":"Spheal (Holiday)","specialty":"技能","interval":"00:55:00","skill_rate":"5.00%","main_skill":"料理成功S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png"},
+    {"id":"364","name_cn":"海魔獅","name_en":"Sealeo","specialty":"樹果","interval":"01:06:40","skill_rate":"2.10%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/364.png"},
+    {"id":"365","name_cn":"帝牙海獅","name_en":"Walrein","specialty":"樹果","interval":"00:50:00","skill_rate":"2.20%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/365.png"},
+    {"id":"371","name_cn":"寶貝龍","name_en":"Bagon","specialty":"樹果","interval":"01:28:20","skill_rate":"2.70%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/371.png"},
+    {"id":"372","name_cn":"甲殼龍","name_en":"Shelgon","specialty":"樹果","interval":"01:03:20","skill_rate":"2.70%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/372.png"},
+    {"id":"373","name_cn":"暴飛龍","name_en":"Salamence","specialty":"樹果","interval":"00:46:40","skill_rate":"3.40%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/373.png"},
+    {"id":"380","name_cn":"拉帝亞斯","name_en":"Latias","specialty":"技能","interval":"00:46:40","skill_rate":"4.90%","main_skill":"治癒波動","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/380.png"},
+    {"id":"381","name_cn":"拉帝歐斯","name_en":"Latios","specialty":"技能","interval":"00:46:40","skill_rate":"3.00%","main_skill":"流星群","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/381.png"},
+    {"id":"387","name_cn":"草苗龜","name_en":"Turtwig","specialty":"技能","interval":"01:15:00","skill_rate":"4.10%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/387.png"},
+    {"id":"388","name_cn":"樹林龜","name_en":"Grotle","specialty":"技能","interval":"01:01:40","skill_rate":"4.60%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/388.png"},
+    {"id":"389","name_cn":"土台龜","name_en":"Torterra","specialty":"技能","interval":"00:48:20","skill_rate":"4.80%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/389.png"},
+    {"id":"390","name_cn":"小火焰猴","name_en":"Chimchar","specialty":"技能","interval":"01:08:20","skill_rate":"3.30%","main_skill":"樹果遽增","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/390.png"},
+    {"id":"391","name_cn":"猛火猴","name_en":"Monferno","specialty":"技能","interval":"00:51:40","skill_rate":"3.30%","main_skill":"樹果遽增","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/391.png"},
+    {"id":"392","name_cn":"烈焰猴","name_en":"Infernape","specialty":"技能","interval":"00:40:00","skill_rate":"3.30%","main_skill":"樹果遽增","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/392.png"},
+    {"id":"393","name_cn":"波加曼","name_en":"Piplup","specialty":"樹果","interval":"01:15:00","skill_rate":"2.60%","main_skill":"幫手支援S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/393.png"},
+    {"id":"394","name_cn":"波皇子","name_en":"Prinplup","specialty":"樹果","interval":"01:01:40","skill_rate":"3.50%","main_skill":"幫手支援S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/394.png"},
+    {"id":"395","name_cn":"帝王拿波","name_en":"Empoleon","specialty":"樹果","interval":"00:53:20","skill_rate":"3.80%","main_skill":"幫手支援S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/395.png"},
+    {"id":"403","name_cn":"小貓怪","name_en":"Shinx","specialty":"食材","interval":"01:13:20","skill_rate":"1.80%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/403.png"},
+    {"id":"404","name_cn":"勒克貓","name_en":"Luxio","specialty":"食材","interval":"00:53:20","skill_rate":"1.80%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/404.png"},
+    {"id":"405","name_cn":"倫琴貓","name_en":"Luxray","specialty":"食材","interval":"00:40:00","skill_rate":"2.30%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/405.png"},
+    {"id":"425","name_cn":"飄飄球","name_en":"Drifloon","specialty":"技能","interval":"01:20:00","skill_rate":"7.10%","main_skill":"蓄力","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/425.png"},
+    {"id":"426","name_cn":"隨風球","name_en":"Drifblim","specialty":"技能","interval":"00:41:40","skill_rate":"6.30%","main_skill":"蓄力","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/426.png"},
+    {"id":"442","name_cn":"花岩怪","name_en":"Spiritomb","specialty":"食材","interval":"00:58:20","skill_rate":"3.60%","main_skill":"幫手支援S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/442.png"},
+    {"id":"447","name_cn":"利歐路","name_en":"Riolu","specialty":"技能","interval":"01:10:00","skill_rate":"3.80%","main_skill":"夢之碎片獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/447.png"},
+    {"id":"448","name_cn":"路卡利歐","name_en":"Lucario","specialty":"技能","interval":"00:43:20","skill_rate":"5.10%","main_skill":"波導彈","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/448.png"},
+    {"id":"453","name_cn":"不良蛙","name_en":"Croagunk","specialty":"食材","interval":"01:33:20","skill_rate":"4.20%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/453.png"},
+    {"id":"454","name_cn":"毒骷蛙","name_en":"Toxicroak","specialty":"食材","interval":"00:56:40","skill_rate":"4.30%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/454.png"},
+    {"id":"459","name_cn":"雪笠怪","name_en":"Snover","specialty":"食材","interval":"01:33:20","skill_rate":"4.40%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/459.png"},
+    {"id":"460","name_cn":"暴雪王","name_en":"Abomasnow","specialty":"食材","interval":"00:50:00","skill_rate":"4.40%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/460.png"},
+    {"id":"488","name_cn":"克雷色利亞","name_en":"Cresselia","specialty":"技能","interval":"00:38:20","skill_rate":"4.10%","main_skill":"新月祈禱","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/488.png"},
+    {"id":"491","name_cn":"達克萊伊","name_en":"Darkrai","specialty":"全部","interval":"00:48:20","skill_rate":"2.30%","main_skill":"夢魘","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/491.png"},
+    {"id":"517","name_cn":"食夢夢","name_en":"Munna","specialty":"樹果","interval":"01:35:00","skill_rate":"4.30%","main_skill":"夢之碎片獲取S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/517.png"},
+    {"id":"518","name_cn":"夢夢蝕","name_en":"Musharna","specialty":"樹果","interval":"00:46:40","skill_rate":"4.10%","main_skill":"夢之碎片獲取S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/518.png"},
+    {"id":"557","name_cn":"石居蟹","name_en":"Dwebble","specialty":"技能","interval":"01:11:40","skill_rate":"5.40%","main_skill":"食材精選S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/557.png"},
+    {"id":"558","name_cn":"岩殿居蟹","name_en":"Crustle","specialty":"技能","interval":"00:53:20","skill_rate":"6.40%","main_skill":"食材精選S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/558.png"},
+    {"id":"590","name_cn":"哎呀球菇","name_en":"Foongus","specialty":"食材","interval":"01:35:00","skill_rate":"3.50%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/590.png"},
+    {"id":"591","name_cn":"敗露球菇","name_en":"Amoonguss","specialty":"食材","interval":"00:58:20","skill_rate":"4.70%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/591.png"},
+    {"id":"627","name_cn":"毛頭小鷹","name_en":"Rufflet","specialty":"技能","interval":"01:03:20","skill_rate":"3.10%","main_skill":"樹果遽增","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/627.png"},
+    {"id":"628","name_cn":"勇士雄鷹","name_en":"Braviary","specialty":"技能","interval":"00:40:00","skill_rate":"3.50%","main_skill":"樹果遽增","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/628.png"},
+    {"id":"696","name_cn":"寶寶暴龍","name_en":"Tyrunt","specialty":"樹果","interval":"01:26:40","skill_rate":"2.40%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/696.png"},
+    {"id":"697","name_cn":"怪顎龍","name_en":"Tyrantrum","specialty":"樹果","interval":"00:46:40","skill_rate":"2.90%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/697.png"},
+    {"id":"701","name_cn":"摔角鷹人","name_en":"Hawlucha","specialty":"技能","interval":"00:40:00","skill_rate":"5.20%","main_skill":"食材精選S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/701.png"},
+    {"id":"702","name_cn":"咚咚鼠","name_en":"Dedenne","specialty":"技能","interval":"00:41:40","skill_rate":"4.50%","main_skill":"料理成功S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/702.png"},
+    {"id":"710","name_cn":"南瓜精 (小顆種)","name_en":"Pumpkaboo (Small Variety)","specialty":"食材","interval":"01:28:20","skill_rate":"4.90%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/710.png"},
+    {"id":"710","name_cn":"南瓜精 (中顆種)","name_en":"Pumpkaboo (Medium Variety)","specialty":"食材","interval":"01:30:00","skill_rate":"4.90%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/710.png"},
+    {"id":"710","name_cn":"南瓜精 (大顆種)","name_en":"Pumpkaboo (Large Variety)","specialty":"食材","interval":"01:31:40","skill_rate":"4.90%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/710.png"},
+    {"id":"710","name_cn":"南瓜精 (巨顆種)","name_en":"Pumpkaboo (Jumbo Variety)","specialty":"食材","interval":"01:33:20","skill_rate":"4.90%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/710.png"},
+    {"id":"711","name_cn":"南瓜怪人 (小顆種)","name_en":"Gourgeist (Small Variety)","specialty":"食材","interval":"00:51:40","skill_rate":"4.90%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/711.png"},
+    {"id":"711","name_cn":"南瓜怪人 (中顆種)","name_en":"Gourgeist (Medium Variety)","specialty":"食材","interval":"00:53:20","skill_rate":"4.90%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/711.png"},
+    {"id":"711","name_cn":"南瓜怪人 (大顆種)","name_en":"Gourgeist (Large Variety)","specialty":"食材","interval":"00:55:00","skill_rate":"4.90%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/711.png"},
+    {"id":"711","name_cn":"南瓜怪人 (巨顆種)","name_en":"Gourgeist (Jumbo Variety)","specialty":"食材","interval":"00:56:40","skill_rate":"4.90%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/711.png"},
+    {"id":"714","name_cn":"嗡蝠","name_en":"Noibat","specialty":"技能","interval":"01:25:00","skill_rate":"4.80%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/714.png"},
+    {"id":"715","name_cn":"音波龍","name_en":"Noivern","specialty":"技能","interval":"00:45:00","skill_rate":"4.80%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/715.png"},
+    {"id":"736","name_cn":"強顎雞母蟲","name_en":"Grubbin","specialty":"食材","interval":"01:16:40","skill_rate":"2.90%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/736.png"},
+    {"id":"737","name_cn":"蟲電寶","name_en":"Charjabug","specialty":"食材","interval":"00:55:00","skill_rate":"2.80%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/737.png"},
+    {"id":"738","name_cn":"鍬農炮蟲","name_en":"Vikavolt","specialty":"食材","interval":"00:46:40","skill_rate":"5.10%","main_skill":"能量填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/738.png"},
+    {"id":"742","name_cn":"萌虻","name_en":"Cutiefly","specialty":"食材","interval":"01:15:00","skill_rate":"1.90%","main_skill":"食材精選S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/742.png"},
+    {"id":"743","name_cn":"蝶結萌虻","name_en":"Ribombee","specialty":"食材","interval":"00:38:20","skill_rate":"2.50%","main_skill":"食材精選S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/743.png"},
+    {"id":"759","name_cn":"童偶熊","name_en":"Stufful","specialty":"食材","interval":"01:08:20","skill_rate":"1.10%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/759.png"},
+    {"id":"760","name_cn":"穿著熊","name_en":"Bewear","specialty":"食材","interval":"00:46:40","skill_rate":"1.30%","main_skill":"能量填充S（隨機）","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/760.png"},
+    {"id":"764","name_cn":"花療環環","name_en":"Comfey","specialty":"食材","interval":"00:41:40","skill_rate":"3.50%","main_skill":"活力療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/764.png"},
+    {"id":"777","name_cn":"托戈德瑪爾","name_en":"Togedemaru","specialty":"技能","interval":"00:45:00","skill_rate":"5.40%","main_skill":"蹭蹭臉頰","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/777.png"},
+    {"id":"778","name_cn":"謎擬Q","name_en":"Mimikyu","specialty":"技能","interval":"00:41:40","skill_rate":"3.50%","main_skill":"畫皮","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/778.png"},
+    {"id":"780","name_cn":"老翁龍","name_en":"Drampa","specialty":"食材","interval":"00:58:20","skill_rate":"4.60%","main_skill":"料理成功S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/780.png"},
+    {"id":"845","name_cn":"古月鳥","name_en":"Cramorant","specialty":"食材","interval":"00:45:00","skill_rate":"3.90%","main_skill":"料理成功S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/845.png"},
+    {"id":"848","name_cn":"毒電嬰","name_en":"Toxel","specialty":"技能","interval":"01:33:20","skill_rate":"4.80%","main_skill":"食材獲取S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/848.png"},
+    {"id":"849","name_cn":"顫弦蠑螈（高調的樣子）","name_en":"Toxtricity (Amped Form)","specialty":"技能","interval":"00:51:40","skill_rate":"6.40%","main_skill":"正電","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/849.png"},
+    {"id":"8001","name_cn":"顫弦蠑螈（低調的樣子）","name_en":"Toxtricity (Low Key Form)","specialty":"技能","interval":"00:51:40","skill_rate":"6.40%","main_skill":"負電","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png"},
+    {"id":"906","name_cn":"新葉喵","name_en":"Sprigatito","specialty":"食材","interval":"01:16:40","skill_rate":"2.30%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/906.png"},
+    {"id":"907","name_cn":"蒂蕾喵","name_en":"Floragato","specialty":"食材","interval":"00:58:20","skill_rate":"2.30%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/907.png"},
+    {"id":"908","name_cn":"魔幻假面喵","name_en":"Meowscarada","specialty":"食材","interval":"00:43:20","skill_rate":"2.20%","main_skill":"料理強化S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/908.png"},
+    {"id":"909","name_cn":"呆火鱷","name_en":"Fuecoco","specialty":"食材","interval":"01:10:00","skill_rate":"5.30%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/909.png"},
+    {"id":"910","name_cn":"炙燙鱷","name_en":"Crocalor","specialty":"食材","interval":"00:51:40","skill_rate":"5.00%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/910.png"},
+    {"id":"911","name_cn":"骨紋巨聲鱷","name_en":"Skeledirge","specialty":"食材","interval":"00:45:00","skill_rate":"6.20%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/911.png"},
+    {"id":"912","name_cn":"潤水鴨","name_en":"Quaxly","specialty":"食材","interval":"01:20:00","skill_rate":"2.80%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/912.png"},
+    {"id":"913","name_cn":"湧躍鴨","name_en":"Quaxwell","specialty":"食材","interval":"01:00:00","skill_rate":"2.70%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/913.png"},
+    {"id":"914","name_cn":"狂歡浪舞鴨","name_en":"Quaquaval","specialty":"食材","interval":"00:43:20","skill_rate":"2.40%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/914.png"},
+    {"id":"921","name_cn":"布撥","name_en":"Pawmi","specialty":"技能","interval":"01:16:40","skill_rate":"3.60%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/921.png"},
+    {"id":"922","name_cn":"布土撥","name_en":"Pawmo","specialty":"技能","interval":"00:55:00","skill_rate":"3.60%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/922.png"},
+    {"id":"923","name_cn":"巴布土撥","name_en":"Pawmot","specialty":"技能","interval":"00:40:00","skill_rate":"3.90%","main_skill":"活力全體療癒S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/923.png"},
+    {"id":"957","name_cn":"小鍛匠","name_en":"Tinkatink","specialty":"樹果","interval":"01:15:00","skill_rate":"1.60%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/957.png"},
+    {"id":"958","name_cn":"巧鍛匠","name_en":"Tinkatuff","specialty":"樹果","interval":"00:55:00","skill_rate":"1.80%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/958.png"},
+    {"id":"959","name_cn":"巨鍛匠","name_en":"Tinkaton","specialty":"樹果","interval":"00:40:00","skill_rate":"2.00%","main_skill":"能量填充M","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/959.png"},
+    {"id":"974","name_cn":"走鯨","name_en":"Cetoddle","specialty":"食材","interval":"01:25:00","skill_rate":"4.20%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/974.png"},
+    {"id":"975","name_cn":"浩大鯨","name_en":"Cetitan","specialty":"食材","interval":"00:46:40","skill_rate":"4.20%","main_skill":"活力填充S","icon_url":"https://www.serebii.net/pokemonsleep/pokemon/icon/975.png"}
+  ];
+
+  const EXCLUDED_SKILL_NAMES = [
+    '揮指', '模仿', '變身', '十項全能',
+    'Metronome', 'Mimic', 'Transform', 'All-Rounder'
+  ];
+
+  function isExcludedSkill(skillName) {
+    if (!skillName) return true;
+    const s = String(skillName).trim();
+    return EXCLUDED_SKILL_NAMES.some(ex => s === ex || s.startsWith(ex + '（') || s.startsWith(ex + '(') || s.startsWith(ex + ' '));
+  }
+
+  const SKILL_TRACK_DEFINITIONS = [
+    {
+      id: 'charge_energy',
+      name: '能量填充',
+      name_en: 'Charge Strength',
+      desc: '增加卡比獸的能量',
+      desc_en: 'Increases Snorlax Strength',
+      color: '#f59e0b',
+      bgColor: 'rgba(245, 158, 11, 0.15)',
+      svgPath: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    },
+    {
+      id: 'energy_all',
+      name: '活力全體療癒',
+      name_en: 'Energy for Everyone',
+      desc: '讓全體隊友回復活力',
+      desc_en: 'Restores Energy to all teammates',
+      color: '#10b981',
+      bgColor: 'rgba(16, 185, 129, 0.15)',
+      svgPath: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    },
+    {
+      id: 'energy_single',
+      name: '活力單體/隨機療癒',
+      name_en: 'Target/Random Energy Cheer',
+      desc: '回復自身或隊友活力',
+      desc_en: 'Restores Energy to a specific or random ally',
+      color: '#06b6d4',
+      bgColor: 'rgba(6, 182, 212, 0.15)',
+      svgPath: '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+    },
+    {
+      id: 'cooking_pot',
+      name: '料理強化（擴鍋）',
+      name_en: 'Cooking Power-up',
+      desc: '擴大下一次料理的鍋子容量',
+      desc_en: 'Expands pot capacity for next cooking',
+      color: '#ec4899',
+      bgColor: 'rgba(236, 72, 153, 0.15)',
+      svgPath: '<path d="M4 19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9H4v10zM12 2v4M8 6h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    },
+    {
+      id: 'cooking_chance',
+      name: '料理大成功機率',
+      name_en: 'Tasty Chance',
+      desc: '提升下一次料理大成功的機率',
+      desc_en: 'Boosts extra tasty chance for next dish',
+      color: '#8b5cf6',
+      bgColor: 'rgba(139, 92, 246, 0.15)',
+      svgPath: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    },
+    {
+      id: 'helper_boost',
+      name: '幫手支援/加速',
+      name_en: 'Helper Boost / Speed',
+      desc: '全隊或特定屬性立即完成幫忙',
+      desc_en: 'Instant helps for team or matching types',
+      color: '#3b82f6',
+      bgColor: 'rgba(59, 130, 246, 0.15)',
+      svgPath: '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    },
+    {
+      id: 'dream_shards',
+      name: '夢之碎片獲取',
+      name_en: 'Dream Shard Magnet',
+      desc: '直接獲得夢之碎片',
+      desc_en: 'Obtains Dream Shards directly',
+      color: '#a855f7',
+      bgColor: 'rgba(168, 85, 247, 0.15)',
+      svgPath: '<polygon points="12 2 2 7 12 12 22 7 12 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="2 17 12 22 22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="2 12 12 17 22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    },
+    {
+      id: 'ingredient',
+      name: '食材獲取/精選',
+      name_en: 'Ingredient Magnet / Draw',
+      desc: '隨機或精選獲得多個食材',
+      desc_en: 'Gathers random or selected ingredients',
+      color: '#f97316',
+      bgColor: 'rgba(249, 115, 22, 0.15)',
+      svgPath: '<path d="M12 2a5 5 0 0 1 5 5c0 2.3-1.5 4.3-3.6 4.9V19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-7.1C6.5 11.3 5 9.3 5 7a5 5 0 0 1 7-5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    },
+    {
+      id: 'berry_burst',
+      name: '樹果遽增/發動',
+      name_en: 'Berry Burst',
+      desc: '直接獲得大量樹果',
+      desc_en: 'Instantly obtains multiple berries',
+      color: '#ef4444',
+      bgColor: 'rgba(239, 68, 68, 0.15)',
+      svgPath: '<circle cx="12" cy="12" r="6" stroke="currentColor" stroke-width="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+    }
+  ];
+
+  const COMPOSITE_SKILL_TRACKS = {
+    '正電': ['ingredient', 'helper_boost'],
+    '負電': ['cooking_pot', 'energy_single'],
+    '禮物': ['ingredient', 'dream_shards'],
+    '健美': ['ingredient', 'cooking_chance'],
+    '魔法火焰': ['cooking_pot', 'cooking_chance'],
+    '蹭蹭臉頰': ['energy_single', 'helper_boost'],
+    '治癒波動': ['energy_single', 'helper_boost'],
+    '樹果汁': ['energy_all', 'energy_single'],
+    '波導彈': ['charge_energy', 'dream_shards'],
+    '新月祈禱': ['energy_all', 'berry_burst'],
+    '精神擊破': ['charge_energy', 'berry_burst'],
+    '超幸運': ['ingredient', 'dream_shards']
+  };
+
+  function getSkillTracks(mainSkill) {
+    if (!mainSkill) return [];
+    const s = String(mainSkill).trim();
+
+    for (const [compName, tracks] of Object.entries(COMPOSITE_SKILL_TRACKS)) {
+      if (s === compName || s.startsWith(compName + '（') || s.startsWith(compName + '(')) {
+        return tracks;
+      }
+    }
+
+    if (s.includes('能量填充') || s.includes('Charge Strength')) return ['charge_energy'];
+    if (s.includes('活力療癒全體') || s.includes('活力全體') || s.includes('Energy for Everyone')) return ['energy_all'];
+    if (s.includes('活力療癒S') || s.includes('活力填充') || s.includes('活力應援') || s.includes('Energy Cheer') || s.includes('Charge Energy')) return ['energy_single'];
+    if (s.includes('料理強化') || s.includes('Cooking Power-up')) return ['cooking_pot'];
+    if (s.includes('美味機會') || s.includes('料理成功') || s.includes('Tasty Chance')) return ['cooking_chance'];
+    if (s.includes('幫手支援') || s.includes('幫手獎勵') || s.includes('幫手加速') || s.includes('Helper Boost') || s.includes('Extra Helpful')) return ['helper_boost'];
+    if (s.includes('夢之碎片') || s.includes('Dream Shard')) return ['dream_shards'];
+    if (s.includes('食材獲取') || s.includes('食材精選') || s.includes('Ingredient Magnet') || s.includes('Ingredient Draw')) return ['ingredient'];
+    if (s.includes('樹果遽增') || s.includes('Berry Burst')) return ['berry_burst'];
+
+    return ['charge_energy'];
+  }
+
+  // =========================================================================
+  // 主技能天梯邏輯與控制器 (Main Skill Ladder Controller)
+  // =========================================================================
+
+  let skillLadderSearchQuery = '';
+  let skillLadderTop15Only = true;
+  let skillLadderSortOrder = 'DEFAULT';
+  let skillLadderSpecialtyFilter = 'ALL';
+  let isSkillLadderSpeedM = false;
+  let isSkillLadderSpeedS = false;
+  let isSkillLadderSkillM = false;
+  let isSkillLadderSkillS = false;
+  let skillLadderNatureSpeed = false;
+  let skillLadderNatureSkill = false;
+
+  function parseIntervalToSec(intervalStr) {
+    if (!intervalStr) return 3600;
+    const parts = String(intervalStr).split(':').map(Number);
+    if (parts.length === 3) {
+      return (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+    } else if (parts.length === 2) {
+      return (parts[0] * 60) + parts[1];
+    }
+    const num = parseFloat(intervalStr);
+    return isNaN(num) ? 3600 : num;
+  }
+
+  function getPokemonSkillLadderProcs(pkm) {
+    if (!pkm) return null;
+    const baseIntervalSec = parseIntervalToSec(pkm.interval);
+    const speedDiscount = 0.118;
+    const speedReduction = Math.min(0.35, (isSkillLadderSpeedM ? 0.14 : 0) + (isSkillLadderSpeedS ? 0.07 : 0));
+    const natureSpeedMult = skillLadderNatureSpeed ? 0.90 : 1.0;
+    const effectiveIntervalSec = Math.max(600, Math.round(baseIntervalSec * (1 - speedDiscount) * (1 - speedReduction) * natureSpeedMult));
+    const idealIntervalSec = effectiveIntervalSec * 0.45;
+
+    let baseRate = 0.03;
+    if (pkm.skill_rate) {
+      const parsedRate = parseFloat(pkm.skill_rate) / 100;
+      if (!isNaN(parsedRate) && parsedRate > 0) baseRate = parsedRate;
+    }
+    const subskillRateBonus = (isSkillLadderSkillM ? 0.36 : 0) + (isSkillLadderSkillS ? 0.18 : 0);
+    const natureSkillMult = skillLadderNatureSkill ? 1.20 : 1.0;
+    const finalSkillRate = baseRate * (1 + subskillRateBonus) * natureSkillMult;
+    const procs = (43200 / idealIntervalSec) * finalSkillRate;
+
+    return {
+      procs,
+      effectiveIntervalSec,
+      idealIntervalSec,
+      baseSkillRate: baseRate,
+      finalSkillRate
+    };
+  }
+
+  function getAllSkillPokemonList() {
+    return POKEMON_SKILLS_BASELINE_DATA;
+  }
+
+  function handleSkillLadderSubTabSwitch(targetTab, isWikiMainActive, isMobileH5) {
+    const sidebar = document.getElementById('skill-ladder-filter-sidebar');
+    const handle = document.getElementById('skill-ladder-sidebar-bookmark-handle');
+    const backdrop = document.getElementById('skill-ladder-sidebar-backdrop');
+
+    if (sidebar) {
+      if (isWikiMainActive && targetTab === 'skills_ladder') {
+        sidebar.style.display = 'flex';
+        const isOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_skill_ladder_sidebar_open', true) : true;
+        if (isOpen && !isMobileH5 && window.innerWidth > 1024) {
+          sidebar.classList.remove('collapsed');
+        } else {
+          sidebar.classList.add('collapsed');
+          if (backdrop) backdrop.classList.remove('active');
+        }
+      } else {
+        sidebar.style.display = 'none';
+        sidebar.classList.add('collapsed');
+        if (backdrop) backdrop.classList.remove('active');
+      }
+    }
+
+    if (handle) {
+      if (isWikiMainActive && targetTab === 'skills_ladder') {
+        const isCollapsed = sidebar ? sidebar.classList.contains('collapsed') : true;
+        if (isCollapsed) {
+          handle.classList.remove('drawer-open');
+          handle.style.display = 'flex';
+          handle.style.opacity = '1';
+          handle.style.pointerEvents = 'auto';
+          handle.style.visibility = 'visible';
+        } else {
+          handle.classList.add('drawer-open');
+          handle.style.display = 'none';
+          handle.style.opacity = '0';
+          handle.style.pointerEvents = 'none';
+          handle.style.visibility = 'hidden';
+        }
+        updateSkillLadderActiveFilterBadge();
+      } else {
+        handle.classList.add('drawer-open');
+        handle.style.display = 'none';
+        handle.style.opacity = '0';
+        handle.style.pointerEvents = 'none';
+      }
+    }
+
+    if (targetTab === 'skills_ladder') {
+      try {
+        if (typeof refreshSkillCoordinateLadder === 'function') {
+          refreshSkillCoordinateLadder();
+        }
+      } catch (e) {}
+    }
+  }
+
+  function getSkillLadderSearchQuery() {
+    return skillLadderSearchQuery;
+  }
+
+  function setSkillLadderSearchQuery(val) {
+    onSkillLadderSearch(val);
+  }
+
+  function onSkillLadderSearch(val) {
+    skillLadderSearchQuery = (val || '').trim();
+    const clearBtn = document.getElementById('skill-ladder-search-clear-btn');
+    if (clearBtn) {
+      clearBtn.style.display = skillLadderSearchQuery ? 'inline-block' : 'none';
+    }
+    refreshSkillCoordinateLadder();
+  }
+
+  function clearSkillLadderSearch() {
+    skillLadderSearchQuery = '';
+    const input = document.getElementById('skill-ladder-pkm-search-input');
+    if (input) input.value = '';
+    const clearBtn = document.getElementById('skill-ladder-search-clear-btn');
+    if (clearBtn) clearBtn.style.display = 'none';
+    refreshSkillCoordinateLadder();
+  }
+
+  function toggleSkillLadderTop15(enabled) {
+    skillLadderTop15Only = enabled !== undefined ? !!enabled : !skillLadderTop15Only;
+    const switchInput = document.getElementById('skill-ladder-top15-switch');
+    if (switchInput) switchInput.checked = skillLadderTop15Only;
+    refreshSkillCoordinateLadder();
+  }
+
+  function getSkillLadderTop15Only() {
+    return skillLadderTop15Only;
+  }
+
+  function setSkillLadderSortOrder(order) {
+    skillLadderSortOrder = order || 'DEFAULT';
+    const sidebar = document.getElementById('skill-ladder-filter-sidebar') || document;
+    const btns = sidebar.querySelectorAll('[data-skill-sort-order]');
+    btns.forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-skill-sort-order') === skillLadderSortOrder);
+    });
+    refreshSkillCoordinateLadder();
+  }
+
+  function getSkillLadderSortOrder() {
+    return skillLadderSortOrder;
+  }
+
+  function setSkillLadderSpecialtyFilter(spec) {
+    skillLadderSpecialtyFilter = spec || 'ALL';
+    const sidebar = document.getElementById('skill-ladder-filter-sidebar') || document;
+    const btns = sidebar.querySelectorAll('[data-skill-specialty-filter]');
+    btns.forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-skill-specialty-filter') === skillLadderSpecialtyFilter);
+    });
+    refreshSkillCoordinateLadder();
+  }
+
+  function getSkillLadderSpecialtyFilter() {
+    return skillLadderSpecialtyFilter;
+  }
+
+  function toggleSkillLadderSubskill(key) {
+    if (key === 'SPEED_M') isSkillLadderSpeedM = !isSkillLadderSpeedM;
+    else if (key === 'SPEED_S') isSkillLadderSpeedS = !isSkillLadderSpeedS;
+    else if (key === 'SKILL_M') isSkillLadderSkillM = !isSkillLadderSkillM;
+    else if (key === 'SKILL_S') isSkillLadderSkillS = !isSkillLadderSkillS;
+    syncSkillLadderSidebarButtons();
+    refreshSkillCoordinateLadder();
+  }
+
+  function toggleSkillLadderNatureFilter(key) {
+    if (key === 'SPEED') {
+      skillLadderNatureSpeed = !skillLadderNatureSpeed;
+      if (skillLadderNatureSpeed) skillLadderNatureSkill = false;
+    } else if (key === 'SKILL') {
+      skillLadderNatureSkill = !skillLadderNatureSkill;
+      if (skillLadderNatureSkill) skillLadderNatureSpeed = false;
+    }
+    syncSkillLadderSidebarButtons();
+    refreshSkillCoordinateLadder();
+  }
+
+  function getSkillLadderNature() {
+    if (skillLadderNatureSpeed) return 'SPEED';
+    if (skillLadderNatureSkill) return 'SKILL';
+    return 'NONE';
+  }
+
+  function syncSkillLadderSidebarButtons() {
+    const flags = {
+      SPEED_M: isSkillLadderSpeedM,
+      SPEED_S: isSkillLadderSpeedS,
+      SKILL_M: isSkillLadderSkillM,
+      SKILL_S: isSkillLadderSkillS
+    };
+    const sidebar = document.getElementById('skill-ladder-filter-sidebar') || document;
+    const subBtns = sidebar.querySelectorAll('[data-skill-subskill-boost]');
+    subBtns.forEach(btn => {
+      const k = btn.getAttribute('data-skill-subskill-boost');
+      btn.classList.toggle('active', !!flags[k]);
+    });
+
+    const natBtns = sidebar.querySelectorAll('[data-skill-nature-filter]');
+    natBtns.forEach(btn => {
+      const k = btn.getAttribute('data-skill-nature-filter');
+      const active = (k === 'SPEED' && skillLadderNatureSpeed) || (k === 'SKILL' && skillLadderNatureSkill);
+      btn.classList.toggle('active', !!active);
+    });
+  }
+
+  function resetSkillLadderFilters() {
+    skillLadderSearchQuery = '';
+    skillLadderTop15Only = true;
+    skillLadderSortOrder = 'DEFAULT';
+    skillLadderSpecialtyFilter = 'ALL';
+    isSkillLadderSpeedM = false;
+    isSkillLadderSpeedS = false;
+    isSkillLadderSkillM = false;
+    isSkillLadderSkillS = false;
+    skillLadderNatureSpeed = false;
+    skillLadderNatureSkill = false;
+
+    const input = document.getElementById('skill-ladder-pkm-search-input');
+    if (input) input.value = '';
+    const clearBtn = document.getElementById('skill-ladder-search-clear-btn');
+    if (clearBtn) clearBtn.style.display = 'none';
+
+    const switchInput = document.getElementById('skill-ladder-top15-switch');
+    if (switchInput) switchInput.checked = true;
+
+    const sidebar = document.getElementById('skill-ladder-filter-sidebar') || document;
+    const sortBtns = sidebar.querySelectorAll('[data-skill-sort-order]');
+    sortBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-skill-sort-order') === 'DEFAULT'));
+
+    const specBtns = sidebar.querySelectorAll('[data-skill-specialty-filter]');
+    specBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-skill-specialty-filter') === 'ALL'));
+
+    syncSkillLadderSidebarButtons();
+    updateSkillLadderActiveFilterBadge();
+    refreshSkillCoordinateLadder();
+  }
+
+  function updateSkillLadderActiveFilterBadge() {
+    const badge = document.getElementById('skill-ladder-sidebar-bookmark-badge');
+    let count = 0;
+    if (skillLadderSearchQuery && skillLadderSearchQuery.trim()) count++;
+    if (skillLadderSpecialtyFilter && skillLadderSpecialtyFilter !== 'ALL') count++;
+    if (skillLadderSortOrder && skillLadderSortOrder !== 'DEFAULT') count++;
+    if (!skillLadderTop15Only) count++;
+    if (isSkillLadderSpeedM || isSkillLadderSpeedS || isSkillLadderSkillM || isSkillLadderSkillS) count++;
+    if (skillLadderNatureSpeed || skillLadderNatureSkill) count++;
+
+    if (badge) {
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }
+
+  function openSkillLadderSidebar() {
+    toggleSkillLadderSidebar(true);
+  }
+
+  function closeSkillLadderSidebar() {
+    toggleSkillLadderSidebar(false);
+  }
+
+  function toggleSkillLadderSidebar(forceOpen) {
+    const sidebar = document.getElementById('skill-ladder-filter-sidebar');
+    const handle = document.getElementById('skill-ladder-sidebar-bookmark-handle');
+    const backdrop = document.getElementById('skill-ladder-sidebar-backdrop');
+    if (!sidebar) return;
+
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    let open;
+    if (typeof forceOpen === 'boolean') {
+      open = forceOpen;
+    } else {
+      open = sidebar.classList.contains('collapsed');
+    }
+
+    if (open) {
+      sidebar.classList.remove('collapsed');
+      if (backdrop) backdrop.classList.add('active');
+      if (handle) {
+        if (isMobileH5) {
+          handle.classList.add('drawer-open');
+        } else {
+          handle.classList.add('drawer-open');
+          handle.style.display = 'none';
+        }
+      }
+      if (typeof window.saveSidebarState === 'function') {
+        window.saveSidebarState('pksleep_skill_ladder_sidebar_open', true);
+      }
+    } else {
+      sidebar.classList.add('collapsed');
+      if (backdrop) backdrop.classList.remove('active');
+      if (handle) {
+        handle.classList.remove('drawer-open');
+        handle.style.display = 'flex';
+        handle.style.opacity = '1';
+        handle.style.pointerEvents = 'auto';
+        handle.style.visibility = 'visible';
+      }
+      if (typeof window.saveSidebarState === 'function') {
+        window.saveSidebarState('pksleep_skill_ladder_sidebar_open', false);
+      }
+    }
+    updateSkillLadderActiveFilterBadge();
+  }
+
+  function toggleSkillLadderEnergyHelp(e) {
+    if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+    const popover = document.getElementById('skill-ladder-energy-help-popover');
+    if (!popover) return;
+    const isVisible = popover.style.display !== 'none';
+    popover.style.display = isVisible ? 'none' : 'block';
+  }
+
+  function closeSkillLadderEnergyHelp(e) {
+    if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+    const popover = document.getElementById('skill-ladder-energy-help-popover');
+    if (popover) popover.style.display = 'none';
+  }
+
+  // =========================================================================
+  // 主技能天梯渲染與視圖 (Main Skill Ladder View & Renderers)
+  // =========================================================================
+
+  function renderSkillCoordinateLadder() {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const allPkm = getAllSkillPokemonList();
+
+    let globalMaxProcs = 4.0;
+    const processedTracks = SKILL_TRACK_DEFINITIONS.map(track => {
+      const trackId = track.id;
+      const trackName = isEN ? track.name_en : track.name;
+      const trackDesc = isEN ? track.desc_en : track.desc;
+
+      const matchingPokemon = allPkm.filter(p => {
+        if (!p || isExcludedSkill(p.main_skill)) return false;
+        const tracks = getSkillTracks(p.main_skill);
+        if (!tracks.includes(trackId)) return false;
+
+        const spec = p.specialty || '';
+        if (skillLadderSpecialtyFilter === 'SKILL' && !spec.includes('技能') && spec !== 'Skills') return false;
+        if (skillLadderSpecialtyFilter === 'BERRY' && !spec.includes('樹果') && spec !== 'Berries') return false;
+        if (skillLadderSpecialtyFilter === 'INGREDIENT' && !spec.includes('食材') && spec !== 'Ingredients') return false;
+
+        if (skillLadderSearchQuery) {
+          if (typeof matchesLadderSearch === 'function') {
+            if (!matchesLadderSearch(p.name_cn || p.name, p.name_en, skillLadderSearchQuery)) return false;
+          } else {
+            const q = skillLadderSearchQuery.toLowerCase();
+            const nCn = (p.name_cn || p.name || '').toLowerCase();
+            const nEn = (p.name_en || '').toLowerCase();
+            if (!nCn.includes(q) && !nEn.includes(q)) return false;
+          }
+        }
+        return true;
+      });
+
+      const nodes = matchingPokemon.map(p => {
+        const calcRes = getPokemonSkillLadderProcs(p);
+        if (!calcRes) return null;
+
+        const specStr = p.specialty || '技能';
+        const specKey = (specStr.includes('樹果') || specStr === 'Berries') ? 'berry'
+          : (specStr.includes('食材') || specStr === 'Ingredients') ? 'ingredient'
+          : 'skill';
+        const specDisplay = isEN
+          ? (specKey === 'berry' ? 'Berries' : specKey === 'ingredient' ? 'Ingredients' : 'Skills')
+          : (specKey === 'berry' ? '樹果型' : specKey === 'ingredient' ? '食材型' : '技能型');
+
+        const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name_cn || p.name)) || p.name_en || p.name_cn) : (p.name_cn || p.name);
+        const skillName = p.main_skill || '';
+        const skillDisplayName = isEN ? ((window.I18N && window.I18N.getMainSkillName(skillName)) || skillName) : skillName;
+        const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
+
+        return {
+          p,
+          procs: calcRes.procs,
+          displayCount: calcRes.procs.toFixed(2),
+          calcRes,
+          pkmDisplayName,
+          specialtyKey: specKey,
+          specialtyDisplay: specDisplay,
+          skillName,
+          skillDisplayName,
+          iconUrl,
+          isTopNode: false
+        };
+      }).filter(Boolean);
+
+      nodes.sort((a, b) => b.procs - a.procs);
+      if (nodes.length > 0) nodes[0].isTopNode = true;
+
+      let visibleNodes = nodes;
+      if (skillLadderTop15Only && visibleNodes.length > 15) {
+        visibleNodes = visibleNodes.slice(0, 15);
+      }
+
+      visibleNodes.forEach(n => {
+        if (n.procs > globalMaxProcs) globalMaxProcs = n.procs;
+      });
+
+      const trackMaxProcs = visibleNodes.length > 0 ? visibleNodes[0].procs : 0;
+
+      return {
+        track,
+        trackId,
+        trackName,
+        trackDesc,
+        nodes: visibleNodes,
+        totalCount: nodes.length,
+        trackMaxProcs,
+        isTrackEmpty: visibleNodes.length === 0
+      };
+    });
+
+    if (skillLadderSortOrder === 'PROCS_DESC') {
+      processedTracks.sort((a, b) => b.trackMaxProcs - a.trackMaxProcs);
+    } else if (skillLadderSortOrder === 'COUNT_DESC') {
+      processedTracks.sort((a, b) => b.nodes.length - a.nodes.length);
+    }
+
+    const minVal = 0;
+    const maxVal = Math.max(4, Math.ceil(globalMaxProcs * 1.05));
+    const step = maxVal > 14 ? 2 : 1;
+    const ticks = [];
+    for (let t = minVal; t <= maxVal; t += step) ticks.push(t);
+    if (ticks[ticks.length - 1] < maxVal) ticks.push(maxVal);
+
+    function getPosPct(val) {
+      const clamped = Math.min(Math.max(val, minVal), maxVal);
+      return (((clamped - minVal) / (maxVal - minVal)) * 100).toFixed(2);
+    }
+
+    return `
+      <div class="wiki-coordinate-ladder-wrapper">
+        <div class="wiki-coordinate-ladder">
+          <div class="ladder-ruler-header">
+            <div class="ladder-ruler-spacer">
+              <span class="text-secondary font-bold" style="font-size: 11px; letter-spacing: 0.5px;">${isEN ? 'Procs/12h' : '發動次數/12h'}</span>
+            </div>
+            <div class="ladder-ruler-scale">
+              ${ticks.map(t => `
+                <div class="ladder-ruler-tick" style="left: ${getPosPct(t)}%;">
+                  <span class="tick-label">${t}</span>
+                  <div class="tick-line"></div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          ${processedTracks.map(({ track, trackName, trackDesc, nodes, isTrackEmpty }, trackIdx) => {
+            const isTopTrack = trackIdx < 4;
+            const popupDirectionClass = isTopTrack ? 'popup-down' : 'popup-up';
+
+            let minTrackCount = maxVal;
+            nodes.forEach(n => {
+              if (n.procs < minTrackCount) minTrackCount = n.procs;
+            });
+            if (minTrackCount > maxVal) minTrackCount = minVal;
+            const leadPct = getPosPct(minTrackCount);
+
+            const countGroups = {};
+            nodes.forEach(n => {
+              const k = n.procs.toFixed(1);
+              if (!countGroups[k]) countGroups[k] = [];
+              countGroups[k].push(n);
+            });
+
+            return `
+              <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''}" data-skill-track="${track.id}">
+                <div class="ladder-track-header" title="${escapeHtml(trackName)} · ${escapeHtml(trackDesc)}">
+                  <div class="ladder-track-ing-main skill-track-icon-main" style="display:flex;align-items:center;justify-content:center;">
+                    <span class="skill-track-icon-wrapper" style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:${track.bgColor};color:${track.color};">
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+                        ${track.svgPath}
+                      </svg>
+                    </span>
+                  </div>
+                  <div class="skill-track-header-title-box" style="margin-left: 8px; overflow: hidden;">
+                    <span class="font-bold text-primary" style="font-size: 13px; display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${escapeHtml(trackName)}</span>
+                    <span class="text-secondary" style="font-size: 11px; display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${nodes.length} ${isEN ? 'species' : '種寶可夢'}</span>
+                  </div>
+                </div>
+
+                <div class="ladder-track-canvas">
+                  <div class="ladder-grid-lines">
+                    ${ticks.map(t => `<div class="ladder-grid-line" style="left: ${getPosPct(t)}%;"></div>`).join('')}
+                  </div>
+                  <div class="ladder-track-lead-line" style="left: 0; width: ${leadPct}%;"></div>
+                  <div class="ladder-track-line" style="left: ${leadPct}%; right: 0;"></div>
+
+                  <div class="ladder-nodes-container">
+                    ${nodes.map((node, nodeIdx) => {
+                      const groupKey = node.procs.toFixed(1);
+                      const group = countGroups[groupKey] || [node];
+                      const groupSize = group.length;
+                      const itemIdx = group.indexOf(node);
+
+                      let offsetPx = 0;
+                      if (groupSize > 1) {
+                        const staggerStep = groupSize >= 6 ? 14 : 18;
+                        offsetPx = Math.round((itemIdx - (groupSize - 1) / 2) * staggerStep);
+                      }
+
+                      const basePosPct = parseFloat(getPosPct(node.procs));
+                      const alignClass = basePosPct > 60 ? 'align-right' : (basePosPct < 40 ? 'align-left' : 'align-center');
+                      const leftStyle = offsetPx === 0 ? `${basePosPct}%` : `calc(${basePosPct}% + ${offsetPx}px)`;
+                      const zIndex = node.isTopNode ? 50 : Math.max(40 - nodeIdx, 5);
+
+                      const idealMin = Math.floor(node.calcRes.idealIntervalSec / 60);
+                      const idealSec = Math.round(node.calcRes.idealIntervalSec % 60);
+
+                      return `
+                        <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} ${groupSize > 1 ? 'node-in-cluster' : ''}"
+                             data-pkm="${escapeHtml(node.p.name_cn || node.p.name)}"
+                             style="left: ${leftStyle}; z-index: ${zIndex};">
+                          <div class="node-avatar-wrapper">
+                            <img src="${node.iconUrl}" class="node-avatar-img" alt="${escapeHtml(node.pkmDisplayName)}" loading="lazy" decoding="async">
+                          </div>
+                          <div class="node-count-badge" title="${isEN ? '12h Expected Triggers: ' : '日間 12h 預估發動次數：'}${node.displayCount}">
+                            ${node.displayCount}
+                          </div>
+
+                          <div class="ladder-node-tooltip">
+                            <div class="tooltip-title">
+                              ${node.isTopNode ? (isEN ? 'Top 1 ' : 'TOP 1 ') : ''}${escapeHtml(node.pkmDisplayName)}
+                              <span class="node-specialty-tag specialty-${node.specialtyKey}" style="margin-left: 6px; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); color: var(--accent-color, #38bdf8);">${node.specialtyDisplay}</span>
+                            </div>
+                            <div class="tooltip-detail">
+                              ${isEN ? 'Est. 12h Triggers: ' : '預估 12h 發動：'}
+                              <span class="text-success font-bold">${node.displayCount} ${isEN ? 'procs/12h' : '次/12h'}</span>
+                            </div>
+                            <div class="tooltip-yield-breakdown">
+                              <div class="breakdown-row">
+                                <span class="breakdown-label">${isEN ? 'Main Skill:' : '主技能：'}</span>
+                                <span class="breakdown-val font-bold text-primary">${escapeHtml(node.skillDisplayName)}</span>
+                              </div>
+                              <div class="breakdown-row">
+                                <span class="breakdown-label">${isEN ? 'Base Rate:' : '基礎機率：'}</span>
+                                <span class="breakdown-val">${(node.calcRes.baseSkillRate * 100).toFixed(2)}%</span>
+                              </div>
+                              <div class="breakdown-row">
+                                <span class="breakdown-label">${isEN ? 'Final Rate:' : '最終機率：'}</span>
+                                <span class="breakdown-val text-accent font-bold">${(node.calcRes.finalSkillRate * 100).toFixed(2)}%</span>
+                              </div>
+                              <div class="breakdown-row">
+                                <span class="breakdown-label">${isEN ? 'Ideal Interval (0.45x):' : '滿活力間隔 (0.45x)：'}</span>
+                                <span class="breakdown-val">${idealMin}${isEN ? 'm ' : '分'}${idealSec}${isEN ? 's' : '秒'}</span>
+                              </div>
+                              <div class="breakdown-row">
+                                <span class="breakdown-label">${isEN ? 'Est. Helps (12h):' : '日間 12h 總幫忙次數：'}</span>
+                                <span class="breakdown-val">${(43200 / node.calcRes.idealIntervalSec).toFixed(1)} ${isEN ? 'helps' : '次'}</span>
+                              </div>
+                            </div>
+                            <div class="tooltip-note" style="margin-top: 6px; font-size: 11px; line-height: 1.4; color: var(--text-secondary);">
+                              ${isEN ? 'Formula: 43200 / (effectiveInterval * 0.45) * finalSkillRate' : '計算公式：43200 / (有效間隔 * 0.45) * 最終技能機率'}
+                            </div>
+                          </div>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function refreshSkillCoordinateLadder() {
+    const container = document.getElementById('wiki-skill-ladder-coordinate');
+    if (container) {
+      container.innerHTML = renderSkillCoordinateLadder();
+    }
+    updateSkillLadderActiveFilterBadge();
+  }
+
+  function renderSkillLadderMobileHandle(currentWikiSubTab, isEN) {
+    return `
+      <!-- 右下懸浮技能天梯篩選按鈕 (Mobile FAB) -->
+      <button type="button" id="skill-ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openSkillLadderSidebar()" title="${isEN ? 'Filter' : '展開技能天梯篩選器'}" aria-label="${isEN ? 'Filter' : '展開技能天梯篩選器'}" style="${currentWikiSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}">
+        <span class="bookmark-icon">
+          <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="21" x2="4" y2="14"></line>
+            <line x1="4" y1="10" x2="4" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12" y2="3"></line>
+            <line x1="20" y1="21" x2="20" y2="16"></line>
+            <line x1="20" y1="12" x2="20" y2="3"></line>
+            <line x1="1" y1="14" x2="7" y2="14"></line>
+            <line x1="9" y1="8" x2="15" y2="8"></line>
+            <line x1="17" y1="16" x2="23" y2="16"></line>
+          </svg>
+        </span>
+        <span id="skill-ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
+      </button>
+    `;
+  }
+
+  function renderSkillLadderSidebar(initialSkillLadderCollapsed, isEN) {
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    return `
+      <aside id="skill-ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialSkillLadderCollapsed}" style="${currentWikiSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Skill Filters' : '技能天梯篩選器'}">
+        ${!isMobileH5 ? `
+          <button type="button" id="skill-ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleSkillLadderSidebar(true)" title="${isEN ? 'Expand Filter' : '展開技能天梯篩選側邊欄'}" aria-label="${isEN ? 'Expand Filter' : '展開技能天梯篩選側邊欄'}">
+            <span class="bookmark-icon">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+            </span>
+            <span class="bookmark-text">${isEN ? 'Filter' : '篩選'}</span>
+            <span class="bookmark-arrow">◀</span>
+            <span id="skill-ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
+          </button>
+        ` : ''}
+
+        <div class="sidebar-header">
+          <button type="button" id="skill-ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.toggleSkillLadderSidebar(false)" title="${isEN ? 'Collapse Filter' : '收合側邊欄'}" aria-label="${isEN ? 'Collapse Filter' : '收合側邊欄'}">◀</button>
+          <div class="sidebar-title-group" style="display:flex;align-items:center;gap:6px;">
+            <span class="sidebar-title">${isEN ? 'Skill Filters' : '技能天梯篩選器'}</span>
+            <button type="button" class="pokedex-formula-help-btn ladder-formula-help-btn" onclick="window.WikiDB.toggleSkillLadderEnergyHelp(event)" title="${isEN ? 'Baseline: Lv.60 Ideal Energy (0.45x) 12h' : '基準：Lv.60 滿活力 (0.45x) 12小時'}" aria-label="Skill Ladder Energy Info">?</button>
+          </div>
+          <button type="button" id="skill-ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetSkillLadderFilters()" title="${isEN ? 'Reset Filters' : '重設所有條件'}">${isEN ? 'Reset' : '全部重設'}</button>
+
+          <div id="skill-ladder-energy-help-popover" class="ladder-energy-help-popover" style="display:none;" role="tooltip">
+            <div class="pokedex-energy-help-backdrop" onclick="window.WikiDB.closeSkillLadderEnergyHelp(event)"></div>
+            <div class="pokedex-energy-help-bubble ladder-energy-help-bubble">
+              <div class="energy-help-title font-bold">${isEN ? 'Baseline: Lv.60 Ideal Energy (12h)' : '天梯基準：Lv.60 滿活力 (12h)'}</div>
+              <div class="energy-help-body">
+                ${isEN
+                  ? 'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daytime 12-hour procs: 43200 / (effectiveInterval * 0.45) * finalSkillRate.'
+                  : '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算日間 12 小時主技能發動次數：43200 / (有效間隔 * 0.45) * 最終技能機率。'}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-scrollable-content">
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${isEN ? 'Search Pokémon' : '搜尋寶可夢'}</span>
+              <button type="button" id="skill-ladder-search-clear-btn" class="sidebar-section-clear-btn" style="${(typeof getSkillLadderSearchQuery === 'function' && getSkillLadderSearchQuery()) ? 'display:inline-block;' : 'display:none;'}" onclick="window.WikiDB.clearSkillLadderSearch()">${isEN ? 'Clear' : '清空'}</button>
+            </div>
+            <div class="sidebar-search-box" style="margin-top: 4px;">
+              <span class="sidebar-search-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+                </svg>
+              </span>
+              <input type="text" id="skill-ladder-pkm-search-input" class="sidebar-search-input" placeholder="${isEN ? 'Search Pokémon...' : '搜尋寶可夢名稱...'}" value="${(typeof getSkillLadderSearchQuery === 'function' ? getSkillLadderSearchQuery() : '')}" oninput="window.WikiDB.onSkillLadderSearch(this.value)">
+            </div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${isEN ? 'Track Sorting' : '天梯軌道排序'}</span>
+              <label class="ladder-top15-switch-label" title="${isEN ? 'Show Top 15 Only' : '預設開啟前15名排行'}">
+                <input type="checkbox" id="skill-ladder-top15-switch" class="ladder-switch-input" ${(typeof getSkillLadderTop15Only === 'function' ? getSkillLadderTop15Only() : true) ? 'checked' : ''} onchange="window.WikiDB.toggleSkillLadderTop15(this.checked)">
+                <span class="ladder-switch-slider"></span>
+                <span class="ladder-switch-text">${isEN ? 'Top 15' : '前15名'}</span>
+              </label>
+            </div>
+            <div class="sidebar-skills-list sidebar-2col-tags">
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'DEFAULT') ? 'active' : ''}" data-skill-sort-order="DEFAULT" onclick="window.WikiDB.setSkillLadderSortOrder('DEFAULT')">${isEN ? 'Default' : '預設分類'}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'PROCS_DESC') ? 'active' : ''}" data-skill-sort-order="PROCS_DESC" onclick="window.WikiDB.setSkillLadderSortOrder('PROCS_DESC')">${isEN ? 'Procs: High-Low' : '次數：多到少'}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'COUNT_DESC') ? 'active' : ''}" data-skill-sort-order="COUNT_DESC" onclick="window.WikiDB.setSkillLadderSortOrder('COUNT_DESC')">${isEN ? 'Species: High-Low' : '數量：多到少'}</button>
+            </div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${isEN ? 'Specialty Type' : '寶可夢專長'}</span>
+            </div>
+            <div class="sidebar-skills-list">
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSpecialtyFilter === 'function' && getSkillLadderSpecialtyFilter() === 'ALL') ? 'active' : ''}" data-skill-specialty-filter="ALL" onclick="window.WikiDB.setSkillLadderSpecialtyFilter('ALL')">${isEN ? 'All' : '全部'}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSpecialtyFilter === 'function' && getSkillLadderSpecialtyFilter() === 'SKILL') ? 'active' : ''}" data-skill-specialty-filter="SKILL" onclick="window.WikiDB.setSkillLadderSpecialtyFilter('SKILL')">${isEN ? 'Skill' : '技能型'}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSpecialtyFilter === 'function' && getSkillLadderSpecialtyFilter() === 'BERRY') ? 'active' : ''}" data-skill-specialty-filter="BERRY" onclick="window.WikiDB.setSkillLadderSpecialtyFilter('BERRY')">${isEN ? 'Berry' : '樹果型'}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSpecialtyFilter === 'function' && getSkillLadderSpecialtyFilter() === 'INGREDIENT') ? 'active' : ''}" data-skill-specialty-filter="INGREDIENT" onclick="window.WikiDB.setSkillLadderSpecialtyFilter('INGREDIENT')">${isEN ? 'Ingredient' : '食材型'}</button>
+            </div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${isEN ? 'Sub-Skills' : '副技能補正模擬'}</span>
+            </div>
+            <div class="sidebar-skills-list sidebar-2col-tags">
+              <button type="button" class="tag-btn ${typeof isSkillLadderSpeedM !== 'undefined' && isSkillLadderSpeedM ? 'active' : ''}" id="skill-ladder-speed-m-toggle" data-skill-subskill-boost="SPEED_M" onclick="window.WikiDB.toggleSkillLadderSubskill('SPEED_M')">${isEN ? 'Help Speed M' : '幫忙速度M'}</button>
+              <button type="button" class="tag-btn ${typeof isSkillLadderSpeedS !== 'undefined' && isSkillLadderSpeedS ? 'active' : ''}" id="skill-ladder-speed-s-toggle" data-skill-subskill-boost="SPEED_S" onclick="window.WikiDB.toggleSkillLadderSubskill('SPEED_S')">${isEN ? 'Help Speed S' : '幫忙速度S'}</button>
+              <button type="button" class="tag-btn ${typeof isSkillLadderSkillM !== 'undefined' && isSkillLadderSkillM ? 'active' : ''}" id="skill-ladder-skill-m-toggle" data-skill-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_M')">${isEN ? 'Skill Trigger M' : '技能機率M'}</button>
+              <button type="button" class="tag-btn ${typeof isSkillLadderSkillS !== 'undefined' && isSkillLadderSkillS ? 'active' : ''}" id="skill-ladder-skill-s-toggle" data-skill-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_S')">${isEN ? 'Skill Trigger S' : '技能機率S'}</button>
+            </div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${isEN ? 'Nature Boost' : '性格補正模擬'}</span>
+            </div>
+            <div class="sidebar-skills-list sidebar-2col-tags">
+              <button type="button" class="tag-btn ${(typeof getSkillLadderNature === 'function' && getSkillLadderNature() === 'SPEED') ? 'active' : ''}" data-skill-nature-filter="SPEED" onclick="window.WikiDB.toggleSkillLadderNatureFilter('SPEED')">${isEN ? 'Help Speed ▲' : '幫忙速度▲'}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderNature === 'function' && getSkillLadderNature() === 'SKILL') ? 'active' : ''}" data-skill-nature-filter="SKILL" onclick="window.WikiDB.toggleSkillLadderNatureFilter('SKILL')">${isEN ? 'Skill Chance ▲' : '技能機率▲'}</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    `;
+  }
+
+  function attachSkillLadderExports(wikiExport, targetWindow) {
+    const methods = {
+      toggleSkillLadderSidebar: toggleSkillLadderSidebar,
+      openSkillLadderSidebar: openSkillLadderSidebar,
+      closeSkillLadderSidebar: closeSkillLadderSidebar,
+      toggleSkillLadderEnergyHelp: toggleSkillLadderEnergyHelp,
+      closeSkillLadderEnergyHelp: closeSkillLadderEnergyHelp,
+      resetSkillLadderFilters: resetSkillLadderFilters,
+      onSkillLadderSearch: onSkillLadderSearch,
+      setSkillLadderSearchQuery: setSkillLadderSearchQuery,
+      getSkillLadderSearchQuery: getSkillLadderSearchQuery,
+      clearSkillLadderSearch: clearSkillLadderSearch,
+      toggleSkillLadderTop15: toggleSkillLadderTop15,
+      getSkillLadderTop15Only: getSkillLadderTop15Only,
+      setSkillLadderSortOrder: setSkillLadderSortOrder,
+      getSkillLadderSortOrder: getSkillLadderSortOrder,
+      setSkillLadderSpecialtyFilter: setSkillLadderSpecialtyFilter,
+      getSkillLadderSpecialtyFilter: getSkillLadderSpecialtyFilter,
+      toggleSkillLadderSubskill: toggleSkillLadderSubskill,
+      toggleSkillLadderNatureFilter: toggleSkillLadderNatureFilter,
+      getSkillLadderNature: getSkillLadderNature,
+      refreshSkillCoordinateLadder: refreshSkillCoordinateLadder,
+      renderSkillCoordinateLadder: renderSkillCoordinateLadder,
+      updateSkillLadderActiveFilterBadge: updateSkillLadderActiveFilterBadge,
+      POKEMON_SKILLS_BASELINE_DATA: typeof POKEMON_SKILLS_BASELINE_DATA !== 'undefined' ? POKEMON_SKILLS_BASELINE_DATA : [],
+      SKILL_TRACK_DEFINITIONS: typeof SKILL_TRACK_DEFINITIONS !== 'undefined' ? SKILL_TRACK_DEFINITIONS : [],
+      COMPOSITE_SKILL_TRACKS: typeof COMPOSITE_SKILL_TRACKS !== 'undefined' ? COMPOSITE_SKILL_TRACKS : {},
+      getPokemonSkillLadderProcs: typeof getPokemonSkillLadderProcs === 'function' ? getPokemonSkillLadderProcs : null
+    };
+
+    if (wikiExport && typeof wikiExport === 'object') {
+      Object.assign(wikiExport, methods);
+    }
+    if (targetWindow && typeof targetWindow === 'object') {
+      Object.assign(targetWindow, methods);
+    }
+  }
+
   // 渲染樹果與食材基礎能量看板 (極簡無名無滾輪 18 格全展開版 + 等級滑桿、島嶼加成與順果 2x 開關)
   function renderValuesBoard() {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
@@ -8521,6 +9699,8 @@
     const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
     const isLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_ladder_sidebar_open', true) : true;
     const initialLadderCollapsed = isMobileH5 ? 'collapsed' : (isLadderOpen ? '' : 'collapsed');
+    const isSkillLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_skill_ladder_sidebar_open', true) : true;
+    const initialSkillLadderCollapsed = isMobileH5 ? 'collapsed' : (isSkillLadderOpen ? '' : 'collapsed');
     const isWikiMainActive = !!(container && (
       (container.style && container.style.display !== 'none' && !container.hidden) ||
       (typeof document !== 'undefined' && document.getElementById && document.getElementById('tab-wiki') && document.getElementById('tab-wiki').classList && document.getElementById('tab-wiki').classList.contains('active')) ||
@@ -8595,6 +9775,8 @@
           </span>
           <span id="ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
         </button>
+
+        ${typeof renderSkillLadderMobileHandle === 'function' ? renderSkillLadderMobileHandle(currentWikiSubTab, isEN) : ''}
       ` : ''}
 
       <!-- 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側滑動) -->
@@ -8764,6 +9946,8 @@
         </div>
       </aside>
 
+      ${typeof renderSkillLadderSidebar === 'function' ? renderSkillLadderSidebar(initialSkillLadderCollapsed, isEN) : ''}
+
       <div class="wiki-main-container">
         <!-- 二級子分頁導航 (Sub-tabs) - 精簡無大標題橫幅 -->
         <div class="wiki-subnav-bar">
@@ -8771,6 +9955,7 @@
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isMobileH5 ? (isEN ? 'Skills' : (isCN ? '主技能' : '主技能')) : (isEN ? 'Main Skills' : (isCN ? '主技能数值库' : '主技能數值庫'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isMobileH5 ? (isEN ? 'Subskills' : (isCN ? '副技性格' : '副技性格')) : (isEN ? 'Sub-Skills' : (isCN ? '副技能与性格指南' : '副技能與性格指南'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isMobileH5 ? (isEN ? 'Ladder' : (isCN ? '食材天梯' : '食材天梯')) : (isEN ? 'Ingredient Ladder' : (isCN ? '食材产量天梯榜' : '食材產量天梯榜'))}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills_ladder' ? 'active' : ''}" data-subtab="skills_ladder" onclick="window.WikiDB.switchSubTab('skills_ladder')">${isMobileH5 ? (isEN ? 'Skill Ladder' : (isCN ? '技能天梯' : '技能天梯')) : (isEN ? 'Main Skill Ladder' : (isCN ? '主技能天梯榜' : '主技能天梯榜'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isMobileH5 ? (isEN ? 'Values' : (isCN ? '能量速查' : '能量速查')) : (isEN ? 'Berry & Ings' : (isCN ? '树果与食材能量' : '樹果與食材能量'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Growth' : (isCN ? '培育指南' : '培育指南')) : (isEN ? 'Tier Guide' : (isCN ? '培育与评级指南' : '培育與評級指南'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'islands' ? 'active' : ''}" data-subtab="islands" onclick="window.WikiDB.switchSubTab('islands')">${isMobileH5 ? (isEN ? 'Islands' : (isCN ? '岛屿营地' : '島嶼營地')) : (isEN ? 'Camps & EX' : (isCN ? '岛屿营地与EX模式' : '島嶼營地與EX模式'))}</button>
@@ -9065,6 +10250,14 @@
           </div>
         </div>
 
+        <!-- 子分頁：主技能天梯榜 (Skill Proc Ladder) -->
+        <div id="wiki-subpanel-skills_ladder" class="wiki-subpanel ${currentWikiSubTab === 'skills_ladder' ? 'active' : ''}" style="${currentWikiSubTab === 'skills_ladder' ? '' : 'display:none;'}">
+          <!-- 橫向視覺技能天梯座標圖 -->
+          <div id="wiki-skill-ladder-coordinate">
+            ${typeof renderSkillCoordinateLadder === 'function' ? renderSkillCoordinateLadder() : ''}
+          </div>
+        </div>
+
         <!-- 子分頁 4：樹果與食材基礎能量 (Berry & Ingredient Values) -->
         <div id="wiki-subpanel-values" class="wiki-subpanel ${currentWikiSubTab === 'values' ? 'active' : ''}" style="${currentWikiSubTab === 'values' ? '' : 'display:none;'}">
           ${renderValuesBoard()}
@@ -9234,6 +10427,7 @@
 
       <!-- 遮罩層 (Backdrop for Mobile Drawer - 阻斷點擊穿透) -->
       <div id="ladder-sidebar-backdrop" class="sidebar-backdrop" onclick="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchend="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchstart="event.stopPropagation()"></div>
+      <div id="skill-ladder-sidebar-backdrop" class="sidebar-backdrop" onclick="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeSkillLadderSidebar()" ontouchend="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeSkillLadderSidebar()" ontouchstart="event.stopPropagation()"></div>
     `;
 
     if (typeof window.pruneOverlayDuplicates === 'function') {
@@ -9243,6 +10437,9 @@
         'ladder-sidebar-backdrop',
         'ladder-sidebar-bookmark-handle',
         'ladder-recipe-highlight-fab',
+        'skill-ladder-filter-sidebar',
+        'skill-ladder-sidebar-backdrop',
+        'skill-ladder-sidebar-bookmark-handle',
         'wiki-item-detail-modal'
       ]);
     }
@@ -9407,6 +10604,10 @@
     navigateToPokemonDex: navigateToPokemonDex
   };
 
+  if (typeof attachSkillLadderExports === 'function') {
+    attachSkillLadderExports(WikiDBExport, window);
+  }
+
   window.WikiDB = WikiDBExport;
   window.filterItemsByCategory = filterItemsByCategory;
   window.handleItemsSearch = handleItemsSearch;
@@ -9421,85 +10622,28 @@
   window.formatSnorlaxRankBadge = formatSnorlaxRankBadge;
 
   // 同步掛載至 window 根層級以防止任何命名空間呼叫錯誤
-  window.switchWikiSubTab = switchWikiSubTab;
-  window.getCurrentSubTab = getCurrentSubTab;
-  window.getCurrentIslandId = () => currentIslandId;
-  window.getIsExpertModeActive = () => isExpertModeActive;
-  window.getCurrentIslandSleepType = () => currentIslandSleepType;
-  window.sortIslandSpawns = sortIslandSpawns;
-  window.getIslandSpawnsSort = getIslandSpawnsSort;
-  window.toggleIslandLegendaryOnly = toggleIslandLegendaryOnly;
-  window.getSavedIslandLegendaryOnly = getSavedIslandLegendaryOnly;
-  window.toggleLadderSidebar = toggleLadderSidebar;
-  window.toggleLadderEnergyHelp = toggleLadderEnergyHelp;
-  window.closeLadderEnergyHelp = closeLadderEnergyHelp;
-  window.closeSleepStylePopover = closeSleepStylePopover;
-  window.switchLadderView = switchLadderView;
-  window.filterWikiSkills = filterWikiSkills;
-  window.filterWikiIngredients = filterWikiIngredients;
-  window.switchChargeStock = switchChargeStock;
-  window.switchHelperBoost = switchHelperBoost;
-  window.toggleDetailTable = toggleDetailTable;
-  window.toggleSkillCard = toggleSkillCard;
-  window.toggleSkillStepper = toggleSkillStepper;
-  window.updateBerryLevel = updateBerryLevel;
-  window.updateBerryIsland = updateBerryIsland;
-  window.toggleBerryFavorite = toggleBerryFavorite;
-  window.toggleLadderTop15 = toggleLadderTop15;
-  window.getLadderTop15Only = getLadderTop15Only;
-  window.toggleLadderIngM = toggleLadderIngM;
-  window.toggleLadderIngS = toggleLadderIngS;
-  window.toggleLadderSpeedM = toggleLadderSpeedM;
-  window.toggleLadderSpeedS = toggleLadderSpeedS;
-  window.toggleLadderSkillM = toggleLadderSkillM;
-  window.toggleLadderSkillS = toggleLadderSkillS;
-  window.toggleLadderSubskill = toggleLadderSubskill;
-  window.toggleLadderNatureIng = toggleLadderNatureIng;
-  window.toggleLadderNatureSpeed = toggleLadderNatureSpeed;
-  window.toggleLadderNatureFilter = toggleLadderNatureFilter;
-  window.toggleLadderRecipeMultiSelect = toggleLadderRecipeMultiSelect;
-  window.getLadderNature = getLadderNature;
-  window.setLadderNature = setLadderNature;
-  window.onLadderSearch = onLadderSearch;
-  window.clearLadderSearch = clearLadderSearch;
-  window.setLadderSupplyFilter = setLadderSupplyFilter;
-  window.setLadderRecipeFilter = setLadderRecipeFilter;
-  window.setLadderSpecialtyFilter = setLadderSpecialtyFilter;
-  window.toggleLadderSkillDrawExpected = toggleLadderSkillDrawExpected;
-  window.getLadderSkillDrawExpected = getLadderSkillDrawExpected;
-  window.getPokemonSkillDrawBonus = getPokemonSkillDrawBonus;
-  window.INGREDIENT_DRAW_SKILL_EXPECTATIONS = INGREDIENT_DRAW_SKILL_EXPECTATIONS;
-  window.setLadderSortOrder = setLadderSortOrder;
-  window.getLadderSortOrder = getLadderSortOrder;
-  window.resetLadderFilters = resetLadderFilters;
-  window.refreshCoordinateLadder = refreshCoordinateLadder;
-  window.renderCoordinateLadder = renderCoordinateLadder;
-  window.handleLadderGroupHover = handleLadderGroupHover;
-  window.handleLadderGroupHoverOut = handleLadderGroupHoverOut;
-  window.recalcTriggerChance = recalcTriggerChance;
-  window.recalcSleepDays = recalcSleepDays;
-  window.initCalcCustomSelects = initCalcCustomSelects;
-  window.openLadderSidebar = openLadderSidebar;
-  window.closeLadderSidebar = closeLadderSidebar;
-  window.openIngredientRankingModal = openIngredientRankingModal;
-  window.closeIngredientRankingModal = closeIngredientRankingModal;
-  window.updateLadderActiveFilterBadge = updateLadderActiveFilterBadge;
-  window.HELPING_SPEED_MATRIX = HELPING_SPEED_MATRIX;
-  window.selectIsland = selectIsland;
-  window.toggleIslandExpertMode = toggleIslandExpertMode;
-  window.filterIslandSleepType = filterIslandSleepType;
-  window.renderIslandsSubpanel = renderIslandsSubpanel;
-  window.TOP_7_RECIPES_HIGHLIGHT = TOP_7_RECIPES_HIGHLIGHT;
-  window.TOP_RECIPES_BY_CATEGORY = TOP_RECIPES_BY_CATEGORY;
-  window.openLadderRecipeModal = openLadderRecipeModal;
-  window.closeLadderRecipeModal = closeLadderRecipeModal;
-  window.openSkillDrawHelpModal = openSkillDrawHelpModal;
-  window.closeSkillDrawHelpModal = closeSkillDrawHelpModal;
-  window.selectLadderHighlightRecipe = selectLadderHighlightRecipe;
-  window.clearLadderHighlightRecipe = clearLadderHighlightRecipe;
-  window.switchLadderRecipeCategory = switchLadderRecipeCategory;
-  window.getLadderRecipeCategory = () => ladderRecipeCategory;
-  window.getLadderHighlightRecipe = () => ladderHighlightRecipe;
+  Object.assign(window, {
+    switchWikiSubTab, getCurrentSubTab, getCurrentIslandId: () => currentIslandId,
+    getIsExpertModeActive: () => isExpertModeActive, getCurrentIslandSleepType: () => currentIslandSleepType,
+    sortIslandSpawns, getIslandSpawnsSort, toggleIslandLegendaryOnly, getSavedIslandLegendaryOnly,
+    toggleLadderSidebar, toggleLadderEnergyHelp, closeLadderEnergyHelp, closeSleepStylePopover,
+    switchLadderView, filterWikiSkills, filterWikiIngredients, switchChargeStock, switchHelperBoost,
+    toggleDetailTable, toggleSkillCard, toggleSkillStepper, updateBerryLevel, updateBerryIsland,
+    toggleBerryFavorite, toggleLadderTop15, getLadderTop15Only, toggleLadderIngM, toggleLadderIngS,
+    toggleLadderSpeedM, toggleLadderSpeedS, toggleLadderSkillM, toggleLadderSkillS, toggleLadderSubskill,
+    toggleLadderNatureIng, toggleLadderNatureSpeed, toggleLadderNatureFilter, toggleLadderRecipeMultiSelect,
+    getLadderNature, setLadderNature, onLadderSearch, clearLadderSearch, setLadderSupplyFilter,
+    setLadderRecipeFilter, setLadderSpecialtyFilter, toggleLadderSkillDrawExpected, getLadderSkillDrawExpected,
+    getPokemonSkillDrawBonus, INGREDIENT_DRAW_SKILL_EXPECTATIONS, setLadderSortOrder, getLadderSortOrder,
+    resetLadderFilters, refreshCoordinateLadder, renderCoordinateLadder, handleLadderGroupHover,
+    handleLadderGroupHoverOut, recalcTriggerChance, recalcSleepDays, initCalcCustomSelects,
+    openLadderSidebar, closeLadderSidebar, openIngredientRankingModal, closeIngredientRankingModal,
+    updateLadderActiveFilterBadge, HELPING_SPEED_MATRIX, selectIsland, toggleIslandExpertMode,
+    filterIslandSleepType, renderIslandsSubpanel, TOP_7_RECIPES_HIGHLIGHT, TOP_RECIPES_BY_CATEGORY,
+    openLadderRecipeModal, closeLadderRecipeModal, openSkillDrawHelpModal, closeSkillDrawHelpModal,
+    selectLadderHighlightRecipe, clearLadderHighlightRecipe, switchLadderRecipeCategory,
+    getLadderRecipeCategory: () => ladderRecipeCategory, getLadderHighlightRecipe: () => ladderHighlightRecipe
+  });
 
   // 當 DOM 準備完成時自動初始化
   if (document.readyState === 'loading') {

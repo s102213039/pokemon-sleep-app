@@ -22,6 +22,7 @@ const MOBILE_OVERLAY_IDS = [
   'recipe-filter-sidebar', 'recipe-sidebar-backdrop',
   'box-filter-sidebar', 'box-sidebar-backdrop',
   'ladder-filter-sidebar', 'ladder-sidebar-backdrop',
+  'skill-ladder-filter-sidebar', 'skill-ladder-sidebar-backdrop',
   'pokedex-detail-modal', 'box-edit-modal', 'box-guide-lightbox-modal',
   'settings-modal', 'ladder-recipe-modal', 'modal-appraisal-report',
   'wiki-item-detail-modal'
@@ -39,7 +40,8 @@ const SIDEBAR_BACKDROP_BY_ID = {
   'pokemon-filter-sidebar': 'sidebar-backdrop',
   'recipe-filter-sidebar': 'recipe-sidebar-backdrop',
   'box-filter-sidebar': 'box-sidebar-backdrop',
-  'ladder-filter-sidebar': 'ladder-sidebar-backdrop'
+  'ladder-filter-sidebar': 'ladder-sidebar-backdrop',
+  'skill-ladder-filter-sidebar': 'skill-ladder-sidebar-backdrop'
 };
 
 function queryAllById(id) {
@@ -123,6 +125,7 @@ function isAnyOverlayOpen() {
     if (isDrawerVisiblyOpen(resolveUniqueOverlay('recipe-filter-sidebar'))) return true;
     if (isDrawerVisiblyOpen(resolveUniqueOverlay('box-filter-sidebar'))) return true;
     if (isDrawerVisiblyOpen(resolveUniqueOverlay('ladder-filter-sidebar'))) return true;
+    if (isDrawerVisiblyOpen(resolveUniqueOverlay('skill-ladder-filter-sidebar'))) return true;
     for (let i = 0; i < MOBILE_OVERLAY_IDS.length; i++) {
       const id = MOBILE_OVERLAY_IDS[i];
       if (id.indexOf('sidebar') !== -1 || id.indexOf('backdrop') !== -1) continue;

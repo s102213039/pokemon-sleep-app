@@ -54,7 +54,7 @@
     ));
 
     if (isMobileH5) {
-      if (isWikiMainActive && targetTab === 'ingredients') {
+      if (isWikiMainActive && (targetTab === 'ingredients' || targetTab === 'skills_ladder')) {
         document.body.classList.add('ladder-active');
       } else {
         document.body.classList.remove('ladder-active');
@@ -113,6 +113,10 @@
         ladderHandle.style.opacity = '0';
         ladderHandle.style.pointerEvents = 'none';
       }
+    }
+
+    if (typeof handleSkillLadderSubTabSwitch === 'function') {
+      handleSkillLadderSubTabSwitch(targetTab, isWikiMainActive, isMobileH5);
     }
 
     const ladderRecipeFab = document.getElementById('ladder-recipe-highlight-fab');
@@ -965,10 +969,7 @@
       pot_size: 33,
       base_energy: 7483,
       icon: 'https://www.serebii.net/pokemonsleep/meals/grilledtailcurry.png',
-      ingredients: [
-        { name: '美味尾巴', count: 8, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' },
-        { name: '火辣香草', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }
-      ]
+      ingredients: [{ name: '美味尾巴', count: 8, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }]
     },
     {
       name_cn: '呆呆獸尾巴的胡椒沙拉',
@@ -977,22 +978,15 @@
       pot_size: 35,
       base_energy: 8169,
       icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png',
-      ingredients: [
-        { name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' },
-        { name: '火辣香草', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' },
-        { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }
-      ]
+      ingredients: [{ name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }]
     }
   ];
 
   const ALL_TOP_CATEGORY_RECIPES = [
-    ...TOP_RECIPES_BY_CATEGORY.curry,
-    ...TOP_RECIPES_BY_CATEGORY.salad,
-    ...TOP_RECIPES_BY_CATEGORY.dessert,
-    ...TAIL_FEATURED_RECIPES
+    ...TOP_RECIPES_BY_CATEGORY.curry, ...TOP_RECIPES_BY_CATEGORY.salad,
+    ...TOP_RECIPES_BY_CATEGORY.dessert, ...TAIL_FEATURED_RECIPES
   ];
 
   if (typeof window !== 'undefined') {
     window.ALL_TOP_CATEGORY_RECIPES = ALL_TOP_CATEGORY_RECIPES;
   }
-

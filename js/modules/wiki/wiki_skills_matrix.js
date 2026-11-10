@@ -547,7 +547,7 @@
   }));
 
   const STORAGE_KEY_WIKI_SUBTAB = 'pksleep_active_wiki_subtab';
-  const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'values', 'ratings', 'islands', 'items'];
+  const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'skills_ladder', 'values', 'ratings', 'islands', 'items'];
 
   const STORAGE_KEY_SKILLS_CATEGORY = 'pksleep_wiki_skills_category';
   const VALID_SKILLS_CATEGORIES = ['all', 'energy', 'energy_heal', 'ingredient', 'special', 'shards'];

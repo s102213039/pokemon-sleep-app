@@ -28,6 +28,9 @@ const WIKI_MODULES = [
   'wiki_camps_render.js',
   'wiki_render_ratings.js',
   'wiki_render_ladder.js',
+  'wiki_skill_ladder_data.js',
+  'wiki_skill_ladder.js',
+  'wiki_skill_ladder_render.js',
   'wiki_render_skills.js',
   'wiki_items.js',
   'wiki_main.js'

@@ -2069,6 +2069,7 @@ const MOBILE_OVERLAY_IDS = [
   'recipe-filter-sidebar', 'recipe-sidebar-backdrop',
   'box-filter-sidebar', 'box-sidebar-backdrop',
   'ladder-filter-sidebar', 'ladder-sidebar-backdrop',
+  'skill-ladder-filter-sidebar', 'skill-ladder-sidebar-backdrop',
   'pokedex-detail-modal', 'box-edit-modal', 'box-guide-lightbox-modal',
   'settings-modal', 'ladder-recipe-modal', 'modal-appraisal-report',
   'wiki-item-detail-modal'
@@ -2086,7 +2087,8 @@ const SIDEBAR_BACKDROP_BY_ID = {
   'pokemon-filter-sidebar': 'sidebar-backdrop',
   'recipe-filter-sidebar': 'recipe-sidebar-backdrop',
   'box-filter-sidebar': 'box-sidebar-backdrop',
-  'ladder-filter-sidebar': 'ladder-sidebar-backdrop'
+  'ladder-filter-sidebar': 'ladder-sidebar-backdrop',
+  'skill-ladder-filter-sidebar': 'skill-ladder-sidebar-backdrop'
 };
 
 function queryAllById(id) {
@@ -2170,6 +2172,7 @@ function isAnyOverlayOpen() {
     if (isDrawerVisiblyOpen(resolveUniqueOverlay('recipe-filter-sidebar'))) return true;
     if (isDrawerVisiblyOpen(resolveUniqueOverlay('box-filter-sidebar'))) return true;
     if (isDrawerVisiblyOpen(resolveUniqueOverlay('ladder-filter-sidebar'))) return true;
+    if (isDrawerVisiblyOpen(resolveUniqueOverlay('skill-ladder-filter-sidebar'))) return true;
     for (let i = 0; i < MOBILE_OVERLAY_IDS.length; i++) {
       const id = MOBILE_OVERLAY_IDS[i];
       if (id.indexOf('sidebar') !== -1 || id.indexOf('backdrop') !== -1) continue;
@@ -2739,7 +2742,7 @@ if (typeof document !== 'undefined') {
 
       const STORAGE_KEY_MAIN_TAB = 'pksleep_active_main_tab';
       const VALID_MAIN_TABS = ['pokemon', 'recipes', 'wiki', 'box', 'news'];
-      const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'values', 'ratings', 'islands', 'items'];
+      const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'skills_ladder', 'values', 'ratings', 'islands', 'items'];
       const VALID_BOX_SUBTABS = ['list', 'lab'];
 
       function switchMainTab(target) {
@@ -2819,6 +2822,18 @@ if (typeof document !== 'undefined') {
             if (typeof ladderSidebar.style.setProperty === 'function') ladderSidebar.style.setProperty('display', 'none', 'important');
           }
           if (ladderBackdrop) ladderBackdrop.classList.remove('active');
+          const curSkillLadderHandle = document.getElementById('skill-ladder-sidebar-bookmark-handle');
+          if (curSkillLadderHandle && curSkillLadderHandle.style) {
+            curSkillLadderHandle.style.display = 'none';
+            if (typeof curSkillLadderHandle.style.setProperty === 'function') curSkillLadderHandle.style.setProperty('display', 'none', 'important');
+          }
+          const skillLadderSidebar = document.getElementById('skill-ladder-filter-sidebar');
+          if (skillLadderSidebar && skillLadderSidebar.style) {
+            skillLadderSidebar.style.display = 'none';
+            if (typeof skillLadderSidebar.style.setProperty === 'function') skillLadderSidebar.style.setProperty('display', 'none', 'important');
+          }
+          const skillLadderBackdrop = document.getElementById('skill-ladder-sidebar-backdrop');
+          if (skillLadderBackdrop) skillLadderBackdrop.classList.remove('active');
           const curLadderRecipeFab = document.getElementById('ladder-recipe-highlight-fab');
           if (curLadderRecipeFab && curLadderRecipeFab.style) {
             curLadderRecipeFab.style.display = 'none';
@@ -2932,9 +2947,10 @@ if (typeof document !== 'undefined') {
             try { window.WikiDB.switchSubTab(wikiSubTab); } catch (e) {}
           }
           const isIng = wikiSubTab === 'ingredients';
+          const isSkillLadder = wikiSubTab === 'skills_ladder';
           const isVal = wikiSubTab === 'values';
           if (isMobileH5) {
-            if (isIng) {
+            if (isIng || isSkillLadder) {
               document.body.classList.add('ladder-active');
             } else {
               document.body.classList.remove('ladder-active');
@@ -2977,6 +2993,43 @@ if (typeof document !== 'undefined') {
               curLadderHandle.style.opacity = '0';
               curLadderHandle.style.pointerEvents = 'none';
               curLadderHandle.style.visibility = 'hidden';
+            }
+          }
+
+          const skillLadderSidebar = document.getElementById('skill-ladder-filter-sidebar');
+          const skillLadderBackdrop = document.getElementById('skill-ladder-sidebar-backdrop');
+          if (skillLadderSidebar) {
+            if (isSkillLadder) {
+              skillLadderSidebar.style.display = 'flex';
+              const isSkillLadderOpen = getSidebarSavedState('pksleep_skill_ladder_sidebar_open', true);
+              if (isSkillLadderOpen && !isMobileH5 && window.innerWidth > 1024) {
+                skillLadderSidebar.classList.remove('collapsed');
+              } else {
+                skillLadderSidebar.classList.add('collapsed');
+                if (skillLadderBackdrop) skillLadderBackdrop.classList.remove('active');
+              }
+            } else {
+              skillLadderSidebar.style.display = 'none';
+              skillLadderSidebar.classList.add('collapsed');
+              if (skillLadderBackdrop) skillLadderBackdrop.classList.remove('active');
+            }
+          }
+          const curSkillLadderHandle = document.getElementById('skill-ladder-sidebar-bookmark-handle');
+          if (curSkillLadderHandle) {
+            const isCollapsed = skillLadderSidebar ? skillLadderSidebar.classList.contains('collapsed') : true;
+            if (isSkillLadder && isCollapsed) {
+              curSkillLadderHandle.classList.remove('drawer-open');
+              if (curSkillLadderHandle.style && typeof curSkillLadderHandle.style.removeProperty === 'function') curSkillLadderHandle.style.removeProperty('display');
+              curSkillLadderHandle.style.display = 'flex';
+              curSkillLadderHandle.style.opacity = '1';
+              curSkillLadderHandle.style.pointerEvents = 'auto';
+              curSkillLadderHandle.style.visibility = 'visible';
+            } else {
+              if (isSkillLadder && !isCollapsed) curSkillLadderHandle.classList.add('drawer-open');
+              curSkillLadderHandle.style.display = 'none';
+              curSkillLadderHandle.style.opacity = '0';
+              curSkillLadderHandle.style.pointerEvents = 'none';
+              curSkillLadderHandle.style.visibility = 'hidden';
             }
           }
 

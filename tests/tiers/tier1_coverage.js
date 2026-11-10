@@ -2451,6 +2451,333 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     assertEquals(minBraces, 0, `styles.min.css must have zero negative braces`);
     assertEquals(openBraces, 0, `styles.min.css must have balanced braces`);
   });
+
+  test('Tier 1 - Feature Coverage', 'Main Skill Ladder Subtab Registration, i18n Dictionary & Navigation', () => {
+    // 1. Verify i18n dictionary entries
+    const zhTw = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n', 'i18n_dict_zh_tw.js'), 'utf8');
+    const zhCn = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n', 'i18n_dict_zh_cn.js'), 'utf8');
+    const enUs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n', 'i18n_dict_en_us.js'), 'utf8');
+    assert(zhTw.includes("'wiki.subtab_skills_ladder': '主技能天梯榜'"), 'zh-TW must include wiki.subtab_skills_ladder');
+    assert(zhCn.includes("'wiki.subtab_skills_ladder': '主技能天梯榜'"), 'zh-CN must include wiki.subtab_skills_ladder');
+    assert(enUs.includes("'wiki.subtab_skills_ladder': 'Skill Ladder'"), 'en-US must include wiki.subtab_skills_ladder');
+
+    // 2. Verify VALID_WIKI_SUBTABS in wiki.js and pokedex_nav.js
+    const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    assert(wikiJs.includes("'skills_ladder'"), 'wiki.js must contain skills_ladder');
+    const pokedexNavJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'pokedex', 'pokedex_nav.js'), 'utf8');
+    assert(pokedexNavJs.includes("'skills_ladder'"), 'pokedex_nav.js must contain skills_ladder');
+
+    // 3. Execution in vm context
+    const elements = new Map();
+    const getMockEl = (id) => {
+      if (!elements.has(id)) {
+        elements.set(id, {
+          id,
+          style: { display: '', removeProperty: () => {} },
+          classList: {
+            classes: new Set(),
+            add(c) { this.classes.add(c); },
+            remove(c) { this.classes.delete(c); },
+            contains(c) { return this.classes.has(c); },
+            toggle(c, force) { if (force !== undefined) { force ? this.add(c) : this.remove(c); } else { this.contains(c) ? this.remove(c) : this.add(c); } }
+          },
+          innerHTML: '',
+          textContent: '',
+          setAttribute: () => {},
+          getAttribute: () => null,
+          addEventListener: () => {},
+          removeEventListener: () => {},
+          querySelectorAll: () => []
+        });
+      }
+      return elements.get(id);
+    };
+
+    const mockStorage = new Map([['pksleep_lang', 'zh-TW']]);
+    const ctx = {
+      localStorage: {
+        getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+        setItem: (k, v) => mockStorage.set(k, String(v)),
+        removeItem: (k) => mockStorage.delete(k)
+      },
+      window: {
+        localStorage: {
+          getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+          setItem: (k, v) => mockStorage.set(k, String(v)),
+          removeItem: (k) => mockStorage.delete(k)
+        },
+        addEventListener: () => {},
+        I18N: { getLanguage: () => 'zh-TW', getPokemonName: (s) => s, getMainSkillName: (s) => s },
+        getSidebarSavedState: () => true
+      },
+      document: {
+        body: {
+          classList: {
+            classes: new Set(),
+            add(c) { this.classes.add(c); },
+            remove(c) { this.classes.delete(c); },
+            contains(c) { return this.classes.has(c); }
+          }
+        },
+        documentElement: { setAttribute: () => {} },
+        getElementById: (id) => getMockEl(id),
+        querySelectorAll: (sel) => [],
+        createElement: () => ({ setAttribute: () => {}, innerHTML: '', className: '', id: '', style: {} }),
+        addEventListener: () => {}
+      },
+      console: console
+    };
+    ctx.window.window = ctx.window;
+    ctx.window.document = ctx.document;
+    vm.createContext(ctx);
+    vm.runInContext(wikiJs, ctx);
+
+    const WikiDB = ctx.window.WikiDB;
+    assert(typeof WikiDB.switchSubTab === 'function', 'WikiDB.switchSubTab must be a function');
+    assert(typeof WikiDB.renderSkillCoordinateLadder === 'function', 'WikiDB.renderSkillCoordinateLadder must be a function');
+
+    // Test subtab switch to skills_ladder
+    WikiDB.switchSubTab('skills_ladder');
+    assertEquals(ctx.window.getCurrentSubTab(), 'skills_ladder', 'Subtab must be skills_ladder');
+    const skillSidebar = getMockEl('skill-ladder-filter-sidebar');
+    assertEquals(skillSidebar.style.display, 'flex', 'Skill ladder sidebar must be display: flex');
+    const ingSidebar = getMockEl('ladder-filter-sidebar');
+    assertEquals(ingSidebar.style.display, 'none', 'Ingredient ladder sidebar must be display: none');
+  });
+
+  test('Tier 1 - Feature Coverage', 'Main Skill Ladder Formula: Lv.60 Full Energy 12h Daytime Procs Calculation', () => {
+    const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    const mockStorage = new Map([['pksleep_lang', 'zh-TW']]);
+    const ctx = {
+      localStorage: {
+        getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+        setItem: (k, v) => mockStorage.set(k, String(v)),
+        removeItem: (k) => mockStorage.delete(k)
+      },
+      window: {
+        localStorage: {
+          getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+          setItem: (k, v) => mockStorage.set(k, String(v)),
+          removeItem: (k) => mockStorage.delete(k)
+        },
+        addEventListener: () => {},
+        I18N: { getLanguage: () => 'zh-TW', getPokemonName: (s) => s, getMainSkillName: (s) => s }
+      },
+      document: {
+        body: { classList: { contains: () => false } },
+        documentElement: { setAttribute: () => {} },
+        getElementById: () => null,
+        querySelectorAll: () => [],
+        createElement: () => ({ setAttribute: () => {}, innerHTML: '', className: '', id: '', style: {} }),
+        addEventListener: () => {}
+      },
+      console: console
+    };
+    ctx.window.window = ctx.window;
+    ctx.window.document = ctx.document;
+    vm.createContext(ctx);
+    vm.runInContext(wikiJs, ctx);
+
+    const WikiDB = ctx.window.WikiDB;
+    assert(Array.isArray(WikiDB.POKEMON_SKILLS_BASELINE_DATA), 'POKEMON_SKILLS_BASELINE_DATA must be an array');
+    assert(WikiDB.POKEMON_SKILLS_BASELINE_DATA.length >= 240, 'POKEMON_SKILLS_BASELINE_DATA must contain >= 240 pokemon');
+
+    // Find Golduck (哥達鴨) - interval 00:56:40 (3400s), skill_rate 12.5%
+    const golduck = WikiDB.POKEMON_SKILLS_BASELINE_DATA.find(p => p.name === '哥達鴨' || p.name_en === 'Golduck');
+    assert(golduck, 'Golduck must exist in baseline data');
+
+    // Baseline calculation without subskill/nature boosts
+    const resBase = WikiDB.getPokemonSkillLadderProcs(golduck);
+    assert(resBase, 'Calculation result for Golduck must not be null');
+    // baseIntervalSec: 3400
+    // Lv.60 speed discount: 0.118 -> 3400 * (1 - 0.118) = 2998.8 -> round to 2999
+    // idealIntervalSec: 2999 * 0.45 = 1349.55
+    // finalSkillRate: 0.125
+    // procs: (43200 / 1349.55) * 0.125 = 32.01067... * 0.125 = 4.0013...
+    assertEquals(resBase.effectiveIntervalSec, 2999, 'Golduck effective interval at Lv.60');
+    assert(Math.abs(resBase.idealIntervalSec - 1349.55) < 0.01, 'Golduck ideal interval at 0.45x');
+    assert(Math.abs(resBase.procs - 4.001) < 0.01, 'Golduck baseline 12h procs ~ 4.00');
+
+    // Test with boosts: Help Speed M (14%) + Skill Trigger M (36%) + Nature Skill (+20%)
+    WikiDB.toggleSkillLadderSubskill('SPEED_M');
+    WikiDB.toggleSkillLadderSubskill('SKILL_M');
+    WikiDB.toggleSkillLadderNatureFilter('SKILL');
+
+    const resBoosted = WikiDB.getPokemonSkillLadderProcs(golduck);
+    // effectiveIntervalSec: round(3400 * (1 - 0.118) * (1 - 0.14)) = round(2998.8 * 0.86) = round(2578.968) = 2579
+    // idealIntervalSec: 2579 * 0.45 = 1160.55
+    // finalSkillRate: 0.125 * (1 + 0.36) * 1.20 = 0.125 * 1.36 * 1.20 = 0.204
+    // procs: (43200 / 1160.55) * 0.204 = 37.2237... * 0.204 = 7.5936...
+    assertEquals(resBoosted.effectiveIntervalSec, 2579, 'Boosted effective interval');
+    assert(Math.abs(resBoosted.finalSkillRate - 0.204) < 0.0001, 'Boosted final skill rate');
+    assert(Math.abs(resBoosted.procs - 7.594) < 0.05, 'Boosted 12h procs ~ 7.59');
+
+    // Reset filters
+    WikiDB.resetSkillLadderFilters();
+  });
+
+  test('Tier 1 - Feature Coverage', 'Main Skill Ladder Exclusions & Composite Skill Dual-Track Display', () => {
+    const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    const mockStorage = new Map([['pksleep_lang', 'zh-TW']]);
+    const ctx = {
+      localStorage: {
+        getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+        setItem: (k, v) => mockStorage.set(k, String(v)),
+        removeItem: (k) => mockStorage.delete(k)
+      },
+      window: {
+        localStorage: {
+          getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+          setItem: (k, v) => mockStorage.set(k, String(v)),
+          removeItem: (k) => mockStorage.delete(k)
+        },
+        addEventListener: () => {},
+        I18N: { getLanguage: () => 'zh-TW', getPokemonName: (s) => s, getMainSkillName: (s) => s }
+      },
+      document: {
+        body: { classList: { contains: () => false } },
+        documentElement: { setAttribute: () => {} },
+        getElementById: () => null,
+        querySelectorAll: () => [],
+        createElement: () => ({ setAttribute: () => {}, innerHTML: '', className: '', id: '', style: {} }),
+        addEventListener: () => {}
+      },
+      console: console
+    };
+    ctx.window.window = ctx.window;
+    ctx.window.document = ctx.document;
+    vm.createContext(ctx);
+    vm.runInContext(wikiJs, ctx);
+
+    const WikiDB = ctx.window.WikiDB;
+    // Turn off Top 15 so all species in tracks are rendered
+    WikiDB.toggleSkillLadderTop15(false);
+    const html = WikiDB.renderSkillCoordinateLadder();
+
+    // 1. Excluded skills verification
+    assert(!html.includes('data-pkm="百變怪"'), 'Ditto (變身) must be excluded from ladder');
+    assert(!html.includes('data-pkm="波克比"'), 'Togepi (揮指) must be excluded from ladder');
+    assert(!html.includes('data-pkm="皮皮"'), 'Clefairy (揮指) must be excluded from ladder');
+    assert(!html.includes('data-pkm="魔牆偶"'), 'Mr. Mime (模仿) must be excluded from ladder');
+    assert(!html.includes('data-pkm="愛心魚"'), 'Luvdisc (十項全能) must be excluded from ladder');
+
+    // 2. Composite skills dual-track verification
+    // Helper function to check if a pokemon exists in a specific track row
+    const isPokemonInTrack = (trackId, pkmName) => {
+      const trackIdx = html.indexOf(`data-skill-track="${trackId}"`);
+      if (trackIdx === -1) return false;
+      const nextTrackIdx = html.indexOf('data-skill-track="', trackIdx + 1);
+      const trackSection = nextTrackIdx !== -1 ? html.slice(trackIdx, nextTrackIdx) : html.slice(trackIdx);
+      return trackSection.includes(`data-pkm="${pkmName}"`);
+    };
+
+    // Togedemaru (托戈德瑪爾) with 蹭蹭臉頰 -> energy_single AND helper_boost
+    assert(isPokemonInTrack('energy_single', '托戈德瑪爾'), 'Togedemaru must appear in energy_single track');
+    assert(isPokemonInTrack('helper_boost', '托戈德瑪爾'), 'Togedemaru must appear in helper_boost track');
+
+    // Plusle (正電拍拍) with 正電 -> ingredient AND helper_boost
+    assert(isPokemonInTrack('ingredient', '正電拍拍'), 'Plusle must appear in ingredient track');
+    assert(isPokemonInTrack('helper_boost', '正電拍拍'), 'Plusle must appear in helper_boost track');
+
+    // Minun (負電拍拍) with 負電 -> cooking_pot AND energy_single
+    assert(isPokemonInTrack('cooking_pot', '負電拍拍'), 'Minun must appear in cooking_pot track');
+    assert(isPokemonInTrack('energy_single', '負電拍拍'), 'Minun must appear in energy_single track');
+
+    // Raikou (雷公) with 幫手支援[電] -> helper_boost
+    assert(isPokemonInTrack('helper_boost', '雷公'), 'Raikou must appear in helper_boost track');
+
+    // Magnezone (自爆磁怪) with 料理強化S -> cooking_pot
+    assert(isPokemonInTrack('cooking_pot', '自爆磁怪'), 'Magnezone must appear in cooking_pot track');
+  });
+
+  test('Tier 1 - Feature Coverage', 'Main Skill Ladder Sidebar Controls, Zero-Ingredient Policy, Zero Emojis & Zero Glyphs', () => {
+    const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    const mockStorage = new Map([['pksleep_lang', 'zh-TW']]);
+    let coordinateInner = '';
+    const ctx = {
+      localStorage: {
+        getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+        setItem: (k, v) => mockStorage.set(k, String(v)),
+        removeItem: (k) => mockStorage.delete(k)
+      },
+      window: {
+        localStorage: {
+          getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+          setItem: (k, v) => mockStorage.set(k, String(v)),
+          removeItem: (k) => mockStorage.delete(k)
+        },
+        addEventListener: () => {},
+        I18N: { getLanguage: () => 'zh-TW', getPokemonName: (s) => s, getMainSkillName: (s) => s }
+      },
+      document: {
+        body: { classList: { contains: () => false } },
+        documentElement: { setAttribute: () => {} },
+        getElementById: (id) => {
+          if (id === 'wiki-skill-ladder-coordinate') {
+            return {
+              get innerHTML() { return coordinateInner; },
+              set innerHTML(v) { coordinateInner = v; }
+            };
+          }
+          return null;
+        },
+        querySelectorAll: () => [],
+        createElement: () => ({ setAttribute: () => {}, innerHTML: '', className: '', id: '', style: {} }),
+        addEventListener: () => {}
+      },
+      console: console
+    };
+    ctx.window.window = ctx.window;
+    ctx.window.document = ctx.document;
+    vm.createContext(ctx);
+    vm.runInContext(wikiJs, ctx);
+
+    const WikiDB = ctx.window.WikiDB;
+
+    // 1. Live search filter
+    WikiDB.onSkillLadderSearch('哥達鴨');
+    assertEquals(WikiDB.getSkillLadderSearchQuery(), '哥達鴨', 'Search query set');
+    const searchHtml = WikiDB.renderSkillCoordinateLadder();
+    assert(searchHtml.includes('data-pkm="哥達鴨"'), 'Search for 哥達鴨 must match Golduck');
+    assert(!searchHtml.includes('data-pkm="皮卡丘"'), 'Search for 哥達鴨 must NOT match Pikachu');
+    WikiDB.clearSkillLadderSearch();
+    assertEquals(WikiDB.getSkillLadderSearchQuery(), '', 'Search query cleared');
+
+    // 2. Specialty filter
+    WikiDB.setSkillLadderSpecialtyFilter('SKILL');
+    const skillSpecHtml = WikiDB.renderSkillCoordinateLadder();
+    assert(skillSpecHtml.includes('specialty-skill'), 'SKILL filter must include skill specialty nodes');
+    assert(!skillSpecHtml.includes('specialty-berry'), 'SKILL filter must NOT include berry specialty nodes');
+    WikiDB.setSkillLadderSpecialtyFilter('ALL');
+
+    // 3. Track sorting
+    WikiDB.setSkillLadderSortOrder('PROCS_DESC');
+    assertEquals(WikiDB.getSkillLadderSortOrder(), 'PROCS_DESC', 'Sort order PROCS_DESC set');
+    WikiDB.setSkillLadderSortOrder('DEFAULT');
+
+    // 4. Strict Zero-Ingredient Policy on Skill Ladder Sidebar
+    const wikiSidebarSource = fs.existsSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_skill_ladder_render.js'))
+      ? fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_skill_ladder_render.js'), 'utf8')
+      : fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    const skillSidebarMatch = wikiSidebarSource.match(/<aside id="skill-ladder-filter-sidebar"[\s\S]*?<\/aside>/);
+    assert(skillSidebarMatch, 'skill-ladder-filter-sidebar markup must exist in wiki_skill_ladder_render.js or wiki.js');
+    const sidebarHtml = skillSidebarMatch[0];
+    assert(!sidebarHtml.includes('ladderSupplyFilter'), 'Skill sidebar must NOT contain ladderSupplyFilter');
+    assert(!sidebarHtml.includes('ladderRecipeFilter'), 'Skill sidebar must NOT contain ladderRecipeFilter');
+    assert(!sidebarHtml.includes('data-recipe-filter'), 'Skill sidebar must NOT contain data-recipe-filter');
+    assert(!sidebarHtml.includes('data-supply-filter'), 'Skill sidebar must NOT contain data-supply-filter');
+    assert(!sidebarHtml.includes('ING_M'), 'Skill sidebar must NOT contain ING_M');
+    assert(!sidebarHtml.includes('ING_S'), 'Skill sidebar must NOT contain ING_S');
+    assert(!sidebarHtml.includes('data-nature-filter="ING"'), 'Skill sidebar must NOT contain ING nature');
+
+    // 5. Zero Emoji Policy: rendered ladder HTML contains zero emojis
+    const fullHtml = WikiDB.renderSkillCoordinateLadder();
+    const emojiRegex = /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1FA70}-\u{1FAFF}]/u;
+    assert(!emojiRegex.test(fullHtml), 'Skill ladder rendered HTML must contain ZERO emojis');
+
+    // 6. Zero Decorative Glyphs: no star glyphs
+    assert(!fullHtml.includes('★') && !fullHtml.includes('☆'), 'Skill ladder must contain ZERO decorative star glyphs');
+  });
 }
 
 module.exports = { registerTier1Tests };

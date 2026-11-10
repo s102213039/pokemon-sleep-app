@@ -5,6 +5,8 @@
     const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
     const isLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_ladder_sidebar_open', true) : true;
     const initialLadderCollapsed = isMobileH5 ? 'collapsed' : (isLadderOpen ? '' : 'collapsed');
+    const isSkillLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_skill_ladder_sidebar_open', true) : true;
+    const initialSkillLadderCollapsed = isMobileH5 ? 'collapsed' : (isSkillLadderOpen ? '' : 'collapsed');
     const isWikiMainActive = !!(container && (
       (container.style && container.style.display !== 'none' && !container.hidden) ||
       (typeof document !== 'undefined' && document.getElementById && document.getElementById('tab-wiki') && document.getElementById('tab-wiki').classList && document.getElementById('tab-wiki').classList.contains('active')) ||
@@ -79,6 +81,8 @@
           </span>
           <span id="ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
         </button>
+
+        ${typeof renderSkillLadderMobileHandle === 'function' ? renderSkillLadderMobileHandle(currentWikiSubTab, isEN) : ''}
       ` : ''}
 
       <!-- 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側滑動) -->
@@ -248,6 +252,8 @@
         </div>
       </aside>
 
+      ${typeof renderSkillLadderSidebar === 'function' ? renderSkillLadderSidebar(initialSkillLadderCollapsed, isEN) : ''}
+
       <div class="wiki-main-container">
         <!-- 二級子分頁導航 (Sub-tabs) - 精簡無大標題橫幅 -->
         <div class="wiki-subnav-bar">
@@ -255,6 +261,7 @@
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isMobileH5 ? (isEN ? 'Skills' : (isCN ? '主技能' : '主技能')) : (isEN ? 'Main Skills' : (isCN ? '主技能数值库' : '主技能數值庫'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isMobileH5 ? (isEN ? 'Subskills' : (isCN ? '副技性格' : '副技性格')) : (isEN ? 'Sub-Skills' : (isCN ? '副技能与性格指南' : '副技能與性格指南'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isMobileH5 ? (isEN ? 'Ladder' : (isCN ? '食材天梯' : '食材天梯')) : (isEN ? 'Ingredient Ladder' : (isCN ? '食材产量天梯榜' : '食材產量天梯榜'))}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills_ladder' ? 'active' : ''}" data-subtab="skills_ladder" onclick="window.WikiDB.switchSubTab('skills_ladder')">${isMobileH5 ? (isEN ? 'Skill Ladder' : (isCN ? '技能天梯' : '技能天梯')) : (isEN ? 'Main Skill Ladder' : (isCN ? '主技能天梯榜' : '主技能天梯榜'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isMobileH5 ? (isEN ? 'Values' : (isCN ? '能量速查' : '能量速查')) : (isEN ? 'Berry & Ings' : (isCN ? '树果与食材能量' : '樹果與食材能量'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Growth' : (isCN ? '培育指南' : '培育指南')) : (isEN ? 'Tier Guide' : (isCN ? '培育与评级指南' : '培育與評級指南'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'islands' ? 'active' : ''}" data-subtab="islands" onclick="window.WikiDB.switchSubTab('islands')">${isMobileH5 ? (isEN ? 'Islands' : (isCN ? '岛屿营地' : '島嶼營地')) : (isEN ? 'Camps & EX' : (isCN ? '岛屿营地与EX模式' : '島嶼營地與EX模式'))}</button>
@@ -549,6 +556,14 @@
           </div>
         </div>
 
+        <!-- 子分頁：主技能天梯榜 (Skill Proc Ladder) -->
+        <div id="wiki-subpanel-skills_ladder" class="wiki-subpanel ${currentWikiSubTab === 'skills_ladder' ? 'active' : ''}" style="${currentWikiSubTab === 'skills_ladder' ? '' : 'display:none;'}">
+          <!-- 橫向視覺技能天梯座標圖 -->
+          <div id="wiki-skill-ladder-coordinate">
+            ${typeof renderSkillCoordinateLadder === 'function' ? renderSkillCoordinateLadder() : ''}
+          </div>
+        </div>
+
         <!-- 子分頁 4：樹果與食材基礎能量 (Berry & Ingredient Values) -->
         <div id="wiki-subpanel-values" class="wiki-subpanel ${currentWikiSubTab === 'values' ? 'active' : ''}" style="${currentWikiSubTab === 'values' ? '' : 'display:none;'}">
           ${renderValuesBoard()}
@@ -718,6 +733,7 @@
 
       <!-- 遮罩層 (Backdrop for Mobile Drawer - 阻斷點擊穿透) -->
       <div id="ladder-sidebar-backdrop" class="sidebar-backdrop" onclick="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchend="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchstart="event.stopPropagation()"></div>
+      <div id="skill-ladder-sidebar-backdrop" class="sidebar-backdrop" onclick="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeSkillLadderSidebar()" ontouchend="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeSkillLadderSidebar()" ontouchstart="event.stopPropagation()"></div>
     `;
 
     if (typeof window.pruneOverlayDuplicates === 'function') {
@@ -727,6 +743,9 @@
         'ladder-sidebar-backdrop',
         'ladder-sidebar-bookmark-handle',
         'ladder-recipe-highlight-fab',
+        'skill-ladder-filter-sidebar',
+        'skill-ladder-sidebar-backdrop',
+        'skill-ladder-sidebar-bookmark-handle',
         'wiki-item-detail-modal'
       ]);
     }
@@ -891,6 +910,10 @@
     navigateToPokemonDex: navigateToPokemonDex
   };
 
+  if (typeof attachSkillLadderExports === 'function') {
+    attachSkillLadderExports(WikiDBExport, window);
+  }
+
   window.WikiDB = WikiDBExport;
   window.filterItemsByCategory = filterItemsByCategory;
   window.handleItemsSearch = handleItemsSearch;
@@ -905,85 +928,28 @@
   window.formatSnorlaxRankBadge = formatSnorlaxRankBadge;
 
   // 同步掛載至 window 根層級以防止任何命名空間呼叫錯誤
-  window.switchWikiSubTab = switchWikiSubTab;
-  window.getCurrentSubTab = getCurrentSubTab;
-  window.getCurrentIslandId = () => currentIslandId;
-  window.getIsExpertModeActive = () => isExpertModeActive;
-  window.getCurrentIslandSleepType = () => currentIslandSleepType;
-  window.sortIslandSpawns = sortIslandSpawns;
-  window.getIslandSpawnsSort = getIslandSpawnsSort;
-  window.toggleIslandLegendaryOnly = toggleIslandLegendaryOnly;
-  window.getSavedIslandLegendaryOnly = getSavedIslandLegendaryOnly;
-  window.toggleLadderSidebar = toggleLadderSidebar;
-  window.toggleLadderEnergyHelp = toggleLadderEnergyHelp;
-  window.closeLadderEnergyHelp = closeLadderEnergyHelp;
-  window.closeSleepStylePopover = closeSleepStylePopover;
-  window.switchLadderView = switchLadderView;
-  window.filterWikiSkills = filterWikiSkills;
-  window.filterWikiIngredients = filterWikiIngredients;
-  window.switchChargeStock = switchChargeStock;
-  window.switchHelperBoost = switchHelperBoost;
-  window.toggleDetailTable = toggleDetailTable;
-  window.toggleSkillCard = toggleSkillCard;
-  window.toggleSkillStepper = toggleSkillStepper;
-  window.updateBerryLevel = updateBerryLevel;
-  window.updateBerryIsland = updateBerryIsland;
-  window.toggleBerryFavorite = toggleBerryFavorite;
-  window.toggleLadderTop15 = toggleLadderTop15;
-  window.getLadderTop15Only = getLadderTop15Only;
-  window.toggleLadderIngM = toggleLadderIngM;
-  window.toggleLadderIngS = toggleLadderIngS;
-  window.toggleLadderSpeedM = toggleLadderSpeedM;
-  window.toggleLadderSpeedS = toggleLadderSpeedS;
-  window.toggleLadderSkillM = toggleLadderSkillM;
-  window.toggleLadderSkillS = toggleLadderSkillS;
-  window.toggleLadderSubskill = toggleLadderSubskill;
-  window.toggleLadderNatureIng = toggleLadderNatureIng;
-  window.toggleLadderNatureSpeed = toggleLadderNatureSpeed;
-  window.toggleLadderNatureFilter = toggleLadderNatureFilter;
-  window.toggleLadderRecipeMultiSelect = toggleLadderRecipeMultiSelect;
-  window.getLadderNature = getLadderNature;
-  window.setLadderNature = setLadderNature;
-  window.onLadderSearch = onLadderSearch;
-  window.clearLadderSearch = clearLadderSearch;
-  window.setLadderSupplyFilter = setLadderSupplyFilter;
-  window.setLadderRecipeFilter = setLadderRecipeFilter;
-  window.setLadderSpecialtyFilter = setLadderSpecialtyFilter;
-  window.toggleLadderSkillDrawExpected = toggleLadderSkillDrawExpected;
-  window.getLadderSkillDrawExpected = getLadderSkillDrawExpected;
-  window.getPokemonSkillDrawBonus = getPokemonSkillDrawBonus;
-  window.INGREDIENT_DRAW_SKILL_EXPECTATIONS = INGREDIENT_DRAW_SKILL_EXPECTATIONS;
-  window.setLadderSortOrder = setLadderSortOrder;
-  window.getLadderSortOrder = getLadderSortOrder;
-  window.resetLadderFilters = resetLadderFilters;
-  window.refreshCoordinateLadder = refreshCoordinateLadder;
-  window.renderCoordinateLadder = renderCoordinateLadder;
-  window.handleLadderGroupHover = handleLadderGroupHover;
-  window.handleLadderGroupHoverOut = handleLadderGroupHoverOut;
-  window.recalcTriggerChance = recalcTriggerChance;
-  window.recalcSleepDays = recalcSleepDays;
-  window.initCalcCustomSelects = initCalcCustomSelects;
-  window.openLadderSidebar = openLadderSidebar;
-  window.closeLadderSidebar = closeLadderSidebar;
-  window.openIngredientRankingModal = openIngredientRankingModal;
-  window.closeIngredientRankingModal = closeIngredientRankingModal;
-  window.updateLadderActiveFilterBadge = updateLadderActiveFilterBadge;
-  window.HELPING_SPEED_MATRIX = HELPING_SPEED_MATRIX;
-  window.selectIsland = selectIsland;
-  window.toggleIslandExpertMode = toggleIslandExpertMode;
-  window.filterIslandSleepType = filterIslandSleepType;
-  window.renderIslandsSubpanel = renderIslandsSubpanel;
-  window.TOP_7_RECIPES_HIGHLIGHT = TOP_7_RECIPES_HIGHLIGHT;
-  window.TOP_RECIPES_BY_CATEGORY = TOP_RECIPES_BY_CATEGORY;
-  window.openLadderRecipeModal = openLadderRecipeModal;
-  window.closeLadderRecipeModal = closeLadderRecipeModal;
-  window.openSkillDrawHelpModal = openSkillDrawHelpModal;
-  window.closeSkillDrawHelpModal = closeSkillDrawHelpModal;
-  window.selectLadderHighlightRecipe = selectLadderHighlightRecipe;
-  window.clearLadderHighlightRecipe = clearLadderHighlightRecipe;
-  window.switchLadderRecipeCategory = switchLadderRecipeCategory;
-  window.getLadderRecipeCategory = () => ladderRecipeCategory;
-  window.getLadderHighlightRecipe = () => ladderHighlightRecipe;
+  Object.assign(window, {
+    switchWikiSubTab, getCurrentSubTab, getCurrentIslandId: () => currentIslandId,
+    getIsExpertModeActive: () => isExpertModeActive, getCurrentIslandSleepType: () => currentIslandSleepType,
+    sortIslandSpawns, getIslandSpawnsSort, toggleIslandLegendaryOnly, getSavedIslandLegendaryOnly,
+    toggleLadderSidebar, toggleLadderEnergyHelp, closeLadderEnergyHelp, closeSleepStylePopover,
+    switchLadderView, filterWikiSkills, filterWikiIngredients, switchChargeStock, switchHelperBoost,
+    toggleDetailTable, toggleSkillCard, toggleSkillStepper, updateBerryLevel, updateBerryIsland,
+    toggleBerryFavorite, toggleLadderTop15, getLadderTop15Only, toggleLadderIngM, toggleLadderIngS,
+    toggleLadderSpeedM, toggleLadderSpeedS, toggleLadderSkillM, toggleLadderSkillS, toggleLadderSubskill,
+    toggleLadderNatureIng, toggleLadderNatureSpeed, toggleLadderNatureFilter, toggleLadderRecipeMultiSelect,
+    getLadderNature, setLadderNature, onLadderSearch, clearLadderSearch, setLadderSupplyFilter,
+    setLadderRecipeFilter, setLadderSpecialtyFilter, toggleLadderSkillDrawExpected, getLadderSkillDrawExpected,
+    getPokemonSkillDrawBonus, INGREDIENT_DRAW_SKILL_EXPECTATIONS, setLadderSortOrder, getLadderSortOrder,
+    resetLadderFilters, refreshCoordinateLadder, renderCoordinateLadder, handleLadderGroupHover,
+    handleLadderGroupHoverOut, recalcTriggerChance, recalcSleepDays, initCalcCustomSelects,
+    openLadderSidebar, closeLadderSidebar, openIngredientRankingModal, closeIngredientRankingModal,
+    updateLadderActiveFilterBadge, HELPING_SPEED_MATRIX, selectIsland, toggleIslandExpertMode,
+    filterIslandSleepType, renderIslandsSubpanel, TOP_7_RECIPES_HIGHLIGHT, TOP_RECIPES_BY_CATEGORY,
+    openLadderRecipeModal, closeLadderRecipeModal, openSkillDrawHelpModal, closeSkillDrawHelpModal,
+    selectLadderHighlightRecipe, clearLadderHighlightRecipe, switchLadderRecipeCategory,
+    getLadderRecipeCategory: () => ladderRecipeCategory, getLadderHighlightRecipe: () => ladderHighlightRecipe
+  });
 
   // 當 DOM 準備完成時自動初始化
   if (document.readyState === 'loading') {
