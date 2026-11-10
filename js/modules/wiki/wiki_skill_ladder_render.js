@@ -2,6 +2,16 @@
   // 主技能天梯渲染與視圖 (Main Skill Ladder View & Renderers)
   // =========================================================================
 
+  const _escapeHtml = typeof escapeHtml === 'function' ? escapeHtml : function (str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  };
+
   function renderSkillCoordinateLadder() {
     const isEN = typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function' && window.I18N.getLanguage() === 'en-US';
     const allPkm = getAllSkillPokemonList();
@@ -18,19 +28,27 @@
         if (!tracks.includes(trackId)) return false;
 
         const spec = p.specialty || '';
-        if (skillLadderSpecialtyFilter === 'SKILL' && !spec.includes('技能') && spec !== 'Skills') return false;
-        if (skillLadderSpecialtyFilter === 'BERRY' && !spec.includes('樹果') && spec !== 'Berries') return false;
-        if (skillLadderSpecialtyFilter === 'INGREDIENT' && !spec.includes('食材') && spec !== 'Ingredients') return false;
+        if (skillLadderSpecialtyFilter === 'SKILL' && !spec.includes('技能') && spec !== 'Skills' && spec !== 'Skill') return false;
+        if (skillLadderSpecialtyFilter === 'BERRY' && !spec.includes('樹果') && spec !== 'Berries' && spec !== 'Berry') return false;
+        if (skillLadderSpecialtyFilter === 'INGREDIENT' && !spec.includes('食材') && spec !== 'Ingredients' && spec !== 'Ingredient') return false;
 
         if (skillLadderSearchQuery) {
+          const q = skillLadderSearchQuery.toLowerCase().trim();
+          let matched = false;
           if (typeof matchesLadderSearch === 'function') {
-            if (!matchesLadderSearch(p.name_cn || p.name, p.name_en, skillLadderSearchQuery)) return false;
-          } else {
-            const q = skillLadderSearchQuery.toLowerCase();
+            matched = matchesLadderSearch(p.name_cn || p.name, p.name_en, q);
+          }
+          if (!matched) {
             const nCn = (p.name_cn || p.name || '').toLowerCase();
             const nEn = (p.name_en || '').toLowerCase();
-            if (!nCn.includes(q) && !nEn.includes(q)) return false;
+            const nJp = (p.name_jp || '').toLowerCase();
+            const pId = String(p.id || '');
+            const pNo = String(p.formatted_no || '');
+            const isNum = (/^\d+$/).test(q);
+            const numMatch = isNum && (parseInt(pId, 10) === parseInt(q, 10) || pId === q || pNo === q || pNo === q.padStart(3, '0') || pId.padStart(3, '0') === q.padStart(3, '0'));
+            matched = nCn.includes(q) || nEn.includes(q) || (nJp && nJp.includes(q)) || !!numMatch;
           }
+          if (!matched) return false;
         }
         return true;
       });
@@ -136,7 +154,7 @@
             nodes.forEach(n => {
               if (n.procs < minTrackCount) minTrackCount = n.procs;
             });
-            if (minTrackCount > maxVal) minTrackCount = minVal;
+            if (minTrackCount >= maxVal || isTrackEmpty) minTrackCount = minVal;
             const leadPct = getPosPct(minTrackCount);
 
             const clusters = [];
@@ -169,7 +187,7 @@
 
             return `
               <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''}" data-skill-track="${track.id}">
-                <div class="ladder-track-header" title="${escapeHtml(trackName)} · ${escapeHtml(trackDesc)}">
+                <div class="ladder-track-header" title="${_escapeHtml(trackName)} · ${_escapeHtml(trackDesc)}">
                   <div class="ladder-track-ing-main skill-track-icon-main" style="display:flex;align-items:center;justify-content:center;">
                     <span class="skill-track-icon-wrapper" style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:${track.bgColor};color:${track.color};">
                       <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
@@ -178,7 +196,7 @@
                     </span>
                   </div>
                   <div class="skill-track-header-title-box" style="margin-left: 8px; overflow: hidden;">
-                    <span class="font-bold text-primary" style="font-size: 13px; display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${escapeHtml(trackName)}</span>
+                    <span class="font-bold text-primary" style="font-size: 13px; display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${_escapeHtml(trackName)}</span>
                     <span class="text-secondary" style="font-size: 11px; display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${nodes.length} ${isEN ? 'species' : '種寶可夢'}</span>
                   </div>
                 </div>
@@ -206,7 +224,9 @@
 
                       const basePosPct = parseFloat(getPosPct(node.procs));
                       const alignClass = basePosPct > 60 ? 'align-right' : (basePosPct < 40 ? 'align-left' : 'align-center');
-                      const leftStyle = offsetPx === 0 ? `${basePosPct}%` : `calc(${basePosPct}% + ${offsetPx}px)`;
+                      const leftStyle = offsetPx === 0
+                        ? `clamp(12px, ${basePosPct}%, calc(100% - 12px))`
+                        : `clamp(12px, calc(${basePosPct}% + ${offsetPx}px), calc(100% - 12px))`;
                       const zIndex = node.isTopNode ? 50 : Math.max(40 - nodeIdx, 5);
 
                       const idealMin = Math.floor(node.calcRes.idealIntervalSec / 60);
@@ -214,10 +234,10 @@
 
                       return `
                         <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} ${groupSize > 1 ? 'node-in-cluster' : ''}"
-                             data-pkm="${escapeHtml(node.p.name_cn || node.p.name)}"
+                             data-pkm="${_escapeHtml(node.p.name_cn || node.p.name)}"
                              style="left: ${leftStyle}; z-index: ${zIndex};">
                           <div class="node-avatar-wrapper">
-                            <img src="${node.iconUrl}" class="node-avatar-img" alt="${escapeHtml(node.pkmDisplayName)}" loading="lazy" decoding="async">
+                            <img src="${node.iconUrl}" class="node-avatar-img" alt="${_escapeHtml(node.pkmDisplayName)}" loading="lazy" decoding="async">
                           </div>
                           <div class="node-count-badge" title="${isEN ? '12h Expected Triggers: ' : '日間 12h 預估發動次數：'}${node.displayCount}">
                             ${node.displayCount}
@@ -225,7 +245,7 @@
 
                           <div class="ladder-node-tooltip">
                             <div class="tooltip-title">
-                              ${node.isTopNode ? (isEN ? 'Top 1 ' : 'TOP 1 ') : ''}${escapeHtml(node.pkmDisplayName)}
+                              ${node.isTopNode ? (isEN ? 'Top 1 ' : 'TOP 1 ') : ''}${_escapeHtml(node.pkmDisplayName)}
                               <span class="node-specialty-tag specialty-${node.specialtyKey}" style="margin-left: 6px; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); color: var(--accent-color, #38bdf8);">${node.specialtyDisplay}</span>
                             </div>
                             <div class="tooltip-detail">
@@ -235,7 +255,7 @@
                             <div class="tooltip-yield-breakdown">
                               <div class="breakdown-row">
                                 <span class="breakdown-label">${isEN ? 'Main Skill:' : '主技能：'}</span>
-                                <span class="breakdown-val font-bold text-primary">${escapeHtml(node.skillDisplayName)}</span>
+                                <span class="breakdown-val font-bold text-primary">${_escapeHtml(node.skillDisplayName)}</span>
                               </div>
                               <div class="breakdown-row">
                                 <span class="breakdown-label">${isEN ? 'Base Rate:' : '基礎機率：'}</span>

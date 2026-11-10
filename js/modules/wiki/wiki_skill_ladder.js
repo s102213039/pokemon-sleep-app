@@ -37,7 +37,18 @@
     let baseRate = 0.03;
     const rawRate = pkm.skill_rate || pkm.skillRate;
     if (rawRate !== undefined && rawRate !== null) {
-      const parsedRate = typeof rawRate === 'number' && rawRate <= 1 ? rawRate : parseFloat(rawRate) / 100;
+      let parsedRate;
+      if (typeof rawRate === 'number') {
+        parsedRate = rawRate <= 1 ? rawRate : rawRate / 100;
+      } else {
+        const strRate = String(rawRate).trim();
+        if (strRate.includes('%')) {
+          parsedRate = parseFloat(strRate) / 100;
+        } else {
+          const val = parseFloat(strRate);
+          parsedRate = (!isNaN(val) && val <= 1) ? val : val / 100;
+        }
+      }
       if (!isNaN(parsedRate) && parsedRate > 0) baseRate = parsedRate;
     }
     const subskillRateBonus = (isSkillLadderSkillM ? 0.36 : 0) + (isSkillLadderSkillS ? 0.18 : 0);
@@ -71,7 +82,7 @@
 
   function handleSkillLadderSubTabSwitch(targetTab, isWikiMainActive, isMobileH5) {
     const sidebar = document.getElementById('skill-ladder-filter-sidebar');
-    const handle = document.getElementById('skill-ladder-sidebar-bookmark-handle');
+    const handles = document.querySelectorAll('#skill-ladder-sidebar-bookmark-handle');
     const backdrop = document.getElementById('skill-ladder-sidebar-backdrop');
 
     if (sidebar) {
@@ -91,28 +102,32 @@
       }
     }
 
-    if (handle) {
-      if (isWikiMainActive && targetTab === 'skills_ladder') {
-        const isCollapsed = sidebar ? sidebar.classList.contains('collapsed') : true;
-        if (isCollapsed) {
-          handle.classList.remove('drawer-open');
-          handle.style.display = 'flex';
-          handle.style.opacity = '1';
-          handle.style.pointerEvents = 'auto';
-          handle.style.visibility = 'visible';
+    if (handles && handles.length > 0) {
+      handles.forEach(handle => {
+        if (isWikiMainActive && targetTab === 'skills_ladder') {
+          const isCollapsed = sidebar ? sidebar.classList.contains('collapsed') : true;
+          if (isCollapsed) {
+            handle.classList.remove('drawer-open');
+            handle.style.display = 'flex';
+            handle.style.opacity = '1';
+            handle.style.pointerEvents = 'auto';
+            handle.style.visibility = 'visible';
+          } else {
+            handle.classList.add('drawer-open');
+            handle.style.display = 'none';
+            handle.style.opacity = '0';
+            handle.style.pointerEvents = 'none';
+            handle.style.visibility = 'hidden';
+          }
         } else {
           handle.classList.add('drawer-open');
           handle.style.display = 'none';
           handle.style.opacity = '0';
           handle.style.pointerEvents = 'none';
-          handle.style.visibility = 'hidden';
         }
+      });
+      if (isWikiMainActive && targetTab === 'skills_ladder') {
         updateSkillLadderActiveFilterBadge();
-      } else {
-        handle.classList.add('drawer-open');
-        handle.style.display = 'none';
-        handle.style.opacity = '0';
-        handle.style.pointerEvents = 'none';
       }
     }
 
@@ -135,26 +150,39 @@
 
   function onSkillLadderSearch(val) {
     skillLadderSearchQuery = (val || '').trim();
-    const clearBtn = document.getElementById('skill-ladder-search-clear-btn');
-    if (clearBtn) {
-      clearBtn.style.display = skillLadderSearchQuery ? 'inline-block' : 'none';
-    }
+    const clearBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('#skill-ladder-search-clear-btn')
+      : [];
+    clearBtns.forEach(b => {
+      b.style.display = skillLadderSearchQuery ? 'inline-block' : 'none';
+    });
     refreshSkillCoordinateLadder();
   }
 
   function clearSkillLadderSearch() {
     skillLadderSearchQuery = '';
-    const input = document.getElementById('skill-ladder-pkm-search-input');
-    if (input) input.value = '';
-    const clearBtn = document.getElementById('skill-ladder-search-clear-btn');
-    if (clearBtn) clearBtn.style.display = 'none';
+    const inputs = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('#skill-ladder-pkm-search-input')
+      : [];
+    inputs.forEach(input => { input.value = ''; });
+    const singleInput = (typeof document !== 'undefined' && typeof document.getElementById === 'function')
+      ? document.getElementById('skill-ladder-pkm-search-input')
+      : null;
+    if (singleInput) singleInput.value = '';
+
+    const clearBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('#skill-ladder-search-clear-btn')
+      : [];
+    clearBtns.forEach(b => { b.style.display = 'none'; });
     refreshSkillCoordinateLadder();
   }
 
   function toggleSkillLadderTop15(enabled) {
     skillLadderTop15Only = enabled !== undefined ? !!enabled : !skillLadderTop15Only;
-    const switchInput = document.getElementById('skill-ladder-top15-switch');
-    if (switchInput) switchInput.checked = skillLadderTop15Only;
+    const switches = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('#skill-ladder-top15-switch')
+      : [];
+    switches.forEach(s => { s.checked = skillLadderTop15Only; });
     refreshSkillCoordinateLadder();
   }
 
@@ -164,8 +192,9 @@
 
   function setSkillLadderSortOrder(order) {
     skillLadderSortOrder = order || 'DEFAULT';
-    const sidebar = document.getElementById('skill-ladder-filter-sidebar') || document;
-    const btns = sidebar.querySelectorAll('[data-skill-sort-order]');
+    const btns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('[data-skill-sort-order]')
+      : [];
     btns.forEach(b => {
       b.classList.toggle('active', b.getAttribute('data-skill-sort-order') === skillLadderSortOrder);
     });
@@ -178,8 +207,9 @@
 
   function setSkillLadderSpecialtyFilter(spec) {
     skillLadderSpecialtyFilter = spec || 'ALL';
-    const sidebar = document.getElementById('skill-ladder-filter-sidebar') || document;
-    const btns = sidebar.querySelectorAll('[data-skill-specialty-filter]');
+    const btns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('[data-skill-specialty-filter]')
+      : [];
     btns.forEach(b => {
       b.classList.toggle('active', b.getAttribute('data-skill-specialty-filter') === skillLadderSpecialtyFilter);
     });
@@ -224,14 +254,17 @@
       SKILL_M: isSkillLadderSkillM,
       SKILL_S: isSkillLadderSkillS
     };
-    const sidebar = document.getElementById('skill-ladder-filter-sidebar') || document;
-    const subBtns = sidebar.querySelectorAll('[data-skill-subskill-boost]');
+    const subBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('[data-skill-subskill-boost]')
+      : [];
     subBtns.forEach(btn => {
       const k = btn.getAttribute('data-skill-subskill-boost');
       btn.classList.toggle('active', !!flags[k]);
     });
 
-    const natBtns = sidebar.querySelectorAll('[data-skill-nature-filter]');
+    const natBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('[data-skill-nature-filter]')
+      : [];
     natBtns.forEach(btn => {
       const k = btn.getAttribute('data-skill-nature-filter');
       const active = (k === 'SPEED' && skillLadderNatureSpeed) || (k === 'SKILL' && skillLadderNatureSkill);
@@ -251,19 +284,33 @@
     skillLadderNatureSpeed = false;
     skillLadderNatureSkill = false;
 
-    const input = document.getElementById('skill-ladder-pkm-search-input');
-    if (input) input.value = '';
-    const clearBtn = document.getElementById('skill-ladder-search-clear-btn');
-    if (clearBtn) clearBtn.style.display = 'none';
+    const inputs = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('#skill-ladder-pkm-search-input')
+      : [];
+    inputs.forEach(input => { input.value = ''; });
+    const singleInput = (typeof document !== 'undefined' && typeof document.getElementById === 'function')
+      ? document.getElementById('skill-ladder-pkm-search-input')
+      : null;
+    if (singleInput) singleInput.value = '';
 
-    const switchInput = document.getElementById('skill-ladder-top15-switch');
-    if (switchInput) switchInput.checked = true;
+    const clearBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('#skill-ladder-search-clear-btn')
+      : [];
+    clearBtns.forEach(b => { b.style.display = 'none'; });
 
-    const sidebar = document.getElementById('skill-ladder-filter-sidebar') || document;
-    const sortBtns = sidebar.querySelectorAll('[data-skill-sort-order]');
+    const switches = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('#skill-ladder-top15-switch')
+      : [];
+    switches.forEach(s => { s.checked = true; });
+
+    const sortBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('[data-skill-sort-order]')
+      : [];
     sortBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-skill-sort-order') === 'DEFAULT'));
 
-    const specBtns = sidebar.querySelectorAll('[data-skill-specialty-filter]');
+    const specBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('[data-skill-specialty-filter]')
+      : [];
     specBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-skill-specialty-filter') === 'ALL'));
 
     syncSkillLadderSidebarButtons();
@@ -317,7 +364,7 @@
 
   function toggleSkillLadderSidebar(forceOpen) {
     const sidebar = document.getElementById('skill-ladder-filter-sidebar');
-    const handle = document.getElementById('skill-ladder-sidebar-bookmark-handle');
+    const handles = document.querySelectorAll('#skill-ladder-sidebar-bookmark-handle');
     const backdrop = document.getElementById('skill-ladder-sidebar-backdrop');
     if (!sidebar) return;
 
@@ -332,13 +379,15 @@
     if (open) {
       sidebar.classList.remove('collapsed');
       if (backdrop) backdrop.classList.add('active');
-      if (handle) {
-        if (isMobileH5) {
-          handle.classList.add('drawer-open');
-        } else {
-          handle.classList.add('drawer-open');
-          handle.style.display = 'none';
-        }
+      if (handles && handles.length > 0) {
+        handles.forEach(handle => {
+          if (isMobileH5) {
+            handle.classList.add('drawer-open');
+          } else {
+            handle.classList.add('drawer-open');
+            handle.style.display = 'none';
+          }
+        });
       }
       if (typeof window.saveSidebarState === 'function') {
         window.saveSidebarState('pksleep_skill_ladder_sidebar_open', true);
@@ -346,12 +395,14 @@
     } else {
       sidebar.classList.add('collapsed');
       if (backdrop) backdrop.classList.remove('active');
-      if (handle) {
-        handle.classList.remove('drawer-open');
-        handle.style.display = 'flex';
-        handle.style.opacity = '1';
-        handle.style.pointerEvents = 'auto';
-        handle.style.visibility = 'visible';
+      if (handles && handles.length > 0) {
+        handles.forEach(handle => {
+          handle.classList.remove('drawer-open');
+          handle.style.display = 'flex';
+          handle.style.opacity = '1';
+          handle.style.pointerEvents = 'auto';
+          handle.style.visibility = 'visible';
+        });
       }
       if (typeof window.saveSidebarState === 'function') {
         window.saveSidebarState('pksleep_skill_ladder_sidebar_open', false);

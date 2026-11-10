@@ -18,8 +18,10 @@ const rawData = JSON.parse(nodeFs.readFileSync(dataJsonPath, 'utf8'));
 
 const cleanPokemonData = rawData.map(p => ({
   id: p.id,
+  formatted_no: p.formatted_no,
   name_cn: p.name_cn,
   name_en: p.name_en,
+  name_jp: p.name_jp,
   specialty: p.specialty,
   interval: p.interval,
   skill_rate: p.skill_rate,
@@ -181,6 +183,7 @@ ${cleanPokemonData.map(p => '    ' + JSON.stringify(p)).join(',\n')}
 
   function getSkillTracks(mainSkill) {
     if (!mainSkill) return [];
+    if (isExcludedSkill(mainSkill)) return [];
     const s = String(mainSkill).trim();
 
     for (const [compName, tracks] of Object.entries(COMPOSITE_SKILL_TRACKS)) {
@@ -199,7 +202,7 @@ ${cleanPokemonData.map(p => '    ' + JSON.stringify(p)).join(',\n')}
     if (s.includes('食材獲取') || s.includes('食材精選') || s.includes('Ingredient Magnet') || s.includes('Ingredient Draw')) return ['ingredient'];
     if (s.includes('樹果遽增') || s.includes('Berry Burst')) return ['berry_burst'];
 
-    return ['charge_energy'];
+    return [];
   }
 `;
 

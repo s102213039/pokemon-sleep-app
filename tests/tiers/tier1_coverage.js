@@ -2860,9 +2860,12 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     assert(typeof procFn === 'function', 'getPokemonSkillLadderProcs must be exported');
     const pkmStrRate = { interval: '00:40:00', skill_rate: '4.20%' };
     const pkmDecRate = { interval: '00:40:00', skillRate: 0.042 };
+    const pkmStrDecRate = { interval: '00:40:00', skillRate: '0.042' };
     const resStr = procFn(pkmStrRate);
     const resDec = procFn(pkmDecRate);
+    const resStrDec = procFn(pkmStrDecRate);
     assert(Math.abs(resStr.procs - resDec.procs) < 0.001, 'Decimal fraction skillRate must yield identical procs to string percent');
+    assert(Math.abs(resStr.procs - resStrDec.procs) < 0.001, 'String decimal fraction skillRate ("0.042") must yield identical procs without double division');
     const resNull = procFn({ name: 'FallbackPkm' });
     assert(resNull && resNull.procs > 0, 'Missing interval and skill_rate must use safe baselines without error');
 
@@ -2888,7 +2891,7 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     // 4. Verify proximity cluster grouping and offset direction in rendered HTML
     const ladderHtml = WikiDB.renderSkillCoordinateLadder();
     assert(ladderHtml.includes('node-in-cluster'), 'Rendered ladder must support and apply node-in-cluster for clustered nodes');
-    assert(ladderHtml.includes('calc('), 'Clustered nodes must have offsetPx calculated via calc(pos% + offsetPx)');
+    assert(ladderHtml.includes('clamp(12px,'), 'Rendered ladder nodes must use clamp(12px, ..., calc(100% - 12px)) to protect canvas boundaries on narrow viewports');
 
     // 5. Verify rapid filter toggling with active search
     WikiDB.onSkillLadderSearch('皮卡丘');
@@ -2904,7 +2907,59 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     assertEquals(WikiDB.getSkillLadderNature(), 'NONE', 'Nature cleared after reset');
     assertEquals(WikiDB.getSkillLadderTop15Only(), true, 'Top 15 restored after reset');
 
-    // 6. Verify dynamic Pokemon list fallback in getAllSkillPokemonList
+    // 6. Verify empty track dotted lead line boundary (leadPct = 0.00% on empty track)
+    WikiDB.onSkillLadderSearch('NonExistentPokemonNameXYZ');
+    const emptyTrackHtml = WikiDB.renderSkillCoordinateLadder();
+    assert(emptyTrackHtml.includes('class="ladder-track-lead-line" style="left: 0; width: 0.00%;"'), 'Empty track must render 0.00% lead line instead of 100%');
+    WikiDB.clearSkillLadderSearch();
+
+    // 7. Verify search support for Pokedex number and Japanese name
+    WikiDB.onSkillLadderSearch('025');
+    const idSearchHtml = WikiDB.renderSkillCoordinateLadder();
+    assert(idSearchHtml.includes('data-pkm="皮卡丘"'), 'Search by Pokedex number 025 must match Pikachu');
+    WikiDB.onSkillLadderSearch('ピカチュウ');
+    const jpSearchHtml = WikiDB.renderSkillCoordinateLadder();
+    assert(jpSearchHtml.includes('data-pkm="皮卡丘"'), 'Search by Japanese name ピカチュウ must match Pikachu');
+    WikiDB.clearSkillLadderSearch();
+
+    // 8. Verify PopoverCoordinator integration with skill-ladder-energy-help-popover
+    const popoverSource = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'components', 'popoverCoordinator.js'), 'utf8');
+    const mockPopovers = new Map();
+    const getMockPopEl = (id) => {
+      if (!mockPopovers.has(id)) {
+        mockPopovers.set(id, { id, style: { display: 'none' }, parentNode: null });
+      }
+      return mockPopovers.get(id);
+    };
+    let closedSkillLadderEnergyHelp = false;
+    const popoverCtx = {
+      global: {},
+      document: {
+        getElementById: (id) => getMockPopEl(id),
+        querySelectorAll: () => [],
+        querySelector: () => null,
+        activeElement: null
+      },
+      WikiDB: {
+        closeSkillLadderEnergyHelp: () => { closedSkillLadderEnergyHelp = true; }
+      }
+    };
+    popoverCtx.global = popoverCtx;
+    vm.createContext(popoverCtx);
+    vm.runInContext(popoverSource, popoverCtx);
+    const Coordinator = popoverCtx.PopoverCoordinator || popoverCtx.global.PopoverCoordinator;
+    assert(Coordinator && typeof Coordinator.hasAnyOpen === 'function', 'PopoverCoordinator must be defined');
+
+    // Test hasAnyOpen when skill-ladder-energy-help-popover is active
+    getMockPopEl('skill-ladder-energy-help-popover').style.display = 'block';
+    assert(Coordinator.hasAnyOpen() === true, 'hasAnyOpen must return true when skill-ladder-energy-help-popover is open');
+
+    // Test dismissAll dismisses skill-ladder-energy-help-popover
+    Coordinator.dismissAll();
+    assertEquals(getMockPopEl('skill-ladder-energy-help-popover').style.display, 'none', 'dismissAll must set skill popover display to none');
+    assert(closedSkillLadderEnergyHelp, 'dismissAll must trigger WikiDB.closeSkillLadderEnergyHelp');
+
+    // 9. Verify dynamic Pokemon list fallback in getAllSkillPokemonList
     const baselineList = WikiDB.POKEMON_SKILLS_BASELINE_DATA;
     assert(Array.isArray(baselineList) && baselineList.length >= 251, 'Baseline dataset must contain >= 251 species');
   });

@@ -14,6 +14,8 @@
       if (typeof global.document === 'undefined') return false;
       const lPop = global.document.getElementById('ladder-energy-help-popover');
       if (lPop && lPop.style.display !== 'none' && lPop.style.display !== '') return true;
+      const skPop = global.document.getElementById('skill-ladder-energy-help-popover');
+      if (skPop && skPop.style.display !== 'none' && skPop.style.display !== '') return true;
       const sPop = global.document.getElementById('ladder-skill-help-modal');
       if (sPop && sPop.style.display !== 'none' && sPop.style.display !== '') return true;
       if (global.document.getElementById('island-sleep-popover')) return true;
@@ -46,10 +48,12 @@
       // 3. 關閉天梯與百科各浮窗
       if (global.WikiDB) {
         if (typeof global.WikiDB.closeLadderEnergyHelp === 'function') global.WikiDB.closeLadderEnergyHelp();
+        if (typeof global.WikiDB.closeSkillLadderEnergyHelp === 'function') global.WikiDB.closeSkillLadderEnergyHelp();
         if (typeof global.WikiDB.closeSkillDrawHelpModal === 'function') global.WikiDB.closeSkillDrawHelpModal();
         if (typeof global.WikiDB.closeSleepStylePopover === 'function') global.WikiDB.closeSleepStylePopover();
       }
       if (typeof global.closeLadderEnergyHelp === 'function') global.closeLadderEnergyHelp();
+      if (typeof global.closeSkillLadderEnergyHelp === 'function') global.closeSkillLadderEnergyHelp();
       if (typeof global.closeSkillDrawHelpModal === 'function') global.closeSkillDrawHelpModal();
       if (typeof global.closeSleepStylePopover === 'function') global.closeSleepStylePopover();
 
@@ -59,6 +63,8 @@
         if (pPop) pPop.style.display = 'none';
         const lPop = global.document.getElementById('ladder-energy-help-popover');
         if (lPop) lPop.style.display = 'none';
+        const skPop = global.document.getElementById('skill-ladder-energy-help-popover');
+        if (skPop) skPop.style.display = 'none';
         const sPop = global.document.getElementById('ladder-skill-help-modal');
         if (sPop) sPop.style.display = 'none';
 
