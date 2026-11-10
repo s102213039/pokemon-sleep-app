@@ -15,24 +15,30 @@
 
   function parseIntervalToSec(intervalStr) {
     if (!intervalStr) return 3600;
-    const parts = String(intervalStr).split(':').map(Number);
-    if (parts.length === 3) {
-      return (parts[0] * 3600) + (parts[1] * 60) + parts[2];
-    } else if (parts.length === 2) {
-      return (parts[0] * 60) + parts[1];
+    const str = String(intervalStr).trim();
+    if (str.includes(':')) {
+      const parts = str.split(':').map(n => parseInt(n, 10));
+      if (parts.length === 3 && parts.every(n => !isNaN(n) && n >= 0)) {
+        return (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+      } else if (parts.length === 2 && parts.every(n => !isNaN(n) && n >= 0)) {
+        return (parts[0] * 60) + parts[1];
+      }
+      return 3600;
     }
-    const num = parseFloat(intervalStr);
-    return isNaN(num) ? 3600 : num;
+    const num = parseFloat(str);
+    return (!isNaN(num) && Number.isFinite(num)) ? num : 3600;
   }
 
   function getPokemonSkillLadderProcs(pkm) {
     if (!pkm) return null;
-    const baseIntervalSec = parseIntervalToSec(pkm.interval);
+    const rawInterval = pkm.interval || pkm.help_interval || pkm.frequency || '';
+    const baseIntervalSec = parseIntervalToSec(rawInterval);
     const speedDiscount = 0.118;
     const speedReduction = Math.min(0.35, (isSkillLadderSpeedM ? 0.14 : 0) + (isSkillLadderSpeedS ? 0.07 : 0));
     const natureSpeedMult = skillLadderNatureSpeed ? 0.90 : 1.0;
     const effectiveIntervalSec = Math.max(600, Math.round(baseIntervalSec * (1 - speedDiscount) * (1 - speedReduction) * natureSpeedMult));
     const idealIntervalSec = effectiveIntervalSec * 0.45;
+    const helps12h = 43200 / idealIntervalSec;
 
     let baseRate = 0.03;
     const rawRate = pkm.skill_rate || pkm.skillRate;
@@ -49,19 +55,25 @@
           parsedRate = (!isNaN(val) && val <= 1) ? val : val / 100;
         }
       }
-      if (!isNaN(parsedRate) && parsedRate > 0) baseRate = parsedRate;
+      if (!isNaN(parsedRate) && Number.isFinite(parsedRate) && parsedRate > 0) {
+        baseRate = Math.min(1.0, parsedRate);
+      }
     }
     const subskillRateBonus = (isSkillLadderSkillM ? 0.36 : 0) + (isSkillLadderSkillS ? 0.18 : 0);
     const natureSkillMult = skillLadderNatureSkill ? 1.20 : 1.0;
     const finalSkillRate = baseRate * (1 + subskillRateBonus) * natureSkillMult;
-    const procs = (43200 / idealIntervalSec) * finalSkillRate;
+    const procs = helps12h * finalSkillRate;
+
+    const mainSkill = pkm.main_skill || pkm.mainSkill || pkm.skill || '';
 
     return {
       procs,
+      helps12h,
       effectiveIntervalSec,
       idealIntervalSec,
       baseSkillRate: baseRate,
-      finalSkillRate
+      finalSkillRate,
+      mainSkill
     };
   }
 

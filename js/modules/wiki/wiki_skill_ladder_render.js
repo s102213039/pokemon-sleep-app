@@ -131,10 +131,10 @@
 
     return `
       <div class="wiki-coordinate-ladder-wrapper">
-        <div class="wiki-coordinate-ladder">
+        <div class="wiki-coordinate-ladder wiki-skill-coordinate-ladder">
           <div class="ladder-ruler-header">
-            <div class="ladder-ruler-spacer">
-              <span class="text-secondary font-bold" style="font-size: 11px; letter-spacing: 0.5px;">${isEN ? 'Procs/12h' : '發動次數/12h'}</span>
+            <div class="ladder-ruler-spacer skill-ladder-ruler-spacer">
+              <span class="text-secondary font-bold skill-ruler-label" style="font-size: 11px; letter-spacing: 0.5px;">${isEN ? 'Procs/12h' : '發動次數/12h'}</span>
             </div>
             <div class="ladder-ruler-scale">
               ${ticks.map(t => `
@@ -165,7 +165,7 @@
               } else {
                 const head = currentCluster[0];
                 const prev = currentCluster[currentCluster.length - 1];
-                if (Math.abs(prev.procs - n.procs) <= 0.12 && Math.abs(head.procs - n.procs) <= 0.25) {
+                if (Math.abs(prev.procs - n.procs) <= 0.20 && Math.abs(head.procs - n.procs) <= 0.45) {
                   currentCluster.push(n);
                 } else {
                   clusters.push(currentCluster);
@@ -187,18 +187,11 @@
 
             return `
               <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''}" data-skill-track="${track.id}">
-                <div class="ladder-track-header" title="${_escapeHtml(trackName)} · ${_escapeHtml(trackDesc)}">
-                  <div class="ladder-track-ing-main skill-track-icon-main" style="display:flex;align-items:center;justify-content:center;">
-                    <span class="skill-track-icon-wrapper" style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:${track.bgColor};color:${track.color};">
-                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
-                        ${track.svgPath}
-                      </svg>
-                    </span>
-                  </div>
-                  <div class="skill-track-header-title-box" style="margin-left: 8px; overflow: hidden;">
-                    <span class="font-bold text-primary" style="font-size: 13px; display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${_escapeHtml(trackName)}</span>
-                    <span class="text-secondary" style="font-size: 11px; display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${nodes.length} ${isEN ? 'species' : '種寶可夢'}</span>
-                  </div>
+                <div class="ladder-track-header skill-ladder-track-header" title="${_escapeHtml(trackName)} · ${_escapeHtml(trackDesc)}">
+                  <span class="skill-track-name-tag" style="background:${track.bgColor}; color:${track.color}; border: 1px solid ${track.color}40;">
+                    ${_escapeHtml(trackName)}
+                  </span>
+                  <span class="skill-track-count-tag text-secondary">${nodes.length} ${isEN ? 'species' : '種'}</span>
                 </div>
 
                 <div class="ladder-track-canvas">
@@ -208,7 +201,7 @@
                   <div class="ladder-track-lead-line" style="left: 0; width: ${leadPct}%;"></div>
                   <div class="ladder-track-line" style="left: ${leadPct}%; right: 0;"></div>
 
-                  <div class="ladder-nodes-container">
+                  <div class="ladder-nodes-container" data-boundary-protection="clamp(12px, calc(100% - 12px))">
                     ${nodes.map((node, nodeIdx) => {
                       const clusterInfo = nodeClusterMap.get(node) || { groupSize: 1, itemIdx: 0 };
                       const groupSize = clusterInfo.groupSize;
@@ -216,7 +209,7 @@
 
                       let offsetPx = 0;
                       if (groupSize > 1) {
-                        const staggerStep = groupSize >= 6 ? 12 : (groupSize >= 4 ? 15 : 18);
+                        const staggerStep = groupSize >= 6 ? 16 : (groupSize >= 4 ? 20 : 24);
                         // nodes is sorted descending, so itemIdx = 0 has highest procs and shifts right (+),
                         // while itemIdx = groupSize - 1 has lowest procs and shifts left (-)
                         offsetPx = Math.round(((groupSize - 1) / 2 - itemIdx) * staggerStep);
@@ -225,12 +218,14 @@
                       const basePosPct = parseFloat(getPosPct(node.procs));
                       const alignClass = basePosPct > 60 ? 'align-right' : (basePosPct < 40 ? 'align-left' : 'align-center');
                       const leftStyle = offsetPx === 0
-                        ? `clamp(12px, ${basePosPct}%, calc(100% - 12px))`
-                        : `clamp(12px, calc(${basePosPct}% + ${offsetPx}px), calc(100% - 12px))`;
+                        ? `clamp(20px, ${basePosPct}%, calc(100% - 20px))`
+                        : `clamp(20px, calc(${basePosPct}% + ${offsetPx}px), calc(100% - 20px))`;
                       const zIndex = node.isTopNode ? 50 : Math.max(40 - nodeIdx, 5);
 
-                      const idealMin = Math.floor(node.calcRes.idealIntervalSec / 60);
-                      const idealSec = Math.round(node.calcRes.idealIntervalSec % 60);
+                      const roundedIdealSec = Math.round(node.calcRes.idealIntervalSec);
+                      const idealMin = Math.floor(roundedIdealSec / 60);
+                      const idealSec = roundedIdealSec % 60;
+                      const helpsDisplay = (node.calcRes.helps12h != null ? node.calcRes.helps12h : (43200 / node.calcRes.idealIntervalSec)).toFixed(1);
 
                       return `
                         <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} ${groupSize > 1 ? 'node-in-cluster' : ''}"
@@ -267,11 +262,11 @@
                               </div>
                               <div class="breakdown-row">
                                 <span class="breakdown-label">${isEN ? 'Ideal Interval (0.45x):' : '滿活力間隔 (0.45x)：'}</span>
-                                <span class="breakdown-val">${idealMin}${isEN ? 'm ' : '分'}${idealSec}${isEN ? 's' : '秒'}</span>
+                                <span class="breakdown-val">${idealMin}${isEN ? 'm ' : '分'}${String(idealSec).padStart(2, '0')}${isEN ? 's' : '秒'}</span>
                               </div>
                               <div class="breakdown-row">
                                 <span class="breakdown-label">${isEN ? 'Est. Helps (12h):' : '日間 12h 總幫忙次數：'}</span>
-                                <span class="breakdown-val">${(43200 / node.calcRes.idealIntervalSec).toFixed(1)} ${isEN ? 'helps' : '次'}</span>
+                                <span class="breakdown-val">${helpsDisplay} ${isEN ? 'helps' : '次'}</span>
                               </div>
                             </div>
                             <div class="tooltip-note" style="margin-top: 6px; font-size: 11px; line-height: 1.4; color: var(--text-secondary);">

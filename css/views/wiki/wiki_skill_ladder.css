@@ -1,0 +1,149 @@
+/* =========================================================================
+   Skill Ladder Scoped Layout & Node Sizing Rules
+   ========================================================================= */
+
+/* Subpanel Flex & Single Frame Rule Compliance */
+#wiki-subpanel-skills_ladder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+#wiki-skill-ladder-coordinate {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Track Header & Ruler Spacer Synchronization (Desktop 140px, Mobile 96px) */
+.mobile-h5-app .wiki-skill-coordinate-ladder .skill-ladder-ruler-spacer,
+.mobile-h5-app .wiki-skill-coordinate-ladder .skill-ladder-track-header,
+.wiki-skill-coordinate-ladder .skill-ladder-ruler-spacer,
+.wiki-skill-coordinate-ladder .skill-ladder-track-header {
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+  box-sizing: border-box;
+  padding: 0 8px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.wiki-skill-coordinate-ladder .skill-ruler-label {
+  font-size: 11px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+/* Pure Text Skill Name Tag (Zero Icons / Zero Glyphs / Zero Emojis) */
+.skill-track-name-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 102px;
+}
+
+.skill-track-count-tag {
+  font-size: 10.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Expanded Track Height for 9 Tracks */
+.mobile-h5-app .wiki-skill-coordinate-ladder .ladder-track-row,
+.wiki-skill-coordinate-ladder .ladder-track-row {
+  height: clamp(52px, calc((100vh - 280px) / 9), 68px) !important;
+  min-height: 50px !important;
+  max-height: 72px !important;
+  margin-bottom: 3px !important;
+}
+
+/* Enlarged Pokemon Avatar Node (38px diameter) */
+.mobile-h5-app .wiki-skill-coordinate-ladder .node-avatar-wrapper,
+.wiki-skill-coordinate-ladder .node-avatar-wrapper {
+  position: relative;
+  width: 38px !important;
+  height: 38px !important;
+  flex-shrink: 0;
+}
+
+.wiki-skill-coordinate-ladder .node-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--bg-card-inner);
+  border: 1.5px solid var(--border-color);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  object-fit: contain;
+}
+
+.wiki-skill-coordinate-ladder .ladder-node.node-top1 .node-avatar-img {
+  border: 2px solid #eab308;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.75);
+}
+
+.wiki-skill-coordinate-ladder .ladder-node:hover {
+  transform: translate(-50%, -55%) scale(1.15);
+  z-index: 10000 !important;
+}
+
+/* Refined Count Badge for 38px Avatar */
+.wiki-skill-coordinate-ladder .node-count-badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: var(--bg-card-inner);
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin-top: -5px;
+  border: 1px solid var(--border-color);
+  font-feature-settings: 'tnum';
+  line-height: 1.1;
+  z-index: 2;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px), (max-width: 640px) {
+  .mobile-h5-app .wiki-skill-coordinate-ladder .skill-ladder-ruler-spacer,
+  .mobile-h5-app .wiki-skill-coordinate-ladder .skill-ladder-track-header,
+  .wiki-skill-coordinate-ladder .skill-ladder-ruler-spacer,
+  .wiki-skill-coordinate-ladder .skill-ladder-track-header {
+    width: 96px !important;
+    min-width: 96px !important;
+    max-width: 96px !important;
+    padding-right: 4px;
+  }
+
+  .skill-track-name-tag {
+    font-size: 10px;
+    padding: 2px 5px;
+    max-width: 68px;
+  }
+
+  .skill-track-count-tag {
+    font-size: 9.5px;
+  }
+
+  .mobile-h5-app .wiki-skill-coordinate-ladder .node-avatar-wrapper,
+  .wiki-skill-coordinate-ladder .node-avatar-wrapper {
+    width: 34px !important;
+    height: 34px !important;
+  }
+}

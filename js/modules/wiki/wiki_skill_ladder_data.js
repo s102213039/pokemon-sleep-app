@@ -259,14 +259,21 @@
   ];
 
   const EXCLUDED_SKILL_NAMES = [
-    '揮指', '模仿', '變身', '十項全能',
-    'Metronome', 'Mimic', 'Transform', 'All-Rounder'
+    '揮指', '模仿', '變身', '十項全能', '技能複製',
+    '挥指', '变身', '十项全能', '技能复制',
+    'Metronome', 'Mimic', 'Transform', 'All-Rounder', 'Skill Copy', 'Finger Wag'
   ];
 
   function isExcludedSkill(skillName) {
     if (!skillName) return true;
     const s = String(skillName).trim();
-    return EXCLUDED_SKILL_NAMES.some(ex => s === ex || s.startsWith(ex + '（') || s.startsWith(ex + '(') || s.startsWith(ex + ' '));
+    const sLower = s.toLowerCase();
+    return EXCLUDED_SKILL_NAMES.some(ex => {
+      const exLower = ex.toLowerCase();
+      return s === ex || sLower === exLower ||
+        s.startsWith(ex + '（') || s.startsWith(ex + '(') || s.startsWith(ex + ' ') ||
+        sLower.startsWith(exLower + '(') || sLower.startsWith(exLower + ' ');
+    });
   }
 
   const SKILL_TRACK_DEFINITIONS = [
@@ -389,6 +396,7 @@
     '超幸運': ['ingredient', 'dream_shards'],
     'Super Luck': ['ingredient', 'dream_shards'],
     '怪力鉗': ['ingredient', 'cooking_chance'],
+    '怪力钳': ['ingredient', 'cooking_chance'],
     'Hyper Cutter': ['ingredient', 'cooking_chance'],
     '月光': ['energy_single'],
     'Moonlight': ['energy_single'],
@@ -399,29 +407,34 @@
     '蓄力': ['charge_energy'],
     'Stockpile': ['charge_energy'],
     '夢魘': ['charge_energy'],
-    'Bad Dreams': ['charge_energy']
+    'Bad Dreams': ['charge_energy'],
+    'Darkrai Nightmare': ['charge_energy']
   };
 
   function getSkillTracks(mainSkill) {
     if (!mainSkill) return [];
     if (isExcludedSkill(mainSkill)) return [];
     const s = String(mainSkill).trim();
+    const sLower = s.toLowerCase();
 
     for (const [compName, tracks] of Object.entries(COMPOSITE_SKILL_TRACKS)) {
-      if (s === compName || s.startsWith(compName + '（') || s.startsWith(compName + '(') || s.startsWith(compName + ' ')) {
+      const compLower = compName.toLowerCase();
+      if (s === compName || sLower === compLower ||
+          s.startsWith(compName + '（') || s.startsWith(compName + '(') || s.startsWith(compName + ' ') ||
+          sLower.startsWith(compLower + '(') || sLower.startsWith(compLower + ' ')) {
         return tracks;
       }
     }
 
-    if (s.includes('能量填充') || s.includes('Charge Strength')) return ['charge_energy'];
-    if (s.includes('活力全體') || s.includes('活力療癒全體') || s.includes('Energy for Everyone')) return ['energy_all'];
-    if (s.includes('活力療癒') || s.includes('活力填充') || s.includes('活力充填') || s.includes('活力應援') || s.includes('Energy Cheer') || s.includes('Charge Energy')) return ['energy_single'];
-    if (s.includes('料理強化') || s.includes('Cooking Power-up')) return ['cooking_pot'];
-    if (s.includes('料理成功') || s.includes('美味機會') || s.includes('Tasty Chance')) return ['cooking_chance'];
-    if (s.includes('幫手支援') || s.includes('幫手加速') || s.includes('幫手獎勵') || s.includes('Helper Boost') || s.includes('Extra Helpful')) return ['helper_boost'];
-    if (s.includes('夢之碎片') || s.includes('Dream Shard')) return ['dream_shards'];
-    if (s.includes('食材獲取') || s.includes('食材精選') || s.includes('Ingredient Magnet') || s.includes('Ingredient Draw')) return ['ingredient'];
-    if (s.includes('樹果遽增') || s.includes('Berry Burst')) return ['berry_burst'];
+    if (sLower.includes('charge strength') || sLower.includes('darkrai nightmare') || s.includes('能量填充') || s.includes('能量充填') || s.includes('達克萊伊專屬')) return ['charge_energy'];
+    if (sLower.includes('energy for everyone') || s.includes('活力全體') || s.includes('活力全体') || s.includes('活力療癒全體') || s.includes('活力疗愈全体') || ((s.includes('活力療癒') || s.includes('活力疗愈')) && (s.includes('全体') || s.includes('全體'))) || s.includes('全體療癒') || s.includes('全体疗愈') || s.includes('全體能量回復') || s.includes('全体能量回复')) return ['energy_all'];
+    if (sLower.includes('energizing cheer') || sLower.includes('energy cheer') || sLower.includes('charge energy') || s.includes('活力療癒') || s.includes('活力疗愈') || s.includes('活力填充') || s.includes('活力充填') || s.includes('活力應援') || s.includes('活力应援') || s.includes('自體活力回復') || s.includes('自体活力回复') || s.includes('活力充沛')) return ['energy_single'];
+    if (sLower.includes('cooking power-up') || sLower.includes('cooking power up') || s.includes('料理強化') || s.includes('料理擴大') || s.includes('料理扩大')) return ['cooking_pot'];
+    if (sLower.includes('tasty chance') || s.includes('料理成功') || s.includes('美味機會') || s.includes('美味机会')) return ['cooking_chance'];
+    if (sLower.includes('helper boost') || sLower.includes('extra helpful') || sLower.includes('helper speed') || s.includes('幫手支援') || s.includes('幫手加速') || s.includes('幫手獎勵') || s.includes('幫手') || s.includes('帮手') || s.includes('傳說降臨') || s.includes('传说降临')) return ['helper_boost'];
+    if (sLower.includes('dream shard') || s.includes('夢之碎片') || s.includes('梦之碎片') || s.includes('碎片獲取') || s.includes('碎片获取')) return ['dream_shards'];
+    if (sLower.includes('ingredient magnet') || sLower.includes('ingredient draw') || sLower.includes('ingredient selection') || sLower.includes('ingr. selection') || sLower.includes('random ingredients') || s.includes('食材獲取') || s.includes('食材精選') || s.includes('食材精选') || s.includes('食材隨機') || s.includes('食材随机')) return ['ingredient'];
+    if (sLower.includes('berry burst') || sLower.includes('berry field') || s.includes('樹果遽增') || s.includes('树果遽增') || s.includes('樹果擴增') || s.includes('树果扩增') || s.includes('樹果領域') || s.includes('树果领域')) return ['berry_burst'];
 
     return [];
   }

@@ -49,6 +49,7 @@ const CSS_MODULES = [
   'views/wiki/wiki_speed.css',
   'views/wiki/wiki_camps.css',
   'views/wiki/wiki_ladder.css',
+  'views/wiki/wiki_skill_ladder.css',
   'views/wiki/wiki_ladder_meals.css',
   'views/wiki/wiki_items.css',
   'views/lab/lab_overview.css',

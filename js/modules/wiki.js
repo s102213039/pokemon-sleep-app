@@ -7380,14 +7380,21 @@
   ];
 
   const EXCLUDED_SKILL_NAMES = [
-    '揮指', '模仿', '變身', '十項全能',
-    'Metronome', 'Mimic', 'Transform', 'All-Rounder'
+    '揮指', '模仿', '變身', '十項全能', '技能複製',
+    '挥指', '变身', '十项全能', '技能复制',
+    'Metronome', 'Mimic', 'Transform', 'All-Rounder', 'Skill Copy', 'Finger Wag'
   ];
 
   function isExcludedSkill(skillName) {
     if (!skillName) return true;
     const s = String(skillName).trim();
-    return EXCLUDED_SKILL_NAMES.some(ex => s === ex || s.startsWith(ex + '（') || s.startsWith(ex + '(') || s.startsWith(ex + ' '));
+    const sLower = s.toLowerCase();
+    return EXCLUDED_SKILL_NAMES.some(ex => {
+      const exLower = ex.toLowerCase();
+      return s === ex || sLower === exLower ||
+        s.startsWith(ex + '（') || s.startsWith(ex + '(') || s.startsWith(ex + ' ') ||
+        sLower.startsWith(exLower + '(') || sLower.startsWith(exLower + ' ');
+    });
   }
 
   const SKILL_TRACK_DEFINITIONS = [
@@ -7510,6 +7517,7 @@
     '超幸運': ['ingredient', 'dream_shards'],
     'Super Luck': ['ingredient', 'dream_shards'],
     '怪力鉗': ['ingredient', 'cooking_chance'],
+    '怪力钳': ['ingredient', 'cooking_chance'],
     'Hyper Cutter': ['ingredient', 'cooking_chance'],
     '月光': ['energy_single'],
     'Moonlight': ['energy_single'],
@@ -7520,29 +7528,34 @@
     '蓄力': ['charge_energy'],
     'Stockpile': ['charge_energy'],
     '夢魘': ['charge_energy'],
-    'Bad Dreams': ['charge_energy']
+    'Bad Dreams': ['charge_energy'],
+    'Darkrai Nightmare': ['charge_energy']
   };
 
   function getSkillTracks(mainSkill) {
     if (!mainSkill) return [];
     if (isExcludedSkill(mainSkill)) return [];
     const s = String(mainSkill).trim();
+    const sLower = s.toLowerCase();
 
     for (const [compName, tracks] of Object.entries(COMPOSITE_SKILL_TRACKS)) {
-      if (s === compName || s.startsWith(compName + '（') || s.startsWith(compName + '(') || s.startsWith(compName + ' ')) {
+      const compLower = compName.toLowerCase();
+      if (s === compName || sLower === compLower ||
+          s.startsWith(compName + '（') || s.startsWith(compName + '(') || s.startsWith(compName + ' ') ||
+          sLower.startsWith(compLower + '(') || sLower.startsWith(compLower + ' ')) {
         return tracks;
       }
     }
 
-    if (s.includes('能量填充') || s.includes('Charge Strength')) return ['charge_energy'];
-    if (s.includes('活力全體') || s.includes('活力療癒全體') || s.includes('Energy for Everyone')) return ['energy_all'];
-    if (s.includes('活力療癒') || s.includes('活力填充') || s.includes('活力充填') || s.includes('活力應援') || s.includes('Energy Cheer') || s.includes('Charge Energy')) return ['energy_single'];
-    if (s.includes('料理強化') || s.includes('Cooking Power-up')) return ['cooking_pot'];
-    if (s.includes('料理成功') || s.includes('美味機會') || s.includes('Tasty Chance')) return ['cooking_chance'];
-    if (s.includes('幫手支援') || s.includes('幫手加速') || s.includes('幫手獎勵') || s.includes('Helper Boost') || s.includes('Extra Helpful')) return ['helper_boost'];
-    if (s.includes('夢之碎片') || s.includes('Dream Shard')) return ['dream_shards'];
-    if (s.includes('食材獲取') || s.includes('食材精選') || s.includes('Ingredient Magnet') || s.includes('Ingredient Draw')) return ['ingredient'];
-    if (s.includes('樹果遽增') || s.includes('Berry Burst')) return ['berry_burst'];
+    if (sLower.includes('charge strength') || sLower.includes('darkrai nightmare') || s.includes('能量填充') || s.includes('能量充填') || s.includes('達克萊伊專屬')) return ['charge_energy'];
+    if (sLower.includes('energy for everyone') || s.includes('活力全體') || s.includes('活力全体') || s.includes('活力療癒全體') || s.includes('活力疗愈全体') || ((s.includes('活力療癒') || s.includes('活力疗愈')) && (s.includes('全体') || s.includes('全體'))) || s.includes('全體療癒') || s.includes('全体疗愈') || s.includes('全體能量回復') || s.includes('全体能量回复')) return ['energy_all'];
+    if (sLower.includes('energizing cheer') || sLower.includes('energy cheer') || sLower.includes('charge energy') || s.includes('活力療癒') || s.includes('活力疗愈') || s.includes('活力填充') || s.includes('活力充填') || s.includes('活力應援') || s.includes('活力应援') || s.includes('自體活力回復') || s.includes('自体活力回复') || s.includes('活力充沛')) return ['energy_single'];
+    if (sLower.includes('cooking power-up') || sLower.includes('cooking power up') || s.includes('料理強化') || s.includes('料理擴大') || s.includes('料理扩大')) return ['cooking_pot'];
+    if (sLower.includes('tasty chance') || s.includes('料理成功') || s.includes('美味機會') || s.includes('美味机会')) return ['cooking_chance'];
+    if (sLower.includes('helper boost') || sLower.includes('extra helpful') || sLower.includes('helper speed') || s.includes('幫手支援') || s.includes('幫手加速') || s.includes('幫手獎勵') || s.includes('幫手') || s.includes('帮手') || s.includes('傳說降臨') || s.includes('传说降临')) return ['helper_boost'];
+    if (sLower.includes('dream shard') || s.includes('夢之碎片') || s.includes('梦之碎片') || s.includes('碎片獲取') || s.includes('碎片获取')) return ['dream_shards'];
+    if (sLower.includes('ingredient magnet') || sLower.includes('ingredient draw') || sLower.includes('ingredient selection') || sLower.includes('ingr. selection') || sLower.includes('random ingredients') || s.includes('食材獲取') || s.includes('食材精選') || s.includes('食材精选') || s.includes('食材隨機') || s.includes('食材随机')) return ['ingredient'];
+    if (sLower.includes('berry burst') || sLower.includes('berry field') || s.includes('樹果遽增') || s.includes('树果遽增') || s.includes('樹果擴增') || s.includes('树果扩增') || s.includes('樹果領域') || s.includes('树果领域')) return ['berry_burst'];
 
     return [];
   }
@@ -7564,24 +7577,30 @@
 
   function parseIntervalToSec(intervalStr) {
     if (!intervalStr) return 3600;
-    const parts = String(intervalStr).split(':').map(Number);
-    if (parts.length === 3) {
-      return (parts[0] * 3600) + (parts[1] * 60) + parts[2];
-    } else if (parts.length === 2) {
-      return (parts[0] * 60) + parts[1];
+    const str = String(intervalStr).trim();
+    if (str.includes(':')) {
+      const parts = str.split(':').map(n => parseInt(n, 10));
+      if (parts.length === 3 && parts.every(n => !isNaN(n) && n >= 0)) {
+        return (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+      } else if (parts.length === 2 && parts.every(n => !isNaN(n) && n >= 0)) {
+        return (parts[0] * 60) + parts[1];
+      }
+      return 3600;
     }
-    const num = parseFloat(intervalStr);
-    return isNaN(num) ? 3600 : num;
+    const num = parseFloat(str);
+    return (!isNaN(num) && Number.isFinite(num)) ? num : 3600;
   }
 
   function getPokemonSkillLadderProcs(pkm) {
     if (!pkm) return null;
-    const baseIntervalSec = parseIntervalToSec(pkm.interval);
+    const rawInterval = pkm.interval || pkm.help_interval || pkm.frequency || '';
+    const baseIntervalSec = parseIntervalToSec(rawInterval);
     const speedDiscount = 0.118;
     const speedReduction = Math.min(0.35, (isSkillLadderSpeedM ? 0.14 : 0) + (isSkillLadderSpeedS ? 0.07 : 0));
     const natureSpeedMult = skillLadderNatureSpeed ? 0.90 : 1.0;
     const effectiveIntervalSec = Math.max(600, Math.round(baseIntervalSec * (1 - speedDiscount) * (1 - speedReduction) * natureSpeedMult));
     const idealIntervalSec = effectiveIntervalSec * 0.45;
+    const helps12h = 43200 / idealIntervalSec;
 
     let baseRate = 0.03;
     const rawRate = pkm.skill_rate || pkm.skillRate;
@@ -7598,19 +7617,25 @@
           parsedRate = (!isNaN(val) && val <= 1) ? val : val / 100;
         }
       }
-      if (!isNaN(parsedRate) && parsedRate > 0) baseRate = parsedRate;
+      if (!isNaN(parsedRate) && Number.isFinite(parsedRate) && parsedRate > 0) {
+        baseRate = Math.min(1.0, parsedRate);
+      }
     }
     const subskillRateBonus = (isSkillLadderSkillM ? 0.36 : 0) + (isSkillLadderSkillS ? 0.18 : 0);
     const natureSkillMult = skillLadderNatureSkill ? 1.20 : 1.0;
     const finalSkillRate = baseRate * (1 + subskillRateBonus) * natureSkillMult;
-    const procs = (43200 / idealIntervalSec) * finalSkillRate;
+    const procs = helps12h * finalSkillRate;
+
+    const mainSkill = pkm.main_skill || pkm.mainSkill || pkm.skill || '';
 
     return {
       procs,
+      helps12h,
       effectiveIntervalSec,
       idealIntervalSec,
       baseSkillRate: baseRate,
-      finalSkillRate
+      finalSkillRate,
+      mainSkill
     };
   }
 
@@ -8107,10 +8132,10 @@
 
     return `
       <div class="wiki-coordinate-ladder-wrapper">
-        <div class="wiki-coordinate-ladder">
+        <div class="wiki-coordinate-ladder wiki-skill-coordinate-ladder">
           <div class="ladder-ruler-header">
-            <div class="ladder-ruler-spacer">
-              <span class="text-secondary font-bold" style="font-size: 11px; letter-spacing: 0.5px;">${isEN ? 'Procs/12h' : '發動次數/12h'}</span>
+            <div class="ladder-ruler-spacer skill-ladder-ruler-spacer">
+              <span class="text-secondary font-bold skill-ruler-label" style="font-size: 11px; letter-spacing: 0.5px;">${isEN ? 'Procs/12h' : '發動次數/12h'}</span>
             </div>
             <div class="ladder-ruler-scale">
               ${ticks.map(t => `
@@ -8141,7 +8166,7 @@
               } else {
                 const head = currentCluster[0];
                 const prev = currentCluster[currentCluster.length - 1];
-                if (Math.abs(prev.procs - n.procs) <= 0.12 && Math.abs(head.procs - n.procs) <= 0.25) {
+                if (Math.abs(prev.procs - n.procs) <= 0.20 && Math.abs(head.procs - n.procs) <= 0.45) {
                   currentCluster.push(n);
                 } else {
                   clusters.push(currentCluster);
@@ -8163,18 +8188,11 @@
 
             return `
               <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''}" data-skill-track="${track.id}">
-                <div class="ladder-track-header" title="${_escapeHtml(trackName)} · ${_escapeHtml(trackDesc)}">
-                  <div class="ladder-track-ing-main skill-track-icon-main" style="display:flex;align-items:center;justify-content:center;">
-                    <span class="skill-track-icon-wrapper" style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:${track.bgColor};color:${track.color};">
-                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
-                        ${track.svgPath}
-                      </svg>
-                    </span>
-                  </div>
-                  <div class="skill-track-header-title-box" style="margin-left: 8px; overflow: hidden;">
-                    <span class="font-bold text-primary" style="font-size: 13px; display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${_escapeHtml(trackName)}</span>
-                    <span class="text-secondary" style="font-size: 11px; display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${nodes.length} ${isEN ? 'species' : '種寶可夢'}</span>
-                  </div>
+                <div class="ladder-track-header skill-ladder-track-header" title="${_escapeHtml(trackName)} · ${_escapeHtml(trackDesc)}">
+                  <span class="skill-track-name-tag" style="background:${track.bgColor}; color:${track.color}; border: 1px solid ${track.color}40;">
+                    ${_escapeHtml(trackName)}
+                  </span>
+                  <span class="skill-track-count-tag text-secondary">${nodes.length} ${isEN ? 'species' : '種'}</span>
                 </div>
 
                 <div class="ladder-track-canvas">
@@ -8184,7 +8202,7 @@
                   <div class="ladder-track-lead-line" style="left: 0; width: ${leadPct}%;"></div>
                   <div class="ladder-track-line" style="left: ${leadPct}%; right: 0;"></div>
 
-                  <div class="ladder-nodes-container">
+                  <div class="ladder-nodes-container" data-boundary-protection="clamp(12px, calc(100% - 12px))">
                     ${nodes.map((node, nodeIdx) => {
                       const clusterInfo = nodeClusterMap.get(node) || { groupSize: 1, itemIdx: 0 };
                       const groupSize = clusterInfo.groupSize;
@@ -8192,7 +8210,7 @@
 
                       let offsetPx = 0;
                       if (groupSize > 1) {
-                        const staggerStep = groupSize >= 6 ? 12 : (groupSize >= 4 ? 15 : 18);
+                        const staggerStep = groupSize >= 6 ? 16 : (groupSize >= 4 ? 20 : 24);
                         // nodes is sorted descending, so itemIdx = 0 has highest procs and shifts right (+),
                         // while itemIdx = groupSize - 1 has lowest procs and shifts left (-)
                         offsetPx = Math.round(((groupSize - 1) / 2 - itemIdx) * staggerStep);
@@ -8201,12 +8219,14 @@
                       const basePosPct = parseFloat(getPosPct(node.procs));
                       const alignClass = basePosPct > 60 ? 'align-right' : (basePosPct < 40 ? 'align-left' : 'align-center');
                       const leftStyle = offsetPx === 0
-                        ? `clamp(12px, ${basePosPct}%, calc(100% - 12px))`
-                        : `clamp(12px, calc(${basePosPct}% + ${offsetPx}px), calc(100% - 12px))`;
+                        ? `clamp(20px, ${basePosPct}%, calc(100% - 20px))`
+                        : `clamp(20px, calc(${basePosPct}% + ${offsetPx}px), calc(100% - 20px))`;
                       const zIndex = node.isTopNode ? 50 : Math.max(40 - nodeIdx, 5);
 
-                      const idealMin = Math.floor(node.calcRes.idealIntervalSec / 60);
-                      const idealSec = Math.round(node.calcRes.idealIntervalSec % 60);
+                      const roundedIdealSec = Math.round(node.calcRes.idealIntervalSec);
+                      const idealMin = Math.floor(roundedIdealSec / 60);
+                      const idealSec = roundedIdealSec % 60;
+                      const helpsDisplay = (node.calcRes.helps12h != null ? node.calcRes.helps12h : (43200 / node.calcRes.idealIntervalSec)).toFixed(1);
 
                       return `
                         <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} ${groupSize > 1 ? 'node-in-cluster' : ''}"
@@ -8243,11 +8263,11 @@
                               </div>
                               <div class="breakdown-row">
                                 <span class="breakdown-label">${isEN ? 'Ideal Interval (0.45x):' : '滿活力間隔 (0.45x)：'}</span>
-                                <span class="breakdown-val">${idealMin}${isEN ? 'm ' : '分'}${idealSec}${isEN ? 's' : '秒'}</span>
+                                <span class="breakdown-val">${idealMin}${isEN ? 'm ' : '分'}${String(idealSec).padStart(2, '0')}${isEN ? 's' : '秒'}</span>
                               </div>
                               <div class="breakdown-row">
                                 <span class="breakdown-label">${isEN ? 'Est. Helps (12h):' : '日間 12h 總幫忙次數：'}</span>
-                                <span class="breakdown-val">${(43200 / node.calcRes.idealIntervalSec).toFixed(1)} ${isEN ? 'helps' : '次'}</span>
+                                <span class="breakdown-val">${helpsDisplay} ${isEN ? 'helps' : '次'}</span>
                               </div>
                             </div>
                             <div class="tooltip-note" style="margin-top: 6px; font-size: 11px; line-height: 1.4; color: var(--text-secondary);">
