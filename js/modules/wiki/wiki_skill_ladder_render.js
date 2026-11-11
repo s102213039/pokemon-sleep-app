@@ -74,7 +74,14 @@
         const subInfo = typeof getSkillSubCategoryInfo === 'function'
           ? getSkillSubCategoryInfo(skillName, trackId, isEN)
           : { subKey: '', subLabel: '', fullLabel: skillDisplayName };
-        const skillFullDisplay = subInfo.fullLabel || skillDisplayName;
+        let skillFullDisplay = subInfo.fullLabel || skillDisplayName;
+        if (skillFullDisplay) {
+          skillFullDisplay = skillFullDisplay
+            .replace(/（隨機）\s*（隨機）/g, '（隨機）')
+            .replace(/\(隨機\)\s*\(隨機\)/g, '(隨機)')
+            .replace(/\(Random\)\s*\(Random\)/gi, '(Random)')
+            .replace(/（Random）\s*（Random）/gi, '（Random）');
+        }
         const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 
         return {

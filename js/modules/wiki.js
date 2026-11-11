@@ -7704,9 +7704,31 @@
       }
     }
 
-    const fullLabel = subLabel
-      ? (isEN ? `${skillDisplayName} (${subLabel})` : `${skillDisplayName}（${subLabel}）`)
-      : skillDisplayName;
+    let fullLabel = skillDisplayName;
+    if (subLabel) {
+      const alreadyHasZh = skillDisplayName.includes('（' + subLabel + '）') || skillDisplayName.includes('(' + subLabel + ')');
+      const alreadyHasEn = isEN && (skillDisplayName.includes('(' + subLabel + ')') || skillDisplayName.includes('（' + subLabel + '）'));
+      const alreadyHasRandom = (subKey === 'random') && (
+        /（隨機）|\(隨機\)|\(Random\)|\(random\)|（Random）/i.test(skillDisplayName)
+      );
+      const alreadyHasFixed = (subKey === 'fixed' || subKey === 'fixed_s') && (
+        /（固定）|\(固定\)|\(Fixed\)|\(fixed\)|（Fixed）/i.test(skillDisplayName)
+      );
+
+      if (!alreadyHasZh && !alreadyHasEn && !alreadyHasRandom && !alreadyHasFixed) {
+        fullLabel = isEN ? `${skillDisplayName} (${subLabel})` : `${skillDisplayName}（${subLabel}）`;
+      }
+    }
+
+    fullLabel = fullLabel
+      .replace(/（([^）]+)）\s*（\1）/g, '（$1）')
+      .replace(/\(([^)]+)\)\s*\(\1\)/gi, '($1)')
+      .replace(/（([^）]+)）\s*\(\1\)/gi, '（$1）')
+      .replace(/\(([^)]+)\)\s*（\1）/gi, '（$1）')
+      .replace(/（隨機）\s*（隨機）/g, '（隨機）')
+      .replace(/\(隨機\)\s*\(隨機\)/g, '(隨機)')
+      .replace(/\(Random\)\s*\(Random\)/gi, '(Random)')
+      .replace(/（Random）\s*（Random）/gi, '（Random）');
 
     return {
       subKey,
@@ -8288,7 +8310,14 @@
       const subInfo = typeof getSkillSubCategoryInfo === 'function'
         ? getSkillSubCategoryInfo(skillName, trackId, isEN)
         : { subKey: '', subLabel: '', fullLabel: skillDisplayName };
-      const skillFullDisplay = subInfo.fullLabel || skillDisplayName;
+      let skillFullDisplay = subInfo.fullLabel || skillDisplayName;
+      if (skillFullDisplay) {
+        skillFullDisplay = skillFullDisplay
+          .replace(/（隨機）\s*（隨機）/g, '（隨機）')
+          .replace(/\(隨機\)\s*\(隨機\)/g, '(隨機)')
+          .replace(/\(Random\)\s*\(Random\)/gi, '(Random)')
+          .replace(/（Random）\s*（Random）/gi, '（Random）');
+      }
       const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 
       return {
@@ -8392,20 +8421,17 @@
           const rank = item.rank;
           const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : 'rank-other'));
           return `
-            <div class="ing-rank-card ${rankClass}" title="${esc(item.pkmDisplayName)} (${esc(item.skillFullDisplay || item.skillDisplayName)}) · ${item.displayProcs} ${isEN ? 'procs/12h' : '次/12h'}">
+            <div class="ing-rank-card ${rankClass}" title="${esc(item.skillFullDisplay || item.skillDisplayName)} · ${item.displayProcs} ${isEN ? 'procs/12h' : '次/12h'}">
               <div class="ing-rank-left">
-                <div class="ing-rank-num ${rankClass}">
+                <div class="ing-rank-num ${rankClass}" style="font-size:10.5px;font-weight:700;width:20px;min-width:20px;">
                   #${rank}
                 </div>
                 <div class="ing-rank-avatar-box ${rankClass}">
-                  <img src="${item.iconUrl}" class="ing-rank-avatar-img" alt="${esc(item.pkmDisplayName)}" loading="lazy">
+                  <img src="${item.iconUrl}" class="ing-rank-avatar-img" alt="" loading="lazy">
                 </div>
-                <div class="skill-rank-meta-col" style="display:flex;flex-direction:column;gap:1px;min-width:0;">
-                  <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
-                    <span class="font-bold text-primary" style="font-size:12.5px;">${esc(item.pkmDisplayName)}</span>
-                    ${typeof getSkillLadderSpecialtyIcon === 'function' ? getSkillLadderSpecialtyIcon(item.specKey, item.specDisplay, 15) : `<span class="node-specialty-tag specialty-${item.specKey}" style="font-size:9.5px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,0.08);color:var(--accent-color, #38bdf8);">${esc(item.specDisplay)}</span>`}
-                  </div>
-                  <span class="text-secondary" style="font-size:10.5px;">${esc(item.skillFullDisplay || item.skillDisplayName)}</span>
+                <div class="skill-rank-meta-col" style="display:flex;align-items:center;gap:6px;min-width:0;">
+                  ${typeof getSkillLadderSpecialtyIcon === 'function' ? getSkillLadderSpecialtyIcon(item.specKey, item.specDisplay, 15) : `<span class="node-specialty-tag specialty-${item.specKey}" style="font-size:9.5px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,0.08);color:var(--accent-color, #38bdf8);">${esc(item.specDisplay)}</span>`}
+                  <span class="text-secondary skill-rank-skill-name" style="font-size:11px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(item.skillFullDisplay || item.skillDisplayName)}</span>
                 </div>
               </div>
               <div class="ing-rank-right">
@@ -8564,7 +8590,14 @@
         const subInfo = typeof getSkillSubCategoryInfo === 'function'
           ? getSkillSubCategoryInfo(skillName, trackId, isEN)
           : { subKey: '', subLabel: '', fullLabel: skillDisplayName };
-        const skillFullDisplay = subInfo.fullLabel || skillDisplayName;
+        let skillFullDisplay = subInfo.fullLabel || skillDisplayName;
+        if (skillFullDisplay) {
+          skillFullDisplay = skillFullDisplay
+            .replace(/（隨機）\s*（隨機）/g, '（隨機）')
+            .replace(/\(隨機\)\s*\(隨機\)/g, '(隨機)')
+            .replace(/\(Random\)\s*\(Random\)/gi, '(Random)')
+            .replace(/（Random）\s*（Random）/gi, '（Random）');
+        }
         const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 
         return {

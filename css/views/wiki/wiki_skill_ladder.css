@@ -159,6 +159,37 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
   vertical-align: middle !important;
 }
 
+/* Skill Ranking Modal Refined Rank Number & Single-Row Meta */
+#wiki-skill-ranking-modal .ing-rank-num {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  width: 20px !important;
+  min-width: 20px !important;
+}
+
+#wiki-skill-ranking-modal .ing-rank-num.rank-1,
+#wiki-skill-ranking-modal .ing-rank-num.rank-2,
+#wiki-skill-ranking-modal .ing-rank-num.rank-3 {
+  font-size: 11px !important;
+}
+
+#wiki-skill-ranking-modal .skill-rank-meta-col {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+}
+
+#wiki-skill-ranking-modal .skill-rank-skill-name {
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  color: var(--text-secondary, #94a3b8) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
 /* Enlarged Pokemon Avatar Node (38px diameter) */
 .mobile-h5-app .wiki-skill-coordinate-ladder .node-avatar-wrapper,
 .wiki-skill-coordinate-ladder .node-avatar-wrapper {
@@ -242,5 +273,17 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
   .wiki-skill-coordinate-ladder .node-avatar-wrapper {
     width: 34px !important;
     height: 34px !important;
+  }
+
+  #wiki-skill-ranking-modal .ing-rank-num {
+    font-size: 9.5px !important;
+    width: 18px !important;
+    min-width: 18px !important;
+  }
+
+  #wiki-skill-ranking-modal .ing-rank-num.rank-1,
+  #wiki-skill-ranking-modal .ing-rank-num.rank-2,
+  #wiki-skill-ranking-modal .ing-rank-num.rank-3 {
+    font-size: 10px !important;
   }
 }

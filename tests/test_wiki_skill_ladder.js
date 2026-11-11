@@ -786,6 +786,82 @@ console.log('\n[Suite 12] Modal Highlight Bleed-Through Prevention & Lifecycle')
 }
 
 // -----------------------------------------------------------------------------
+// Suite 13: Skill Name Duplication Fix & Ranking Modal UI Refinements
+// -----------------------------------------------------------------------------
+console.log('\n[Suite 13] Skill Name Duplication Fix & Ranking Modal UI Refinements');
+
+{
+  const { sandbox } = createLadderSandbox();
+  const getSub = sandbox.getSkillSubCategoryInfo;
+
+  // 1. R1: No duplicate （隨機） or (Random) suffix
+  const chargeRandZh = getSub('能量填充S（隨機）', 'charge_energy', false);
+  assertEquals(chargeRandZh.fullLabel, '能量填充S（隨機）', '能量填充S（隨機） has clean fullLabel without duplicate suffix');
+  assert(!chargeRandZh.fullLabel.includes('（隨機）（隨機）'), '能量填充S（隨機） does not contain duplicate （隨機）');
+
+  const chargeRandEn = getSub('Charge Strength S (Random)', 'charge_energy', true);
+  assertEquals(chargeRandEn.fullLabel, 'Charge Strength S (Random)', 'Charge Strength S (Random) has clean fullLabel without duplicate suffix');
+  assert(!chargeRandEn.fullLabel.includes('(Random) (Random)'), 'Charge Strength S (Random) does not contain duplicate (Random)');
+
+  const dreamRandZh = getSub('夢之碎片獲取S（隨機）', 'dream_shards', false);
+  assertEquals(dreamRandZh.fullLabel, '夢之碎片獲取S（隨機）', '夢之碎片獲取S（隨機） has clean fullLabel without duplicate suffix');
+  assert(!dreamRandZh.fullLabel.includes('（隨機）（隨機）'), '夢之碎片獲取S（隨機） does not contain duplicate （隨機）');
+
+  const dreamRandEn = getSub('Dream Shard Magnet S (Random)', 'dream_shards', true);
+  assertEquals(dreamRandEn.fullLabel, 'Dream Shard Magnet S (Random)', 'Dream Shard Magnet S (Random) has clean fullLabel without duplicate suffix');
+
+  // Defensive sanitization of pre-duplicated input
+  const preDupeZh = getSub('能量填充S（隨機）（隨機）', 'charge_energy', false);
+  assertEquals(preDupeZh.fullLabel, '能量填充S（隨機）', 'Pre-duplicated input is cleaned up to 能量填充S（隨機）');
+
+  // Rendered ladder coordinate HTML verification
+  const ladderHtml = sandbox.renderSkillCoordinateLadder();
+  assert(!ladderHtml.includes('（隨機）（隨機）'), 'Rendered ladder HTML does not contain duplicate （隨機）（隨機）');
+  assert(!ladderHtml.includes('(Random) (Random)'), 'Rendered ladder HTML does not contain duplicate (Random) (Random)');
+
+  // 2. R2: Ranking modal content does NOT display Pokemon names
+  sandbox.openSkillRankingModal('charge_energy');
+  const modalEl = sandbox.document.getElementById('wiki-skill-ranking-modal');
+  assert(modalEl !== null, 'Ranking modal was rendered for charge_energy');
+  const modalHtml = modalEl.innerHTML;
+
+  assert(!modalHtml.includes('（隨機）（隨機）'), 'Ranking modal HTML does not contain duplicate （隨機）（隨機）');
+  assert(!modalHtml.includes('(Random) (Random)'), 'Ranking modal HTML does not contain duplicate (Random) (Random)');
+
+  // Inspect that skill-rank-meta-col does not contain Pokemon name span in meta column
+  assert(!modalHtml.includes('class="font-bold text-primary" style="font-size:12.5px;"'),
+    'Ranking modal does not contain Pokemon name span in meta column');
+
+  // Verify that Pokemon names are not rendered in the card content
+  const samplePokemonNames = ['皮卡丘', '雷丘', '電龍', '茸茸羊', '咚咚鼠', '卡比獸', 'Pikachu', 'Raichu', 'Ampharos', 'Dedenne', 'Snorlax'];
+  for (const pName of samplePokemonNames) {
+    assert(!modalHtml.includes(`>${pName}<`), `Ranking modal does not display Pokemon name >${pName}<`);
+  }
+
+  // 3. R3: Ranking numbers have significantly reduced font size
+  const skillLadderCss = fs.readFileSync(skillLadderCssPath, 'utf8');
+  const stylesCss = fs.readFileSync(stylesCssPath, 'utf8');
+  assert(skillLadderCss.includes('#wiki-skill-ranking-modal .ing-rank-num'),
+    'wiki_skill_ladder.css defines scoped rule for #wiki-skill-ranking-modal .ing-rank-num');
+  assert(skillLadderCss.includes('font-size: 10.5px !important;'),
+    'wiki_skill_ladder.css sets rank num font-size to 10.5px !important');
+  assert(stylesCss.includes('#wiki-skill-ranking-modal .ing-rank-num'),
+    'css/styles.css is synchronized with scoped rule for #wiki-skill-ranking-modal .ing-rank-num');
+
+  // 4. R3: Specialty icon and skill name aligned in the same row
+  assert(modalHtml.includes('class="skill-rank-meta-col" style="display:flex;align-items:center;gap:6px;min-width:0;"'),
+    'Ranking modal meta column uses inline flex with align-items center and 6px gap');
+  assert(modalHtml.includes('class="specialty-icon') || modalHtml.includes('node-specialty-tag'),
+    'Ranking modal contains specialty icon');
+  assert(modalHtml.includes('class="text-secondary skill-rank-skill-name"'),
+    'Ranking modal contains skill-rank-skill-name');
+  assert(skillLadderCss.includes('#wiki-skill-ranking-modal .skill-rank-meta-col'),
+    'wiki_skill_ladder.css defines flex-direction row and align-items center for .skill-rank-meta-col');
+
+  sandbox.closeSkillRankingModal();
+}
+
+// -----------------------------------------------------------------------------
 // Final Summary & Exit
 // -----------------------------------------------------------------------------
 console.log('\n================================================================');
