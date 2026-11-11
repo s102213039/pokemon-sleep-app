@@ -7709,10 +7709,10 @@
       const alreadyHasZh = skillDisplayName.includes('（' + subLabel + '）') || skillDisplayName.includes('(' + subLabel + ')');
       const alreadyHasEn = isEN && (skillDisplayName.includes('(' + subLabel + ')') || skillDisplayName.includes('（' + subLabel + '）'));
       const alreadyHasRandom = (subKey === 'random') && (
-        /（隨機）|\(隨機\)|\(Random\)|\(random\)|（Random）/i.test(skillDisplayName)
+        /（\s*隨機\s*）|\(\s*隨機\s*\)|\(\s*Random\s*\)|（\s*Random\s*）/i.test(skillDisplayName)
       );
       const alreadyHasFixed = (subKey === 'fixed' || subKey === 'fixed_s') && (
-        /（固定）|\(固定\)|\(Fixed\)|\(fixed\)|（Fixed）/i.test(skillDisplayName)
+        /（\s*固定\s*）|\(\s*固定\s*\)|\(\s*Fixed\s*\)|（\s*Fixed\s*）/i.test(skillDisplayName)
       );
 
       if (!alreadyHasZh && !alreadyHasEn && !alreadyHasRandom && !alreadyHasFixed) {
@@ -7721,11 +7721,11 @@
     }
 
     fullLabel = fullLabel
-      .replace(/(?:[（\(]隨機[）\)])(?:\s*[（\(]隨機[）\)])+/g, '（隨機）')
-      .replace(/(?:[（\(]Random[）\)])(?:\s*[（\(]Random[）\)])+/gi, isEN ? '(Random)' : '（Random）')
-      .replace(/(?:[（\(]固定[）\)])(?:\s*[（\(]固定[）\)])+/g, '（固定）')
-      .replace(/(?:[（\(]Fixed[）\)])(?:\s*[（\(]Fixed[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
-      .replace(/[（\(]([^）\(\)]+)[）\)](?:\s*[（\(]\1[）\)])+/gi, (match, p1) => {
+      .replace(/(?:[（\(]\s*隨機\s*[）\)])(?:\s*[（\(]\s*隨機\s*[）\)])+/g, '（隨機）')
+      .replace(/(?:[（\(]\s*Random\s*[）\)])(?:\s*[（\(]\s*Random\s*[）\)])+/gi, isEN ? '(Random)' : '（Random）')
+      .replace(/(?:[（\(]\s*固定\s*[）\)])(?:\s*[（\(]\s*固定\s*[）\)])+/g, '（固定）')
+      .replace(/(?:[（\(]\s*Fixed\s*[）\)])(?:\s*[（\(]\s*Fixed\s*[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
+      .replace(/[（\(]\s*([^）\(\)\s]+(?:\s+[^）\(\)\s]+)*)\s*[）\)](?:\s*[（\(]\s*\1\s*[）\)])+/gi, (match, p1) => {
         return isEN ? `(${p1})` : `（${p1}）`;
       });
 
@@ -8312,11 +8312,11 @@
       let skillFullDisplay = subInfo.fullLabel || skillDisplayName;
       if (skillFullDisplay) {
         skillFullDisplay = skillFullDisplay
-          .replace(/(?:[（\(]隨機[）\)])(?:\s*[（\(]隨機[）\)])+/g, '（隨機）')
-          .replace(/(?:[（\(]Random[）\)])(?:\s*[（\(]Random[）\)])+/gi, isEN ? '(Random)' : '（Random）')
-          .replace(/(?:[（\(]固定[）\)])(?:\s*[（\(]固定[）\)])+/g, '（固定）')
-          .replace(/(?:[（\(]Fixed[）\)])(?:\s*[（\(]Fixed[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
-          .replace(/[（\(]([^）\(\)]+)[）\)](?:\s*[（\(]\1[）\)])+/gi, (m, p1) => isEN ? `(${p1})` : `（${p1}）`);
+          .replace(/(?:[（\(]\s*隨機\s*[）\)])(?:\s*[（\(]\s*隨機\s*[）\)])+/g, '（隨機）')
+          .replace(/(?:[（\(]\s*Random\s*[）\)])(?:\s*[（\(]\s*Random\s*[）\)])+/gi, isEN ? '(Random)' : '（Random）')
+          .replace(/(?:[（\(]\s*固定\s*[）\)])(?:\s*[（\(]\s*固定\s*[）\)])+/g, '（固定）')
+          .replace(/(?:[（\(]\s*Fixed\s*[）\)])(?:\s*[（\(]\s*Fixed\s*[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
+          .replace(/[（\(]\s*([^）\(\)\s]+(?:\s+[^）\(\)\s]+)*)\s*[）\)](?:\s*[（\(]\s*\1\s*[）\)])+/gi, (m, p1) => isEN ? `(${p1})` : `（${p1}）`);
       }
       const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 
@@ -8593,11 +8593,11 @@
         let skillFullDisplay = subInfo.fullLabel || skillDisplayName;
         if (skillFullDisplay) {
           skillFullDisplay = skillFullDisplay
-            .replace(/(?:[（\(]隨機[）\)])(?:\s*[（\(]隨機[）\)])+/g, '（隨機）')
-            .replace(/(?:[（\(]Random[）\)])(?:\s*[（\(]Random[）\)])+/gi, isEN ? '(Random)' : '（Random）')
-            .replace(/(?:[（\(]固定[）\)])(?:\s*[（\(]固定[）\)])+/g, '（固定）')
-            .replace(/(?:[（\(]Fixed[）\)])(?:\s*[（\(]Fixed[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
-            .replace(/[（\(]([^）\(\)]+)[）\)](?:\s*[（\(]\1[）\)])+/gi, (m, p1) => isEN ? `(${p1})` : `（${p1}）`);
+            .replace(/(?:[（\(]\s*隨機\s*[）\)])(?:\s*[（\(]\s*隨機\s*[）\)])+/g, '（隨機）')
+            .replace(/(?:[（\(]\s*Random\s*[）\)])(?:\s*[（\(]\s*Random\s*[）\)])+/gi, isEN ? '(Random)' : '（Random）')
+            .replace(/(?:[（\(]\s*固定\s*[）\)])(?:\s*[（\(]\s*固定\s*[）\)])+/g, '（固定）')
+            .replace(/(?:[（\(]\s*Fixed\s*[）\)])(?:\s*[（\(]\s*Fixed\s*[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
+            .replace(/[（\(]\s*([^）\(\)\s]+(?:\s+[^）\(\)\s]+)*)\s*[）\)](?:\s*[（\(]\s*\1\s*[）\)])+/gi, (m, p1) => isEN ? `(${p1})` : `（${p1}）`);
         }
         const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 

@@ -823,6 +823,12 @@ console.log('\n[Suite 13] Skill Name Duplication Fix & Ranking Modal UI Refineme
   const preDupeMixed = getSub('能量填充S(隨機)（隨機）', 'charge_energy', false);
   assertEquals(preDupeMixed.fullLabel, '能量填充S（隨機）', 'Mixed brackets input (隨機)（隨機） is cleaned up to 能量填充S（隨機）');
 
+  const preDupeSpaced = getSub('能量填充S（ 隨機 ）（隨機）', 'charge_energy', false);
+  assertEquals(preDupeSpaced.fullLabel, '能量填充S（隨機）', 'Spaced brackets input （ 隨機 ）（隨機） is cleaned up to 能量填充S（隨機）');
+
+  const preDupeSpacedEn = getSub('Charge Strength S ( Random ) (Random)', 'charge_energy', true);
+  assertEquals(preDupeSpacedEn.fullLabel, 'Charge Strength S (Random)', 'Spaced English input ( Random ) (Random) is cleaned up to Charge Strength S (Random)');
+
   const preDupeFixed = getSub('能量填充S（固定）（固定）（固定）', 'charge_energy', false);
   assertEquals(preDupeFixed.fullLabel, '能量填充S（固定）', 'Pre-duplicated fixed input is cleaned up to 能量填充S（固定）');
 
