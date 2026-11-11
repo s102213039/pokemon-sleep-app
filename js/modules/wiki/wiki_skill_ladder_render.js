@@ -16,7 +16,8 @@
     const isEN = typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function' && window.I18N.getLanguage() === 'en-US';
     const allPkm = getAllSkillPokemonList();
 
-    let globalMaxProcs = 4.0;
+    let globalMinProcs = Infinity;
+    let globalMaxProcs = -Infinity;
     const processedTracks = SKILL_TRACK_DEFINITIONS.map(track => {
       const trackId = track.id;
       const trackName = isEN ? track.name_en : track.name;
@@ -70,6 +71,10 @@
         const pkmDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function' && window.I18N.getPokemonName(p.name_cn || p.name)) || p.name_en || p.name_cn) : (p.name_cn || p.name);
         const skillName = p.main_skill || '';
         const skillDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function' && window.I18N.getMainSkillName(skillName)) || skillName) : skillName;
+        const subInfo = typeof getSkillSubCategoryInfo === 'function'
+          ? getSkillSubCategoryInfo(skillName, trackId, isEN)
+          : { subKey: '', subLabel: '', fullLabel: skillDisplayName };
+        const skillFullDisplay = subInfo.fullLabel || skillDisplayName;
         const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 
         return {
@@ -82,6 +87,9 @@
           specialtyDisplay: specDisplay,
           skillName,
           skillDisplayName,
+          skillFullDisplay,
+          subKey: subInfo.subKey,
+          subLabel: subInfo.subLabel,
           iconUrl,
           isTopNode: false
         };
@@ -96,6 +104,7 @@
       }
 
       visibleNodes.forEach(n => {
+        if (n.procs < globalMinProcs) globalMinProcs = n.procs;
         if (n.procs > globalMaxProcs) globalMaxProcs = n.procs;
       });
 
@@ -119,14 +128,38 @@
       processedTracks.sort((a, b) => b.nodes.length - a.nodes.length);
     }
 
-    const minVal = 0;
-    const maxVal = Math.max(4, Math.ceil(globalMaxProcs * 1.05));
-    const step = maxVal > 14 ? 2 : 1;
-    const ticks = [];
-    for (let t = minVal; t <= maxVal; t += step) ticks.push(t);
-    if (ticks[ticks.length - 1] < maxVal) ticks.push(maxVal);
+    let minVal = 0;
+    let maxVal = 4;
+    if (globalMinProcs !== Infinity && globalMaxProcs !== -Infinity) {
+      if (Math.abs(globalMaxProcs - globalMinProcs) < 0.01) {
+        minVal = Math.max(0, Number((globalMinProcs - 0.5).toFixed(2)));
+        maxVal = Number((globalMaxProcs + 0.5).toFixed(2));
+      } else {
+        minVal = Number(globalMinProcs.toFixed(2));
+        maxVal = Number(globalMaxProcs.toFixed(2));
+      }
+    }
+
+    const range = maxVal - minVal;
+    const ticks = [minVal];
+    if (range > 0.05) {
+      const step = range > 10 ? 2 : (range > 3.5 ? 1 : 0.5);
+      const minGap = range * 0.08;
+      let cand = Math.ceil(minVal / step) * step;
+      while (cand < maxVal) {
+        const cleanCand = Number(cand.toFixed(2));
+        if ((cleanCand - minVal) >= minGap && (maxVal - cleanCand) >= minGap) {
+          ticks.push(cleanCand);
+        }
+        cand += step;
+      }
+      ticks.push(maxVal);
+    } else {
+      ticks.push(maxVal);
+    }
 
     function getPosPct(val) {
+      if (maxVal <= minVal) return '0.00';
       const clamped = Math.min(Math.max(val, minVal), maxVal);
       return (((clamped - minVal) / (maxVal - minVal)) * 100).toFixed(2);
     }
@@ -136,12 +169,12 @@
         <div class="wiki-coordinate-ladder wiki-skill-coordinate-ladder">
           <div class="ladder-ruler-header">
             <div class="ladder-ruler-spacer skill-ladder-ruler-spacer">
-              <span class="text-secondary font-bold skill-ruler-label" style="font-size: 11px; letter-spacing: 0.5px;">${isEN ? 'Procs/12h' : '發動次數/12h'}</span>
+              <span class="text-secondary font-bold skill-ruler-label" style="font-size: 11px; letter-spacing: 0.5px;">${isEN ? 'Procs/12h' : '次數/12h'}</span>
             </div>
             <div class="ladder-ruler-scale">
               ${ticks.map(t => `
                 <div class="ladder-ruler-tick" style="left: ${getPosPct(t)}%;">
-                  <span class="tick-label">${t}</span>
+                  <span class="tick-label">${typeof t === 'number' ? (Number.isInteger(t) ? t : Number(t.toFixed(2))) : t}</span>
                   <div class="tick-line"></div>
                 </div>
               `).join('')}
@@ -194,10 +227,10 @@
                      role="button"
                      tabindex="0"
                      title="${_escapeHtml(trackName)} · ${_escapeHtml(trackDesc)} · ${isEN ? 'Click to view rankings' : '點擊查看發動次數排名'}">
-                  <span class="skill-track-name-tag" style="background:${track.bgColor}; color:${track.color}; border: 1px solid ${track.color}40;">
+                  <span class="skill-track-name-tag" style="color:${track.color};">
                     ${_escapeHtml(trackName)}
                   </span>
-                  <span class="skill-track-count-tag text-secondary">${nodes.length} ${isEN ? 'species' : '種'}</span>
+                  <span class="skill-track-count-tag text-secondary" style="display:none;">${nodes.length} ${isEN ? 'species' : '種'}</span>
                 </div>
 
                 <div class="ladder-track-canvas">
@@ -247,12 +280,12 @@
                           <div class="ladder-node-tooltip">
                             <div class="tooltip-title">
                               ${node.isTopNode ? (isEN ? 'Top 1 ' : 'TOP 1 ') : ''}${_escapeHtml(node.pkmDisplayName)}
-                              <span class="node-specialty-tag specialty-${node.specialtyKey}" style="margin-left: 6px; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); color: var(--accent-color, #38bdf8);">${node.specialtyDisplay}</span>
+                              ${typeof getSkillLadderSpecialtyIcon === 'function' ? getSkillLadderSpecialtyIcon(node.specialtyKey, node.specialtyDisplay, 16) : `<span class="node-specialty-tag specialty-${node.specialtyKey}" style="margin-left: 6px; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); color: var(--accent-color, #38bdf8);">${node.specialtyDisplay}</span>`}
                             </div>
                             <div class="tooltip-yield-breakdown">
                               <div class="breakdown-row">
                                 <span class="breakdown-label">${isEN ? 'Main Skill:' : '主技能：'}</span>
-                                <span class="breakdown-val font-bold text-primary">${_escapeHtml(node.skillDisplayName)}</span>
+                                <span class="breakdown-val font-bold text-primary">${_escapeHtml(node.skillFullDisplay || node.skillDisplayName)}</span>
                               </div>
                               <div class="breakdown-row">
                                 <span class="breakdown-label">${isEN ? 'Base Rate:' : '基礎機率：'}</span>
@@ -476,7 +509,9 @@
       COMPOSITE_SKILL_TRACKS: typeof COMPOSITE_SKILL_TRACKS !== 'undefined' ? COMPOSITE_SKILL_TRACKS : {},
       getPokemonSkillLadderProcs: typeof getPokemonSkillLadderProcs === 'function' ? getPokemonSkillLadderProcs : null,
       isExcludedSkill: typeof isExcludedSkill === 'function' ? isExcludedSkill : null,
-      getSkillTracks: typeof getSkillTracks === 'function' ? getSkillTracks : null
+      getSkillTracks: typeof getSkillTracks === 'function' ? getSkillTracks : null,
+      getSkillSubCategoryInfo: typeof getSkillSubCategoryInfo === 'function' ? getSkillSubCategoryInfo : null,
+      getSkillLadderSpecialtyIcon: typeof getSkillLadderSpecialtyIcon === 'function' ? getSkillLadderSpecialtyIcon : null
     };
 
     if (wikiExport && typeof wikiExport === 'object') {

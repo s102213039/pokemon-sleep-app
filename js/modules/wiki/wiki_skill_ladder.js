@@ -471,8 +471,27 @@
     if (popover) popover.style.display = 'none';
   }
 
-  function openSkillRankingModal(trackId) {
+  function openSkillRankingModal(trackId, subFilter) {
     if (!trackId) return;
+
+    if (typeof window !== 'undefined' && window.PopoverCoordinator && typeof window.PopoverCoordinator.dismissAll === 'function') {
+      try { window.PopoverCoordinator.dismissAll(); } catch (e) {}
+    }
+    if (typeof document !== 'undefined') {
+      const activeRows = document.querySelectorAll('.ladder-track-row.has-active-tooltip');
+      activeRows.forEach(el => el.classList.remove('has-active-tooltip'));
+      const activeNodes = document.querySelectorAll('.ladder-node.tooltip-active');
+      activeNodes.forEach(el => el.classList.remove('tooltip-active'));
+      const activeGroupHovers = document.querySelectorAll('[data-pkm-group].group-hover-active');
+      activeGroupHovers.forEach(el => el.classList.remove('group-hover-active'));
+      if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        try { document.activeElement.blur(); } catch (e) {}
+      }
+      if (document.body && document.body.classList && typeof document.body.classList.add === 'function') {
+        document.body.classList.add('skill-ranking-modal-open');
+      }
+    }
+
     const isEN = typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function' && window.I18N.getLanguage() === 'en-US';
     const trackDef = (typeof SKILL_TRACK_DEFINITIONS !== 'undefined' && Array.isArray(SKILL_TRACK_DEFINITIONS))
       ? SKILL_TRACK_DEFINITIONS.find(t => t.id === trackId)
@@ -516,7 +535,9 @@
       return true;
     });
 
-    const rankingList = matchingPokemon.map(p => {
+    const currentSubFilter = subFilter || 'ALL';
+
+    const rawList = matchingPokemon.map(p => {
       const calcRes = getPokemonSkillLadderProcs(p);
       if (!calcRes) return null;
 
@@ -531,6 +552,10 @@
       const pkmDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function' && window.I18N.getPokemonName(p.name_cn || p.name)) || p.name_en || p.name_cn) : (p.name_cn || p.name);
       const skillName = p.main_skill || '';
       const skillDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function' && window.I18N.getMainSkillName(skillName)) || skillName) : skillName;
+      const subInfo = typeof getSkillSubCategoryInfo === 'function'
+        ? getSkillSubCategoryInfo(skillName, trackId, isEN)
+        : { subKey: '', subLabel: '', fullLabel: skillDisplayName };
+      const skillFullDisplay = subInfo.fullLabel || skillDisplayName;
       const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 
       return {
@@ -543,9 +568,17 @@
         helpsDisplay: (calcRes.helps12h != null ? calcRes.helps12h : (43200 / calcRes.idealIntervalSec)).toFixed(1),
         specKey,
         specDisplay,
-        skillDisplayName
+        skillName,
+        skillDisplayName,
+        skillFullDisplay,
+        subKey: subInfo.subKey,
+        subLabel: subInfo.subLabel
       };
     }).filter(Boolean);
+
+    const rankingList = currentSubFilter === 'ALL'
+      ? rawList
+      : rawList.filter(item => item.subKey === currentSubFilter);
 
     rankingList.sort((a, b) => b.procs - a.procs);
 
@@ -579,6 +612,43 @@
       return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     };
 
+    let subFilterHTML = '';
+    if (trackId === 'energy_single') {
+      const filters = [
+        { key: 'ALL', label: isEN ? 'All' : '全部' },
+        { key: 'self', label: isEN ? 'Self' : '自己' },
+        { key: 'ally', label: isEN ? 'Random Ally' : '隨機他人' }
+      ];
+      subFilterHTML = `
+        <div class="skill-rank-subfilters" style="display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap;">
+          ${filters.map(f => `
+            <button type="button" class="tag-btn ${currentSubFilter === f.key ? 'active' : ''}"
+                    style="font-size:11px;padding:2px 10px;border-radius:12px;line-height:1.4;cursor:pointer;"
+                    onclick="window.WikiDB.openSkillRankingModal('${trackId}', '${f.key}')">
+              ${esc(f.label)}
+            </button>
+          `).join('')}
+        </div>
+      `;
+    } else if (trackId === 'ingredient') {
+      const filters = [
+        { key: 'ALL', label: isEN ? 'All' : '全部' },
+        { key: 'magnet', label: isEN ? 'Ingredient Magnet' : '食材獲取' },
+        { key: 'select', label: isEN ? 'Ingredient Draw' : '食材精選' }
+      ];
+      subFilterHTML = `
+        <div class="skill-rank-subfilters" style="display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap;">
+          ${filters.map(f => `
+            <button type="button" class="tag-btn ${currentSubFilter === f.key ? 'active' : ''}"
+                    style="font-size:11px;padding:2px 10px;border-radius:12px;line-height:1.4;cursor:pointer;"
+                    onclick="window.WikiDB.openSkillRankingModal('${trackId}', '${f.key}')">
+              ${esc(f.label)}
+            </button>
+          `).join('')}
+        </div>
+      `;
+    }
+
     const itemsHTML = rankedList.length === 0 ? `
       <div class="ing-rank-empty">
         <p>${isEN ? 'No Pokémon matched current skill ladder filter conditions.' : '當前篩選條件下查無符合之寶可夢。'}</p>
@@ -589,7 +659,7 @@
           const rank = item.rank;
           const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : 'rank-other'));
           return `
-            <div class="ing-rank-card ${rankClass}" title="${esc(item.pkmDisplayName)} (${esc(item.skillDisplayName)}) · ${item.displayProcs} ${isEN ? 'procs/12h' : '次/12h'}">
+            <div class="ing-rank-card ${rankClass}" title="${esc(item.pkmDisplayName)} (${esc(item.skillFullDisplay || item.skillDisplayName)}) · ${item.displayProcs} ${isEN ? 'procs/12h' : '次/12h'}">
               <div class="ing-rank-left">
                 <div class="ing-rank-num ${rankClass}">
                   #${rank}
@@ -600,9 +670,9 @@
                 <div class="skill-rank-meta-col" style="display:flex;flex-direction:column;gap:1px;min-width:0;">
                   <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
                     <span class="font-bold text-primary" style="font-size:12.5px;">${esc(item.pkmDisplayName)}</span>
-                    <span class="node-specialty-tag specialty-${item.specKey}" style="font-size:9.5px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,0.08);color:var(--accent-color, #38bdf8);">${esc(item.specDisplay)}</span>
+                    ${typeof getSkillLadderSpecialtyIcon === 'function' ? getSkillLadderSpecialtyIcon(item.specKey, item.specDisplay, 15) : `<span class="node-specialty-tag specialty-${item.specKey}" style="font-size:9.5px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,0.08);color:var(--accent-color, #38bdf8);">${esc(item.specDisplay)}</span>`}
                   </div>
-                  <span class="text-secondary" style="font-size:10.5px;">${esc(item.skillDisplayName)}</span>
+                  <span class="text-secondary" style="font-size:10.5px;">${esc(item.skillFullDisplay || item.skillDisplayName)}</span>
                 </div>
               </div>
               <div class="ing-rank-right">
@@ -623,13 +693,14 @@
           <div class="ing-rank-title-group">
             <div class="ing-rank-header-text">
               <div class="ing-rank-header-title">
-                <span class="skill-track-name-tag" style="background:${trackDef.bgColor}; color:${trackDef.color}; border: 1px solid ${trackDef.color}40; max-width:none; font-size:12.5px; padding:3px 10px;">
+                <span class="skill-track-name-tag" style="color:${trackDef.color}; max-width:none; font-size:14px; padding:0; background:transparent; border:none;">
                   ${esc(trackName)}
                 </span>
               </div>
               <div class="ing-rank-header-sub">
                 <span>${esc(trackDesc)} · ${isEN ? 'Lv.60 Ideal Energy (0.45x)' : 'Lv.60 滿活力 (0.45x)'} · ${rankedList.length} ${isEN ? 'Pokémon' : '隻寶可夢'}</span>
               </div>
+              ${subFilterHTML}
             </div>
           </div>
           <button type="button" class="ing-rank-close-btn" onclick="window.WikiDB.closeSkillRankingModal()" title="${isEN ? 'Close' : '關閉'}" aria-label="Close">
@@ -666,14 +737,20 @@
   }
 
   function closeSkillRankingModal() {
-    if (typeof document === 'undefined' || typeof document.getElementById !== 'function') return;
-    const modal = document.getElementById('wiki-skill-ranking-modal');
-    if (!modal) return;
-    const wipe = () => { modal.innerHTML = ''; };
-    if (typeof window !== 'undefined' && typeof window.animateOverlayClose === 'function') {
-      window.animateOverlayClose(modal, wipe);
-    } else {
-      modal.style.display = 'none';
-      wipe();
+    if (typeof document !== 'undefined') {
+      if (document.body && document.body.classList && typeof document.body.classList.remove === 'function') {
+        document.body.classList.remove('skill-ranking-modal-open');
+      }
+      if (typeof document.getElementById === 'function') {
+        const modal = document.getElementById('wiki-skill-ranking-modal');
+        if (!modal) return;
+        const wipe = () => { modal.innerHTML = ''; };
+        if (typeof window !== 'undefined' && typeof window.animateOverlayClose === 'function') {
+          window.animateOverlayClose(modal, wipe);
+        } else {
+          modal.style.display = 'none';
+          wipe();
+        }
+      }
     }
   }

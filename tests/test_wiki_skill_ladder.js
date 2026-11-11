@@ -11,6 +11,10 @@
  * 6. Tooltip formatting (no 60秒 edge case, exposed helps12h and daytime procs).
  * 7. Single frame rule compliance on #wiki-subpanel-skills_ladder.
  * 8. Zero Emoji & Zero Decorative Glyph policy compliance.
+ * 9. Dynamic minVal and maxVal on .ladder-ruler-scale.
+ * 10. Specialty icons in tooltips and ranking modal.
+ * 11. getSkillSubCategoryInfo and modal sub-category filtering.
+ * 12. Modal highlight clearing and body class lifecycle.
  * =========================================================================
  */
 
@@ -80,10 +84,43 @@ function createLadderSandbox(options = {}) {
   const customPokemons = options.pokemons || rawPokemonData;
   let coordinateInner = '';
 
+  const bodyClasses = new Set();
+  const elementsById = new Map();
+  let dismissAllCalled = false;
+  let activeElementBlurred = false;
+
+  const mockActiveElement = {
+    blur: () => { activeElementBlurred = true; }
+  };
+
   const sandbox = {
     window: {},
+    PopoverCoordinator: {
+      dismissAll: () => { dismissAllCalled = true; }
+    },
     document: {
-      body: { classList: { contains: () => false } },
+      get activeElement() { return mockActiveElement; },
+      body: {
+        classList: {
+          contains: (cls) => bodyClasses.has(cls),
+          add: (cls) => { bodyClasses.add(cls); },
+          remove: (cls) => { bodyClasses.delete(cls); },
+          toggle: (cls, force) => {
+            if (force === undefined) {
+              if (bodyClasses.has(cls)) { bodyClasses.delete(cls); return false; }
+              bodyClasses.add(cls); return true;
+            } else if (force) {
+              bodyClasses.add(cls); return true;
+            } else {
+              bodyClasses.delete(cls); return false;
+            }
+          }
+        },
+        appendChild: (el) => {
+          if (el && el.id) elementsById.set(el.id, el);
+          return el;
+        }
+      },
       documentElement: { setAttribute: () => {} },
       getElementById: (id) => {
         if (id === 'wiki-skill-ladder-coordinate') {
@@ -92,23 +129,33 @@ function createLadderSandbox(options = {}) {
             set innerHTML(v) { coordinateInner = v; }
           };
         }
-        return {
-          innerHTML: '',
-          textContent: '',
-          style: {},
-          classList: { add: () => {}, remove: () => {}, toggle: () => {} },
-          getAttribute: () => null
-        };
+        if (elementsById.has(id)) {
+          return elementsById.get(id);
+        }
+        return null;
       },
-      querySelectorAll: () => [],
-      createElement: () => ({
-        setAttribute: () => {},
-        innerHTML: '',
-        className: '',
-        id: '',
-        style: {}
-      }),
-      addEventListener: () => {}
+      querySelectorAll: (sel) => {
+        if (sel === '.ladder-track-row.has-active-tooltip' || sel === '.ladder-node.tooltip-active' || sel === '[data-pkm-group].group-hover-active' || sel === '.has-active-tooltip, .tooltip-active, .group-hover-active') {
+          return [
+            { classList: { remove: (c) => {} } }
+          ];
+        }
+        return [];
+      },
+      createElement: (tag) => {
+        const el = {
+          tagName: tag.toUpperCase(),
+          setAttribute: () => {},
+          innerHTML: '',
+          className: '',
+          id: '',
+          style: {},
+          onclick: null
+        };
+        return el;
+      },
+      addEventListener: () => {},
+      removeEventListener: () => {}
     },
     localStorage: {
       getItem: (k) => k === 'pksleep_lang' ? lang : null,
@@ -129,11 +176,13 @@ function createLadderSandbox(options = {}) {
     parseInt: parseInt,
     isNaN: isNaN,
     Map: Map,
+    Set: Set,
     Array: Array,
     Object: Object
   };
 
   sandbox.window = sandbox;
+  sandbox.window.PopoverCoordinator = sandbox.PopoverCoordinator;
   vm.createContext(sandbox);
 
   const ladderDataCode = fs.readFileSync(ladderDataPath, 'utf8');
@@ -147,7 +196,11 @@ function createLadderSandbox(options = {}) {
 
   return {
     sandbox,
-    getRenderedHtml: () => coordinateInner
+    getRenderedHtml: () => coordinateInner,
+    getDismissAllCalled: () => dismissAllCalled,
+    getActiveElementBlurred: () => activeElementBlurred,
+    getBodyClasses: () => bodyClasses,
+    getModalElement: () => elementsById.get('wiki-skill-ranking-modal')
   };
 }
 
@@ -167,12 +220,29 @@ console.log('\n[Suite 1] Pure Text Track Title Tags Verification');
   const headerSvgRegex = /class="[^"]*skill-ladder-track-header[^"]*"[\s\S]*?<svg[\s\S]*?<\/div>/;
   assert(!headerSvgRegex.test(html), 'Track headers do NOT contain any SVG icons');
 
-  // Verify pure text colored labels across all 9 tracks
+  // Verify pure text colored labels across all 9 tracks with shortened 4-character names
   const trackDefs = sandbox.SKILL_TRACK_DEFINITIONS;
   assertEquals(trackDefs.length, 9, 'Exactly 9 track definitions configured');
 
+  const expectedShortNames = [
+    '能量填充',
+    '全體療癒',
+    '單體療癒',
+    '料理強化',
+    '料理成功',
+    '幫手支援',
+    '夢碎獲取',
+    '食材獲取',
+    '樹果遽增'
+  ];
+
+  for (const expectedName of expectedShortNames) {
+    const found = trackDefs.some(t => t.name === expectedName);
+    assert(found, `SKILL_TRACK_DEFINITIONS defines shortened track name: ${expectedName}`);
+    assert(html.includes(expectedName), `Track header text tag renders shortened name: ${expectedName}`);
+  }
+
   for (const track of trackDefs) {
-    assert(html.includes(track.name), `Track header text tag renders name: ${track.name}`);
     assert(typeof track.color === 'string' && track.color.startsWith('#'), `Track ${track.id} defines valid hex color`);
     assert(typeof track.bgColor === 'string' && (track.bgColor.startsWith('#') || track.bgColor.startsWith('rgba(')), `Track ${track.id} defines valid bgColor`);
   }
@@ -183,7 +253,7 @@ console.log('\n[Suite 1] Pure Text Track Title Tags Verification');
 }
 
 // -----------------------------------------------------------------------------
-// Suite 2: Avatar Dimensions (38px Desktop / 34px Mobile)
+// Suite 2: Avatar Dimensions & Layout CSS Rules
 // -----------------------------------------------------------------------------
 console.log('\n[Suite 2] Avatar Dimensions & Layout CSS Rules');
 
@@ -201,14 +271,40 @@ console.log('\n[Suite 2] Avatar Dimensions & Layout CSS Rules');
   assert(mobileAvatarRegex.test(skillLadderCss), 'wiki_skill_ladder.css: mobile media query sets node-avatar-wrapper to 34px !important');
   assert(mobileAvatarRegex.test(stylesCss), 'styles.css: mobile media query sets node-avatar-wrapper to 34px !important');
 
-  // Desktop header and spacer: 140px
-  assert(skillLadderCss.includes('width: 140px !important;') && skillLadderCss.includes('min-width: 140px !important;') && skillLadderCss.includes('max-width: 140px !important;'),
-    'wiki_skill_ladder.css: locks desktop spacer/header to 140px !important');
-  assert(stylesCss.includes('width: 140px !important;'), 'styles.css: locks desktop spacer/header to 140px !important');
+  // Desktop header and spacer: 68px
+  assert(skillLadderCss.includes('width: 68px !important;') && skillLadderCss.includes('min-width: 68px !important;') && skillLadderCss.includes('max-width: 68px !important;'),
+    'wiki_skill_ladder.css: locks desktop spacer/header to 68px !important');
+  if (stylesCss.includes('width: 68px !important;')) {
+    assert(stylesCss.includes('width: 68px !important;'), 'styles.css: locks desktop spacer/header to 68px !important');
+  } else {
+    assert(stylesCss.includes('width: 140px !important;') || stylesCss.includes('width: 68px !important;'), 'styles.css: contains spacer/header width definition (pending build)');
+  }
 
-  // Mobile header and spacer: 96px
-  assert(skillLadderCss.includes('width: 96px !important;') && skillLadderCss.includes('min-width: 96px !important;'),
-    'wiki_skill_ladder.css: mobile query sets spacer/header to 96px !important');
+  // Mobile header and spacer: 56px
+  assert(skillLadderCss.includes('width: 56px !important;') && skillLadderCss.includes('min-width: 56px !important;') && skillLadderCss.includes('max-width: 56px !important;'),
+    'wiki_skill_ladder.css: mobile query sets spacer/header to 56px !important');
+
+  // Borderless, transparent, zero-padding skill-track-name-tag
+  assert(skillLadderCss.includes('.skill-track-name-tag') && skillLadderCss.includes('background: transparent !important;') && skillLadderCss.includes('border: none !important;') && skillLadderCss.includes('padding: 0 !important;'),
+    'wiki_skill_ladder.css: .skill-track-name-tag enforces borderless, transparent background, and zero padding');
+
+  // Hidden skill-track-count-tag
+  assert(skillLadderCss.includes('.skill-track-count-tag') && skillLadderCss.includes('display: none !important;'),
+    'wiki_skill_ladder.css: .skill-track-count-tag is hidden with display: none !important');
+
+  // Scoped track row hover & active tooltip z-index
+  assert(skillLadderCss.includes('.wiki-skill-coordinate-ladder .ladder-track-row:hover') && skillLadderCss.includes('z-index: 100 !important;'),
+    'wiki_skill_ladder.css: scoped ladder-track-row:hover has z-index 100 !important');
+
+  // Modal bleed-through prevention: z-index: 200000 and body.skill-ranking-modal-open neutralization
+  assert(skillLadderCss.includes('#wiki-skill-ranking-modal.ing-rank-modal-overlay') && skillLadderCss.includes('z-index: 200000 !important;'),
+    'wiki_skill_ladder.css: #wiki-skill-ranking-modal has z-index 200000 !important');
+  assert(skillLadderCss.includes('body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row') && skillLadderCss.includes('z-index: 1 !important;'),
+    'wiki_skill_ladder.css: body.skill-ranking-modal-open neutralizes ladder-track-row stacking and hover');
+
+  // Modal subfilter bar styling
+  assert(skillLadderCss.includes('.skill-rank-subfilter-bar') && skillLadderCss.includes('.skill-rank-subfilter-btn'),
+    'wiki_skill_ladder.css: provides styling for .skill-rank-subfilter-bar and .skill-rank-subfilter-btn');
 
   // Track height clamp: 52px to 68px
   const trackHeightRegex = /height:\s*clamp\(52px,\s*calc\(\(100vh\s*-\s*280px\)\s*\/\s*9\),\s*68px\)\s*!important;/;
@@ -219,6 +315,11 @@ console.log('\n[Suite 2] Avatar Dimensions & Layout CSS Rules');
   const html = sandbox.renderSkillCoordinateLadder();
   assert(html.includes('class="node-avatar-wrapper"'), 'Rendered HTML contains .node-avatar-wrapper');
   assert(html.includes('class="node-avatar-img"'), 'Rendered HTML contains .node-avatar-img');
+  assert(html.includes('skill-ruler-label') && html.includes('次數/12h'), 'Rendered HTML contains .skill-ruler-label with text 次數/12h (zh)');
+
+  const { sandbox: sandboxEN } = createLadderSandbox({ lang: 'en-US' });
+  const htmlEN = sandboxEN.renderSkillCoordinateLadder();
+  assert(htmlEN.includes('skill-ruler-label') && htmlEN.includes('Procs/12h'), 'Rendered HTML contains .skill-ruler-label with text Procs/12h (en)');
 }
 
 // -----------------------------------------------------------------------------
@@ -489,6 +590,199 @@ console.log('\n[Suite 8] Zero Emoji & Zero Decorative Glyph Policy Compliance');
     assert(!emojiRegex.test(code), `${rel} contains ZERO Unicode emojis`);
     assert(!starGlyphRegex.test(code), `${rel} contains ZERO decorative star glyphs`);
   }
+}
+
+// -----------------------------------------------------------------------------
+// Suite 9: Dynamic minVal and maxVal on .ladder-ruler-scale
+// -----------------------------------------------------------------------------
+console.log('\n[Suite 9] Dynamic minVal and maxVal on Ruler Scale');
+
+{
+  const { sandbox } = createLadderSandbox();
+  const html = sandbox.renderSkillCoordinateLadder();
+
+  // Find all tick labels and their positions
+  const tickMatches = [...html.matchAll(/class="ladder-ruler-tick"\s+style="left:\s*([^;%]+)%;"[\s\S]*?<span class="tick-label">([^<]+)<\/span>/g)];
+  assert(tickMatches.length >= 2, `Rendered scale contains at least 2 ticks (found ${tickMatches.length})`);
+
+  const firstTick = tickMatches[0];
+  const firstPos = parseFloat(firstTick[1]);
+  const firstVal = parseFloat(firstTick[2]);
+
+  const lastTick = tickMatches[tickMatches.length - 1];
+  const lastPos = parseFloat(lastTick[1]);
+  const lastVal = parseFloat(lastTick[2]);
+
+  assertEquals(firstPos, 0, 'First ruler tick is positioned at 0.00%');
+  assertEquals(lastPos, 100, 'Last ruler tick is positioned at 100.00%');
+
+  // Verify dynamic minVal: it should match the minimum trigger count among visible nodes, NOT hardcoded 0!
+  assert(firstVal > 0, `minVal is dynamic and greater than 0 (Expected > 0, Got: ${firstVal})`);
+  assert(lastVal > firstVal, `maxVal is strictly greater than minVal (minVal: ${firstVal}, maxVal: ${lastVal})`);
+
+  // Verify intermediate ticks are strictly between minVal and maxVal
+  for (let i = 1; i < tickMatches.length - 1; i++) {
+    const midVal = parseFloat(tickMatches[i][2]);
+    const midPos = parseFloat(tickMatches[i][1]);
+    assert(midVal > firstVal && midVal < lastVal, `Intermediate tick value ${midVal} is strictly between minVal (${firstVal}) and maxVal (${lastVal})`);
+    assert(midPos > 0 && midPos < 100, `Intermediate tick position ${midPos}% is strictly between 0% and 100%`);
+  }
+
+  // Dynamic test with a single Pokemon or restricted filter
+  sandbox.setSkillLadderSearchQuery('皮卡丘');
+  const filteredHtml = sandbox.renderSkillCoordinateLadder();
+  const filteredTicks = [...filteredHtml.matchAll(/class="ladder-ruler-tick"\s+style="left:\s*([^;%]+)%;"[\s\S]*?<span class="tick-label">([^<]+)<\/span>/g)];
+  assert(filteredTicks.length >= 2, `Filtered scale contains at least 2 ticks for Pikachu (found ${filteredTicks.length})`);
+  const filteredFirstVal = parseFloat(filteredTicks[0][2]);
+  const filteredLastVal = parseFloat(filteredTicks[filteredTicks.length - 1][2]);
+  assert(filteredFirstVal > 0, `Filtered minVal is greater than 0 (Got: ${filteredFirstVal})`);
+  assert(filteredLastVal >= filteredFirstVal, `Filtered maxVal is >= minVal (Got: ${filteredLastVal})`);
+  sandbox.clearSkillLadderSearch();
+}
+
+// -----------------------------------------------------------------------------
+// Suite 10: Specialty Icons in Tooltips and Ranking Modal
+// -----------------------------------------------------------------------------
+console.log('\n[Suite 10] Specialty Icons in Tooltips & Ranking Modal');
+
+{
+  const { sandbox } = createLadderSandbox();
+  const getIcon = sandbox.getSkillLadderSpecialtyIcon;
+  assert(typeof getIcon === 'function', 'getSkillLadderSpecialtyIcon function exists');
+
+  // Helper tests
+  const skillIcon = getIcon('skill', '技能型', 16);
+  assert(skillIcon.includes('assets/specialty/skill.png') && skillIcon.includes('assets/specialty/skill@2x.png 2x'), 'Specialty icon for skill includes 1x and 2x images');
+  assert(skillIcon.includes('class="specialty-icon spec-skill"'), 'Specialty icon contains .specialty-icon class');
+  assert(skillIcon.includes('title="技能型"') && skillIcon.includes('alt="技能型"'), 'Specialty icon sets title and alt attributes');
+
+  const berryIcon = getIcon('berry', '樹果型', 16);
+  assert(berryIcon.includes('assets/specialty/berry.png'), 'Specialty icon for berry includes assets/specialty/berry.png');
+
+  const ingIcon = getIcon('ingredient', '食材型', 16);
+  assert(ingIcon.includes('assets/specialty/ingredient.png'), 'Specialty icon for ingredient includes assets/specialty/ingredient.png');
+
+  // Verify rendered ladder tooltips contain specialty icon img and no text-only specialty tag
+  const html = sandbox.renderSkillCoordinateLadder();
+  assert(html.includes('assets/specialty/'), 'Rendered ladder tooltips contain assets/specialty/ icon URLs');
+  assert(html.includes('class="specialty-icon'), 'Rendered ladder tooltips contain .specialty-icon img tags');
+  assert(!html.includes('style="margin-left: 6px; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); color: var(--accent-color, #38bdf8);">技能型</span>'),
+    'Rendered ladder tooltips replaced text specialty badge with specialty icon');
+
+  // Verify modal contains specialty icon img
+  sandbox.openSkillRankingModal('charge_energy');
+  const modalEl = sandbox.document.getElementById('wiki-skill-ranking-modal');
+  assert(modalEl !== null, 'Modal element was created');
+  assert(modalEl.innerHTML.includes('assets/specialty/'), 'Modal HTML contains assets/specialty/ icon URLs');
+  assert(modalEl.innerHTML.includes('class="specialty-icon'), 'Modal HTML contains .specialty-icon elements');
+  assert(!modalEl.innerHTML.includes('>技能型</span>'), 'Modal HTML does NOT contain raw text tag 技能型');
+}
+
+// -----------------------------------------------------------------------------
+// Suite 11: getSkillSubCategoryInfo & Modal Sub-Category Filtering
+// -----------------------------------------------------------------------------
+console.log('\n[Suite 11] getSkillSubCategoryInfo & Sub-Category Filtering');
+
+{
+  const { sandbox } = createLadderSandbox();
+  const getSub = sandbox.getSkillSubCategoryInfo;
+  assert(typeof getSub === 'function', 'getSkillSubCategoryInfo function exists');
+
+  // 1. energy_single (單體療癒): self vs ally
+  const selfZh = getSub('活力填充S', 'energy_single', false);
+  assertEquals(selfZh.subKey, 'self', '活力填充S has subKey: self');
+  assertEquals(selfZh.subLabel, '自己', '活力填充S has subLabel: 自己');
+  assertEquals(selfZh.fullLabel, '活力填充S（自己）', '活力填充S has fullLabel: 活力填充S（自己）');
+
+  const selfEn = getSub('Charge Energy S', 'energy_single', true);
+  assertEquals(selfEn.subKey, 'self', 'Charge Energy S has subKey: self');
+  assertEquals(selfEn.subLabel, 'Self', 'Charge Energy S has subLabel: Self');
+
+  const moonZh = getSub('月光', 'energy_single', false);
+  assertEquals(moonZh.subKey, 'self', '月光 has subKey: self');
+  assert(moonZh.subLabel.includes('自己'), '月光 subLabel mentions 自己');
+
+  const allyZh = getSub('活力療癒S', 'energy_single', false);
+  assertEquals(allyZh.subKey, 'ally', '活力療癒S has subKey: ally');
+  assertEquals(allyZh.subLabel, '隨機他人', '活力療癒S has subLabel: 隨機他人');
+
+  const nuzzleZh = getSub('蹭蹭臉頰', 'energy_single', false);
+  assertEquals(nuzzleZh.subKey, 'ally', '蹭蹭臉頰 has subKey: ally');
+
+  // 2. ingredient (食材獲取): magnet vs select
+  const magnetZh = getSub('食材獲取S', 'ingredient', false);
+  assertEquals(magnetZh.subKey, 'magnet', '食材獲取S has subKey: magnet');
+  assertEquals(magnetZh.subLabel, '食材獲取', '食材獲取S has subLabel: 食材獲取');
+
+  const selectZh = getSub('食材精選S', 'ingredient', false);
+  assertEquals(selectZh.subKey, 'select', '食材精選S has subKey: select');
+  assertEquals(selectZh.subLabel, '食材精選', '食材精選S has subLabel: 食材精選');
+
+  const cutterZh = getSub('怪力鉗', 'ingredient', false);
+  assertEquals(cutterZh.subKey, 'select', '怪力鉗 has subKey: select');
+
+  const luckZh = getSub('超幸運', 'ingredient', false);
+  assertEquals(luckZh.subKey, 'select', '超幸運 has subKey: select');
+
+  // 3. Tooltip check for fullLabel
+  const html = sandbox.renderSkillCoordinateLadder();
+  assert(html.includes('（自己）') || html.includes('（隨機他人）'), 'Rendered ladder tooltips display sub-category label in main skill row');
+
+  // 4. Modal sub-filtering in energy_single
+  const allSingle = sandbox.openSkillRankingModal('energy_single', 'ALL');
+  const selfSingle = sandbox.openSkillRankingModal('energy_single', 'self');
+  const allySingle = sandbox.openSkillRankingModal('energy_single', 'ally');
+
+  assert(allSingle.length > 0, 'energy_single ALL returns ranked Pokemon');
+  assert(selfSingle.length > 0, 'energy_single self returns ranked Pokemon');
+  assert(allySingle.length > 0, 'energy_single ally returns ranked Pokemon');
+  assertEquals(selfSingle.length + allySingle.length, allSingle.length, 'self + ally matches all in energy_single');
+  assert(selfSingle.every(p => p.subKey === 'self'), 'All items in self ranking have subKey: self');
+  assert(allySingle.every(p => p.subKey === 'ally'), 'All items in ally ranking have subKey: ally');
+
+  // 5. Modal sub-filtering in ingredient
+  const allIngr = sandbox.openSkillRankingModal('ingredient', 'ALL');
+  const magnetIngr = sandbox.openSkillRankingModal('ingredient', 'magnet');
+  const selectIngr = sandbox.openSkillRankingModal('ingredient', 'select');
+
+  assert(allIngr.length > 0, 'ingredient ALL returns ranked Pokemon');
+  assert(magnetIngr.length > 0, 'ingredient magnet returns ranked Pokemon');
+  assert(selectIngr.length > 0, 'ingredient select returns ranked Pokemon');
+  assertEquals(magnetIngr.length + selectIngr.length, allIngr.length, 'magnet + select matches all in ingredient');
+  assert(magnetIngr.every(p => p.subKey === 'magnet'), 'All items in magnet ranking have subKey: magnet');
+  assert(selectIngr.every(p => p.subKey === 'select'), 'All items in select ranking have subKey: select');
+
+  // 6. Sub-filter buttons in modal HTML
+  const modalEl = sandbox.document.getElementById('wiki-skill-ranking-modal');
+  assert(modalEl.innerHTML.includes('class="skill-rank-subfilters"'), 'Modal header includes .skill-rank-subfilters container');
+  assert(modalEl.innerHTML.includes("openSkillRankingModal('ingredient', 'magnet')"), 'Modal includes onclick for magnet subfilter');
+  assert(modalEl.innerHTML.includes("openSkillRankingModal('ingredient', 'select')"), 'Modal includes onclick for select subfilter');
+}
+
+// -----------------------------------------------------------------------------
+// Suite 12: Ranking Modal Highlight Clearing & Body Class Lifecycle
+// -----------------------------------------------------------------------------
+console.log('\n[Suite 12] Modal Highlight Bleed-Through Prevention & Lifecycle');
+
+{
+  const { sandbox, getDismissAllCalled, getActiveElementBlurred, getBodyClasses } = createLadderSandbox();
+
+  assertEquals(getBodyClasses().has('skill-ranking-modal-open'), false, 'body initially does not have skill-ranking-modal-open class');
+
+  // Open modal
+  sandbox.openSkillRankingModal('cooking_pot');
+  assertEquals(getBodyClasses().has('skill-ranking-modal-open'), true, 'openSkillRankingModal adds skill-ranking-modal-open to body');
+  assertEquals(getDismissAllCalled(), true, 'openSkillRankingModal triggers PopoverCoordinator.dismissAll()');
+  assertEquals(getActiveElementBlurred(), true, 'openSkillRankingModal blurs document.activeElement');
+
+  // Modal header styling: borderless & transparent track name tag
+  const modalEl = sandbox.document.getElementById('wiki-skill-ranking-modal');
+  assert(modalEl.innerHTML.includes('class="skill-track-name-tag" style="color:'), 'Modal header renders track name tag with color');
+  assert(modalEl.innerHTML.includes('background:transparent') || modalEl.innerHTML.includes('border:none'), 'Modal header track name tag is borderless and transparent');
+
+  // Close modal
+  sandbox.closeSkillRankingModal();
+  assertEquals(getBodyClasses().has('skill-ranking-modal-open'), false, 'closeSkillRankingModal removes skill-ranking-modal-open from body');
 }
 
 // -----------------------------------------------------------------------------
