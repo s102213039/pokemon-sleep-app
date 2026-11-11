@@ -363,9 +363,30 @@ ${cleanPokemonData.map(p => '    ' + JSON.stringify(p)).join(',\n')}
       }
     }
 
-    const fullLabel = subLabel
-      ? (isEN ? \`\${skillDisplayName} (\${subLabel})\` : \`\${skillDisplayName}（\${subLabel}）\`)
-      : skillDisplayName;
+    let fullLabel = skillDisplayName;
+    if (subLabel) {
+      const alreadyHasZh = skillDisplayName.includes('（' + subLabel + '）') || skillDisplayName.includes('(' + subLabel + ')');
+      const alreadyHasEn = isEN && (skillDisplayName.includes('(' + subLabel + ')') || skillDisplayName.includes('（' + subLabel + '）'));
+      const alreadyHasRandom = (subKey === 'random') && (
+        /（隨機）|\\(隨機\\)|\\(Random\\)|\\(random\\)|（Random）/i.test(skillDisplayName)
+      );
+      const alreadyHasFixed = (subKey === 'fixed' || subKey === 'fixed_s') && (
+        /（固定）|\\(固定\\)|\\(Fixed\\)|\\(fixed\\)|（Fixed）/i.test(skillDisplayName)
+      );
+
+      if (!alreadyHasZh && !alreadyHasEn && !alreadyHasRandom && !alreadyHasFixed) {
+        fullLabel = isEN ? \`\${skillDisplayName} (\${subLabel})\` : \`\${skillDisplayName}（\${subLabel}）\`;
+      }
+    }
+
+    fullLabel = fullLabel
+      .replace(/(?:[（\\(]隨機[）\\)])(?:\\s*[（\\(]隨機[）\\)])+/g, '（隨機）')
+      .replace(/(?:[（\\(]Random[）\\)])(?:\\s*[（\\(]Random[）\\)])+/gi, isEN ? '(Random)' : '（Random）')
+      .replace(/(?:[（\\(]固定[）\\)])(?:\\s*[（\\(]固定[）\\)])+/g, '（固定）')
+      .replace(/(?:[（\\(]Fixed[）\\)])(?:\\s*[（\\(]Fixed[）\\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
+      .replace(/[（\\(]([^）\\(\\)]+)[）\\)](?:\\s*[（\\(]\\1[）\\)])+/gi, (match, p1) => {
+        return isEN ? \`(\${p1})\` : \`（\${p1}）\`;
+      });
 
     return {
       subKey,

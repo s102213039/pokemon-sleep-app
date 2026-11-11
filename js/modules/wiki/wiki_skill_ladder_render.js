@@ -77,10 +77,11 @@
         let skillFullDisplay = subInfo.fullLabel || skillDisplayName;
         if (skillFullDisplay) {
           skillFullDisplay = skillFullDisplay
-            .replace(/（隨機）\s*（隨機）/g, '（隨機）')
-            .replace(/\(隨機\)\s*\(隨機\)/g, '(隨機)')
-            .replace(/\(Random\)\s*\(Random\)/gi, '(Random)')
-            .replace(/（Random）\s*（Random）/gi, '（Random）');
+            .replace(/(?:[（\(]隨機[）\)])(?:\s*[（\(]隨機[）\)])+/g, '（隨機）')
+            .replace(/(?:[（\(]Random[）\)])(?:\s*[（\(]Random[）\)])+/gi, isEN ? '(Random)' : '（Random）')
+            .replace(/(?:[（\(]固定[）\)])(?:\s*[（\(]固定[）\)])+/g, '（固定）')
+            .replace(/(?:[（\(]Fixed[）\)])(?:\s*[（\(]Fixed[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
+            .replace(/[（\(]([^）\(\)]+)[）\)](?:\s*[（\(]\1[）\)])+/gi, (m, p1) => isEN ? `(${p1})` : `（${p1}）`);
         }
         const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 

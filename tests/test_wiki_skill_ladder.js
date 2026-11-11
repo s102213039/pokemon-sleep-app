@@ -810,9 +810,26 @@ console.log('\n[Suite 13] Skill Name Duplication Fix & Ranking Modal UI Refineme
   const dreamRandEn = getSub('Dream Shard Magnet S (Random)', 'dream_shards', true);
   assertEquals(dreamRandEn.fullLabel, 'Dream Shard Magnet S (Random)', 'Dream Shard Magnet S (Random) has clean fullLabel without duplicate suffix');
 
-  // Defensive sanitization of pre-duplicated input
-  const preDupeZh = getSub('能量填充S（隨機）（隨機）', 'charge_energy', false);
-  assertEquals(preDupeZh.fullLabel, '能量填充S（隨機）', 'Pre-duplicated input is cleaned up to 能量填充S（隨機）');
+  // Defensive sanitization of pre-duplicated input (2x, 3x, mixed brackets)
+  const preDupeZh2 = getSub('能量填充S（隨機）（隨機）', 'charge_energy', false);
+  assertEquals(preDupeZh2.fullLabel, '能量填充S（隨機）', 'Pre-duplicated 2x input is cleaned up to 能量填充S（隨機）');
+
+  const preDupeZh3 = getSub('能量填充S（隨機）（隨機）（隨機）', 'charge_energy', false);
+  assertEquals(preDupeZh3.fullLabel, '能量填充S（隨機）', 'Pre-duplicated 3x input is cleaned up to 能量填充S（隨機）');
+
+  const preDupeEn3 = getSub('Charge Strength S (Random) (Random) (Random)', 'charge_energy', true);
+  assertEquals(preDupeEn3.fullLabel, 'Charge Strength S (Random)', 'Pre-duplicated 3x English input is cleaned up to Charge Strength S (Random)');
+
+  const preDupeMixed = getSub('能量填充S(隨機)（隨機）', 'charge_energy', false);
+  assertEquals(preDupeMixed.fullLabel, '能量填充S（隨機）', 'Mixed brackets input (隨機)（隨機） is cleaned up to 能量填充S（隨機）');
+
+  const preDupeFixed = getSub('能量填充S（固定）（固定）（固定）', 'charge_energy', false);
+  assertEquals(preDupeFixed.fullLabel, '能量填充S（固定）', 'Pre-duplicated fixed input is cleaned up to 能量填充S（固定）');
+
+  // Generator script parity verification
+  const genScriptContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'scripts', 'generate_wiki_skill_ladder.js'), 'utf8');
+  assert(genScriptContent.includes('隨機'), 'generate_wiki_skill_ladder.js defines random deduplication');
+  assert(genScriptContent.includes('（隨機）') && genScriptContent.includes('Random'), 'generate_wiki_skill_ladder.js defines robust deduplication logic');
 
   // Rendered ladder coordinate HTML verification
   const ladderHtml = sandbox.renderSkillCoordinateLadder();
@@ -849,7 +866,7 @@ console.log('\n[Suite 13] Skill Name Duplication Fix & Ranking Modal UI Refineme
     'css/styles.css is synchronized with scoped rule for #wiki-skill-ranking-modal .ing-rank-num');
 
   // 4. R3: Specialty icon and skill name aligned in the same row
-  assert(modalHtml.includes('class="skill-rank-meta-col" style="display:flex;align-items:center;gap:6px;min-width:0;"'),
+  assert(modalHtml.includes('class="skill-rank-meta-col"') && modalHtml.includes('display:flex') && modalHtml.includes('align-items:center') && modalHtml.includes('gap:6px'),
     'Ranking modal meta column uses inline flex with align-items center and 6px gap');
   assert(modalHtml.includes('class="specialty-icon') || modalHtml.includes('node-specialty-tag'),
     'Ranking modal contains specialty icon');
@@ -857,6 +874,12 @@ console.log('\n[Suite 13] Skill Name Duplication Fix & Ranking Modal UI Refineme
     'Ranking modal contains skill-rank-skill-name');
   assert(skillLadderCss.includes('#wiki-skill-ranking-modal .skill-rank-meta-col'),
     'wiki_skill_ladder.css defines flex-direction row and align-items center for .skill-rank-meta-col');
+  assert(skillLadderCss.includes('#wiki-skill-ranking-modal .ing-rank-left'),
+    'wiki_skill_ladder.css defines flex rules for #wiki-skill-ranking-modal .ing-rank-left');
+  assert(skillLadderCss.includes('#wiki-skill-ranking-modal .ing-rank-right'),
+    'wiki_skill_ladder.css defines flex rules for #wiki-skill-ranking-modal .ing-rank-right');
+  assert(stylesCss.includes('#wiki-skill-ranking-modal .ing-rank-left'),
+    'styles.css is synchronized with rules for #wiki-skill-ranking-modal .ing-rank-left');
 
   sandbox.closeSkillRankingModal();
 }

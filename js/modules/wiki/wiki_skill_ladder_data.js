@@ -600,14 +600,13 @@
     }
 
     fullLabel = fullLabel
-      .replace(/（([^）]+)）\s*（\1）/g, '（$1）')
-      .replace(/\(([^)]+)\)\s*\(\1\)/gi, '($1)')
-      .replace(/（([^）]+)）\s*\(\1\)/gi, '（$1）')
-      .replace(/\(([^)]+)\)\s*（\1）/gi, '（$1）')
-      .replace(/（隨機）\s*（隨機）/g, '（隨機）')
-      .replace(/\(隨機\)\s*\(隨機\)/g, '(隨機)')
-      .replace(/\(Random\)\s*\(Random\)/gi, '(Random)')
-      .replace(/（Random）\s*（Random）/gi, '（Random）');
+      .replace(/(?:[（\(]隨機[）\)])(?:\s*[（\(]隨機[）\)])+/g, '（隨機）')
+      .replace(/(?:[（\(]Random[）\)])(?:\s*[（\(]Random[）\)])+/gi, isEN ? '(Random)' : '（Random）')
+      .replace(/(?:[（\(]固定[）\)])(?:\s*[（\(]固定[）\)])+/g, '（固定）')
+      .replace(/(?:[（\(]Fixed[）\)])(?:\s*[（\(]Fixed[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
+      .replace(/[（\(]([^）\(\)]+)[）\)](?:\s*[（\(]\1[）\)])+/gi, (match, p1) => {
+        return isEN ? `(${p1})` : `（${p1}）`;
+      });
 
     return {
       subKey,

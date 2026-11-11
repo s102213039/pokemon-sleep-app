@@ -7721,14 +7721,13 @@
     }
 
     fullLabel = fullLabel
-      .replace(/（([^）]+)）\s*（\1）/g, '（$1）')
-      .replace(/\(([^)]+)\)\s*\(\1\)/gi, '($1)')
-      .replace(/（([^）]+)）\s*\(\1\)/gi, '（$1）')
-      .replace(/\(([^)]+)\)\s*（\1）/gi, '（$1）')
-      .replace(/（隨機）\s*（隨機）/g, '（隨機）')
-      .replace(/\(隨機\)\s*\(隨機\)/g, '(隨機)')
-      .replace(/\(Random\)\s*\(Random\)/gi, '(Random)')
-      .replace(/（Random）\s*（Random）/gi, '（Random）');
+      .replace(/(?:[（\(]隨機[）\)])(?:\s*[（\(]隨機[）\)])+/g, '（隨機）')
+      .replace(/(?:[（\(]Random[）\)])(?:\s*[（\(]Random[）\)])+/gi, isEN ? '(Random)' : '（Random）')
+      .replace(/(?:[（\(]固定[）\)])(?:\s*[（\(]固定[）\)])+/g, '（固定）')
+      .replace(/(?:[（\(]Fixed[）\)])(?:\s*[（\(]Fixed[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
+      .replace(/[（\(]([^）\(\)]+)[）\)](?:\s*[（\(]\1[）\)])+/gi, (match, p1) => {
+        return isEN ? `(${p1})` : `（${p1}）`;
+      });
 
     return {
       subKey,
@@ -8313,10 +8312,11 @@
       let skillFullDisplay = subInfo.fullLabel || skillDisplayName;
       if (skillFullDisplay) {
         skillFullDisplay = skillFullDisplay
-          .replace(/（隨機）\s*（隨機）/g, '（隨機）')
-          .replace(/\(隨機\)\s*\(隨機\)/g, '(隨機)')
-          .replace(/\(Random\)\s*\(Random\)/gi, '(Random)')
-          .replace(/（Random）\s*（Random）/gi, '（Random）');
+          .replace(/(?:[（\(]隨機[）\)])(?:\s*[（\(]隨機[）\)])+/g, '（隨機）')
+          .replace(/(?:[（\(]Random[）\)])(?:\s*[（\(]Random[）\)])+/gi, isEN ? '(Random)' : '（Random）')
+          .replace(/(?:[（\(]固定[）\)])(?:\s*[（\(]固定[）\)])+/g, '（固定）')
+          .replace(/(?:[（\(]Fixed[）\)])(?:\s*[（\(]Fixed[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
+          .replace(/[（\(]([^）\(\)]+)[）\)](?:\s*[（\(]\1[）\)])+/gi, (m, p1) => isEN ? `(${p1})` : `（${p1}）`);
       }
       const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 
@@ -8422,19 +8422,19 @@
           const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : 'rank-other'));
           return `
             <div class="ing-rank-card ${rankClass}" title="${esc(item.skillFullDisplay || item.skillDisplayName)} · ${item.displayProcs} ${isEN ? 'procs/12h' : '次/12h'}">
-              <div class="ing-rank-left">
-                <div class="ing-rank-num ${rankClass}" style="font-size:10.5px;font-weight:700;width:20px;min-width:20px;">
+              <div class="ing-rank-left" style="min-width:0;flex:1 1 auto;">
+                <div class="ing-rank-num ${rankClass}" style="font-size:10.5px;font-weight:700;width:20px;min-width:20px;flex-shrink:0;">
                   #${rank}
                 </div>
-                <div class="ing-rank-avatar-box ${rankClass}">
+                <div class="ing-rank-avatar-box ${rankClass}" style="flex-shrink:0;">
                   <img src="${item.iconUrl}" class="ing-rank-avatar-img" alt="" loading="lazy">
                 </div>
-                <div class="skill-rank-meta-col" style="display:flex;align-items:center;gap:6px;min-width:0;">
+                <div class="skill-rank-meta-col" style="display:flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto;">
                   ${typeof getSkillLadderSpecialtyIcon === 'function' ? getSkillLadderSpecialtyIcon(item.specKey, item.specDisplay, 15) : `<span class="node-specialty-tag specialty-${item.specKey}" style="font-size:9.5px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,0.08);color:var(--accent-color, #38bdf8);">${esc(item.specDisplay)}</span>`}
-                  <span class="text-secondary skill-rank-skill-name" style="font-size:11px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(item.skillFullDisplay || item.skillDisplayName)}</span>
+                  <span class="text-secondary skill-rank-skill-name" style="font-size:11px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;">${esc(item.skillFullDisplay || item.skillDisplayName)}</span>
                 </div>
               </div>
-              <div class="ing-rank-right">
+              <div class="ing-rank-right" style="flex-shrink:0;margin-left:8px;">
                 <span class="ing-rank-yield-line"><span class="ing-rank-yield-num">${item.displayProcs}</span><span class="ing-rank-yield-unit">${isEN ? ' /12h' : ' 次/12h'}</span></span>
                 <span class="ing-rank-split-line" style="font-size:10px;color:var(--text-muted);" title="${isEN ? 'Final Skill Rate / 12h Helps' : '最終技能機率 / 日間 12h 幫忙次數'}">
                   ${item.finalRatePct}% · ${item.helpsDisplay}${isEN ? 'h' : '次'}
@@ -8593,10 +8593,11 @@
         let skillFullDisplay = subInfo.fullLabel || skillDisplayName;
         if (skillFullDisplay) {
           skillFullDisplay = skillFullDisplay
-            .replace(/（隨機）\s*（隨機）/g, '（隨機）')
-            .replace(/\(隨機\)\s*\(隨機\)/g, '(隨機)')
-            .replace(/\(Random\)\s*\(Random\)/gi, '(Random)')
-            .replace(/（Random）\s*（Random）/gi, '（Random）');
+            .replace(/(?:[（\(]隨機[）\)])(?:\s*[（\(]隨機[）\)])+/g, '（隨機）')
+            .replace(/(?:[（\(]Random[）\)])(?:\s*[（\(]Random[）\)])+/gi, isEN ? '(Random)' : '（Random）')
+            .replace(/(?:[（\(]固定[）\)])(?:\s*[（\(]固定[）\)])+/g, '（固定）')
+            .replace(/(?:[（\(]Fixed[）\)])(?:\s*[（\(]Fixed[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
+            .replace(/[（\(]([^）\(\)]+)[）\)](?:\s*[（\(]\1[）\)])+/gi, (m, p1) => isEN ? `(${p1})` : `（${p1}）`);
         }
         const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 
