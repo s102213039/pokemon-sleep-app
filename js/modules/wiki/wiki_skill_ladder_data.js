@@ -583,23 +583,7 @@
       }
     }
 
-    let fullLabel = skillDisplayName;
-    if (subLabel) {
-      const alreadyHasZh = skillDisplayName.includes('（' + subLabel + '）') || skillDisplayName.includes('(' + subLabel + ')');
-      const alreadyHasEn = isEN && (skillDisplayName.includes('(' + subLabel + ')') || skillDisplayName.includes('（' + subLabel + '）'));
-      const alreadyHasRandom = (subKey === 'random') && (
-        /（\s*隨機\s*）|\(\s*隨機\s*\)|\(\s*Random\s*\)|（\s*Random\s*）/i.test(skillDisplayName)
-      );
-      const alreadyHasFixed = (subKey === 'fixed' || subKey === 'fixed_s') && (
-        /（\s*固定\s*）|\(\s*固定\s*\)|\(\s*Fixed\s*\)|（\s*Fixed\s*）/i.test(skillDisplayName)
-      );
-
-      if (!alreadyHasZh && !alreadyHasEn && !alreadyHasRandom && !alreadyHasFixed) {
-        fullLabel = isEN ? `${skillDisplayName} (${subLabel})` : `${skillDisplayName}（${subLabel}）`;
-      }
-    }
-
-    fullLabel = fullLabel
+    let fullLabel = skillDisplayName
       .replace(/(?:[（\(]\s*隨機\s*[）\)])(?:\s*[（\(]\s*隨機\s*[）\)])+/g, '（隨機）')
       .replace(/(?:[（\(]\s*Random\s*[）\)])(?:\s*[（\(]\s*Random\s*[）\)])+/gi, isEN ? '(Random)' : '（Random）')
       .replace(/(?:[（\(]\s*固定\s*[）\)])(?:\s*[（\(]\s*固定\s*[）\)])+/g, '（固定）')

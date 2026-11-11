@@ -620,43 +620,6 @@
       return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     };
 
-    let subFilterHTML = '';
-    if (trackId === 'energy_single') {
-      const filters = [
-        { key: 'ALL', label: isEN ? 'All' : '全部' },
-        { key: 'self', label: isEN ? 'Self' : '自己' },
-        { key: 'ally', label: isEN ? 'Random Ally' : '隨機他人' }
-      ];
-      subFilterHTML = `
-        <div class="skill-rank-subfilters" style="display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap;">
-          ${filters.map(f => `
-            <button type="button" class="tag-btn ${currentSubFilter === f.key ? 'active' : ''}"
-                    style="font-size:11px;padding:2px 10px;border-radius:12px;line-height:1.4;cursor:pointer;"
-                    onclick="window.WikiDB.openSkillRankingModal('${trackId}', '${f.key}')">
-              ${esc(f.label)}
-            </button>
-          `).join('')}
-        </div>
-      `;
-    } else if (trackId === 'ingredient') {
-      const filters = [
-        { key: 'ALL', label: isEN ? 'All' : '全部' },
-        { key: 'magnet', label: isEN ? 'Ingredient Magnet' : '食材獲取' },
-        { key: 'select', label: isEN ? 'Ingredient Draw' : '食材精選' }
-      ];
-      subFilterHTML = `
-        <div class="skill-rank-subfilters" style="display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap;">
-          ${filters.map(f => `
-            <button type="button" class="tag-btn ${currentSubFilter === f.key ? 'active' : ''}"
-                    style="font-size:11px;padding:2px 10px;border-radius:12px;line-height:1.4;cursor:pointer;"
-                    onclick="window.WikiDB.openSkillRankingModal('${trackId}', '${f.key}')">
-              ${esc(f.label)}
-            </button>
-          `).join('')}
-        </div>
-      `;
-    }
-
     const itemsHTML = rankedList.length === 0 ? `
       <div class="ing-rank-empty">
         <p>${isEN ? 'No Pokémon matched current skill ladder filter conditions.' : '當前篩選條件下查無符合之寶可夢。'}</p>
@@ -705,7 +668,6 @@
               <div class="ing-rank-header-sub">
                 <span>${esc(trackDesc)} · ${isEN ? 'Lv.60 Ideal Energy (0.45x)' : 'Lv.60 滿活力 (0.45x)'} · ${rankedList.length} ${isEN ? 'Pokémon' : '隻寶可夢'}</span>
               </div>
-              ${subFilterHTML}
             </div>
           </div>
           <button type="button" class="ing-rank-close-btn" onclick="window.WikiDB.closeSkillRankingModal()" title="${isEN ? 'Close' : '關閉'}" aria-label="Close">

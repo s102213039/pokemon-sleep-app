@@ -302,9 +302,9 @@ console.log('\n[Suite 2] Avatar Dimensions & Layout CSS Rules');
   assert(skillLadderCss.includes('body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row') && skillLadderCss.includes('z-index: 1 !important;'),
     'wiki_skill_ladder.css: body.skill-ranking-modal-open neutralizes ladder-track-row stacking and hover');
 
-  // Modal subfilter bar styling
-  assert(skillLadderCss.includes('.skill-rank-subfilter-bar') && skillLadderCss.includes('.skill-rank-subfilter-btn'),
-    'wiki_skill_ladder.css: provides styling for .skill-rank-subfilter-bar and .skill-rank-subfilter-btn');
+  // Modal top subfilter bar removed to maximize vertical space
+  assert(!skillLadderCss.includes('.skill-rank-subfilter-bar') && !skillLadderCss.includes('.skill-rank-subfilters'),
+    'wiki_skill_ladder.css: removed unused .skill-rank-subfilter-bar and .skill-rank-subfilters rules');
 
   // Track height clamp: 52px to 68px
   const trackHeightRegex = /height:\s*clamp\(52px,\s*calc\(\(100vh\s*-\s*280px\)\s*\/\s*9\),\s*68px\)\s*!important;/;
@@ -688,75 +688,64 @@ console.log('\n[Suite 11] getSkillSubCategoryInfo & Sub-Category Filtering');
   const getSub = sandbox.getSkillSubCategoryInfo;
   assert(typeof getSub === 'function', 'getSkillSubCategoryInfo function exists');
 
-  // 1. energy_single (單體療癒): self vs ally
+  // 1. energy_single (單體療癒): clean skill names without appended parenthetical explanations
   const selfZh = getSub('活力填充S', 'energy_single', false);
   assertEquals(selfZh.subKey, 'self', '活力填充S has subKey: self');
   assertEquals(selfZh.subLabel, '自己', '活力填充S has subLabel: 自己');
-  assertEquals(selfZh.fullLabel, '活力填充S（自己）', '活力填充S has fullLabel: 活力填充S（自己）');
+  assertEquals(selfZh.fullLabel, '活力填充S', '活力填充S has clean fullLabel without parenthetical explanation');
 
   const selfEn = getSub('Charge Energy S', 'energy_single', true);
   assertEquals(selfEn.subKey, 'self', 'Charge Energy S has subKey: self');
-  assertEquals(selfEn.subLabel, 'Self', 'Charge Energy S has subLabel: Self');
+  assertEquals(selfEn.fullLabel, 'Charge Energy S', 'Charge Energy S has clean fullLabel without parenthetical explanation');
 
   const moonZh = getSub('月光', 'energy_single', false);
   assertEquals(moonZh.subKey, 'self', '月光 has subKey: self');
-  assert(moonZh.subLabel.includes('自己'), '月光 subLabel mentions 自己');
+  assertEquals(moonZh.fullLabel, '月光', '月光 has clean fullLabel without parenthetical explanation');
 
   const allyZh = getSub('活力療癒S', 'energy_single', false);
   assertEquals(allyZh.subKey, 'ally', '活力療癒S has subKey: ally');
-  assertEquals(allyZh.subLabel, '隨機他人', '活力療癒S has subLabel: 隨機他人');
+  assertEquals(allyZh.fullLabel, '活力療癒S', '活力療癒S has clean fullLabel without parenthetical explanation');
 
   const nuzzleZh = getSub('蹭蹭臉頰', 'energy_single', false);
   assertEquals(nuzzleZh.subKey, 'ally', '蹭蹭臉頰 has subKey: ally');
+  assertEquals(nuzzleZh.fullLabel, '蹭蹭臉頰', '蹭蹭臉頰 has clean fullLabel without parenthetical explanation');
 
-  // 2. ingredient (食材獲取): magnet vs select
+  // 2. ingredient (食材獲取): clean skill names without appended parenthetical explanations
   const magnetZh = getSub('食材獲取S', 'ingredient', false);
   assertEquals(magnetZh.subKey, 'magnet', '食材獲取S has subKey: magnet');
-  assertEquals(magnetZh.subLabel, '食材獲取', '食材獲取S has subLabel: 食材獲取');
+  assertEquals(magnetZh.fullLabel, '食材獲取S', '食材獲取S has clean fullLabel without parenthetical explanation');
 
   const selectZh = getSub('食材精選S', 'ingredient', false);
   assertEquals(selectZh.subKey, 'select', '食材精選S has subKey: select');
-  assertEquals(selectZh.subLabel, '食材精選', '食材精選S has subLabel: 食材精選');
+  assertEquals(selectZh.fullLabel, '食材精選S', '食材精選S has clean fullLabel without parenthetical explanation');
 
   const cutterZh = getSub('怪力鉗', 'ingredient', false);
   assertEquals(cutterZh.subKey, 'select', '怪力鉗 has subKey: select');
+  assertEquals(cutterZh.fullLabel, '怪力鉗', '怪力鉗 has clean fullLabel without parenthetical explanation');
 
   const luckZh = getSub('超幸運', 'ingredient', false);
   assertEquals(luckZh.subKey, 'select', '超幸運 has subKey: select');
+  assertEquals(luckZh.fullLabel, '超幸運', '超幸運 has clean fullLabel without parenthetical explanation');
 
-  // 3. Tooltip check for fullLabel
+  // 3. Tooltip & Modal check: no ugly parenthetical explanation suffixes and no top subfilter bar
   const html = sandbox.renderSkillCoordinateLadder();
-  assert(html.includes('（自己）') || html.includes('（隨機他人）'), 'Rendered ladder tooltips display sub-category label in main skill row');
+  assert(!html.includes('（自己）') && !html.includes('（隨機他人）') && !html.includes('（自己 (+隨機他人)）'),
+    'Rendered ladder tooltips omit appended parenthetical explanations');
 
-  // 4. Modal sub-filtering in energy_single
-  const allSingle = sandbox.openSkillRankingModal('energy_single', 'ALL');
-  const selfSingle = sandbox.openSkillRankingModal('energy_single', 'self');
-  const allySingle = sandbox.openSkillRankingModal('energy_single', 'ally');
+  // 4. Ranking modal checks for energy_single and ingredient
+  const allSingle = sandbox.openSkillRankingModal('energy_single');
+  assert(allSingle.length > 0, 'energy_single returns ranked Pokemon');
+  const modalSingleEl = sandbox.document.getElementById('wiki-skill-ranking-modal');
+  assert(!modalSingleEl.innerHTML.includes('skill-rank-subfilters'), 'energy_single modal omits header subfilter bar');
+  assert(!modalSingleEl.innerHTML.includes('（自己）') && !modalSingleEl.innerHTML.includes('（隨機他人）') && !modalSingleEl.innerHTML.includes('自己 (+隨機他人)'),
+    'energy_single modal omits appended parenthetical explanations');
 
-  assert(allSingle.length > 0, 'energy_single ALL returns ranked Pokemon');
-  assert(selfSingle.length > 0, 'energy_single self returns ranked Pokemon');
-  assert(allySingle.length > 0, 'energy_single ally returns ranked Pokemon');
-  assertEquals(selfSingle.length + allySingle.length, allSingle.length, 'self + ally matches all in energy_single');
-  assert(selfSingle.every(p => p.subKey === 'self'), 'All items in self ranking have subKey: self');
-  assert(allySingle.every(p => p.subKey === 'ally'), 'All items in ally ranking have subKey: ally');
-
-  // 5. Modal sub-filtering in ingredient
-  const allIngr = sandbox.openSkillRankingModal('ingredient', 'ALL');
-  const magnetIngr = sandbox.openSkillRankingModal('ingredient', 'magnet');
-  const selectIngr = sandbox.openSkillRankingModal('ingredient', 'select');
-
-  assert(allIngr.length > 0, 'ingredient ALL returns ranked Pokemon');
-  assert(magnetIngr.length > 0, 'ingredient magnet returns ranked Pokemon');
-  assert(selectIngr.length > 0, 'ingredient select returns ranked Pokemon');
-  assertEquals(magnetIngr.length + selectIngr.length, allIngr.length, 'magnet + select matches all in ingredient');
-  assert(magnetIngr.every(p => p.subKey === 'magnet'), 'All items in magnet ranking have subKey: magnet');
-  assert(selectIngr.every(p => p.subKey === 'select'), 'All items in select ranking have subKey: select');
-
-  // 6. Sub-filter buttons in modal HTML
+  const allIngr = sandbox.openSkillRankingModal('ingredient');
+  assert(allIngr.length > 0, 'ingredient returns ranked Pokemon');
   const modalEl = sandbox.document.getElementById('wiki-skill-ranking-modal');
-  assert(modalEl.innerHTML.includes('class="skill-rank-subfilters"'), 'Modal header includes .skill-rank-subfilters container');
-  assert(modalEl.innerHTML.includes("openSkillRankingModal('ingredient', 'magnet')"), 'Modal includes onclick for magnet subfilter');
-  assert(modalEl.innerHTML.includes("openSkillRankingModal('ingredient', 'select')"), 'Modal includes onclick for select subfilter');
+  assert(!modalEl.innerHTML.includes('class="skill-rank-subfilters"'), 'Modal header removes .skill-rank-subfilters container');
+  assert(!modalEl.innerHTML.includes('（食材獲取）') && !modalEl.innerHTML.includes('（食材精選）'),
+    'ingredient modal omits appended parenthetical explanations');
 }
 
 // -----------------------------------------------------------------------------
