@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "manifestHash": "0eb3cc3f8fe8e7f2",
-  "updatedAt": "2026-11-12T04:49:16Z",
+  "manifestHash": "e17659c1414d34d5",
+  "updatedAt": "2026-11-12T10:45:14Z",
   "files": {
     "data.json": {
       "hash": "4691c9118781e9ef",
@@ -9,9 +9,9 @@
       "count": 253
     },
     "recipes.json": {
-      "hash": "d3b189efa1d6ff79",
-      "size": 56439,
-      "count": 78
+      "hash": "091c56bdb6ab64f4",
+      "size": 58778,
+      "count": 81
     },
     "news.json": {
       "hash": "d6e2f703ad1c0c00",

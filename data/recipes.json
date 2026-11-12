@@ -607,7 +607,7 @@
     "name_cn": "彈跳咖哩烏龍麵",
     "name_en": "Bounce Curry Udon",
     "category": "咖哩",
-    "pot_size": 112,
+    "pot_size": 90,
     "base_energy": 25539,
     "bonus_pct": 78,
     "icon": "https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png",
@@ -623,14 +623,35 @@
         "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png"
       },
       {
-        "name": "火辣香草",
-        "count": 22,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
-      },
-      {
         "name": "豆製肉",
         "count": 20,
         "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      }
+    ]
+  },
+  {
+    "name_cn": "Seed Bomb Naan and Curry",
+    "name_en": "Seed Bomb Naan and Curry",
+    "category": "咖哩",
+    "pot_size": 39,
+    "base_energy": 7950,
+    "bonus_pct": 35,
+    "icon": "https://www.serebii.net/pokemonsleep/meals/seedbombnaanandcurry.png",
+    "ingredients": [
+      {
+        "name": "一口堅果",
+        "count": 15,
+        "icon": "assets/ingredients/snackablenuts.svg"
+      },
+      {
+        "name": "沉甸甸南瓜",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png"
+      },
+      {
+        "name": "萌綠玉米",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png"
       }
     ]
   },
@@ -1297,6 +1318,37 @@
         "name": "品鮮蘑菇",
         "count": 27,
         "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png"
+      }
+    ]
+  },
+  {
+    "name_cn": "Grass Knot Salad Wrap",
+    "name_en": "Grass Knot Salad Wrap",
+    "category": "沙拉",
+    "pot_size": 121,
+    "base_energy": 26350,
+    "bonus_pct": 78,
+    "icon": "https://www.serebii.net/pokemonsleep/meals/grassknotsaladwrap.png",
+    "ingredients": [
+      {
+        "name": "一口堅果",
+        "count": 30,
+        "icon": "assets/ingredients/snackablenuts.svg"
+      },
+      {
+        "name": "嫩亮酪梨",
+        "count": 22,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png"
+      },
+      {
+        "name": "暖暖薑",
+        "count": 36,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      },
+      {
+        "name": "好眠番茄",
+        "count": 33,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
       }
     ]
   },
@@ -1979,6 +2031,37 @@
         "name": "放鬆可可",
         "count": 21,
         "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png"
+      }
+    ]
+  },
+  {
+    "name_cn": "Slowpoke Tail Roll Cake",
+    "name_en": "Slowpoke Tail Roll Cake",
+    "category": "甜點",
+    "pot_size": 91,
+    "base_energy": 19846,
+    "bonus_pct": 78,
+    "icon": "https://www.serebii.net/pokemonsleep/meals/slowpoketailrollcake.png",
+    "ingredients": [
+      {
+        "name": "一口堅果",
+        "count": 26,
+        "icon": "assets/ingredients/snackablenuts.svg"
+      },
+      {
+        "name": "美味尾巴",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png"
+      },
+      {
+        "name": "萌綠大豆",
+        "count": 22,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      },
+      {
+        "name": "特選蛋",
+        "count": 33,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
       }
     ]
   }
