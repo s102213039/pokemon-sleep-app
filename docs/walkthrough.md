@@ -2776,3 +2776,21 @@
   - `npm run test:fast`：161 / 161 Passed。
   - `npm run build`：CSS 與 JS 打包完成，全域樣式與模組樣式 100% 同步。
 
+### 技能天梯節點浮窗精簡與層級置頂優化 (Wiki Skill Ladder Node Tooltip & Elevation Refinements)
+- **浮窗發光外框消除 (Zero Highlight Bleed-Through)**：
+  - 於 `.wiki-skill-coordinate-ladder .ladder-node-tooltip` 明確宣告 `filter: none !important; -webkit-filter: none !important;`，將天梯節點分組高亮與點擊選取發光效果嚴格侷限於頭像框體，杜絕浮窗本體繼承青色邊緣泛光。
+- **選取與懸停頭像層級置頂 (Active Node Stacking Elevation)**：
+  - 將選取、懸停及啟用浮窗之節點層級提升至 `z-index: 100000 !important`，搭配 `scale(1.22)` 縮放，確保當前操作的寶可夢圖示永遠位於最上層，徹底解決被相鄰節點遮擋之問題。
+- **頂部形態與名稱標題移除 (Tooltip Header Elimination)**：
+  - 徹底移除浮窗最上方之 `.tooltip-title`（寶可夢名稱與專長形態圖示），使資訊呈現更加緊湊純粹。
+  - 保留節點之 `specialty-${node.specialtyKey}` 語意化類別，兼顧樣式辨識與測試覆蓋。
+- **產量明細無邊框重構 (Single Frame Rule Compliance)**：
+  - 依循單一外框原則，全面移除浮窗內部 `.tooltip-yield-breakdown` 之內外邊框、左側高亮邊框與多餘背景底色，消除雙重外框視覺干擾。
+- **發動次數文字前綴精簡與居中放大 (Centered Procs Display)**：
+  - 移除「預估 12h 發動：」文字前綴，僅以 `text-success font-bold`（13.5px、字母間距 0.3px）居中展示次數統計（如 `3.05 次/12h`）。
+- **測試與建置驗證**：
+  - `node tests/test_wiki_skill_ladder.js`：790 / 790 Passed (14 Suites, 0 Failures)。
+  - `npm run test:fast`：161 / 161 Passed。
+  - `npm test`：全量 4 Tiers 284 / 284 Passed。
+
+

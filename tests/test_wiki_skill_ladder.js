@@ -326,6 +326,24 @@ console.log('\n[Suite 2] Avatar Dimensions & Layout CSS Rules');
   assert(!skillLadderCss.includes('.skill-rank-subfilter-bar') && !skillLadderCss.includes('.skill-rank-subfilters'),
     'wiki_skill_ladder.css: removed unused .skill-rank-subfilter-bar and .skill-rank-subfilters rules');
 
+  // Active and hovered node z-index: 100000 to bring active icon to front
+  assert(skillLadderCss.includes('.wiki-skill-coordinate-ladder .ladder-node.tooltip-active') && skillLadderCss.includes('z-index: 100000 !important;'),
+    'wiki_skill_ladder.css: active and hovered node brings avatar to front with z-index 100000 !important');
+  assert(stylesCss.includes('.wiki-skill-coordinate-ladder .ladder-node.tooltip-active') && stylesCss.includes('z-index: 100000 !important;'),
+    'styles.css: active and hovered node brings avatar to front with z-index 100000 !important');
+
+  // Tooltip clean dark card without drop-shadow or cyan highlight outline
+  assert(skillLadderCss.includes('.wiki-skill-coordinate-ladder .ladder-node-tooltip') && skillLadderCss.includes('filter: none !important;'),
+    'wiki_skill_ladder.css: tooltip has filter: none !important to prevent highlight bleed');
+  assert(stylesCss.includes('.wiki-skill-coordinate-ladder .ladder-node-tooltip') && stylesCss.includes('filter: none !important;'),
+    'styles.css: tooltip has filter: none !important to prevent highlight bleed');
+
+  // Tooltip yield breakdown removes inner border and background (Single Frame Rule)
+  assert(skillLadderCss.includes('.wiki-skill-coordinate-ladder .tooltip-yield-breakdown') && skillLadderCss.includes('border: none !important;'),
+    'wiki_skill_ladder.css: tooltip-yield-breakdown has border: none !important');
+  assert(stylesCss.includes('.wiki-skill-coordinate-ladder .tooltip-yield-breakdown') && stylesCss.includes('border: none !important;'),
+    'styles.css: tooltip-yield-breakdown has border: none !important');
+
   // Track height clamp: 52px to 68px
   const trackHeightRegex = /height:\s*clamp\(52px,\s*calc\(\(100vh\s*-\s*280px\)\s*\/\s*9\),\s*68px\)\s*!important;/;
   assert(trackHeightRegex.test(skillLadderCss), 'wiki_skill_ladder.css: track-row height clamps between 52px and 68px');
@@ -518,15 +536,17 @@ console.log('\n[Suite 6] Tooltip Formatting & Seconds Boundary Handling');
 
   // Verify Tooltip contains 12h daytime help count
   assert(html.includes('日間 12h 總幫忙次數：') || html.includes('Est. Helps (12h):'), 'Tooltip contains 12h help count label');
-  assert(html.includes('預估 12h 發動：') || html.includes('Est. 12h Triggers:'), 'Tooltip contains 12h triggers label');
+  assert(!html.includes('預估 12h 發動：') && !html.includes('Est. 12h Triggers:'), 'Tooltip removes 預估 12h 發動： label prefix');
+  assert(html.includes('text-success font-bold') && html.includes('次/12h'), 'Tooltip displays clean centered procs with text-success font-bold');
   assert(html.includes('滿活力間隔 (0.45x)：') || html.includes('Ideal Interval (0.45x):'), 'Tooltip contains ideal interval label');
 
-  // Verify formula note is removed from tooltip and Est. 12h Triggers is at the bottom
+  // Verify formula note and top specialty icon/name are removed from tooltip and procs count is at the bottom
   assert(!html.includes('計算公式：43200 / (有效間隔 * 0.45) * 最終技能機率'), 'Tooltip removes bottom formula text (zh)');
   assert(!html.includes('Formula: 43200 / (effectiveInterval * 0.45) * finalSkillRate'), 'Tooltip removes bottom formula text (en)');
+  assert(!html.includes('class="tooltip-title"'), 'Tooltip removes top specialty icon and pokemon name');
   const breakdownIdx = html.indexOf('tooltip-yield-breakdown');
-  const detailIdx = html.indexOf('預估 12h 發動：');
-  assert(breakdownIdx > 0 && detailIdx > breakdownIdx, 'Est. 12h Triggers is positioned below tooltip-yield-breakdown at bottom of tooltip');
+  const procsIdx = html.indexOf('class="text-success font-bold"');
+  assert(breakdownIdx > 0 && procsIdx > breakdownIdx, 'Clean procs count is positioned below tooltip-yield-breakdown at bottom of tooltip');
 
   // Verify Final Evolution Only switch & filtering
   const sidebarHtml = sandbox.renderSkillLadderSidebar('', false, 'skills_ladder');
@@ -682,12 +702,11 @@ console.log('\n[Suite 10] Specialty Icons in Tooltips & Ranking Modal');
   const ingIcon = getIcon('ingredient', '食材型', 16);
   assert(ingIcon.includes('assets/specialty/ingredient.png'), 'Specialty icon for ingredient includes assets/specialty/ingredient.png');
 
-  // Verify rendered ladder tooltips contain specialty icon img and no text-only specialty tag
+  // Verify rendered ladder tooltips remove top specialty icon & name per user spec
   const html = sandbox.renderSkillCoordinateLadder();
-  assert(html.includes('assets/specialty/'), 'Rendered ladder tooltips contain assets/specialty/ icon URLs');
-  assert(html.includes('class="specialty-icon'), 'Rendered ladder tooltips contain .specialty-icon img tags');
+  assert(!html.includes('class="tooltip-title"'), 'Rendered ladder tooltips remove top title with specialty icon');
   assert(!html.includes('style="margin-left: 6px; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); color: var(--accent-color, #38bdf8);">技能型</span>'),
-    'Rendered ladder tooltips replaced text specialty badge with specialty icon');
+    'Rendered ladder tooltips do not contain raw text specialty badge');
 
   // Verify modal contains specialty icon img
   sandbox.openSkillRankingModal('charge_energy');

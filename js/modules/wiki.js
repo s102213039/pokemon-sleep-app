@@ -8864,7 +8864,7 @@
                       const helpsDisplay = (node.calcRes.helps12h != null ? node.calcRes.helps12h : (43200 / node.calcRes.idealIntervalSec)).toFixed(1);
 
                       return `
-                        <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} ${groupSize > 1 ? 'node-in-cluster' : ''}"
+                        <div class="ladder-node specialty-${node.specialtyKey} ${node.isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} ${groupSize > 1 ? 'node-in-cluster' : ''}"
                              data-pkm="${_escapeHtml(node.p.name_cn || node.p.name)}"
                              data-pkm-group="pkm-${node.p.id}"
                              data-pkm-id="${node.p.id}"
@@ -8877,10 +8877,6 @@
                           </div>
 
                           <div class="ladder-node-tooltip">
-                            <div class="tooltip-title">
-                              ${node.isTopNode ? _tSkillLadder('TOP 1 ', 'Top 1 ') : ''}${_escapeHtml(node.pkmDisplayName)}
-                              ${typeof getSkillLadderSpecialtyIcon === 'function' ? getSkillLadderSpecialtyIcon(node.specialtyKey, node.specialtyDisplay, 16) : `<span class="node-specialty-tag specialty-${node.specialtyKey}" style="margin-left: 6px; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); color: var(--accent-color, #38bdf8);">${node.specialtyDisplay}</span>`}
-                            </div>
                             <div class="tooltip-yield-breakdown">
                               <div class="breakdown-row">
                                 <span class="breakdown-label">${_tSkillLadder('主技能：', 'Main Skill:')}</span>
@@ -8903,9 +8899,8 @@
                                 <span class="breakdown-val">${helpsDisplay} ${_tSkillLadder('次', 'helps')}</span>
                               </div>
                             </div>
-                            <div class="tooltip-detail" style="margin-top: 6px;">
-                              ${_tSkillLadder('預估 12h 發動：', 'Est. 12h Triggers: ')}
-                              <span class="text-success font-bold">${node.displayCount} ${_tSkillLadder('次/12h', 'procs/12h')}</span>
+                            <div class="tooltip-detail" style="margin-top: 6px; text-align: center;">
+                              <span class="text-success font-bold" style="font-size: 13.5px; letter-spacing: 0.3px;">${node.displayCount} ${_tSkillLadder('次/12h', 'procs/12h')}</span>
                             </div>
                           </div>
                         </div>

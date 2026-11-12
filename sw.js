@@ -12,7 +12,7 @@
 
 // 歷史快取標記：用於 activate 事件自動清理歷史舊版快取 pksleep-img-cache-v1 與 pksleep-static-cache-v1
 const IMG_CACHE_NAME = 'pksleep-img-cache-v20261106_04';
-const STATIC_CACHE_NAME = 'pksleep-static-v20261112_1622';
+const STATIC_CACHE_NAME = 'pksleep-static-v20261112_1810';
 const VALID_CACHES = [IMG_CACHE_NAME, STATIC_CACHE_NAME];
 
 const FALLBACK_SVG_BODY = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#38bdf8"/></svg>';

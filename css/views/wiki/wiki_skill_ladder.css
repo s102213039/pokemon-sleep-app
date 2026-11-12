@@ -192,27 +192,58 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
   box-shadow: 0 0 10px rgba(234, 179, 8, 0.75);
 }
 
-.wiki-skill-coordinate-ladder .ladder-node:hover {
-  transform: translate(-50%, -55%) scale(1.15);
-  z-index: 10000 !important;
+/* Active and Hovered Node Z-Index: Bring Active Pokemon Icon to Front */
+.wiki-skill-coordinate-ladder .ladder-node:hover,
+.wiki-skill-coordinate-ladder .ladder-node:focus,
+.wiki-skill-coordinate-ladder .ladder-node.tooltip-active {
+  transform: translate(-50%, -55%) scale(1.22);
+  z-index: 100000 !important;
 }
 
 /* Dual-track Compound Main Skill Group Hover Highlight */
-.wiki-skill-coordinate-ladder .ladder-node.group-hover-active {
-  z-index: 35 !important;
+.wiki-skill-coordinate-ladder .ladder-node.group-hover-active,
+.wiki-skill-coordinate-ladder .ladder-node.group-selected {
+  z-index: 9999 !important;
   transform: translate(-50%, -50%) scale(1.18);
-  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.75));
+}
+
+.wiki-skill-coordinate-ladder .ladder-node.group-hover-active:hover,
+.wiki-skill-coordinate-ladder .ladder-node.group-hover-active.tooltip-active,
+.wiki-skill-coordinate-ladder .ladder-node.group-selected.tooltip-active {
+  z-index: 100000 !important;
+  transform: translate(-50%, -55%) scale(1.25);
 }
 
 .wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-wrapper,
-.wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-wrap {
+.wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-wrap,
+.wiki-skill-coordinate-ladder .ladder-node.group-selected .node-avatar-wrapper {
   border-radius: 50%;
   box-shadow: 0 0 12px rgba(56, 189, 248, 0.9), 0 0 4px rgba(250, 204, 21, 0.8);
 }
 
-.wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-img {
+.wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-img,
+.wiki-skill-coordinate-ladder .ladder-node.group-selected .node-avatar-img {
   border: 2px solid #38bdf8 !important;
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.8) !important;
+}
+
+/* Tooltip Clean Dark Card - Zero Highlight/Drop-Shadow Bleed-Through */
+.wiki-skill-coordinate-ladder .ladder-node-tooltip {
+  filter: none !important;
+  -webkit-filter: none !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  outline: none !important;
+}
+
+/* Remove Outer Border and Background from Yield Breakdown (Single Frame Rule) */
+.wiki-skill-coordinate-ladder .tooltip-yield-breakdown {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
 }
 
 /* Refined Count Badge for 38px Avatar */
