@@ -5,6 +5,98 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-13 已完成（主技能天梯完整精修、跨模組規則與隊長皮卡丘 ID 對齊、倉庫非阻塞彈窗與 JSON/OCR 統一去重升級、全三語覆蓋與 284/284 回歸驗證）
+
+- **測試狀態**：
+  - 全量回歸 `npm test`：**284 / 284 PASS**（`npm run test:fast` 161 / 161 PASS）。
+  - 領域獨立測試：`tests/test_wiki_skill_ladder.js` (**783 / 783 PASS**)、`tests/test_cross_module_consistency.js` (**5 / 5 PASS**)、`tests/test_box_import_dedup.js` (**6 / 6 PASS**)。
+- **核心交付內容**：
+  1. **R1 主技能天梯完整精修與手機版 H5 整合 (`skills_ladder`)**：
+     - 排行榜浮窗（`#wiki-skill-ranking-modal`）保留無文字名稱精簡排版，並為 `.skill-rank-card` 與 `.rank-pkm-avatar` 補齊三語 `title` / `alt` 懸停提示，點擊卡片維持不跳轉。
+     - 複合主技能雙軌懸停同步高亮：於 `.ladder-node` 掛載 `data-pkm-group` 與 `data-pkm-id`，於 `.wiki-skill-coordinate-ladder` 綁定 `handleLadderGroupHover` / `handleLadderGroupHoverOut` 跨越不同軌道連動高亮（`.group-hover-active`），並為 `.clickable-skill-header` 加入 `Enter` / `Space` 鍵盤無障礙觸發。
+     - 手機版 H5 整合：`#skill-ladder-sidebar-bookmark-handle` 納入回到頂部按鈕避讓檢測（`pokedex_ui.js`）與抽屜顯隱狀態聯動（`pokedex_filters.js`），並於 `wiki_calculators.js` 綁定 `#skill-ladder-filter-sidebar` 右滑關閉手勢。
+     - 全面補齊 `zh-TW` / `zh-CN` / `en-US` 三語切換（`_tSkillLadder`、`I18N.getPokemonName`、`I18N.getMainSkillName`）與簡繁英搜尋匹配；於 `VERIFIED_FEATURES_AND_BASELINES.md` 記錄複合/特殊主技能不拆分為獨立篩選分類之設計約束。
+  2. **R2 跨模組資料與規則一致性對齊**：
+     - 隊長皮卡丘圖示對齊：`pokedex_base.js`（`SPECIAL_ICON_MAP`）與 `data/special_icons.json` 補齊 `'9007'` 映射並保留 `'9003'` 向後相容別名。
+     - 統一最終進化與主技能等級上限判定：`isPokemonSkillLadderFinalEvo` 統一委託 `window.isFinalEvolution`（保留 `#429` 夢妖魔邊界與 `POKEMON_SKILLS_BASELINE_DATA` 回退）；`box_modal_form.js`、`lab_specialists.js` 與 `pokedex_detail_ctrl.js` 統一套用涵蓋全部 39 種主技能（含「技能複製」、「十項全能」等）之 `getMainSkillMaxLevel`。
+     - 未實裝空資料防呆：強化 `#546` 木棉球與 `#547` 風妖精（空 `main_skill`、空 `skill_rate`）於圖鑑、倉庫、評測研究室與天梯之空值防護。
+  3. **R3 寶可夢倉庫與批次 OCR 穩定性升級 (`js/modules/box/*.js`)**：
+     - 徹底移除 `box_main.js` 與 `box_modal_conflict.js` 中所有原生 `alert()` / `confirm()` 阻塞彈窗，改用非阻塞 Promise 主題確認浮窗 `showBoxConfirmModal` 與 `showBoxToast`（零 Emoji）。
+     - 建立共用 `upsertImportedPokemonToBox` 統一處理 JSON 匯入與批次 OCR 入庫：完全一致指紋自動略過；同個體但較高等級或較高技能等級自動原地升級，並保留既有自訂 `nickname`、獎章 `ribbon` 與異色標記；批次 OCR 完成後於 Toast 詳實回報新增、升級、略過與失敗圖片檔名清單。
+     - 導入 `_tBox` 全面補齊倉庫與 OCR 提示之 `zh-TW` / `zh-CN` / `en-US` 三語顯示。
+
+## 交接：2026-11-12 已完成（主技能天梯排行榜浮窗精簡：移除頂部冗餘篩選列與括號內附加說明、同步資料雜湊清單，762/762 與 284/284 測試全數通過）
+
+- **測試狀態**：`npm run test:fast` (161/161 PASS)、全量 `npm test` (284/284 PASS) 與專項 `node tests/test_wiki_skill_ladder.js` (762/762 PASS) 100% 通過（0 失敗）。
+- **核心功能與修復項目**：
+  1. **移除排行榜浮窗（`#wiki-skill-ranking-modal`）頂部篩選器列**：
+     - 於 `js/modules/wiki/wiki_skill_ladder.js` 移除頂部佔用垂直空間的子分類篩選按鈕列（`全部 / 自己 / 隨機他人` 與 `全部 / 食材獲取 / 食材精選`），並同步清除 `css/views/wiki/wiki_skill_ladder.css` 與 `css/styles.css` 內未使用的 `.skill-rank-subfilter-*` 樣式，保留最大清單可視區域。
+  2. **移除主技能名稱後方括號內的附加說明**：
+     - 於 `scripts/generate_wiki_skill_ladder.js` 與 `js/modules/wiki/wiki_skill_ladder_data.js` 調整 `getSkillSubCategoryInfo`，停止在 `fullLabel` 後方拼接 `（自己）`、`（隨機他人）`、`（自己 (+隨機他人)）`、`（食材獲取）`、`（食材精選）`、`（固定）` 等括號補充說明，讓排行榜浮窗與天梯懸浮窗僅顯示乾淨的真實主技能名稱。
+  3. **同步 `data/manifest.json` 雜湊與版本戳記**：
+     - 執行 `npm run data:minify` 與 `npm run build` 更新 `20261111_1634` 快取版本，確保全量 284 項整合測試全數通過。
+
+## 交接：2026-11-11 已完成（主技能天梯浮窗與標籤修正：消除 `（隨機）（隨機）` 重複後綴、移除排行榜浮窗寶可夢文字名稱、大幅縮小 `#1` 排名數字並讓專長圖示與主技能名稱同行展示、768/768 與 161/161 測試全數通過）
+
+- **測試狀態**：`npm run test:fast` (161/161 PASS) 與專項 `node tests/test_wiki_skill_ladder.js` (768/768 PASS，13 個測試套件) 100% 通過（0 失敗）。
+- **核心功能與修復項目**：
+  1. **修復主技能名稱重複後綴（`能量填充S（隨機）（隨機）` -> `能量填充S（隨機）`）**：
+     - 於 `scripts/generate_wiki_skill_ladder.js`、`js/modules/wiki/wiki_skill_ladder_data.js`、`js/modules/wiki/wiki_skill_ladder.js` 與 `js/modules/wiki/wiki_skill_ladder_render.js` 實作後綴去重機制（支援全形／半形括號混用、內部空白容錯與任意次數連續重複去重），確保已帶有 `（隨機）` / `(Random)` 的技能名稱不會重複拼接子分類後綴。
+  2. **移除排行榜浮窗（`#wiki-skill-ranking-modal`）內的寶可夢文字名稱**：
+     - 於 `openSkillRankingModal` 卡片渲染中移除寶可夢文字名稱（僅保留寶可夢頭像圖示），使版面更精簡清爽。
+  3. **大幅縮小浮窗前方排名數字（`#1` 等）並將專長形態圖示與技能名稱同行展示**：
+     - 於 `css/views/wiki/wiki_skill_ladder.css` 與 `css/styles.css` 將 `#wiki-skill-ranking-modal .ing-rank-num` 字級大幅縮小至桌面版 `10.5px`（前 3 名 `11px`）、行動版 `9.5px`（前 3 名 `10px`），並收緊寬度至 `22px`（行動版 `18px`）。
+     - 將寶可夢專長圖示（`assets/specialty/{skill,ingredient,berry}.png`）與主技能名稱並排於同一行（`.skill-rank-inline-row`，`display: flex; align-items: center; gap: 5px; white-space: nowrap;`）展示。
+
+## 交接：2026-11-11 已完成（主技能天梯 `skills_ladder` 細節精修：四字無外框技能名稱、浮窗區分自己/隨機他人與食材獲取/精選、專長形態圖示化、消除浮窗開啟時底層軌道高亮穿透、隱藏種數標籤與動態最小/最大刻度區間最大化橫向空間、725/725 與 284/284 測試全數通過）
+
+- **測試狀態**：`npm run test:fast` (161/161 PASS)、全量 `npm test` (284/284 PASS) 與專項 `node tests/test_wiki_skill_ladder.js` (725/725 PASS) 100% 通過（0 失敗）。
+- **核心功能與優化項目**：
+  1. **主技能名稱移除外框並全面精簡為四字純文字**：
+     - 移除 `.skill-track-name-tag` 外框與底色（`background: transparent; border: none; padding: 0;`），並將 9 大軌道名稱精簡為四字：`能量填充`、`全體療癒`、`單體療癒`、`料理強化`、`料理成功`、`幫手支援`、`夢碎獲取`、`食材獲取`、`樹果遽增`。
+  2. **浮窗內精確區分個別技能與子分類（`getSkillSubCategoryInfo`）**：
+     - 於寶可夢節點浮窗（`.ladder-node-tooltip`）及點擊軌道名稱彈出的排行榜浮窗（`#wiki-skill-ranking-modal`）中，明確標註個別主技能與子分類：`單體療癒` 區分「自己」（如 `活力填充S（自己）`、`月光（自己 (+隨機他人)）`）與「隨機他人」（如 `活力療癒S（隨機他人）`、`蹭蹭臉頰（隨機他人）`、`治癒波動（隨機他人）`）；`食材獲取` 區分「食材獲取」（如 `食材獲取S（食材獲取）`、`健美（食材獲取）`、`正電（食材獲取）`、`禮物（食材獲取）`）與「食材精選」（如 `食材精選S（食材精選）`、`超幸運（食材精選）`、`怪力鉗（食材精選）`），並於排行榜浮窗頂部提供快速篩選按鈕（`全部 / 自己 / 隨機他人`、`全部 / 食材獲取 / 食材精選`）。
+  3. **浮窗內專長改用形態圖示展示（`getSkillLadderSpecialtyIcon`）**：
+     - 將寶可夢節點浮窗與排行榜浮窗內的文字標籤（`技能型`、`食材型`、`樹果型`）替換為圓形專長圖示（`assets/specialty/{skill,ingredient,berry}.png` 與 `@2x.png`），大幅節省橫向空間。
+  4. **徹底修復點擊主技能名稱彈出排行榜浮窗時底層軌道高亮穿透問題**：
+     - `openSkillRankingModal` 開啟時自動呼叫 `PopoverCoordinator.dismissAll()`、移除 `.has-active-tooltip` / `.tooltip-active`、執行 `blur()` 並於 `document.body` 加上 `skill-ranking-modal-open` 狀態類別；同時於 `wiki_skill_ladder.css` 將 `#wiki-skill-ranking-modal` 層級提升至 `z-index: 200000 !important` 並在彈窗開啟期間強制重置底層軌道背景與 `z-index: 1 !important`，徹底消除底層軌道高亮殘留與穿透。
+  5. **隱藏 `.skill-track-count-tag` 並以動態最小/最大值刻度最大化橫向空間**：
+     - 隱藏 `.skill-track-count-tag text-secondary`（`X 種`），將左側標題與標尺間距由桌面版 `140px` / 行動版 `96px` 大幅收緊至 `68px` / `56px`，並將左上角 `.skill-ruler-label` 文字改為 `次數/12h`。
+     - `.ladder-ruler-scale` 橫向刻度改為動態取用當前可見寶可夢的最小發動次數（`minVal`）與最大發動次數（`maxVal`）作為左右端點（0% ~ 100%），徹底消除左側無寶可夢的空白區間，讓整體橫向展示空間最大化。
+
+## 交接：2026-11-11 已完成（主技能天梯 `skills_ladder` 進階優化：新增「最終進化」Switch 開關、寶可夢浮窗移除底部計算公式並將「預估 12h 發動」移至最下方、左側主技能標題點選彈出發動次數排行榜、寶可夢節點並行無覆蓋展示、636/636 與 284/284 測試全數通過）
+
+- **測試狀態**：`npm run test:fast` (161/161 PASS)、全量 `npm test` (284/284 PASS) 與專項 `node tests/test_wiki_skill_ladder.js` (636/636 PASS) 100% 通過（0 失敗）。
+- **核心功能與優化項目**：
+  1. **新增「最終進化 (Final Evo)」Switch 開關**：
+     - 於主技能天梯側邊篩選器「寶可夢專長」標題列右側新增 `#skill-ladder-final-only-switch` 切換開關（支援 `toggleSkillLadderFinalOnly` / `getSkillLadderFinalOnly` / `isPokemonSkillLadderFinalEvo`），並在 `wiki_skill_ladder_data.js` 補齊 `is_final` 欄位，開啟時僅保留最終進化寶可夢。
+  2. **寶可夢浮窗 (Tooltip) 移除底部計算公式並替換為「預估 12h 發動」**：
+     - 於 `wiki_skill_ladder_render.js` 移除個別寶可夢浮窗最下方的冗長字串「計算公式：43200 / (有效間隔 * 0.45) * 最終技能機率」，並將「預估 12h 發動：X.XX 次/12h」替換移至浮窗明細表最下方作為核心結論展示。
+  3. **左側主技能名稱點選彈出排行榜 (`openSkillRankingModal`)**：
+     - 左側 `.skill-ladder-track-header` 升級為可點擊互動按鈕（`.clickable-skill-header`），點擊後開啟與食材天梯一致的排行榜彈窗（`#wiki-skill-ranking-modal`），依當前篩選條件（專長、最終進化、副技能與性格補正、關鍵字）展示該主技能分類下所有寶可夢的密集排名（Dense Ranking `#1, #2, #3...`）、頭像、主技能名稱、專長標籤、日間 12h 預估發動次數與最終機率/幫忙次數明細。
+  4. **寶可夢節點並行展示（大幅拉開間距避免重疊覆蓋）**：
+     - 將同叢集判定範圍擴展為相鄰差距 `<= 0.30`、叢集跨度 `<= 0.65`，並將 `38px` 頭像節點的水平偏移步距由原本的 `16/20/24px` 大幅提升至 `30/36/42px`，讓相近發動次數的寶可夢以並行展開方式清晰呈現，不再互相遮擋覆蓋。
+
+## 交接：2026-11-10 已完成（主技能天梯 `skills_ladder` 建置與全面優化：純文字軌道標題、38px 放大寶可夢頭像、日間 12h 幫忙與發動次數校準、全庫 241 隻非隨機寶可夢 100% 映射、284/284 與 623/623 測試全數通過）
+
+- **測試狀態**：`npm run test:fast` (161/161 PASS)、全量 `npm test` (284/284 PASS) 與專項 `node tests/test_wiki_skill_ladder.js` (623/623 PASS) 100% 通過（0 失敗）。
+- **核心功能與優化項目**：
+  1. **主技能天梯 (`skills_ladder`) 模組架構與複合主技能雙軌展示**：
+     - 於 `js/modules/wiki/` 新增 `wiki_skill_ladder_data.js`、`wiki_skill_ladder.js`、`wiki_skill_ladder_render.js`，並將專屬樣式獨立拆分至 `css/views/wiki/wiki_skill_ladder.css`（嚴格維持所有模組 `< 1,000` 行上限，並遵循 Single Frame Rule 外層無冗餘邊框）。
+     - 完整對齊食材天梯操作體驗（篩選器、頂部與底部雙向刻度尺、節點展開浮窗與詳細數據），並徹底移除所有食材專用欄位（無 A/B/C 食材組合標籤、無食譜供需篩選、無鍋子容量控制）。
+  2. **純文字主技能軌道標題（移除抽象 SVG 圖示）**：
+     - 移除軌道左側原本自繪的抽象 SVG 圖示，改用結構緊湊、高對比度的純文字彩色標籤（`.skill-track-name-tag`）展示 9 大主技能分類名稱（能量填充、活力全體療癒、活力單體/隨機療癒、料理強化（擴鍋）、料理大成功機率、幫手支援/加速、夢之碎片獲取、食材獲取/精選、樹果遽增/發動）。
+     - 鎖定軌道標題與刻度尺左側區域寬度（桌面版 `140px`，行動版 `96px`），確保刻度軸線 0px 偏差完美對齊。
+  3. **放大寶可夢節點頭像（38px）與防重疊交錯佈局**：
+     - 善用主技能天梯較寬的水平數值跨度，於 `#wiki-subpanel-skills_ladder` 作用域內將寶可夢頭像由 `28px` 放大至桌面版 `38px`（行動版 `34px`），軌道高度擴大為 `clamp(52px, 6.2vh, 68px)`。
+     - 升級同座標防重疊叢集演算法（水平間距 `< 1.8%` 判定同叢集，垂直交錯偏移擴大為 `16px / 20px / 24px`），並將首尾邊界夾限收緊至 `3.5% ~ 96.5%` 防止大頭像裁切。
+  4. **日間 12h 幫忙次數 (`helps12h`) 與技能發動次數 (`procs`) 校準與防護**：
+     - 嚴格遵循圖鑑基準公式：`effectiveIntervalSec = Math.max(600, Math.round(baseIntervalSec * (1 - 0.118) * (1 - speedReduction) * natureSpeedMult))`，滿活力 `idealIntervalSec = effectiveIntervalSec * 0.45`，日間 12h 總幫忙次數 `helps12h = 43200 / idealIntervalSec`，期望發動次數 `procs = helps12h * finalSkillRate`。
+     - 強化 `parseIntervalToSec` 與 `parseSkillRate` 邊界防禦（杜絕異常字串產生 `NaN` / `Infinity`），並修正 Tooltip 秒數四捨五入邊界（先對總秒數 `Math.round(idealIntervalSec)` 再取分秒，徹底消除 `XX分60秒` 溢位問題）。
+  5. **全庫 253 隻寶可夢與 38+ 主技能 100% 映射確認**：
+     - 盤點確認全庫 253 隻寶可夢中：10 隻隨機/模仿類主技能（`揮指`、`模仿`、`變身`、`十項全能`、`技能複製`）依規排除，2 隻未實裝預留寶可夢（`#546` 木棉球、`#547` 風妖精）排除，其餘 **241 隻已實裝非隨機寶可夢 100% 納入 9 大主技能軌道**。
+     - 其中 **17 隻複合型主技能寶可夢**（如正電拍拍/負電拍拍 `正電`/`負電`、赫拉克羅斯 `健美`、夢妖魔 `魔法火焰`、拉帝亞斯/拉帝歐斯 `精神擊破`/`流星群`、路卡利歐 `波導彈`、謎擬Q `畫皮`、克雷色利亞 `新月祈禱`、達克萊伊 `夢魘` 等）雙向映射至對應的 2 個主技能軌道，總計 258 個軌道節點，支援繁/簡/英大小寫無關別名匹配。
+
 ## 交接：2026-11-06 已完成（特殊主技能全面去除冗餘括號與修正怪異翻譯、夢妖魔最終進化與雲端推送生效、盒子分頁下拉刷新誤觸根除、三層快取自動失效架構升級）
 
 - **測試狀態**：`npm run test:fast` (156/156 PASS) 與全量 `npm test` (279/279 PASS) 100% 通過（0 失敗）。
@@ -2604,4 +2696,83 @@
 - Tier 4 快取與重要情境測試：**100% Passed**。
 
 
+
+
+### 2026-11-07: 移除未經官方確認之料理與食材假資產、回歸真實基準與全站圖片本地解析加固
+
+#### 1. 問題根因與處理原則
+- **未確認數量之新料理與食材假資產清理**：
+  - 官方預告 11/16 登場之新咖哩（39）、新沙拉（121）、新點心（91）從未公佈各食材個別數量、料理名稱、基礎能量與加成比例。先前版本捏造了 3 道料理名稱與內部食材數量，且先前曾將咖啡豆圖檔假冒為一口堅果。
+  - 依使用者明確指示「不要給我使用錯誤的資訊去填充進去亂搞，不是正確的就不要使用」，徹底刪除 3 道未確認料理，將全站食譜數量嚴格回歸官方已驗證之 78 道（25 咖哩、26 沙拉、27 甜點）。
+  - 徹底刪除假冒一口堅果之圖檔及 3 道料理捏造圖檔，移除未發布之木棉球 (#546) 與風妖精 (#547)，全站寶可夢回歸 251 隻已發布寶可夢，食材天梯回歸 19 條已驗證天梯。
+- **全站圖片死圖徹底解決**：
+  - 在道具百科 (wiki_items.js) 與營地島嶼 (wiki_camps_render.js) 渲染層直接以 mapExternalToLocalAsset 解析本地同源相對路徑，不再經過任何第三方外部網址轉跳，從源頭根絕死圖。
+  - sw.js 同步雙向攔截，離線與快取安全隔離。
+
+#### 2. 測試與驗證結果
+- **測試全面對齊真實發布規格**：
+  - tests/test_challenger_m2_multitab_adversarial.js：22/22 Passed (CONFIRM)。
+  - tests/stress_recipe_consumers_adversarial.js：37/37 Passed (APPROVE)。
+  - tests/e2e_sync_and_multitab.js：114/114 Passed (0 Failed)。
+  - npm run test:fast：156/156 Passed (0.35s)。
+  - npm test：全量回歸測試 279/279 Passed (0 Failed)。
+
+
+### 2026-11-10: 數據百科 (Wiki) 新增「主技能天梯」二級子分頁與精確橫向天梯視覺化
+
+#### 1. 核心功能實作
+- **主技能天梯子分頁與視覺化軌道**：
+  - 在數據百科（Wiki）導航列新增二級子分頁「主技能天梯榜」（與食材天梯榜並列，介面與操作風格一致）。
+  - 依照技能效果類別（能量填充、活力全體療癒、活力單體/隨機療癒、料理強化、料理大成功機率、幫手支援/加速、夢之碎片獲取、食材獲取/精選、樹果遽增/發動）建立 9 條獨立橫向視覺軌道。
+  - 計算基準嚴格依據 Lv.60 滿活力（活力 >= 80%，間隔 0.45x）試算日間 12 小時主技能發動次數：`43200 / (effectiveIntervalSec * 0.45) * finalSkillRate`。
+- **技能覆蓋、特殊排除與複合主技能雙重展示**：
+  - 排除特殊隨機主技能：揮指（Metronome）、模仿（Mimic）、變身（Transform）、十項全能（All-Rounder）。
+  - 支援複合效果技能雙重展示：正電、負電、禮物、健美、魔法火焰、蹭蹭臉頰、治癒波動、樹果汁、超幸運、波導彈、新月祈禱、精神擊破、怪力鉗、畫皮等皆於對應效果軌道中雙重展示。
+- **側邊欄無食材純技能篩選控制項**：
+  - 移除所有食材相關元素（無供餐梯隊、無食材型態、無料理高亮 FAB、副技能/性格無食材機率）。
+  - 保留並生效即時搜尋、天梯軌道排序（預設/發動次數/數量）、寶可夢專長分類、副技能補正（幫忙速度 M/S、技能機率 M/S）、性格補正（幫速▲、技能▲）、重設按鈕與抽屜機制。
+
+#### 2. 對抗性審查修復 (Reviewer Round 2)
+- **節點水平偏移交錯方向修正**：
+  - 修正重疊叢集計算中偏移符號相反之錯誤，確保發動次數較高之節點向右偏移、較低之節點向左偏移，視覺排列與數值高低嚴格一致。
+- **鄰近節點叢集鏈結範圍限制**：
+  - 加入叢集首節點跨度上限（`Math.abs(head.procs - n.procs) <= 0.25`），杜絕連續微小階差節點無限連鎖導致大範圍偏離尺規座標。
+- **排除技能防禦與核心導出**：
+  - 修正 `getSkillTracks()` 針對排除技能與未知技能誤落入 `charge_energy` 之問題，確保排除技能返回空陣列 `[]`。
+  - 將 `isExcludedSkill` 與 `getSkillTracks` 正式導出於 `WikiDB` 與 `window`。
+  - 支援 `skillRate` 駝峰與已正規化小數（如 0.042）之容錯運算。
+  - 修正響應式環境下側邊欄多書籤按鈕之徽章同步更新。
+
+#### 3. 對抗性審查與壓力加固 (Reviewer Round 3)
+- **圖鑑編號數值化與補零查詢相容**：
+  - 修正搜尋圖鑑編號時（如 `025` 與 `25`）因字串長度與補零格式差異造成匹配失敗問題，支援整數轉譯與雙向 `padStart(3, '0')` 容錯匹配。
+- **基礎天梯數據集產生腳本同步加固**：
+  - 更新 `scripts/generate_wiki_skill_ladder.js` 萃取規則，納入 `formatted_no` 與 `name_jp`，並修正 `getSkillTracks` 排除防護與回退邏輯，杜絕覆寫遺漏。
+  - 重新產出 `js/modules/wiki/wiki_skill_ladder_data.js`，包含 251 隻寶可夢之完整三語名稱與格式化編號（428 行，嚴格符合 1000 行上限）。
+- **雙書籤按鈕同步狀態一致性**：
+  - 於子分頁切換（`handleSkillLadderSubTabSwitch`）與側邊欄展開收合（`toggleSkillLadderSidebar`）中全面採用 `querySelectorAll('#skill-ladder-sidebar-bookmark-handle')`，確保桌面端與行動端 FAB 按鈕狀態完全同步。
+- **超窄螢幕邊界安全拘束**：
+  - 採用 `clamp(12px, ..., calc(100% - 12px))` 封裝天梯節點之水平定位，杜絕極端座標與交錯偏移溢出畫布邊界。
+- **浮窗協調器（PopoverCoordinator）生命週期對接**：
+  - 將主技能天梯能量說明浮窗 `skill-ladder-energy-help-popover` 納入 `PopoverCoordinator.hasAnyOpen()` 與 `dismissAll()` 管轄。
+
+#### 4. 測試與全域規範驗收
+- `npm run test:fast`：**161 / 161 Passed (0.28s)**。
+- `npm test`：全量 4 Tiers **284 / 284 Passed (2.4s)**。
+- 零 Emoji 規範、零特殊字形裝飾符號規範、嚴禁巢狀雙重外框規範全數通過。
+
+### 技能天梯圖與浮窗顯示修正 (Wiki Skill Ladder Modal & Suffix Refinements)
+- **R1 技能名稱重複後綴修復**：
+  - 修復「能量填充S（隨機）（隨機）」等名稱重複拼接問題，建立對全半形括號及內部空白具容錯性之正則表達式，支援隨機（Random）、固定（Fixed）與任意重複括號後綴之徹底坍縮。
+  - 同步更新資料集產生腳本 `scripts/generate_wiki_skill_ladder.js`、`js/modules/wiki/wiki_skill_ladder_data.js`、`js/modules/wiki/wiki_skill_ladder.js` 及 `js/modules/wiki/wiki_skill_ladder_render.js`。
+- **R2 技能天梯排名浮窗移除寶可夢名稱**：
+  - 於 `#wiki-skill-ranking-modal` 排名卡片中徹底移除寶可夢名稱文字（移除可見標籤、標題屬性及圖片 alt 洩漏），確保點擊或查看排名浮窗時僅展示排名、頭像、專長圖示、技能名稱與發動次數。
+- **R3 排名數字縮小與圖示技能同排展示**：
+  - 排名數字尺寸自 13px-15px 大幅縮小至 10.5px/11px（行動端 9.5px/10px）。
+  - 將專長類型圖示（15px 固定）與技能名稱（支援單行自動刪節 `text-overflow: ellipsis`）調整為同一行橫向排列展示。
+  - 補足 `.ing-rank-left` 與 `.ing-rank-right` 之 Flexbox 拘束，杜絕窄螢幕下產量數據遭到擠壓。
+- **測試與建置驗證**：
+  - `node tests/test_wiki_skill_ladder.js`：768 / 768 Passed (13 Suites, 0 Failures)。
+  - `npm run test:fast`：161 / 161 Passed。
+  - `npm run build`：CSS 與 JS 打包完成，全域樣式與模組樣式 100% 同步。
 

@@ -10,6 +10,7 @@ const SPECIAL_ICON_MAP = {
   '9001': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png',
   '9002': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png',
   '9003': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png',
+  '9007': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png',
   '9004': 'https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png',
   '9005': 'https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png',
   '9006': 'https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png',
@@ -146,7 +147,8 @@ function getIconUrl(p) {
  */
 function isFinalEvolution(p) {
   if (!p) return false;
-  if (p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1') {
+  const raw = p.is_final !== undefined && p.is_final !== null ? p.is_final : p.isFinal;
+  if (raw === '〇' || raw === 'O' || raw === 'o' || raw === true || raw === '1' || raw === 1) {
     return true;
   }
   const idStr = String(p.id || p.formatted_no || p.pokemonId || '');
@@ -155,6 +157,44 @@ function isFinalEvolution(p) {
   if (name === '夢妖魔') return true;
   const nameEn = (p.name_en || (p.name && p.name.en ? p.name.en : '')).toLowerCase();
   if (nameEn === 'mismagius') return true;
+
+  // 1. window.POKEMON_DB / window.allPokemons / PokemonApp.allPokemons 查核
+  const db = (typeof window !== 'undefined' && (window.POKEMON_DB || window.allPokemons))
+    ? (window.POKEMON_DB || window.allPokemons)
+    : ((typeof PokemonApp !== 'undefined' && PokemonApp.allPokemons) ? PokemonApp.allPokemons : null);
+  if (db && Array.isArray(db)) {
+    const match = db.find(item => item && (
+      (idStr && (String(item.id) === idStr || String(item.formatted_no) === idStr)) ||
+      (name && (item.name_cn === name || item.name === name)) ||
+      (nameEn && item.name_en && item.name_en.toLowerCase() === nameEn)
+    ));
+    if (match && match !== p) {
+      const dRaw = match.is_final !== undefined && match.is_final !== null ? match.is_final : match.isFinal;
+      if (dRaw === '〇' || dRaw === 'O' || dRaw === 'o' || dRaw === true || dRaw === '1' || dRaw === 1) return true;
+    }
+  }
+
+  // 2. window.POKEMON_SKILLS_BASELINE_DATA / POKEMON_SKILLS_BASELINE_DATA 查核 (當 POKEMON_DB 資料不完整或檢查 next-ID 進化時之防禦)
+  const baseline = (typeof window !== 'undefined' && Array.isArray(window.POKEMON_SKILLS_BASELINE_DATA))
+    ? window.POKEMON_SKILLS_BASELINE_DATA
+    : ((typeof POKEMON_SKILLS_BASELINE_DATA !== 'undefined' && Array.isArray(POKEMON_SKILLS_BASELINE_DATA)) ? POKEMON_SKILLS_BASELINE_DATA : null);
+  if (baseline) {
+    const match = baseline.find(item => item && (
+      (idStr && (String(item.id) === idStr || String(item.formatted_no) === idStr)) ||
+      (name && (item.name_cn === name || item.name === name)) ||
+      (nameEn && item.name_en && item.name_en.toLowerCase() === nameEn)
+    ));
+    if (match) {
+      const bRaw = match.is_final !== undefined && match.is_final !== null ? match.is_final : match.isFinal;
+      if (bRaw === '〇' || bRaw === 'O' || bRaw === 'o' || bRaw === true || bRaw === '1' || bRaw === 1) return true;
+    }
+  }
+
+  // 3. 次一編號 (next-ID) 進化檢查防護 (如 #025 皮卡丘 -> #026 雷丘，若後續存在進化則非最終形態)
+  if (p.evo_req && String(p.evo_req).trim() !== '') {
+    return false;
+  }
+
   return false;
 }
 
@@ -684,6 +724,15 @@ function getPokemonBerry(p) {
 }
 if (typeof window !== 'undefined') {
   window.getPokemonBerry = getPokemonBerry;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    SPECIAL_ICON_MAP,
+    getIconUrl,
+    isFinalEvolution,
+    mapExternalToLocalAsset,
+    getPokemonBerry
+  };
 }
 
 
@@ -3969,73 +4018,109 @@ if (typeof document !== 'undefined') {
         bindSidebarSwipeRightToClose(sidebar, () => toggleSidebar(false));
       }
 
+      function closeMobileDrawer() {
+        if (typeof window.toggleRecipeSidebar === 'function') {
+          window.toggleRecipeSidebar(false);
+        }
+        if (typeof window.closeLadderSidebar === 'function') {
+          window.closeLadderSidebar();
+        }
+        if (typeof window.toggleSidebar === 'function') {
+          window.toggleSidebar(false);
+        }
+        if (typeof window.toggleBoxSidebar === 'function') {
+          window.toggleBoxSidebar(false);
+        }
+        if (typeof window.closeSkillLadderSidebar === 'function') {
+          window.closeSkillLadderSidebar();
+        }
+        document.querySelectorAll('.pokemon-filter-sidebar, .recipe-filter-sidebar, .box-filter-sidebar, .ladder-fixed-sidebar, .skill-ladder-filter-sidebar').forEach(sb => {
+          sb.classList.add('collapsed');
+        });
+        document.querySelectorAll('.sidebar-backdrop').forEach(bd => bd.classList.remove('active'));
+        const curMainTab = (typeof window !== 'undefined' && window.location && window.location.hash)
+          ? window.location.hash.replace(/^#/, '').split(/[/_?]/)[0]
+          : (typeof localStorage !== 'undefined' ? localStorage.getItem('pksleep_active_main_tab') || 'pokemon' : 'pokemon');
+        const isPoke = curMainTab === 'pokemon' || curMainTab === '';
+        const isRecipe = curMainTab === 'recipes';
+        const isWiki = curMainTab === 'wiki';
+        const isBox = curMainTab === 'box';
+
+        const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) || '';
+        const isIngredientSubtab = rawHash.includes('/ingredients') || (typeof localStorage !== 'undefined' && localStorage.getItem('pksleep_active_wiki_subtab') === 'ingredients');
+        const isSkillLadderSubtab = window.WikiState && window.WikiState.currentSubtab === 'skills_ladder';
+
+        const f1 = document.getElementById('sidebar-bookmark-handle');
+        const f2 = document.getElementById('recipe-sidebar-bookmark-handle');
+        const f3 = document.getElementById('ladder-sidebar-bookmark-handle');
+        const f4 = document.getElementById('box-sidebar-bookmark-handle');
+        const f5 = document.getElementById('skill-ladder-sidebar-bookmark-handle');
+
+        if (f1) {
+          f1.style.opacity = isPoke ? '1' : '0';
+          f1.style.pointerEvents = isPoke ? 'auto' : 'none';
+          f1.style.display = isPoke ? 'flex' : 'none';
+          f1.style.visibility = isPoke ? 'visible' : 'hidden';
+        }
+        if (f2) {
+          f2.style.opacity = isRecipe ? '1' : '0';
+          f2.style.pointerEvents = isRecipe ? 'auto' : 'none';
+          f2.style.display = isRecipe ? 'flex' : 'none';
+          f2.style.visibility = isRecipe ? 'visible' : 'hidden';
+        }
+        if (f3) {
+          f3.style.display = (isWiki && !isIngredientSubtab && !isSkillLadderSubtab) ? 'inline-flex' : 'none';
+          f3.style.opacity = (isWiki && !isIngredientSubtab && !isSkillLadderSubtab) ? '1' : '0';
+          f3.style.pointerEvents = (isWiki && !isIngredientSubtab && !isSkillLadderSubtab) ? 'auto' : 'none';
+          f3.style.visibility = (isWiki && !isIngredientSubtab && !isSkillLadderSubtab) ? 'visible' : 'hidden';
+        }
+        if (f4) {
+          const isLabSubtab = rawHash.includes('/lab') || (typeof localStorage !== 'undefined' && localStorage.getItem('pksleep_active_box_subtab') === 'lab');
+          const showF4 = isBox && !isLabSubtab;
+          f4.style.opacity = showF4 ? '1' : '0';
+          f4.style.pointerEvents = showF4 ? 'auto' : 'none';
+          f4.style.display = showF4 ? 'flex' : 'none';
+          f4.style.visibility = showF4 ? 'visible' : 'hidden';
+        }
+        if (f5) {
+          f5.style.display = (isWiki && isSkillLadderSubtab) ? 'inline-flex' : 'none';
+          f5.style.opacity = (isWiki && isSkillLadderSubtab) ? '1' : '0';
+          f5.style.pointerEvents = (isWiki && isSkillLadderSubtab) ? 'auto' : 'none';
+          f5.style.visibility = (isWiki && isSkillLadderSubtab) ? 'visible' : 'hidden';
+        }
+      }
+      window.closeMobileDrawer = closeMobileDrawer;
+
       // 全域防護：點擊遮罩層 (sidebar-backdrop) 時優雅收合側邊欄並消費事件
       document.addEventListener('touchend', (e) => {
         const target = e.target;
         if (target && target.classList && target.classList.contains('sidebar-backdrop')) {
           e.preventDefault();
           e.stopPropagation();
-          if (typeof window.toggleRecipeSidebar === 'function') {
-            window.toggleRecipeSidebar(false);
-          }
-          if (typeof window.closeLadderSidebar === 'function') {
-            window.closeLadderSidebar();
-          }
-          if (typeof window.toggleSidebar === 'function') {
-            window.toggleSidebar(false);
-          }
-          if (typeof window.toggleBoxSidebar === 'function') {
-            window.toggleBoxSidebar(false);
-          }
-          document.querySelectorAll('.pokemon-filter-sidebar, .recipe-filter-sidebar, .box-filter-sidebar, .ladder-fixed-sidebar').forEach(sb => {
-            sb.classList.add('collapsed');
-          });
-          document.querySelectorAll('.sidebar-backdrop').forEach(bd => bd.classList.remove('active'));
+          closeMobileDrawer();
+        }
+      }, { passive: false });
+
+      window.addEventListener('resize', () => {
+        const f3 = document.getElementById('ladder-sidebar-bookmark-handle');
+        const f5 = document.getElementById('skill-ladder-sidebar-bookmark-handle');
+        if (window.innerWidth > 980) {
+          if (f5) f5.style.display = 'none';
+        } else {
           const curMainTab = (typeof window !== 'undefined' && window.location && window.location.hash)
             ? window.location.hash.replace(/^#/, '').split(/[/_?]/)[0]
             : (typeof localStorage !== 'undefined' ? localStorage.getItem('pksleep_active_main_tab') || 'pokemon' : 'pokemon');
-          const isPoke = curMainTab === 'pokemon' || curMainTab === '';
-          const isRecipe = curMainTab === 'recipes';
           const isWiki = curMainTab === 'wiki';
-          const isBox = curMainTab === 'box';
-
-          const f1 = document.getElementById('sidebar-bookmark-handle');
-          const f2 = document.getElementById('recipe-sidebar-bookmark-handle');
-          const f3 = document.getElementById('ladder-sidebar-bookmark-handle');
-          const f4 = document.getElementById('box-sidebar-bookmark-handle');
-
-          if (f1) {
-            f1.style.opacity = isPoke ? '1' : '0';
-            f1.style.pointerEvents = isPoke ? 'auto' : 'none';
-            f1.style.display = isPoke ? 'flex' : 'none';
-            f1.style.visibility = isPoke ? 'visible' : 'hidden';
-          }
-          if (f2) {
-            f2.style.opacity = isRecipe ? '1' : '0';
-            f2.style.pointerEvents = isRecipe ? 'auto' : 'none';
-            f2.style.display = isRecipe ? 'flex' : 'none';
-            f2.style.visibility = isRecipe ? 'visible' : 'hidden';
-          }
-          if (f3) {
-            const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) || '';
-            const isIngSubtab = rawHash.includes('/ingredients') || (typeof localStorage !== 'undefined' && localStorage.getItem('pksleep_active_wiki_subtab') === 'ingredients');
-            const showF3 = isWiki && isIngSubtab;
-            f3.style.opacity = showF3 ? '1' : '0';
-            f3.style.pointerEvents = showF3 ? 'auto' : 'none';
-            f3.style.display = showF3 ? 'flex' : 'none';
-            f3.style.visibility = showF3 ? 'visible' : 'hidden';
-          }
-          if (f4) {
-            const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) || '';
-            const isLabSubtab = rawHash.includes('/lab') || (typeof localStorage !== 'undefined' && localStorage.getItem('pksleep_active_box_subtab') === 'lab');
-            const showF4 = isBox && !isLabSubtab;
-            f4.style.opacity = showF4 ? '1' : '0';
-            f4.style.pointerEvents = showF4 ? 'auto' : 'none';
-            f4.style.display = showF4 ? 'flex' : 'none';
-            f4.style.visibility = showF4 ? 'visible' : 'hidden';
+          const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) || '';
+          const isIngredientSubtab = rawHash.includes('/ingredients') || (typeof localStorage !== 'undefined' && localStorage.getItem('pksleep_active_wiki_subtab') === 'ingredients');
+          const isSkillLadderSubtab = window.WikiState && window.WikiState.currentSubtab === 'skills_ladder';
+          const hasActiveDrawer = document.querySelector('.pokemon-filter-sidebar:not(.collapsed), .recipe-filter-sidebar:not(.collapsed), .box-filter-sidebar:not(.collapsed), .ladder-fixed-sidebar:not(.collapsed), .skill-ladder-filter-sidebar:not(.collapsed)');
+          if (!hasActiveDrawer) {
+            if (f5) f5.style.display = (isWiki && isSkillLadderSubtab) ? 'inline-flex' : 'none';
+            if (f3) f3.style.display = (isWiki && !isIngredientSubtab && !isSkillLadderSubtab) ? 'inline-flex' : 'none';
           }
         }
-      }, { passive: false });
+      }, { passive: true });
 
       window.updateActiveFilterBadge = updateActiveFilterBadge;
     }
@@ -4597,13 +4682,14 @@ if (typeof document !== 'undefined') {
         // 行動端 H5 避讓檢測：若右下有篩選按鈕 (FAB)，自動向上避讓 138px，防止互相覆蓋
         const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
         if (isMobileH5) {
-          const fabPkm = document.getElementById('sidebar-bookmark-handle');
-          const fabRecipe = document.getElementById('recipe-sidebar-bookmark-handle');
-          const fabLadder = document.getElementById('ladder-sidebar-bookmark-handle');
+          const f1 = document.getElementById('sidebar-bookmark-handle');
+          const f2 = document.getElementById('recipe-sidebar-bookmark-handle');
+          const f3 = document.getElementById('ladder-sidebar-bookmark-handle');
+          const f4 = document.getElementById('box-sidebar-bookmark-handle');
+          const f5 = document.getElementById('skill-ladder-sidebar-bookmark-handle');
 
-          const isFabVisible = (el) => {
-            if (!el) return false;
-            if (el.style.display === 'none') return false;
+          const isVis = (el) => {
+            if (!el || el.style.display === 'none') return false;
             if (typeof window !== 'undefined' && typeof window.getComputedStyle === 'function') {
               try {
                 const s = window.getComputedStyle(el);
@@ -4613,7 +4699,7 @@ if (typeof document !== 'undefined') {
             return true;
           };
 
-          if (isFabVisible(fabPkm) || isFabVisible(fabRecipe) || isFabVisible(fabLadder)) {
+          if (isVis(f1) || isVis(f2) || isVis(f3) || isVis(f4) || isVis(f5)) {
             btn.classList.add('has-filter-fab');
           } else {
             btn.classList.remove('has-filter-fab');
@@ -5035,17 +5121,47 @@ let pokedexModalState = {
 let pokedexActiveSubskillSlot = 1;
 let pokedexSubskillPaletteExpanded = false;
 
-function getPokedexMainSkillMaxLvl(skillName) {
-  if (typeof window !== 'undefined' && window.UserBox && typeof window.UserBox.getMainSkillMaxLevel === 'function') {
-    return window.UserBox.getMainSkillMaxLevel(skillName);
+function getMainSkillMaxLevel(mainSkillName) {
+  if (typeof window !== 'undefined' && typeof window.getMainSkillMaxLevel === 'function' && window.getMainSkillMaxLevel !== getMainSkillMaxLevel) {
+    return window.getMainSkillMaxLevel(mainSkillName);
   }
-  if (!skillName) return 6;
-  const s = String(skillName).trim();
-  if (s.includes('夢之碎片') || s.includes('波導彈') || s.includes('Dream Shard') || s.includes('Aura Sphere')) return 8;
-  if (s.includes('能量填充') || s.includes('能量充填') || s.includes('Charge Strength') || s.includes('蓄力') || s.includes('夢魘')) return 7;
-  if (s.includes('食材獲取') || s.includes('食材精選') || s.includes('Ingredient') || s.includes('怪力鉗') || s.includes('怪力钳') || s.includes('超幸運') || s.includes('正電') || s.includes('禮物')) return 7;
-  if (s.includes('料理強化') || s.includes('料理等級') || s.includes('Cooking Power') || s.includes('負電') || s.includes('魔法火焰') || s.includes('Mystical Fire') || s.includes('料理輔助') || s.includes('健美') || s.includes('Bulk Up') || s.includes('揮指') || s.includes('十項全能') || s.includes('Metronome') || s.includes('變身') || s.includes('模仿') || s.includes('幫手支援') || s.includes('Extra Helpful')) return 7;
+  if (typeof window !== 'undefined' && window.UserBox && typeof window.UserBox.getMainSkillMaxLevel === 'function') {
+    return window.UserBox.getMainSkillMaxLevel(mainSkillName);
+  }
+  if (!mainSkillName || typeof mainSkillName !== 'string') {
+    return 6;
+  }
+  const clean = mainSkillName.trim();
+  if (clean.includes('夢之碎片') || clean.includes('波導彈') || clean.includes('Dream Shard') || clean.includes('Aura Sphere')) {
+    return 8;
+  }
+  if (
+    clean.includes('能量填充') || clean.includes('能量充填') || clean.includes('Charge Strength') || clean.includes('蓄力') || clean.includes('夢魘') ||
+    clean.includes('食材獲取') || clean.includes('食材精選') || clean.includes('Ingredient') || clean.includes('怪力鉗') || clean.includes('怪力钳') || clean.includes('超幸運') || clean.includes('正電') || clean.includes('禮物') ||
+    clean.includes('料理強化') || clean.includes('料理等級') || clean.includes('Cooking Power') || clean.includes('負電') || clean.includes('魔法火焰') || clean.includes('Mystical Fire') || clean.includes('料理躍進') || clean.includes('料理輔助') || clean.includes('健美') || clean.includes('Bulk Up') ||
+    clean.includes('揮指') || clean.includes('技能複製') || clean.includes('十項全能') || clean.includes('All-Rounder') || clean.includes('Metronome') || clean.includes('Skill Copy') || clean.includes('變身') || clean.includes('模仿') ||
+    clean.includes('幫手支援') || clean.includes('Extra Helpful') || clean.includes('Helper Support')
+  ) {
+    return 7;
+  }
+  if (typeof window !== 'undefined' && window.MAIN_SKILLS_DATA) {
+    const sData = window.MAIN_SKILLS_DATA[clean] || (Array.isArray(window.MAIN_SKILLS_DATA) ? window.MAIN_SKILLS_DATA.find(s => s && s.name === clean) : null);
+    if (sData) {
+      if (sData.levels && (sData.levels['8'] || sData.levels[8])) return 8;
+      if (sData.levels && (sData.levels['7'] || sData.levels[7])) return 7;
+      if (sData.maxLevel) return sData.maxLevel;
+    }
+  }
   return 6;
+}
+
+function getPokedexMainSkillMaxLvl(skillName) {
+  return getMainSkillMaxLevel(skillName);
+}
+
+if (typeof window !== 'undefined') {
+  if (!window.getMainSkillMaxLevel) window.getMainSkillMaxLevel = getMainSkillMaxLevel;
+  window.getPokedexMainSkillMaxLvl = getPokedexMainSkillMaxLvl;
 }
 
 function parsePokedexIntervalToSec(intervalStr) {
@@ -5714,7 +5830,7 @@ function updatePokedexSubskillUI() {
       return `
         <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" onclick="window.PokemonApp.choosePokedexSubskill('${escapeHtml(sk.name)}')" title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Selected)' : '（已選用）') : ''}">
           <span>${escapeHtml(skDisplayName)}</span>
-          ${isUsed ? '<span style="font-size:10px;opacity:0.8;margin-left:2px;">✓</span>' : ''}
+          ${isUsed ? '<span style="font-size:10px;opacity:0.8;margin-left:2px;">[✓]</span>' : ''}
         </button>
       `;
     }).join('');
@@ -5733,6 +5849,13 @@ function updatePokedexSubskillUI() {
       toggleBtn.classList.remove('is-expanded');
     }
   }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    getMainSkillMaxLevel,
+    getPokedexMainSkillMaxLvl
+  };
 }
 
 

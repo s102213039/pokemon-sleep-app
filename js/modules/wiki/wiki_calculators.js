@@ -686,6 +686,17 @@
         }, { passive: true });
       }
     }
+
+    const skillLadderSidebar = document.getElementById('skill-ladder-filter-sidebar');
+    if (skillLadderSidebar && typeof window.bindSidebarSwipeRightToClose === 'function') {
+      window.bindSidebarSwipeRightToClose(skillLadderSidebar, () => {
+        if (window.WikiSkillLadder && typeof window.WikiSkillLadder.closeSidebar === 'function') {
+          window.WikiSkillLadder.closeSidebar();
+        } else if (typeof window.closeSkillLadderSidebar === 'function') {
+          window.closeSkillLadderSidebar();
+        }
+      });
+    }
   }
 
   // --- 全域事件委託備援 (Global Event Delegation Fallback) ---

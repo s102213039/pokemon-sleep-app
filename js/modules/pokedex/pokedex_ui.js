@@ -554,13 +554,14 @@
         // 行動端 H5 避讓檢測：若右下有篩選按鈕 (FAB)，自動向上避讓 138px，防止互相覆蓋
         const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
         if (isMobileH5) {
-          const fabPkm = document.getElementById('sidebar-bookmark-handle');
-          const fabRecipe = document.getElementById('recipe-sidebar-bookmark-handle');
-          const fabLadder = document.getElementById('ladder-sidebar-bookmark-handle');
+          const f1 = document.getElementById('sidebar-bookmark-handle');
+          const f2 = document.getElementById('recipe-sidebar-bookmark-handle');
+          const f3 = document.getElementById('ladder-sidebar-bookmark-handle');
+          const f4 = document.getElementById('box-sidebar-bookmark-handle');
+          const f5 = document.getElementById('skill-ladder-sidebar-bookmark-handle');
 
-          const isFabVisible = (el) => {
-            if (!el) return false;
-            if (el.style.display === 'none') return false;
+          const isVis = (el) => {
+            if (!el || el.style.display === 'none') return false;
             if (typeof window !== 'undefined' && typeof window.getComputedStyle === 'function') {
               try {
                 const s = window.getComputedStyle(el);
@@ -570,7 +571,7 @@
             return true;
           };
 
-          if (isFabVisible(fabPkm) || isFabVisible(fabRecipe) || isFabVisible(fabLadder)) {
+          if (isVis(f1) || isVis(f2) || isVis(f3) || isVis(f4) || isVis(f5)) {
             btn.classList.add('has-filter-fab');
           } else {
             btn.classList.remove('has-filter-fab');

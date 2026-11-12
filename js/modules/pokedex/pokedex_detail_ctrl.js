@@ -1,14 +1,44 @@
-function getPokedexMainSkillMaxLvl(skillName) {
-  if (typeof window !== 'undefined' && window.UserBox && typeof window.UserBox.getMainSkillMaxLevel === 'function') {
-    return window.UserBox.getMainSkillMaxLevel(skillName);
+function getMainSkillMaxLevel(mainSkillName) {
+  if (typeof window !== 'undefined' && typeof window.getMainSkillMaxLevel === 'function' && window.getMainSkillMaxLevel !== getMainSkillMaxLevel) {
+    return window.getMainSkillMaxLevel(mainSkillName);
   }
-  if (!skillName) return 6;
-  const s = String(skillName).trim();
-  if (s.includes('夢之碎片') || s.includes('波導彈') || s.includes('Dream Shard') || s.includes('Aura Sphere')) return 8;
-  if (s.includes('能量填充') || s.includes('能量充填') || s.includes('Charge Strength') || s.includes('蓄力') || s.includes('夢魘')) return 7;
-  if (s.includes('食材獲取') || s.includes('食材精選') || s.includes('Ingredient') || s.includes('怪力鉗') || s.includes('怪力钳') || s.includes('超幸運') || s.includes('正電') || s.includes('禮物')) return 7;
-  if (s.includes('料理強化') || s.includes('料理等級') || s.includes('Cooking Power') || s.includes('負電') || s.includes('魔法火焰') || s.includes('Mystical Fire') || s.includes('料理輔助') || s.includes('健美') || s.includes('Bulk Up') || s.includes('揮指') || s.includes('十項全能') || s.includes('Metronome') || s.includes('變身') || s.includes('模仿') || s.includes('幫手支援') || s.includes('Extra Helpful')) return 7;
+  if (typeof window !== 'undefined' && window.UserBox && typeof window.UserBox.getMainSkillMaxLevel === 'function') {
+    return window.UserBox.getMainSkillMaxLevel(mainSkillName);
+  }
+  if (!mainSkillName || typeof mainSkillName !== 'string') {
+    return 6;
+  }
+  const clean = mainSkillName.trim();
+  if (clean.includes('夢之碎片') || clean.includes('波導彈') || clean.includes('Dream Shard') || clean.includes('Aura Sphere')) {
+    return 8;
+  }
+  if (
+    clean.includes('能量填充') || clean.includes('能量充填') || clean.includes('Charge Strength') || clean.includes('蓄力') || clean.includes('夢魘') ||
+    clean.includes('食材獲取') || clean.includes('食材精選') || clean.includes('Ingredient') || clean.includes('怪力鉗') || clean.includes('怪力钳') || clean.includes('超幸運') || clean.includes('正電') || clean.includes('禮物') ||
+    clean.includes('料理強化') || clean.includes('料理等級') || clean.includes('Cooking Power') || clean.includes('負電') || clean.includes('魔法火焰') || clean.includes('Mystical Fire') || clean.includes('料理躍進') || clean.includes('料理輔助') || clean.includes('健美') || clean.includes('Bulk Up') ||
+    clean.includes('揮指') || clean.includes('技能複製') || clean.includes('十項全能') || clean.includes('All-Rounder') || clean.includes('Metronome') || clean.includes('Skill Copy') || clean.includes('變身') || clean.includes('模仿') ||
+    clean.includes('幫手支援') || clean.includes('Extra Helpful') || clean.includes('Helper Support')
+  ) {
+    return 7;
+  }
+  if (typeof window !== 'undefined' && window.MAIN_SKILLS_DATA) {
+    const sData = window.MAIN_SKILLS_DATA[clean] || (Array.isArray(window.MAIN_SKILLS_DATA) ? window.MAIN_SKILLS_DATA.find(s => s && s.name === clean) : null);
+    if (sData) {
+      if (sData.levels && (sData.levels['8'] || sData.levels[8])) return 8;
+      if (sData.levels && (sData.levels['7'] || sData.levels[7])) return 7;
+      if (sData.maxLevel) return sData.maxLevel;
+    }
+  }
   return 6;
+}
+
+function getPokedexMainSkillMaxLvl(skillName) {
+  return getMainSkillMaxLevel(skillName);
+}
+
+if (typeof window !== 'undefined') {
+  if (!window.getMainSkillMaxLevel) window.getMainSkillMaxLevel = getMainSkillMaxLevel;
+  window.getPokedexMainSkillMaxLvl = getPokedexMainSkillMaxLvl;
 }
 
 function parsePokedexIntervalToSec(intervalStr) {
@@ -677,7 +707,7 @@ function updatePokedexSubskillUI() {
       return `
         <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" onclick="window.PokemonApp.choosePokedexSubskill('${escapeHtml(sk.name)}')" title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Selected)' : '（已選用）') : ''}">
           <span>${escapeHtml(skDisplayName)}</span>
-          ${isUsed ? '<span style="font-size:10px;opacity:0.8;margin-left:2px;">✓</span>' : ''}
+          ${isUsed ? '<span style="font-size:10px;opacity:0.8;margin-left:2px;">[✓]</span>' : ''}
         </button>
       `;
     }).join('');
@@ -696,5 +726,12 @@ function updatePokedexSubskillUI() {
       toggleBtn.classList.remove('is-expanded');
     }
   }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    getMainSkillMaxLevel,
+    getPokedexMainSkillMaxLvl
+  };
 }
 

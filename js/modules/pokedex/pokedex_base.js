@@ -10,6 +10,7 @@ const SPECIAL_ICON_MAP = {
   '9001': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png',
   '9002': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png',
   '9003': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png',
+  '9007': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png',
   '9004': 'https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png',
   '9005': 'https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png',
   '9006': 'https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png',
@@ -146,7 +147,8 @@ function getIconUrl(p) {
  */
 function isFinalEvolution(p) {
   if (!p) return false;
-  if (p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1') {
+  const raw = p.is_final !== undefined && p.is_final !== null ? p.is_final : p.isFinal;
+  if (raw === '〇' || raw === 'O' || raw === 'o' || raw === true || raw === '1' || raw === 1) {
     return true;
   }
   const idStr = String(p.id || p.formatted_no || p.pokemonId || '');
@@ -155,6 +157,44 @@ function isFinalEvolution(p) {
   if (name === '夢妖魔') return true;
   const nameEn = (p.name_en || (p.name && p.name.en ? p.name.en : '')).toLowerCase();
   if (nameEn === 'mismagius') return true;
+
+  // 1. window.POKEMON_DB / window.allPokemons / PokemonApp.allPokemons 查核
+  const db = (typeof window !== 'undefined' && (window.POKEMON_DB || window.allPokemons))
+    ? (window.POKEMON_DB || window.allPokemons)
+    : ((typeof PokemonApp !== 'undefined' && PokemonApp.allPokemons) ? PokemonApp.allPokemons : null);
+  if (db && Array.isArray(db)) {
+    const match = db.find(item => item && (
+      (idStr && (String(item.id) === idStr || String(item.formatted_no) === idStr)) ||
+      (name && (item.name_cn === name || item.name === name)) ||
+      (nameEn && item.name_en && item.name_en.toLowerCase() === nameEn)
+    ));
+    if (match && match !== p) {
+      const dRaw = match.is_final !== undefined && match.is_final !== null ? match.is_final : match.isFinal;
+      if (dRaw === '〇' || dRaw === 'O' || dRaw === 'o' || dRaw === true || dRaw === '1' || dRaw === 1) return true;
+    }
+  }
+
+  // 2. window.POKEMON_SKILLS_BASELINE_DATA / POKEMON_SKILLS_BASELINE_DATA 查核 (當 POKEMON_DB 資料不完整或檢查 next-ID 進化時之防禦)
+  const baseline = (typeof window !== 'undefined' && Array.isArray(window.POKEMON_SKILLS_BASELINE_DATA))
+    ? window.POKEMON_SKILLS_BASELINE_DATA
+    : ((typeof POKEMON_SKILLS_BASELINE_DATA !== 'undefined' && Array.isArray(POKEMON_SKILLS_BASELINE_DATA)) ? POKEMON_SKILLS_BASELINE_DATA : null);
+  if (baseline) {
+    const match = baseline.find(item => item && (
+      (idStr && (String(item.id) === idStr || String(item.formatted_no) === idStr)) ||
+      (name && (item.name_cn === name || item.name === name)) ||
+      (nameEn && item.name_en && item.name_en.toLowerCase() === nameEn)
+    ));
+    if (match) {
+      const bRaw = match.is_final !== undefined && match.is_final !== null ? match.is_final : match.isFinal;
+      if (bRaw === '〇' || bRaw === 'O' || bRaw === 'o' || bRaw === true || bRaw === '1' || bRaw === 1) return true;
+    }
+  }
+
+  // 3. 次一編號 (next-ID) 進化檢查防護 (如 #025 皮卡丘 -> #026 雷丘，若後續存在進化則非最終形態)
+  if (p.evo_req && String(p.evo_req).trim() !== '') {
+    return false;
+  }
+
   return false;
 }
 
@@ -684,5 +724,14 @@ function getPokemonBerry(p) {
 }
 if (typeof window !== 'undefined') {
   window.getPokemonBerry = getPokemonBerry;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    SPECIAL_ICON_MAP,
+    getIconUrl,
+    isFinalEvolution,
+    mapExternalToLocalAsset,
+    getPokemonBerry
+  };
 }
 

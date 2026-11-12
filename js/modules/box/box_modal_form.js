@@ -175,64 +175,64 @@
   }
 
   /* ─── 取得主技能的最大等級上限 (6 / 7 / 8) ─────────────────── */
-  function getMainSkillMaxLevel(name) {
-    if (!name) return 7;
-    const clean = String(name).trim();
+  function getMainSkillMaxLevel(mainSkillName) {
+    if (!mainSkillName || typeof mainSkillName !== 'string') return 6;
+    const clean = mainSkillName.trim();
 
-    // 1. 夢之碎片系列（夢之碎片獲取S、波導彈）：官方上限 Lv. 8
+    // 1. 從 window.MAIN_SKILLS_DATA 動態比對
+    if (typeof window !== 'undefined' && window.MAIN_SKILLS_DATA && window.MAIN_SKILLS_DATA[clean] && window.MAIN_SKILLS_DATA[clean].levels) {
+      if (window.MAIN_SKILLS_DATA[clean].levels['8']) return 8;
+      return window.MAIN_SKILLS_DATA[clean].levels['7'] ? 7 : 6;
+    }
+
+    // 2. 夢之碎片系列（夢之碎片獲取S、波導彈）：官方上限 Lv. 8
     if (clean.includes('夢之碎片') || clean.includes('波導彈') || clean.includes('Dream Shard') || clean.includes('Aura Sphere')) {
       return 8;
     }
 
-    // 2. 能量填充 / 蓄力 / 夢魘 系列：官方上限 Lv. 7
-    if (clean.includes('能量填充') || clean.includes('Charge Strength') || clean.includes('蓄力') || clean.includes('夢魘')) {
-      return 7;
+    // 3. Fallback string check for Lv.7 skills:
+    const LV7_SKILLS = [
+      '能量填充S', '能量填充M', '能量填充', 'Charge Strength S', 'Charge Strength M', 'Charge Strength',
+      '食材獲取S', '食材獲取', 'Ingredient Magnet S', '食材精選', '怪力鉗', '怪力钳', '超幸運', '正電', '禮物',
+      '幫手支援S', '幫手支援', 'Extra Helpful S', 'Helper Support',
+      '料理強化S', '料理強化', 'Cooking Power-Up S', 'Cooking Power', '料理輔助', '健美', 'Bulk Up', '負電', '魔法火焰', 'Mystical Fire', '料理躍進',
+      '蓄力', '夢魘',
+      '揮指', 'Metronome',
+      '技能複製', 'Skill Copy',
+      '十項全能', 'All-Rounder',
+      '變身', '模仿', 'Transform', 'Mimic'
+    ];
+    for (let i = 0; i < LV7_SKILLS.length; i++) {
+      if (clean.includes(LV7_SKILLS[i])) return 7;
     }
 
-    // 3. 食材系列（獲取、精選、怪力鉗、超幸運、正電、禮物）：官方上限 Lv. 7
-    if (clean.includes('食材獲取') || clean.includes('食材精選') || clean.includes('Ingredient') || clean.includes('怪力鉗') || clean.includes('怪力钳') || clean.includes('超幸運') || clean.includes('正電') || clean.includes('禮物')) {
-      return 7;
-    }
-
-    // 4. 料理鍋系列：料理強化 / 負電 / 魔法火焰 為 Lv. 7，料理成功為 Lv. 6
-    if (clean.includes('料理強化') || clean.includes('Cooking Power') || clean.includes('負電') || clean.includes('魔法火焰') || clean.includes('Mystical Fire') || clean.includes('料理躍進')) {
-      return 7;
-    }
-    if (clean.includes('料理成功') || clean.includes('Extra Tasty')) {
+    // 4. Lv. 6 系列 (料理成功, 幫手加速, 樹果遽增, 活力恢復等)
+    if (clean.includes('料理成功') || clean.includes('Extra Tasty') ||
+        clean.includes('幫手加速') || clean.includes('Helper Boost') ||
+        clean.includes('樹果遽增') || clean.includes('Berry Burst') ||
+        clean.includes('畫皮') || clean.includes('流星群') || clean.includes('精神擊破') ||
+        clean.includes('樹果領域') || clean.includes('Psystrike') ||
+        clean.includes('活力') || clean.includes('療癒') || clean.includes('充填') ||
+        clean.includes('月光') || clean.includes('新月祈禱') || clean.includes('蹭蹭臉頰') ||
+        clean.includes('治癒波動') || clean.includes('樹果汁') ||
+        clean.includes('Energizing Cheer') || clean.includes('Energy for Everyone') || clean.includes('Charge Energy')) {
       return 6;
     }
 
-    // 5. 幫手系列：幫手支援為 Lv. 7，幫手加速（屬性）為 Lv. 6
-    if (clean.includes('幫手支援') || clean.includes('Helper Support')) {
-      return 7;
-    }
-    if (clean.includes('幫手加速') || clean.includes('Helper Boost')) {
-      return 6;
-    }
-
-    // 6. 樹果遽增系列 / 領域系列：官方上限 Lv. 6
-    if (clean.includes('樹果遽增') || clean.includes('Berry Burst') || clean.includes('畫皮') || clean.includes('流星群') || clean.includes('精神擊破') || clean.includes('樹果領域') || clean.includes('Psystrike')) {
-      return 6;
-    }
-
-    // 7. 活力恢復系列（全體療癒、活力療癒、活力填充/充填、月光、新月祈禱、蹭蹭臉頰、治癒波動、樹果汁）：官方上限 Lv. 6
-    if (clean.includes('活力') || clean.includes('療癒') || clean.includes('充填') || clean.includes('月光') || clean.includes('新月祈禱') || clean.includes('蹭蹭臉頰') || clean.includes('治癒波動') || clean.includes('樹果汁') || clean.includes('Energizing Cheer') || clean.includes('Energy for Everyone') || clean.includes('Charge Energy')) {
-      return 6;
-    }
-
-    // 8. 料理輔助 / 揮指 / 變身 / 模仿：官方上限 Lv. 7
-    if (clean.includes('料理輔助') || clean.includes('健美') || clean.includes('Bulk Up') || clean.includes('揮指') || clean.includes('十項全能') || clean.includes('Metronome') || clean.includes('變身') || clean.includes('模仿') || clean.includes('Transform') || clean.includes('Mimic')) {
-      return 7;
-    }
-
-    // 9. 從 window.WikiDB 動態比對
+    // 5. 從 window.WikiDB 動態比對
     if (typeof window !== 'undefined' && window.WikiDB && Array.isArray(window.WikiDB.MAIN_SKILLS_DATA)) {
       const norm = clean.replace(/[（(].*?[）)]/, '').replace(/\s+/g, '');
       const found = window.WikiDB.MAIN_SKILLS_DATA.find(s => s.name.replace(/[（(].*?[）)]/, '').replace(/\s+/g, '') === norm);
       if (found && found.maxLevel) return found.maxLevel;
     }
 
-    return 7;
+    return 6;
+  }
+
+  if (typeof window !== 'undefined') {
+    window.getMainSkillMaxLevel = getMainSkillMaxLevel;
+    window.UserBox = window.UserBox || {};
+    window.UserBox.getMainSkillMaxLevel = getMainSkillMaxLevel;
   }
 
   /* ─── 最終階段 3 階進化形態清單 (進化兩次，基礎主技能 +2) ─────── */
@@ -733,7 +733,7 @@
           return `
             <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" ${isUsed ? 'disabled' : ''} title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Already Selected)' : '（已選用）') : ''}">
               <span>${escapeHtml(skDisplayName)}</span>
-              ${isUsed ? '<span style="font-size:10px;opacity:0.8;">✓</span>' : ''}
+              ${isUsed ? '<span style="font-size:10px;opacity:0.8;">[v]</span>' : ''}
             </button>
           `;
         }).join('');

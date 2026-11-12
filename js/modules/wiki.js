@@ -3830,6 +3830,17 @@
         }, { passive: true });
       }
     }
+
+    const skillLadderSidebar = document.getElementById('skill-ladder-filter-sidebar');
+    if (skillLadderSidebar && typeof window.bindSidebarSwipeRightToClose === 'function') {
+      window.bindSidebarSwipeRightToClose(skillLadderSidebar, () => {
+        if (window.WikiSkillLadder && typeof window.WikiSkillLadder.closeSidebar === 'function') {
+          window.WikiSkillLadder.closeSidebar();
+        } else if (typeof window.closeSkillLadderSidebar === 'function') {
+          window.closeSkillLadderSidebar();
+        }
+      });
+    }
   }
 
   // --- 全域事件委託備援 (Global Event Delegation Fallback) ---
@@ -7401,8 +7412,10 @@
     {
       id: 'charge_energy',
       name: '能量填充',
+      name_cn: '能量填充',
       name_en: 'Charge Strength',
       desc: '增加卡比獸的能量',
+      desc_cn: '增加卡比獸的能量',
       desc_en: 'Increases Snorlax Strength',
       color: '#f59e0b',
       bgColor: 'rgba(245, 158, 11, 0.15)',
@@ -7411,8 +7424,10 @@
     {
       id: 'energy_all',
       name: '全體療癒',
+      name_cn: '全體療癒',
       name_en: 'Energy for Everyone',
       desc: '讓全體隊友回復活力',
+      desc_cn: '讓全體隊友回復活力',
       desc_en: 'Restores Energy to all teammates',
       color: '#10b981',
       bgColor: 'rgba(16, 185, 129, 0.15)',
@@ -7421,8 +7436,10 @@
     {
       id: 'energy_single',
       name: '單體療癒',
+      name_cn: '單體療癒',
       name_en: 'Single/Random Heal',
       desc: '回復自身或隊友活力',
+      desc_cn: '回復自身或隊友活力',
       desc_en: 'Restores Energy to a specific or random ally',
       color: '#06b6d4',
       bgColor: 'rgba(6, 182, 212, 0.15)',
@@ -7431,8 +7448,10 @@
     {
       id: 'cooking_pot',
       name: '料理強化',
+      name_cn: '料理強化',
       name_en: 'Cooking Power-up',
       desc: '擴大下一次料理的鍋子容量',
+      desc_cn: '擴大下一次料理的鍋子容量',
       desc_en: 'Expands pot capacity for next cooking',
       color: '#ec4899',
       bgColor: 'rgba(236, 72, 153, 0.15)',
@@ -7441,8 +7460,10 @@
     {
       id: 'cooking_chance',
       name: '料理成功',
+      name_cn: '料理成功',
       name_en: 'Tasty Chance',
       desc: '提升下一次料理大成功的機率',
+      desc_cn: '提升下一次料理大成功的機率',
       desc_en: 'Boosts extra tasty chance for next dish',
       color: '#8b5cf6',
       bgColor: 'rgba(139, 92, 246, 0.15)',
@@ -7451,8 +7472,10 @@
     {
       id: 'helper_boost',
       name: '幫手支援',
+      name_cn: '幫手支援',
       name_en: 'Helper Boost',
       desc: '全隊或特定屬性立即完成幫忙',
+      desc_cn: '全隊或特定屬性立即完成幫忙',
       desc_en: 'Instant helps for team or matching types',
       color: '#3b82f6',
       bgColor: 'rgba(59, 130, 246, 0.15)',
@@ -7461,8 +7484,10 @@
     {
       id: 'dream_shards',
       name: '夢碎獲取',
+      name_cn: '夢碎獲取',
       name_en: 'Dream Shards',
       desc: '直接獲得夢之碎片',
+      desc_cn: '直接獲得夢之碎片',
       desc_en: 'Obtains Dream Shards directly',
       color: '#a855f7',
       bgColor: 'rgba(168, 85, 247, 0.15)',
@@ -7471,8 +7496,10 @@
     {
       id: 'ingredient',
       name: '食材獲取',
+      name_cn: '食材獲取',
       name_en: 'Ingredients',
       desc: '隨機或精選獲得多個食材',
+      desc_cn: '隨機或精選獲得多個食材',
       desc_en: 'Gathers random or selected ingredients',
       color: '#f97316',
       bgColor: 'rgba(249, 115, 22, 0.15)',
@@ -7481,8 +7508,10 @@
     {
       id: 'berry_burst',
       name: '樹果遽增',
+      name_cn: '樹果遽增',
       name_en: 'Berry Burst',
       desc: '直接獲得大量樹果',
+      desc_cn: '直接獲得大量樹果',
       desc_en: 'Instantly obtains multiple berries',
       color: '#ef4444',
       bgColor: 'rgba(239, 68, 68, 0.15)',
@@ -7560,12 +7589,21 @@
     return [];
   }
 
+  function _tSkillLadder(zhTw, en) {
+    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') {
+      const lang = window.I18N.getLanguage();
+      if (lang === 'en-US') return en !== undefined ? en : zhTw;
+      if (lang === 'zh-CN' && typeof window.I18N.toSimplified === 'function') return window.I18N.toSimplified(zhTw);
+    }
+    return zhTw;
+  }
+
   function getSkillSubCategoryInfo(mainSkill, trackId, isEN) {
     const s = String(mainSkill || '').trim();
     const sLower = s.toLowerCase();
-    const skillDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function' && isEN)
+    const skillDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function')
       ? (window.I18N.getMainSkillName(mainSkill) || mainSkill)
-      : s;
+      : (isEN ? (mainSkill || s) : s);
 
     let subKey = '';
     let subLabel = '';
@@ -7573,134 +7611,134 @@
     if (trackId === 'energy_single') {
       if (s.includes('活力填充') || s.includes('活力充填') || sLower.includes('charge energy')) {
         subKey = 'self';
-        subLabel = isEN ? 'Self' : '自己';
+        subLabel = _tSkillLadder('自己', 'Self');
       } else if (s.includes('月光') || sLower.includes('moonlight')) {
         subKey = 'self';
-        subLabel = isEN ? 'Self (+Random Ally)' : '自己 (+隨機他人)';
+        subLabel = _tSkillLadder('自己 (+隨機他人)', 'Self (+Random Ally)');
       } else {
         subKey = 'ally';
-        subLabel = isEN ? 'Random Ally' : '隨機他人';
+        subLabel = _tSkillLadder('隨機他人', 'Random Ally');
       }
     } else if (trackId === 'ingredient') {
       if (s.includes('食材精選') || s.includes('食材精选') || s.includes('超幸運') || s.includes('超幸运') || s.includes('怪力鉗') || s.includes('怪力钳') || sLower.includes('ingredient draw') || sLower.includes('ingr. select') || sLower.includes('super luck') || sLower.includes('hyper cutter')) {
         subKey = 'select';
-        subLabel = isEN ? 'Ingredient Draw' : '食材精選';
+        subLabel = _tSkillLadder('食材精選', 'Ingredient Draw');
       } else {
         subKey = 'magnet';
-        subLabel = isEN ? 'Ingredient Magnet' : '食材獲取';
+        subLabel = _tSkillLadder('食材獲取', 'Ingredient Magnet');
       }
     } else if (trackId === 'charge_energy') {
       if (s.includes('隨機') || s.includes('随机') || sLower.includes('random')) {
         subKey = 'random';
-        subLabel = isEN ? 'Random' : '隨機';
+        subLabel = _tSkillLadder('隨機', 'Random');
       } else if (s.includes('能量填充M') || s.includes('能量充填M') || sLower.includes('charge strength m')) {
         subKey = 'fixed_m';
-        subLabel = isEN ? 'Fixed M' : '高倍固定';
+        subLabel = _tSkillLadder('高倍固定', 'Fixed M');
       } else if (s.includes('蓄力') || sLower.includes('stockpile')) {
         subKey = 'stockpile';
-        subLabel = isEN ? 'Stockpile' : '疊加爆發';
+        subLabel = _tSkillLadder('疊加爆發', 'Stockpile');
       } else if (s.includes('波導彈') || s.includes('波导弹') || sLower.includes('aura sphere')) {
         subKey = 'strength_shards';
-        subLabel = isEN ? 'Strength+Shards' : '能量+夢碎';
+        subLabel = _tSkillLadder('能量+夢碎', 'Strength+Shards');
       } else if (s.includes('精神擊破') || s.includes('精神击破') || sLower.includes('psystrike')) {
         subKey = 'strength_field';
-        subLabel = isEN ? 'Strength+Berry Field' : '能量+樹果領域';
+        subLabel = _tSkillLadder('能量+樹果領域', 'Strength+Berry Field');
       } else if (s.includes('夢魘') || s.includes('梦魇') || sLower.includes('bad dreams') || sLower.includes('nightmare')) {
         subKey = 'nightmare';
-        subLabel = isEN ? 'High Strength' : '高倍能量';
+        subLabel = _tSkillLadder('高倍能量', 'High Strength');
       } else {
         subKey = 'fixed_s';
-        subLabel = isEN ? 'Fixed S' : '固定';
+        subLabel = _tSkillLadder('固定', 'Fixed S');
       }
     } else if (trackId === 'energy_all') {
       if (s.includes('樹果汁') || s.includes('树果汁') || sLower.includes('berry juice')) {
         subKey = 'berry_juice';
-        subLabel = isEN ? 'Team+Berry Juice' : '全體+樹果汁';
+        subLabel = _tSkillLadder('全體+樹果汁', 'Team+Berry Juice');
       } else if (s.includes('新月祈禱') || s.includes('新月祈祷') || sLower.includes('lunar prayer')) {
         subKey = 'lunar_prayer';
-        subLabel = isEN ? 'Team+Berry Burst' : '全體+樹果遽增';
+        subLabel = _tSkillLadder('全體+樹果遽增', 'Team+Berry Burst');
       } else {
         subKey = 'team_heal';
-        subLabel = isEN ? 'Team Heal' : '全體回復';
+        subLabel = _tSkillLadder('全體回復', 'Team Heal');
       }
     } else if (trackId === 'cooking_pot') {
       if (s.includes('魔法火焰') || sLower.includes('mystical fire')) {
         subKey = 'pot_tasty';
-        subLabel = isEN ? 'Pot+Tasty' : '擴鍋+料理成功';
+        subLabel = _tSkillLadder('擴鍋+料理成功', 'Pot+Tasty');
       } else if (s.includes('負電') || s.includes('负电') || sLower.includes('minus')) {
         subKey = 'pot_heal';
-        subLabel = isEN ? 'Pot+Random Heal' : '擴鍋+隨機他人';
+        subLabel = _tSkillLadder('擴鍋+隨機他人', 'Pot+Random Heal');
       } else {
         subKey = 'pot_expand';
-        subLabel = isEN ? 'Pot Expand' : '擴鍋';
+        subLabel = _tSkillLadder('擴鍋', 'Pot Expand');
       }
     } else if (trackId === 'cooking_chance') {
       if (s.includes('魔法火焰') || sLower.includes('mystical fire')) {
         subKey = 'tasty_pot';
-        subLabel = isEN ? 'Tasty+Pot' : '大成功+擴鍋';
+        subLabel = _tSkillLadder('大成功+擴鍋', 'Tasty+Pot');
       } else if (s.includes('健美') || sLower.includes('bulk up')) {
         subKey = 'tasty_magnet';
-        subLabel = isEN ? 'Tasty+Ingr. Magnet' : '大成功+食材獲取';
+        subLabel = _tSkillLadder('大成功+食材獲取', 'Tasty+Ingr. Magnet');
       } else if (s.includes('怪力鉗') || s.includes('怪力钳') || sLower.includes('hyper cutter')) {
         subKey = 'tasty_draw';
-        subLabel = isEN ? 'Tasty+Ingr. Draw' : '大成功+食材精選';
+        subLabel = _tSkillLadder('大成功+食材精選', 'Tasty+Ingr. Draw');
       } else if (s.includes('畫皮') || s.includes('画皮') || sLower.includes('disguise')) {
         subKey = 'tasty_burst';
-        subLabel = isEN ? '3x Berry Burst' : '大成功3倍樹果';
+        subLabel = _tSkillLadder('大成功3倍樹果', '3x Berry Burst');
       } else {
         subKey = 'tasty_chance';
-        subLabel = isEN ? 'Tasty Chance' : '大成功機率';
+        subLabel = _tSkillLadder('大成功機率', 'Tasty Chance');
       }
     } else if (trackId === 'helper_boost') {
       if (s.includes('幫手加速') || s.includes('帮手加速') || sLower.includes('helper speed')) {
         subKey = 'team_boost';
-        subLabel = isEN ? 'Team Type Boost' : '同屬全隊加速';
+        subLabel = _tSkillLadder('同屬全隊加速', 'Team Type Boost');
       } else if (s.includes('正電') || s.includes('正电') || sLower.includes('plus')) {
         subKey = 'plus_synergy';
-        subLabel = isEN ? 'Plus Synergy' : '連動食材獲取';
+        subLabel = _tSkillLadder('連動食材獲取', 'Plus Synergy');
       } else if (s.includes('蹭蹭臉頰') || s.includes('蹭蹭脸颊') || sLower.includes('nuzzle')) {
         subKey = 'nuzzle_proc';
-        subLabel = isEN ? 'Random Heal+Extra Proc' : '隨機他人+額外發動';
+        subLabel = _tSkillLadder('隨機他人+額外發動', 'Random Heal+Extra Proc');
       } else if (s.includes('治癒波動') || s.includes('治愈波动') || sLower.includes('heal pulse')) {
         subKey = 'heal_help';
-        subLabel = isEN ? 'Random Heal+Instant Help' : '隨機他人+立即幫忙';
+        subLabel = _tSkillLadder('隨機他人+立即幫忙', 'Random Heal+Instant Help');
       } else {
         subKey = 'single_boost';
-        subLabel = isEN ? 'Single Boost' : '單體支援';
+        subLabel = _tSkillLadder('單體支援', 'Single Boost');
       }
     } else if (trackId === 'dream_shards') {
       if (s.includes('隨機') || s.includes('随机') || sLower.includes('random')) {
         subKey = 'random';
-        subLabel = isEN ? 'Random' : '隨機';
+        subLabel = _tSkillLadder('隨機', 'Random');
       } else if (s.includes('波導彈') || s.includes('波导弹') || sLower.includes('aura sphere')) {
         subKey = 'shards_strength';
-        subLabel = isEN ? 'Shards+Strength' : '固定夢碎+能量';
+        subLabel = _tSkillLadder('固定夢碎+能量', 'Shards+Strength');
       } else if (s.includes('超幸運') || s.includes('超幸运') || sLower.includes('super luck')) {
         subKey = 'draw_crit';
-        subLabel = isEN ? 'Ingr. Draw+Crit Shards' : '食材精選+暴擊夢碎';
+        subLabel = _tSkillLadder('食材精選+暴擊夢碎', 'Ingr. Draw+Crit Shards');
       } else if (s.includes('禮物') || s.includes('礼物') || sLower.includes('present')) {
         subKey = 'magnet_candy';
-        subLabel = isEN ? 'Ingr. Magnet+Candy' : '食材獲取+隨機糖果';
+        subLabel = _tSkillLadder('食材獲取+隨機糖果', 'Ingr. Magnet+Candy');
       } else {
         subKey = 'fixed';
-        subLabel = isEN ? 'Fixed' : '固定';
+        subLabel = _tSkillLadder('固定', 'Fixed');
       }
     } else if (trackId === 'berry_burst') {
       if (s.includes('畫皮') || s.includes('画皮') || sLower.includes('disguise')) {
         subKey = 'disguise_burst';
-        subLabel = isEN ? 'Disguise 3x' : '大成功3倍樹果';
+        subLabel = _tSkillLadder('大成功3倍樹果', 'Disguise 3x');
       } else if (s.includes('流星群') || sLower.includes('draco meteor')) {
         subKey = 'dragon_burst';
-        subLabel = isEN ? 'Dragon Burst' : '龍屬樹果遽增';
+        subLabel = _tSkillLadder('龍屬樹果遽增', 'Dragon Burst');
       } else if (s.includes('新月祈禱') || s.includes('新月祈祷') || sLower.includes('lunar prayer')) {
         subKey = 'psychic_burst';
-        subLabel = isEN ? 'Psychic Burst' : '超能樹果遽增';
+        subLabel = _tSkillLadder('超能樹果遽增', 'Psychic Burst');
       } else if (s.includes('精神擊破') || s.includes('精神击破') || sLower.includes('psystrike')) {
         subKey = 'psychic_field';
-        subLabel = isEN ? 'Psychic Field' : '超能樹果領域';
+        subLabel = _tSkillLadder('超能樹果領域', 'Psychic Field');
       } else {
         subKey = 'standard_burst';
-        subLabel = isEN ? 'Berry Burst' : '標準樹果遽增';
+        subLabel = _tSkillLadder('標準樹果遽增', 'Berry Burst');
       }
     }
 
@@ -7739,6 +7777,20 @@
   // =========================================================================
   // 主技能天梯邏輯與控制器 (Main Skill Ladder Controller)
   // =========================================================================
+
+  function _tSkillLadder(zhTw, en) {
+    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') {
+      const lang = window.I18N.getLanguage();
+      if (lang === 'en-US') return en !== undefined ? en : zhTw;
+      if (lang === 'zh-CN' && typeof window.I18N.toSimplified === 'function') return window.I18N.toSimplified(zhTw);
+    }
+    return zhTw;
+  }
+
+  if (typeof window !== 'undefined') {
+    window.WikiSkillLadder = window.WikiSkillLadder || {};
+    window.WikiSkillLadder._tSkillLadder = _tSkillLadder;
+  }
 
   let skillLadderSearchQuery = '';
   let skillLadderTop15Only = true;
@@ -7943,13 +7995,43 @@
 
   function isPokemonSkillLadderFinalEvo(p) {
     if (!p) return false;
-    const raw = p.is_final !== undefined && p.is_final !== null ? p.is_final : p.isFinal;
+    let fullPkm = p;
+    if (typeof window !== 'undefined' && Array.isArray(window.POKEMON_DB)) {
+      const found = window.POKEMON_DB.find(x => x && ((p.id && String(x.id) === String(p.id)) || (x.name_cn && x.name_cn === (p.name_cn || p.name))));
+      if (found) fullPkm = found;
+    }
+    if (typeof window !== 'undefined' && typeof window.isFinalEvolution === 'function') {
+      return window.isFinalEvolution(fullPkm || p);
+    }
+    if (typeof isFinalEvolution === 'function') {
+      return isFinalEvolution(fullPkm || p);
+    }
+
+    const raw = (fullPkm && fullPkm.is_final !== undefined && fullPkm.is_final !== null)
+      ? fullPkm.is_final
+      : (p.is_final !== undefined && p.is_final !== null ? p.is_final : p.isFinal);
     if (raw === '〇' || raw === 'O' || raw === 'o' || raw === true || raw === '1' || raw === 1) return true;
-    const base = (typeof POKEMON_SKILLS_BASELINE_DATA !== 'undefined' && Array.isArray(POKEMON_SKILLS_BASELINE_DATA))
-      ? POKEMON_SKILLS_BASELINE_DATA.find(item => (item.id && String(item.id) === String(p.id)) || (item.name_cn && item.name_cn === (p.name_cn || p.name)))
-      : null;
-    if (base && (base.is_final === '〇' || base.is_final === 'O' || base.is_final === 'o' || base.is_final === true || base.is_final === '1')) {
-      return true;
+
+    const idStr = String((fullPkm && fullPkm.id) || p.id || p.formatted_no || p.pokemonId || '');
+    if (idStr === '429' || idStr === '0429') return true;
+    const name = (fullPkm && fullPkm.name_cn) || p.name_cn || (typeof p.name === 'string' ? p.name : (p.name && p.name.cn ? p.name.cn : ''));
+    if (name === '夢妖魔' || name === '梦妖魔') return true;
+    const nameEn = String((fullPkm && fullPkm.name_en) || p.name_en || (p.name && p.name.en ? p.name.en : '')).toLowerCase();
+    if (nameEn === 'mismagius') return true;
+
+    const baseline = (typeof window !== 'undefined' && window.POKEMON_SKILLS_BASELINE_DATA)
+      ? window.POKEMON_SKILLS_BASELINE_DATA
+      : (typeof POKEMON_SKILLS_BASELINE_DATA !== 'undefined' ? POKEMON_SKILLS_BASELINE_DATA : null);
+    if (baseline) {
+      let base = null;
+      if (Array.isArray(baseline)) {
+        base = baseline.find(item => (item.id && String(item.id) === String(p.id)) || (item.name_cn && item.name_cn === (p.name_cn || p.name)));
+      } else if (typeof baseline === 'object') {
+        base = baseline[String(p.id)] || baseline[String(Number(p.id) + 1)];
+      }
+      if (base && (base.is_final === '〇' || base.is_final === 'O' || base.is_final === 'o' || base.is_final === true || base.is_final === '1')) {
+        return true;
+      }
     }
     return false;
   }
@@ -8236,8 +8318,8 @@
       : null;
     if (!trackDef) return;
 
-    const trackName = isEN ? trackDef.name_en : trackDef.name;
-    const trackDesc = isEN ? trackDef.desc_en : trackDef.desc;
+    const trackName = _tSkillLadder(trackDef.name_cn || trackDef.name, trackDef.name_en);
+    const trackDesc = _tSkillLadder(trackDef.desc_cn || trackDef.desc, trackDef.desc_en);
     const allPkm = getAllSkillPokemonList();
 
     const matchingPokemon = allPkm.filter(p => {
@@ -8266,7 +8348,10 @@
           const pNo = String(p.formatted_no || '');
           const isNum = (/^\d+$/).test(q);
           const numMatch = isNum && (parseInt(pId, 10) === parseInt(q, 10) || pId === q || pNo === q || pNo === q.padStart(3, '0') || pId.padStart(3, '0') === q.padStart(3, '0'));
-          matched = nCn.includes(q) || nEn.includes(q) || (nJp && nJp.includes(q)) || !!numMatch;
+          const nSimp = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function' && p.name_cn)
+            ? window.I18N.toSimplified(p.name_cn).toLowerCase()
+            : '';
+          matched = nCn.includes(q) || nEn.includes(q) || (nJp && nJp.includes(q)) || (nSimp && nSimp.includes(q)) || !!numMatch;
         }
         if (!matched) return false;
       }
@@ -8283,13 +8368,19 @@
       const specKey = (specStr.includes('樹果') || specStr === 'Berries') ? 'berry'
         : (specStr.includes('食材') || specStr === 'Ingredients') ? 'ingredient'
         : 'skill';
-      const specDisplay = isEN
-        ? (specKey === 'berry' ? 'Berries' : specKey === 'ingredient' ? 'Ingredients' : 'Skills')
-        : (specKey === 'berry' ? '樹果型' : specKey === 'ingredient' ? '食材型' : '技能型');
+      const specDisplay = (specKey === 'berry')
+        ? _tSkillLadder('樹果型', 'Berries')
+        : (specKey === 'ingredient')
+          ? _tSkillLadder('食材型', 'Ingredients')
+          : _tSkillLadder('技能型', 'Skills');
 
-      const pkmDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function' && window.I18N.getPokemonName(p.name_cn || p.name)) || p.name_en || p.name_cn) : (p.name_cn || p.name);
+      const pkmDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
+        ? window.I18N.getPokemonName(p.name_cn || p.name)
+        : (isEN ? (p.name_en || p.name_cn || p.name) : (p.name_cn || p.name));
       const skillName = p.main_skill || '';
-      const skillDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function' && window.I18N.getMainSkillName(skillName)) || skillName) : skillName;
+      const skillDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function')
+        ? window.I18N.getMainSkillName(skillName)
+        : skillName;
       const subInfo = typeof getSkillSubCategoryInfo === 'function'
         ? getSkillSubCategoryInfo(skillName, trackId, isEN)
         : { subKey: '', subLabel: '', fullLabel: skillDisplayName };
@@ -8360,7 +8451,7 @@
 
     const itemsHTML = rankedList.length === 0 ? `
       <div class="ing-rank-empty">
-        <p>${isEN ? 'No Pokémon matched current skill ladder filter conditions.' : '當前篩選條件下查無符合之寶可夢。'}</p>
+        <p>${_tSkillLadder('當前篩選條件下查無符合之寶可夢。', 'No Pokémon matched current skill ladder filter conditions.')}</p>
       </div>
     ` : `
       <div class="ing-rank-list">
@@ -8368,13 +8459,13 @@
           const rank = item.rank;
           const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : 'rank-other'));
           return `
-            <div class="ing-rank-card ${rankClass}" title="${esc(item.skillFullDisplay || item.skillDisplayName)} · ${item.displayProcs} ${isEN ? 'procs/12h' : '次/12h'}">
+            <div class="ing-rank-card ingredient-rank-card skill-rank-card ${rankClass}" title="${esc(item.pkmDisplayName)}">
               <div class="ing-rank-left" style="min-width:0;flex:1 1 auto;">
                 <div class="ing-rank-num ${rankClass}" style="font-size:10.5px;font-weight:700;width:20px;min-width:20px;flex-shrink:0;">
                   #${rank}
                 </div>
                 <div class="ing-rank-avatar-box ${rankClass}" style="flex-shrink:0;">
-                  <img src="${item.iconUrl}" class="ing-rank-avatar-img" alt="" loading="lazy">
+                  <img src="${item.iconUrl}" class="ing-rank-avatar-img rank-pkm-avatar" alt="${esc(item.pkmDisplayName)}" title="${esc(item.pkmDisplayName)}" loading="lazy">
                 </div>
                 <div class="skill-rank-meta-col" style="display:flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto;">
                   ${typeof getSkillLadderSpecialtyIcon === 'function' ? getSkillLadderSpecialtyIcon(item.specKey, item.specDisplay, 15) : `<span class="node-specialty-tag specialty-${item.specKey}" style="font-size:9.5px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,0.08);color:var(--accent-color, #38bdf8);">${esc(item.specDisplay)}</span>`}
@@ -8382,9 +8473,9 @@
                 </div>
               </div>
               <div class="ing-rank-right" style="flex-shrink:0;margin-left:8px;">
-                <span class="ing-rank-yield-line"><span class="ing-rank-yield-num">${item.displayProcs}</span><span class="ing-rank-yield-unit">${isEN ? ' /12h' : ' 次/12h'}</span></span>
-                <span class="ing-rank-split-line" style="font-size:10px;color:var(--text-muted);" title="${isEN ? 'Final Skill Rate / 12h Helps' : '最終技能機率 / 日間 12h 幫忙次數'}">
-                  ${item.finalRatePct}% · ${item.helpsDisplay}${isEN ? 'h' : '次'}
+                <span class="ing-rank-yield-line"><span class="ing-rank-yield-num">${item.displayProcs}</span><span class="ing-rank-yield-unit">${_tSkillLadder(' 次/12h', ' /12h')}</span></span>
+                <span class="ing-rank-split-line" style="font-size:10px;color:var(--text-muted);" title="${_tSkillLadder('最終技能機率 / 日間 12h 幫忙次數', 'Final Skill Rate / 12h Helps')}">
+                  ${item.finalRatePct}% · ${item.helpsDisplay}${_tSkillLadder('次', 'h')}
                 </span>
               </div>
             </div>
@@ -8404,11 +8495,11 @@
                 </span>
               </div>
               <div class="ing-rank-header-sub">
-                <span>${esc(trackDesc)} · ${isEN ? 'Lv.60 Ideal Energy (0.45x)' : 'Lv.60 滿活力 (0.45x)'} · ${rankedList.length} ${isEN ? 'Pokémon' : '隻寶可夢'}</span>
+                <span>${esc(trackDesc)} · ${_tSkillLadder('Lv.60 滿活力 (0.45x)', 'Lv.60 Ideal Energy (0.45x)')} · ${rankedList.length} ${_tSkillLadder('隻寶可夢', 'Pokémon')}</span>
               </div>
             </div>
           </div>
-          <button type="button" class="ing-rank-close-btn" onclick="window.WikiDB.closeSkillRankingModal()" title="${isEN ? 'Close' : '關閉'}" aria-label="Close">
+          <button type="button" class="ing-rank-close-btn" onclick="window.WikiDB.closeSkillRankingModal()" title="${_tSkillLadder('關閉', 'Close')}" aria-label="Close">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -8460,6 +8551,19 @@
     }
   }
 
+  function openSkillLadderCategoryModal(catId, subFilter) {
+    return openSkillRankingModal(catId, subFilter);
+  }
+
+  if (typeof window !== 'undefined') {
+    window.WikiSkillLadder = window.WikiSkillLadder || {};
+    window.WikiSkillLadder.openCategoryModal = openSkillLadderCategoryModal;
+    window.WikiSkillLadder.openSkillLadderCategoryModal = openSkillLadderCategoryModal;
+    window.WikiSkillLadder.openSkillRankingModal = openSkillRankingModal;
+    window.WikiSkillLadder.closeSidebar = closeSkillLadderSidebar;
+    window.WikiSkillLadder.closeSkillRankingModal = closeSkillRankingModal;
+  }
+
   // =========================================================================
   // 主技能天梯渲染與視圖 (Main Skill Ladder View & Renderers)
   // =========================================================================
@@ -8474,6 +8578,17 @@
       .replace(/'/g, '&#39;');
   };
 
+  var _tSkillLadder = (typeof window !== 'undefined' && window.WikiSkillLadder && typeof window.WikiSkillLadder._tSkillLadder === 'function')
+    ? window.WikiSkillLadder._tSkillLadder
+    : function (zhTw, en) {
+        if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') {
+          const lang = window.I18N.getLanguage();
+          if (lang === 'en-US') return en !== undefined ? en : zhTw;
+          if (lang === 'zh-CN' && typeof window.I18N.toSimplified === 'function') return window.I18N.toSimplified(zhTw);
+        }
+        return zhTw;
+      };
+
   function renderSkillCoordinateLadder() {
     const isEN = typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function' && window.I18N.getLanguage() === 'en-US';
     const allPkm = getAllSkillPokemonList();
@@ -8482,8 +8597,8 @@
     let globalMaxProcs = -Infinity;
     const processedTracks = SKILL_TRACK_DEFINITIONS.map(track => {
       const trackId = track.id;
-      const trackName = isEN ? track.name_en : track.name;
-      const trackDesc = isEN ? track.desc_en : track.desc;
+      const trackName = _tSkillLadder(track.name_cn || track.name, track.name_en);
+      const trackDesc = _tSkillLadder(track.desc_cn || track.desc, track.desc_en);
 
       const matchingPokemon = allPkm.filter(p => {
         if (!p || isExcludedSkill(p.main_skill)) return false;
@@ -8511,7 +8626,10 @@
             const pNo = String(p.formatted_no || '');
             const isNum = (/^\d+$/).test(q);
             const numMatch = isNum && (parseInt(pId, 10) === parseInt(q, 10) || pId === q || pNo === q || pNo === q.padStart(3, '0') || pId.padStart(3, '0') === q.padStart(3, '0'));
-            matched = nCn.includes(q) || nEn.includes(q) || (nJp && nJp.includes(q)) || !!numMatch;
+            const nSimp = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function' && p.name_cn)
+              ? window.I18N.toSimplified(p.name_cn).toLowerCase()
+              : '';
+            matched = nCn.includes(q) || nEn.includes(q) || (nJp && nJp.includes(q)) || (nSimp && nSimp.includes(q)) || !!numMatch;
           }
           if (!matched) return false;
         }
@@ -8526,13 +8644,19 @@
         const specKey = (specStr.includes('樹果') || specStr === 'Berries') ? 'berry'
           : (specStr.includes('食材') || specStr === 'Ingredients') ? 'ingredient'
           : 'skill';
-        const specDisplay = isEN
-          ? (specKey === 'berry' ? 'Berries' : specKey === 'ingredient' ? 'Ingredients' : 'Skills')
-          : (specKey === 'berry' ? '樹果型' : specKey === 'ingredient' ? '食材型' : '技能型');
+        const specDisplay = (specKey === 'berry')
+          ? _tSkillLadder('樹果型', 'Berries')
+          : (specKey === 'ingredient')
+            ? _tSkillLadder('食材型', 'Ingredients')
+            : _tSkillLadder('技能型', 'Skills');
 
-        const pkmDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function' && window.I18N.getPokemonName(p.name_cn || p.name)) || p.name_en || p.name_cn) : (p.name_cn || p.name);
+        const pkmDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
+          ? window.I18N.getPokemonName(p.name_cn || p.name)
+          : (isEN ? (p.name_en || p.name_cn || p.name) : (p.name_cn || p.name));
         const skillName = p.main_skill || '';
-        const skillDisplayName = isEN ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function' && window.I18N.getMainSkillName(skillName)) || skillName) : skillName;
+        const skillDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function')
+          ? window.I18N.getMainSkillName(skillName)
+          : skillName;
         const subInfo = typeof getSkillSubCategoryInfo === 'function'
           ? getSkillSubCategoryInfo(skillName, trackId, isEN)
           : { subKey: '', subLabel: '', fullLabel: skillDisplayName };
@@ -8636,10 +8760,12 @@
 
     return `
       <div class="wiki-coordinate-ladder-wrapper">
-        <div class="wiki-coordinate-ladder wiki-skill-coordinate-ladder">
+        <div class="wiki-coordinate-ladder wiki-skill-coordinate-ladder"
+             onmouseover="window.WikiDB && window.WikiDB.handleLadderGroupHover && window.WikiDB.handleLadderGroupHover(event)"
+             onmouseout="window.WikiDB && window.WikiDB.handleLadderGroupHoverOut && window.WikiDB.handleLadderGroupHoverOut(event)">
           <div class="ladder-ruler-header">
             <div class="ladder-ruler-spacer skill-ladder-ruler-spacer">
-              <span class="text-secondary font-bold skill-ruler-label" style="font-size: 11px; letter-spacing: 0.5px;">${isEN ? 'Procs/12h' : '次數/12h'}</span>
+              <span class="text-secondary font-bold skill-ruler-label" style="font-size: 11px; letter-spacing: 0.5px;">${_tSkillLadder('次數/12h', 'Procs/12h')}</span>
             </div>
             <div class="ladder-ruler-scale">
               ${ticks.map(t => `
@@ -8693,14 +8819,15 @@
             return `
               <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''}" data-skill-track="${track.id}">
                 <div class="ladder-track-header skill-ladder-track-header clickable-skill-header"
-                     onclick="window.WikiDB.openSkillRankingModal('${track.id}')"
+                     onclick="if(window.WikiSkillLadder&&typeof window.WikiSkillLadder.openCategoryModal==='function'){window.WikiSkillLadder.openCategoryModal('${_escapeHtml(track.id)}');}else if(window.WikiDB&&typeof window.WikiDB.openSkillRankingModal==='function'){window.WikiDB.openSkillRankingModal('${_escapeHtml(track.id)}');}"
+                     onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();if(window.WikiSkillLadder&&typeof window.WikiSkillLadder.openCategoryModal==='function'){window.WikiSkillLadder.openCategoryModal('${_escapeHtml(track.id)}');}else if(window.WikiDB&&typeof window.WikiDB.openSkillRankingModal==='function'){window.WikiDB.openSkillRankingModal('${_escapeHtml(track.id)}');}}"
                      role="button"
                      tabindex="0"
-                     title="${_escapeHtml(trackName)} · ${_escapeHtml(trackDesc)} · ${isEN ? 'Click to view rankings' : '點擊查看發動次數排名'}">
+                     title="${_escapeHtml(trackName)} · ${_escapeHtml(trackDesc)} · ${_tSkillLadder('點擊查看發動次數排名', 'Click to view rankings')}">
                   <span class="skill-track-name-tag" style="color:${track.color};">
                     ${_escapeHtml(trackName)}
                   </span>
-                  <span class="skill-track-count-tag text-secondary" style="display:none;">${nodes.length} ${isEN ? 'species' : '種'}</span>
+                  <span class="skill-track-count-tag text-secondary" style="display:none;">${nodes.length} ${_tSkillLadder('種', 'species')}</span>
                 </div>
 
                 <div class="ladder-track-canvas">
@@ -8739,44 +8866,46 @@
                       return `
                         <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} ${groupSize > 1 ? 'node-in-cluster' : ''}"
                              data-pkm="${_escapeHtml(node.p.name_cn || node.p.name)}"
+                             data-pkm-group="pkm-${node.p.id}"
+                             data-pkm-id="${node.p.id}"
                              style="left: ${leftStyle}; z-index: ${zIndex};">
                           <div class="node-avatar-wrapper">
                             <img src="${node.iconUrl}" class="node-avatar-img" alt="${_escapeHtml(node.pkmDisplayName)}" loading="lazy" decoding="async">
                           </div>
-                          <div class="node-count-badge" title="${isEN ? '12h Expected Triggers: ' : '日間 12h 預估發動次數：'}${node.displayCount}">
+                          <div class="node-count-badge" title="${_tSkillLadder('日間 12h 預估發動次數：', '12h Expected Triggers: ')}${node.displayCount}">
                             ${node.displayCount}
                           </div>
 
                           <div class="ladder-node-tooltip">
                             <div class="tooltip-title">
-                              ${node.isTopNode ? (isEN ? 'Top 1 ' : 'TOP 1 ') : ''}${_escapeHtml(node.pkmDisplayName)}
+                              ${node.isTopNode ? _tSkillLadder('TOP 1 ', 'Top 1 ') : ''}${_escapeHtml(node.pkmDisplayName)}
                               ${typeof getSkillLadderSpecialtyIcon === 'function' ? getSkillLadderSpecialtyIcon(node.specialtyKey, node.specialtyDisplay, 16) : `<span class="node-specialty-tag specialty-${node.specialtyKey}" style="margin-left: 6px; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); color: var(--accent-color, #38bdf8);">${node.specialtyDisplay}</span>`}
                             </div>
                             <div class="tooltip-yield-breakdown">
                               <div class="breakdown-row">
-                                <span class="breakdown-label">${isEN ? 'Main Skill:' : '主技能：'}</span>
+                                <span class="breakdown-label">${_tSkillLadder('主技能：', 'Main Skill:')}</span>
                                 <span class="breakdown-val font-bold text-primary">${_escapeHtml(node.skillFullDisplay || node.skillDisplayName)}</span>
                               </div>
                               <div class="breakdown-row">
-                                <span class="breakdown-label">${isEN ? 'Base Rate:' : '基礎機率：'}</span>
+                                <span class="breakdown-label">${_tSkillLadder('基礎機率：', 'Base Rate:')}</span>
                                 <span class="breakdown-val">${(node.calcRes.baseSkillRate * 100).toFixed(2)}%</span>
                               </div>
                               <div class="breakdown-row">
-                                <span class="breakdown-label">${isEN ? 'Final Rate:' : '最終機率：'}</span>
+                                <span class="breakdown-label">${_tSkillLadder('最終機率：', 'Final Rate:')}</span>
                                 <span class="breakdown-val text-accent font-bold">${(node.calcRes.finalSkillRate * 100).toFixed(2)}%</span>
                               </div>
                               <div class="breakdown-row">
-                                <span class="breakdown-label">${isEN ? 'Ideal Interval (0.45x):' : '滿活力間隔 (0.45x)：'}</span>
-                                <span class="breakdown-val">${idealMin}${isEN ? 'm ' : '分'}${String(idealSec).padStart(2, '0')}${isEN ? 's' : '秒'}</span>
+                                <span class="breakdown-label">${_tSkillLadder('滿活力間隔 (0.45x)：', 'Ideal Interval (0.45x):')}</span>
+                                <span class="breakdown-val">${idealMin}${_tSkillLadder('分', 'm ')}${String(idealSec).padStart(2, '0')}${_tSkillLadder('秒', 's')}</span>
                               </div>
                               <div class="breakdown-row">
-                                <span class="breakdown-label">${isEN ? 'Est. Helps (12h):' : '日間 12h 總幫忙次數：'}</span>
-                                <span class="breakdown-val">${helpsDisplay} ${isEN ? 'helps' : '次'}</span>
+                                <span class="breakdown-label">${_tSkillLadder('日間 12h 總幫忙次數：', 'Est. Helps (12h):')}</span>
+                                <span class="breakdown-val">${helpsDisplay} ${_tSkillLadder('次', 'helps')}</span>
                               </div>
                             </div>
                             <div class="tooltip-detail" style="margin-top: 6px;">
-                              ${isEN ? 'Est. 12h Triggers: ' : '預估 12h 發動：'}
-                              <span class="text-success font-bold">${node.displayCount} ${isEN ? 'procs/12h' : '次/12h'}</span>
+                              ${_tSkillLadder('預估 12h 發動：', 'Est. 12h Triggers: ')}
+                              <span class="text-success font-bold">${node.displayCount} ${_tSkillLadder('次/12h', 'procs/12h')}</span>
                             </div>
                           </div>
                         </div>
@@ -8803,7 +8932,7 @@
   function renderSkillLadderMobileHandle(currentWikiSubTab, isEN) {
     return `
       <!-- 右下懸浮技能天梯篩選按鈕 (Mobile FAB) -->
-      <button type="button" id="skill-ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openSkillLadderSidebar()" title="${isEN ? 'Filter' : '展開技能天梯篩選器'}" aria-label="${isEN ? 'Filter' : '展開技能天梯篩選器'}" style="${currentWikiSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}">
+      <button type="button" id="skill-ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openSkillLadderSidebar()" title="${_tSkillLadder('展開技能天梯篩選器', 'Filter')}" aria-label="${_tSkillLadder('展開技能天梯篩選器', 'Filter')}" style="${currentWikiSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}">
         <span class="bookmark-icon">
           <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="4" y1="21" x2="4" y2="14"></line>
@@ -8826,9 +8955,9 @@
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const currentSubTab = subTab || (typeof currentWikiSubTab !== 'undefined' ? currentWikiSubTab : (typeof window !== 'undefined' && typeof window.getCurrentSubTab === 'function' ? window.getCurrentSubTab() : 'skills_ladder'));
     return `
-      <aside id="skill-ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialSkillLadderCollapsed}" style="${currentSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Skill Filters' : '技能天梯篩選器'}">
+      <aside id="skill-ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialSkillLadderCollapsed}" style="${currentSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}" aria-label="${_tSkillLadder('技能天梯篩選器', 'Skill Filters')}">
         ${!isMobileH5 ? `
-          <button type="button" id="skill-ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleSkillLadderSidebar(true)" title="${isEN ? 'Expand Filter' : '展開技能天梯篩選側邊欄'}" aria-label="${isEN ? 'Expand Filter' : '展開技能天梯篩選側邊欄'}">
+          <button type="button" id="skill-ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleSkillLadderSidebar(true)" title="${_tSkillLadder('展開技能天梯篩選側邊欄', 'Expand Filter')}" aria-label="${_tSkillLadder('展開技能天梯篩選側邊欄', 'Expand Filter')}">
             <span class="bookmark-icon">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="4" y1="21" x2="4" y2="14"></line>
@@ -8842,28 +8971,29 @@
                 <line x1="17" y1="16" x2="23" y2="16"></line>
               </svg>
             </span>
-            <span class="bookmark-text">${isEN ? 'Filter' : '篩選'}</span>
+            <span class="bookmark-text">${_tSkillLadder('篩選', 'Filter')}</span>
             <span class="bookmark-arrow">◀</span>
             <span id="skill-ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
           </button>
         ` : ''}
 
         <div class="sidebar-header">
-          <button type="button" id="skill-ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.toggleSkillLadderSidebar(false)" title="${isEN ? 'Collapse Filter' : '收合側邊欄'}" aria-label="${isEN ? 'Collapse Filter' : '收合側邊欄'}">◀</button>
+          <button type="button" id="skill-ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.toggleSkillLadderSidebar(false)" title="${_tSkillLadder('收合側邊欄', 'Collapse Filter')}" aria-label="${_tSkillLadder('收合側邊欄', 'Collapse Filter')}">◀</button>
           <div class="sidebar-title-group" style="display:flex;align-items:center;gap:6px;">
-            <span class="sidebar-title">${isEN ? 'Skill Filters' : '技能天梯篩選器'}</span>
-            <button type="button" class="pokedex-formula-help-btn ladder-formula-help-btn" onclick="window.WikiDB.toggleSkillLadderEnergyHelp(event)" title="${isEN ? 'Baseline: Lv.60 Ideal Energy (0.45x) 12h' : '基準：Lv.60 滿活力 (0.45x) 12小時'}" aria-label="Skill Ladder Energy Info">?</button>
+            <span class="sidebar-title">${_tSkillLadder('技能天梯篩選器', 'Skill Filters')}</span>
+            <button type="button" class="pokedex-formula-help-btn ladder-formula-help-btn" onclick="window.WikiDB.toggleSkillLadderEnergyHelp(event)" title="${_tSkillLadder('基準：Lv.60 滿活力 (0.45x) 12小時', 'Baseline: Lv.60 Ideal Energy (0.45x) 12h')}" aria-label="Skill Ladder Energy Info">?</button>
           </div>
-          <button type="button" id="skill-ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetSkillLadderFilters()" title="${isEN ? 'Reset Filters' : '重設所有條件'}">${isEN ? 'Reset' : '全部重設'}</button>
+          <button type="button" id="skill-ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetSkillLadderFilters()" title="${_tSkillLadder('重設所有條件', 'Reset Filters')}">${_tSkillLadder('全部重設', 'Reset')}</button>
 
           <div id="skill-ladder-energy-help-popover" class="ladder-energy-help-popover" style="display:none;" role="tooltip">
             <div class="pokedex-energy-help-backdrop" onclick="window.WikiDB.closeSkillLadderEnergyHelp(event)"></div>
             <div class="pokedex-energy-help-bubble ladder-energy-help-bubble">
-              <div class="energy-help-title font-bold">${isEN ? 'Baseline: Lv.60 Ideal Energy (12h)' : '天梯基準：Lv.60 滿活力 (12h)'}</div>
+              <div class="energy-help-title font-bold">${_tSkillLadder('天梯基準：Lv.60 滿活力 (12h)', 'Baseline: Lv.60 Ideal Energy (12h)')}</div>
               <div class="energy-help-body">
-                ${isEN
-                  ? 'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daytime 12-hour procs: 43200 / (effectiveInterval * 0.45) * finalSkillRate.'
-                  : '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算日間 12 小時主技能發動次數：43200 / (有效間隔 * 0.45) * 最終技能機率。'}
+                ${_tSkillLadder(
+                  '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算日間 12 小時主技能發動次數：43200 / (有效間隔 * 0.45) * 最終技能機率。',
+                  'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daytime 12-hour procs: 43200 / (effectiveInterval * 0.45) * finalSkillRate.'
+                )}
               </div>
             </div>
           </div>
@@ -8872,8 +9002,8 @@
         <div class="sidebar-scrollable-content">
           <div class="sidebar-section">
             <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${isEN ? 'Search Pokémon' : '搜尋寶可夢'}</span>
-              <button type="button" id="skill-ladder-search-clear-btn" class="sidebar-section-clear-btn" style="${(typeof getSkillLadderSearchQuery === 'function' && getSkillLadderSearchQuery()) ? 'display:inline-block;' : 'display:none;'}" onclick="window.WikiDB.clearSkillLadderSearch()">${isEN ? 'Clear' : '清空'}</button>
+              <span class="sidebar-section-title">${_tSkillLadder('搜尋寶可夢', 'Search Pokémon')}</span>
+              <button type="button" id="skill-ladder-search-clear-btn" class="sidebar-section-clear-btn" style="${(typeof getSkillLadderSearchQuery === 'function' && getSkillLadderSearchQuery()) ? 'display:inline-block;' : 'display:none;'}" onclick="window.WikiDB.clearSkillLadderSearch()">${_tSkillLadder('清空', 'Clear')}</button>
             </div>
             <div class="sidebar-search-box" style="margin-top: 4px;">
               <span class="sidebar-search-icon" aria-hidden="true">
@@ -8882,62 +9012,62 @@
                   <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
                 </svg>
               </span>
-              <input type="text" id="skill-ladder-pkm-search-input" class="sidebar-search-input" placeholder="${isEN ? 'Search Pokémon...' : '搜尋寶可夢名稱...'}" value="${(typeof getSkillLadderSearchQuery === 'function' ? getSkillLadderSearchQuery() : '')}" oninput="window.WikiDB.onSkillLadderSearch(this.value)">
+              <input type="text" id="skill-ladder-pkm-search-input" class="sidebar-search-input" placeholder="${_tSkillLadder('搜尋寶可夢名稱...', 'Search Pokémon...')}" value="${(typeof getSkillLadderSearchQuery === 'function' ? getSkillLadderSearchQuery() : '')}" oninput="window.WikiDB.onSkillLadderSearch(this.value)">
             </div>
           </div>
 
           <div class="sidebar-section">
             <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${isEN ? 'Track Sorting' : '天梯軌道排序'}</span>
-              <label class="ladder-top15-switch-label" title="${isEN ? 'Show Top 15 Only' : '預設開啟前15名排行'}">
+              <span class="sidebar-section-title">${_tSkillLadder('天梯軌道排序', 'Track Sorting')}</span>
+              <label class="ladder-top15-switch-label" title="${_tSkillLadder('預設開啟前15名排行', 'Show Top 15 Only')}">
                 <input type="checkbox" id="skill-ladder-top15-switch" class="ladder-switch-input" ${(typeof getSkillLadderTop15Only === 'function' ? getSkillLadderTop15Only() : true) ? 'checked' : ''} onchange="window.WikiDB.toggleSkillLadderTop15(this.checked)">
                 <span class="ladder-switch-slider"></span>
-                <span class="ladder-switch-text">${isEN ? 'Top 15' : '前15名'}</span>
+                <span class="ladder-switch-text">${_tSkillLadder('前15名', 'Top 15')}</span>
               </label>
             </div>
             <div class="sidebar-skills-list sidebar-2col-tags">
-              <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'DEFAULT') ? 'active' : ''}" data-skill-sort-order="DEFAULT" onclick="window.WikiDB.setSkillLadderSortOrder('DEFAULT')">${isEN ? 'Default' : '預設分類'}</button>
-              <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'PROCS_DESC') ? 'active' : ''}" data-skill-sort-order="PROCS_DESC" onclick="window.WikiDB.setSkillLadderSortOrder('PROCS_DESC')">${isEN ? 'Procs: High-Low' : '次數：多到少'}</button>
-              <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'COUNT_DESC') ? 'active' : ''}" data-skill-sort-order="COUNT_DESC" onclick="window.WikiDB.setSkillLadderSortOrder('COUNT_DESC')">${isEN ? 'Species: High-Low' : '數量：多到少'}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'DEFAULT') ? 'active' : ''}" data-skill-sort-order="DEFAULT" onclick="window.WikiDB.setSkillLadderSortOrder('DEFAULT')">${_tSkillLadder('預設分類', 'Default')}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'PROCS_DESC') ? 'active' : ''}" data-skill-sort-order="PROCS_DESC" onclick="window.WikiDB.setSkillLadderSortOrder('PROCS_DESC')">${_tSkillLadder('次數：多到少', 'Procs: High-Low')}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'COUNT_DESC') ? 'active' : ''}" data-skill-sort-order="COUNT_DESC" onclick="window.WikiDB.setSkillLadderSortOrder('COUNT_DESC')">${_tSkillLadder('數量：多到少', 'Species: High-Low')}</button>
             </div>
           </div>
 
           <div class="sidebar-section">
             <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${isEN ? 'Specialty Type' : '寶可夢專長'}</span>
-              <label class="ladder-top15-switch-label" title="${isEN ? 'Show Final Evolution Only' : '僅保留最終進化寶可夢'}">
+              <span class="sidebar-section-title">${_tSkillLadder('寶可夢專長', 'Specialty Type')}</span>
+              <label class="ladder-top15-switch-label" title="${_tSkillLadder('僅保留最終進化寶可夢', 'Show Final Evolution Only')}">
                 <input type="checkbox" id="skill-ladder-final-only-switch" class="ladder-switch-input" ${(typeof getSkillLadderFinalOnly === 'function' ? getSkillLadderFinalOnly() : false) ? 'checked' : ''} onchange="window.WikiDB.toggleSkillLadderFinalOnly(this.checked)">
                 <span class="ladder-switch-slider"></span>
-                <span class="ladder-switch-text">${isEN ? 'Final Evo' : '最終進化'}</span>
+                <span class="ladder-switch-text">${_tSkillLadder('最終進化', 'Final Evo')}</span>
               </label>
             </div>
             <div class="sidebar-skills-list">
-              <button type="button" class="tag-btn ${(typeof getSkillLadderSpecialtyFilter === 'function' && getSkillLadderSpecialtyFilter() === 'ALL') ? 'active' : ''}" data-skill-specialty-filter="ALL" onclick="window.WikiDB.setSkillLadderSpecialtyFilter('ALL')">${isEN ? 'All' : '全部'}</button>
-              <button type="button" class="tag-btn ${(typeof getSkillLadderSpecialtyFilter === 'function' && getSkillLadderSpecialtyFilter() === 'SKILL') ? 'active' : ''}" data-skill-specialty-filter="SKILL" onclick="window.WikiDB.setSkillLadderSpecialtyFilter('SKILL')">${isEN ? 'Skill' : '技能型'}</button>
-              <button type="button" class="tag-btn ${(typeof getSkillLadderSpecialtyFilter === 'function' && getSkillLadderSpecialtyFilter() === 'BERRY') ? 'active' : ''}" data-skill-specialty-filter="BERRY" onclick="window.WikiDB.setSkillLadderSpecialtyFilter('BERRY')">${isEN ? 'Berry' : '樹果型'}</button>
-              <button type="button" class="tag-btn ${(typeof getSkillLadderSpecialtyFilter === 'function' && getSkillLadderSpecialtyFilter() === 'INGREDIENT') ? 'active' : ''}" data-skill-specialty-filter="INGREDIENT" onclick="window.WikiDB.setSkillLadderSpecialtyFilter('INGREDIENT')">${isEN ? 'Ingredient' : '食材型'}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSpecialtyFilter === 'function' && getSkillLadderSpecialtyFilter() === 'ALL') ? 'active' : ''}" data-skill-specialty-filter="ALL" onclick="window.WikiDB.setSkillLadderSpecialtyFilter('ALL')">${_tSkillLadder('全部', 'All')}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSpecialtyFilter === 'function' && getSkillLadderSpecialtyFilter() === 'SKILL') ? 'active' : ''}" data-skill-specialty-filter="SKILL" onclick="window.WikiDB.setSkillLadderSpecialtyFilter('SKILL')">${_tSkillLadder('技能型', 'Skill')}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSpecialtyFilter === 'function' && getSkillLadderSpecialtyFilter() === 'BERRY') ? 'active' : ''}" data-skill-specialty-filter="BERRY" onclick="window.WikiDB.setSkillLadderSpecialtyFilter('BERRY')">${_tSkillLadder('樹果型', 'Berry')}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSpecialtyFilter === 'function' && getSkillLadderSpecialtyFilter() === 'INGREDIENT') ? 'active' : ''}" data-skill-specialty-filter="INGREDIENT" onclick="window.WikiDB.setSkillLadderSpecialtyFilter('INGREDIENT')">${_tSkillLadder('食材型', 'Ingredient')}</button>
             </div>
           </div>
 
           <div class="sidebar-section">
             <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${isEN ? 'Sub-Skills' : '副技能補正模擬'}</span>
+              <span class="sidebar-section-title">${_tSkillLadder('副技能補正模擬', 'Sub-Skills')}</span>
             </div>
             <div class="sidebar-skills-list sidebar-2col-tags">
-              <button type="button" class="tag-btn ${typeof isSkillLadderSpeedM !== 'undefined' && isSkillLadderSpeedM ? 'active' : ''}" id="skill-ladder-speed-m-toggle" data-skill-subskill-boost="SPEED_M" onclick="window.WikiDB.toggleSkillLadderSubskill('SPEED_M')">${isEN ? 'Help Speed M' : '幫忙速度M'}</button>
-              <button type="button" class="tag-btn ${typeof isSkillLadderSpeedS !== 'undefined' && isSkillLadderSpeedS ? 'active' : ''}" id="skill-ladder-speed-s-toggle" data-skill-subskill-boost="SPEED_S" onclick="window.WikiDB.toggleSkillLadderSubskill('SPEED_S')">${isEN ? 'Help Speed S' : '幫忙速度S'}</button>
-              <button type="button" class="tag-btn ${typeof isSkillLadderSkillM !== 'undefined' && isSkillLadderSkillM ? 'active' : ''}" id="skill-ladder-skill-m-toggle" data-skill-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_M')">${isEN ? 'Skill Trigger M' : '技能機率M'}</button>
-              <button type="button" class="tag-btn ${typeof isSkillLadderSkillS !== 'undefined' && isSkillLadderSkillS ? 'active' : ''}" id="skill-ladder-skill-s-toggle" data-skill-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_S')">${isEN ? 'Skill Trigger S' : '技能機率S'}</button>
+              <button type="button" class="tag-btn ${typeof isSkillLadderSpeedM !== 'undefined' && isSkillLadderSpeedM ? 'active' : ''}" id="skill-ladder-speed-m-toggle" data-skill-subskill-boost="SPEED_M" onclick="window.WikiDB.toggleSkillLadderSubskill('SPEED_M')">${_tSkillLadder('幫忙速度M', 'Help Speed M')}</button>
+              <button type="button" class="tag-btn ${typeof isSkillLadderSpeedS !== 'undefined' && isSkillLadderSpeedS ? 'active' : ''}" id="skill-ladder-speed-s-toggle" data-skill-subskill-boost="SPEED_S" onclick="window.WikiDB.toggleSkillLadderSubskill('SPEED_S')">${_tSkillLadder('幫忙速度S', 'Help Speed S')}</button>
+              <button type="button" class="tag-btn ${typeof isSkillLadderSkillM !== 'undefined' && isSkillLadderSkillM ? 'active' : ''}" id="skill-ladder-skill-m-toggle" data-skill-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_M')">${_tSkillLadder('技能機率M', 'Skill Trigger M')}</button>
+              <button type="button" class="tag-btn ${typeof isSkillLadderSkillS !== 'undefined' && isSkillLadderSkillS ? 'active' : ''}" id="skill-ladder-skill-s-toggle" data-skill-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_S')">${_tSkillLadder('技能機率S', 'Skill Trigger S')}</button>
             </div>
           </div>
 
           <div class="sidebar-section">
             <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${isEN ? 'Nature Boost' : '性格補正模擬'}</span>
+              <span class="sidebar-section-title">${_tSkillLadder('性格補正模擬', 'Nature Boost')}</span>
             </div>
             <div class="sidebar-skills-list sidebar-2col-tags">
-              <button type="button" class="tag-btn ${(typeof getSkillLadderNature === 'function' && getSkillLadderNature() === 'SPEED') ? 'active' : ''}" data-skill-nature-filter="SPEED" onclick="window.WikiDB.toggleSkillLadderNatureFilter('SPEED')">${isEN ? 'Help Speed ▲' : '幫忙速度▲'}</button>
-              <button type="button" class="tag-btn ${(typeof getSkillLadderNature === 'function' && getSkillLadderNature() === 'SKILL') ? 'active' : ''}" data-skill-nature-filter="SKILL" onclick="window.WikiDB.toggleSkillLadderNatureFilter('SKILL')">${isEN ? 'Skill Chance ▲' : '技能機率▲'}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderNature === 'function' && getSkillLadderNature() === 'SPEED') ? 'active' : ''}" data-skill-nature-filter="SPEED" onclick="window.WikiDB.toggleSkillLadderNatureFilter('SPEED')">${_tSkillLadder('幫忙速度▲', 'Help Speed ▲')}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderNature === 'function' && getSkillLadderNature() === 'SKILL') ? 'active' : ''}" data-skill-nature-filter="SKILL" onclick="window.WikiDB.toggleSkillLadderNatureFilter('SKILL')">${_tSkillLadder('技能機率▲', 'Skill Chance ▲')}</button>
             </div>
           </div>
         </div>
@@ -8947,6 +9077,7 @@
 
   function attachSkillLadderExports(wikiExport, targetWindow) {
     const methods = {
+      _tSkillLadder: _tSkillLadder,
       toggleSkillLadderSidebar: toggleSkillLadderSidebar,
       openSkillLadderSidebar: openSkillLadderSidebar,
       closeSkillLadderSidebar: closeSkillLadderSidebar,
@@ -8963,6 +9094,8 @@
       getSkillLadderFinalOnly: typeof getSkillLadderFinalOnly === 'function' ? getSkillLadderFinalOnly : null,
       isPokemonSkillLadderFinalEvo: typeof isPokemonSkillLadderFinalEvo === 'function' ? isPokemonSkillLadderFinalEvo : null,
       openSkillRankingModal: typeof openSkillRankingModal === 'function' ? openSkillRankingModal : null,
+      openSkillLadderCategoryModal: typeof openSkillLadderCategoryModal === 'function' ? openSkillLadderCategoryModal : (typeof openSkillRankingModal === 'function' ? openSkillRankingModal : null),
+      openCategoryModal: typeof openSkillLadderCategoryModal === 'function' ? openSkillLadderCategoryModal : (typeof openSkillRankingModal === 'function' ? openSkillRankingModal : null),
       closeSkillRankingModal: typeof closeSkillRankingModal === 'function' ? closeSkillRankingModal : null,
       setSkillLadderSortOrder: setSkillLadderSortOrder,
       getSkillLadderSortOrder: getSkillLadderSortOrder,
@@ -11143,6 +11276,12 @@
     if (!target) return;
     const groupName = target.getAttribute('data-pkm-group');
     if (!groupName) return;
+    const skillLadder = target.closest('.wiki-skill-coordinate-ladder');
+    if (skillLadder) {
+      const siblings = skillLadder.querySelectorAll(`[data-pkm-group="${groupName}"]`);
+      siblings.forEach(el => el.classList.add('group-hover-active'));
+      return;
+    }
     const row = target.closest('.ladder-track-row, .ladder-tail-track-row');
     if (!row) return;
     const siblings = row.querySelectorAll(`[data-pkm-group="${groupName}"]`);
@@ -11154,6 +11293,12 @@
     if (!target) return;
     const groupName = target.getAttribute('data-pkm-group');
     if (!groupName) return;
+    const skillLadder = target.closest('.wiki-skill-coordinate-ladder');
+    if (skillLadder) {
+      const siblings = skillLadder.querySelectorAll(`[data-pkm-group="${groupName}"]`);
+      siblings.forEach(el => el.classList.remove('group-hover-active'));
+      return;
+    }
     const row = target.closest('.ladder-track-row, .ladder-tail-track-row');
     if (!row) return;
     const siblings = row.querySelectorAll(`[data-pkm-group="${groupName}"]`);

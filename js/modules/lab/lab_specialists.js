@@ -142,16 +142,42 @@
   }
 
   function getMainSkillMaxLevel(name) {
+    if (typeof window !== 'undefined' && typeof window.getMainSkillMaxLevel === 'function' && window.getMainSkillMaxLevel !== getMainSkillMaxLevel) {
+      return window.getMainSkillMaxLevel(name);
+    }
     if (typeof window !== 'undefined' && window.UserBox && typeof window.UserBox.getMainSkillMaxLevel === 'function') {
       return window.UserBox.getMainSkillMaxLevel(name);
     }
-    if (!name) return 7;
-    const clean = String(name).trim();
-    if (clean.includes('夢之碎片') || clean.includes('波導彈') || clean.includes('Dream Shard') || clean.includes('Aura Sphere')) return 8;
-    if (clean.includes('能量填充') || clean.includes('Charge Strength') || clean.includes('蓄力') || clean.includes('夢魘')) return 7;
-    if (clean.includes('食材獲取') || clean.includes('食材精選') || clean.includes('Ingredient') || clean.includes('怪力鉗') || clean.includes('怪力钳') || clean.includes('超幸運') || clean.includes('正電') || clean.includes('禮物')) return 7;
-    if (clean.includes('料理強化') || clean.includes('Cooking Power') || clean.includes('負電') || clean.includes('魔法火焰') || clean.includes('Mystical Fire') || clean.includes('料理躍進') || clean.includes('料理輔助') || clean.includes('健美') || clean.includes('Bulk Up') || clean.includes('揮指') || clean.includes('十項全能') || clean.includes('Metronome') || clean.includes('變身') || clean.includes('模仿') || clean.includes('幫手支援') || clean.includes('Helper Support')) return 7;
+    if (!name || typeof name !== 'string') return 6;
+    const clean = name.trim();
+    if (clean.includes('夢之碎片') || clean.includes('波導彈') || clean.includes('Dream Shard') || clean.includes('Aura Sphere')) {
+      return 8;
+    }
+    if (
+      clean.includes('能量填充') || clean.includes('能量充填') || clean.includes('Charge Strength') || clean.includes('蓄力') || clean.includes('夢魘') ||
+      clean.includes('食材獲取') || clean.includes('食材精選') || clean.includes('Ingredient') || clean.includes('怪力鉗') || clean.includes('怪力钳') || clean.includes('超幸運') || clean.includes('正電') || clean.includes('禮物') ||
+      clean.includes('料理強化') || clean.includes('料理等級') || clean.includes('Cooking Power') || clean.includes('負電') || clean.includes('魔法火焰') || clean.includes('Mystical Fire') || clean.includes('料理躍進') || clean.includes('料理輔助') || clean.includes('健美') || clean.includes('Bulk Up') ||
+      clean.includes('揮指') || clean.includes('技能複製') || clean.includes('十項全能') || clean.includes('All-Rounder') || clean.includes('Metronome') || clean.includes('Skill Copy') || clean.includes('變身') || clean.includes('模仿') ||
+      clean.includes('幫手支援') || clean.includes('Extra Helpful') || clean.includes('Helper Support')
+    ) {
+      return 7;
+    }
+    if (typeof window !== 'undefined' && window.MAIN_SKILLS_DATA) {
+      const sData = window.MAIN_SKILLS_DATA[clean] || (Array.isArray(window.MAIN_SKILLS_DATA) ? window.MAIN_SKILLS_DATA.find(s => s && s.name === clean) : null);
+      if (sData) {
+        if (sData.levels && (sData.levels['8'] || sData.levels[8])) return 8;
+        if (sData.levels && (sData.levels['7'] || sData.levels[7])) return 7;
+        if (sData.maxLevel) return sData.maxLevel;
+      }
+    }
     return 6;
+  }
+
+  if (typeof window !== 'undefined' && !window.getMainSkillMaxLevel) {
+    window.getMainSkillMaxLevel = getMainSkillMaxLevel;
+  }
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports.getMainSkillMaxLevel = getMainSkillMaxLevel;
   }
 
   /* ─── 計算實際有效主技能等級 (結合進化次數基礎、副技能解鎖加成與自訂上限) ── */
@@ -174,7 +200,7 @@
     const savedLvl = parseInt(pkm.skillLevel || pkm.skill_level || (pkm.rawItem && pkm.rawItem.skillLevel), 10);
     let effective = (!isNaN(savedLvl) && savedLvl > 0) ? savedLvl : naturalLvl;
 
-    const maxLvl = base && base.main_skill ? getMainSkillMaxLevel(base.main_skill) : 8;
+    const maxLvl = getMainSkillMaxLevel(base ? base.main_skill : '');
     return Math.min(maxLvl, Math.max(1, effective));
   }
 

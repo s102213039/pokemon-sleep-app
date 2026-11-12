@@ -1,3 +1,20 @@
+  /* ─── 多語言輔助函式 (zh-TW / zh-CN / en-US) ───────────────────── */
+  function _tBox(zhTw, en) {
+    const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function')
+      ? window.I18N.getLanguage()
+      : 'zh-TW';
+    if (lang === 'en-US') {
+      return (en !== undefined) ? en : zhTw;
+    }
+    if (lang === 'zh-CN') {
+      if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function') {
+        return window.I18N.toSimplified(zhTw);
+      }
+      return zhTw;
+    }
+    return zhTw;
+  }
+
   function showBoxToast(title, message, type = 'success') {
     if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
       return window.showToast(title, message, type);
@@ -21,7 +38,7 @@
         <div class="box-toast-title">${escapeHtml(title)}</div>
         <div class="box-toast-msg">${escapeHtml(message)}</div>
       </div>
-      <button type="button" class="box-toast-close" onclick="this.parentElement && this.parentElement.remove()">✕</button>
+      <button type="button" class="box-toast-close" onclick="this.parentElement && this.parentElement.remove()">&times;</button>
     `;
 
     if (container && typeof container.appendChild === 'function') {
@@ -37,10 +54,176 @@
     return toast;
   }
 
+  /* ─── 非阻塞主題自訂確認彈窗 (Custom Themed Confirmation Modal) ─── */
+  function showBoxConfirmModal(message, options = {}) {
+    return new Promise((resolve) => {
+      if (typeof document === 'undefined') return resolve(true);
+      let modal = document.getElementById('box-custom-confirm-modal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'box-custom-confirm-modal';
+        modal.className = 'box-modal-backdrop modal-backdrop modal-overlay';
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:10060;';
+        document.body.appendChild(modal);
+      }
+      const title = options.title || _tBox('確認操作', 'Confirm Action');
+      const confirmText = options.confirmText || _tBox('確認', 'Confirm');
+      const cancelText = options.cancelText || _tBox('取消', 'Cancel');
+      const isDanger = options.type === 'danger';
+      modal.innerHTML = `
+        <div class="box-modal-dialog modal-content" style="max-width:380px;width:90%;border-radius:16px;padding:24px 20px;text-align:center;box-sizing:border-box;margin:auto;background:var(--bg-card-solid, #1e293b);border:1px solid var(--border-color, rgba(255,255,255,0.1));box-shadow:var(--shadow-lg, 0 10px 25px rgba(0,0,0,0.5));">
+          <div style="width:48px;height:48px;border-radius:50%;background:${isDanger ? 'rgba(239, 68, 68, 0.15)' : 'rgba(59, 130, 246, 0.15)'};border:1.5px solid ${isDanger ? 'rgba(239, 68, 68, 0.35)' : 'rgba(59, 130, 246, 0.35)'};display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:${isDanger ? '#ef4444' : '#3b82f6'};">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          </div>
+          <div style="font-size:16px;font-weight:700;color:var(--text-primary, #f8fafc);margin-bottom:8px;">${escapeHtml(title)}</div>
+          <p style="font-size:13px;color:var(--text-secondary, #94a3b8);line-height:1.6;margin:10px 0 20px;word-break:break-word;">${escapeHtml(message)}</p>
+          <div style="display:flex;gap:10px;justify-content:center;">
+            <button type="button" id="box-confirm-cancel-btn" style="flex:1;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;background:var(--bg-card, #0f172a);border:1px solid var(--border-color, rgba(255,255,255,0.15));color:var(--text-secondary, #94a3b8);cursor:pointer;">${escapeHtml(cancelText)}</button>
+            <button type="button" id="box-confirm-ok-btn" style="flex:1;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;background:${isDanger ? '#ef4444' : 'var(--primary-color, #3b82f6)'};border:none;color:#ffffff;cursor:pointer;">${escapeHtml(confirmText)}</button>
+          </div>
+        </div>
+      `;
+      modal.style.display = 'flex';
+      if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
+      function cleanup(result) {
+        modal.style.display = 'none';
+        modal.innerHTML = '';
+        if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+        resolve(result);
+      }
+      const okBtn = document.getElementById('box-confirm-ok-btn');
+      const cancelBtn = document.getElementById('box-confirm-cancel-btn');
+      if (okBtn) okBtn.onclick = (e) => { e.stopPropagation(); cleanup(true); };
+      if (cancelBtn) cancelBtn.onclick = (e) => { e.stopPropagation(); cleanup(false); };
+      modal.onclick = (e) => { if (e.target === modal) { e.stopPropagation(); cleanup(false); } };
+    });
+  }
+
+  /* ─── 刪除寶可夢操作 (非阻塞自訂確認彈窗) ────────────────────────── */
+  async function removeFromUserBox(boxId) {
+    const item = userBox.find(p => (p && (p.uid === boxId || p.id === boxId)));
+    if (!item) return false;
+    const pName = item.name || _tBox('寶可夢', 'Pokémon');
+    const confirmMsg = _tBox(`確定要從倉庫刪除「${pName}」嗎？`, `Are you sure you want to delete "${pName}" from your Box?`);
+    const confirmed = await showBoxConfirmModal(confirmMsg, {
+      title: _tBox('確認刪除', 'Confirm Deletion'),
+      confirmText: _tBox('刪除', 'Delete'),
+      type: 'danger'
+    });
+    if (!confirmed) return false;
+    const idx = userBox.indexOf(item);
+    if (idx !== -1) {
+      userBox.splice(idx, 1);
+      saveUserBox();
+      renderBox();
+      showBoxToast(_tBox('刪除成功', 'Deleted Successfully'), _tBox(`已刪除「${pName}」`, `"${pName}" has been removed from Box`), 'info');
+      return true;
+    }
+    return false;
+  }
+
+  /* ─── 統一去重與高階升級入庫函式 (Unified Upsert & Deduplication) ───── */
+  function upsertImportedPokemonToBox(incomingEntry, userBoxArray) {
+    const list = userBoxArray || userBox;
+    if (!incomingEntry || typeof incomingEntry !== 'object') return { status: 'skipped', entry: null };
+
+    const incomingLevel = Math.max(1, Math.min(100, parseInt(incomingEntry.level, 10) || 1));
+    const incomingSkillLevel = Math.max(1, Math.min(8, parseInt(incomingEntry.skillLevel || incomingEntry.mainSkillLevel || incomingEntry.main_skill_level, 10) || 1));
+
+    // 1. Check exact feature fingerprint via makePokemonFingerprint
+    const fpFn = (typeof makePokemonFingerprint === 'function') ? makePokemonFingerprint
+      : (typeof window !== 'undefined' && window.UserBox && typeof window.UserBox.makePokemonFingerprint === 'function' ? window.UserBox.makePokemonFingerprint : null);
+    const incomingFp = fpFn ? fpFn(incomingEntry) : '';
+    if (fpFn && incomingFp) {
+      const exactMatch = list.find(p => p && fpFn(p) === incomingFp);
+      if (exactMatch) {
+        const existLevel = Math.max(1, Math.min(100, parseInt(exactMatch.level, 10) || 1));
+        const existSkillLevel = Math.max(1, Math.min(8, parseInt(exactMatch.skillLevel || exactMatch.mainSkillLevel || exactMatch.main_skill_level, 10) || 1));
+        if (existLevel >= incomingLevel && existSkillLevel >= incomingSkillLevel) {
+          return { status: 'skipped', entry: exactMatch };
+        }
+      }
+    }
+
+    // 2. Check findSimilarPokemonInBox (same pkmId, same nature, compatible subskills / ingredients)
+    const similarFn = (typeof findSimilarPokemonInBox === 'function') ? findSimilarPokemonInBox
+      : (typeof window !== 'undefined' && window.UserBox && typeof window.UserBox.findSimilarPokemonInBox === 'function' ? window.UserBox.findSimilarPokemonInBox : null);
+    const similarExisting = similarFn ? similarFn(incomingEntry, list) : null;
+
+    if (similarExisting) {
+      const existLevel = Math.max(1, Math.min(100, parseInt(similarExisting.level, 10) || 1));
+      const existSkillLevel = Math.max(1, Math.min(8, parseInt(similarExisting.skillLevel || similarExisting.mainSkillLevel || similarExisting.main_skill_level, 10) || 1));
+
+      if (incomingLevel > existLevel || incomingSkillLevel > existSkillLevel) {
+        similarExisting.level = Math.max(existLevel, incomingLevel);
+        const upgradedSkillLvl = Math.max(existSkillLevel, incomingSkillLevel);
+        similarExisting.skillLevel = upgradedSkillLvl;
+        if ('mainSkillLevel' in similarExisting || 'main_skill_level' in similarExisting) {
+          similarExisting.mainSkillLevel = upgradedSkillLvl;
+          similarExisting.main_skill_level = upgradedSkillLvl;
+        }
+
+        const incomingSubs = Array.isArray(incomingEntry.subskills) ? incomingEntry.subskills : [];
+        const existingSubs = Array.isArray(similarExisting.subskills) ? similarExisting.subskills : [];
+        if (incomingSubs.filter(Boolean).length > existingSubs.filter(Boolean).length) {
+          similarExisting.subskills = incomingSubs.slice();
+        }
+
+        const incomingIng1 = incomingEntry.ing1 || (incomingEntry.ingredients && incomingEntry.ingredients[0]) || '';
+        const incomingIng2 = incomingEntry.ing2 || (incomingEntry.ingredients && incomingEntry.ingredients[1]) || '';
+        const incomingIng3 = incomingEntry.ing3 || (incomingEntry.ingredients && incomingEntry.ingredients[2]) || '';
+        const existIng1 = similarExisting.ing1 || (similarExisting.ingredients && similarExisting.ingredients[0]) || '';
+        const existIng2 = similarExisting.ing2 || (similarExisting.ingredients && similarExisting.ingredients[1]) || '';
+        const existIng3 = similarExisting.ing3 || (similarExisting.ingredients && similarExisting.ingredients[2]) || '';
+        const incomingIngCount = [incomingIng1, incomingIng2, incomingIng3].filter(Boolean).length;
+        const existIngCount = [existIng1, existIng2, existIng3].filter(Boolean).length;
+
+        if (incomingIngCount > existIngCount) {
+          if (incomingIng1) similarExisting.ing1 = incomingIng1;
+          if (incomingIng2) similarExisting.ing2 = incomingIng2;
+          if (incomingIng3) similarExisting.ing3 = incomingIng3;
+          if (Array.isArray(similarExisting.ingredients) || Array.isArray(incomingEntry.ingredients)) {
+            similarExisting.ingredients = [similarExisting.ing1, similarExisting.ing2, similarExisting.ing3].filter(Boolean);
+          }
+        }
+
+        const existNick = (similarExisting.nickname || '').trim();
+        const incomingNick = (incomingEntry.nickname || '').trim();
+        if (!existNick && incomingNick) similarExisting.nickname = incomingNick;
+
+        const incomingRibbon = parseInt(incomingEntry.ribbon, 10) || 0;
+        const existRibbon = parseInt(similarExisting.ribbon, 10) || 0;
+        similarExisting.ribbon = Math.max(existRibbon, incomingRibbon);
+
+        const isShiny = Boolean(similarExisting.isShiny || similarExisting.shiny || incomingEntry.isShiny || incomingEntry.shiny);
+        similarExisting.isShiny = isShiny;
+        if ('shiny' in similarExisting || 'shiny' in incomingEntry) similarExisting.shiny = isShiny;
+
+        similarExisting.updatedAt = new Date().toISOString();
+        return { status: 'upgraded', entry: similarExisting };
+      } else {
+        return { status: 'skipped', entry: similarExisting };
+      }
+    }
+
+    // 3. No match exists -> append incomingEntry to list
+    if (!incomingEntry.uid && !incomingEntry.id) {
+      incomingEntry.uid = 'pkm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+    } else if (!incomingEntry.uid && incomingEntry.id) {
+      incomingEntry.uid = incomingEntry.id;
+    }
+    if (!incomingEntry.addedAt && !incomingEntry.createdAt) {
+      incomingEntry.addedAt = new Date().toISOString();
+      incomingEntry.createdAt = Date.now();
+    }
+    list.push(incomingEntry);
+    return { status: 'added', entry: incomingEntry };
+  }
+
   /* ─── 備份匯出與匯入 ─────────────────────────────────────── */
   function exportBoxJSON() {
     if (userBox.length === 0) {
-      showBoxToast('匯出提醒', '倉庫內目前沒有任何寶可夢可匯出！', 'warning');
+      showBoxToast(_tBox('匯出提醒', 'Export Notice'), _tBox('倉庫內目前沒有任何寶可夢可匯出！', 'Your Box is currently empty, nothing to export!'), 'warning');
       return;
     }
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userBox, null, 2));
@@ -74,12 +257,16 @@
     }
 
     clean.level = Math.max(1, Math.min(100, parseInt(raw.level, 10) || 1));
-    clean.main_skill_level = Math.max(1, Math.min(7, parseInt(raw.main_skill_level, 10) || 1));
+    clean.main_skill_level = Math.max(1, Math.min(8, parseInt(raw.main_skill_level || raw.skillLevel || raw.mainSkillLevel, 10) || 1));
+    clean.skillLevel = clean.main_skill_level;
+    clean.mainSkillLevel = clean.main_skill_level;
     if (raw.pokemonId != null) clean.pokemonId = String(raw.pokemonId).slice(0, 20);
+    if (raw.pkmId != null) clean.pkmId = String(raw.pkmId).slice(0, 20);
 
     clean.nature = typeof raw.nature === 'string' ? raw.nature.trim().slice(0, 20) : '認真';
     clean.cleanseMint = Boolean(raw.cleanseMint);
     clean.ribbon = Math.max(0, Math.min(4, parseInt(raw.ribbon, 10) || 0));
+    clean.isShiny = Boolean(raw.isShiny || raw.shiny);
 
     if (Array.isArray(raw.subskills)) {
       clean.subskills = raw.subskills
@@ -98,6 +285,9 @@
     } else {
       clean.ingredients = [];
     }
+    clean.ing1 = raw.ing1 || clean.ingredients[0] || '';
+    clean.ing2 = raw.ing2 || clean.ingredients[1] || '';
+    clean.ing3 = raw.ing3 || clean.ingredients[2] || '';
 
     if (typeof raw.specialty === 'string') clean.specialty = raw.specialty.slice(0, 20);
     if (typeof raw.type === 'string') clean.type = raw.type.slice(0, 20);
@@ -109,36 +299,54 @@
   function importBoxJSON(file) {
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const imported = JSON.parse(e.target.result);
         if (Array.isArray(imported)) {
           if (imported.length > MAX_IMPORT_COUNT) {
-            showBoxToast('匯入超限', `單次匯入不可超過 ${MAX_IMPORT_COUNT} 隻寶可夢！`, 'warning');
+            showBoxToast(_tBox('匯入超限', 'Import Limit Exceeded'), _tBox(`單次匯入不可超過 ${MAX_IMPORT_COUNT} 隻寶可夢！`, `Cannot import more than ${MAX_IMPORT_COUNT} Pokémon at once!`), 'warning');
             return;
           }
           const validItems = imported.map(sanitizeImportedPokemon).filter(Boolean);
           if (validItems.length === 0) {
-            showBoxToast('匯入失敗', '無有效的寶可夢資料可匯入！', 'warning');
+            showBoxToast(_tBox('匯入失敗', 'Import Failed'), _tBox('無有效的寶可夢資料可匯入！', 'No valid Pokémon data to import!'), 'warning');
             return;
           }
-          if (confirm(`確定要匯入 ${validItems.length} 隻寶可夢嗎？（將合併至現有倉庫）`)) {
-            const existingUids = new Set(userBox.map(p => p.uid));
-            validItems.forEach(item => {
-              if (!item.uid || existingUids.has(item.uid)) {
-                item.uid = 'pkm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-              }
-              userBox.push(item);
-            });
-            saveUserBox();
-            renderBox();
-            showBoxToast('匯入成功', `成功匯入 ${validItems.length} 隻寶可夢！`, 'success');
-          }
+
+          const confirmMsg = _tBox(
+            `確定要匯入 ${validItems.length} 隻寶可夢嗎？（將合併至現有倉庫）`,
+            `Import ${validItems.length} Pokémon? (They will be merged into your Box)`
+          );
+          const confirmed = await showBoxConfirmModal(confirmMsg, {
+            title: _tBox('確認匯入', 'Confirm Import'),
+            confirmText: _tBox('確認匯入', 'Confirm Import')
+          });
+          if (!confirmed) return;
+
+          let addedCount = 0;
+          let upgradedCount = 0;
+          let skippedCount = 0;
+
+          validItems.forEach(item => {
+            const res = upsertImportedPokemonToBox(item, userBox);
+            if (res.status === 'added') addedCount++;
+            else if (res.status === 'upgraded') upgradedCount++;
+            else if (res.status === 'skipped') skippedCount++;
+          });
+
+          saveUserBox();
+          renderBox();
+
+          const summaryMsg = _tBox(
+            `匯入完成！新增 ${addedCount} 隻，升級更新 ${upgradedCount} 隻，略過重複 ${skippedCount} 隻。`,
+            `Import complete! ${addedCount} added, ${upgradedCount} upgraded, ${skippedCount} duplicates skipped.`
+          );
+          showBoxToast(_tBox('匯入成功', 'Import Successful'), summaryMsg, 'success');
         } else {
-          showBoxToast('匯入失敗', '匯入檔案格式錯誤，請確認為正確的 JSON 備份檔！', 'warning');
+          showBoxToast(_tBox('匯入失敗', 'Import Failed'), _tBox('匯入檔案格式錯誤，請確認為正確的 JSON 備份檔！', 'Invalid import file format. Please ensure it is a valid JSON backup file!'), 'warning');
         }
       } catch (err) {
-        showBoxToast('解析失敗', '解析 JSON 備份檔案失敗：' + err.message, 'error');
+        showBoxToast(_tBox('解析失敗', 'Parse Failed'), _tBox('解析 JSON 備份檔案失敗：', 'Failed to parse JSON backup file: ') + err.message, 'error');
       }
     };
     reader.readAsText(file);
@@ -244,10 +452,9 @@
         const isCollapsed = guideBody.style.display === 'none';
         guideBody.style.display = isCollapsed ? 'flex' : 'none';
         guideToggleBtn.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
-        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
         guideToggleBtn.textContent = isCollapsed 
-          ? (isEN ? 'Collapse' : '收合說明') 
-          : (isEN ? 'Expand Guide' : '展開說明');
+          ? _tBox('收合說明', 'Collapse') 
+          : _tBox('展開說明', 'Expand Guide');
       });
     }
 
@@ -446,7 +653,7 @@
         if (window.AppraisalLab && typeof window.AppraisalLab.updateBoxItems === 'function') {
           window.AppraisalLab.updateBoxItems();
         }
-        showBoxToast('雲端同步成功', '已從其他裝置即時同步最新寶可夢倉庫資料！', 'success');
+        showBoxToast(_tBox('雲端同步成功', 'Cloud Sync Successful'), _tBox('已從其他裝置即時同步最新寶可夢倉庫資料！', 'Latest Pokémon Box data synchronized from other devices!'), 'success');
       });
 
       window.CloudSync.onAuthStateChange(() => {
@@ -664,6 +871,11 @@
     NATURE_DATA.forEach(n => { NATURE_DICT[n.name] = n; });
 
     window.PokemonBoxApp = {
+      _tBox,
+      showBoxConfirmModal,
+      removeFromUserBox,
+      upsertImportedPokemonToBox,
+      makePokemonFingerprint: (typeof makePokemonFingerprint === 'function') ? makePokemonFingerprint : (typeof window !== 'undefined' && window.makePokemonFingerprint ? window.makePokemonFingerprint : null),
       getUserBox: () => userBox,
       setUserBox: (box, skipCloudPush = false) => { userBox = box; saveUserBox(skipCloudPush); renderBox(); },
       renderBox: renderBox,
@@ -685,98 +897,6 @@
       initPokemonCombobox,
       openBoxEditModal,
       closeBoxEditModal,
-      setAllPokemons: (p) => { allPokemonsRef = p || []; },
-      buildOcrCompositeCanvas,
-      parsePokemonFromOcr,
-      parsePokemonScreenshotWithWorker,
-      NATURE_DATA,
-      NATURE_DICT,
-      SUBSKILLS_DATA,
-      getFilteredBox,
-      initBoxFilters,
-      toggleBoxSidebar,
-      resetBoxFilters,
-      getBoxFilterState,
-      setBoxFilterState,
-      findSimilarPokemonInBox,
-      comparePokemonDetails,
-      openPokemonConflictModal,
-      closePokemonConflictModal,
-      executePokemonOverwrite,
-      getSortBy: () => sortBy,
-      setSortBy: (s) => { sortBy = s; renderBox(); },
-      toggleColumnSort: (col) => { sortBy = nextBoxSort(sortBy, col); renderBox(); return sortBy; },
-      parseBoxSort,
-      nextBoxSort,
-      BOX_SORT_DEFAULT_DIR
-    };
-    window.UserBox = window.PokemonBoxApp;
-  }
-
-  if (typeof module !== 'undefined' && module.exports) {
-    const NATURE_DICT = {};
-    NATURE_DATA.forEach(n => { NATURE_DICT[n.name] = n; });
-    module.exports = {
-      PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : {
-        getUserBox: () => userBox,
-        setUserBox: (box, skipCloudPush = false) => { userBox = box; saveUserBox(skipCloudPush); renderBox(); },
-        renderBox: renderBox,
-        syncBoxVisibility,
-        setBoxUserForcedGuideVisible: (v) => { boxUserForcedGuideVisible = v; },
-        renderBoxGrid,
-        renderBoxCardIngSlot,
-        getIngCountFromBase,
-        calculatePokemonPR,
-        getMainSkillMaxLevel,
-        getEffectiveSkillLevel,
-        getPokemonEvolutionStage,
-        getSubskillLevelBonus,
-        updateRibbonSelectOptions,
-        updateModalMainSkill,
-        deduceRibbonFromCarry,
-        initPokemonCombobox,
-        setAllPokemons: (p) => { allPokemonsRef = p || []; },
-        buildOcrCompositeCanvas,
-        parsePokemonFromOcr,
-        parsePokemonScreenshotWithWorker,
-        NATURE_DATA,
-        NATURE_DICT,
-        SUBSKILLS_DATA,
-        getFilteredBox,
-        initBoxFilters,
-        toggleBoxSidebar,
-        resetBoxFilters,
-        getBoxFilterState,
-        setBoxFilterState,
-        findSimilarPokemonInBox,
-        comparePokemonDetails,
-        openPokemonConflictModal,
-        closePokemonConflictModal,
-        executePokemonOverwrite,
-        getSortBy: () => sortBy,
-        setSortBy: (s) => { sortBy = s; renderBox(); },
-        toggleColumnSort: (col) => { sortBy = nextBoxSort(sortBy, col); renderBox(); return sortBy; },
-        parseBoxSort,
-        nextBoxSort,
-        BOX_SORT_DEFAULT_DIR
-      },
-      getUserBox: () => userBox,
-      setUserBox: (box) => { userBox = Array.isArray(box) ? box : []; },
-      renderBox: renderBox,
-      syncBoxVisibility,
-      setBoxUserForcedGuideVisible: (v) => { boxUserForcedGuideVisible = v; },
-      renderBoxGrid,
-      renderBoxCardIngSlot,
-      getIngCountFromBase,
-      calculatePokemonPR,
-      getMainSkillMaxLevel,
-      getEffectiveSkillLevel,
-      getPokemonEvolutionStage,
-      getSubskillLevelBonus,
-      updateRibbonSelectOptions,
-      updateModalMainSkill,
-      deduceRibbonFromCarry,
-      initPokemonCombobox,
       setAllPokemons: (p) => { allPokemonsRef = p || []; },
       buildOcrCompositeCanvas,
       parsePokemonFromOcr,
@@ -803,6 +923,69 @@
       parseBoxSort,
       nextBoxSort,
       BOX_SORT_DEFAULT_DIR
+    };
+    window.UserBox = window.PokemonBoxApp;
+    window._tBox = _tBox;
+    window.showBoxConfirmModal = showBoxConfirmModal;
+    window.removeFromUserBox = removeFromUserBox;
+    window.upsertImportedPokemonToBox = upsertImportedPokemonToBox;
+    window.getMainSkillMaxLevel = getMainSkillMaxLevel;
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    const sharedExports = (typeof window !== 'undefined' && window.PokemonBoxApp) ? window.PokemonBoxApp : {
+      _tBox,
+      showBoxConfirmModal,
+      removeFromUserBox,
+      upsertImportedPokemonToBox,
+      makePokemonFingerprint: (typeof makePokemonFingerprint === 'function') ? makePokemonFingerprint : null,
+      getUserBox: () => userBox,
+      setUserBox: (box) => { userBox = Array.isArray(box) ? box : []; },
+      renderBox: renderBox,
+      syncBoxVisibility,
+      setBoxUserForcedGuideVisible: (v) => { boxUserForcedGuideVisible = v; },
+      renderBoxGrid,
+      renderBoxCardIngSlot,
+      getIngCountFromBase,
+      calculatePokemonPR,
+      getMainSkillMaxLevel,
+      getEffectiveSkillLevel,
+      getPokemonEvolutionStage,
+      getSubskillLevelBonus,
+      updateRibbonSelectOptions,
+      updateModalMainSkill,
+      deduceRibbonFromCarry,
+      initPokemonCombobox,
+      setAllPokemons: (p) => { allPokemonsRef = p || []; },
+      buildOcrCompositeCanvas,
+      parsePokemonFromOcr,
+      parsePokemonScreenshotWithWorker,
+      ensureTesseractLoaded,
+      TESSERACT_CDN_URL,
+      NATURE_DATA,
+      NATURE_DICT: (function() { const d = {}; NATURE_DATA.forEach(n => { d[n.name] = n; }); return d; })(),
+      SUBSKILLS_DATA,
+      getFilteredBox,
+      initBoxFilters,
+      toggleBoxSidebar,
+      resetBoxFilters,
+      getBoxFilterState,
+      setBoxFilterState,
+      findSimilarPokemonInBox,
+      comparePokemonDetails,
+      openPokemonConflictModal,
+      closePokemonConflictModal,
+      executePokemonOverwrite,
+      getSortBy: () => sortBy,
+      setSortBy: (s) => { sortBy = s; if (typeof renderBox === 'function') renderBox(); },
+      toggleColumnSort: (col) => { sortBy = nextBoxSort(sortBy, col); if (typeof renderBox === 'function') renderBox(); return sortBy; },
+      parseBoxSort,
+      nextBoxSort,
+      BOX_SORT_DEFAULT_DIR
+    };
+    module.exports = {
+      PokemonBoxApp: sharedExports,
+      ...sharedExports
     };
   }
 })();

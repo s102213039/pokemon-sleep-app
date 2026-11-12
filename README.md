@@ -3,8 +3,8 @@
 <div align="center">
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue?style=for-the-badge&logo=github)](https://s102213039.github.io/pokemon-sleep-app/)
-[![Tests](https://img.shields.io/badge/Tests-279%2F279%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
-[![Bilingual](https://img.shields.io/badge/Language-繁體中文%20%7C%20English-orange?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
+[![Tests](https://img.shields.io/badge/Tests-284%2F284%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
+[![Bilingual](https://img.shields.io/badge/Language-繁體中文%20%7C%20简体中文%20%7C%20English-orange?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
 [![Themes](https://img.shields.io/badge/Themes-4%20Themes%20(Dark%2FLight)-purple?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
@@ -60,18 +60,20 @@
   - 支援六大通用簡化配方形態（XXC, AAX, ABX, ABA, ABB, AAA），簡明易懂。
   - 多維度天梯排序軌道：預設能量升序、能量降序、日產量降序、核心食譜需求量降序。
   - 支援副技能（食材M、幫速M）與性格（食材▲、幫速▲）多重即時試算。
+- **主技能天梯榜 (`skills_ladder`)**：
+  - 9 大純文字主技能分類軌道（動態 min/max 刻度最大化橫向空間），支援 38px 寶可夢頭像與並行錯落排布。
+  - **複合主技能雙軌同步高亮**：懸停複合型主技能寶可夢（如正電/負電拍拍、夢妖魔、克雷色利亞、謎擬Q、路卡利歐等）時跨軌道雙向聯動發光標示。
+  - **點擊軌道名稱開啟排行榜**：與食材天梯一致的密集排名浮窗，支援三語 `title`/`alt` 懸停辨識與「僅顯示最終進化」Switch 開關、副技能及性格補正試算。
 - **樹果與食材基礎能量庫**：樹果能量等級滑桿（Lv.1~70）、島嶼加成（0~85%）、順果 2x 試算與 19 種食材基礎分。
 
 ---
 
 ### 4. 寶可夢倉庫與智慧 OCR 辨識 (User Box & Smart OCR)
 
-> [!IMPORTANT]
-> **開發中階段說明 (In-Progress Notice)**：
-> 寶可夢倉庫（User Box）模組目前**尚未進行全面測試與 Debug 調試**。本機端與線上版保留現有之基本介面與儲存邏輯，部分進階操作、極限邊界或跨裝置匯入/匯出在後續版本中將會安排專項 Debug 與穩定性強化。
-
-- **Tesseract.js OCR 截圖辨識**：支援單張與批次上傳/拖曳遊戲截圖，自動辨識寶可夢物種、性格、等級與副技能。
-- **智慧防重複入庫**：以「物種 + 性格 + 5副技能」生成專屬指紋雜湊，自動剔除重複辨識項目。
+- **Tesseract.js OCR 截圖辨識**：支援單張與批次上傳/拖曳遊戲截圖，自動辨識寶可夢物種、性格、等級與副技能；批次辨識完成後自動統計匯入/升級/略過筆數與失敗檔名清單。
+- **統一特徵指紋防重複與自動升級 (`upsertImportedPokemonToBox`)**：
+  - 統一套用於 JSON 匯入與批次 OCR 入庫：完全一致指紋自動略過；同個體若帶來更高寶可夢等級或主技能等級則原地升級更新，同時保留自訂暱稱、獎章與異色狀態。
+- **非阻塞式確認視窗與三語支援**：全面消除原生 `alert()` / `confirm()` 阻塞彈窗，改為非阻塞主題確認視窗與 Toast，完整支援繁中 / 簡中 / 英文三語切換與 39 種主技能等級上限校正。
 - **手動編輯與備份**：支援自訂暱稱、等級調整 (Lv.1~Lv.80)、食材組合配置與 JSON 備份匯出入。
 
 ---
@@ -161,24 +163,27 @@ graph TD
 
 ## 本地開發與自動化測試 (Testing)
 
-本專案內建一套獨立的 **279 項全自動化測試套件**，涵蓋資料庫完整性、公式精確度、OCR 多錨點辨識、i18n 雙語翻譯、雙端路徑跳轉、評測演算法、樹果遽增 BFS 協同、生產環境資料壓縮、原生 IndexedDB 快取驗證、食譜健康防禦、下拉刷新狀態機與各島嶼營地。詳細測試架構與反饋原則請參考 [docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md)。
+本專案內建一套獨立的 **284 項全自動化測試套件**與多組專項測試，涵蓋資料庫完整性、公式精確度、OCR 多錨點辨識與去重升級、主技能天梯、i18n 三語翻譯、雙端路徑跳轉、評測演算法、樹果遽增 BFS 協同、生產環境資料壓縮、原生 IndexedDB 快取驗證、食譜健康防禦、下拉刷新狀態機與各島嶼營地。詳細測試架構與反饋原則請參考 [docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md)。
 
 ### 常用命令 (Commands)
 ```bash
 # 確保已安裝 Node.js (v18+)
 
-# 1. 日常開發推薦：極速執行 Tier 1~3 (156 項，僅 < 0.4 秒)
+# 1. 日常開發推薦：極速執行 Tier 1~3 (161 項，僅 < 0.4 秒)
 npm run test:fast
 
-# 2. 完整回歸驗證：全量 279 項測試 (約 2.2 秒)
+# 2. 完整回歸驗證：全量 284 項測試 (約 2.2 秒)
 npm test
 
-# 3. 專項手勢與食譜健康度壓力測試
-node tests/adversarial_ptr_stress.js    # 19 項 PTR 對抗手勢測試
-node tests/stress_ptr_concurrency.js     # 10 項 PTR 並行與跨模組中斷測試
-node tests/stress_ptr_gestures.js        # 7 項 PTR 基礎手勢合成測試
-node tests/stress_recipe_health.js       # 57 項食譜健康度與原型污染測試
-node tests/stress_i18n_consumer.js       # 19 項 i18n 跨語系簽名測試
+# 3. 專項領域、手勢與健康度測試
+node tests/test_wiki_skill_ladder.js          # 783 項主技能天梯測試
+node tests/test_cross_module_consistency.js   # 跨模組資料與規則一致性測試
+node tests/test_box_import_dedup.js           # 倉庫去重升級與非阻塞視窗測試
+node tests/adversarial_ptr_stress.js          # 19 項 PTR 對抗手勢測試
+node tests/stress_ptr_concurrency.js          # 10 項 PTR 並行與跨模組中斷測試
+node tests/stress_ptr_gestures.js             # 7 項 PTR 基礎手勢合成測試
+node tests/stress_recipe_health.js            # 57 項食譜健康度與原型污染測試
+node tests/stress_i18n_consumer.js            # 19 項 i18n 跨語系簽名測試
 
 # 4. 指定單一或組合 Tier
 npm run test:tier1    # Tier 1 基礎覆蓋
@@ -194,7 +199,7 @@ npm run data:minify   # 壓回生產極致壓縮格式並自動更新 manifest.j
 ```
 
 ### 測試覆蓋階層
-- **Tier 1 - Feature Coverage (68 項)**：資料集結構、公式計算、食譜加成、主技能矩陣、主題色系、H5 入口完整性、回到頂部按鈕結構。
+- **Tier 1 - Feature Coverage (73 項)**：資料集結構、公式計算、食譜加成、主技能矩陣、主題色系、H5 入口完整性、回到頂部按鈕結構。
 - **Tier 2 - Boundary Cases (70 項)**：空搜尋、大小寫不敏感、多選交集、等級邊界 (Lv.1~80)、鍋子容量上下限、副技能防重複選擇、進化等級防禦、19 項 PTR 嚴苛手勢與死區邊界、12 項食譜健康邊界。
 - **Tier 3 - Cross-Feature (18 項)**：多維度複合篩選、主題語言聯動切換、Dock 導航持久化、睡飽飽獎章抵扣結算、10 項 PTR 跨模組導航切換與並行中斷。
 - **Tier 4 - Real-World Scenarios (123 項)**：雙端真實工作流、OCR 全量解析校準（102x 提速）、嚴格評測雙軌定級、樹果遽增 BFS 爆發、傳說神獸團隊協同、目標料理導向組隊、生產資料壓縮、原生 IndexedDB 0ms 秒開與琥褐溪谷營地驗證。

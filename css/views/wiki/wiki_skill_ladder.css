@@ -197,6 +197,24 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
   z-index: 10000 !important;
 }
 
+/* Dual-track Compound Main Skill Group Hover Highlight */
+.wiki-skill-coordinate-ladder .ladder-node.group-hover-active {
+  z-index: 35 !important;
+  transform: translate(-50%, -50%) scale(1.18);
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.75));
+}
+
+.wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-wrapper,
+.wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-wrap {
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.9), 0 0 4px rgba(250, 204, 21, 0.8);
+}
+
+.wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-img {
+  border: 2px solid #38bdf8 !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8) !important;
+}
+
 /* Refined Count Badge for 38px Avatar */
 .wiki-skill-coordinate-ladder .node-count-badge {
   font-size: 9.5px;

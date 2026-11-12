@@ -145,24 +145,34 @@
   - 支援睡眠經驗值獎勵副技能數量與成長性格增減。
 - **嚴禁退化行為**：不得遺漏 1.5x 與 1.8x 經驗值倍率計算。
 
+### 4.6 主技能發動次數天梯 (`skills_ladder`) 與分類設計約束
+- **[v] 良品狀態 (Verified Working)**：
+  - **9 大純文字分類軌道與動態 min/max 刻度**：標題移除外框與種數標籤（`.skill-track-count-tag` 隱藏），採雙語/簡繁三語（`zh-TW` / `zh-CN` / `en-US`）顯示，刻度取當前可見寶可夢的最小與最大 12h 發動次數為端點。
+  - **複合主技能雙軌同步高亮**：節點掛載 `data-pkm-group="pkm-{id}"`，於 `.wiki-skill-coordinate-ladder` 委派 `handleLadderGroupHover` / `handleLadderGroupHoverOut`，懸停複合主技能寶可夢時跨越雙軌道同步高亮（`.group-hover-active`）。
+  - **排行榜浮窗交互規範**：`.clickable-skill-header` 支援點擊與 `Enter` / `Space` 鍵盤觸發；浮窗精簡呈現（隱藏寶可夢文字姓名與頂部篩選列），僅於 `.skill-rank-card` 與 `.rank-pkm-avatar` 提供三語 `title` / `alt` 懸停辨識，嚴格不跳轉離開頁面。
+  - **最終進化與行動端 H5 整合**：`isPokemonSkillLadderFinalEvo` 統一委託 `window.isFinalEvolution`（保留 `#429` 夢妖魔邊界與 `POKEMON_SKILLS_BASELINE_DATA` 回退）；手機版 `#skill-ladder-filter-sidebar` 支援右滑關閉，`#skill-ladder-sidebar-bookmark-handle` 納入回到頂部按鈕避讓（`has-filter-fab`）與子分頁顯隱聯動。
+  - **架構設計約束（複合/特殊主技能不獨立拆分分類）**：為維持百科 `MAIN_SKILLS_DATA` 與圖鑑篩選器之可讀性並避免分類膨脹，複合型或專屬特殊主技能（如夢幻「十項全能」、超幸運用「超幸運」、大鉗蟹/巨鉗蟹預留「怪力鉗」等）刻意不拆分為獨立篩選類別，而是於圖鑑文字與天梯雙軌映射中整合展現。
+- **嚴禁退化行為**：不得為複合/特殊主技能額外新增瑣碎獨立篩選分類，不得恢復軌道外框或移除 `data-pkm-group` 跨軌聯動。
+
 ---
 
 ## 五、 模組四：寶可夢倉庫與智能截圖辨識 (Pokemon Box & OCR)
 
-### 5.1 本地與雲端雙重儲存
+### 5.1 本地、雲端雙重儲存與非阻塞去重升級
 - **[v] 良品狀態 (Verified Working)**：
-  - 支援未登入本機訪客模式（LocalStorage `pksleep_user_box`）。
-  - 支援 Supabase 雲端登入同步，具備 **5 分鐘防抖冷卻與自推回聲阻斷**，徹底根除每次切換分頁跳出「雲端資料已同步」Toast 的問題。
-  - 支援 JSON 備份完整匯出與安全匯入合併。
-- **嚴禁退化行為**：不得在訪客模式下強制阻擋使用者操作，不得移除雲端同步冷卻機制。
+  - 支援未登入本機訪客模式（LocalStorage `pksleep_user_box`）與 Supabase 雲端登入同步（5 分鐘防抖冷卻與自推回聲阻斷）。
+  - **零原生阻塞彈窗 (Zero Blocking Dialogs)**：`js/modules/box/*.js` 嚴禁任何 `alert()`、`confirm()`、`prompt()` 呼叫，全面替換為非阻塞 Promise 主題確認浮窗（`showBoxConfirmModal`）與 Toast（`showBoxToast`）。
+  - **JSON 匯入與批次 OCR 統一去重升級 (`upsertImportedPokemonToBox`)**：完全一致特徵指紋自動略過；同個體但帶來更高 `level` 或更高 `skillLevel` 時，自動原地升級數值並保留原有自訂 `nickname`、睡飽飽獎章（`ribbon`）與異色標記；非衝突個體直接新增。
+  - **跨模組一致主技能等級上限 (`getMainSkillMaxLevel`)**：統一涵蓋全 39 種主技能（包含「技能複製」、「十項全能」等 Lv.7 及高階 Lv.8 技能）；隊長皮卡丘同時支援 `#9007` 與向後相容別名 `#9003`；未實裝空資料寶可夢（`#546` 木棉球、`#547` 風妖精）具完整空值防護。
+  - **全系統三語支援 (`_tBox`)**：所有匯出入、去重升級、批次 OCR 進度、錯誤與成功提示完整支援 `zh-TW` / `zh-CN` / `en-US`。
+- **嚴禁退化行為**：不得加回原生 `alert()` / `confirm()`，不得覆蓋玩家已設定的自訂暱稱與獎章，不得移除 `#9003` 別名相容性。
 
-### 5.2 Tesseract.js 按需延遲載入 OCR
+### 5.2 Tesseract.js 按需延遲載入 OCR 與批次失敗檔名回報
 - **[v] 良品狀態 (Verified Working)**：
-  - 採用按需延遲載入（`ensureTesseractLoaded`）：使用者進入首頁時完全不載入 heavy 的 `tesseract.min.js`，僅在實際點擊「截圖辨識」時才非同步引入。
-  - 支援單張或多張批次拖曳辨識，具備即時掃描進度指示條與非同步分析隊列。
-  - 智慧覆蓋比對：若辨識出與現有寶可夢高度吻合之記錄，主動彈窗詢問「覆蓋現有」或「另存新檔」。
-  - 支援金色主技能種子等級校正。
-- **嚴禁退化行為**：不得將 `tesseract.min.js` 加回 `index.html` 首屏靜態載入（會浪費 2MB+ 首屏頻寬）。
+  - 採用按需延遲載入（`ensureTesseractLoaded`），進入首頁時完全不載入 `tesseract.min.js`，僅在點擊「截圖辨識」時非同步引入。
+  - 支援單張與多張批次拖曳辨識，套用統一 `upsertImportedPokemonToBox` 去重升級，並在完成摘要 Toast 中精確回報：新增數量、升級數量、略過重複數量，以及辨識失敗之圖片檔名清單。
+  - 智慧覆蓋比對與金色主技能種子等級校正。
+- **嚴禁退化行為**：不得將 `tesseract.min.js` 加回 `index.html` 首屏靜態載入，不得遺漏批次辨識失敗檔名回報。
 
 ### 5.3 清心薄荷 (Cleanse Mint) 中性化功能
 - **[v] 良品狀態 (Verified Working)**：
@@ -390,6 +400,7 @@
 | **9** | **Tesseract.js OCR 首屏強制預載** | 首屏直接加載 2MB+ `tesseract.min.js`，拖慢首次載入時間。 | 改為按需延遲載入（`ensureTesseractLoaded`），首屏完全不下載。 | **嚴禁**在 `index.html` 首屏直接寫入 `<script src="...tesseract.min.js">`。 |
 | **10** | **全域表情符號 (Emoji) 混入** | UI 介面、圖標、按鈕或說明文字中使用 Emoji 充當裝飾。 | 嚴格遵守零 Emoji 規範 (Zero Emoji Policy)，採用乾淨向量圖或純文字標籤。 | **嚴禁**在任何 UI、註解或回應中插入 Emoji。 |
 | **11** | **測試執行超時與 OCR 無快取窮舉** | 每次提需求測試跑 5-10 分鐘，Tier 4 萬次 OCR 解析對 247 隻重複清洗字串與窮舉子字串，單項測試耗時 >8.2 秒。 | 1. `box_ocr_parse.js` 預清洗快取 + 完全相符快速通道（Exact Match Fast-Path），提速 102x，Test 194 降至 1.2s，全套降至 2.1s。<br>2. 提供 `npm run test:fast`（0.25s 執行 Tier 1~3）。<br>3. 支援 `-g` 關鍵字過濾。 | **嚴禁**在未快取情況下對全寶可夢執行窮舉搜尋；**嚴禁**寫死調用路徑；日常開發**優先使用 `npm run test:fast`**。 |
+| **12** | **倉庫阻塞原生彈窗與匯入/OCR 升級衝突** | 刪除/OCR 錯誤使用原生 `alert`/`confirm` 阻斷執行緒，且 JSON 匯入與批次 OCR 去重規則不一致，重複或升級個體未保留暱稱與獎章。 | 1. 全倉庫零原生 `alert`/`confirm`/`prompt`，改用 `showBoxConfirmModal` 與 `showBoxToast`。<br>2. 統一 `upsertImportedPokemonToBox` 處理指紋略過與高訓練度原地升級（保留自訂暱稱、獎章與異色）並報告批次失敗檔名。 | **嚴禁**在模組內使用原生阻塞彈窗；**嚴禁**匯入升級時遺失自訂暱稱與獎章。 |
 
 ---
 

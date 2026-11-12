@@ -1980,64 +1980,64 @@
   }
 
   /* ─── 取得主技能的最大等級上限 (6 / 7 / 8) ─────────────────── */
-  function getMainSkillMaxLevel(name) {
-    if (!name) return 7;
-    const clean = String(name).trim();
+  function getMainSkillMaxLevel(mainSkillName) {
+    if (!mainSkillName || typeof mainSkillName !== 'string') return 6;
+    const clean = mainSkillName.trim();
 
-    // 1. 夢之碎片系列（夢之碎片獲取S、波導彈）：官方上限 Lv. 8
+    // 1. 從 window.MAIN_SKILLS_DATA 動態比對
+    if (typeof window !== 'undefined' && window.MAIN_SKILLS_DATA && window.MAIN_SKILLS_DATA[clean] && window.MAIN_SKILLS_DATA[clean].levels) {
+      if (window.MAIN_SKILLS_DATA[clean].levels['8']) return 8;
+      return window.MAIN_SKILLS_DATA[clean].levels['7'] ? 7 : 6;
+    }
+
+    // 2. 夢之碎片系列（夢之碎片獲取S、波導彈）：官方上限 Lv. 8
     if (clean.includes('夢之碎片') || clean.includes('波導彈') || clean.includes('Dream Shard') || clean.includes('Aura Sphere')) {
       return 8;
     }
 
-    // 2. 能量填充 / 蓄力 / 夢魘 系列：官方上限 Lv. 7
-    if (clean.includes('能量填充') || clean.includes('Charge Strength') || clean.includes('蓄力') || clean.includes('夢魘')) {
-      return 7;
+    // 3. Fallback string check for Lv.7 skills:
+    const LV7_SKILLS = [
+      '能量填充S', '能量填充M', '能量填充', 'Charge Strength S', 'Charge Strength M', 'Charge Strength',
+      '食材獲取S', '食材獲取', 'Ingredient Magnet S', '食材精選', '怪力鉗', '怪力钳', '超幸運', '正電', '禮物',
+      '幫手支援S', '幫手支援', 'Extra Helpful S', 'Helper Support',
+      '料理強化S', '料理強化', 'Cooking Power-Up S', 'Cooking Power', '料理輔助', '健美', 'Bulk Up', '負電', '魔法火焰', 'Mystical Fire', '料理躍進',
+      '蓄力', '夢魘',
+      '揮指', 'Metronome',
+      '技能複製', 'Skill Copy',
+      '十項全能', 'All-Rounder',
+      '變身', '模仿', 'Transform', 'Mimic'
+    ];
+    for (let i = 0; i < LV7_SKILLS.length; i++) {
+      if (clean.includes(LV7_SKILLS[i])) return 7;
     }
 
-    // 3. 食材系列（獲取、精選、怪力鉗、超幸運、正電、禮物）：官方上限 Lv. 7
-    if (clean.includes('食材獲取') || clean.includes('食材精選') || clean.includes('Ingredient') || clean.includes('怪力鉗') || clean.includes('怪力钳') || clean.includes('超幸運') || clean.includes('正電') || clean.includes('禮物')) {
-      return 7;
-    }
-
-    // 4. 料理鍋系列：料理強化 / 負電 / 魔法火焰 為 Lv. 7，料理成功為 Lv. 6
-    if (clean.includes('料理強化') || clean.includes('Cooking Power') || clean.includes('負電') || clean.includes('魔法火焰') || clean.includes('Mystical Fire') || clean.includes('料理躍進')) {
-      return 7;
-    }
-    if (clean.includes('料理成功') || clean.includes('Extra Tasty')) {
+    // 4. Lv. 6 系列 (料理成功, 幫手加速, 樹果遽增, 活力恢復等)
+    if (clean.includes('料理成功') || clean.includes('Extra Tasty') ||
+        clean.includes('幫手加速') || clean.includes('Helper Boost') ||
+        clean.includes('樹果遽增') || clean.includes('Berry Burst') ||
+        clean.includes('畫皮') || clean.includes('流星群') || clean.includes('精神擊破') ||
+        clean.includes('樹果領域') || clean.includes('Psystrike') ||
+        clean.includes('活力') || clean.includes('療癒') || clean.includes('充填') ||
+        clean.includes('月光') || clean.includes('新月祈禱') || clean.includes('蹭蹭臉頰') ||
+        clean.includes('治癒波動') || clean.includes('樹果汁') ||
+        clean.includes('Energizing Cheer') || clean.includes('Energy for Everyone') || clean.includes('Charge Energy')) {
       return 6;
     }
 
-    // 5. 幫手系列：幫手支援為 Lv. 7，幫手加速（屬性）為 Lv. 6
-    if (clean.includes('幫手支援') || clean.includes('Helper Support')) {
-      return 7;
-    }
-    if (clean.includes('幫手加速') || clean.includes('Helper Boost')) {
-      return 6;
-    }
-
-    // 6. 樹果遽增系列 / 領域系列：官方上限 Lv. 6
-    if (clean.includes('樹果遽增') || clean.includes('Berry Burst') || clean.includes('畫皮') || clean.includes('流星群') || clean.includes('精神擊破') || clean.includes('樹果領域') || clean.includes('Psystrike')) {
-      return 6;
-    }
-
-    // 7. 活力恢復系列（全體療癒、活力療癒、活力填充/充填、月光、新月祈禱、蹭蹭臉頰、治癒波動、樹果汁）：官方上限 Lv. 6
-    if (clean.includes('活力') || clean.includes('療癒') || clean.includes('充填') || clean.includes('月光') || clean.includes('新月祈禱') || clean.includes('蹭蹭臉頰') || clean.includes('治癒波動') || clean.includes('樹果汁') || clean.includes('Energizing Cheer') || clean.includes('Energy for Everyone') || clean.includes('Charge Energy')) {
-      return 6;
-    }
-
-    // 8. 料理輔助 / 揮指 / 變身 / 模仿：官方上限 Lv. 7
-    if (clean.includes('料理輔助') || clean.includes('健美') || clean.includes('Bulk Up') || clean.includes('揮指') || clean.includes('十項全能') || clean.includes('Metronome') || clean.includes('變身') || clean.includes('模仿') || clean.includes('Transform') || clean.includes('Mimic')) {
-      return 7;
-    }
-
-    // 9. 從 window.WikiDB 動態比對
+    // 5. 從 window.WikiDB 動態比對
     if (typeof window !== 'undefined' && window.WikiDB && Array.isArray(window.WikiDB.MAIN_SKILLS_DATA)) {
       const norm = clean.replace(/[（(].*?[）)]/, '').replace(/\s+/g, '');
       const found = window.WikiDB.MAIN_SKILLS_DATA.find(s => s.name.replace(/[（(].*?[）)]/, '').replace(/\s+/g, '') === norm);
       if (found && found.maxLevel) return found.maxLevel;
     }
 
-    return 7;
+    return 6;
+  }
+
+  if (typeof window !== 'undefined') {
+    window.getMainSkillMaxLevel = getMainSkillMaxLevel;
+    window.UserBox = window.UserBox || {};
+    window.UserBox.getMainSkillMaxLevel = getMainSkillMaxLevel;
   }
 
   /* ─── 最終階段 3 階進化形態清單 (進化兩次，基礎主技能 +2) ─────── */
@@ -2538,7 +2538,7 @@
           return `
             <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" ${isUsed ? 'disabled' : ''} title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Already Selected)' : '（已選用）') : ''}">
               <span>${escapeHtml(skDisplayName)}</span>
-              ${isUsed ? '<span style="font-size:10px;opacity:0.8;">✓</span>' : ''}
+              ${isUsed ? '<span style="font-size:10px;opacity:0.8;">[v]</span>' : ''}
             </button>
           `;
         }).join('');
@@ -2613,13 +2613,12 @@
     const modal = document.getElementById('box-edit-modal');
     if (!modal) return;
 
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isEdit = !!existingItem;
     const titleEl = document.getElementById('box-modal-title');
     if (titleEl) {
       titleEl.textContent = isEdit 
-        ? (isEN ? 'Edit Pokémon' : '編輯寶可夢') 
-        : (screenshotSrc ? (isEN ? 'Confirm OCR Entry' : '截圖辨識確認入庫') : (isEN ? 'Add Pokémon' : '手動新增寶可夢'));
+        ? _tBox('編輯寶可夢', 'Edit Pokémon') 
+        : (screenshotSrc ? _tBox('截圖辨識確認入庫', 'Confirm OCR Entry') : _tBox('手動新增寶可夢', 'Add Pokémon'));
     }
 
     // 填寫預設值
@@ -2634,7 +2633,7 @@
       if (screenshotSrc) {
         previewContainer.innerHTML = `
           <div class="box-screenshot-preview-wrap">
-            <span class="box-screenshot-preview-tag">${isEN ? 'Original Screenshot' : '原始截圖對照'}</span>
+            <span class="box-screenshot-preview-tag">${_tBox('原始截圖對照', 'Original Screenshot')}</span>
             <img src="${screenshotSrc}" alt="Screenshot" class="box-screenshot-img">
           </div>
         `;
@@ -2661,8 +2660,8 @@
     if (natureSelect) {
       natureSelect.innerHTML = NATURE_DATA.map(n => {
         const natDisplayName = window.I18N ? window.I18N.getNatureName(n.name) : n.name;
-        const buffLabel = isEN ? (n.buff_en || n.buff) : n.buff;
-        const debuffLabel = isEN ? (n.debuff_en || n.debuff) : n.debuff;
+        const buffLabel = _tBox(n.buff, n.buff_en || n.buff);
+        const debuffLabel = _tBox(n.debuff, n.debuff_en || n.debuff);
         return `
         <option value="${n.name}" ${existingItem && existingItem.nature === n.name ? 'selected' : (n.name === '固執' && !existingItem ? 'selected' : '')}>
           ${natDisplayName} (${buffLabel}${debuffLabel ? ' / ' + debuffLabel : ''})
@@ -2749,7 +2748,6 @@
     const form = document.getElementById('box-edit-form');
     if (!form) return;
 
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const editingUid = form.getAttribute('data-editing-uid');
     const nameSelect = document.getElementById('modal-poke-name');
     const levelInput = document.getElementById('modal-poke-level');
@@ -2763,14 +2761,18 @@
 
     const pokeName = nameSelect ? nameSelect.value : '';
     if (!pokeName) {
-      alert(isEN ? 'Please select a Pokémon.' : '請選擇寶可夢！');
+      if (typeof showBoxToast === 'function') {
+        showBoxToast(_tBox('提示', 'Notice'), _tBox('請選擇寶可夢！', 'Please select a Pokémon.'), 'warning');
+      }
       document.getElementById('modal-poke-search')?.focus();
       return;
     }
 
     const parsedLevel = parseInt(levelInput ? levelInput.value : '', 10);
     if (isNaN(parsedLevel) || parsedLevel < 1 || parsedLevel > 100) {
-      alert(isEN ? 'Please enter a valid level (1 ~ 100).' : '請輸入有效的等級 (1 ~ 100)！');
+      if (typeof showBoxToast === 'function') {
+        showBoxToast(_tBox('提示', 'Notice'), _tBox('請輸入有效的等級 (1 ~ 100)！', 'Please enter a valid level (1 ~ 100).'), 'warning');
+      }
       levelInput?.focus();
       return;
     }
@@ -2828,16 +2830,26 @@
   }
 
   /* ─── 截圖辨識相似寶可夢比對與覆蓋確認彈窗 ───────────────────────── */
-  function findSimilarPokemonInBox(parsed) {
-    if (!parsed || !parsed.name || !userBox || userBox.length === 0) return null;
-    const pkmName = parsed.name.trim();
+  function findSimilarPokemonInBox(parsed, customList) {
+    const list = customList || (typeof userBox !== 'undefined' ? userBox : []);
+    if (!parsed || (!parsed.name && !parsed.pokemonId && !parsed.pkmId) || !list || list.length === 0) return null;
+    const pkmName = (parsed.name || '').trim();
+    const pkmId = parsed.pokemonId || parsed.pkmId;
 
     // 1. 同一寶可夢品種候選池 (Same Species Candidates)
-    const candidates = userBox.filter(p => {
+    const candidates = list.filter(p => {
       if (!p) return false;
-      if (p.name && p.name.trim() === pkmName) return true;
-      if (p.pokemonId && parsed.pokemonId && p.pokemonId === parsed.pokemonId) return true;
-      return false;
+      const cName = (p.name || '').trim();
+      const cId = p.pokemonId || p.pkmId;
+      const isSameSpecies = (pkmName && cName && cName === pkmName) ||
+                            (pkmId && cId && String(cId) === String(pkmId));
+      if (!isSameSpecies) return false;
+
+      // Nature must match if both are specified
+      if (parsed.nature && p.nature && parsed.nature.trim() !== p.nature.trim()) {
+        return false;
+      }
+      return true;
     });
 
     if (candidates.length === 0) return null;
@@ -2847,6 +2859,26 @@
     let maxScore = -1;
 
     candidates.forEach(cand => {
+      // Subskills compatibility check
+      const parsedSks = parsed.subskills || [];
+      const candSks = cand.subskills || [];
+      const minSlot = Math.min(parsedSks.length, candSks.length);
+      for (let s = 0; s < minSlot; s++) {
+        if (parsedSks[s] && candSks[s] && parsedSks[s] !== candSks[s]) return;
+      }
+
+      // Ingredients compatibility check
+      const pIng1 = parsed.ing1 || (parsed.ingredients && parsed.ingredients[0]);
+      const pIng2 = parsed.ing2 || (parsed.ingredients && parsed.ingredients[1]);
+      const pIng3 = parsed.ing3 || (parsed.ingredients && parsed.ingredients[2]);
+      const cIng1 = cand.ing1 || (cand.ingredients && cand.ingredients[0]);
+      const cIng2 = cand.ing2 || (cand.ingredients && cand.ingredients[1]);
+      const cIng3 = cand.ing3 || (cand.ingredients && cand.ingredients[2]);
+
+      if (pIng1 && cIng1 && pIng1 !== cIng1) return;
+      if (pIng2 && cIng2 && pIng2 !== cIng2) return;
+      if (pIng3 && cIng3 && pIng3 !== cIng3) return;
+
       let score = 20; // 同品種基準分
 
       // (a) 性格一致 (性格是先天固定屬性)
@@ -2856,17 +2888,16 @@
 
       // (b) 食材組合一致性 (比對 Lv.1, Lv.30, Lv.60)
       let ingMatchCount = 0;
-      if (parsed.ing1 && cand.ing1 && parsed.ing1 === cand.ing1) ingMatchCount++;
-      if (parsed.ing2 && cand.ing2 && parsed.ing2 === cand.ing2) ingMatchCount++;
-      if (parsed.ing3 && cand.ing3 && parsed.ing3 === cand.ing3) ingMatchCount++;
+      if (pIng1 && cIng1 && pIng1 === cIng1) ingMatchCount++;
+      if (pIng2 && cIng2 && pIng2 === cIng2) ingMatchCount++;
+      if (pIng3 && cIng3 && pIng3 === cIng3) ingMatchCount++;
       score += ingMatchCount * 12; // 最高 +36
 
       // (c) 副技能交集 (副技能是先天固定的)
-      const candSks = new Set(cand.subskills || []);
-      const parsedSks = parsed.subskills || [];
+      const candSkSet = new Set(candSks.filter(Boolean));
       let skMatchCount = 0;
       parsedSks.forEach(sk => {
-        if (sk && candSks.has(sk)) skMatchCount++;
+        if (sk && candSkSet.has(sk)) skMatchCount++;
       });
       score += skMatchCount * 10; // 最高 +50
 
@@ -2898,7 +2929,6 @@
   }
 
   function comparePokemonDetails(existing, parsed) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const comparisons = [];
 
     // 1. 等級
@@ -2906,7 +2936,7 @@
     const newLevel = Number(parsed.level) || oldLevel;
     comparisons.push({
       field: 'level',
-      label: isEN ? 'Level' : '等級',
+      label: _tBox('等級', 'Level'),
       isSame: oldLevel === newLevel,
       oldHtml: `Lv.${oldLevel}`,
       newHtml: `Lv.${newLevel}`
@@ -2918,10 +2948,10 @@
     const isNickSame = !newNick || (oldNick === newNick);
     comparisons.push({
       field: 'nickname',
-      label: isEN ? 'Nickname' : '自訂暱稱',
+      label: _tBox('自訂暱稱', 'Nickname'),
       isSame: isNickSame,
-      oldHtml: oldNick ? escapeHtml(oldNick) : `<span style="color:var(--text-muted);">${isEN ? 'None' : '未設定'}</span>`,
-      newHtml: newNick ? escapeHtml(newNick) : (oldNick ? `<span style="color:var(--text-muted);">${isEN ? '(Retain: ' + escapeHtml(oldNick) + ')' : '(維持原暱稱：' + escapeHtml(oldNick) + ')'}</span>` : `<span style="color:var(--text-muted);">${isEN ? 'None' : '未設定'}</span>`)
+      oldHtml: oldNick ? escapeHtml(oldNick) : `<span style="color:var(--text-muted);">${_tBox('未設定', 'None')}</span>`,
+      newHtml: newNick ? escapeHtml(newNick) : (oldNick ? `<span style="color:var(--text-muted);">${_tBox('(維持原暱稱：' + escapeHtml(oldNick) + ')', '(Retain: ' + escapeHtml(oldNick) + ')')}</span>` : `<span style="color:var(--text-muted);">${_tBox('未設定', 'None')}</span>`)
     });
 
     // 3. 主技能等級
@@ -2929,7 +2959,7 @@
     const newSkillLvl = Number(parsed.skillLevel || parsed.mainSkillLevel) || oldSkillLvl;
     comparisons.push({
       field: 'skillLevel',
-      label: isEN ? 'Main Skill Level' : '主技能等級',
+      label: _tBox('主技能等級', 'Main Skill Level'),
       isSame: oldSkillLvl === newSkillLvl,
       oldHtml: `Lv.${oldSkillLvl}`,
       newHtml: `Lv.${newSkillLvl}`
@@ -2942,7 +2972,7 @@
     const newNatName = (window.I18N && typeof window.I18N.getNatureName === 'function') ? window.I18N.getNatureName(newNat) : newNat;
     comparisons.push({
       field: 'nature',
-      label: isEN ? 'Nature' : '性格',
+      label: _tBox('性格', 'Nature'),
       isSame: oldNat === newNat,
       oldHtml: escapeHtml(oldNatName),
       newHtml: escapeHtml(newNatName)
@@ -2953,25 +2983,25 @@
     const newMint = !!(parsed.cleanseMint || parsed.useMint);
     comparisons.push({
       field: 'cleanseMint',
-      label: isEN ? 'Cleanse Mint' : '淨白薄荷',
+      label: _tBox('淨白薄荷', 'Cleanse Mint'),
       isSame: oldMint === newMint,
-      oldHtml: oldMint ? (isEN ? 'Used' : '已消除效果') : (isEN ? 'None' : '未消除'),
-      newHtml: newMint ? (isEN ? 'Used' : '已消除效果') : (isEN ? 'None' : '未消除')
+      oldHtml: oldMint ? _tBox('已消除效果', 'Used') : _tBox('未消除', 'None'),
+      newHtml: newMint ? _tBox('已消除效果', 'Used') : _tBox('未消除', 'None')
     });
 
     // 6. 睡飽飽獎章
     const oldRibbon = Number(existing.ribbon) || 0;
     const newRibbon = (parsed.ribbon !== undefined) ? (Number(parsed.ribbon) || 0) : oldRibbon;
     const getRibbonLabel = (val) => {
-      if (val === 1) return isEN ? '200h (+1 Carry)' : '200 小時 (+1 上限)';
-      if (val === 2) return isEN ? '500h (+3 Carry · Speed)' : '500 小時 (+3 上限 · 幫速)';
-      if (val === 3) return isEN ? '1000h (+6 Carry)' : '1000 小時 (+6 上限)';
-      if (val === 4) return isEN ? '2000h (+8 Carry · Max)' : '2000 小時 (+8 上限 · 最大幫速)';
-      return isEN ? 'None (0h)' : '未佩戴 (0h)';
+      if (val === 1) return _tBox('200 小時 (+1 上限)', '200h (+1 Carry)');
+      if (val === 2) return _tBox('500 小時 (+3 上限 · 幫速)', '500h (+3 Carry · Speed)');
+      if (val === 3) return _tBox('1000 小時 (+6 上限)', '1000h (+6 Carry)');
+      if (val === 4) return _tBox('2000 小時 (+8 上限 · 最大幫速)', '2000h (+8 Carry · Max)');
+      return _tBox('未佩戴 (0h)', 'None (0h)');
     };
     comparisons.push({
       field: 'ribbon',
-      label: isEN ? 'Good-Night Ribbon' : '睡飽飽獎章',
+      label: _tBox('睡飽飽獎章', 'Good-Night Ribbon'),
       isSame: oldRibbon === newRibbon,
       oldHtml: getRibbonLabel(oldRibbon),
       newHtml: getRibbonLabel(newRibbon)
@@ -2988,7 +3018,7 @@
     const newIngs = formatIngCombo(parsed);
     comparisons.push({
       field: 'ingredients',
-      label: isEN ? 'Ingredients (Lv1/30/60)' : '食材組合 (Lv1/30/60)',
+      label: _tBox('食材組合 (Lv1/30/60)', 'Ingredients (Lv1/30/60)'),
       isSame: (existing.ing1 === parsed.ing1 && existing.ing2 === parsed.ing2 && existing.ing3 === parsed.ing3),
       oldHtml: escapeHtml(oldIngs),
       newHtml: escapeHtml(newIngs)
@@ -2999,7 +3029,7 @@
     const newSks = (parsed.subskills || []).slice(0, 5);
     const isSksSame = (oldSks.length === newSks.length) && oldSks.every((sk, i) => sk === newSks[i]);
     const formatSks = (sks) => {
-      if (!sks || sks.length === 0) return isEN ? 'None' : '無';
+      if (!sks || sks.length === 0) return _tBox('無', 'None');
       return sks.map(s => {
         const sName = (window.I18N && typeof window.I18N.getSubskillName === 'function') ? window.I18N.getSubskillName(s) : s;
         return escapeHtml(sName);
@@ -3007,7 +3037,7 @@
     };
     comparisons.push({
       field: 'subskills',
-      label: isEN ? 'Sub-Skills' : '副技能組合',
+      label: _tBox('副技能組合', 'Sub-Skills'),
       isSame: isSksSame,
       oldHtml: formatSks(oldSks),
       newHtml: formatSks(newSks)
@@ -3020,10 +3050,9 @@
     if (typeof document === 'undefined') return;
     let modal = document.getElementById('box-conflict-modal');
     if (!modal) return;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
     const base = findPokemonBase(existingCandidate.pokemonId || existingCandidate.name);
-    const pkmDisplayName = isEN ? ((base && base.name_en) || existingCandidate.name) : (existingCandidate.name || (base ? base.name_cn : ''));
+    const pkmDisplayName = _tBox(existingCandidate.name || (base ? base.name_cn : ''), ((base && base.name_en) || existingCandidate.name));
     const candidateDisplayName = existingCandidate.nickname ? `${pkmDisplayName} (${existingCandidate.nickname})` : pkmDisplayName;
     const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
 
@@ -3039,12 +3068,12 @@
           ${iconUrl ? `<img src="${iconUrl}" class="box-conflict-pkm-icon" alt="" loading="lazy">` : ''}
           <div class="box-conflict-pkm-names">
             <div class="box-conflict-pkm-main">${escapeHtml(candidateDisplayName)}</div>
-            <div class="box-conflict-pkm-sub">UID: ${existingCandidate.uid ? existingCandidate.uid.slice(-8) : ''} · ${isEN ? 'Lv.' + (existingCandidate.level || 1) : '現有 Lv.' + (existingCandidate.level || 1)}</div>
+            <div class="box-conflict-pkm-sub">UID: ${existingCandidate.uid ? existingCandidate.uid.slice(-8) : ''} · ${_tBox('現有 Lv.' + (existingCandidate.level || 1), 'Lv.' + (existingCandidate.level || 1))}</div>
           </div>
         </div>
         <div class="box-conflict-pills">
-          <span class="conflict-badge-diff">${diffItems.length} ${isEN ? 'Updates' : '項更新'}</span>
-          <span class="conflict-badge-same">${sameItems.length} ${isEN ? 'Same' : '項相同'}</span>
+          <span class="conflict-badge-diff">${diffItems.length} ${_tBox('項更新', 'Updates')}</span>
+          <span class="conflict-badge-same">${sameItems.length} ${_tBox('項相同', 'Same')}</span>
         </div>
       `;
     }
@@ -3056,16 +3085,16 @@
         <div class="box-conflict-row ${item.isSame ? 'is-same' : 'is-diff'}">
           <div class="conflict-row-field">
             <span class="conflict-field-name">${item.label}</span>
-            <span class="conflict-status-tag ${item.isSame ? 'tag-same' : 'tag-diff'}">${item.isSame ? (isEN ? 'Same' : '相同') : (isEN ? 'Updated' : '已更新')}</span>
+            <span class="conflict-status-tag ${item.isSame ? 'tag-same' : 'tag-diff'}">${item.isSame ? _tBox('相同', 'Same') : _tBox('已更新', 'Updated')}</span>
           </div>
           <div class="conflict-values-grid">
             <div class="conflict-val-col col-existing">
-              <span class="conflict-val-label">${isEN ? 'In Box' : '倉庫現有'}</span>
+              <span class="conflict-val-label">${_tBox('倉庫現有', 'In Box')}</span>
               <div class="conflict-val-content">${item.oldHtml}</div>
             </div>
             <div class="conflict-val-arrow">→</div>
             <div class="conflict-val-col col-parsed">
-              <span class="conflict-val-label">${isEN ? 'New Screenshot' : '截圖新值'}</span>
+              <span class="conflict-val-label">${_tBox('截圖新值', 'New Screenshot')}</span>
               <div class="conflict-val-content">${item.newHtml}</div>
             </div>
           </div>
@@ -3127,7 +3156,6 @@
   }
 
   function executePokemonOverwrite(parsedData, existingCandidate) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const idx = userBox.findIndex(p => p.uid === existingCandidate.uid);
     if (idx === -1) {
       closePokemonConflictModal();
@@ -3158,11 +3186,11 @@
     renderBox();
     closePokemonConflictModal();
 
-    const pkmName = isEN ? ((existingCandidate.name_en || existingCandidate.name) || 'Pokémon') : (existingCandidate.name || '寶可夢');
+    const pkmName = _tBox(existingCandidate.name || '寶可夢', (existingCandidate.name_en || existingCandidate.name) || 'Pokémon');
     const displayName = userBox[idx].nickname ? `${pkmName} (${userBox[idx].nickname})` : pkmName;
     showBoxToast(
-      isEN ? 'Pokémon Overwritten & Updated' : '寶可夢覆蓋更新成功！',
-      isEN ? `Successfully updated "${displayName}" with latest screenshot data.` : `已成功將「${displayName}」覆蓋更新為最新截圖數據！`,
+      _tBox('寶可夢覆蓋更新成功！', 'Pokémon Overwritten & Updated'),
+      _tBox(`已成功將「${displayName}」覆蓋更新為最新截圖數據！`, `Successfully updated "${displayName}" with latest screenshot data.`),
       'success'
     );
   }
@@ -3171,7 +3199,19 @@
   function makePokemonFingerprint(p) {
     if (!p) return '';
     const sks = (p.subskills || []).slice().sort().join(',');
-    return `${p.name || p.pokemonId || ''}_Lv${p.level || 1}_${p.nature || ''}_${sks}_${p.ing1 || ''}_${p.ing2 || ''}_${p.ing3 || ''}`;
+    const ing1 = p.ing1 || (p.ingredients && p.ingredients[0]) || '';
+    const ing2 = p.ing2 || (p.ingredients && p.ingredients[1]) || '';
+    const ing3 = p.ing3 || (p.ingredients && p.ingredients[2]) || '';
+    const id = p.pokemonId || p.pkmId || p.name || '';
+    return `${id}_Lv${p.level || 1}_${p.nature || ''}_${sks}_${ing1}_${ing2}_${ing3}`;
+  }
+
+  if (typeof window !== 'undefined') {
+    window.makePokemonFingerprint = makePokemonFingerprint;
+    window.findSimilarPokemonInBox = findSimilarPokemonInBox;
+    window.UserBox = window.UserBox || {};
+    window.UserBox.makePokemonFingerprint = makePokemonFingerprint;
+    window.UserBox.findSimilarPokemonInBox = findSimilarPokemonInBox;
   }
 
   async function handleScreenshotFiles(files) {
@@ -3179,7 +3219,9 @@
 
     const imageFiles = Array.from(files).filter(f => f && f.type && f.type.startsWith('image/'));
     if (imageFiles.length === 0) {
-      alert('請上傳圖片檔案 (PNG, JPG, WebP)！');
+      if (typeof showBoxToast === 'function') {
+        showBoxToast(_tBox('提示', 'Notice'), _tBox('請上傳圖片檔案 (PNG, JPG, WebP)！', 'Please upload valid image files (PNG, JPG, WebP).'), 'warning');
+      }
       return;
     }
 
@@ -3190,7 +3232,7 @@
       const file = imageFiles[0];
       if (scannerStatus) {
         scannerStatus.style.display = 'flex';
-        scannerStatus.innerHTML = `<span>正在智能解析截圖中，請稍候...</span>`;
+        scannerStatus.innerHTML = `<span>${_tBox('正在智能解析截圖中，請稍候...', 'Analyzing screenshot with AI OCR, please wait...')}</span>`;
       }
 
       const reader = new FileReader();
@@ -3218,25 +3260,24 @@
 
     // 2. 多圖批次辨識入庫流程 (Batch OCR Multi-Import & Smart Deduplication)
     const total = imageFiles.length;
-    let importedCount = 0;
-    let duplicateCount = 0;
-    const importedNames = [];
-
-    // 建立既有特徵指紋集合
-    const existingFingerprints = new Set(userBox.map(makePokemonFingerprint));
+    let addedCount = 0;
+    let upgradedCount = 0;
+    let skippedCount = 0;
+    const failedFiles = [];
+    const addedNames = [];
 
     if (scannerStatus) {
       scannerStatus.style.display = 'flex';
       scannerStatus.innerHTML = `
         <div class="batch-ocr-progress-card">
           <div class="batch-ocr-header">
-            <span class="batch-ocr-title">批次智能辨識入庫中...</span>
+            <span class="batch-ocr-title">${_tBox('批次智能辨識入庫中...', 'Batch OCR Smart Ingestion...')}</span>
             <span id="batch-ocr-counter" class="batch-ocr-counter">0 / ${total}</span>
           </div>
           <div class="batch-ocr-bar-bg">
             <div id="batch-ocr-bar-fill" class="batch-ocr-bar-fill" style="width: 0%;"></div>
           </div>
-          <div id="batch-ocr-status-text" class="batch-ocr-status-text">初始化 OCR 引擎中...</div>
+          <div id="batch-ocr-status-text" class="batch-ocr-status-text">${_tBox('初始化 OCR 引擎中...', 'Initializing OCR engine...')}</div>
         </div>
       `;
     }
@@ -3251,13 +3292,19 @@
       console.warn('Could not initialize shared Tesseract worker:', e);
     }
 
+    const upsertFn = (typeof upsertImportedPokemonToBox === 'function')
+      ? upsertImportedPokemonToBox
+      : (typeof window !== 'undefined' && window.UserBox && typeof window.UserBox.upsertImportedPokemonToBox === 'function'
+          ? window.UserBox.upsertImportedPokemonToBox
+          : null);
+
     for (let i = 0; i < total; i++) {
       const file = imageFiles[i];
       const statusText = document.getElementById('batch-ocr-status-text');
       const counterEl = document.getElementById('batch-ocr-counter');
       const barFill = document.getElementById('batch-ocr-bar-fill');
 
-      if (statusText) statusText.textContent = `正在辨識：${file.name} (${i + 1}/${total})...`;
+      if (statusText) statusText.textContent = _tBox(`正在辨識：${file.name} (${i + 1}/${total})...`, `Recognizing: ${file.name} (${i + 1}/${total})...`);
       if (counterEl) counterEl.textContent = `${i + 1} / ${total}`;
       if (barFill) barFill.style.width = `${Math.round(((i + 1) / total) * 100)}%`;
 
@@ -3265,20 +3312,30 @@
         const imgSrc = await readFileAsDataURL(file);
         const parsed = await parsePokemonScreenshotWithWorker(imgSrc, sharedWorker);
 
-        // 防重保護檢測
-        const fp = makePokemonFingerprint(parsed);
-        if (existingFingerprints.has(fp)) {
-          duplicateCount++;
+        if (!parsed || (!parsed.name && !parsed.pokemonId && !parsed.pkmId)) {
+          failedFiles.push(file.name);
+          continue;
+        }
+
+        if (typeof upsertFn === 'function') {
+          const res = upsertFn(parsed, userBox);
+          if (res.status === 'added') {
+            addedCount++;
+            addedNames.push(parsed.name || _tBox('寶可夢', 'Pokémon'));
+          } else if (res.status === 'upgraded') {
+            upgradedCount++;
+          } else if (res.status === 'skipped') {
+            skippedCount++;
+          }
         } else {
-          existingFingerprints.add(fp);
           parsed.uid = 'pkm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
           parsed.createdAt = Date.now();
           userBox.push(parsed);
-          importedCount++;
-          importedNames.push(parsed.name || '寶可夢');
+          addedCount++;
         }
       } catch (err) {
         console.error(`Error parsing file ${file.name}:`, err);
+        failedFiles.push(file.name);
       }
     }
 
@@ -3292,16 +3349,27 @@
       scannerStatus.style.display = 'none';
     }
 
-    if (importedCount > 0) {
+    if (addedCount > 0 || upgradedCount > 0) {
       saveUserBox();
       renderBox();
     }
 
-    // 彈出 Toast 通知
+    // 彈出 Toast 通知 (全面統計：新增、升級、略過、失敗)
+    let summary = _tBox(
+      `成功入庫 ${addedCount} 隻，升級更新 ${upgradedCount} 隻，略過重複 ${skippedCount} 隻。`,
+      `Successfully added ${addedCount}, upgraded ${upgradedCount}, skipped ${skippedCount} duplicates.`
+    );
+    if (failedFiles.length > 0) {
+      summary += ' ' + _tBox(
+        `失敗 ${failedFiles.length} 張（${failedFiles.join(', ')}）。`,
+        `Failed ${failedFiles.length} images (${failedFiles.join(', ')}).`
+      );
+    }
+
     showBoxToast(
-      '批次辨識入庫完成！',
-      `成功入庫 ${importedCount} 隻寶可夢${duplicateCount > 0 ? ` (已略過 ${duplicateCount} 隻重複截圖)` : ''}${importedNames.length > 0 ? `：${importedNames.slice(0, 5).join('、')}${importedNames.length > 5 ? ' 等' : ''}` : ''}。`,
-      importedCount > 0 ? 'success' : 'info'
+      _tBox('批次辨識入庫完成！', 'Batch OCR Import Complete!'),
+      summary,
+      (addedCount > 0 || upgradedCount > 0) ? 'success' : (failedFiles.length > 0 ? 'warning' : 'info')
     );
   }
 
@@ -4386,6 +4454,23 @@
   }
 
   /* ─── 浮動 Toast 系統 ─────────────────────────────────────── */
+  /* ─── 多語言輔助函式 (zh-TW / zh-CN / en-US) ───────────────────── */
+  function _tBox(zhTw, en) {
+    const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function')
+      ? window.I18N.getLanguage()
+      : 'zh-TW';
+    if (lang === 'en-US') {
+      return (en !== undefined) ? en : zhTw;
+    }
+    if (lang === 'zh-CN') {
+      if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function') {
+        return window.I18N.toSimplified(zhTw);
+      }
+      return zhTw;
+    }
+    return zhTw;
+  }
+
   function showBoxToast(title, message, type = 'success') {
     if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
       return window.showToast(title, message, type);
@@ -4409,7 +4494,7 @@
         <div class="box-toast-title">${escapeHtml(title)}</div>
         <div class="box-toast-msg">${escapeHtml(message)}</div>
       </div>
-      <button type="button" class="box-toast-close" onclick="this.parentElement && this.parentElement.remove()">✕</button>
+      <button type="button" class="box-toast-close" onclick="this.parentElement && this.parentElement.remove()">&times;</button>
     `;
 
     if (container && typeof container.appendChild === 'function') {
@@ -4425,10 +4510,176 @@
     return toast;
   }
 
+  /* ─── 非阻塞主題自訂確認彈窗 (Custom Themed Confirmation Modal) ─── */
+  function showBoxConfirmModal(message, options = {}) {
+    return new Promise((resolve) => {
+      if (typeof document === 'undefined') return resolve(true);
+      let modal = document.getElementById('box-custom-confirm-modal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'box-custom-confirm-modal';
+        modal.className = 'box-modal-backdrop modal-backdrop modal-overlay';
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:10060;';
+        document.body.appendChild(modal);
+      }
+      const title = options.title || _tBox('確認操作', 'Confirm Action');
+      const confirmText = options.confirmText || _tBox('確認', 'Confirm');
+      const cancelText = options.cancelText || _tBox('取消', 'Cancel');
+      const isDanger = options.type === 'danger';
+      modal.innerHTML = `
+        <div class="box-modal-dialog modal-content" style="max-width:380px;width:90%;border-radius:16px;padding:24px 20px;text-align:center;box-sizing:border-box;margin:auto;background:var(--bg-card-solid, #1e293b);border:1px solid var(--border-color, rgba(255,255,255,0.1));box-shadow:var(--shadow-lg, 0 10px 25px rgba(0,0,0,0.5));">
+          <div style="width:48px;height:48px;border-radius:50%;background:${isDanger ? 'rgba(239, 68, 68, 0.15)' : 'rgba(59, 130, 246, 0.15)'};border:1.5px solid ${isDanger ? 'rgba(239, 68, 68, 0.35)' : 'rgba(59, 130, 246, 0.35)'};display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:${isDanger ? '#ef4444' : '#3b82f6'};">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          </div>
+          <div style="font-size:16px;font-weight:700;color:var(--text-primary, #f8fafc);margin-bottom:8px;">${escapeHtml(title)}</div>
+          <p style="font-size:13px;color:var(--text-secondary, #94a3b8);line-height:1.6;margin:10px 0 20px;word-break:break-word;">${escapeHtml(message)}</p>
+          <div style="display:flex;gap:10px;justify-content:center;">
+            <button type="button" id="box-confirm-cancel-btn" style="flex:1;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;background:var(--bg-card, #0f172a);border:1px solid var(--border-color, rgba(255,255,255,0.15));color:var(--text-secondary, #94a3b8);cursor:pointer;">${escapeHtml(cancelText)}</button>
+            <button type="button" id="box-confirm-ok-btn" style="flex:1;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;background:${isDanger ? '#ef4444' : 'var(--primary-color, #3b82f6)'};border:none;color:#ffffff;cursor:pointer;">${escapeHtml(confirmText)}</button>
+          </div>
+        </div>
+      `;
+      modal.style.display = 'flex';
+      if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
+      function cleanup(result) {
+        modal.style.display = 'none';
+        modal.innerHTML = '';
+        if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+        resolve(result);
+      }
+      const okBtn = document.getElementById('box-confirm-ok-btn');
+      const cancelBtn = document.getElementById('box-confirm-cancel-btn');
+      if (okBtn) okBtn.onclick = (e) => { e.stopPropagation(); cleanup(true); };
+      if (cancelBtn) cancelBtn.onclick = (e) => { e.stopPropagation(); cleanup(false); };
+      modal.onclick = (e) => { if (e.target === modal) { e.stopPropagation(); cleanup(false); } };
+    });
+  }
+
+  /* ─── 刪除寶可夢操作 (非阻塞自訂確認彈窗) ────────────────────────── */
+  async function removeFromUserBox(boxId) {
+    const item = userBox.find(p => (p && (p.uid === boxId || p.id === boxId)));
+    if (!item) return false;
+    const pName = item.name || _tBox('寶可夢', 'Pokémon');
+    const confirmMsg = _tBox(`確定要從倉庫刪除「${pName}」嗎？`, `Are you sure you want to delete "${pName}" from your Box?`);
+    const confirmed = await showBoxConfirmModal(confirmMsg, {
+      title: _tBox('確認刪除', 'Confirm Deletion'),
+      confirmText: _tBox('刪除', 'Delete'),
+      type: 'danger'
+    });
+    if (!confirmed) return false;
+    const idx = userBox.indexOf(item);
+    if (idx !== -1) {
+      userBox.splice(idx, 1);
+      saveUserBox();
+      renderBox();
+      showBoxToast(_tBox('刪除成功', 'Deleted Successfully'), _tBox(`已刪除「${pName}」`, `"${pName}" has been removed from Box`), 'info');
+      return true;
+    }
+    return false;
+  }
+
+  /* ─── 統一去重與高階升級入庫函式 (Unified Upsert & Deduplication) ───── */
+  function upsertImportedPokemonToBox(incomingEntry, userBoxArray) {
+    const list = userBoxArray || userBox;
+    if (!incomingEntry || typeof incomingEntry !== 'object') return { status: 'skipped', entry: null };
+
+    const incomingLevel = Math.max(1, Math.min(100, parseInt(incomingEntry.level, 10) || 1));
+    const incomingSkillLevel = Math.max(1, Math.min(8, parseInt(incomingEntry.skillLevel || incomingEntry.mainSkillLevel || incomingEntry.main_skill_level, 10) || 1));
+
+    // 1. Check exact feature fingerprint via makePokemonFingerprint
+    const fpFn = (typeof makePokemonFingerprint === 'function') ? makePokemonFingerprint
+      : (typeof window !== 'undefined' && window.UserBox && typeof window.UserBox.makePokemonFingerprint === 'function' ? window.UserBox.makePokemonFingerprint : null);
+    const incomingFp = fpFn ? fpFn(incomingEntry) : '';
+    if (fpFn && incomingFp) {
+      const exactMatch = list.find(p => p && fpFn(p) === incomingFp);
+      if (exactMatch) {
+        const existLevel = Math.max(1, Math.min(100, parseInt(exactMatch.level, 10) || 1));
+        const existSkillLevel = Math.max(1, Math.min(8, parseInt(exactMatch.skillLevel || exactMatch.mainSkillLevel || exactMatch.main_skill_level, 10) || 1));
+        if (existLevel >= incomingLevel && existSkillLevel >= incomingSkillLevel) {
+          return { status: 'skipped', entry: exactMatch };
+        }
+      }
+    }
+
+    // 2. Check findSimilarPokemonInBox (same pkmId, same nature, compatible subskills / ingredients)
+    const similarFn = (typeof findSimilarPokemonInBox === 'function') ? findSimilarPokemonInBox
+      : (typeof window !== 'undefined' && window.UserBox && typeof window.UserBox.findSimilarPokemonInBox === 'function' ? window.UserBox.findSimilarPokemonInBox : null);
+    const similarExisting = similarFn ? similarFn(incomingEntry, list) : null;
+
+    if (similarExisting) {
+      const existLevel = Math.max(1, Math.min(100, parseInt(similarExisting.level, 10) || 1));
+      const existSkillLevel = Math.max(1, Math.min(8, parseInt(similarExisting.skillLevel || similarExisting.mainSkillLevel || similarExisting.main_skill_level, 10) || 1));
+
+      if (incomingLevel > existLevel || incomingSkillLevel > existSkillLevel) {
+        similarExisting.level = Math.max(existLevel, incomingLevel);
+        const upgradedSkillLvl = Math.max(existSkillLevel, incomingSkillLevel);
+        similarExisting.skillLevel = upgradedSkillLvl;
+        if ('mainSkillLevel' in similarExisting || 'main_skill_level' in similarExisting) {
+          similarExisting.mainSkillLevel = upgradedSkillLvl;
+          similarExisting.main_skill_level = upgradedSkillLvl;
+        }
+
+        const incomingSubs = Array.isArray(incomingEntry.subskills) ? incomingEntry.subskills : [];
+        const existingSubs = Array.isArray(similarExisting.subskills) ? similarExisting.subskills : [];
+        if (incomingSubs.filter(Boolean).length > existingSubs.filter(Boolean).length) {
+          similarExisting.subskills = incomingSubs.slice();
+        }
+
+        const incomingIng1 = incomingEntry.ing1 || (incomingEntry.ingredients && incomingEntry.ingredients[0]) || '';
+        const incomingIng2 = incomingEntry.ing2 || (incomingEntry.ingredients && incomingEntry.ingredients[1]) || '';
+        const incomingIng3 = incomingEntry.ing3 || (incomingEntry.ingredients && incomingEntry.ingredients[2]) || '';
+        const existIng1 = similarExisting.ing1 || (similarExisting.ingredients && similarExisting.ingredients[0]) || '';
+        const existIng2 = similarExisting.ing2 || (similarExisting.ingredients && similarExisting.ingredients[1]) || '';
+        const existIng3 = similarExisting.ing3 || (similarExisting.ingredients && similarExisting.ingredients[2]) || '';
+        const incomingIngCount = [incomingIng1, incomingIng2, incomingIng3].filter(Boolean).length;
+        const existIngCount = [existIng1, existIng2, existIng3].filter(Boolean).length;
+
+        if (incomingIngCount > existIngCount) {
+          if (incomingIng1) similarExisting.ing1 = incomingIng1;
+          if (incomingIng2) similarExisting.ing2 = incomingIng2;
+          if (incomingIng3) similarExisting.ing3 = incomingIng3;
+          if (Array.isArray(similarExisting.ingredients) || Array.isArray(incomingEntry.ingredients)) {
+            similarExisting.ingredients = [similarExisting.ing1, similarExisting.ing2, similarExisting.ing3].filter(Boolean);
+          }
+        }
+
+        const existNick = (similarExisting.nickname || '').trim();
+        const incomingNick = (incomingEntry.nickname || '').trim();
+        if (!existNick && incomingNick) similarExisting.nickname = incomingNick;
+
+        const incomingRibbon = parseInt(incomingEntry.ribbon, 10) || 0;
+        const existRibbon = parseInt(similarExisting.ribbon, 10) || 0;
+        similarExisting.ribbon = Math.max(existRibbon, incomingRibbon);
+
+        const isShiny = Boolean(similarExisting.isShiny || similarExisting.shiny || incomingEntry.isShiny || incomingEntry.shiny);
+        similarExisting.isShiny = isShiny;
+        if ('shiny' in similarExisting || 'shiny' in incomingEntry) similarExisting.shiny = isShiny;
+
+        similarExisting.updatedAt = new Date().toISOString();
+        return { status: 'upgraded', entry: similarExisting };
+      } else {
+        return { status: 'skipped', entry: similarExisting };
+      }
+    }
+
+    // 3. No match exists -> append incomingEntry to list
+    if (!incomingEntry.uid && !incomingEntry.id) {
+      incomingEntry.uid = 'pkm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+    } else if (!incomingEntry.uid && incomingEntry.id) {
+      incomingEntry.uid = incomingEntry.id;
+    }
+    if (!incomingEntry.addedAt && !incomingEntry.createdAt) {
+      incomingEntry.addedAt = new Date().toISOString();
+      incomingEntry.createdAt = Date.now();
+    }
+    list.push(incomingEntry);
+    return { status: 'added', entry: incomingEntry };
+  }
+
   /* ─── 備份匯出與匯入 ─────────────────────────────────────── */
   function exportBoxJSON() {
     if (userBox.length === 0) {
-      showBoxToast('匯出提醒', '倉庫內目前沒有任何寶可夢可匯出！', 'warning');
+      showBoxToast(_tBox('匯出提醒', 'Export Notice'), _tBox('倉庫內目前沒有任何寶可夢可匯出！', 'Your Box is currently empty, nothing to export!'), 'warning');
       return;
     }
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userBox, null, 2));
@@ -4462,12 +4713,16 @@
     }
 
     clean.level = Math.max(1, Math.min(100, parseInt(raw.level, 10) || 1));
-    clean.main_skill_level = Math.max(1, Math.min(7, parseInt(raw.main_skill_level, 10) || 1));
+    clean.main_skill_level = Math.max(1, Math.min(8, parseInt(raw.main_skill_level || raw.skillLevel || raw.mainSkillLevel, 10) || 1));
+    clean.skillLevel = clean.main_skill_level;
+    clean.mainSkillLevel = clean.main_skill_level;
     if (raw.pokemonId != null) clean.pokemonId = String(raw.pokemonId).slice(0, 20);
+    if (raw.pkmId != null) clean.pkmId = String(raw.pkmId).slice(0, 20);
 
     clean.nature = typeof raw.nature === 'string' ? raw.nature.trim().slice(0, 20) : '認真';
     clean.cleanseMint = Boolean(raw.cleanseMint);
     clean.ribbon = Math.max(0, Math.min(4, parseInt(raw.ribbon, 10) || 0));
+    clean.isShiny = Boolean(raw.isShiny || raw.shiny);
 
     if (Array.isArray(raw.subskills)) {
       clean.subskills = raw.subskills
@@ -4486,6 +4741,9 @@
     } else {
       clean.ingredients = [];
     }
+    clean.ing1 = raw.ing1 || clean.ingredients[0] || '';
+    clean.ing2 = raw.ing2 || clean.ingredients[1] || '';
+    clean.ing3 = raw.ing3 || clean.ingredients[2] || '';
 
     if (typeof raw.specialty === 'string') clean.specialty = raw.specialty.slice(0, 20);
     if (typeof raw.type === 'string') clean.type = raw.type.slice(0, 20);
@@ -4497,36 +4755,54 @@
   function importBoxJSON(file) {
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const imported = JSON.parse(e.target.result);
         if (Array.isArray(imported)) {
           if (imported.length > MAX_IMPORT_COUNT) {
-            showBoxToast('匯入超限', `單次匯入不可超過 ${MAX_IMPORT_COUNT} 隻寶可夢！`, 'warning');
+            showBoxToast(_tBox('匯入超限', 'Import Limit Exceeded'), _tBox(`單次匯入不可超過 ${MAX_IMPORT_COUNT} 隻寶可夢！`, `Cannot import more than ${MAX_IMPORT_COUNT} Pokémon at once!`), 'warning');
             return;
           }
           const validItems = imported.map(sanitizeImportedPokemon).filter(Boolean);
           if (validItems.length === 0) {
-            showBoxToast('匯入失敗', '無有效的寶可夢資料可匯入！', 'warning');
+            showBoxToast(_tBox('匯入失敗', 'Import Failed'), _tBox('無有效的寶可夢資料可匯入！', 'No valid Pokémon data to import!'), 'warning');
             return;
           }
-          if (confirm(`確定要匯入 ${validItems.length} 隻寶可夢嗎？（將合併至現有倉庫）`)) {
-            const existingUids = new Set(userBox.map(p => p.uid));
-            validItems.forEach(item => {
-              if (!item.uid || existingUids.has(item.uid)) {
-                item.uid = 'pkm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-              }
-              userBox.push(item);
-            });
-            saveUserBox();
-            renderBox();
-            showBoxToast('匯入成功', `成功匯入 ${validItems.length} 隻寶可夢！`, 'success');
-          }
+
+          const confirmMsg = _tBox(
+            `確定要匯入 ${validItems.length} 隻寶可夢嗎？（將合併至現有倉庫）`,
+            `Import ${validItems.length} Pokémon? (They will be merged into your Box)`
+          );
+          const confirmed = await showBoxConfirmModal(confirmMsg, {
+            title: _tBox('確認匯入', 'Confirm Import'),
+            confirmText: _tBox('確認匯入', 'Confirm Import')
+          });
+          if (!confirmed) return;
+
+          let addedCount = 0;
+          let upgradedCount = 0;
+          let skippedCount = 0;
+
+          validItems.forEach(item => {
+            const res = upsertImportedPokemonToBox(item, userBox);
+            if (res.status === 'added') addedCount++;
+            else if (res.status === 'upgraded') upgradedCount++;
+            else if (res.status === 'skipped') skippedCount++;
+          });
+
+          saveUserBox();
+          renderBox();
+
+          const summaryMsg = _tBox(
+            `匯入完成！新增 ${addedCount} 隻，升級更新 ${upgradedCount} 隻，略過重複 ${skippedCount} 隻。`,
+            `Import complete! ${addedCount} added, ${upgradedCount} upgraded, ${skippedCount} duplicates skipped.`
+          );
+          showBoxToast(_tBox('匯入成功', 'Import Successful'), summaryMsg, 'success');
         } else {
-          showBoxToast('匯入失敗', '匯入檔案格式錯誤，請確認為正確的 JSON 備份檔！', 'warning');
+          showBoxToast(_tBox('匯入失敗', 'Import Failed'), _tBox('匯入檔案格式錯誤，請確認為正確的 JSON 備份檔！', 'Invalid import file format. Please ensure it is a valid JSON backup file!'), 'warning');
         }
       } catch (err) {
-        showBoxToast('解析失敗', '解析 JSON 備份檔案失敗：' + err.message, 'error');
+        showBoxToast(_tBox('解析失敗', 'Parse Failed'), _tBox('解析 JSON 備份檔案失敗：', 'Failed to parse JSON backup file: ') + err.message, 'error');
       }
     };
     reader.readAsText(file);
@@ -4632,10 +4908,9 @@
         const isCollapsed = guideBody.style.display === 'none';
         guideBody.style.display = isCollapsed ? 'flex' : 'none';
         guideToggleBtn.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
-        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
         guideToggleBtn.textContent = isCollapsed 
-          ? (isEN ? 'Collapse' : '收合說明') 
-          : (isEN ? 'Expand Guide' : '展開說明');
+          ? _tBox('收合說明', 'Collapse') 
+          : _tBox('展開說明', 'Expand Guide');
       });
     }
 
@@ -4834,7 +5109,7 @@
         if (window.AppraisalLab && typeof window.AppraisalLab.updateBoxItems === 'function') {
           window.AppraisalLab.updateBoxItems();
         }
-        showBoxToast('雲端同步成功', '已從其他裝置即時同步最新寶可夢倉庫資料！', 'success');
+        showBoxToast(_tBox('雲端同步成功', 'Cloud Sync Successful'), _tBox('已從其他裝置即時同步最新寶可夢倉庫資料！', 'Latest Pokémon Box data synchronized from other devices!'), 'success');
       });
 
       window.CloudSync.onAuthStateChange(() => {
@@ -5052,6 +5327,11 @@
     NATURE_DATA.forEach(n => { NATURE_DICT[n.name] = n; });
 
     window.PokemonBoxApp = {
+      _tBox,
+      showBoxConfirmModal,
+      removeFromUserBox,
+      upsertImportedPokemonToBox,
+      makePokemonFingerprint: (typeof makePokemonFingerprint === 'function') ? makePokemonFingerprint : (typeof window !== 'undefined' && window.makePokemonFingerprint ? window.makePokemonFingerprint : null),
       getUserBox: () => userBox,
       setUserBox: (box, skipCloudPush = false) => { userBox = box; saveUserBox(skipCloudPush); renderBox(); },
       renderBox: renderBox,
@@ -5073,98 +5353,6 @@
       initPokemonCombobox,
       openBoxEditModal,
       closeBoxEditModal,
-      setAllPokemons: (p) => { allPokemonsRef = p || []; },
-      buildOcrCompositeCanvas,
-      parsePokemonFromOcr,
-      parsePokemonScreenshotWithWorker,
-      NATURE_DATA,
-      NATURE_DICT,
-      SUBSKILLS_DATA,
-      getFilteredBox,
-      initBoxFilters,
-      toggleBoxSidebar,
-      resetBoxFilters,
-      getBoxFilterState,
-      setBoxFilterState,
-      findSimilarPokemonInBox,
-      comparePokemonDetails,
-      openPokemonConflictModal,
-      closePokemonConflictModal,
-      executePokemonOverwrite,
-      getSortBy: () => sortBy,
-      setSortBy: (s) => { sortBy = s; renderBox(); },
-      toggleColumnSort: (col) => { sortBy = nextBoxSort(sortBy, col); renderBox(); return sortBy; },
-      parseBoxSort,
-      nextBoxSort,
-      BOX_SORT_DEFAULT_DIR
-    };
-    window.UserBox = window.PokemonBoxApp;
-  }
-
-  if (typeof module !== 'undefined' && module.exports) {
-    const NATURE_DICT = {};
-    NATURE_DATA.forEach(n => { NATURE_DICT[n.name] = n; });
-    module.exports = {
-      PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : {
-        getUserBox: () => userBox,
-        setUserBox: (box, skipCloudPush = false) => { userBox = box; saveUserBox(skipCloudPush); renderBox(); },
-        renderBox: renderBox,
-        syncBoxVisibility,
-        setBoxUserForcedGuideVisible: (v) => { boxUserForcedGuideVisible = v; },
-        renderBoxGrid,
-        renderBoxCardIngSlot,
-        getIngCountFromBase,
-        calculatePokemonPR,
-        getMainSkillMaxLevel,
-        getEffectiveSkillLevel,
-        getPokemonEvolutionStage,
-        getSubskillLevelBonus,
-        updateRibbonSelectOptions,
-        updateModalMainSkill,
-        deduceRibbonFromCarry,
-        initPokemonCombobox,
-        setAllPokemons: (p) => { allPokemonsRef = p || []; },
-        buildOcrCompositeCanvas,
-        parsePokemonFromOcr,
-        parsePokemonScreenshotWithWorker,
-        NATURE_DATA,
-        NATURE_DICT,
-        SUBSKILLS_DATA,
-        getFilteredBox,
-        initBoxFilters,
-        toggleBoxSidebar,
-        resetBoxFilters,
-        getBoxFilterState,
-        setBoxFilterState,
-        findSimilarPokemonInBox,
-        comparePokemonDetails,
-        openPokemonConflictModal,
-        closePokemonConflictModal,
-        executePokemonOverwrite,
-        getSortBy: () => sortBy,
-        setSortBy: (s) => { sortBy = s; renderBox(); },
-        toggleColumnSort: (col) => { sortBy = nextBoxSort(sortBy, col); renderBox(); return sortBy; },
-        parseBoxSort,
-        nextBoxSort,
-        BOX_SORT_DEFAULT_DIR
-      },
-      getUserBox: () => userBox,
-      setUserBox: (box) => { userBox = Array.isArray(box) ? box : []; },
-      renderBox: renderBox,
-      syncBoxVisibility,
-      setBoxUserForcedGuideVisible: (v) => { boxUserForcedGuideVisible = v; },
-      renderBoxGrid,
-      renderBoxCardIngSlot,
-      getIngCountFromBase,
-      calculatePokemonPR,
-      getMainSkillMaxLevel,
-      getEffectiveSkillLevel,
-      getPokemonEvolutionStage,
-      getSubskillLevelBonus,
-      updateRibbonSelectOptions,
-      updateModalMainSkill,
-      deduceRibbonFromCarry,
-      initPokemonCombobox,
       setAllPokemons: (p) => { allPokemonsRef = p || []; },
       buildOcrCompositeCanvas,
       parsePokemonFromOcr,
@@ -5191,6 +5379,69 @@
       parseBoxSort,
       nextBoxSort,
       BOX_SORT_DEFAULT_DIR
+    };
+    window.UserBox = window.PokemonBoxApp;
+    window._tBox = _tBox;
+    window.showBoxConfirmModal = showBoxConfirmModal;
+    window.removeFromUserBox = removeFromUserBox;
+    window.upsertImportedPokemonToBox = upsertImportedPokemonToBox;
+    window.getMainSkillMaxLevel = getMainSkillMaxLevel;
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    const sharedExports = (typeof window !== 'undefined' && window.PokemonBoxApp) ? window.PokemonBoxApp : {
+      _tBox,
+      showBoxConfirmModal,
+      removeFromUserBox,
+      upsertImportedPokemonToBox,
+      makePokemonFingerprint: (typeof makePokemonFingerprint === 'function') ? makePokemonFingerprint : null,
+      getUserBox: () => userBox,
+      setUserBox: (box) => { userBox = Array.isArray(box) ? box : []; },
+      renderBox: renderBox,
+      syncBoxVisibility,
+      setBoxUserForcedGuideVisible: (v) => { boxUserForcedGuideVisible = v; },
+      renderBoxGrid,
+      renderBoxCardIngSlot,
+      getIngCountFromBase,
+      calculatePokemonPR,
+      getMainSkillMaxLevel,
+      getEffectiveSkillLevel,
+      getPokemonEvolutionStage,
+      getSubskillLevelBonus,
+      updateRibbonSelectOptions,
+      updateModalMainSkill,
+      deduceRibbonFromCarry,
+      initPokemonCombobox,
+      setAllPokemons: (p) => { allPokemonsRef = p || []; },
+      buildOcrCompositeCanvas,
+      parsePokemonFromOcr,
+      parsePokemonScreenshotWithWorker,
+      ensureTesseractLoaded,
+      TESSERACT_CDN_URL,
+      NATURE_DATA,
+      NATURE_DICT: (function() { const d = {}; NATURE_DATA.forEach(n => { d[n.name] = n; }); return d; })(),
+      SUBSKILLS_DATA,
+      getFilteredBox,
+      initBoxFilters,
+      toggleBoxSidebar,
+      resetBoxFilters,
+      getBoxFilterState,
+      setBoxFilterState,
+      findSimilarPokemonInBox,
+      comparePokemonDetails,
+      openPokemonConflictModal,
+      closePokemonConflictModal,
+      executePokemonOverwrite,
+      getSortBy: () => sortBy,
+      setSortBy: (s) => { sortBy = s; if (typeof renderBox === 'function') renderBox(); },
+      toggleColumnSort: (col) => { sortBy = nextBoxSort(sortBy, col); if (typeof renderBox === 'function') renderBox(); return sortBy; },
+      parseBoxSort,
+      nextBoxSort,
+      BOX_SORT_DEFAULT_DIR
+    };
+    module.exports = {
+      PokemonBoxApp: sharedExports,
+      ...sharedExports
     };
   }
 })();

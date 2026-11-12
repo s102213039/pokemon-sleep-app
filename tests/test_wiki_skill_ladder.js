@@ -164,8 +164,28 @@ function createLadderSandbox(options = {}) {
     },
     I18N: {
       getLanguage: () => lang,
-      getPokemonName: (name) => name,
-      getMainSkillName: (skill) => skill
+      getPokemonName: (name) => {
+        const raw = typeof name === 'object' ? (name.name_cn || name.name_en || name.name) : name;
+        if (lang === 'zh-CN' && sandbox.I18N && typeof sandbox.I18N.toSimplified === 'function') {
+          return sandbox.I18N.toSimplified(raw);
+        }
+        return raw;
+      },
+      getMainSkillName: (skill) => {
+        if (lang === 'zh-CN' && sandbox.I18N && typeof sandbox.I18N.toSimplified === 'function') {
+          return sandbox.I18N.toSimplified(skill);
+        }
+        return skill;
+      },
+      toSimplified: (str) => {
+        if (!str) return '';
+        return String(str)
+          .replace(/全體/g, '全体')
+          .replace(/療癒/g, '疗愈')
+          .replace(/強化/g, '强化')
+          .replace(/獲取/g, '获取')
+          .replace(/電龍/g, '电龙');
+      }
     },
     allPokemons: customPokemons,
     console: console,
@@ -877,6 +897,63 @@ console.log('\n[Suite 13] Skill Name Duplication Fix & Ranking Modal UI Refineme
     'styles.css is synchronized with rules for #wiki-skill-ranking-modal .ing-rank-left');
 
   sandbox.closeSkillRankingModal();
+}
+
+// -----------------------------------------------------------------------------
+// Suite 14: Three-Language Support, Modal Tooltips, Dual-Track Hover & Final Evo
+// -----------------------------------------------------------------------------
+console.log('\n[Suite 14] Three-Language, Tooltips, Dual Hover & Final Evo Unified');
+
+{
+  // 1. Tooltips in Ranking Modal: .skill-rank-card and .rank-pkm-avatar have title="<localized name>", no visible .rank-pkm-name
+  const { sandbox } = createLadderSandbox();
+  sandbox.openSkillRankingModal('charge_energy');
+  const modalEl = sandbox.document.getElementById('wiki-skill-ranking-modal');
+  assert(modalEl !== null, 'Ranking modal opened');
+  const modalHtml = modalEl.innerHTML;
+  assert(modalHtml.includes('class="ing-rank-card ingredient-rank-card skill-rank-card'), 'Modal cards have .skill-rank-card class');
+  assert(modalHtml.includes('class="ing-rank-avatar-img rank-pkm-avatar"'), 'Modal avatars have .rank-pkm-avatar class');
+  assert(/<div class="[^"]*skill-rank-card[^"]*"\s+title="[^"]+"/.test(modalHtml), '.skill-rank-card has title="<localized name>" attribute');
+  assert(/<img[^>]+class="[^"]*rank-pkm-avatar[^"]*"[^>]+alt="[^"]+"[^>]+title="[^"]+"/.test(modalHtml), '.rank-pkm-avatar has alt and title matching localized name');
+  assert(!modalHtml.includes('rank-pkm-name'), 'No visible .rank-pkm-name elements in modal');
+  sandbox.closeSkillRankingModal();
+
+  // 2. Dual-track Group Hover & Keyboard Accessibility in Ladder DOM
+  const ladderHtml = sandbox.renderSkillCoordinateLadder();
+  assert(ladderHtml.includes('onmouseover="window.WikiDB && window.WikiDB.handleLadderGroupHover && window.WikiDB.handleLadderGroupHover(event)"'), 'Ladder wrapper binds handleLadderGroupHover onmouseover');
+  assert(ladderHtml.includes('onmouseout="window.WikiDB && window.WikiDB.handleLadderGroupHoverOut && window.WikiDB.handleLadderGroupHoverOut(event)"'), 'Ladder wrapper binds handleLadderGroupHoverOut onmouseout');
+  assert(ladderHtml.includes('data-pkm-group="pkm-'), 'Ladder node has data-pkm-group="pkm-..." attribute');
+  assert(ladderHtml.includes('data-pkm-id="'), 'Ladder node has data-pkm-id="..." attribute');
+  assert(ladderHtml.includes("onkeydown=\"if(event.key==='Enter'||event.key===' ')"), 'Clickable track header has onkeydown for Enter and Space');
+  assert(ladderHtml.includes("window.WikiSkillLadder.openCategoryModal("), 'Clickable track header delegates onkeydown to window.WikiSkillLadder.openCategoryModal');
+
+  // 3. Three-Language Support: zh-TW / zh-CN / en-US
+  const { sandbox: sandboxCN } = createLadderSandbox({ lang: 'zh-CN' });
+  const cnTrackName = sandboxCN._tSkillLadder('全體療癒', 'Energy for Everyone');
+  assertEquals(cnTrackName, '全体疗愈', '_tSkillLadder returns Simplified Chinese for zh-CN');
+  const cnLadderHtml = sandboxCN.renderSkillCoordinateLadder();
+  assert(cnLadderHtml.includes('全体疗愈'), 'zh-CN rendered ladder contains Simplified Chinese track name 全体疗愈');
+
+  const { sandbox: sandboxEN } = createLadderSandbox({ lang: 'en-US' });
+  const enTrackName = sandboxEN._tSkillLadder('全體療癒', 'Energy for Everyone');
+  assertEquals(enTrackName, 'Energy for Everyone', '_tSkillLadder returns English for en-US');
+
+  const { sandbox: sandboxTW } = createLadderSandbox({ lang: 'zh-TW' });
+  const twTrackName = sandboxTW._tSkillLadder('全體療癒', 'Energy for Everyone');
+  assertEquals(twTrackName, '全體療癒', '_tSkillLadder returns Traditional Chinese for zh-TW');
+
+  // 4. Unified isPokemonSkillLadderFinalEvo with window.isFinalEvolution & Fallback
+  let isFinalCalled = false;
+  sandbox.window.isFinalEvolution = (p) => { isFinalCalled = true; return p && p.id === 25; };
+  const delegatedRes = sandbox.isPokemonSkillLadderFinalEvo({ id: 25 });
+  assertEquals(delegatedRes, true, 'isPokemonSkillLadderFinalEvo delegates to window.isFinalEvolution');
+  assertEquals(isFinalCalled, true, 'window.isFinalEvolution was called');
+
+  // Fallback when window.isFinalEvolution is undefined
+  delete sandbox.window.isFinalEvolution;
+  assertEquals(sandbox.isPokemonSkillLadderFinalEvo({ id: 429 }), true, 'Fallback evaluates #429 Mismagius as final evolution');
+  assertEquals(sandbox.isPokemonSkillLadderFinalEvo({ name_cn: '夢妖魔' }), true, 'Fallback evaluates 夢妖魔 as final evolution');
+  assertEquals(sandbox.isPokemonSkillLadderFinalEvo({ id: 200 }), false, 'Fallback evaluates #200 Misdreavus as non-final');
 }
 
 // -----------------------------------------------------------------------------
