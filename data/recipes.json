@@ -607,7 +607,7 @@
     "name_cn": "彈跳咖哩烏龍麵",
     "name_en": "Bounce Curry Udon",
     "category": "咖哩",
-    "pot_size": 90,
+    "pot_size": 112,
     "base_energy": 25539,
     "bonus_pct": 78,
     "icon": "https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png",
@@ -621,6 +621,11 @@
         "name": "品鮮蘑菇",
         "count": 31,
         "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png"
+      },
+      {
+        "name": "火辣香草",
+        "count": 22,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
       },
       {
         "name": "豆製肉",
@@ -641,7 +646,7 @@
       {
         "name": "一口堅果",
         "count": 15,
-        "icon": "assets/ingredients/snackablenuts.svg"
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png"
       },
       {
         "name": "沉甸甸南瓜",
@@ -1333,7 +1338,7 @@
       {
         "name": "一口堅果",
         "count": 30,
-        "icon": "assets/ingredients/snackablenuts.svg"
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png"
       },
       {
         "name": "嫩亮酪梨",
@@ -2046,7 +2051,7 @@
       {
         "name": "一口堅果",
         "count": 26,
-        "icon": "assets/ingredients/snackablenuts.svg"
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png"
       },
       {
         "name": "美味尾巴",

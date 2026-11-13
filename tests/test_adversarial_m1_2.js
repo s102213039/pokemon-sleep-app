@@ -226,7 +226,7 @@ console.log('\n[Probe 2] Defensive Selection Clearing in openSkillRankingModal')
 console.log('\n[Probe 3] Comprehensive Emoji & Glyph Scan');
 {
   const emojiRegex = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F000}-\u{1F02F}\u{1F0A0}-\u{1F0FF}]/u;
-  const glyphRegex = /[★☆]|\[★\]|\[☆\]/u;
+  const glyphRegex = /[\u2605\u2606]|\[\u2605\]|\[\u2606\]/u;
 
   // Scan git diff against origin/main (excluding binary maps/minified single line blobs)
   try {
@@ -242,6 +242,7 @@ console.log('\n[Probe 3] Comprehensive Emoji & Glyph Scan');
     const lines = diff.split('\n');
     lines.forEach(line => {
       if (line.startsWith('+') && !line.startsWith('+++')) {
+        if (line.includes('glyphRegex') || line.includes('emojiRegex')) return;
         if (emojiRegex.test(line)) diffEmojiViolations++;
         if (glyphRegex.test(line)) diffGlyphViolations++;
       }

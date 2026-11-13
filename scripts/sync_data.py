@@ -204,7 +204,7 @@ ING_MAP = {
     'rousingcoffee': {'name': '醒腦咖啡豆', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png'},
     'glossyavocado': {'name': '嫩亮酪梨', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png'},
     'plumppumpkin': {'name': '沉甸甸南瓜', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png'},
-    'snackablenuts': {'name': '一口堅果', 'icon': 'assets/ingredients/snackablenuts.svg'}
+    'snackablenuts': {'name': '一口堅果', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png'}
 }
 
 NAME_CN_MAP = {
