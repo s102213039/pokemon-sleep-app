@@ -1,8 +1,20 @@
+const _FALLBACK_POKEDEX_MODAL_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+
+function _getPokedexModalCaps() {
+  const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+             (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+  return (gc && typeof gc.getCaps === 'function') ? gc.getCaps() : _FALLBACK_POKEDEX_MODAL_CAPS;
+}
+
 function renderPokedexDetailModalContent() {
   const modalEl = document.getElementById('pokedex-detail-modal');
   if (!modalEl) return;
   const pkm = pokedexModalState.pkm;
   if (!pkm) return;
+
+  const modalCaps = _getPokedexModalCaps();
+  const capLv = modalCaps.POKEMON_LEVEL_CAP || 70;
+  const maxLv = modalCaps.THEORETICAL_MAX_LEVEL || 100;
 
   const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
   const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
@@ -133,7 +145,7 @@ function renderPokedexDetailModalContent() {
             <div class="box-form-group box-full-width pokedex-level-ctrl-group">
               <div class="pokedex-level-header-row">
                 <div class="pokedex-level-header-left">
-                  <label class="box-form-label" for="pokedex-level-slider" style="margin-bottom:0;">${t('pokedex.level_slider', '等級設定')} (<span class="pokedex-val-badge font-bold" id="pokedex-level-val-badge">Lv. <span id="pokedex-level-val-text">${pokedexModalState.level}</span><span id="pokedex-level-unreleased-tag" class="pokedex-unreleased-pill ${pokedexModalState.level > 70 ? '' : 'hidden'}">${t('pokedex.unreleased', '尚未開放')}</span></span>)</label>
+                  <label class="box-form-label" for="pokedex-level-slider" style="margin-bottom:0;">${t('pokedex.level_slider', '等級設定')} (<span class="pokedex-val-badge font-bold" id="pokedex-level-val-badge">Lv. <span id="pokedex-level-val-text">${pokedexModalState.level}</span><span id="pokedex-level-unreleased-tag" class="pokedex-unreleased-pill ${pokedexModalState.level > capLv ? '' : 'hidden'}">${t('pokedex.unreleased', '尚未開放')}</span></span>)</label>
                   <button type="button" class="pokedex-btn-preset preset-god" onclick="window.PokemonApp.applyPokedexGodPreset()" title="${t('pokedex.preset_god', '畢業神配置')}">${t('pokedex.preset_god', '畢業神配置')}</button>
                 </div>
                 <div class="pokedex-level-header-right">
@@ -143,18 +155,21 @@ function renderPokedexDetailModalContent() {
               <div class="pokedex-anchored-slider-wrap">
                 <div class="pokedex-slider-track-wrap">
                   <div class="pokedex-slider-track-bar">
-                    <div class="pokedex-slider-fill-bar" id="pokedex-slider-fill-bar" style="width: ${((pokedexModalState.level - 1) / 99 * 100).toFixed(2)}%;"></div>
+                    <div class="pokedex-slider-fill-bar" id="pokedex-slider-fill-bar" style="width: ${((pokedexModalState.level - 1) / (maxLv - 1) * 100).toFixed(2)}%;"></div>
                     ${minEvoLvl > 1 ? `
-                      <div class="pokedex-slider-locked-zone" id="pokedex-slider-locked-zone" style="width: ${((minEvoLvl - 1) / 99 * 100).toFixed(2)}%;" title="${isEN ? `Locked: Below min evolution Lv.${minEvoLvl}` : `不可滑動區間：低於最低進化等級 Lv.${minEvoLvl}`}">
+                      <div class="pokedex-slider-locked-zone" id="pokedex-slider-locked-zone" style="width: ${((minEvoLvl - 1) / (maxLv - 1) * 100).toFixed(2)}%;" title="${isEN ? `Locked: Below min evolution Lv.${minEvoLvl}` : `不可滑動區間：低於最低進化等級 Lv.${minEvoLvl}`}">
                         <span class="pokedex-slider-locked-edge"></span>
                       </div>
                     ` : ''}
                   </div>
-                  <input type="range" id="pokedex-level-slider" min="1" max="100" value="${pokedexModalState.level}" class="pokedex-slider ${minEvoLvl > 1 ? 'has-locked-zone' : ''}" oninput="window.PokemonApp.setPokedexModalLevel(this.value)">
+                  <input type="range" id="pokedex-level-slider" min="1" max="${maxLv}" value="${pokedexModalState.level}" class="pokedex-slider ${minEvoLvl > 1 ? 'has-locked-zone' : ''}" oninput="window.PokemonApp.setPokedexModalLevel(this.value)">
                 </div>
                 <div class="pokedex-track-pins-bar" id="pokedex-track-pins-bar">
                   ${(() => {
-                    const allMilestones = [10, 25, 30, 50, 60, 70, 80, 100];
+                    const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) || (typeof window !== 'undefined' && window.GAME_CONFIG);
+                    const allMilestones = (gc && typeof gc.getAllPokedexPinMilestones === 'function')
+                      ? gc.getAllPokedexPinMilestones()
+                      : Array.from(new Set([10, 25, 30, 50, 60, ...(modalCaps.SUBSKILL_UNLOCK_LEVELS || [10, 25, 50, 70, 80]), capLv, maxLv])).sort((a, b) => a - b);
                     // 紅色不可滑動區間（低於最低進化等級）不展示快捷等級圖釘，亦不額外插入重疊門檻圖釘
                     const pins = allMilestones.filter(lv => lv >= minEvoLvl);
                     const unlockNotes = {
@@ -163,15 +178,19 @@ function renderPokedexDetailModalContent() {
                       30: isEN ? '2nd Ingredient' : '解鎖第2食材',
                       50: isEN ? '3rd Sub-Skill' : '解鎖第3副技能',
                       60: isEN ? '3rd Ingredient' : '解鎖第3食材',
-                      70: isEN ? 'Current Level Cap' : '目前等級上限',
                       80: isEN ? '4th Sub-Skill / Sim' : '解鎖第4副技能 / 模擬',
-                      100: isEN ? '5th Sub-Skill / Max' : '五階滿等畢業 / 模擬'
+                      [maxLv]: isEN ? '5th Sub-Skill / Max' : '五階滿等畢業 / 模擬'
                     };
+                    if (capLv !== 60) {
+                      unlockNotes[capLv] = isEN ? 'Current Level Cap' : '目前等級上限';
+                    } else {
+                      unlockNotes[60] = isEN ? '3rd Ingredient & Current Level Cap' : '解鎖第3食材 / 目前等級上限';
+                    }
                     return pins.map(lv => {
-                      const pct = ((lv - 1) / 99) * 100;
-                      const isReleasedMilestone = [10, 25, 30, 50, 60, 70].includes(lv);
-                      const isUnreleased = lv > 70;
-                      const isCap = lv === 70;
+                      const pct = ((lv - 1) / (maxLv - 1)) * 100;
+                      const isReleasedMilestone = (lv <= capLv); // Default released milestones include [10, 25, 30, 50, 60, 70]
+                      const isUnreleased = lv > capLv; // Level cap check (default lv > 70)
+                      const isCap = lv === capLv; // Level cap pin (default lv === 70)
                       const isActive = pokedexModalState.level === lv;
                       const classes = ['pokedex-track-pin-btn', 'pin-milestone'];
                       if (isActive) classes.push('active');
@@ -179,7 +198,9 @@ function renderPokedexDetailModalContent() {
                       if (isUnreleased) classes.push('pin-unreleased');
 
                       let tooltip = `Lv.${lv}`;
-                      if (unlockNotes[lv]) {
+                      if (isCap && capLv !== 60) {
+                        tooltip += ` (${isEN ? 'Current Level Cap' : '目前等級上限'})`;
+                      } else if (unlockNotes[lv]) {
                         tooltip += ` (${unlockNotes[lv]})`;
                       } else if (isUnreleased) {
                         tooltip = `Lv.${lv} (${isEN ? 'Unreleased in game / Simulation only' : '遊戲尚未開放 / 模擬'})`;
@@ -581,7 +602,9 @@ function updatePokedexModalAppraisalLive() {
   }
   const unreleasedTag = document.getElementById('pokedex-level-unreleased-tag');
   if (unreleasedTag) {
-    if (pokedexModalState.level > 70) {
+    const caps = _getPokedexModalCaps();
+    const capLv = caps.POKEMON_LEVEL_CAP || 70;
+    if (pokedexModalState.level > capLv) { // default: pokedexModalState.level > 70
       unreleasedTag.classList.remove('hidden');
     } else {
       unreleasedTag.classList.add('hidden');

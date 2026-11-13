@@ -305,7 +305,19 @@
     }
   }
 
-  // 5.1 樹果能量動態等級 (Lv.1 ~ Lv.70)、島嶼加成 (0% ~ 85%) 與 順果 2x 計算 (持久化保存)
+  // 5.1 樹果能量動態等級 (Lv.1 ~ POKEMON_LEVEL_CAP)、島嶼加成 (0% ~ ISLAND_BONUS_CAP) 與 順果 2x 計算 (持久化保存)
+  const _WIKI_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+
+  function _getWikiGameConfig() {
+    return (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+           (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+  }
+
+  function _getWikiCaps() {
+    const gc = _getWikiGameConfig();
+    return (gc && typeof gc.getCaps === 'function') ? gc.getCaps() : _WIKI_FALLBACK_CAPS;
+  }
+
   const STORAGE_KEY_BERRY_LEVEL = 'pksleep_wiki_berry_level';
   const STORAGE_KEY_BERRY_ISLAND = 'pksleep_wiki_berry_island';
 
@@ -316,17 +328,20 @@
   function loadPersistedBerrySettings() {
     try {
       if (typeof localStorage === 'undefined') return;
+      const caps = _getWikiCaps();
+      const pokeCap = caps.POKEMON_LEVEL_CAP || 70;
+      const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85;
       const savedLv = localStorage.getItem(STORAGE_KEY_BERRY_LEVEL);
       if (savedLv !== null) {
         const parsedLv = parseInt(savedLv, 10);
-        if (!isNaN(parsedLv) && parsedLv >= 1 && parsedLv <= 70) {
+        if (!isNaN(parsedLv) && parsedLv >= 1 && parsedLv <= pokeCap) {
           currentBerryLevel = parsedLv;
         }
       }
       const savedIsland = localStorage.getItem(STORAGE_KEY_BERRY_ISLAND);
       if (savedIsland !== null) {
         const parsedIsland = parseInt(savedIsland, 10);
-        if (!isNaN(parsedIsland) && parsedIsland >= 0 && parsedIsland <= 85) {
+        if (!isNaN(parsedIsland) && parsedIsland >= 0 && parsedIsland <= islandCap) {
           currentIslandBonus = parsedIsland;
         }
       }
@@ -346,7 +361,9 @@
   }
 
   function updateBerryLevel(val) {
-    currentBerryLevel = Math.min(Math.max(parseInt(val, 10) || 1, 1), 70);
+    const caps = _getWikiCaps();
+    const pokeCap = caps.POKEMON_LEVEL_CAP || 70;
+    currentBerryLevel = Math.min(Math.max(parseInt(val, 10) || 1, 1), pokeCap);
     try {
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem(STORAGE_KEY_BERRY_LEVEL, currentBerryLevel.toString());
@@ -355,14 +372,21 @@
     const displayEl = document.getElementById('berry-level-display');
     if (displayEl) displayEl.textContent = `Lv. ${currentBerryLevel}`;
     const sliderEl = document.getElementById('berry-level-slider');
-    if (sliderEl && parseInt(sliderEl.value, 10) !== currentBerryLevel) {
-      sliderEl.value = currentBerryLevel;
+    if (sliderEl) {
+      sliderEl.min = '1';
+      sliderEl.max = String(pokeCap);
+      if (parseInt(sliderEl.value, 10) !== currentBerryLevel) {
+        sliderEl.value = currentBerryLevel;
+      }
     }
     refreshBerryNodes();
   }
 
   function updateBerryIsland(val) {
-    currentIslandBonus = Math.min(Math.max(parseInt(val, 10) || 0, 0), 85);
+    const caps = _getWikiCaps();
+    const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85;
+    const islandStep = caps.ISLAND_BONUS_STEP || 5;
+    currentIslandBonus = Math.min(Math.max(parseInt(val, 10) || 0, 0), islandCap);
     try {
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem(STORAGE_KEY_BERRY_ISLAND, currentIslandBonus.toString());
@@ -371,8 +395,13 @@
     const displayEl = document.getElementById('berry-island-display');
     if (displayEl) displayEl.textContent = `+${currentIslandBonus}%`;
     const sliderEl = document.getElementById('berry-island-slider');
-    if (sliderEl && parseInt(sliderEl.value, 10) !== currentIslandBonus) {
-      sliderEl.value = currentIslandBonus;
+    if (sliderEl) {
+      sliderEl.min = '0';
+      sliderEl.max = String(islandCap);
+      sliderEl.step = String(islandStep);
+      if (parseInt(sliderEl.value, 10) !== currentIslandBonus) {
+        sliderEl.value = currentIslandBonus;
+      }
     }
     refreshBerryNodes();
   }
@@ -488,10 +517,14 @@
     let cur = parseInt(curLvInput.value, 10) || 1;
     let target = parseInt(targetLvInput.value, 10) || 30;
 
+    const caps = _getWikiCaps();
+    const maxTheoretical = caps.THEORETICAL_MAX_LEVEL || 100;
+    const maxCurLv = Math.max(1, maxTheoretical - 1);
+
     if (cur < 1) cur = 1;
-    if (cur > 99) cur = 99;
+    if (cur > maxCurLv) cur = maxCurLv;
     if (target < 2) target = 30;
-    if (target > 100) target = 100;
+    if (target > maxTheoretical) target = maxTheoretical;
 
     function getCumulativeExpAt(lv) {
       if (lv <= 80) return cumulativeExp[lv] || 0;

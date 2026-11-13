@@ -21,7 +21,7 @@
     "build:app": "node scripts/build_app.js",
     "build:all": "node scripts/build_all.js",
     "build:prod": "node scripts/build_prod.js",
-    "build": "node scripts/build_all.js && node scripts/build_prod.js && node scripts/stamp_version.js",
+    "build": "node scripts/sync_game_config.js && node scripts/build_all.js && node scripts/build_prod.js && node scripts/stamp_version.js",
     "stamp": "node scripts/stamp_version.js",
     "data:minify": "node scripts/minify_data.js",
     "data:format": "node scripts/format_data.js",

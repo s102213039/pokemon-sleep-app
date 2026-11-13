@@ -12,6 +12,12 @@
       (typeof document !== 'undefined' && document.getElementById && document.getElementById('tab-wiki') && document.getElementById('tab-wiki').classList && document.getElementById('tab-wiki').classList.contains('active')) ||
       (!container.style && (!document.getElementById || !document.getElementById('tab-wiki')))
     ));
+    const gameCfg = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+                    (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+    const caps = (typeof _getWikiCaps === 'function') ? _getWikiCaps() : (gameCfg && typeof gameCfg.getCaps === 'function' ? gameCfg.getCaps() : { POKEMON_LEVEL_CAP: 70, THEORETICAL_MAX_LEVEL: 100 });
+    const sleepExpTargetLevels = (gameCfg && typeof gameCfg.getSleepExpTargetLevels === 'function')
+      ? gameCfg.getSleepExpTargetLevels()
+      : Array.from(new Set([30, 50, 60, caps.POKEMON_LEVEL_CAP, 80, caps.THEORETICAL_MAX_LEVEL].filter(Boolean))).sort((a, b) => a - b);
 
     container.innerHTML = `
       <!-- 天梯頂級料理食材高亮懸浮按鈕 (FAB) -->
@@ -631,18 +637,13 @@
                 <div class="calc-form-row calc-form-row-levels">
                   <div class="calc-field-group calc-field-cur">
                     <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current:' : '目前等級:'}</label>
-                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="99" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
+                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="${caps.THEORETICAL_MAX_LEVEL - 1}" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
                   </div>
 
                   <div class="calc-field-group calc-field-target">
                     <label class="calc-label" for="calc-sleep-target-lv">${isEN ? 'Target:' : '目標等級:'}</label>
                     <select id="calc-sleep-target-lv" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
-                      <option value="30">Lv.30</option>
-                      <option value="50">Lv.50</option>
-                      <option value="60">Lv.60</option>
-                      <option value="70">Lv.70</option>
-                      <option value="80">Lv.80</option>
-                      <option value="100">Lv.100</option>
+                      ${sleepExpTargetLevels.map(lv => `<option value="${lv}">Lv.${lv}</option>`).join('')}
                     </select>
                   </div>
                 </div>
@@ -701,7 +702,7 @@
                       : row.level === 30 ? 'milestone-green'
                       : row.level === 50 ? 'milestone-amber'
                       : row.level === 60 ? 'milestone-pink'
-                      : row.level === 70 ? 'milestone-purple'
+                      : row.level === caps.POKEMON_LEVEL_CAP ? 'milestone-purple'
                       : 'milestone-cyan';
                     const rawNote = isEN ? (row.note_en || row.note) : row.note;
                     const formattedNote = rawNote

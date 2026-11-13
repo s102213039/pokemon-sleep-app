@@ -158,9 +158,9 @@
       'recipe.cat_salad': '沙拉',
       'recipe.cat_dessert': '點心/飲料',
       'recipe.slider_level': '食譜等級',
-      'recipe.slider_level_desc': '等級加成非線性，Lv.70 最高可達 +258%',
+      'recipe.slider_level_desc': '等級加成非線性，Lv.{maxRecipeLv} 最高可達 +{maxRecipeBonus}%',
       'recipe.slider_island': '島嶼能量加成',
-      'recipe.slider_island_desc': '0%→85%，每格 +5%（×1.00 ～ ×1.85）',
+      'recipe.slider_island_desc': '0%→{maxIslandPct}%，每格 +{islandStep}%（×1.00 ～ ×{maxIslandMult}）',
       'recipe.slider_event': '活動能量加成',
       'recipe.slider_event_desc': '1.00x→1.50x，每格 +0.25x（活動限定倍率）',
       'recipe.slider_pot_expansion': '擴鍋預測',
@@ -563,9 +563,9 @@
       'recipe.cat_salad': '沙拉',
       'recipe.cat_dessert': '点心/饮料',
       'recipe.slider_level': '食谱等级',
-      'recipe.slider_level_desc': '等级加成非线性，Lv.70 最高可达 +258%',
+      'recipe.slider_level_desc': '等级加成非线性，Lv.{maxRecipeLv} 最高可达 +{maxRecipeBonus}%',
       'recipe.slider_island': '岛屿能量加成',
-      'recipe.slider_island_desc': '0%→85%，每格 +5%（×1.00 ～ ×1.85）',
+      'recipe.slider_island_desc': '0%→{maxIslandPct}%，每格 +{islandStep}%（×1.00 ～ ×{maxIslandMult}）',
       'recipe.slider_event': '活动能量加成',
       'recipe.slider_event_desc': '1.00x→1.50x，每格 +0.25x（活动限定倍率）',
       'recipe.slider_pot_expansion': '扩锅预测',
@@ -974,9 +974,9 @@
       'recipe.cat_salad': 'Salad',
       'recipe.cat_dessert': 'Dessert',
       'recipe.slider_level': 'Recipe Level',
-      'recipe.slider_level_desc': 'Non-linear bonus, up to +258% at Lv.70',
+      'recipe.slider_level_desc': 'Non-linear bonus, up to +{maxRecipeBonus}% at Lv.{maxRecipeLv}',
       'recipe.slider_island': 'Island Bonus',
-      'recipe.slider_island_desc': '0% to 85% (+5% step, ×1.00 ~ ×1.85)',
+      'recipe.slider_island_desc': '0% to {maxIslandPct}% (+{islandStep}% step, ×1.00 ~ ×{maxIslandMult})',
       'recipe.slider_event': 'Event Bonus',
       'recipe.slider_event_desc': '1.00x to 1.50x (+0.25x step)',
       'recipe.slider_pot_expansion': 'Pot Expansion',
@@ -2170,15 +2170,51 @@
     return null;
   }
 
+  const _I18N_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+
+  function _resolveDynamicCaps(str) {
+    if (typeof str !== 'string') return str;
+    if (!str.includes('{maxRecipe') && !str.includes('{maxIsland') && !str.includes('{islandStep}')) {
+      return str;
+    }
+    const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+               (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+    const maxRecipeLv = (gc && typeof gc.getRecipeLevelCap === 'function')
+      ? gc.getRecipeLevelCap()
+      : ((gc && gc.CAPS && gc.CAPS.RECIPE_LEVEL_CAP) || _I18N_FALLBACK_CAPS.RECIPE_LEVEL_CAP || 70);
+    const maxRecipeBonus = (gc && typeof gc.getRecipeMaxBonusPct === 'function')
+      ? gc.getRecipeMaxBonusPct()
+      : ((gc && gc.CAPS && gc.CAPS.RECIPE_MAX_BONUS_PCT) || _I18N_FALLBACK_CAPS.RECIPE_MAX_BONUS_PCT || 258);
+    const maxIslandPct = (gc && typeof gc.getIslandBonusCap === 'function')
+      ? gc.getIslandBonusCap()
+      : ((gc && gc.CAPS && gc.CAPS.ISLAND_BONUS_CAP !== undefined) ? gc.CAPS.ISLAND_BONUS_CAP : (_I18N_FALLBACK_CAPS.ISLAND_BONUS_CAP || 85));
+    const islandStep = (gc && typeof gc.getIslandBonusStep === 'function')
+      ? gc.getIslandBonusStep()
+      : ((gc && gc.CAPS && gc.CAPS.ISLAND_BONUS_STEP !== undefined) ? gc.CAPS.ISLAND_BONUS_STEP : (_I18N_FALLBACK_CAPS.ISLAND_BONUS_STEP || 5));
+    const maxIslandMult = (1 + Number(maxIslandPct) / 100).toFixed(2);
+
+    return str
+      .replace(/\{maxRecipeLv\}/g, String(maxRecipeLv))
+      .replace(/\{maxRecipeBonus\}/g, String(maxRecipeBonus))
+      .replace(/\{maxIslandPct\}/g, String(maxIslandPct))
+      .replace(/\{islandStep\}/g, String(islandStep))
+      .replace(/\{maxIslandMult\}/g, String(maxIslandMult));
+  }
+
   function t(key, fallback = '') {
     const dict = DICTIONARY[currentLang] || DICTIONARY[DEFAULT_LANG];
-    if (dict && dict[key] !== undefined) return dict[key];
-    if (currentLang === 'zh-CN') {
+    let res = null;
+    if (dict && dict[key] !== undefined) {
+      res = dict[key];
+    } else if (currentLang === 'zh-CN') {
       const twVal = DICTIONARY['zh-TW'] && DICTIONARY['zh-TW'][key];
-      if (twVal !== undefined) return toSimplifiedChinese(twVal);
-      if (fallback) return toSimplifiedChinese(fallback);
+      if (twVal !== undefined) res = toSimplifiedChinese(twVal);
+      else if (fallback) res = toSimplifiedChinese(fallback);
     }
-    return fallback || key;
+    if (res === null) {
+      res = fallback || key;
+    }
+    return _resolveDynamicCaps(res);
   }
 
   function getTypeName(type) {
@@ -2736,7 +2772,7 @@
   }
 
   function updatePageTranslations() {
-    if (typeof document === 'undefined') return;
+    if (typeof document === 'undefined' || typeof document.querySelectorAll !== 'function') return;
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');

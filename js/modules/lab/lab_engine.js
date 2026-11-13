@@ -1,3 +1,11 @@
+  const _FALLBACK_LAB_ENGINE_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+
+  function _getLabEngineCaps() {
+    const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+               (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+    return (gc && typeof gc.getCaps === 'function') ? gc.getCaps() : _FALLBACK_LAB_ENGINE_CAPS;
+  }
+
   /* ─── 核心評估演算法 (單一維度/等級計算核心) ──────────── */
   function evaluateSingle(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, isPotential, cleanseMint) {
     if (!pkmData) return null;
@@ -808,12 +816,26 @@
     }
 
     // 升級消耗計算
+    const caps = _getLabEngineCaps();
+    const capLv = caps.POKEMON_LEVEL_CAP || 70;
     const costTo30 = calculateMilestoneCost(currentLv, 30, nature);
     const costTo50 = calculateMilestoneCost(currentLv, 50, nature);
     const costTo60 = calculateMilestoneCost(currentLv, 60, nature);
     const costTo70 = calculateMilestoneCost(currentLv, 70, nature);
     const costTo80 = calculateMilestoneCost(currentLv, 80, nature);
     const costTo100 = calculateMilestoneCost(currentLv, 100, nature);
+    const costToCap = calculateMilestoneCost(currentLv, capLv, nature);
+
+    const costsObj = {
+      to30: costTo30,
+      to50: costTo50,
+      to60: costTo60,
+      to70: costTo70,
+      to80: costTo80,
+      to100: costTo100,
+      toCap: costToCap
+    };
+    costsObj['to' + capLv] = costToCap;
 
     return {
       scores: {
@@ -834,14 +856,7 @@
       diagnostics: { pros: pros, cons: cons },
       pros: pros,
       cons: cons,
-      costs: {
-        to30: costTo30,
-        to50: costTo50,
-        to60: costTo60,
-        to70: costTo70,
-        to80: costTo80,
-        to100: costTo100
-      }
+      costs: costsObj
     };
   }
 

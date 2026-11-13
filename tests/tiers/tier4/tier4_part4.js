@@ -2283,44 +2283,43 @@ function registerTier4Part4() {
     assertEquals(recipesJson.length, targetRecipes.length, 'data/recipes.json count must match AppraisalLab target recipes count');
     assert(recipesJson.length >= 78, `data/recipes.json must contain at least 78 recipes (got ${recipesJson.length})`);
 
-    // 2. Official Level Cap (Lv.70) in Pokédex & App
+    // 2. Official Level Cap (GAME_CONFIG.POKEMON_LEVEL_CAP) in Pokédex & App
+    const GameConfig = require(path.join(WORKSPACE_ROOT, 'js', 'core', 'gameConfig.js'));
+    const curCap = GameConfig.getPokemonLevelCap();
+    const maxTheoreticalLv = GameConfig.getTheoreticalMaxLevel();
     const pokedexModalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'pokedex', 'pokedex_modal.js'), 'utf8');
-    assert(pokedexModalCode.includes('lv > 70'), 'pokedex_modal.js must define unreleased as lv > 70');
-    assert(pokedexModalCode.includes('lv === 70'), 'pokedex_modal.js must define cap as lv === 70');
-    assert(pokedexModalCode.includes('[10, 25, 30, 50, 60, 70]'), 'pokedex_modal.js must include Lv.70 as released milestone');
-    assert(!pokedexModalCode.includes('const isCap = lv === 60;'), 'Lv.60 must not be labeled as level cap');
+    assert(pokedexModalCode.includes('lv > capLv'), 'pokedex_modal.js must define unreleased dynamically as lv > capLv');
+    assert(pokedexModalCode.includes('lv === capLv'), 'pokedex_modal.js must define cap dynamically as lv === capLv');
+    assert(pokedexModalCode.includes('getAllPokedexPinMilestones'), 'pokedex_modal.js must source milestones dynamically from GAME_CONFIG');
+    assert(!pokedexModalCode.includes('const isCap = lv === 60;'), 'Lv.60 must not be hardcoded as level cap');
 
     const pokedexCtrlCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'pokedex', 'pokedex_detail_ctrl.js'), 'utf8');
     assert(!pokedexCtrlCode.includes('pokedexModalState.level > 60'), 'pokedex_detail_ctrl.js must not mark Lv.61-70 as unreleased');
-    assert(pokedexCtrlCode.includes('pokedexModalState.level > 70'), 'pokedex_detail_ctrl.js must mark only > 70 as unreleased');
+    assert(pokedexCtrlCode.includes('pokedexModalState.level > capLv'), 'pokedex_detail_ctrl.js must dynamically check > capLv for unreleased');
 
-    // 3. Granular Target Level Milestones (30, 50, 60, 70, 80, 100) in Growth Lab
+    // 3. Granular Target Level Milestones (30, 50, 60, cap, 80, max) in Growth Lab
     const growthJsCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'lab', 'lab_growth.js'), 'utf8');
-    assert(growthJsCode.includes('setGrowthMilestone(30)'), 'Growth Lab must include Lv.30 milestone');
-    assert(growthJsCode.includes('setGrowthMilestone(50)'), 'Growth Lab must include Lv.50 milestone');
-    assert(growthJsCode.includes('setGrowthMilestone(60)'), 'Growth Lab must include Lv.60 milestone');
-    assert(growthJsCode.includes('setGrowthMilestone(70)'), 'Growth Lab must include Lv.70 milestone');
-    assert(growthJsCode.includes('setGrowthMilestone(80)'), 'Growth Lab must include Lv.80 milestone');
-    assert(growthJsCode.includes('setGrowthMilestone(100)'), 'Growth Lab must include Lv.100 milestone');
-    assert(growthJsCode.includes('min="2" max="100"'), 'Target level slider must reach max 100');
+    assert(growthJsCode.includes('getGrowthMilestones'), 'Growth Lab must derive milestone chips dynamically from GAME_CONFIG');
+    assert(growthJsCode.includes('setGrowthMilestone('), 'Growth Lab must bind setGrowthMilestone for milestone chips');
+    assert(growthJsCode.includes('max="${maxLv}"'), 'Target level slider must bind max dynamically from maxLv');
 
     // Verify Growth calculation to Lv.100
-    const costTo100 = AppraisalLab.calculateGrowthCost(1, 100, 1.0, 'normal');
+    const costTo100 = AppraisalLab.calculateGrowthCost(1, maxTheoreticalLv, 1.0, 'normal');
     assertEquals(costTo100.expNeeded, 215000, 'Lv.1 to Lv.100 total EXP must equal 215,000');
     assertEquals(costTo100.shardsNeeded, 680000, 'Lv.1 to Lv.100 total Shards must equal 680,000');
     assertEquals(costTo100.candiesNeeded, 8600, 'Lv.1 to Lv.100 total Candies must equal 8,600');
 
     // 4. Compare Lab Granular Benchmark Levels
     const compareJsCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'lab', 'lab_compare.js'), 'utf8');
-    assert(compareJsCode.includes("id: '70'"), 'lab_compare.js must support Lv.70 benchmark');
-    assert(compareJsCode.includes("id: '80'"), 'lab_compare.js must support Lv.80 benchmark');
-    assert(compareJsCode.includes("id: '100'"), 'lab_compare.js must support Lv.100 benchmark');
+    assert(compareJsCode.includes('capLv'), 'lab_compare.js must resolve current level cap benchmark dynamically');
+    assert(compareJsCode.includes('maxLv') && compareJsCode.includes('id: String(lv)'), 'lab_compare.js must generate benchmark IDs including maxLv dynamically');
 
     // 5. Wiki Sleep EXP Calculator Target Levels
     const wikiMainCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_main.js'), 'utf8');
-    assert(wikiMainCode.includes('value="70"'), 'wiki_main.js must support Lv.70 target');
-    assert(wikiMainCode.includes('value="80"'), 'wiki_main.js must support Lv.80 target');
-    assert(wikiMainCode.includes('value="100"'), 'wiki_main.js must support Lv.100 target');
+    assert(wikiMainCode.includes('getSleepExpTargetLevels'), 'wiki_main.js must derive Sleep EXP target levels dynamically from GAME_CONFIG');
+    assert(GameConfig.getSleepExpTargetLevels().includes(curCap), `Sleep EXP targets must include current cap Lv.${curCap}`);
+    assert(GameConfig.getSleepExpTargetLevels().includes(80), 'Sleep EXP targets must include Lv.80');
+    assert(GameConfig.getSleepExpTargetLevels().includes(maxTheoreticalLv), `Sleep EXP targets must include max Lv.${maxTheoreticalLv}`);
   });
 
   // Test 239: Gengar Ingredient Rate Buff (16.60%), Gastly Line & Misdreavus Line Data Ground-Truth Integrity

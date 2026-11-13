@@ -12,9 +12,11 @@ const { registerTier4Tests } = require('./tiers/tier4_scenarios');
 (async function main() {
   // Ensure all CSS and JS modules are synchronized, minified, and version stamped
   try {
+    const { syncGameConfig } = require('../scripts/sync_game_config');
     const { buildAll } = require('../scripts/build_all');
     const { buildProd } = require('../scripts/build_prod');
     const { stamp } = require('../scripts/stamp_version');
+    syncGameConfig();
     buildAll();
     await buildProd();
     stamp();
@@ -86,7 +88,8 @@ const { registerTier4Tests } = require('./tiers/tier4_scenarios');
     const standaloneSuites = [
       { name: 'Standalone: Cross-Module Consistency & Pokedex H5', file: 'test_cross_module_consistency.js' },
       { name: 'Standalone: Box Import Deduplication & Upgrade Logic', file: 'test_box_import_dedup.js' },
-      { name: 'Standalone: Wiki Main Skill Ladder Integration Suite', file: 'test_wiki_skill_ladder.js' }
+      { name: 'Standalone: Wiki Main Skill Ladder Integration Suite', file: 'test_wiki_skill_ladder.js' },
+      { name: 'Standalone: Dynamic Game Config Single-Source Suite', file: 'test_dynamic_game_config.js' }
     ];
 
     for (const suite of standaloneSuites) {

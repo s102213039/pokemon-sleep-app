@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.min.css?v=20261113_0707">
+  <link rel="stylesheet" href="../css/styles.min.css?v=20261113_0744">
 
   <!-- 全域路徑基準與錯誤診斷攔截器 -->
   <script>
@@ -662,7 +662,7 @@
               <div class="slider-row">
                 <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">Lv.1</span>
                 <input type="range" id="recipe-level-slider" class="rf-slider" min="1" max="70" step="1" value="1" aria-label="食譜等級">
-                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">Lv.70</span>
+                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;" id="recipe-level-max-label">Lv.70</span>
               </div>
             </div>
 
@@ -675,7 +675,7 @@
               <div class="slider-row">
                 <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">0%</span>
                 <input type="range" id="island-bonus-slider" class="rf-slider island-slider" min="0" max="85" step="5" value="0" aria-label="島嶼能量加成">
-                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">85%</span>
+                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;" id="island-bonus-max-label">85%</span>
               </div>
             </div>
 
@@ -1393,21 +1393,22 @@
   </button>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
-  <script src="../js/core/idbStorage.min.js?v=20261113_0707"></script>
-  <script src="../js/core/domUtils.min.js?v=20261113_0707"></script>
-  <script src="../js/core/cloudSync.min.js?v=20261113_0707"></script>
-  <script src="../js/core/i18n.min.js?v=20261113_0707"></script>
-  <script src="../js/core/telemetry.min.js?v=20261113_0707"></script>
-  <script src="../js/components/customSelect.min.js?v=20261113_0707"></script>
-  <script src="../js/components/popoverCoordinator.min.js?v=20261113_0707"></script>
-  <script src="../js/modules/app.min.js?v=20261113_0707"></script>
-  <script src="../js/modules/recipes.min.js?v=20261113_0707"></script>
-  <script src="../js/data/items.min.js?v=20261113_0707"></script>
-  <script src="../js/data/ladder_data.min.js?v=20261113_0707"></script>
-  <script src="../js/modules/wiki.min.js?v=20261113_0707"></script>
-  <script src="../js/modules/box.min.js?v=20261113_0707"></script>
-  <script src="../js/modules/news.min.js?v=20261113_0707"></script>
-  <script src="../js/modules/appraisal.min.js?v=20261113_0707"></script>
+  <script src="../js/core/idbStorage.min.js?v=20261113_0744"></script>
+  <script src="../js/core/gameConfig.min.js?v=20261113_0744"></script>
+  <script src="../js/core/domUtils.min.js?v=20261113_0744"></script>
+  <script src="../js/core/cloudSync.min.js?v=20261113_0744"></script>
+  <script src="../js/core/i18n.min.js?v=20261113_0744"></script>
+  <script src="../js/core/telemetry.min.js?v=20261113_0744"></script>
+  <script src="../js/components/customSelect.min.js?v=20261113_0744"></script>
+  <script src="../js/components/popoverCoordinator.min.js?v=20261113_0744"></script>
+  <script src="../js/modules/app.min.js?v=20261113_0744"></script>
+  <script src="../js/modules/recipes.min.js?v=20261113_0744"></script>
+  <script src="../js/data/items.min.js?v=20261113_0744"></script>
+  <script src="../js/data/ladder_data.min.js?v=20261113_0744"></script>
+  <script src="../js/modules/wiki.min.js?v=20261113_0744"></script>
+  <script src="../js/modules/box.min.js?v=20261113_0744"></script>
+  <script src="../js/modules/news.min.js?v=20261113_0744"></script>
+  <script src="../js/modules/appraisal.min.js?v=20261113_0744"></script>
 
   <!-- 桌面版切換監聽腳本 -->
   <script>

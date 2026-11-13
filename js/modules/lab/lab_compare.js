@@ -1,3 +1,11 @@
+  const _FALLBACK_LAB_COMPARE_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+
+  function _getCompareCaps() {
+    const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+               (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+    return (gc && typeof gc.getCaps === 'function') ? gc.getCaps() : _FALLBACK_LAB_COMPARE_CAPS;
+  }
+
   /* ─── 寶可夢對比數據精算器 (Performance Metrics Calculator for Compare) ─ */
   function calculatePokemonComparisonPerformance(item, base, overrideLevel) {
     if (!item) return null;
@@ -316,15 +324,36 @@
     `;
 
     // ── 基準等級切換橫列 ──
+    const caps = _getCompareCaps();
+    const capLv = caps.POKEMON_LEVEL_CAP || 70;
+    const maxLv = caps.THEORETICAL_MAX_LEVEL || 100;
+    const milestoneLevels = Array.from(new Set([30, 50, 60, capLv, 80, maxLv])).sort((a, b) => a - b);
     const benchmarkLevels = [
-      { id: 'box', label: isEN ? 'Box Lv' : '各自等級', title: isEN ? 'Use each Pokemon\'s box level' : '使用每隻寶可夢各自倉儲等級' },
-      { id: '30', label: 'Lv.30', title: isEN ? 'Lv.30: Unlocks 2nd ingredient' : 'Lv.30：解鎖第2食材' },
-      { id: '50', label: 'Lv.50', title: isEN ? 'Lv.50: Unlocks 3rd sub-skill' : 'Lv.50：解鎖第3副技能' },
-      { id: '60', label: 'Lv.60', title: isEN ? 'Lv.60: Unlocks 3rd ingredient' : 'Lv.60：解鎖第3食材' },
-      { id: '70', label: 'Lv.70', title: isEN ? 'Lv.70: Current in-game maximum level cap' : 'Lv.70：目前遊戲等級上限' },
-      { id: '80', label: 'Lv.80', title: isEN ? 'Lv.80: Unlocks 4th sub-skill (Sim)' : 'Lv.80：解鎖第4副技能 (模擬)' },
-      { id: '100', label: 'Lv.100', title: isEN ? 'Lv.100: Max level graduation with all 5 sub-skills' : 'Lv.100：五階滿等畢業 (全開模擬)' }
+      { id: 'box', label: isEN ? 'Box Lv' : '各自等級', title: isEN ? 'Use each Pokemon\'s box level' : '使用每隻寶可夢各自倉儲等級' }
     ];
+    milestoneLevels.forEach(lv => {
+      let desc = '';
+      if (lv === capLv && lv !== 60) {
+        desc = isEN ? 'Current in-game maximum level cap' : '目前遊戲等級上限';
+      } else if (lv === 30) {
+        desc = isEN ? 'Unlocks 2nd ingredient' : '解鎖第2食材';
+      } else if (lv === 50) {
+        desc = isEN ? 'Unlocks 3rd sub-skill' : '解鎖第3副技能';
+      } else if (lv === 60) {
+        desc = isEN ? (capLv === 60 ? 'Unlocks 3rd ingredient & Current in-game maximum level cap' : 'Unlocks 3rd ingredient') : (capLv === 60 ? '解鎖第3食材 / 目前遊戲等級上限' : '解鎖第3食材');
+      } else if (lv === 80) {
+        desc = isEN ? 'Unlocks 4th sub-skill (Sim)' : '解鎖第4副技能 (模擬)';
+      } else if (lv === maxLv) {
+        desc = isEN ? 'Max level graduation with all 5 sub-skills' : '五階滿等畢業 (全開模擬)';
+      } else {
+        desc = lv > capLv ? (isEN ? 'Simulation Level' : '模擬等級') : (isEN ? 'Milestone' : '里程碑等級');
+      }
+      benchmarkLevels.push({
+        id: String(lv),
+        label: `Lv.${lv}`,
+        title: isEN ? `Lv.${lv}: ${desc}` : `Lv.${lv}：${desc}`
+      });
+    });
     const benchmarkBarHtml = `
       <div class="lab-compare-benchmark-row">
         <span class="lab-compare-benchmark-title">${isEN ? 'Benchmark Level:' : '基準等級:'}</span>

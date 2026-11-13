@@ -17,6 +17,7 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 const PROD_FILES = [
   { src: 'css/styles.css', dest: 'css/styles.min.css', type: 'css' },
   { src: 'js/core/idbStorage.js', dest: 'js/core/idbStorage.min.js', type: 'js' },
+  { src: 'js/core/gameConfig.js', dest: 'js/core/gameConfig.min.js', type: 'js' },
   { src: 'js/core/domUtils.js', dest: 'js/core/domUtils.min.js', type: 'js' },
   { src: 'js/core/cloudSync.js', dest: 'js/core/cloudSync.min.js', type: 'js' },
   { src: 'js/core/i18n.js', dest: 'js/core/i18n.min.js', type: 'js' },

@@ -1,3 +1,11 @@
+const _FALLBACK_POKEDEX_CTRL_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+
+function _getPokedexCtrlCaps() {
+  const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+             (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+  return (gc && typeof gc.getCaps === 'function') ? gc.getCaps() : _FALLBACK_POKEDEX_CTRL_CAPS;
+}
+
 function getMainSkillMaxLevel(mainSkillName) {
   if (typeof window !== 'undefined' && typeof window.getMainSkillMaxLevel === 'function' && window.getMainSkillMaxLevel !== getMainSkillMaxLevel) {
     return window.getMainSkillMaxLevel(mainSkillName);
@@ -178,7 +186,9 @@ function closePokemonDetailModal() {
 function updateSliderProgressFill(lvl) {
   const fillBar = document.getElementById('pokedex-slider-fill-bar');
   if (fillBar) {
-    const percent = Math.min(100, Math.max(0, ((lvl - 1) / 99) * 100));
+    const caps = _getPokedexCtrlCaps();
+    const maxLv = caps.THEORETICAL_MAX_LEVEL || 100;
+    const percent = Math.min(100, Math.max(0, ((lvl - 1) / (maxLv - 1)) * 100));
     fillBar.style.width = `${percent.toFixed(2)}%`;
   }
 }
@@ -375,18 +385,22 @@ function applyPokedexResetPreset() {
   pokedexModalState.ingSlots = [0, 0, 0];
   pokedexActiveSubskillSlot = 1;
 
+  const caps = _getPokedexCtrlCaps();
+  const capLv = caps.POKEMON_LEVEL_CAP || 70;
+  const maxLv = caps.THEORETICAL_MAX_LEVEL || 100;
+
   const slider = document.getElementById('pokedex-level-slider');
   const valText = document.getElementById('pokedex-level-val-text');
   const unreleasedTag = document.getElementById('pokedex-level-unreleased-tag');
   if (slider) {
     slider.min = 1;
-    slider.max = 100;
+    slider.max = maxLv;
     slider.value = pokedexModalState.level;
   }
   if (valText) valText.textContent = pokedexModalState.level;
   updateSliderProgressFill(pokedexModalState.level);
   if (unreleasedTag) {
-    if (pokedexModalState.level > 70) {
+    if (pokedexModalState.level > capLv) { // default: pokedexModalState.level > 70
       unreleasedTag.classList.remove('hidden');
     } else {
       unreleasedTag.classList.add('hidden');
@@ -409,6 +423,9 @@ function applyPokedexResetPreset() {
 }
 
 function setPokedexModalLevel(val) {
+  const caps = _getPokedexCtrlCaps();
+  const capLv = caps.POKEMON_LEVEL_CAP || 70;
+  const maxLv = caps.THEORETICAL_MAX_LEVEL || 100;
   const minEvoLvl = getPokedexMinEvolutionLevel(pokedexModalState.pkm);
   let parsed = parseInt(val, 10);
   if (isNaN(parsed)) parsed = minEvoLvl;
@@ -416,8 +433,8 @@ function setPokedexModalLevel(val) {
   if (parsed < minEvoLvl) {
     parsed = minEvoLvl;
     clamped = true;
-  } else if (parsed > 100) {
-    parsed = 100;
+  } else if (parsed > maxLv) {
+    parsed = maxLv;
   }
   pokedexModalState.level = parsed;
 
@@ -426,7 +443,7 @@ function setPokedexModalLevel(val) {
   const unreleasedTag = document.getElementById('pokedex-level-unreleased-tag');
   if (slider) {
     if (slider.min != 1) slider.min = 1;
-    if (slider.max != 100) slider.max = 100;
+    if (slider.max != maxLv) slider.max = maxLv;
     if (parseInt(slider.value, 10) < minEvoLvl) {
       slider.value = minEvoLvl;
     } else if (slider.value != pokedexModalState.level) {
@@ -439,7 +456,7 @@ function setPokedexModalLevel(val) {
   if (valText) valText.textContent = pokedexModalState.level;
   updateSliderProgressFill(pokedexModalState.level);
   if (unreleasedTag) {
-    if (pokedexModalState.level > 70) {
+    if (pokedexModalState.level > capLv) { // default: pokedexModalState.level > 70
       unreleasedTag.classList.remove('hidden');
     } else {
       unreleasedTag.classList.add('hidden');
@@ -633,6 +650,8 @@ function updatePokedexSubskillUI() {
   const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
   const subskills = pokedexModalState.subskills;
   const currentLevel = pokedexModalState.level;
+  const caps = _getPokedexCtrlCaps();
+  const capLv = caps.POKEMON_LEVEL_CAP || 70;
   const slotLevels = [10, 25, 50, 70, 80];
 
   // 1. 更新 5 個插槽按鈕
@@ -643,7 +662,7 @@ function updatePokedexSubskillUI() {
       const isActive = slotNum === pokedexActiveSubskillSlot;
       const skName = subskills[idx] || '';
       const isLevelReached = currentLevel >= lvl;
-      const isUnreleasedSlot = lvl > 70;
+      const isUnreleasedSlot = lvl > capLv; // default: lvl > 70
       const isEffectActive = isLevelReached;
 
       let badgeHtml = '';

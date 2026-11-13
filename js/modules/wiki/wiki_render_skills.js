@@ -1,9 +1,15 @@
   // 渲染樹果與食材基礎能量看板 (極簡無名無滾輪 18 格全展開版 + 等級滑桿、島嶼加成與順果 2x 開關)
   function renderValuesBoard() {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const caps = typeof _getWikiCaps === 'function' ? _getWikiCaps() : ((typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG && globalThis.GAME_CONFIG.getCaps) ? globalThis.GAME_CONFIG.getCaps() : { POKEMON_LEVEL_CAP: 70, ISLAND_BONUS_CAP: 85, ISLAND_BONUS_STEP: 5 });
+    const pokeCap = caps.POKEMON_LEVEL_CAP || 70;
+    const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85;
+    const islandStep = caps.ISLAND_BONUS_STEP || 5;
+    currentBerryLevel = Math.min(Math.max(currentBerryLevel || 1, 1), pokeCap);
+    currentIslandBonus = Math.min(Math.max(currentIslandBonus || 0, 0), islandCap);
     return `
       <div class="values-horizontal-container">
-        <!-- 區塊 1：樹果基礎能量庫 (Lv.1 ~ Lv.70 + 島嶼加成 0~85% 動態試算 + 雙行 1x/2x 展示) -->
+        <!-- 區塊 1：樹果基礎能量庫 (Lv.1 ~ Lv.${pokeCap} + 島嶼加成 0~${islandCap}% 動態試算 + 雙行 1x/2x 展示) -->
         <div class="values-horizontal-section">
           <div class="values-section-header">
             <div class="values-section-title-group">
@@ -12,20 +18,20 @@
 
             <!-- 等級滑桿與島嶼加成控制器 -->
             <div class="berry-calc-controls">
-              <!-- 寶可夢等級滑桿 (1 ~ 70) -->
+              <!-- 寶可夢等級滑桿 (1 ~ ${pokeCap}) -->
               <div class="berry-control-group">
                 <label for="berry-level-slider" class="berry-control-label">
                   ${isEN ? 'Level:' : '等級：'}<span id="berry-level-display" class="berry-level-tag">Lv. ${currentBerryLevel}</span>
                 </label>
-                <input type="range" id="berry-level-slider" min="1" max="70" value="${currentBerryLevel}" step="1" class="berry-slider" oninput="window.WikiDB.updateBerryLevel(this.value)">
+                <input type="range" id="berry-level-slider" min="1" max="${pokeCap}" value="${currentBerryLevel}" step="1" class="berry-slider" oninput="window.WikiDB.updateBerryLevel(this.value)">
               </div>
 
-              <!-- 島嶼加成滑桿 (0% ~ 85%) -->
+              <!-- 島嶼加成滑桿 (0% ~ ${islandCap}%) -->
               <div class="berry-control-group">
                 <label for="berry-island-slider" class="berry-control-label">
                   ${isEN ? 'Island Bonus:' : '島嶼加成：'}<span id="berry-island-display" class="berry-island-tag">+${currentIslandBonus}%</span>
                 </label>
-                <input type="range" id="berry-island-slider" min="0" max="85" value="${currentIslandBonus}" step="5" class="berry-slider island-slider" oninput="window.WikiDB.updateBerryIsland(this.value)">
+                <input type="range" id="berry-island-slider" min="0" max="${islandCap}" value="${currentIslandBonus}" step="${islandStep}" class="berry-slider island-slider" oninput="window.WikiDB.updateBerryIsland(this.value)">
               </div>
             </div>
           </div>
@@ -154,7 +160,7 @@
     `;}).join('');
   }
 
-  // 方案 C: 渲染技能「精華單行速查 (Lv.1 ➔ Lv.Max)」與「縱向階梯清單（隨卡片點擊展開/收合）」
+  // 方案 C: 渲染技能「精華單行速查 (Lv.1 -> Lv.Max)」與「縱向階梯清單（隨卡片點擊展開/收合）」
   function renderSkillHeroAndStepper(skillId, levelsData, unitLabel, maxLv = 7) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     if (!levelsData || levelsData.length === 0) return '';
@@ -170,7 +176,7 @@
           <span class="hero-lv-label">Lv.1</span>
           <span class="hero-val-text" id="hero-base-${skillId}">${baseVal}</span>
         </span>
-        <span class="hero-arrow-icon">➔</span>
+        <span class="hero-arrow-icon">&rarr;</span>
         <span class="hero-stat-item item-max">
           <span class="hero-lv-label tag-max">Lv.${actualMaxLv}</span>
           <span class="hero-val-text val-max" id="hero-max-${skillId}">${maxVal}</span>

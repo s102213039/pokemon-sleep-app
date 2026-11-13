@@ -1,3 +1,11 @@
+  const _FALLBACK_BOX_FORM_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+
+  function _getBoxFormCaps() {
+    const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+               (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+    return (gc && typeof gc.getCaps === 'function') ? gc.getCaps() : _FALLBACK_BOX_FORM_CAPS;
+  }
+
   function bindCardActions(container) {
     if (!container || typeof container.querySelectorAll !== 'function') return;
     container.querySelectorAll('.btn-appraise').forEach(btn => {
@@ -507,7 +515,9 @@
         defLvl = getEffectiveSkillLevel(existing, p);
       } else if (p) {
         const currentLevelInput = document.getElementById('modal-poke-level');
-        const curLv = parseInt(currentLevelInput ? currentLevelInput.value : '', 10) || 30;
+        const caps = _getBoxFormCaps();
+        const maxLv = caps.THEORETICAL_MAX_LEVEL || 100;
+        const curLv = Math.min(maxLv, Math.max(1, parseInt(currentLevelInput ? currentLevelInput.value : '', 10) || 30));
         defLvl = getEffectiveSkillLevel({ level: curLv, subskills: [] }, p);
       }
       updateRibbonSelectOptions(p);
@@ -804,3 +814,23 @@
 
   /* ─── 開啟編輯/新增彈窗 ─────────────────────────────────── */
   function openBoxEditModal(existingItem = null, screenshotSrc = null) {
+    const _boxCaps = _getBoxFormCaps();
+    const _maxLv = _boxCaps.THEORETICAL_MAX_LEVEL || 100;
+    const _levelInput = document.getElementById('modal-poke-level');
+    if (_levelInput) {
+      _levelInput.min = '1';
+      _levelInput.max = String(_maxLv);
+      _levelInput.placeholder = `1~${_maxLv}`;
+      if (!_levelInput._dynamicBoundsBound) {
+        _levelInput._dynamicBoundsBound = true;
+        _levelInput.addEventListener('change', function () {
+          const val = parseInt(this.value, 10);
+          if (!isNaN(val)) {
+            const c = _getBoxFormCaps();
+            const m = c.THEORETICAL_MAX_LEVEL || 100;
+            if (val > m) this.value = m;
+            else if (val < 1) this.value = 1;
+          }
+        });
+      }
+    }

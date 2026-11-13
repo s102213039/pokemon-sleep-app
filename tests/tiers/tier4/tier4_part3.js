@@ -1223,8 +1223,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
   const recipesJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js'), 'utf8');
   const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
 
-  // 1. Verify Lv. 100 milestone in app.js allMilestones
-  assert(appJs.includes('[10, 25, 30, 50, 60, 70, 80, 100]'), 'app.js allMilestones must include 100');
+  // 1. Verify Lv. 100 milestone in GAME_CONFIG & dynamic wiring in app.js
+  const GameConfig = require(path.join(WORKSPACE_ROOT, 'js', 'core', 'gameConfig.js'));
+  assert(GameConfig.getAllPokedexPinMilestones().includes(100), 'GAME_CONFIG pin milestones must include 100');
+  assert(appJs.includes('getAllPokedexPinMilestones'), 'app.js must derive allMilestones dynamically via GAME_CONFIG');
 
   // 2. Setup mock DOM and open Pokemon Detail Modal for Pikachu (0025)
   const mockElements = new Map();

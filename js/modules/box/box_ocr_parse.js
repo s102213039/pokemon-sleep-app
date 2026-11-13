@@ -1,19 +1,28 @@
-    const clean = normalizeOcrText(text);
+    const _FALLBACK_BOX_OCR_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
 
+    function _getBoxOcrCaps() {
+      const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+                 (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+      return (gc && typeof gc.getCaps === 'function') ? gc.getCaps() : _FALLBACK_BOX_OCR_CAPS;
+    }
+
+    const clean = normalizeOcrText(text);
 
     // 1. 等級預先萃取 (優先從頂部資訊卡辨識，避開主技能等級如 Lv.7)
     let level = 30;
+    const caps = _getBoxOcrCaps();
+    const maxAllowedLvl = Math.min(caps.THEORETICAL_MAX_LEVEL || 100, (caps.POKEMON_LEVEL_CAP || 70) + 5);
     const mainSkillIdx = text.indexOf('健美') !== -1 ? text.indexOf('健美') : (text.indexOf('料理') !== -1 ? text.indexOf('料理') : -1);
     const headerPart = mainSkillIdx > 0 ? text.substring(0, mainSkillIdx) : text;
-    const mHeader = headerPart.match(/Lv\.?\s*(\d{1,2})/i) || headerPart.match(/LV\s*(\d{1,2})/i) || normalizeOcrText(headerPart).match(/Lv\.?(\d{1,2})/i);
+    const mHeader = headerPart.match(/Lv\.?\s*(\d{1,3})/i) || headerPart.match(/LV\s*(\d{1,3})/i) || normalizeOcrText(headerPart).match(/Lv\.?(\d{1,3})/i);
     if (mHeader) {
       const parsedLvl = parseInt(mHeader[1], 10);
-      if (parsedLvl >= 1 && parsedLvl <= 75) level = parsedLvl;
+      if (parsedLvl >= 1 && parsedLvl <= maxAllowedLvl) level = parsedLvl;
     } else {
-      const mAny = text.match(/Lv\.?\s*(\d{1,2})/i) || normalizeOcrText(text).match(/Lv\.?(\d{1,2})/i);
+      const mAny = text.match(/Lv\.?\s*(\d{1,3})/i) || normalizeOcrText(text).match(/Lv\.?(\d{1,3})/i);
       if (mAny) {
         const parsedLvl = parseInt(mAny[1], 10);
-        if (parsedLvl >= 1 && parsedLvl <= 75) level = parsedLvl;
+        if (parsedLvl >= 1 && parsedLvl <= maxAllowedLvl) level = parsedLvl;
       }
     }
 

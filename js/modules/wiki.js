@@ -3449,7 +3449,19 @@
     }
   }
 
-  // 5.1 樹果能量動態等級 (Lv.1 ~ Lv.70)、島嶼加成 (0% ~ 85%) 與 順果 2x 計算 (持久化保存)
+  // 5.1 樹果能量動態等級 (Lv.1 ~ POKEMON_LEVEL_CAP)、島嶼加成 (0% ~ ISLAND_BONUS_CAP) 與 順果 2x 計算 (持久化保存)
+  const _WIKI_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+
+  function _getWikiGameConfig() {
+    return (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+           (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+  }
+
+  function _getWikiCaps() {
+    const gc = _getWikiGameConfig();
+    return (gc && typeof gc.getCaps === 'function') ? gc.getCaps() : _WIKI_FALLBACK_CAPS;
+  }
+
   const STORAGE_KEY_BERRY_LEVEL = 'pksleep_wiki_berry_level';
   const STORAGE_KEY_BERRY_ISLAND = 'pksleep_wiki_berry_island';
 
@@ -3460,17 +3472,20 @@
   function loadPersistedBerrySettings() {
     try {
       if (typeof localStorage === 'undefined') return;
+      const caps = _getWikiCaps();
+      const pokeCap = caps.POKEMON_LEVEL_CAP || 70;
+      const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85;
       const savedLv = localStorage.getItem(STORAGE_KEY_BERRY_LEVEL);
       if (savedLv !== null) {
         const parsedLv = parseInt(savedLv, 10);
-        if (!isNaN(parsedLv) && parsedLv >= 1 && parsedLv <= 70) {
+        if (!isNaN(parsedLv) && parsedLv >= 1 && parsedLv <= pokeCap) {
           currentBerryLevel = parsedLv;
         }
       }
       const savedIsland = localStorage.getItem(STORAGE_KEY_BERRY_ISLAND);
       if (savedIsland !== null) {
         const parsedIsland = parseInt(savedIsland, 10);
-        if (!isNaN(parsedIsland) && parsedIsland >= 0 && parsedIsland <= 85) {
+        if (!isNaN(parsedIsland) && parsedIsland >= 0 && parsedIsland <= islandCap) {
           currentIslandBonus = parsedIsland;
         }
       }
@@ -3490,7 +3505,9 @@
   }
 
   function updateBerryLevel(val) {
-    currentBerryLevel = Math.min(Math.max(parseInt(val, 10) || 1, 1), 70);
+    const caps = _getWikiCaps();
+    const pokeCap = caps.POKEMON_LEVEL_CAP || 70;
+    currentBerryLevel = Math.min(Math.max(parseInt(val, 10) || 1, 1), pokeCap);
     try {
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem(STORAGE_KEY_BERRY_LEVEL, currentBerryLevel.toString());
@@ -3499,14 +3516,21 @@
     const displayEl = document.getElementById('berry-level-display');
     if (displayEl) displayEl.textContent = `Lv. ${currentBerryLevel}`;
     const sliderEl = document.getElementById('berry-level-slider');
-    if (sliderEl && parseInt(sliderEl.value, 10) !== currentBerryLevel) {
-      sliderEl.value = currentBerryLevel;
+    if (sliderEl) {
+      sliderEl.min = '1';
+      sliderEl.max = String(pokeCap);
+      if (parseInt(sliderEl.value, 10) !== currentBerryLevel) {
+        sliderEl.value = currentBerryLevel;
+      }
     }
     refreshBerryNodes();
   }
 
   function updateBerryIsland(val) {
-    currentIslandBonus = Math.min(Math.max(parseInt(val, 10) || 0, 0), 85);
+    const caps = _getWikiCaps();
+    const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85;
+    const islandStep = caps.ISLAND_BONUS_STEP || 5;
+    currentIslandBonus = Math.min(Math.max(parseInt(val, 10) || 0, 0), islandCap);
     try {
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem(STORAGE_KEY_BERRY_ISLAND, currentIslandBonus.toString());
@@ -3515,8 +3539,13 @@
     const displayEl = document.getElementById('berry-island-display');
     if (displayEl) displayEl.textContent = `+${currentIslandBonus}%`;
     const sliderEl = document.getElementById('berry-island-slider');
-    if (sliderEl && parseInt(sliderEl.value, 10) !== currentIslandBonus) {
-      sliderEl.value = currentIslandBonus;
+    if (sliderEl) {
+      sliderEl.min = '0';
+      sliderEl.max = String(islandCap);
+      sliderEl.step = String(islandStep);
+      if (parseInt(sliderEl.value, 10) !== currentIslandBonus) {
+        sliderEl.value = currentIslandBonus;
+      }
     }
     refreshBerryNodes();
   }
@@ -3632,10 +3661,14 @@
     let cur = parseInt(curLvInput.value, 10) || 1;
     let target = parseInt(targetLvInput.value, 10) || 30;
 
+    const caps = _getWikiCaps();
+    const maxTheoretical = caps.THEORETICAL_MAX_LEVEL || 100;
+    const maxCurLv = Math.max(1, maxTheoretical - 1);
+
     if (cur < 1) cur = 1;
-    if (cur > 99) cur = 99;
+    if (cur > maxCurLv) cur = maxCurLv;
     if (target < 2) target = 30;
-    if (target > 100) target = 100;
+    if (target > maxTheoretical) target = maxTheoretical;
 
     function getCumulativeExpAt(lv) {
       if (lv <= 80) return cumulativeExp[lv] || 0;
@@ -9126,9 +9159,15 @@
   // 渲染樹果與食材基礎能量看板 (極簡無名無滾輪 18 格全展開版 + 等級滑桿、島嶼加成與順果 2x 開關)
   function renderValuesBoard() {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const caps = typeof _getWikiCaps === 'function' ? _getWikiCaps() : ((typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG && globalThis.GAME_CONFIG.getCaps) ? globalThis.GAME_CONFIG.getCaps() : { POKEMON_LEVEL_CAP: 70, ISLAND_BONUS_CAP: 85, ISLAND_BONUS_STEP: 5 });
+    const pokeCap = caps.POKEMON_LEVEL_CAP || 70;
+    const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85;
+    const islandStep = caps.ISLAND_BONUS_STEP || 5;
+    currentBerryLevel = Math.min(Math.max(currentBerryLevel || 1, 1), pokeCap);
+    currentIslandBonus = Math.min(Math.max(currentIslandBonus || 0, 0), islandCap);
     return `
       <div class="values-horizontal-container">
-        <!-- 區塊 1：樹果基礎能量庫 (Lv.1 ~ Lv.70 + 島嶼加成 0~85% 動態試算 + 雙行 1x/2x 展示) -->
+        <!-- 區塊 1：樹果基礎能量庫 (Lv.1 ~ Lv.${pokeCap} + 島嶼加成 0~${islandCap}% 動態試算 + 雙行 1x/2x 展示) -->
         <div class="values-horizontal-section">
           <div class="values-section-header">
             <div class="values-section-title-group">
@@ -9137,20 +9176,20 @@
 
             <!-- 等級滑桿與島嶼加成控制器 -->
             <div class="berry-calc-controls">
-              <!-- 寶可夢等級滑桿 (1 ~ 70) -->
+              <!-- 寶可夢等級滑桿 (1 ~ ${pokeCap}) -->
               <div class="berry-control-group">
                 <label for="berry-level-slider" class="berry-control-label">
                   ${isEN ? 'Level:' : '等級：'}<span id="berry-level-display" class="berry-level-tag">Lv. ${currentBerryLevel}</span>
                 </label>
-                <input type="range" id="berry-level-slider" min="1" max="70" value="${currentBerryLevel}" step="1" class="berry-slider" oninput="window.WikiDB.updateBerryLevel(this.value)">
+                <input type="range" id="berry-level-slider" min="1" max="${pokeCap}" value="${currentBerryLevel}" step="1" class="berry-slider" oninput="window.WikiDB.updateBerryLevel(this.value)">
               </div>
 
-              <!-- 島嶼加成滑桿 (0% ~ 85%) -->
+              <!-- 島嶼加成滑桿 (0% ~ ${islandCap}%) -->
               <div class="berry-control-group">
                 <label for="berry-island-slider" class="berry-control-label">
                   ${isEN ? 'Island Bonus:' : '島嶼加成：'}<span id="berry-island-display" class="berry-island-tag">+${currentIslandBonus}%</span>
                 </label>
-                <input type="range" id="berry-island-slider" min="0" max="85" value="${currentIslandBonus}" step="5" class="berry-slider island-slider" oninput="window.WikiDB.updateBerryIsland(this.value)">
+                <input type="range" id="berry-island-slider" min="0" max="${islandCap}" value="${currentIslandBonus}" step="${islandStep}" class="berry-slider island-slider" oninput="window.WikiDB.updateBerryIsland(this.value)">
               </div>
             </div>
           </div>
@@ -9279,7 +9318,7 @@
     `;}).join('');
   }
 
-  // 方案 C: 渲染技能「精華單行速查 (Lv.1 ➔ Lv.Max)」與「縱向階梯清單（隨卡片點擊展開/收合）」
+  // 方案 C: 渲染技能「精華單行速查 (Lv.1 -> Lv.Max)」與「縱向階梯清單（隨卡片點擊展開/收合）」
   function renderSkillHeroAndStepper(skillId, levelsData, unitLabel, maxLv = 7) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     if (!levelsData || levelsData.length === 0) return '';
@@ -9295,7 +9334,7 @@
           <span class="hero-lv-label">Lv.1</span>
           <span class="hero-val-text" id="hero-base-${skillId}">${baseVal}</span>
         </span>
-        <span class="hero-arrow-icon">➔</span>
+        <span class="hero-arrow-icon">&rarr;</span>
         <span class="hero-stat-item item-max">
           <span class="hero-lv-label tag-max">Lv.${actualMaxLv}</span>
           <span class="hero-val-text val-max" id="hero-max-${skillId}">${maxVal}</span>
@@ -10526,6 +10565,12 @@
       (typeof document !== 'undefined' && document.getElementById && document.getElementById('tab-wiki') && document.getElementById('tab-wiki').classList && document.getElementById('tab-wiki').classList.contains('active')) ||
       (!container.style && (!document.getElementById || !document.getElementById('tab-wiki')))
     ));
+    const gameCfg = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+                    (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+    const caps = (typeof _getWikiCaps === 'function') ? _getWikiCaps() : (gameCfg && typeof gameCfg.getCaps === 'function' ? gameCfg.getCaps() : { POKEMON_LEVEL_CAP: 70, THEORETICAL_MAX_LEVEL: 100 });
+    const sleepExpTargetLevels = (gameCfg && typeof gameCfg.getSleepExpTargetLevels === 'function')
+      ? gameCfg.getSleepExpTargetLevels()
+      : Array.from(new Set([30, 50, 60, caps.POKEMON_LEVEL_CAP, 80, caps.THEORETICAL_MAX_LEVEL].filter(Boolean))).sort((a, b) => a - b);
 
     container.innerHTML = `
       <!-- 天梯頂級料理食材高亮懸浮按鈕 (FAB) -->
@@ -11145,18 +11190,13 @@
                 <div class="calc-form-row calc-form-row-levels">
                   <div class="calc-field-group calc-field-cur">
                     <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current:' : '目前等級:'}</label>
-                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="99" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
+                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="${caps.THEORETICAL_MAX_LEVEL - 1}" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
                   </div>
 
                   <div class="calc-field-group calc-field-target">
                     <label class="calc-label" for="calc-sleep-target-lv">${isEN ? 'Target:' : '目標等級:'}</label>
                     <select id="calc-sleep-target-lv" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
-                      <option value="30">Lv.30</option>
-                      <option value="50">Lv.50</option>
-                      <option value="60">Lv.60</option>
-                      <option value="70">Lv.70</option>
-                      <option value="80">Lv.80</option>
-                      <option value="100">Lv.100</option>
+                      ${sleepExpTargetLevels.map(lv => `<option value="${lv}">Lv.${lv}</option>`).join('')}
                     </select>
                   </div>
                 </div>
@@ -11215,7 +11255,7 @@
                       : row.level === 30 ? 'milestone-green'
                       : row.level === 50 ? 'milestone-amber'
                       : row.level === 60 ? 'milestone-pink'
-                      : row.level === 70 ? 'milestone-purple'
+                      : row.level === caps.POKEMON_LEVEL_CAP ? 'milestone-purple'
                       : 'milestone-cyan';
                     const rawNote = isEN ? (row.note_en || row.note) : row.note;
                     const formattedNote = rawNote

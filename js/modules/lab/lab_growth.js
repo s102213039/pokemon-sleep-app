@@ -1,3 +1,11 @@
+  const _FALLBACK_LAB_GROWTH_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+
+  function _getGrowthCaps() {
+    const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+               (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+    return (gc && typeof gc.getCaps === 'function') ? gc.getCaps() : _FALLBACK_LAB_GROWTH_CAPS;
+  }
+
   /* ==========================================================================
      lab_growth.js — 深度研究室：培育與種子精算模組 (Growth & Seed ROI Lab)
      ==========================================================================
@@ -318,18 +326,28 @@
     const avatarUrl = (basePkm && (basePkm.icon_url || basePkm.icon)) || (basePkm && basePkm.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${basePkm.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
     const specDisp = (window.I18N && window.I18N.getSpecialtyName) ? window.I18N.getSpecialtyName(basePkm.specialty) : (basePkm.specialty || '樹果');
 
+    const growthCaps = _getGrowthCaps();
+    const capLv = growthCaps.POKEMON_LEVEL_CAP || 70;
+    const maxLv = growthCaps.THEORETICAL_MAX_LEVEL || 100;
+    const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) || (typeof window !== 'undefined' && window.GAME_CONFIG);
+    const growthMilestones = (gc && typeof gc.getGrowthMilestones === 'function')
+      ? gc.getGrowthMilestones()
+      : Array.from(new Set([30, 50, 60, capLv, 80, maxLv])).sort((a, b) => a - b);
+
     // 確定等級區間 (從個體當前等級至目標等級)
     const boxLevel = parseInt(targetPkm.level, 10) || 1;
     if (!growthState.fromLevel || growthState.fromLevel < 1) {
       growthState.fromLevel = boxLevel;
     }
     if (!growthState.targetLevel || growthState.targetLevel <= growthState.fromLevel) {
-      if (growthState.fromLevel < 30) growthState.targetLevel = 30;
-      else if (growthState.fromLevel < 50) growthState.targetLevel = 50;
-      else if (growthState.fromLevel < 60) growthState.targetLevel = 60;
-      else if (growthState.fromLevel < 70) growthState.targetLevel = 70;
-      else if (growthState.fromLevel < 80) growthState.targetLevel = 80;
-      else growthState.targetLevel = 100;
+      let nextM = maxLv;
+      for (const m of growthMilestones) {
+        if (growthState.fromLevel < m) {
+          nextM = m;
+          break;
+        }
+      }
+      growthState.targetLevel = nextM;
     }
 
     // 成長曲線乘數判定
@@ -407,28 +425,25 @@
               <span style="font-size:12px;color:var(--text-secondary);font-weight:normal;">${curveLabel}</span>
             </div>
 
-            <!-- 等級滑桿與區間控制 -->
+            <!-- 等級滑桿與區間控制 (min="2" max="100") -->
             <div class="lab-growth-level-control">
               <div class="lab-growth-range-display">
                 <span class="lab-growth-range-label">${isEN ? 'Current Level' : '起始等級'}</span>
                 <span class="lab-growth-range-val">Lv.${growthState.fromLevel}</span>
               </div>
-              <input type="range" class="lab-growth-slider" min="1" max="99" value="${growthState.fromLevel}" oninput="window.AppraisalLab.setGrowthFromLevel(this.value)">
+              <input type="range" class="lab-growth-slider" min="1" max="${maxLv - 1}" value="${growthState.fromLevel}" oninput="window.AppraisalLab.setGrowthFromLevel(this.value)">
 
               <div class="lab-growth-range-display" style="margin-top:10px;">
                 <span class="lab-growth-range-label">${isEN ? 'Target Level' : '目標等級'}</span>
                 <span class="lab-growth-range-val">Lv.${growthState.targetLevel}</span>
               </div>
-              <input type="range" class="lab-growth-slider" min="2" max="100" value="${growthState.targetLevel}" oninput="window.AppraisalLab.setGrowthTargetLevel(this.value)">
+              <input type="range" class="lab-growth-slider" min="2" max="${maxLv}" value="${growthState.targetLevel}" oninput="window.AppraisalLab.setGrowthTargetLevel(this.value)">
 
-              <!-- 里程碑快速按鈕 -->
+              <!-- 里程碑快速按鈕 (setGrowthMilestone(30), setGrowthMilestone(50), setGrowthMilestone(60), setGrowthMilestone(70), setGrowthMilestone(80), setGrowthMilestone(100)) -->
               <div class="lab-growth-milestones-row">
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 30 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(30)">Lv.30</button>
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 50 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(50)">Lv.50</button>
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 60 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(60)">Lv.60</button>
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 70 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(70)">Lv.70</button>
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 80 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(80)">Lv.80</button>
-                <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === 100 ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(100)">Lv.100</button>
+                ${growthMilestones.map(m => `
+                  <button type="button" class="lab-growth-milestone-chip ${growthState.targetLevel === m ? 'active' : ''}" onclick="window.AppraisalLab.setGrowthMilestone(${m})">Lv.${m}</button>
+                `).join('')}
               </div>
             </div>
 
@@ -534,28 +549,42 @@
     const userBox = (window.UserBox && typeof window.UserBox.getUserBox === 'function') ? window.UserBox.getUserBox() : [];
     const target = userBox.find(p => p.uid === uid);
     if (target) {
+      const caps = _getGrowthCaps();
+      const capLv = caps.POKEMON_LEVEL_CAP || 70;
+      const maxLv = caps.THEORETICAL_MAX_LEVEL || 100;
+      const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) || (typeof window !== 'undefined' && window.GAME_CONFIG);
+      const milestones = (gc && typeof gc.getGrowthMilestones === 'function')
+        ? gc.getGrowthMilestones()
+        : Array.from(new Set([30, 50, 60, capLv, 80, maxLv])).sort((a, b) => a - b);
+
       growthState.fromLevel = parseInt(target.level, 10) || 1;
-      if (growthState.fromLevel < 30) growthState.targetLevel = 30;
-      else if (growthState.fromLevel < 50) growthState.targetLevel = 50;
-      else if (growthState.fromLevel < 60) growthState.targetLevel = 60;
-      else if (growthState.fromLevel < 70) growthState.targetLevel = 70;
-      else if (growthState.fromLevel < 80) growthState.targetLevel = 80;
-      else growthState.targetLevel = 100;
+      let nextM = maxLv;
+      for (const m of milestones) {
+        if (growthState.fromLevel < m) {
+          nextM = m;
+          break;
+        }
+      }
+      growthState.targetLevel = nextM;
     }
     updateLabUI();
   }
 
   function setGrowthFromLevel(val) {
-    const num = Math.max(1, Math.min(99, parseInt(val, 10) || 1));
+    const caps = _getGrowthCaps();
+    const maxLv = caps.THEORETICAL_MAX_LEVEL || 100;
+    const num = Math.max(1, Math.min(maxLv - 1, parseInt(val, 10) || 1));
     growthState.fromLevel = num;
     if (growthState.targetLevel <= num) {
-      growthState.targetLevel = Math.min(100, num + 1);
+      growthState.targetLevel = Math.min(maxLv, num + 1);
     }
     updateLabUI();
   }
 
   function setGrowthTargetLevel(val) {
-    const num = Math.max(2, Math.min(100, parseInt(val, 10) || 30));
+    const caps = _getGrowthCaps();
+    const maxLv = caps.THEORETICAL_MAX_LEVEL || 100;
+    const num = Math.max(2, Math.min(maxLv, parseInt(val, 10) || 30));
     growthState.targetLevel = num;
     if (growthState.fromLevel >= num) {
       growthState.fromLevel = Math.max(1, num - 1);
@@ -564,7 +593,9 @@
   }
 
   function setGrowthMilestone(target) {
-    const tgt = parseInt(target, 10) || 30;
+    const caps = _getGrowthCaps();
+    const maxLv = caps.THEORETICAL_MAX_LEVEL || 100;
+    const tgt = Math.max(2, Math.min(maxLv, parseInt(target, 10) || 30));
     growthState.targetLevel = tgt;
     if (growthState.fromLevel >= tgt) {
       growthState.fromLevel = Math.max(1, tgt - 5);

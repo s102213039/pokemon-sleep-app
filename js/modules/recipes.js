@@ -87,11 +87,23 @@
   let viewMode            = 'table';
   let minBonus            = 0;
   let minPot              = 0;
-  let recipeLevel         = 1;       // 1-70
-  let islandBonus         = 0;       // 0-85 (%)
+  let recipeLevel         = 1;       // 1-70 (dynamic)
+  let islandBonus         = 0;       // 0-85 (%) (dynamic)
   let eventBonus          = 1.0;     // 1.00 - 1.50 (step 0.25)
   let potExpansion        = 0;       // 0 - 700 (多餘食材追加個數)
   let showTasty           = false;   // 漂亮成功 (2x / 3x) 開關
+
+  const _RECIPES_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+
+  function _getRecipesGameConfig() {
+    return (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+           (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+  }
+
+  function _getRecipesGameCaps() {
+    const gc = _getRecipesGameConfig();
+    return (gc && typeof gc.getCaps === 'function') ? gc.getCaps() : _RECIPES_FALLBACK_CAPS;
+  }
 
   /* ─── 食譜等級加成倉率表（Lv.1-70）
      資料來源：ポケモンスリープ攻略・検証 Wiki (wikiwiki.jp/poke_sleep)
@@ -110,9 +122,22 @@
     65: 234, 66: 239, 67: 243, 68: 248, 69: 252, 70: 258
   };
 
-  /* 取得指定等級的加成偉率 (百分比) */
+  /* 取得指定等級的加成倍率 (百分比) */
   function getLevelBonus(lv) {
-    return LEVEL_BONUS_TABLE[Math.min(Math.max(lv, 1), 70)] || 0;
+    const gc = _getRecipesGameConfig();
+    const caps = _getRecipesGameCaps();
+    const recipeCap = caps.RECIPE_LEVEL_CAP || 70;
+    if (gc && typeof gc.getRecipeLevelBonus === 'function') {
+      return gc.getRecipeLevelBonus(lv, recipeCap);
+    }
+    const clampedLv = Math.min(Math.max(parseInt(lv, 10) || 1, 1), recipeCap);
+    if (Object.prototype.hasOwnProperty.call(LEVEL_BONUS_TABLE, clampedLv)) {
+      return LEVEL_BONUS_TABLE[clampedLv];
+    }
+    if (clampedLv > 70) {
+      return 258 + (clampedLv - 70) * (258 - 252);
+    }
+    return 0;
   }
 
   /* ─── LocalStorage 鍵值 ─────────────────────────────── */
@@ -121,11 +146,14 @@
   function loadPrefs() {
     try {
       const saved = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+      const caps = _getRecipesGameCaps();
       selectedCategory = saved.selectedCategory || 'ALL';
       minBonus         = Number(saved.minBonus) || 0;
       minPot           = Number(saved.minPot)   || 0;
-      recipeLevel      = Number(saved.recipeLevel) || 1;
-      islandBonus      = Number(saved.islandBonus) || 0;
+      const rawLevel   = Number(saved.recipeLevel) || 1;
+      recipeLevel      = Math.min(Math.max(rawLevel, 1), caps.RECIPE_LEVEL_CAP || 70);
+      const rawIsland  = Number(saved.islandBonus) || 0;
+      islandBonus      = Math.min(Math.max(rawIsland, 0), caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85);
       eventBonus       = saved.eventBonus !== undefined ? Math.min(1.5, Math.max(1.0, Number(saved.eventBonus))) : 1.0;
       potExpansion     = Number(saved.potExpansion) || 0;
       showTasty        = Boolean(saved.showTasty);
@@ -191,18 +219,38 @@
   /* ─── 初始化滑桿與開關顯示 ─────────────────────────────── */
   function syncLevelUI() {
     if (!levelSlider || !levelBadge) return;
+    const caps = _getRecipesGameCaps();
+    const recipeCap = caps.RECIPE_LEVEL_CAP || 70;
+    levelSlider.min = '1';
+    levelSlider.max = String(recipeCap);
+    const maxLabel = document.getElementById('recipe-level-max-label');
+    if (maxLabel) {
+      maxLabel.textContent = `Lv.${recipeCap}`;
+    }
+    recipeLevel = Math.min(Math.max(recipeLevel, 1), recipeCap);
     levelSlider.value = recipeLevel;
     const bonusPct = getLevelBonus(recipeLevel);
     levelBadge.textContent = `Lv.${recipeLevel}  +${bonusPct}%`;
-    updateSliderFill(levelSlider, 1, 70);
+    updateSliderFill(levelSlider, 1, recipeCap);
   }
 
   function syncIslandUI() {
     if (!islandSlider || !islandBadge) return;
+    const caps = _getRecipesGameCaps();
+    const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85;
+    const islandStep = caps.ISLAND_BONUS_STEP || 5;
+    islandSlider.min = '0';
+    islandSlider.max = String(islandCap);
+    islandSlider.step = String(islandStep);
+    const maxLabel = document.getElementById('island-bonus-max-label');
+    if (maxLabel) {
+      maxLabel.textContent = `${islandCap}%`;
+    }
+    islandBonus = Math.min(Math.max(islandBonus, 0), islandCap);
     islandSlider.value = islandBonus;
     const mult = (1 + islandBonus / 100).toFixed(2);
     islandBadge.textContent = `+${islandBonus}% (×${mult})`;
-    updateSliderFill(islandSlider, 0, 85);
+    updateSliderFill(islandSlider, 0, islandCap);
   }
 
   function syncEventUI() {
@@ -693,7 +741,10 @@
     if (levelSlider) {
       syncLevelUI();
       levelSlider.addEventListener('input', () => {
-        recipeLevel = parseInt(levelSlider.value, 10);
+        const caps = _getRecipesGameCaps();
+        const recipeCap = caps.RECIPE_LEVEL_CAP || 70;
+        const parsed = parseInt(levelSlider.value, 10);
+        recipeLevel = Math.min(Math.max(isNaN(parsed) ? 1 : parsed, 1), recipeCap);
         syncLevelUI();
         savePrefs();
         render();
@@ -703,7 +754,10 @@
     if (islandSlider) {
       syncIslandUI();
       islandSlider.addEventListener('input', () => {
-        islandBonus = parseInt(islandSlider.value, 10);
+        const caps = _getRecipesGameCaps();
+        const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85;
+        const parsed = parseInt(islandSlider.value, 10);
+        islandBonus = Math.min(Math.max(isNaN(parsed) ? 0 : parsed, 0), islandCap);
         syncIslandUI();
         savePrefs();
         render();

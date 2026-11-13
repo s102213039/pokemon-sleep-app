@@ -2806,3 +2806,21 @@
 
 
 
+### 全域等級上限與島嶼加成單一設定中心化 (Dynamic Game Config: Single Source of Truth)
+- **核心設定與建置同步 (`js/core/gameConfig.js`, `scripts/sync_game_config.js`, `scripts/build_prod.js`, `package.json`)**：
+  - 建立 `js/core/gameConfig.js` 作為全域唯一設定中心，統一管理 `CAPS`（`POKEMON_LEVEL_CAP: 70`、`RECIPE_LEVEL_CAP: 70`、`THEORETICAL_MAX_LEVEL: 100`、`ISLAND_BONUS_CAP: 85`、`ISLAND_BONUS_STEP: 5`、`SUBSKILL_UNLOCK_LEVELS: [10, 25, 50, 70, 80]`）、`RECIPE_LEVEL_BONUS_TABLE`（超出 Lv.70 線性外推 `+6%/lv`）、里程碑與邊界鉗制函式，以及 `syncStaticDomCaps(doc)`。
+  - 新增 `scripts/sync_game_config.js` 並整合進 `npm run build`，於建置時自動同步 `index.html`、`app/index.html` 與各模組之 `@GAME_CONFIG_FALLBACK_START` / `@GAME_CONFIG_FALLBACK_END` 回退區塊，並將 `gameConfig.js` 納入 `build_prod.js` 產出 `js/core/gameConfig.min.js`。
+- **HTML 與多語系動態插值 (`index.html`, `app/index.html`, `js/core/i18n/i18n_core.js`, `i18n_dict_*.js`)**：
+  - 於雙入口 HTML 載入 `gameConfig.min.js`（置於 `domUtils.min.js` 之前），為滑桿上限標籤加入 `#recipe-level-max-label` 與 `#island-bonus-max-label`。
+  - 在 `i18n_dict_zh_tw.js`、`i18n_dict_zh_cn.js`、`i18n_dict_en_us.js` 將 `recipe.slider_level_desc` 與 `recipe.slider_island_desc` 參數化（`{maxRecipeLv}`, `{maxRecipeBonus}`, `{maxIslandPct}`, `{islandStep}`, `{maxIslandMult}`），並於 `i18n_core.js` 的 `t()` 透過 `_resolveDynamicCaps()` 即時解析。
+- **食譜與百科動態連動 (`js/modules/recipes/recipes_state.js`, `js/modules/wiki/wiki_*.js`)**：
+  - `recipes_state.js` 改用 `_getRecipesGameCaps()` 驅動 `getLevelBonus(lv)`、`loadPrefs()` 數值鉗制、`syncLevelUI()`、`syncIslandUI()` 與 `initSliders()`。
+  - `wiki_calculators.js`、`wiki_render_skills.js`、`wiki_main.js` 透過 `_getWikiCaps()` 同步樹果/島嶼滑桿鉗制、睡眠 EXP 目前等級上限（`THEORETICAL_MAX_LEVEL - 1`）、`getSleepExpTargetLevels()` 目標選單與現有上限列高亮標記。
+- **圖鑑、實驗室與倉庫 OCR 動態邊界 (`js/modules/pokedex/*.js`, `js/modules/lab/*.js`, `js/modules/box/*.js`)**：
+  - `pokedex_modal.js`、`pokedex_detail_ctrl.js` 動態依據 `capLv` / `maxLv` 與 `getAllPokedexPinMilestones()` 分類 `pin-cap` 與 `pin-unreleased` 節點並縮放滑桿進度條。
+  - `lab_compare.js`、`lab_growth.js`、`lab_engine.js` 動態產生對比基準、成長里程碑（`getGrowthMilestones()`）、滑桿最大邊界與 `costs.toCap` / `['to' + capLv]`。
+  - `box_ocr_parse.js` 與 `box_modal_form.js` 以 `Math.min(THEORETICAL_MAX_LEVEL, POKEMON_LEVEL_CAP + 5)` 動態約束 OCR 等級辨識與編輯彈窗 `#modal-poke-level` 邊界，並維持 `[10, 25, 50, 70, 80]` 既有五槽副技能解鎖等級規則。
+- **測試與建置驗證**：
+  - 新增 `tests/test_dynamic_game_config.js`（8 / 8 Passed）並整合至 `tests/run_tests.js`，同步更新 `tests/tiers/tier4/tier4_part3.js` 與 `tier4_part4.js` 斷言以驗證動態設定行為。
+  - `npm run build`：17 份壓縮產物建置成功（exit 0）。
+  - `npm run test:fast`：165 / 165 Passed；`npm test`：全量 4 Tiers 288 / 288 Passed。
