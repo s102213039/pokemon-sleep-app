@@ -18,7 +18,7 @@
 
   let skillLadderSearchQuery = '';
   let skillLadderTop15Only = true;
-  let skillLadderFinalOnly = false;
+  let skillLadderFinalOnly = true;
   let skillLadderSortOrder = 'DEFAULT';
   let skillLadderSpecialtyFilter = 'ALL';
   let isSkillLadderSpeedM = false;
@@ -358,7 +358,7 @@
   function resetSkillLadderFilters() {
     skillLadderSearchQuery = '';
     skillLadderTop15Only = true;
-    skillLadderFinalOnly = false;
+    skillLadderFinalOnly = true;
     skillLadderSortOrder = 'DEFAULT';
     skillLadderSpecialtyFilter = 'ALL';
     isSkillLadderSpeedM = false;
@@ -390,7 +390,7 @@
     const finalSwitches = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
       ? document.querySelectorAll('#skill-ladder-final-only-switch')
       : [];
-    finalSwitches.forEach(s => { s.checked = false; });
+    finalSwitches.forEach(s => { s.checked = true; });
 
     const sortBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
       ? document.querySelectorAll('[data-skill-sort-order]')
@@ -413,7 +413,7 @@
     if (skillLadderSpecialtyFilter && skillLadderSpecialtyFilter !== 'ALL') count++;
     if (skillLadderSortOrder && skillLadderSortOrder !== 'DEFAULT') count++;
     if (!skillLadderTop15Only) count++;
-    if (skillLadderFinalOnly) count++;
+    if (!skillLadderFinalOnly) count++;
     if (isSkillLadderSpeedM || isSkillLadderSpeedS || isSkillLadderSkillM || isSkillLadderSkillS) count++;
     if (skillLadderNatureSpeed || skillLadderNatureSkill) count++;
 

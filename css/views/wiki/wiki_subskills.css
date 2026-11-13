@@ -235,7 +235,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 640px;
+  max-width: 440px;
   max-height: min(840px, 88vh);
   display: flex;
   flex-direction: column;
@@ -265,11 +265,11 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .wiki-item-modal-icon-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: none;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.16) 0%, transparent 72%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -279,9 +279,10 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .wiki-item-modal-icon {
-  width: 100%;
-  height: 100%;
+  width: 38px;
+  height: 38px;
   object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.28));
 }
 
 .wiki-item-modal-heading {
@@ -316,7 +317,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  border: 1px solid var(--border-color);
+  border: none;
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
@@ -331,22 +332,21 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .wiki-item-modal-close-btn:hover {
-  background: var(--bg-card-hover);
+  background: var(--bg-card-hover, rgba(148, 163, 184, 0.12));
   color: var(--text-title);
-  border-color: var(--accent-blue);
 }
 
 /* Single Frame Rule: Modal Body and Sections have no outer duplicate borders */
 .wiki-item-modal-body {
   border: none !important;
   background: transparent !important;
-  padding: 16px 20px !important;
+  padding: 16px 18px !important;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   flex: 1 1 auto;
 }
 
@@ -358,6 +358,11 @@ body.mobile-h5-app *::-webkit-scrollbar {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.wiki-item-modal-section + .wiki-item-modal-section {
+  border-top: 1px solid rgba(148, 163, 184, 0.14) !important;
+  padding-top: 12px !important;
 }
 
 .wiki-item-section-title {
@@ -388,7 +393,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 /* Pricing Grid */
 .wiki-item-pricing-grid {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
   border: none !important;
   background: transparent !important;
@@ -396,14 +401,14 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .wiki-item-price-pill {
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 6px 12px;
+  background: rgba(148, 163, 184, 0.08);
+  border: none !important;
+  border-radius: 10px;
+  padding: 6px 10px;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 130px;
+  min-width: 100px;
   flex: 1 1 0;
 }
 
@@ -417,7 +422,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .wiki-item-price-pill .price-value {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--accent-blue);
 }
@@ -448,30 +453,42 @@ body.mobile-h5-app *::-webkit-scrollbar {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   border: none !important;
   background: transparent !important;
 }
 
 .wiki-item-acq-item {
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 6px 12px;
+  position: relative;
+  background: transparent !important;
+  border: none !important;
+  padding: 3px 0 3px 14px;
   font-size: 13px;
   color: var(--text-main);
+  line-height: 1.4;
+}
+
+.wiki-item-acq-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-blue, #38bdf8);
 }
 
 /* Modal Stat Hero Banner */
 .wiki-item-modal-stat-hero {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 10px 14px;
+  gap: 12px;
+  padding: 8px 12px;
   border-radius: 10px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  margin-bottom: 8px;
+  background: rgba(148, 163, 184, 0.08);
+  border: none !important;
+  margin-bottom: 6px;
   box-sizing: border-box;
 }
 
@@ -479,21 +496,21 @@ body.mobile-h5-app *::-webkit-scrollbar {
   display: inline-flex;
   align-items: baseline;
   gap: 4px;
-  padding: 6px 14px;
+  padding: 4px 10px;
   border-radius: 8px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  background: rgba(56, 189, 248, 0.12);
+  border: none !important;
   flex-shrink: 0;
 }
 
 .wiki-item-modal-stat-hero .stat-hero-val {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 900;
   line-height: 1;
 }
 
 .wiki-item-modal-stat-hero .stat-hero-unit {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   opacity: 0.9;
 }
@@ -506,7 +523,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .wiki-item-modal-stat-hero .stat-hero-title {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 800;
   color: var(--text-title);
   line-height: 1.25;
@@ -531,20 +548,20 @@ body.mobile-h5-app *::-webkit-scrollbar {
   background: transparent !important;
   padding: 0 !important;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
 }
 
 .wiki-item-pkm-card {
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
+  background: rgba(148, 163, 184, 0.08);
+  border: none !important;
   border-radius: 12px;
-  padding: 8px 12px;
+  padding: 8px 10px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease;
   text-align: left;
   font-family: inherit;
   color: inherit;
@@ -554,8 +571,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 .wiki-item-pkm-card:hover {
   transform: translateY(-2px);
-  border-color: var(--accent-blue);
-  background: var(--bg-card-hover, rgba(56, 189, 248, 0.1));
+  background: rgba(56, 189, 248, 0.14);
 }
 
 .wiki-item-pkm-card:active {
@@ -606,7 +622,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
   padding: 14px;
   text-align: center;
   border-radius: 8px;
-  border: 1px dashed var(--border-color);
+  border: none;
+  background: rgba(148, 163, 184, 0.06);
   color: var(--text-muted);
   font-size: 12.5px;
 }
@@ -683,14 +700,75 @@ body.mobile-h5-app *::-webkit-scrollbar {
   border-color: #e2e8f0 !important;
 }
 
+[data-theme="dawn"] .wiki-item-modal-close-btn,
+[data-theme="emerald"] .wiki-item-modal-close-btn {
+  color: #64748b;
+  background: transparent;
+  border: none !important;
+}
+
+[data-theme="dawn"] .wiki-item-modal-close-btn:hover,
+[data-theme="emerald"] .wiki-item-modal-close-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
 [data-theme="dawn"] .wiki-item-price-pill,
 [data-theme="emerald"] .wiki-item-price-pill,
-[data-theme="dawn"] .wiki-item-acq-item,
-[data-theme="emerald"] .wiki-item-acq-item,
 [data-theme="dawn"] .wiki-item-pkm-card,
-[data-theme="emerald"] .wiki-item-pkm-card {
-  background: #f8fafc !important;
-  border-color: #e2e8f0 !important;
+[data-theme="emerald"] .wiki-item-pkm-card,
+[data-theme="dawn"] .wiki-item-modal-stat-hero,
+[data-theme="emerald"] .wiki-item-modal-stat-hero {
+  background: #f1f5f9 !important;
+  border: none !important;
+}
+
+[data-theme="dawn"] .wiki-item-acq-item,
+[data-theme="emerald"] .wiki-item-acq-item {
+  background: transparent !important;
+  border: none !important;
+}
+
+[data-theme="dawn"] .wiki-item-modal-section + .wiki-item-modal-section,
+[data-theme="emerald"] .wiki-item-modal-section + .wiki-item-modal-section {
+  border-top-color: #e2e8f0 !important;
+}
+
+[data-theme="onyx"] .wiki-item-modal-dialog {
+  background: #0a0a0c !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="onyx"] .wiki-item-modal-header {
+  background: #0a0a0c !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="onyx"] .wiki-item-modal-close-btn {
+  color: #94a3b8;
+  background: transparent;
+  border: none !important;
+}
+
+[data-theme="onyx"] .wiki-item-modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+[data-theme="onyx"] .wiki-item-price-pill,
+[data-theme="onyx"] .wiki-item-pkm-card,
+[data-theme="onyx"] .wiki-item-modal-stat-hero {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: none !important;
+}
+
+[data-theme="onyx"] .wiki-item-acq-item {
+  background: transparent !important;
+  border: none !important;
+}
+
+[data-theme="onyx"] .wiki-item-modal-section + .wiki-item-modal-section {
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 /* Mobile H5 Bottom Sheet Adaptations */

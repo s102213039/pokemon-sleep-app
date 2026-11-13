@@ -23,9 +23,7 @@
     'linking_cord': ['64', '65', '67', '68', '75', '76', '93', '94', '95', '208', '79', '199', '137', '233', '710', '711'],
     'metal_coat': ['95', '208', '123', '212'],
     'kings_rock': ['79', '199', '61', '186'],
-    'up_grade': ['137', '233'],
-    'razor_claw': ['215', '461'],
-    'dragon_scale': ['116', '117', '230']
+    'razor_claw': ['215', '461']
   };
 
   function getMasterItemsData() {
@@ -659,7 +657,6 @@
           </div>
           <div class="stat-hero-meta">
             <span class="stat-hero-title">${escapeHtml(stat.lbl)}</span>
-            <span class="stat-hero-sub">${escapeHtml(effectsText)}</span>
           </div>
         `;
         statHeroEl.style.display = 'flex';

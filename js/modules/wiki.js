@@ -7827,7 +7827,7 @@
 
   let skillLadderSearchQuery = '';
   let skillLadderTop15Only = true;
-  let skillLadderFinalOnly = false;
+  let skillLadderFinalOnly = true;
   let skillLadderSortOrder = 'DEFAULT';
   let skillLadderSpecialtyFilter = 'ALL';
   let isSkillLadderSpeedM = false;
@@ -8167,7 +8167,7 @@
   function resetSkillLadderFilters() {
     skillLadderSearchQuery = '';
     skillLadderTop15Only = true;
-    skillLadderFinalOnly = false;
+    skillLadderFinalOnly = true;
     skillLadderSortOrder = 'DEFAULT';
     skillLadderSpecialtyFilter = 'ALL';
     isSkillLadderSpeedM = false;
@@ -8199,7 +8199,7 @@
     const finalSwitches = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
       ? document.querySelectorAll('#skill-ladder-final-only-switch')
       : [];
-    finalSwitches.forEach(s => { s.checked = false; });
+    finalSwitches.forEach(s => { s.checked = true; });
 
     const sortBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
       ? document.querySelectorAll('[data-skill-sort-order]')
@@ -8222,7 +8222,7 @@
     if (skillLadderSpecialtyFilter && skillLadderSpecialtyFilter !== 'ALL') count++;
     if (skillLadderSortOrder && skillLadderSortOrder !== 'DEFAULT') count++;
     if (!skillLadderTop15Only) count++;
-    if (skillLadderFinalOnly) count++;
+    if (!skillLadderFinalOnly) count++;
     if (isSkillLadderSpeedM || isSkillLadderSpeedS || isSkillLadderSkillM || isSkillLadderSkillS) count++;
     if (skillLadderNatureSpeed || skillLadderNatureSkill) count++;
 
@@ -9067,7 +9067,7 @@
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${_tSkillLadder('寶可夢專長', 'Specialty Type')}</span>
               <label class="ladder-top15-switch-label" title="${_tSkillLadder('僅保留最終進化寶可夢', 'Show Final Evolution Only')}">
-                <input type="checkbox" id="skill-ladder-final-only-switch" class="ladder-switch-input" ${(typeof getSkillLadderFinalOnly === 'function' ? getSkillLadderFinalOnly() : false) ? 'checked' : ''} onchange="window.WikiDB.toggleSkillLadderFinalOnly(this.checked)">
+                <input type="checkbox" id="skill-ladder-final-only-switch" class="ladder-switch-input" ${(typeof getSkillLadderFinalOnly === 'function' ? getSkillLadderFinalOnly() : true) ? 'checked' : ''} onchange="window.WikiDB.toggleSkillLadderFinalOnly(this.checked)">
                 <span class="ladder-switch-slider"></span>
                 <span class="ladder-switch-text">${_tSkillLadder('最終進化', 'Final Evo')}</span>
               </label>
@@ -9618,9 +9618,7 @@
     'linking_cord': ['64', '65', '67', '68', '75', '76', '93', '94', '95', '208', '79', '199', '137', '233', '710', '711'],
     'metal_coat': ['95', '208', '123', '212'],
     'kings_rock': ['79', '199', '61', '186'],
-    'up_grade': ['137', '233'],
-    'razor_claw': ['215', '461'],
-    'dragon_scale': ['116', '117', '230']
+    'razor_claw': ['215', '461']
   };
 
   function getMasterItemsData() {
@@ -10254,7 +10252,6 @@
           </div>
           <div class="stat-hero-meta">
             <span class="stat-hero-title">${escapeHtml(stat.lbl)}</span>
-            <span class="stat-hero-sub">${escapeHtml(effectsText)}</span>
           </div>
         `;
         statHeroEl.style.display = 'flex';

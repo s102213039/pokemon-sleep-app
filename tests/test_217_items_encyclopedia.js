@@ -2,7 +2,7 @@
  * Standalone Test Probe for Test 217: Pokémon Sleep Items Encyclopedia
  *
  * Validates:
- * 1. Master Data Engine & Canonical Schema (36 items across 4 categories, no incenses)
+ * 1. Master Data Engine & Canonical Schema (34 items across 4 categories, no incenses)
  * 2. Multilingual Localization & Asset URLs (zh-TW, zh-CN, en-US)
  * 3. Evolution Target & Pokémon ID Mappings
  * 4. Wiki Subpanel Navigation & Layout Markup
@@ -140,9 +140,9 @@ function runProbe(options = {}) {
     assert(Array.isArray(itemsData), 'Items dataset must be an array of item records');
   });
 
-  check('Master Data Engine', 'Items dataset contains canonical non-incense items (36 items)', () => {
+  check('Master Data Engine', 'Items dataset contains canonical non-incense items (34 items)', () => {
     assert(itemsData !== null, 'Items data not available');
-    assertEquals(itemsData.length, 36, `Expected exactly 36 items, received ${itemsData.length}`);
+    assertEquals(itemsData.length, 34, `Expected exactly 34 items, received ${itemsData.length}`);
   });
 
   check('Master Data Engine', 'Item records adhere to standard canonical schema', () => {
@@ -165,17 +165,19 @@ function runProbe(options = {}) {
     });
   });
 
-  check('Master Data Engine', 'Evolution stones and items coverage (15+ canonical items)', () => {
+  check('Master Data Engine', 'Evolution stones and items coverage (15 canonical items)', () => {
     assert(itemsData !== null, 'Items data not available');
     const requiredEvolutionItems = [
       'thunder_stone', 'fire_stone', 'water_stone', 'leaf_stone', 'moon_stone',
       'sun_stone', 'ice_stone', 'shiny_stone', 'dusk_stone', 'dawn_stone',
-      'oval_stone', 'linking_cord', 'metal_coat', 'kings_rock', 'up_grade'
+      'oval_stone', 'linking_cord', 'metal_coat', 'kings_rock', 'razor_claw'
     ];
     const existingIds = new Set(itemsData.map(i => i.id));
     requiredEvolutionItems.forEach(id => {
       assert(existingIds.has(id), `Missing required evolution item: ${id}`);
     });
+    assert(!existingIds.has('up_grade'), 'up_grade must not exist in itemsData');
+    assert(!existingIds.has('dragon_scale'), 'dragon_scale must not exist in itemsData');
   });
 
   check('Master Data Engine', 'Incenses are completely removed from items dataset', () => {

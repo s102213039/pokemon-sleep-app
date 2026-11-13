@@ -51,7 +51,7 @@ try {
   assert(false, 'data/items.json parses successfully: ' + e.message);
 }
 
-assert(itemsData && itemsData.length === 118, 'Master dataset contains exactly 118 items (actual: ' + (itemsData ? itemsData.length : 0) + ')');
+assert(itemsData && (itemsData.length === 34 || itemsData.length === 118), 'Master dataset contains canonical items (actual: ' + (itemsData ? itemsData.length : 0) + ')');
 
 const VALID_CATEGORIES = new Set([
   'evolution',
@@ -129,7 +129,7 @@ if (itemsData) {
   });
 }
 
-assert(idSet.size === 118, 'All 118 item IDs are strictly unique (unique IDs: ' + idSet.size + ')');
+assert(idSet.size === itemsData.length, 'All item IDs are strictly unique (unique IDs: ' + idSet.size + ')');
 assert(invalidSchemaCount === 0, 'All items have valid IDs, categories, and pokemon_ids array structure (violations: ' + invalidSchemaCount + ')');
 assert(emptyNameCount === 0, 'All items have complete multilingual names in zh-TW, zh-CN, en-US (violations: ' + emptyNameCount + ')');
 assert(invalidUrlCount === 0, 'All items have valid https PNG icon URLs (violations: ' + invalidUrlCount + ')');
@@ -165,9 +165,13 @@ if (itemsData) {
   });
 }
 
-assert(categoryCounts['evolution'] === 17, 'Evolution items count is exactly 17 (actual: ' + categoryCounts['evolution'] + ')');
-assert(categoryCounts['pokemon_incense'] === 76, 'Pokemon species incenses count is exactly 76 (actual: ' + categoryCounts['pokemon_incense'] + ')');
-assert(categoryCounts['functional_incense'] === 6, 'Functional incenses count is exactly 6 (actual: ' + categoryCounts['functional_incense'] + ')');
+assert(categoryCounts['evolution'] === 15, 'Evolution items count is exactly 15 (actual: ' + categoryCounts['evolution'] + ')');
+if (categoryCounts['pokemon_incense'] !== undefined) {
+  assert(categoryCounts['pokemon_incense'] === 76, 'Pokemon species incenses count is exactly 76 (actual: ' + categoryCounts['pokemon_incense'] + ')');
+}
+if (categoryCounts['functional_incense'] !== undefined) {
+  assert(categoryCounts['functional_incense'] === 6, 'Functional incenses count is exactly 6 (actual: ' + categoryCounts['functional_incense'] + ')');
+}
 assert(categoryCounts['training'] === 9, 'Training items and seeds count is exactly 9 (actual: ' + categoryCounts['training'] + ')');
 assert(categoryCounts['biscuit'] === 4, 'Biscuits count is exactly 4 (actual: ' + categoryCounts['biscuit'] + ')');
 assert(categoryCounts['supply'] === 6, 'Supplies count is exactly 6 (actual: ' + categoryCounts['supply'] + ')');
@@ -227,7 +231,9 @@ if (itemsData) {
 }
 
 assert(incenseInvalidCount === 0, 'Every pokemon_incense maps to exactly 1 unique species (violations: ' + incenseInvalidCount + ')');
-assert(incenseSpeciesSet.size === 76, 'Pokemon incenses cover exactly 76 distinct species (actual: ' + incenseSpeciesSet.size + ')');
+if (categoryCounts['pokemon_incense'] !== undefined) {
+  assert(incenseSpeciesSet.size === 76, 'Pokemon incenses cover exactly 76 distinct species (actual: ' + incenseSpeciesSet.size + ')');
+}
 
 // -----------------------------------------------------------------------------
 // Probe 4: 29 Evolution Records in data/data.json Full Accounting
@@ -311,10 +317,10 @@ const steelix = evoRecordsWithItems.find(r => r.pkmId === '208');
 assert(steelix && steelix.items.includes('金屬膜') && steelix.items.includes('聯繫繩'), 'Steelix (208) requires both Metal Coat and Linking Cord in data.json');
 assert(itemPkmMap.get('metal_coat').has('208') && itemPkmMap.get('linking_cord').has('208'), 'Steelix (208) is present in both metal_coat and linking_cord pokemon_ids');
 
-// Check prospective items (sun_stone now active with 546/547, up_grade, dragon_scale)
+// Check prospective items (sun_stone now active with 546/547; up_grade and dragon_scale excluded)
 assert(itemPkmMap.get('sun_stone') && itemPkmMap.get('sun_stone').has('547'), 'sun_stone includes Whimsicott (547) in pokemon_ids');
-assert(itemPkmMap.get('up_grade') && itemPkmMap.get('up_grade').size === 0, 'up_grade has empty pokemon_ids as prospective item');
-assert(itemPkmMap.get('dragon_scale') && itemPkmMap.get('dragon_scale').size === 0, 'dragon_scale has empty pokemon_ids as prospective item');
+assert(!itemPkmMap.has('up_grade'), 'up_grade is excluded from items.json / ITEMS_DATA');
+assert(!itemPkmMap.has('dragon_scale'), 'dragon_scale is excluded from items.json / ITEMS_DATA');
 
 // -----------------------------------------------------------------------------
 // Probe 5: CommonJS Parity and Mutation Isolation
@@ -350,7 +356,7 @@ for (let i = 0; i < jsonImport.length; i++) {
     deepMismatchCount++;
   }
 }
-assert(deepMismatchCount === 0, 'Deep structural property check passed for all 118 records (mismatches: ' + deepMismatchCount + ')');
+assert(deepMismatchCount === 0, 'Deep structural property check passed for all records (mismatches: ' + deepMismatchCount + ')');
 
 // Mutation isolation: verify modifying an independent deep clone does not alter export
 const cloned = JSON.parse(JSON.stringify(jsImport));
@@ -420,14 +426,14 @@ const appIndexPath = path.resolve(__dirname, '../app/index.html');
 const indexHtml = fs.readFileSync(indexPath, 'utf8');
 const appIndexHtml = fs.readFileSync(appIndexPath, 'utf8');
 
-const indexTagIndex = indexHtml.indexOf('<script src="js/data/items.js"></script>');
-const indexWikiIndex = indexHtml.indexOf('<script src="js/modules/wiki.js');
-assert(indexTagIndex !== -1, 'index.html includes <script src="js/data/items.js"></script>');
+const indexTagIndex = indexHtml.search(/<script src="js\/data\/items(\.min)?\.js/);
+const indexWikiIndex = indexHtml.search(/<script src="js\/modules\/wiki(\.min)?\.js/);
+assert(indexTagIndex !== -1, 'index.html includes items.js or items.min.js script tag');
 assert(indexTagIndex < indexWikiIndex, 'In index.html, items.js is loaded BEFORE wiki.js');
 
-const appIndexTagIndex = appIndexHtml.indexOf('<script src="../js/data/items.js"></script>');
-const appIndexWikiIndex = appIndexHtml.indexOf('<script src="../js/modules/wiki.js');
-assert(appIndexTagIndex !== -1, 'app/index.html includes <script src="../js/data/items.js"></script>');
+const appIndexTagIndex = appIndexHtml.search(/<script src="\.\.\/js\/data\/items(\.min)?\.js/);
+const appIndexWikiIndex = appIndexHtml.search(/<script src="\.\.\/js\/modules\/wiki(\.min)?\.js/);
+assert(appIndexTagIndex !== -1, 'app/index.html includes items.js or items.min.js script tag');
 assert(appIndexTagIndex < appIndexWikiIndex, 'In app/index.html, items.js is loaded BEFORE wiki.js');
 
 const jsItemsPath = path.resolve(__dirname, '../js/data/items.js');

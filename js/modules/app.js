@@ -6624,9 +6624,7 @@ const POKEDEX_EVO_ITEM_DEFINITIONS = [
   { id: 'linking_cord',  name_tw: '聯繫繩', name_cn: '联系绳', name_en: 'Linking Cord',  icon: 'https://www.serebii.net/pokemonsleep/items/linkingcord.png' },
   { id: 'metal_coat',    name_tw: '金屬膜', name_cn: '金属膜', name_en: 'Metal Coat',    icon: 'https://www.serebii.net/pokemonsleep/items/metalcoat.png' },
   { id: 'kings_rock',    name_tw: '王者之證', name_cn: '王者之证', name_en: "King's Rock", icon: "https://www.serebii.net/pokemonsleep/items/king'srock.png" },
-  { id: 'up_grade',      name_tw: '升級資料', name_cn: '升级数据', name_en: 'Upgrade',   icon: 'https://www.serebii.net/itemdex/sprites/upgrade.png' },
-  { id: 'razor_claw',    name_tw: '銳利之爪', name_cn: '锐利之爪', name_en: 'Razor Claw', icon: 'https://www.serebii.net/pokemonsleep/items/razorclaw.png' },
-  { id: 'dragon_scale',  name_tw: '龍之鱗片', name_cn: '龙之鳞片', name_en: 'Dragon Scale', icon: 'https://www.serebii.net/itemdex/sprites/dragonscale.png' }
+  { id: 'razor_claw',    name_tw: '銳利之爪', name_cn: '锐利之爪', name_en: 'Razor Claw', icon: 'https://www.serebii.net/pokemonsleep/items/razorclaw.png' }
 ];
 
 function getPokemonEvolutionItems(pkm) {

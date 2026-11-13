@@ -2906,6 +2906,7 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     assertEquals(WikiDB.getSkillLadderSearchQuery(), '', 'Search query cleared after reset');
     assertEquals(WikiDB.getSkillLadderNature(), 'NONE', 'Nature cleared after reset');
     assertEquals(WikiDB.getSkillLadderTop15Only(), true, 'Top 15 restored after reset');
+    assertEquals(WikiDB.getSkillLadderFinalOnly(), true, 'Final Evo restored to true after reset');
 
     // 6. Verify empty track dotted lead line boundary (leadPct = 0.00% on empty track)
     WikiDB.onSkillLadderSearch('NonExistentPokemonNameXYZ');
@@ -2913,7 +2914,8 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     assert(emptyTrackHtml.includes('class="ladder-track-lead-line" style="left: 0; width: 0.00%;"'), 'Empty track must render 0.00% lead line instead of 100%');
     WikiDB.clearSkillLadderSearch();
 
-    // 7. Verify search support for Pokedex number and Japanese name
+    // 7. Verify search support for Pokedex number and Japanese name (toggle off finalOnly to match pre-evo Pikachu 025)
+    WikiDB.toggleSkillLadderFinalOnly(false);
     WikiDB.onSkillLadderSearch('025');
     const idSearchHtml = WikiDB.renderSkillCoordinateLadder();
     assert(idSearchHtml.includes('data-pkm="皮卡丘"'), 'Search by Pokedex number 025 must match Pikachu');
@@ -2921,6 +2923,7 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     const jpSearchHtml = WikiDB.renderSkillCoordinateLadder();
     assert(jpSearchHtml.includes('data-pkm="皮卡丘"'), 'Search by Japanese name ピカチュウ must match Pikachu');
     WikiDB.clearSkillLadderSearch();
+    WikiDB.toggleSkillLadderFinalOnly(true);
 
     // 8. Verify PopoverCoordinator integration with skill-ladder-energy-help-popover
     const popoverSource = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'components', 'popoverCoordinator.js'), 'utf8');

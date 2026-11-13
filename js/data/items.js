@@ -1,6 +1,6 @@
 /**
  * js/data/items.js - Pokémon Sleep Items Master Data
- * Master dataset containing 36 essential items across 4 categories (evolution, training, biscuit, supply).
+ * Master dataset containing 34 essential items across 4 categories (evolution, training, biscuit, supply).
  */
 (function () {
   'use strict';
@@ -682,48 +682,6 @@
     ]
   },
   {
-    "id": "up_grade",
-    "category": "evolution",
-    "name": {
-      "zh-TW": "升級資料",
-      "zh-CN": "升级数据",
-      "en-US": "Upgrade"
-    },
-    "icon_url": "https://www.serebii.net/itemdex/sprites/upgrade.png",
-    "description": {
-      "zh-TW": "裝滿了各種各樣資訊的透明裝置。能使特定寶可夢進化。",
-      "zh-CN": "装满了各种各样信息的透明装置。能使特定宝可梦进化。",
-      "en-US": "A transparent device containing all sorts of data. It can induce evolution in certain Pokémon."
-    },
-    "effects": {
-      "zh-TW": "能使特定寶可夢進化的道具。",
-      "zh-CN": "能使特定宝可梦进化的道具。",
-      "en-US": "Can be used to evolve certain Pokémon."
-    },
-    "sleep_points": {
-      "regular": 1400,
-      "premium": null,
-      "limit_regular": "每月 5 個",
-      "limit_premium": null
-    },
-    "diamonds": null,
-    "acquisition": {
-      "zh-TW": [
-        "一般睡眠點數交換所 (1,400pt)",
-        "預備收錄道具"
-      ],
-      "zh-CN": [
-        "一般睡眠点数交换所 (1,400pt)",
-        "预备收录道具"
-      ],
-      "en-US": [
-        "Regular Sleep Point Exchange (1,400pt)",
-        "Prospective Item"
-      ]
-    },
-    "pokemon_ids": []
-  },
-  {
     "id": "razor_claw",
     "category": "evolution",
     "name": {
@@ -769,48 +727,6 @@
     "pokemon_ids": [
       "461"
     ]
-  },
-  {
-    "id": "dragon_scale",
-    "category": "evolution",
-    "name": {
-      "zh-TW": "龍之鱗片",
-      "zh-CN": "龙之鳞片",
-      "en-US": "Dragon Scale"
-    },
-    "icon_url": "https://www.serebii.net/itemdex/sprites/dragonscale.png",
-    "description": {
-      "zh-TW": "質地堅硬的龍之鱗片。能使特定寶可夢進化的珍貴道具。",
-      "zh-CN": "质地坚硬的龙之鳞片。能使特定宝可梦进化的珍贵道具。",
-      "en-US": "A tough and hard scale from a Dragon-type Pokémon. A precious item that can induce evolution."
-    },
-    "effects": {
-      "zh-TW": "能使特定寶可夢進化的道具。",
-      "zh-CN": "能使特定宝可梦进化的道具。",
-      "en-US": "Can be used to evolve certain Pokémon."
-    },
-    "sleep_points": {
-      "regular": 1400,
-      "premium": null,
-      "limit_regular": "每月 5 個",
-      "limit_premium": null
-    },
-    "diamonds": null,
-    "acquisition": {
-      "zh-TW": [
-        "一般睡眠點數交換所 (1,400pt)",
-        "預備收錄道具"
-      ],
-      "zh-CN": [
-        "一般睡眠点数交换所 (1,400pt)",
-        "预备收录道具"
-      ],
-      "en-US": [
-        "Regular Sleep Point Exchange (1,400pt)",
-        "Prospective Item"
-      ]
-    },
-    "pokemon_ids": []
   },
   {
     "id": "handy_candy_s",

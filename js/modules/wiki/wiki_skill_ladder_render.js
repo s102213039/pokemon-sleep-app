@@ -466,7 +466,7 @@
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${_tSkillLadder('寶可夢專長', 'Specialty Type')}</span>
               <label class="ladder-top15-switch-label" title="${_tSkillLadder('僅保留最終進化寶可夢', 'Show Final Evolution Only')}">
-                <input type="checkbox" id="skill-ladder-final-only-switch" class="ladder-switch-input" ${(typeof getSkillLadderFinalOnly === 'function' ? getSkillLadderFinalOnly() : false) ? 'checked' : ''} onchange="window.WikiDB.toggleSkillLadderFinalOnly(this.checked)">
+                <input type="checkbox" id="skill-ladder-final-only-switch" class="ladder-switch-input" ${(typeof getSkillLadderFinalOnly === 'function' ? getSkillLadderFinalOnly() : true) ? 'checked' : ''} onchange="window.WikiDB.toggleSkillLadderFinalOnly(this.checked)">
                 <span class="ladder-switch-slider"></span>
                 <span class="ladder-switch-text">${_tSkillLadder('最終進化', 'Final Evo')}</span>
               </label>

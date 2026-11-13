@@ -555,16 +555,28 @@ console.log('\n[Suite 6] Tooltip Formatting & Seconds Boundary Handling');
   // Verify Final Evolution Only switch & filtering
   const sidebarHtml = sandbox.renderSkillLadderSidebar('', false, 'skills_ladder');
   assert(sidebarHtml.includes('id="skill-ladder-final-only-switch"'), 'Sidebar contains Final Evolution switch');
-  assertEquals(sandbox.getSkillLadderFinalOnly(), false, 'Final Evolution filter defaults to false');
+  assertEquals(sandbox.getSkillLadderFinalOnly(), true, 'Final Evolution filter defaults to true');
   sandbox.toggleSkillLadderTop15(false);
+  const defaultFinalHtml = sandbox.renderSkillCoordinateLadder();
+  assert(!defaultFinalHtml.includes('data-pkm="拉魯拉絲"'), 'Default Final Evolution filter excludes pre-evolution Ralts');
+  assert(defaultFinalHtml.includes('data-pkm="沙奈朵"'), 'Default Final Evolution filter retains final evolution Gardevoir');
+
+  sandbox.toggleSkillLadderFinalOnly(false);
+  assertEquals(sandbox.getSkillLadderFinalOnly(), false, 'Final Evolution filter toggles to false');
   const allHtml = sandbox.renderSkillCoordinateLadder();
   assert(allHtml.includes('data-pkm="拉魯拉絲"'), 'Without Final Evolution filter, pre-evolution Ralts is included');
+
   sandbox.toggleSkillLadderFinalOnly(true);
   assertEquals(sandbox.getSkillLadderFinalOnly(), true, 'Final Evolution filter toggles to true');
   const finalHtml = sandbox.renderSkillCoordinateLadder();
   assert(!finalHtml.includes('data-pkm="拉魯拉絲"'), 'Final Evolution filter excludes pre-evolution Ralts');
   assert(finalHtml.includes('data-pkm="沙奈朵"'), 'Final Evolution filter retains final evolution Gardevoir');
+
+  // Verify resetSkillLadderFilters restores Final Evolution filter to true
   sandbox.toggleSkillLadderFinalOnly(false);
+  assertEquals(sandbox.getSkillLadderFinalOnly(), false, 'Final Evolution filter toggled to false before reset');
+  sandbox.resetSkillLadderFilters();
+  assertEquals(sandbox.getSkillLadderFinalOnly(), true, 'resetSkillLadderFilters restores Final Evolution filter to true');
   sandbox.toggleSkillLadderTop15(true);
 
   // Verify clickable track header & openSkillRankingModal

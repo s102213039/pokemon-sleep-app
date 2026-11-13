@@ -2824,3 +2824,15 @@
   - 新增 `tests/test_dynamic_game_config.js`（8 / 8 Passed）並整合至 `tests/run_tests.js`，同步更新 `tests/tiers/tier4/tier4_part3.js` 與 `tier4_part4.js` 斷言以驗證動態設定行為。
   - `npm run build`：17 份壓縮產物建置成功（exit 0）。
   - `npm run test:fast`：165 / 165 Passed；`npm test`：全量 4 Tiers 288 / 288 Passed。
+### 技能天梯最終進化預設與道具百科/詳情浮窗精簡優化 (Skill Ladder Default & Items Modal Polish)
+- **技能天梯最終進化預設開啟 (`js/modules/wiki/wiki_skill_ladder.js`, `js/modules/wiki/wiki_skill_ladder_render.js`)**：
+  - 將 `skillLadderFinalOnly` 預設值與 `resetSkillLadderFilters()` 重設值調整為 `true`，並同步 `#skill-ladder-final-only-switch` 預設勾選狀態，與食材天梯一致。
+  - 更新 `updateSkillLadderActiveFilterBadge()` 為 `if (!skillLadderFinalOnly) count++;`，確保預設開啟狀態下篩選計數為 `0`。
+- **移除未實裝道具「龍之鱗片」與「升級資料」(`data/items.json`, `js/data/items.js`, `js/modules/pokedex/pokedex_calc.js`, `js/modules/wiki/wiki_items.js`, `js/core/i18n/i18n_entities.js`)**：
+  - 自資料集、圖鑑進化道具定義、`ITEM_POKEMON_FAMILY_MAP` 與多語系字典移除 `dragon_scale` 與 `up_grade`，並同步執行 `scripts/minify_data.js` 更新 `data/manifest.json`（34 項正式道具，含 15 項進化道具）。
+- **道具詳情浮窗窄版無內框遊戲感重構 (`css/views/wiki/wiki_subskills.css`, `js/modules/wiki/wiki_items.js`)**：
+  - 將 `#wiki-item-detail-modal` 寬度由 `640px` 收窄至 `440px`（`border-radius: 20px`），並全面移除內部所有子外框（單一外框原則：圖示底座採無框徑向光暈、數值焦點徽章改為無框膠囊、睡點交換區塊與對應寶可夢卡片皆去框並以淡色表面與細分隔線呈現、獲取管道改為純淨無框圓點條列）。
+  - 消除 `#wiki-item-modal-stat-hero` 與 `#wiki-item-modal-effects` 之重複效果敘述，維持 4 種主題與行動版 Bottom Sheet 適配。
+- **測試與建置驗證**：
+  - `npm run build`：建置 17 份壓縮產物成功（exit 0）。
+  - `npm test`：全量 4 Tiers 288 / 288 Passed；`test_wiki_skill_ladder.js`、`test_217_items_encyclopedia.js`（26/26）、`test_reviewer_m3_2_adversarial.js`（18/18）全數通過。

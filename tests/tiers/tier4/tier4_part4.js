@@ -718,8 +718,8 @@ function registerTier4Part4() {
     assert(itemsData !== null, 'Items dataset must be present in data/items.json or embedded in js/modules/wiki.js');
     assert(Array.isArray(itemsData), 'Items dataset must be an array of item records');
 
-    // 2. Canonical item count === 36 (non-incense)
-    assertEquals(itemsData.length, 36, `Expected exactly 36 items, received ${itemsData.length}`);
+    // 2. Canonical item count === 34 (non-incense)
+    assertEquals(itemsData.length, 34, `Expected exactly 34 items, received ${itemsData.length}`);
 
     // 3. Item records adhere to standard canonical schema
     const validCategories = ['evolution', 'training', 'biscuit', 'supply'];
@@ -738,16 +738,18 @@ function registerTier4Part4() {
       assert(Array.isArray(item.pokemon_ids), `Item ${item.id} pokemon_ids must be an array`);
     });
 
-    // 4. Evolution stones and items coverage (15+ canonical items)
+    // 4. Evolution stones and items coverage (15 canonical items)
     const requiredEvolutionItems = [
       'thunder_stone', 'fire_stone', 'water_stone', 'leaf_stone', 'moon_stone',
       'sun_stone', 'ice_stone', 'shiny_stone', 'dusk_stone', 'dawn_stone',
-      'oval_stone', 'linking_cord', 'metal_coat', 'kings_rock', 'up_grade'
+      'oval_stone', 'linking_cord', 'metal_coat', 'kings_rock', 'razor_claw'
     ];
     const existingIds = new Set(itemsData.map(i => i.id));
     requiredEvolutionItems.forEach(id => {
       assert(existingIds.has(id), `Missing required evolution item: ${id}`);
     });
+    assert(!existingIds.has('up_grade'), 'up_grade must not exist in itemsData');
+    assert(!existingIds.has('dragon_scale'), 'dragon_scale must not exist in itemsData');
 
     // 5. Incenses completely removed from dataset
     const incenseItems = itemsData.filter(i => i.category.includes('incense') || i.id.includes('incense'));

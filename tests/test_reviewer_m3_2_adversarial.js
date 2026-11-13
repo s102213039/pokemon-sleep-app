@@ -85,9 +85,11 @@ check('Integrity Audit', 'No hardcoded test score or test bypass strings in sour
   }
 });
 
-check('Integrity Audit', 'POKEDEX_EVO_ITEM_DEFINITIONS contains 17 canonical evolution items with valid Serebii URLs', () => {
-  assert(appJs.includes('const POKEDEX_EVO_ITEM_DEFINITIONS = ['), 'POKEDEX_EVO_ITEM_DEFINITIONS must exist');
-  const match = appJs.match(/const\s+POKEDEX_EVO_ITEM_DEFINITIONS\s*=\s*(\[[\s\S]*?\]);/);
+check('Integrity Audit', 'POKEDEX_EVO_ITEM_DEFINITIONS contains 15 canonical evolution items with valid Serebii URLs', () => {
+  const pokedexCalcPath = path.join(ROOT, 'js', 'modules', 'pokedex', 'pokedex_calc.js');
+  const evoSource = fs.existsSync(pokedexCalcPath) ? fs.readFileSync(pokedexCalcPath, 'utf8') : appJs;
+  assert(evoSource.includes('const POKEDEX_EVO_ITEM_DEFINITIONS = ['), 'POKEDEX_EVO_ITEM_DEFINITIONS must exist');
+  const match = evoSource.match(/const\s+POKEDEX_EVO_ITEM_DEFINITIONS\s*=\s*(\[[\s\S]*?\]);/);
   assert(match !== null, 'Could not parse POKEDEX_EVO_ITEM_DEFINITIONS array');
 
   const sandbox = {};
@@ -95,13 +97,12 @@ check('Integrity Audit', 'POKEDEX_EVO_ITEM_DEFINITIONS contains 17 canonical evo
   const defs = vm.runInContext(match[1], sandbox);
 
   assert(Array.isArray(defs), 'defs must be array');
-  assertEquals(defs.length, 17, 'Must have exactly 17 canonical evolution item definitions');
+  assertEquals(defs.length, 15, 'Must have exactly 15 canonical evolution item definitions');
 
   const expectedIds = [
     'thunder_stone', 'fire_stone', 'water_stone', 'leaf_stone', 'moon_stone',
     'sun_stone', 'ice_stone', 'shiny_stone', 'dusk_stone', 'dawn_stone',
-    'oval_stone', 'linking_cord', 'metal_coat', 'kings_rock', 'up_grade',
-    'razor_claw', 'dragon_scale'
+    'oval_stone', 'linking_cord', 'metal_coat', 'kings_rock', 'razor_claw'
   ];
 
   expectedIds.forEach(id => {
@@ -110,6 +111,10 @@ check('Integrity Audit', 'POKEDEX_EVO_ITEM_DEFINITIONS contains 17 canonical evo
     assert(found.name_tw && found.name_cn && found.name_en, `Item ${id} missing localization`);
     assert(found.icon && found.icon.startsWith('https://www.serebii.net/'), `Item ${id} must have serebii sprite URL`);
   });
+
+  const existingItemIds = new Set(itemsData.map(i => i.id));
+  assert(!existingItemIds.has('up_grade'), 'up_grade must not exist in itemsData');
+  assert(!existingItemIds.has('dragon_scale'), 'dragon_scale must not exist in itemsData');
 });
 
 // -----------------------------------------------------------------------------
@@ -123,10 +128,12 @@ check('Bidirectional Nav', 'getPokemonEvolutionItems parses single and multi-ite
   };
   vm.createContext(sandbox);
 
-  // Extract function definitions from app.js
-  const defsMatch = appJs.match(/const\s+POKEDEX_EVO_ITEM_DEFINITIONS\s*=\s*(\[[\s\S]*?\]);/);
-  const getEvoItemsMatch = appJs.match(/function\s+getPokemonEvolutionItems\(pkm\)\s*\{[\s\S]*?\n\}/);
-  const renderChipsMatch = appJs.match(/function\s+renderPokedexEvoItemChipsHTML\(pkm\)\s*\{[\s\S]*?\n\}/);
+  // Extract function definitions from pokedex_calc.js or app.js
+  const pokedexCalcPath = path.join(ROOT, 'js', 'modules', 'pokedex', 'pokedex_calc.js');
+  const evoSource = fs.existsSync(pokedexCalcPath) ? fs.readFileSync(pokedexCalcPath, 'utf8') : appJs;
+  const defsMatch = evoSource.match(/const\s+POKEDEX_EVO_ITEM_DEFINITIONS\s*=\s*(\[[\s\S]*?\]);/);
+  const getEvoItemsMatch = evoSource.match(/function\s+getPokemonEvolutionItems\(pkm\)\s*\{[\s\S]*?\n\}/);
+  const renderChipsMatch = evoSource.match(/function\s+renderPokedexEvoItemChipsHTML\(pkm\)\s*\{[\s\S]*?\n\}/);
 
   assert(defsMatch && getEvoItemsMatch && renderChipsMatch, 'Helper functions must be extractable');
 
@@ -144,7 +151,7 @@ check('Bidirectional Nav', 'getPokemonEvolutionItems parses single and multi-ite
   assertEquals(raichuItems.length, 1, 'Raichu must have 1 evo item');
   assertEquals(raichuItems[0].id, 'thunder_stone', 'Raichu evo item must be thunder_stone');
   const raichuHtml = renderPokedexEvoItemChipsHTML(raichu);
-  assert(raichuHtml.includes('class="pokedex-evo-item-btn"'), 'Must render button with .pokedex-evo-item-btn');
+  assert(raichuHtml.includes('pokedex-evo-item-btn'), 'Must render button with .pokedex-evo-item-btn');
   assert(raichuHtml.includes('data-evo-item-id="thunder_stone"'), 'Must have data-evo-item-id');
   assert(raichuHtml.includes("openItemDetailModal('thunder_stone')"), 'Must call openItemDetailModal');
 
@@ -209,6 +216,13 @@ check('Modal Suspension Protocol', 'Full simulation of openItemDetailModal and c
         return null;
       },
       querySelectorAll() { return []; },
+      remove() {
+        if (this.parentElement && Array.isArray(this.parentElement.children)) {
+          const idx = this.parentElement.children.indexOf(this);
+          if (idx !== -1) this.parentElement.children.splice(idx, 1);
+        }
+        this.parentElement = null;
+      },
       __suspendedForDetail: false
     };
   }
@@ -261,6 +275,10 @@ check('Modal Suspension Protocol', 'Full simulation of openItemDetailModal and c
     function getMasterItemsData() { return itemsData; }
     function getItemLocalizedName(item) { return item.name['zh-TW']; }
     function getItemCategoryBadgeName(c) { return c; }
+    function getItemHighlightStat(item) { return null; }
+    function getItemLocalizedEffects(item) { return ""; }
+    function getItemFlavorDescription(item) { return ""; }
+    function getItemAcquisitionList(item) { return []; }
     ${wikiJs.match(/let\s+activeItemModalEscHandler[\s\S]*?function\s+closeItemDetailModal\(\)\s*\{[\s\S]*?\n  \}/)[0]}
   `;
 
@@ -378,6 +396,10 @@ check('Adversarial Stress', 'Rapid open-close re-entrance does not leak event li
     function getMasterItemsData() { return itemsData; }
     function getItemLocalizedName(item) { return item.name['zh-TW']; }
     function getItemCategoryBadgeName(c) { return c; }
+    function getItemHighlightStat(item) { return null; }
+    function getItemLocalizedEffects(item) { return ""; }
+    function getItemFlavorDescription(item) { return ""; }
+    function getItemAcquisitionList(item) { return []; }
     ${wikiJs.match(/let\s+activeItemModalEscHandler[\s\S]*?function\s+closeItemDetailModal\(\)\s*\{[\s\S]*?\n  \}/)[0]}
   `;
   vm.runInContext(modalFunctionsCode, sandbox);
@@ -418,7 +440,7 @@ check('Single Frame Rule', '.wiki-item-modal-section has border: none !important
 });
 
 check('Single Frame Rule', '.wiki-item-pokemon-grid has border: none !important and background: transparent !important', () => {
-  const match = stylesCss.match(/\.wiki-item-pokemon-grid\s*\{([\s\S]*?)\}/);
+  const match = stylesCss.match(/(?:^|\n)\.wiki-item-pokemon-grid\s*\{([\s\S]*?)\}/);
   assert(match !== null, '.wiki-item-pokemon-grid rule block must exist in styles.css');
   const gridRules = match[1];
   assert(gridRules.includes('border: none !important') || gridRules.includes('border: 0 !important'),
