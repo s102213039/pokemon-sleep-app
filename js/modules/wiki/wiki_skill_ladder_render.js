@@ -298,7 +298,8 @@
                       const helpsDisplay = (node.calcRes.helps12h != null ? node.calcRes.helps12h : (43200 / node.calcRes.idealIntervalSec)).toFixed(1);
 
                       return `
-                        <div class="ladder-node specialty-${node.specialtyKey} ${node.isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} ${groupSize > 1 ? 'node-in-cluster' : ''}"
+                        <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} ${groupSize > 1 ? 'node-in-cluster' : ''}"
+                             data-specialty="specialty-${node.specialtyKey}"
                              data-pkm="${_escapeHtml(node.p.name_cn || node.p.name)}"
                              data-pkm-group="pkm-${node.p.id}"
                              data-pkm-id="${node.p.id}"

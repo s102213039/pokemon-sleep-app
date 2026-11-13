@@ -168,6 +168,15 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
   min-width: 0 !important;
 }
 
+/* Ladder Node Container: Strictly borderless and transparent (no rectangular outer box) */
+.wiki-skill-coordinate-ladder .ladder-node,
+[data-theme] .wiki-skill-coordinate-ladder .ladder-node {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 /* Enlarged Pokemon Avatar Node (38px diameter) */
 .mobile-h5-app .wiki-skill-coordinate-ladder .node-avatar-wrapper,
 .wiki-skill-coordinate-ladder .node-avatar-wrapper {

@@ -348,9 +348,13 @@ console.log('\n[Suite 2] Avatar Dimensions & Layout CSS Rules');
   const trackHeightRegex = /height:\s*clamp\(52px,\s*calc\(\(100vh\s*-\s*280px\)\s*\/\s*9\),\s*68px\)\s*!important;/;
   assert(trackHeightRegex.test(skillLadderCss), 'wiki_skill_ladder.css: track-row height clamps between 52px and 68px');
 
+  assert(skillLadderCss.includes('[data-theme] .wiki-skill-coordinate-ladder .ladder-node') && skillLadderCss.includes('border: none !important;'), 'wiki_skill_ladder.css: .ladder-node enforces transparent borderless container');
+
   // Rendered DOM check
   const { sandbox } = createLadderSandbox();
   const html = sandbox.renderSkillCoordinateLadder();
+  assert(!/class="ladder-node\s+[^"]*specialty-/.test(html), 'Rendered .ladder-node must NOT carry .specialty-* CSS class (prevents rectangular box)');
+  assert(html.includes('data-specialty="specialty-'), 'Rendered .ladder-node preserves specialty metadata via data-specialty');
   assert(html.includes('class="node-avatar-wrapper"'), 'Rendered HTML contains .node-avatar-wrapper');
   assert(html.includes('class="node-avatar-img"'), 'Rendered HTML contains .node-avatar-img');
   assert(html.includes('skill-ruler-label') && html.includes('次數/12h'), 'Rendered HTML contains .skill-ruler-label with text 次數/12h (zh)');

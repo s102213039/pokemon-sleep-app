@@ -2793,4 +2793,16 @@
   - `npm run test:fast`：161 / 161 Passed。
   - `npm test`：全量 4 Tiers 284 / 284 Passed。
 
+### 天梯寶可夢節點長方形外框徹底移除 (Ladder Node Outer Rectangular Box Elimination)
+- **根因定位與結構修正 (`js/modules/wiki/wiki_skill_ladder_render.js`)**：
+  - 排查發現先前為滿足測試斷言而掛載於 `.ladder-node` 的 `specialty-${node.specialtyKey}` CSS 類別，會誤觸 `css/mobile/dock_nav.css` 中專長標籤徽章的 `.specialty-berry`、`.specialty-ingredient`、`.specialty-skill` 全域樣式（帶背景與 1px 長方形邊框），導致天梯中的每個寶可夢圖示與次數外層均被套上彩色長方形外框。
+  - 將 `specialty-${node.specialtyKey}` 自 `class` 移至 `data-specialty="specialty-${node.specialtyKey}"` 屬性，徹底解除徽章長方形外框套用，同時保留語意屬性與既有篩選測試覆蓋。
+- **防禦性無框 CSS 加固 (`css/views/wiki/wiki_skill_ladder.css`)**：
+  - 新增 `.wiki-skill-coordinate-ladder .ladder-node` 與 `[data-theme] .wiki-skill-coordinate-ladder .ladder-node` 高權重規則，明確強制 `background: transparent !important; border: none !important; box-shadow: none !important; outline: none !important;`，確保在所有主題下節點容器皆維持純淨透明無外框。
+- **測試與建置驗證**：
+  - `node tests/test_wiki_skill_ladder.js`：793 / 793 Passed (14 Suites, 0 Failures)。
+  - `npm test`：全量 4 Tiers 287 / 287 Passed。
+  - `node tests/test_adversarial_m1_2.js`：21 / 21 Passed；`node tests/test_challenger_m1_cache_sync.js`：18 / 18 Passed。
+
+
 
