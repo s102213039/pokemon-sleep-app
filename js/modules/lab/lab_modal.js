@@ -705,6 +705,7 @@
     '豆製肉': 103, 'Bean Sausage': 103,
     '暖暖薑': 109, 'Warming Ginger': 109,
     '好眠番茄': 110, 'Snoozy Tomato': 110,
+    '一口堅果': 112, 'Snackable Nuts': 112,
     '特選蛋': 115, 'Fancy Egg': 115,
     '純粹油': 121, 'Pure Oil': 121,
     '窩心洋芋': 124, 'Soft Potato': 124,

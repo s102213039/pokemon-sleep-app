@@ -179,13 +179,13 @@ test('Tier 1 - Feature Coverage', 'Wiki Database Integrity: wiki.js defines skil
 });
 
 
-test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js matches Serebii Separate Base Power (19 ingredients, 18 berries Lv.1)', () => {
+test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js matches Serebii Separate Base Power (20 ingredients, 18 berries Lv.1)', () => {
   const wikiPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js');
   const wikiContent = fs.readFileSync(wikiPath, 'utf8');
 
   const SEREbii_ING = {
     '特選蘋果': 90, '哞哞鮮奶': 98, '萌綠大豆': 100, '甜甜蜜': 101, '豆製肉': 103,
-    '暖暖薑': 109, '好眠番茄': 110, '特選蛋': 115, '純粹油': 121, '窩心洋芋': 124,
+    '暖暖薑': 109, '好眠番茄': 110, '一口堅果': 112, '特選蛋': 115, '純粹油': 121, '窩心洋芋': 124,
     '火辣香草': 130, '萌綠玉米': 140, '放鬆可可': 151, '醒腦咖啡豆': 153, '嫩亮酪梨': 162,
     '品鮮蘑菇': 167, '粗枝大蔥': 185, '沉甸甸南瓜': 250, '美味尾巴': 342
   };
@@ -206,7 +206,7 @@ test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js match
   const ings = parseEntries(ingBlock[1]);
   const berries = parseEntries(berryBlock[1]);
 
-  assertEquals(ings.length, 19, 'INGREDIENT_VALUES_DATA should have 19 entries');
+  assertEquals(ings.length, 20, 'INGREDIENT_VALUES_DATA should have 20 entries');
   assertEquals(berries.length, 18, 'BERRY_VALUES_DATA should have 18 entries');
 
   ings.forEach(({ name, energy }) => {
@@ -225,8 +225,8 @@ test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js match
   const ladderBlock = ladderFileContent.match(/const LV60_COORDINATE_LADDER_DATA = \[([\s\S]*?)\];\s*\n\s*\/\/ 舊版清單資料/);
   assert(ladderBlock, 'LV60_COORDINATE_LADDER_DATA not found');
   const ladderEnergies = [...ladderBlock[1].matchAll(/"energy": (\d+)/g)].map(m => +m[1]).sort((a,b)=>a-b);
-  const ingEnergies = Object.values(SEREbii_ING).sort((a,b)=>a-b);
-  assertEquals(ladderEnergies.length, 19, 'LV60 ladder should cover all 19 ingredients');
+  const ingEnergies = Object.values(SEREbii_ING).filter(e => e !== 112).sort((a,b)=>a-b);
+  assertEquals(ladderEnergies.length, 19, 'LV60 ladder covers the 19 released ingredients with verified rates');
   assertEquals(ladderEnergies.join(','), ingEnergies.join(','), 'Ladder ingredient energies should match INGREDIENT_VALUES_DATA');
 
   assert(!wikiContent.includes('energy: 200') && !wikiContent.match(/"energy": 200/), 'Residual pumpkin energy 200 should not exist');

@@ -2836,3 +2836,14 @@
 - **測試與建置驗證**：
   - `npm run build`：建置 17 份壓縮產物成功（exit 0）。
   - `npm test`：全量 4 Tiers 288 / 288 Passed；`test_wiki_skill_ladder.js`、`test_217_items_encyclopedia.js`（26/26）、`test_reviewer_m3_2_adversarial.js`（18/18）全數通過。
+### 實證核查新食材「一口堅果 (Snackable Nuts)」與 3 道新食譜整合
+- **Serebii 官方資料核對**：
+  - 確認 `data/recipes.json` 中由自動同步引入的 3 道新食譜（`Seed Bomb Naan and Curry`、`Grass Knot Salad Wrap`、`Slowpoke Tail Roll Cake`）皆實際使用新食材 `一口堅果`（`Snackable Nuts`，基礎能量 `112`），並非咖啡豆替代。
+  - 確認 `data/data.json` 中 `#546 木棉球 (Cottonee)` 與 `#547 風妖精 (Whimsicott)` 預定登場時間為 `2026-11-16 15:00`，目前官方尚無幫忙間隔與食材機率數據，故不捏造食材產量天梯（維持 19 項已實裝食材天梯數據）。
+- **本地圖示與全站基礎資料補齊**：
+  - 下載補齊 `assets/ingredients/snackablenuts.png` 及 3 道新食譜本地圖示（`assets/meals/seedbombnaanandcurry.png`、`grassknotsaladwrap.png`、`slowpoketailrollcake.png`），避免本地映射 404 降級。
+  - 於 `js/modules/wiki/wiki_skills_matrix.js`（`INGREDIENT_VALUES_DATA`）、`js/modules/lab/lab_modal.js`（`INGREDIENTS_ENERGY_MAP`）、`js/modules/lab/lab_team_picker.js`（`CANONICAL_INGREDIENTS`）與 `js/modules/lab/lab_specialists.js`（`ING_ALIASES`）補齊「一口堅果 (`112`)」。
+- **測試與建置驗證**：
+  - 更新 `tests/tiers/tier1_coverage.js` 驗證 20 項食材基礎能量與 19 項已實裝食材產量天梯一致性。
+  - `npm run build`：建置 17 份壓縮產物成功（exit 0）。
+  - `npm test`：全量 4 Tiers **288 / 288 Passed**（0 Failed）。
