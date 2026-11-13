@@ -528,6 +528,8 @@
       activeNodes.forEach(el => el.classList.remove('tooltip-active'));
       const activeGroupHovers = document.querySelectorAll('[data-pkm-group].group-hover-active');
       activeGroupHovers.forEach(el => el.classList.remove('group-hover-active'));
+      const activeGroupSelected = document.querySelectorAll('.group-selected');
+      activeGroupSelected.forEach(el => el.classList.remove('group-selected'));
       if (document.activeElement && typeof document.activeElement.blur === 'function') {
         try { document.activeElement.blur(); } catch (e) {}
       }

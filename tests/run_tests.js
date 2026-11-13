@@ -9,75 +9,113 @@ const { registerTier2Tests } = require('./tiers/tier2_boundaries');
 const { registerTier3Tests } = require('./tiers/tier3_combos');
 const { registerTier4Tests } = require('./tiers/tier4_scenarios');
 
-// Ensure all CSS and JS modules are synchronized
-try {
-  const { buildAll } = require('../scripts/build_all');
-  buildAll();
-} catch (e) {
-  // Silent fallback if running in custom environments
-}
+(async function main() {
+  // Ensure all CSS and JS modules are synchronized, minified, and version stamped
+  try {
+    const { buildAll } = require('../scripts/build_all');
+    const { buildProd } = require('../scripts/build_prod');
+    const { stamp } = require('../scripts/stamp_version');
+    buildAll();
+    await buildProd();
+    stamp();
+  } catch (e) {
+    // Silent fallback if running in custom environments
+  }
 
-// CLI option parsing: e.g. --tier=1..4, --tier=1,2,3, --fast, --skip-tier4, --grep="pattern"
-const args = process.argv.slice(2);
-let targetTiers = null;
-let grepFilter = null;
-const isFastMode = args.includes('--fast') || args.includes('--quick') || args.includes('-f') || process.env.FAST_TEST === '1';
-const skipTier4 = args.includes('--skip-tier4') || isFastMode;
+  // CLI option parsing: e.g. --tier=1..4, --tier=1,2,3, --fast, --skip-tier4, --grep="pattern"
+  const args = process.argv.slice(2);
+  let targetTiers = null;
+  let grepFilter = null;
+  const isFastMode = args.includes('--fast') || args.includes('--quick') || args.includes('-f') || process.env.FAST_TEST === '1';
+  const skipTier4 = args.includes('--skip-tier4') || isFastMode;
 
-const parseTierString = (str) => {
-  return str.split(',')
-    .map(s => parseInt(s.trim(), 10))
-    .filter(n => !isNaN(n) && n >= 1 && n <= 4);
-};
+  const parseTierString = (str) => {
+    return str.split(',')
+      .map(s => parseInt(s.trim(), 10))
+      .filter(n => !isNaN(n) && n >= 1 && n <= 4);
+  };
 
-for (let i = 0; i < args.length; i++) {
-  const arg = args[i];
-  if (arg.startsWith('--tier=') || arg.startsWith('--tiers=') || arg.startsWith('-t=') || arg.startsWith('-T=')) {
-    const val = arg.split('=')[1];
-    targetTiers = parseTierString(val);
-  } else if (arg === '-t' || arg === '-T' || arg === '--tier' || arg === '--tiers') {
-    if (args[i + 1] && !args[i + 1].startsWith('-')) {
-      targetTiers = parseTierString(args[i + 1]);
-      i++;
-    }
-  } else if (arg.startsWith('--grep=') || arg.startsWith('-g=')) {
-    grepFilter = arg.split('=')[1].trim();
-  } else if (arg === '--grep' || arg === '-g') {
-    if (args[i + 1] && !args[i + 1].startsWith('-')) {
-      grepFilter = args[i + 1].trim();
-      i++;
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg.startsWith('--tier=') || arg.startsWith('--tiers=') || arg.startsWith('-t=') || arg.startsWith('-T=')) {
+      const val = arg.split('=')[1];
+      targetTiers = parseTierString(val);
+    } else if (arg === '-t' || arg === '-T' || arg === '--tier' || arg === '--tiers') {
+      if (args[i + 1] && !args[i + 1].startsWith('-')) {
+        targetTiers = parseTierString(args[i + 1]);
+        i++;
+      }
+    } else if (arg.startsWith('--grep=') || arg.startsWith('-g=')) {
+      grepFilter = arg.split('=')[1].trim();
+    } else if (arg === '--grep' || arg === '-g') {
+      if (args[i + 1] && !args[i + 1].startsWith('-')) {
+        grepFilter = args[i + 1].trim();
+        i++;
+      }
     }
   }
-}
 
-if (skipTier4) {
-  if (!targetTiers || targetTiers.length === 0) {
-    targetTiers = [1, 2, 3];
-  } else {
-    targetTiers = targetTiers.filter(t => t !== 4);
-    if (targetTiers.length === 0) targetTiers = [1, 2, 3];
+  if (skipTier4) {
+    if (!targetTiers || targetTiers.length === 0) {
+      targetTiers = [1, 2, 3];
+    } else {
+      targetTiers = targetTiers.filter(t => t !== 4);
+      if (targetTiers.length === 0) targetTiers = [1, 2, 3];
+    }
   }
-}
 
-if (targetTiers && targetTiers.length === 0) {
-  targetTiers = null;
-}
+  if (targetTiers && targetTiers.length === 0) {
+    targetTiers = null;
+  }
 
-if (grepFilter) {
-  harness.setGrepFilter(grepFilter);
-}
+  if (grepFilter) {
+    harness.setGrepFilter(grepFilter);
+  }
 
-const shouldRun = (t) => !targetTiers || targetTiers.includes(t);
+  const shouldRun = (t) => !targetTiers || targetTiers.includes(t);
 
-console.log('\n======================================================');
-console.log('      Pokémon Sleep SPA Automated E2E Test Suite');
-if (targetTiers) console.log(`      Running Tiers: ${targetTiers.join(', ')}`);
-if (grepFilter) console.log(`      Filter Grep: "${grepFilter}"`);
-console.log('======================================================\n');
+  console.log('\n======================================================');
+  console.log('      Pokémon Sleep SPA Automated E2E Test Suite');
+  if (targetTiers) console.log(`      Running Tiers: ${targetTiers.join(', ')}`);
+  if (grepFilter) console.log(`      Filter Grep: "${grepFilter}"`);
+  console.log('======================================================\n');
 
-if (shouldRun(1)) registerTier1Tests();
-if (shouldRun(2)) registerTier2Tests();
-if (shouldRun(3)) registerTier3Tests();
-if (shouldRun(4)) registerTier4Tests();
+  function registerStandaloneTests() {
+    const { execFileSync } = require('child_process');
+    const path = require('path');
+    const standaloneSuites = [
+      { name: 'Standalone: Cross-Module Consistency & Pokedex H5', file: 'test_cross_module_consistency.js' },
+      { name: 'Standalone: Box Import Deduplication & Upgrade Logic', file: 'test_box_import_dedup.js' },
+      { name: 'Standalone: Wiki Main Skill Ladder Integration Suite', file: 'test_wiki_skill_ladder.js' }
+    ];
 
-harness.printSummaryAndExit();
+    for (const suite of standaloneSuites) {
+      harness.test('Tier 3 - Cross-Feature Combinations', suite.name, () => {
+        const scriptPath = path.join(__dirname, suite.file);
+        try {
+          execFileSync(process.execPath, [scriptPath], {
+            stdio: 'pipe',
+            env: process.env
+          });
+        } catch (err) {
+          if (err.stdout) console.error(err.stdout.toString());
+          if (err.stderr) console.error(err.stderr.toString());
+          throw new Error(`Standalone test suite ${suite.file} failed with exit code ${err.status || 1}`);
+        }
+      });
+    }
+  }
+
+  if (shouldRun(1)) registerTier1Tests();
+  if (shouldRun(2)) registerTier2Tests();
+  if (shouldRun(3)) {
+    registerTier3Tests();
+    registerStandaloneTests();
+  }
+  if (shouldRun(4)) registerTier4Tests();
+
+  harness.printSummaryAndExit();
+})().catch(err => {
+  console.error('[run_tests] Fatal execution failure:', err);
+  process.exit(1);
+});

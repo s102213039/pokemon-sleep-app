@@ -881,7 +881,7 @@
       'pokedex.filter_sidebar_title': 'Filter',
       'pokedex.reset_all': 'Reset',
       'pokedex.only_final': 'Final Evo',
-      'pokedex.only_initial_ing': '\u{1F957} Ing.1 only',
+      'pokedex.only_initial_ing': 'Ing.1 only',
       'pokedex.show_no': 'No.',
       'pokedex.specialty_title': 'Specialty',
       'pokedex.berry_title': 'Berries',

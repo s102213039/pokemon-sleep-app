@@ -33,9 +33,9 @@ jobs:
 
       - name: Verify Git Working Tree Cleanliness After Build
         run: |
-          if [ -n "$(git status --porcelain js/ css/)" ]; then
-            echo "[!] Uncommitted build artifacts detected. Please run 'npm run build' before pushing."
-            git status --porcelain js/ css/
+          if [ -n "$(git status --porcelain js/ css/ index.html app/index.html sw.js scripts/.build_stamp.json)" ]; then
+            echo "[!] Uncommitted build artifacts or outdated version stamps detected. Please run 'npm run build' before pushing."
+            git status --porcelain js/ css/ index.html app/index.html sw.js scripts/.build_stamp.json
             exit 1
           fi
 

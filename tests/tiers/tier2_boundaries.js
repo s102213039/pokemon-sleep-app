@@ -564,7 +564,7 @@ test('Tier 2 - Boundary & Corner Cases', 'Sidebar Filter UI Tokens (Ing.1 only &
 
   ctx.window.I18N.setLanguage('en-US');
   const initialIngText = ctx.window.I18N.t('pokedex.only_initial_ing');
-  assert(initialIngText === '🥗 Ing.1 only', `pokedex.only_initial_ing in English must be "🥗 Ing.1 only", got "${initialIngText}"`);
+  assert(initialIngText === 'Ing.1 only', `pokedex.only_initial_ing in English must be "Ing.1 only", got "${initialIngText}"`);
 });
 
 // --- NEW Tier 2 Tests: Redirection, Anti-Loop, Stepper, Subskills, Clear Button ---
@@ -1004,16 +1004,16 @@ test('Tier 2 - Boundary & Corner Cases', 'Ingredient Ladder: Dense Ranking & Mul
   const cards = [...modalContainer.innerHTML.matchAll(/<div class="ing-rank-card [^"]*" title="([^"]+)"[\s\S]*?<div class="ing-rank-num [^"]*">\s*([^<\s]+)\s*<\/div>/g)];
   assert(cards.length >= 7, 'Must have at least 7 ranked cards for tomato');
 
-  // Cards 1-3 must all have 🥇 medal
-  assertEquals(cards[0][2], '🥇', '1st card must have 🥇');
-  assertEquals(cards[1][2], '🥇', '2nd card must have 🥇 (tied)');
-  assertEquals(cards[2][2], '🥇', '3rd card must have 🥇 (tied)');
+  // Cards 1-3 must all have #1
+  assertEquals(cards[0][2], '#1', '1st card must have #1');
+  assertEquals(cards[1][2], '#1', '2nd card must have #1 (tied)');
+  assertEquals(cards[2][2], '#1', '3rd card must have #1 (tied)');
 
-  // Card 4 (魔牆人偶 71) must have 🥈 medal (Dense rank 2, NOT rank 4!)
-  assertEquals(cards[3][2], '🥈', '4th card (魔牆人偶 71) must have 🥈 (Dense rank 2)');
+  // Card 4 (魔牆人偶 71) must have #2 (Dense rank 2, NOT rank 4!)
+  assertEquals(cards[3][2], '#2', '4th card (魔牆人偶 71) must have #2 (Dense rank 2)');
 
-  // Card 5 (妙蛙花 68) must have 🥉 medal (Dense rank 3)
-  assertEquals(cards[4][2], '🥉', '5th card (妙蛙花 68) must have 🥉 (Dense rank 3)');
+  // Card 5 (妙蛙花 68) must have #3 (Dense rank 3)
+  assertEquals(cards[4][2], '#3', '5th card (妙蛙花 68) must have #3 (Dense rank 3)');
 
   // Card 6 (三地鼠 66) must have #4
   assertEquals(cards[5][2], '#4', '6th card (三地鼠 66) must have #4');

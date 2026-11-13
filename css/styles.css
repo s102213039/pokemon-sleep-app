@@ -12266,7 +12266,8 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
 }
 
 /* Remove Outer Border and Background from Yield Breakdown (Single Frame Rule) */
-.wiki-skill-coordinate-ladder .tooltip-yield-breakdown {
+.wiki-skill-coordinate-ladder .tooltip-yield-breakdown,
+[data-theme] .wiki-skill-coordinate-ladder .tooltip-yield-breakdown {
   margin: 0 !important;
   padding: 0 !important;
   background: transparent !important;

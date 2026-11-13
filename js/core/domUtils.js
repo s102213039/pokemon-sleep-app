@@ -458,9 +458,12 @@
       return { needsUpdate: true, remoteHash, cachedData };
     },
 
+    _swRegistered: false,
     registerServiceWorker: function () {
+      if (this._swRegistered) return;
       if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return;
       if (typeof location === 'undefined' || (location.protocol !== 'http:' && location.protocol !== 'https:')) return;
+      this._swRegistered = true;
       try {
         const isSubApp = location.pathname && location.pathname.includes('/app/');
         const swUrl = isSubApp ? '../sw.js' : 'sw.js';
@@ -476,16 +479,27 @@
           if (reg && typeof reg.update === 'function') {
             reg.update();
           }
+          if (typeof document !== 'undefined' && document.addEventListener) {
+            document.addEventListener('visibilitychange', function () {
+              if (document.visibilityState === 'visible' && reg && typeof reg.update === 'function') {
+                reg.update();
+              }
+            });
+          }
         }).catch(function () {});
       } catch (e) {}
     }
   };
 
   // 自動啟動 Service Worker 圖片與靜態資源快取
-  if (typeof global !== 'undefined' && global.addEventListener) {
-    global.addEventListener('load', function () {
+  if (typeof global !== 'undefined') {
+    if (typeof document !== 'undefined' && document.readyState === 'complete') {
       DataCacheManager.registerServiceWorker();
-    });
+    } else if (global.addEventListener) {
+      global.addEventListener('load', function () {
+        DataCacheManager.registerServiceWorker();
+      });
+    }
   }
 
   DOMUtils.DataCacheManager = DataCacheManager;

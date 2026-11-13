@@ -3255,7 +3255,7 @@
             <div class="ing-rank-card ${rankClass}" title="${pkmDisplayName} (${item.recipe}) · ${item.count} ${isEN ? '/day' : '顆/天'}">
               <div class="ing-rank-left">
                 <div class="ing-rank-num ${rankClass}">
-                  ${rank === 1 ? '\u{1F947}' : (rank === 2 ? '\u{1F948}' : (rank === 3 ? '\u{1F949}' : `#${rank}`))}
+                  #${rank}
                 </div>
                 <div class="ing-rank-avatar-box ${rankClass}">
                   <img src="${item.icon}" class="ing-rank-avatar-img" alt="${pkmDisplayName}" loading="lazy">
@@ -8304,6 +8304,8 @@
       activeNodes.forEach(el => el.classList.remove('tooltip-active'));
       const activeGroupHovers = document.querySelectorAll('[data-pkm-group].group-hover-active');
       activeGroupHovers.forEach(el => el.classList.remove('group-hover-active'));
+      const activeGroupSelected = document.querySelectorAll('.group-selected');
+      activeGroupSelected.forEach(el => el.classList.remove('group-selected'));
       if (document.activeElement && typeof document.activeElement.blur === 'function') {
         try { document.activeElement.blur(); } catch (e) {}
       }

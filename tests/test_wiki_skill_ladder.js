@@ -339,10 +339,10 @@ console.log('\n[Suite 2] Avatar Dimensions & Layout CSS Rules');
     'styles.css: tooltip has filter: none !important to prevent highlight bleed');
 
   // Tooltip yield breakdown removes inner border and background (Single Frame Rule)
-  assert(skillLadderCss.includes('.wiki-skill-coordinate-ladder .tooltip-yield-breakdown') && skillLadderCss.includes('border: none !important;'),
-    'wiki_skill_ladder.css: tooltip-yield-breakdown has border: none !important');
-  assert(stylesCss.includes('.wiki-skill-coordinate-ladder .tooltip-yield-breakdown') && stylesCss.includes('border: none !important;'),
-    'styles.css: tooltip-yield-breakdown has border: none !important');
+  assert(skillLadderCss.includes('[data-theme] .wiki-skill-coordinate-ladder .tooltip-yield-breakdown') && skillLadderCss.includes('border: none !important;'),
+    'wiki_skill_ladder.css: tooltip-yield-breakdown has hardened theme specificity and border: none !important');
+  assert(stylesCss.includes('[data-theme] .wiki-skill-coordinate-ladder .tooltip-yield-breakdown') && stylesCss.includes('border: none !important;'),
+    'styles.css: tooltip-yield-breakdown has hardened theme specificity and border: none !important');
 
   // Track height clamp: 52px to 68px
   const trackHeightRegex = /height:\s*clamp\(52px,\s*calc\(\(100vh\s*-\s*280px\)\s*\/\s*9\),\s*68px\)\s*!important;/;
