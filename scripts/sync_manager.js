@@ -271,8 +271,8 @@ function validateSingleRecipe(recipe, index) {
       } else {
         ingSum += ing.count;
       }
-      if (hasOwn.call(ing, 'icon') && (typeof ing.icon !== 'string' || !ing.icon.startsWith('http'))) {
-        errors.push(`${prefix}.ingredients[${j}]: Ingredient icon must be a valid HTTP URL`);
+      if (hasOwn.call(ing, 'icon') && (typeof ing.icon !== 'string' || (!ing.icon.startsWith('http') && !ing.icon.startsWith('assets/ingredients/')))) {
+        errors.push(`${prefix}.ingredients[${j}]: Ingredient icon must be a valid HTTP URL or local placeholder asset`);
       }
     }
 
@@ -288,8 +288,8 @@ function validateSingleRecipe(recipe, index) {
     }
   }
 
-  if (hasOwn.call(recipe, 'icon') && (typeof recipe.icon !== 'string' || !recipe.icon.startsWith('https://www.serebii.net/pokemonsleep/meals/'))) {
-    errors.push(`${prefix}: Recipe icon must start with https://www.serebii.net/pokemonsleep/meals/`);
+  if (hasOwn.call(recipe, 'icon') && (typeof recipe.icon !== 'string' || (!recipe.icon.startsWith('https://www.serebii.net/pokemonsleep/meals/') && !recipe.icon.startsWith('assets/meals/')))) {
+    errors.push(`${prefix}: Recipe icon must start with https://www.serebii.net/pokemonsleep/meals/ or assets/meals/`);
   }
 
   return errors;
@@ -509,7 +509,7 @@ function scanNewsForPreviews(newsList) {
           name_cn: ingName,
           name_en: ingName === '一口堅果' ? 'Snackable Nuts' : ingName,
           slug: ingName === '一口堅果' ? 'snackablenuts' : ingName.toLowerCase(),
-          icon: `https://www.serebii.net/pokemonsleep/ingredients/${ingName === '一口堅果' ? 'snackablenuts' : 'unknown'}.png`,
+          icon: ingName === '一口堅果' ? 'assets/ingredients/snackablenuts_placeholder.svg' : 'https://www.serebii.net/pokemonsleep/ingredients/unknown.png',
           source_article: article.id
         });
       }

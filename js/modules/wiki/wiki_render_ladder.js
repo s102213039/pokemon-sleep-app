@@ -267,10 +267,11 @@
                 ${activeHighlightRecipes.map((rec, idx) => {
                   const style = getRecipeMarkStyle(idx);
                   const recName = isEN ? rec.name_en : rec.name_cn;
+                  const recIconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(rec.icon) : rec.icon) || rec.icon;
                   return `
                     <div class="ladder-recipe-banner-recipe-chip" title="${recName}">
                       ${activeHighlightRecipes.length > 1 ? `<span class="ladder-recipe-banner-recipe-dot" style="background:${style.color}"></span>` : ''}
-                      <img src="${rec.icon}" class="ladder-recipe-banner-icon" alt="${recName}">
+                      <img src="${recIconUrl}" class="ladder-recipe-banner-icon" alt="${recName}">
                     </div>
                   `;
                 }).join('')}
@@ -363,7 +364,7 @@
                    ${isDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('${ing.id}')" role="button" tabindex="0"`} 
                    title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isHighlighted ? (isEN ? 'Selected Dish: ' : '選定料理: ') + targetDishName + ` (${targetDishNeed}${isEN ? '/meal' : '顆/餐'})` : (isDimmed ? (isEN ? 'Not in current recipe' : '非此料理所需食材') : (isEN ? 'Key Dish: ' : '核心大菜: ') + dishName)} · ${isEN ? 'Click to view rankings' : '點擊查看產量排名'}">
                 <div class="ladder-track-ing-main">
-                  <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
+                  <img src="${(typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon}" class="ladder-ing-icon" alt="${ingName}">
                 </div>
               </div>
 

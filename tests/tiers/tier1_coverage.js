@@ -92,7 +92,7 @@ test('Tier 1 - Feature Coverage', 'Dataset Integrity: recipes.json exists and co
     r.ingredients.forEach(ing => {
       assert(ing.name && ing.name.trim(), `Recipe ${r.name_cn} ingredient missing name`);
       assert(ing.count > 0, `Recipe ${r.name_cn} ingredient count must be > 0`);
-      assert(ing.icon && ing.icon.startsWith('http'), `Recipe ${r.name_cn} ingredient icon missing/invalid`);
+      assert(ing.icon && (ing.icon.startsWith('http') || ing.icon.startsWith('assets/')), `Recipe ${r.name_cn} ingredient icon missing/invalid`);
     });
   });
 });

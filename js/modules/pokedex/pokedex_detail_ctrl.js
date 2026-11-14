@@ -628,7 +628,8 @@ function renderPokedexIngredientStrip() {
     const optButtons = slot.allowed.map((ing, optIdx) => {
       const isSelected = currentOptIdx === optIdx;
       const ingDisplayName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
-      const iconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
+      const rawIconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
+      const iconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(rawIconUrl) : rawIconUrl) || rawIconUrl;
       return `
         <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" data-slot-idx="${slot.slotIdx}" data-opt-idx="${optIdx}" title="${escapeHtml(ingDisplayName)}" aria-label="${escapeHtml(ingDisplayName)}" onclick="window.PokemonApp.setPokedexModalIng(${slot.slotIdx}, ${optIdx})">
           <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}" loading="lazy">

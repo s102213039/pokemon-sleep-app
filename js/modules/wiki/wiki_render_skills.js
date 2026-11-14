@@ -65,9 +65,12 @@
           <div class="values-compact-grid values-ing-grid">
             ${INGREDIENT_VALUES_DATA.map(ing => {
               const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
+              const ingIcon = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function' && ing.icon && ing.icon.startsWith('assets/'))
+                ? (window.mapExternalToLocalAsset(ing.icon) || ing.icon)
+                : ing.icon;
               return `
               <div class="value-compact-node ${ing.id === 'tail' ? 'value-tail-highlight' : ''}" title="${ingName} - ${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}">
-                <img src="${ing.icon}" class="value-compact-icon" alt="${ingName}">
+                <img src="${ingIcon}" class="value-compact-icon" alt="${ingName}">
                 <span class="value-compact-energy ing-val">${ing.energy}</span>
               </div>
             `;}).join('')}
@@ -123,7 +126,7 @@
       <div class="ladder-card ${filteredTiers.length === 0 ? 'ladder-track-empty' : ''}" data-ladder-ing="${ing.id}">
         <div class="ladder-header">
           <div class="ladder-title-group">
-            <img src="${ing.icon}" class="ladder-icon" alt="${ingName}">
+            <img src="${(typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon}" class="ladder-icon" alt="${ingName}">
             <h4 class="ladder-name">${ingName}</h4>
           </div>
           <span class="ladder-max-badge">${filteredTiers.length > 0 ? (isEN ? 'Max Daily ~ ' : '最高日產 ~ ') + scaledMax + (isEN ? '/day' : '顆/天') : (isEN ? 'No Match' : '無符合')}</span>

@@ -94,6 +94,23 @@
     return 'bonus-badge-default';
   }
 
+  function _resolveRecipeAssetUrl(rawUrl) {
+    if (!rawUrl || typeof rawUrl !== 'string') return '';
+    if (rawUrl.startsWith('assets/') || rawUrl.includes('snackablenuts') || rawUrl.includes('seedbombnaanandcurry') || rawUrl.includes('grassknotsaladwrap') || rawUrl.includes('slowpoketailrollcake')) {
+      if (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function') {
+        const mapped = window.mapExternalToLocalAsset(rawUrl);
+        if (mapped) return mapped;
+      }
+      if (rawUrl.startsWith('assets/')) {
+        const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__)
+          ? window.__DATA_BASE_PATH__
+          : ((typeof window !== 'undefined' && window.location && window.location.pathname && window.location.pathname.includes('/app/')) ? '../' : '');
+        return `${base}${rawUrl}`;
+      }
+    }
+    return rawUrl;
+  }
+
   function renderIngRow(ingredients) {
     const list = Array.isArray(ingredients) ? ingredients : [];
     return `<div class="recipe-ing-row">
@@ -102,9 +119,10 @@
         const rawName = typeof i.name === 'string' ? i.name : (typeof i.name !== 'symbol' ? String(i.name || '') : '');
         const ingDisplayName = (window.I18N && rawName) ? window.I18N.getIngredientName(rawName) : rawName;
         const count = (typeof i.count === 'number' && Number.isFinite(i.count)) ? i.count : 0;
+        const ingIcon = _resolveRecipeAssetUrl(i.icon);
         return `
         <div class="recipe-ing-chip" title="${ingDisplayName} × ${count}">
-          ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+          ${ingIcon ? `<img src="${ingIcon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy" onerror="this.style.display='none';">` : ''}
           <span class="recipe-ing-count">×${count}</span>
         </div>
       `;
@@ -426,7 +444,7 @@
               return `
               <tr>
                 <td style="vertical-align:middle;text-align:center;">
-                  <img src="${r.icon}" width="52" height="52" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';"
+                  <img src="${_resolveRecipeAssetUrl(r.icon)}" width="52" height="52" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';"
                     style="border-radius:10px;object-fit:contain;background:var(--bg-card-inner);padding:4px;border:1px solid var(--border-color);display:block;margin:0 auto;">
                 </td>
                 <td class="recipe-name-cell" style="vertical-align:middle;">
@@ -466,7 +484,7 @@
             <div class="h5-recipe-card">
               <div class="h5-recipe-left-col">
                 <div class="h5-recipe-top-row">
-                  <img class="h5-recipe-img" src="${r.icon}" alt="${primaryName}" loading="lazy" onerror="this.style.display='none';">
+                  <img class="h5-recipe-img" src="${_resolveRecipeAssetUrl(r.icon)}" alt="${primaryName}" loading="lazy" onerror="this.style.display='none';">
                   <div class="h5-recipe-title-meta">
                     <span class="h5-recipe-name">${primaryName}</span>
                     <div class="h5-recipe-tags-row">

@@ -5,6 +5,23 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-14 已完成（3道未實裝料理與新食材一口堅果改採向量問號佔位圖片、修復自動同步造成的資料迴歸、288/288 測試全數通過）
+
+- **測試狀態**：
+  - 全量回歸 `npm test`：**288 / 288 PASS**（`npm run test:fast` 165 / 165 PASS）。
+  - 動態同步與壓力測試：`tests/e2e_sync_and_multitab.js`（PASS）、`tests/stress_sync_manager_adversarial.js`（PASS）。
+  - Emoji 與特殊裝飾符號稽核：12 個相關資源與原始碼檔案均為 0 Emoji、0 星號/裝飾字形。
+- **核心變更項目**：
+  1. **移除 Serebii 下載圖片並建立明確向量佔位圖示（Zero Confusion）**：
+     - 刪除先前下載的 `assets/ingredients/snackablenuts.png`、`assets/meals/seedbombnaanandcurry.png`、`assets/meals/grassknotsaladwrap.png`、`assets/meals/slowpoketailrollcake.png` 共 4 個 PNG 檔案。
+     - 新增向量 SVG 佔位圖示：`assets/ingredients/snackablenuts_placeholder.svg`（圓角深色虛線框配中央問號）與 `assets/meals/meal_placeholder.svg`（盤形虛線框配中央問號）。
+  2. **跨資料表、I18N、介面與同步腳本統一切換為佔位圖路徑**：
+     - 更新 `data/recipes.json`（3 道新料理圖示與其「一口堅果」食材圖示）、`data/data.json`（`#546` 木棉球與 `#547` 風妖精之一口堅果圖示）、`js/core/i18n/i18n_core.js`、`js/modules/wiki/wiki_skills_matrix.js`、`js/modules/lab/lab_milestone.js`、`scripts/sync_data.py` 與 `scripts/sync_manager.js`。
+     - 強化桌面版（`index.html`）與手機版（`app/index.html`）共同路徑解析：於 `js/modules/pokedex/pokedex_base.js`（`mapExternalToLocalAsset`）、`js/modules/recipes/recipes_render.js`（`_resolveRecipeAssetUrl`）、`js/modules/pokedex/pokedex_detail_ctrl.js`、`js/modules/box/box_modal_form.js`、`js/modules/wiki/wiki_render_skills.js`、`js/modules/wiki/wiki_ladder_modal.js` 及 `js/modules/wiki/wiki_render_ladder.js` 統一補齊 `window.__DATA_BASE_PATH__` / `../` 相對路徑前綴，避免手機版 `/app/` 出現 404。
+  3. **順帶修復遠端自動同步 (`fb6f3ca`) 引起的 2 項資料迴歸**：
+     - 還原 `data/recipes.json` 中「彈跳咖哩烏龍麵 (`Bounce Curry Udon`)」遭爬蟲遺漏之第 4 種食材「火辣香草 x22」，恢復正確鍋容量 `112`（39 薑 + 31 蘑菇 + 22 香草 + 20 肉）。
+     - 補齊 `data/news.json` 最近兩則自動同步公告（「夢之碎片增量週vol.3」、「大餐週滿足包vol.1」）之 `title_en` 英文翻譯，消除 `title_en` 含中文導致的 Tier 1 雙語檢測失敗。
+
 ## 交接：2026-11-13 已完成（主技能天梯完整精修、跨模組規則與隊長皮卡丘 ID 對齊、倉庫非阻塞彈窗與 JSON/OCR 統一去重升級、全三語覆蓋與 284/284 回歸驗證）
 
 - **測試狀態**：

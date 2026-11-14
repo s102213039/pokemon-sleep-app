@@ -2464,7 +2464,8 @@
       container.innerHTML = slot.allowed.map(ing => {
         const isSelected = hiddenInput.value === ing.name;
         const ingDisplayName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
-        const iconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
+        const rawIconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
+        const iconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(rawIconUrl) : rawIconUrl) || rawIconUrl;
 
         return `
           <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" data-slot="${slot.key}" data-ing="${escapeHtml(ing.name)}" title="${escapeHtml(ingDisplayName)}" aria-label="${escapeHtml(ingDisplayName)}">

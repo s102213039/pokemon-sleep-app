@@ -212,6 +212,21 @@ function mapExternalToLocalAsset(rawUrl) {
     ? window.__DATA_BASE_PATH__
     : ((typeof window !== 'undefined' && window.location && window.location.pathname && window.location.pathname.includes('/app/')) ? '../' : '');
 
+  if (cleanUrl.includes('snackablenuts_placeholder.svg') || cleanUrl.includes('/pokemonsleep/ingredients/snackablenuts.png')) {
+    return `${base}assets/ingredients/snackablenuts_placeholder.svg`;
+  }
+  if (
+    cleanUrl.includes('meal_placeholder.svg') ||
+    cleanUrl.includes('/pokemonsleep/meals/seedbombnaanandcurry.png') ||
+    cleanUrl.includes('/pokemonsleep/meals/grassknotsaladwrap.png') ||
+    cleanUrl.includes('/pokemonsleep/meals/slowpoketailrollcake.png')
+  ) {
+    return `${base}assets/meals/meal_placeholder.svg`;
+  }
+  if (cleanUrl.startsWith('assets/')) {
+    return `${base}${cleanUrl}`;
+  }
+
   if (cleanUrl.includes('/pokemonsleep/pokemon/icon/')) {
     const fn = cleanUrl.split('/pokemonsleep/pokemon/icon/')[1];
     if (fn) return `${base}assets/pokemon/icon/${fn}`;
@@ -5751,7 +5766,8 @@ function renderPokedexIngredientStrip() {
     const optButtons = slot.allowed.map((ing, optIdx) => {
       const isSelected = currentOptIdx === optIdx;
       const ingDisplayName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
-      const iconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
+      const rawIconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
+      const iconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(rawIconUrl) : rawIconUrl) || rawIconUrl;
       return `
         <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" data-slot-idx="${slot.slotIdx}" data-opt-idx="${optIdx}" title="${escapeHtml(ingDisplayName)}" aria-label="${escapeHtml(ingDisplayName)}" onclick="window.PokemonApp.setPokedexModalIng(${slot.slotIdx}, ${optIdx})">
           <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}" loading="lazy">

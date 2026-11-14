@@ -480,7 +480,7 @@
     { id: "sausage", name: "豆製肉", enName: "Bean Sausage", energy: 103, icon: "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
     { id: "ginger", name: "暖暖薑", enName: "Warming Ginger", energy: 109, icon: "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" },
     { id: "tomato", name: "好眠番茄", enName: "Snoozy Tomato", energy: 110, icon: "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
-    { id: "nuts", name: "一口堅果", enName: "Snackable Nuts", energy: 112, icon: "https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png" },
+    { id: "nuts", name: "一口堅果", enName: "Snackable Nuts", energy: 112, icon: "assets/ingredients/snackablenuts_placeholder.svg" },
     { id: "egg", name: "特選蛋", enName: "Fancy Egg", energy: 115, icon: "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
     { id: "oil", name: "純粹油", enName: "Pure Oil", energy: 121, icon: "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" },
     { id: "potato", name: "窩心洋芋", enName: "Soft Potato", energy: 124, icon: "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" },

@@ -1280,7 +1280,7 @@
     { id: "sausage", name: "豆製肉", enName: "Bean Sausage", energy: 103, icon: "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
     { id: "ginger", name: "暖暖薑", enName: "Warming Ginger", energy: 109, icon: "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" },
     { id: "tomato", name: "好眠番茄", enName: "Snoozy Tomato", energy: 110, icon: "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
-    { id: "nuts", name: "一口堅果", enName: "Snackable Nuts", energy: 112, icon: "https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png" },
+    { id: "nuts", name: "一口堅果", enName: "Snackable Nuts", energy: 112, icon: "assets/ingredients/snackablenuts_placeholder.svg" },
     { id: "egg", name: "特選蛋", enName: "Fancy Egg", energy: 115, icon: "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
     { id: "oil", name: "純粹油", enName: "Pure Oil", energy: 121, icon: "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" },
     { id: "potato", name: "窩心洋芋", enName: "Soft Potato", energy: 124, icon: "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" },
@@ -2532,11 +2532,12 @@
       bodyEl.innerHTML = list.map((r, rIdx) => {
         const isCurrent = isHighlightRecipeSelected(r.name_cn);
         const displayName = isEN ? r.name_en : r.name_cn;
+        const recipeIconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(r.icon) : r.icon) || r.icon;
         return `
           <div class="ladder-recipe-card ${isCurrent ? 'selected' : ''}" onclick="window.WikiDB.selectLadderHighlightRecipe('${r.name_cn}')" role="button" tabindex="0">
             <div class="recipe-card-top">
               <span class="recipe-card-rank">${rIdx + 1}</span>
-              <img src="${r.icon}" class="recipe-card-icon" alt="${displayName}" onerror="this.style.opacity='0.3';">
+              <img src="${recipeIconUrl}" class="recipe-card-icon" alt="${displayName}" onerror="this.style.opacity='0.3';">
               <div class="recipe-card-meta">
                 <div class="recipe-card-name-row">
                   <span class="recipe-card-name">${displayName}</span>
@@ -2552,9 +2553,10 @@
             <div class="recipe-card-ings-row">
               ${r.ingredients.map(ing => {
                 const ingDisplayName = isEN ? ((window.I18N && window.I18N.getIngredientName(ing.name)) || ing.name) : ing.name;
+                const ingIconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon;
                 return `
                   <span class="recipe-card-ing-chip" title="${ingDisplayName}">
-                    <img src="${ing.icon}" class="recipe-card-ing-icon" alt="${ingDisplayName}" onerror="this.style.display='none';">
+                    <img src="${ingIconUrl}" class="recipe-card-ing-icon" alt="${ingDisplayName}" onerror="this.style.display='none';">
                     <span class="ing-chip-count">×${ing.count}</span>
                   </span>
                 `;
@@ -6732,10 +6734,11 @@
                 ${activeHighlightRecipes.map((rec, idx) => {
                   const style = getRecipeMarkStyle(idx);
                   const recName = isEN ? rec.name_en : rec.name_cn;
+                  const recIconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(rec.icon) : rec.icon) || rec.icon;
                   return `
                     <div class="ladder-recipe-banner-recipe-chip" title="${recName}">
                       ${activeHighlightRecipes.length > 1 ? `<span class="ladder-recipe-banner-recipe-dot" style="background:${style.color}"></span>` : ''}
-                      <img src="${rec.icon}" class="ladder-recipe-banner-icon" alt="${recName}">
+                      <img src="${recIconUrl}" class="ladder-recipe-banner-icon" alt="${recName}">
                     </div>
                   `;
                 }).join('')}
@@ -6828,7 +6831,7 @@
                    ${isDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('${ing.id}')" role="button" tabindex="0"`} 
                    title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isHighlighted ? (isEN ? 'Selected Dish: ' : '選定料理: ') + targetDishName + ` (${targetDishNeed}${isEN ? '/meal' : '顆/餐'})` : (isDimmed ? (isEN ? 'Not in current recipe' : '非此料理所需食材') : (isEN ? 'Key Dish: ' : '核心大菜: ') + dishName)} · ${isEN ? 'Click to view rankings' : '點擊查看產量排名'}">
                 <div class="ladder-track-ing-main">
-                  <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
+                  <img src="${(typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon}" class="ladder-ing-icon" alt="${ingName}">
                 </div>
               </div>
 
@@ -9224,9 +9227,12 @@
           <div class="values-compact-grid values-ing-grid">
             ${INGREDIENT_VALUES_DATA.map(ing => {
               const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
+              const ingIcon = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function' && ing.icon && ing.icon.startsWith('assets/'))
+                ? (window.mapExternalToLocalAsset(ing.icon) || ing.icon)
+                : ing.icon;
               return `
               <div class="value-compact-node ${ing.id === 'tail' ? 'value-tail-highlight' : ''}" title="${ingName} - ${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}">
-                <img src="${ing.icon}" class="value-compact-icon" alt="${ingName}">
+                <img src="${ingIcon}" class="value-compact-icon" alt="${ingName}">
                 <span class="value-compact-energy ing-val">${ing.energy}</span>
               </div>
             `;}).join('')}
@@ -9282,7 +9288,7 @@
       <div class="ladder-card ${filteredTiers.length === 0 ? 'ladder-track-empty' : ''}" data-ladder-ing="${ing.id}">
         <div class="ladder-header">
           <div class="ladder-title-group">
-            <img src="${ing.icon}" class="ladder-icon" alt="${ingName}">
+            <img src="${(typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon}" class="ladder-icon" alt="${ingName}">
             <h4 class="ladder-name">${ingName}</h4>
           </div>
           <span class="ladder-max-badge">${filteredTiers.length > 0 ? (isEN ? 'Max Daily ~ ' : '最高日產 ~ ') + scaledMax + (isEN ? '/day' : '顆/天') : (isEN ? 'No Match' : '無符合')}</span>

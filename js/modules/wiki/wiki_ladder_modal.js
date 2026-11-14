@@ -130,11 +130,12 @@
       bodyEl.innerHTML = list.map((r, rIdx) => {
         const isCurrent = isHighlightRecipeSelected(r.name_cn);
         const displayName = isEN ? r.name_en : r.name_cn;
+        const recipeIconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(r.icon) : r.icon) || r.icon;
         return `
           <div class="ladder-recipe-card ${isCurrent ? 'selected' : ''}" onclick="window.WikiDB.selectLadderHighlightRecipe('${r.name_cn}')" role="button" tabindex="0">
             <div class="recipe-card-top">
               <span class="recipe-card-rank">${rIdx + 1}</span>
-              <img src="${r.icon}" class="recipe-card-icon" alt="${displayName}" onerror="this.style.opacity='0.3';">
+              <img src="${recipeIconUrl}" class="recipe-card-icon" alt="${displayName}" onerror="this.style.opacity='0.3';">
               <div class="recipe-card-meta">
                 <div class="recipe-card-name-row">
                   <span class="recipe-card-name">${displayName}</span>
@@ -150,9 +151,10 @@
             <div class="recipe-card-ings-row">
               ${r.ingredients.map(ing => {
                 const ingDisplayName = isEN ? ((window.I18N && window.I18N.getIngredientName(ing.name)) || ing.name) : ing.name;
+                const ingIconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon;
                 return `
                   <span class="recipe-card-ing-chip" title="${ingDisplayName}">
-                    <img src="${ing.icon}" class="recipe-card-ing-icon" alt="${ingDisplayName}" onerror="this.style.display='none';">
+                    <img src="${ingIconUrl}" class="recipe-card-ing-icon" alt="${ingDisplayName}" onerror="this.style.display='none';">
                     <span class="ing-chip-count">×${ing.count}</span>
                   </span>
                 `;
