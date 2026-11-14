@@ -212,17 +212,6 @@ function mapExternalToLocalAsset(rawUrl) {
     ? window.__DATA_BASE_PATH__
     : ((typeof window !== 'undefined' && window.location && window.location.pathname && window.location.pathname.includes('/app/')) ? '../' : '');
 
-  if (cleanUrl.includes('snackablenuts_placeholder.svg') || cleanUrl.includes('/pokemonsleep/ingredients/snackablenuts.png')) {
-    return `${base}assets/ingredients/snackablenuts_placeholder.svg`;
-  }
-  if (
-    cleanUrl.includes('meal_placeholder.svg') ||
-    cleanUrl.includes('/pokemonsleep/meals/seedbombnaanandcurry.png') ||
-    cleanUrl.includes('/pokemonsleep/meals/grassknotsaladwrap.png') ||
-    cleanUrl.includes('/pokemonsleep/meals/slowpoketailrollcake.png')
-  ) {
-    return `${base}assets/meals/meal_placeholder.svg`;
-  }
   if (cleanUrl.startsWith('assets/')) {
     return `${base}${cleanUrl}`;
   }

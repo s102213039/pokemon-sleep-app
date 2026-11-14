@@ -1735,8 +1735,8 @@
         <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">
           ${isEN ? 'Delete Pokémon?' : '確認刪除寶可夢？'}
         </div>
-        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:8px 0 14px;padding:8px 12px;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid var(--border-color-subtle, rgba(255,255,255,0.08));">
-          ${iconUrl ? `<img src="${iconUrl}" width="32" height="32" style="border-radius:4px;object-fit:contain;" alt="">` : ''}
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0 12px;padding:2px 0;background:transparent;border:none;">
+          ${iconUrl ? `<img src="${iconUrl}" width="40" height="40" style="object-fit:contain;" alt="">` : ''}
           <div style="text-align:left;">
             <div style="font-size:13px;font-weight:700;color:var(--text-primary);">${escapeHtml(displayName)}</div>
             <div style="font-size:11px;color:var(--text-muted);font-weight:600;">Lv.${item.level || 1}</div>

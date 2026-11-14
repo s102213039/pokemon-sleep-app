@@ -24,16 +24,16 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 4px;
-  padding: 2px 5px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0 2px 0 0;
   font-size: 10px;
 }
 
 .lab-recipe-ing-icon {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
 }
 

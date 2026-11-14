@@ -5,6 +5,30 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-14 已完成（補齊 Serebii 官方實裝一口堅果與 3 道新料理高清圖示、全站展示圖示全面無外框化並放大優化、規範寫入 MD 基線與 288/288 全量測試通過）
+
+- **測試狀態**：
+  - 全量回歸 `npm test`：**288 / 288 PASS**（`npm run test:fast` 165 / 165 PASS）。
+  - 動態同步測試：`tests/e2e_sync_and_multitab.js`、`tests/stress_sync_manager_adversarial.js` 全數通過。
+- **核心交付內容**：
+  1. **取得並啟用官方真實料理與新食材 PNG 圖示**：
+     - 實地向 Serebii 查驗取得最新釋出之 4 張官方高清 PNG（`ingredients/snackablenuts.png` `21,250 B`、`meals/seedbombnaanandcurry.png` `37,596 B`、`meals/grassknotsaladwrap.png` `49,947 B`、`meals/slowpoketailrollcake.png` `38,564 B`），下載保存於 `assets/ingredients/` 與 `assets/meals/` 並透過視覺讀取確認圖樣正確。
+     - 將 `data/recipes.json`、`data/data.json`、`js/core/i18n/i18n_core.js`、`js/modules/wiki/wiki_skills_matrix.js`、`js/modules/lab/lab_milestone.js`、`scripts/sync_data.py` 與 `scripts/sync_manager.js` 還原為標準 Serebii URL（由 `mapExternalToLocalAsset` 自動對應至本機 `assets/` PNG），並移除暫時 SVG 佔位檔。
+  2. **料理食譜圖示去外框並放大 (`recipe-ing-row` 與料理圖示)**：
+     - `css/components/buttons_badges.css`：移除 `.recipe-ing-chip` 框線/底色/Hover 框線，`.recipe-ing-icon` 由 `28px` 放大至 `32px`。
+     - `css/components/tables.css`：移除 `.compact-chip` 外框，`.compact-chip .recipe-ing-icon` 由 `16px` 放大至 `20px`。
+     - `css/components/modals/pokedex_modal_hero.css`：移除 `.h5-recipe-img`（`38px -> 44px`）與 `.h5-recipe-ing-section .recipe-ing-chip` 外框，食材圖示由 `18px` 放大至 `22px`。
+     - `js/modules/recipes/recipes_render.js`：移除桌面表格（`52px -> 58px`）與卡片（`48px -> 56px`）料理圖示行內邊框/底色/內距。
+  3. **全盤掃描並移除跨頁面展示圖示外框（Wiki / Pokedex / Box / Lab）**：
+     - 透過三位 Flash 子代理依互斥邊界協同修改：
+       - `css/mobile/wiki_camps.css` & `css/mobile/wiki_skills.css`：移除 `.recipe-card-icon`（`44px -> 48px`）、`.recipe-card-ing-chip`（圖示 `16px -> 19px`）與天梯 `.ladder-recipe-banner-ing-chip`（圖示 `18px -> 20px / 21px`）外框與淺色主題殘留框。
+       - `css/mobile/wiki_ladder.css`：移除 `.island-pkm-avatar` 與 `.island-pkm-icon-only .island-pkm-avatar` 圓框底色與邊框（維持 `32px` 與 hover 微縮放）。
+       - `css/views/recipes_picker.css`：移除排行榜 `.ing-rank-avatar-box` 預設與淺色主題實心底框及 `.rank-other` 邊框，僅保留 Top 3 獎牌高亮識別環。
+       - `css/views/news/news_cards.css` & `css/views/pokedex.css`：移除圖鑑詳情 `.pokedex-header-avatar`（`46px -> 50px`）與表格 `.table-icon`（`34px -> 38px`）外框底色。
+       - `css/views/wiki/wiki_camps.css`、`.lab-editor.css`、`.lab-growth.css`、`wiki_render_skills.js`、`lab_team_ui.js`、`box_render.js`：移除 `.lab-recipe-ing-chip`（圖示 `14px -> 18px`）、`.box-pkm-avatar-slot`、`.lab-growth-avatar-wrap`（頭像 `44px -> 52px`）、`.wiki-ing-badge`（頭像 `30px -> 34px`、食材 `20px -> 24px`）、未觸發高亮之隊伍食材晶片（`13px -> 16px`）與刪除確認框預覽頭像（`32px -> 40px`）外框。
+  4. **設計規則永久寫入專案 Markdown 規範**：
+     - 於 `docs/VERIFIED_FEATURES_AND_BASELINES.md` 與 `docs/SPECIAL_ICONS_RULES.md` 寫入「圖示無外框視覺規範（Frameless Icon Display Policy）」，確保後續開發不再替純展示圖示加框，並同步更新 `~/.gemini/agent-docs/projects/pokemon-sleep-app/`。
+
 ## 交接：2026-11-14 已完成（3道未實裝料理與新食材一口堅果改採向量問號佔位圖片、修復自動同步造成的資料迴歸、288/288 測試全數通過）
 
 - **測試狀態**：

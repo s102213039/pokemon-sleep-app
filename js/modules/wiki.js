@@ -1280,7 +1280,7 @@
     { id: "sausage", name: "豆製肉", enName: "Bean Sausage", energy: 103, icon: "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
     { id: "ginger", name: "暖暖薑", enName: "Warming Ginger", energy: 109, icon: "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" },
     { id: "tomato", name: "好眠番茄", enName: "Snoozy Tomato", energy: 110, icon: "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
-    { id: "nuts", name: "一口堅果", enName: "Snackable Nuts", energy: 112, icon: "assets/ingredients/snackablenuts_placeholder.svg" },
+    { id: "nuts", name: "一口堅果", enName: "Snackable Nuts", energy: 112, icon: "https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png" },
     { id: "egg", name: "特選蛋", enName: "Fancy Egg", energy: 115, icon: "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
     { id: "oil", name: "純粹油", enName: "Pure Oil", energy: 121, icon: "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" },
     { id: "potato", name: "窩心洋芋", enName: "Soft Potato", energy: 124, icon: "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" },
@@ -9534,7 +9534,7 @@
                 ${INGREDIENT_DRAW_POKEMONS.map(p => `
                   <tr>
                     <td style="text-align: center; padding: 5px 4px;">
-                      <img src="${p.icon}" width="30" height="30" style="object-fit: contain; vertical-align: middle; border-radius: 6px;" alt="${isEN ? p.name_en : p.name}" title="${isEN ? (p.family_en || p.name_en) : (p.family || p.name)}">
+                      <img src="${p.icon}" width="34" height="34" style="object-fit: contain; vertical-align: middle;" alt="${isEN ? p.name_en : p.name}" title="${isEN ? (p.family_en || p.name_en) : (p.family || p.name)}">
                     </td>
                     <td style="text-align: center; padding: 5px 6px;">
                       <span class="wiki-skill-badge skill-badge-blue">${isEN ? p.skill_en : p.skill}</span>
@@ -9543,8 +9543,8 @@
                     <td style="text-align: center; padding: 5px 4px;">
                       <div style="display: inline-flex; align-items: center; gap: 4px; justify-content: center; flex-direction: row; flex-wrap: nowrap;">
                         ${p.ingredients.map(ig => `
-                          <div class="wiki-ing-badge" title="${isEN ? ig.name_en : ig.name}" style="display: inline-flex; align-items: center; justify-content: center; background: var(--bg-card-inner); padding: 2px 4px; border-radius: 5px; border: 1px solid var(--border-color-subtle); cursor: help;">
-                            <img src="${ig.icon}" width="20" height="20" alt="${isEN ? ig.name_en : ig.name}" style="object-fit: contain; vertical-align: middle;">
+                          <div class="wiki-ing-badge" title="${isEN ? ig.name_en : ig.name}" style="display: inline-flex; align-items: center; justify-content: center; background: transparent; border: none; padding: 0; cursor: help;">
+                            <img src="${ig.icon}" width="24" height="24" alt="${isEN ? ig.name_en : ig.name}" style="object-fit: contain; vertical-align: middle;">
                           </div>
                         `).join('')}
                       </div>

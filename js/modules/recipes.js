@@ -1432,8 +1432,8 @@
               return `
               <tr>
                 <td style="vertical-align:middle;text-align:center;">
-                  <img src="${_resolveRecipeAssetUrl(r.icon)}" width="52" height="52" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';"
-                    style="border-radius:10px;object-fit:contain;background:var(--bg-card-inner);padding:4px;border:1px solid var(--border-color);display:block;margin:0 auto;">
+                  <img src="${_resolveRecipeAssetUrl(r.icon)}" width="58" height="58" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';"
+                    style="object-fit:contain;display:block;margin:0 auto;">
                 </td>
                 <td class="recipe-name-cell" style="vertical-align:middle;">
                   <div class="recipe-name-wrapper" style="display:flex;flex-direction:column;justify-content:center;min-height:52px;">
@@ -1516,7 +1516,7 @@
           return `
           <div class="pokemon-card recipe-desktop-card">
             <div class="card-header" style="align-items:center;margin-bottom:6px;">
-              <img class="card-icon" src="${r.icon}" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';" style="width:48px;height:48px;border-radius:10px;object-fit:contain;background:var(--bg-card-inner);padding:2px;border:1px solid var(--border-color);">
+              <img class="card-icon" src="${r.icon}" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';" style="width:56px;height:56px;object-fit:contain;">
               <div class="card-title-group" style="flex:1;min-width:0;">
                 <h3 class="pokemon-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px;margin-bottom:3px;">${primaryName}</h3>
                 <div style="display:flex;gap:6px;align-items:center;">

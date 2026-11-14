@@ -299,17 +299,16 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
 .island-pkm-icon-only .island-pkm-avatar {
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: 0;
   object-fit: cover;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1.5px solid var(--border-color-subtle, rgba(255, 255, 255, 0.15));
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  background: transparent;
+  border: none;
+  transition: transform 0.15s ease;
   cursor: pointer;
 }
 
 .island-pkm-icon-only .island-pkm-avatar:hover {
-  transform: scale(1.18);
-  border-color: var(--accent-blue, #38bdf8);
+  transform: scale(1.08);
 }
 
 /* Snorlax Rank Pokéball Badges */
@@ -588,8 +587,8 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   height: 28px;
   border-radius: 50%;
   object-fit: cover;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.12));
+  background: transparent;
+  border: none;
   flex-shrink: 0;
 }
 

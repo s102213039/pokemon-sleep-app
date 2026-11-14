@@ -38,16 +38,10 @@
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip,
 [data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip,
 [data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
+  background: transparent;
+  border: none;
   color: #0f172a;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-}
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip,
-[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip,
-[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip {
-  border-color: #bae6fd;
+  box-shadow: none;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-banner-ing-count,
@@ -124,8 +118,8 @@
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-icon,
 [data-theme="midnight"][data-theme-inverted="true"] .recipe-card-icon,
 [data-theme="onyx"][data-theme-inverted="true"] .recipe-card-icon {
-  background: #f1f5f9;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: transparent;
+  border: none;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-active-pill,
@@ -153,8 +147,8 @@
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip,
 [data-theme="midnight"][data-theme-inverted="true"] .recipe-card-ing-chip,
 [data-theme="onyx"][data-theme-inverted="true"] .recipe-card-ing-chip {
-  background: #f8fafc;
-  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: transparent;
+  border: none;
   color: #334155;
 }
 
@@ -315,16 +309,18 @@
 
 .mobile-h5-app .ladder-recipe-banner-ing-chip,
 .mobile-h5-html .ladder-recipe-banner-ing-chip {
-  padding: 2px 6px !important;
+  padding: 0 3px 0 0 !important;
   gap: 3px !important;
-  border-radius: 5px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background: transparent !important;
   flex-shrink: 0 !important;
 }
 
 .mobile-h5-app .ladder-banner-ing-icon,
 .mobile-h5-html .ladder-banner-ing-icon {
-  width: 18px !important;
-  height: 18px !important;
+  width: 21px !important;
+  height: 21px !important;
 }
 
 .mobile-h5-app .ladder-banner-ing-count,
@@ -398,15 +394,17 @@
   }
 
   .ladder-recipe-banner-ing-chip {
-    padding: 2px 6px !important;
+    padding: 0 3px 0 0 !important;
     gap: 3px !important;
-    border-radius: 5px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    background: transparent !important;
     flex-shrink: 0 !important;
   }
 
   .ladder-banner-ing-icon {
-    width: 18px !important;
-    height: 18px !important;
+    width: 21px !important;
+    height: 21px !important;
   }
 
   .ladder-banner-ing-count {

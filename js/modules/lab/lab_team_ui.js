@@ -341,17 +341,18 @@
 
       const chipBorder = isSurplusDaily
         ? '1px solid #22c55e'
-        : (isCookMatch ? '1px solid var(--accent-color, #38bdf8)' : '1px solid rgba(255,255,255,0.08)');
+        : (isCookMatch ? '1px solid var(--accent-color, #38bdf8)' : 'none');
       const chipBg = isSurplusDaily
         ? 'rgba(34, 197, 94, 0.12)'
-        : (isCookMatch ? 'rgba(56, 189, 248, 0.12)' : 'rgba(255, 255, 255, 0.04)');
+        : (isCookMatch ? 'rgba(56, 189, 248, 0.12)' : 'transparent');
+      const chipPadding = (isSurplusDaily || isCookMatch) ? '1px 5px' : '0 2px';
       const numColor = isSurplusDaily
         ? '#4ade80'
         : (isCookMatch ? '#38bdf8' : '#e2e8f0');
 
       return `
-        <div style="display:inline-flex;align-items:center;gap:3px;background:${chipBg};border:${chipBorder};border-radius:4px;padding:1px 5px;font-size:10.5px;" title="${escapeHtml(iDisplayName)}${isSurplusDaily ? (isEN ? ' (Daily Self-Sufficient)' : ' (三餐自給充裕)') : (isCookMatch ? (isEN ? ' (Recipe Synergy)' : ' (料理契合)') : '')}">
-          ${iconUrl ? `<img src="${iconUrl}" style="width:13px;height:13px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(iDisplayName)}">` : ''}
+        <div style="display:inline-flex;align-items:center;gap:3px;background:${chipBg};border:${chipBorder};border-radius:4px;padding:${chipPadding};font-size:10.5px;" title="${escapeHtml(iDisplayName)}${isSurplusDaily ? (isEN ? ' (Daily Self-Sufficient)' : ' (三餐自給充裕)') : (isCookMatch ? (isEN ? ' (Recipe Synergy)' : ' (料理契合)') : '')}">
+          ${iconUrl ? `<img src="${iconUrl}" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(iDisplayName)}">` : ''}
           <span style="color:${numColor};font-weight:700;">x${count}</span>
         </div>
       `;

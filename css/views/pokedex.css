@@ -189,13 +189,14 @@
 }
 
 .table-icon {
-  width: 34px !important;
-  height: 34px !important;
-  min-width: 34px !important;
-  max-width: 34px !important;
-  border-radius: 6px;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  max-width: 38px !important;
+  border-radius: 0;
   object-fit: contain;
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
+  border: none;
   padding: 0 !important;
   box-sizing: border-box !important;
   display: block !important;

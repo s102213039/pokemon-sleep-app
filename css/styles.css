@@ -2881,13 +2881,14 @@ body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-cont
 }
 
 .table-icon {
-  width: 34px !important;
-  height: 34px !important;
-  min-width: 34px !important;
-  max-width: 34px !important;
-  border-radius: 6px;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  max-width: 38px !important;
+  border-radius: 0;
   object-fit: contain;
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
+  border: none;
   padding: 0 !important;
   box-sizing: border-box !important;
   display: block !important;
@@ -3992,10 +3993,10 @@ body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area .pokemon-tabl
   display: inline-flex !important;
   align-items: center !important;
   gap: 2.5px !important;
-  padding: 2px 5px !important;
-  border-radius: 6px !important;
-  background: var(--bg-card-inner) !important;
-  border: 1px solid var(--border-color) !important;
+  padding: 0 3px 0 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: none !important;
   font-size: 11px !important;
   font-weight: 600 !important;
   color: var(--text-secondary) !important;
@@ -4004,8 +4005,8 @@ body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area .pokemon-tabl
 }
 
 .compact-chip .recipe-ing-icon {
-  width: 16px !important;
-  height: 16px !important;
+  width: 20px !important;
+  height: 20px !important;
   object-fit: contain !important;
 }
 
@@ -4325,21 +4326,16 @@ body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area .pokemon-tabl
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color-subtle);
-  border-radius: 8px;
-  padding: 3px 6px 3px 3px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0 3px 0 0;
   white-space: nowrap;
-  transition: border-color 0.15s;
-}
-
-.recipe-ing-chip:hover {
-  border-color: var(--border-color);
 }
 
 .recipe-ing-icon {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -7773,22 +7769,21 @@ input[type="number"] {
   min-width: 36px;
   min-height: 36px;
   border-radius: 50%;
-  background: var(--table-row-odd-solid, #0d1527);
-  border: 1.5px solid var(--border-color);
+  background: transparent;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
   box-sizing: border-box;
-  padding: 2px;
-  transition: border-color 0.2s ease;
+  padding: 0;
 }
 
 [data-theme="dawn"] .box-pkm-avatar-slot,
 [data-theme="emerald"] .box-pkm-avatar-slot {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
+  background: transparent;
+  border: none;
 }
 
 .box-pkm-selected-avatar {
@@ -16274,8 +16269,8 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
 }
 
 .lab-recipe-ing-icon {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
 }
 
@@ -20982,13 +20977,13 @@ body.box-lab-active .box-fab-container,
 }
 
 .h5-recipe-img {
-  width: 38px !important;
-  height: 38px !important;
+  width: 44px !important;
+  height: 44px !important;
   object-fit: contain !important;
-  border-radius: 8px !important;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04)) !important;
-  border: 1px solid var(--border-color) !important;
-  padding: 2px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
   flex-shrink: 0 !important;
 }
 
@@ -21058,10 +21053,10 @@ body.box-lab-active .box-fab-container,
   display: inline-flex !important;
   align-items: center !important;
   gap: 3px !important;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05)) !important;
-  border: 1px solid var(--border-color-subtle, var(--border-color)) !important;
-  border-radius: 6px !important;
-  padding: 2px 6px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 3px 0 0 !important;
   font-size: 11.5px !important;
   font-weight: 700 !important;
   color: var(--text-secondary) !important;
@@ -21070,8 +21065,8 @@ body.box-lab-active .box-fab-container,
 }
 
 .h5-recipe-ing-section .recipe-ing-icon {
-  width: 18px !important;
-  height: 18px !important;
+  width: 22px !important;
+  height: 22px !important;
   object-fit: contain !important;
 }
 
@@ -25171,35 +25166,40 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   min-width: 32px !important;
   min-height: 32px !important;
   border-radius: 50% !important;
-  padding: 1.5px !important;
+  padding: 0 !important;
   box-sizing: border-box !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.22) !important;
+  background: transparent !important;
+  border: none !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   flex-shrink: 0 !important;
   overflow: hidden !important;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: none !important;
 }
 
 .ing-rank-avatar-box.rank-1 {
+  background: transparent !important;
   border: 2px solid #fbbf24 !important;
   box-shadow: 0 0 10px rgba(251, 191, 36, 0.6) !important;
 }
 
 .ing-rank-avatar-box.rank-2 {
+  background: transparent !important;
   border: 2px solid #cbd5e1 !important;
   box-shadow: 0 0 8px rgba(203, 213, 225, 0.45) !important;
 }
 
 .ing-rank-avatar-box.rank-3 {
+  background: transparent !important;
   border: 2px solid #fb923c !important;
   box-shadow: 0 0 8px rgba(251, 146, 60, 0.45) !important;
 }
 
 .ing-rank-avatar-box.rank-other {
-  border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .ing-rank-avatar-img {
@@ -25212,26 +25212,30 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
 
 [data-theme="dawn"] .ing-rank-avatar-box,
 [data-theme="emerald"] .ing-rank-avatar-box {
-  background: #ffffff !important;
-  border: 1.5px solid #cbd5e1 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
 [data-theme="dawn"] .ing-rank-avatar-box.rank-1,
 [data-theme="emerald"] .ing-rank-avatar-box.rank-1 {
-  border-color: #f59e0b !important;
+  background: transparent !important;
+  border: 2px solid #f59e0b !important;
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.45) !important;
 }
 
 [data-theme="dawn"] .ing-rank-avatar-box.rank-2,
 [data-theme="emerald"] .ing-rank-avatar-box.rank-2 {
-  border-color: #94a3b8 !important;
+  background: transparent !important;
+  border: 2px solid #94a3b8 !important;
   box-shadow: 0 0 6px rgba(148, 163, 184, 0.35) !important;
 }
 
 [data-theme="dawn"] .ing-rank-avatar-box.rank-3,
 [data-theme="emerald"] .ing-rank-avatar-box.rank-3 {
-  border-color: #ea580c !important;
+  background: transparent !important;
+  border: 2px solid #ea580c !important;
   box-shadow: 0 0 6px rgba(234, 88, 12, 0.35) !important;
 }
 
@@ -28021,17 +28025,16 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
 .island-pkm-icon-only .island-pkm-avatar {
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: 0;
   object-fit: cover;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1.5px solid var(--border-color-subtle, rgba(255, 255, 255, 0.15));
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  background: transparent;
+  border: none;
+  transition: transform 0.15s ease;
   cursor: pointer;
 }
 
 .island-pkm-icon-only .island-pkm-avatar:hover {
-  transform: scale(1.18);
-  border-color: var(--accent-blue, #38bdf8);
+  transform: scale(1.08);
 }
 
 /* Snorlax Rank Pokéball Badges */
@@ -28310,8 +28313,8 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   height: 28px;
   border-radius: 50%;
   object-fit: cover;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.12));
+  background: transparent;
+  border: none;
   flex-shrink: 0;
 }
 
@@ -28738,14 +28741,14 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 }
 
 .recipe-card-icon {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
   flex-shrink: 0;
-  border-radius: 8px;
-  background: var(--bg-card-inner-subtle, rgba(0, 0, 0, 0.2));
-  border: 1px solid var(--border-color-subtle, transparent);
-  padding: 2px;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .recipe-card-meta {
@@ -28839,10 +28842,10 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   align-items: center;
   gap: 4px;
   font-size: 11px;
-  padding: 2px 7px;
-  border-radius: 5px;
-  background: var(--bg-card, rgba(255, 255, 255, 0.05));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  padding: 0 3px 0 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
   color: var(--text-secondary, #94a3b8);
 }
 
@@ -29155,25 +29158,25 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  border-radius: 6px;
-  padding: 3px 7px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0 3px 0 0;
   font-size: 11.5px;
   color: var(--text-title, #f8fafc);
   flex-shrink: 0;
 }
 
 .ladder-banner-ing-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
   flex-shrink: 0;
 }
 
 .recipe-card-ing-icon {
-  width: 16px;
-  height: 16px;
+  width: 19px;
+  height: 19px;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -29360,16 +29363,10 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip,
 [data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip,
 [data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
+  background: transparent;
+  border: none;
   color: #0f172a;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-}
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip,
-[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip,
-[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip {
-  border-color: #bae6fd;
+  box-shadow: none;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-banner-ing-count,
@@ -29446,8 +29443,8 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-icon,
 [data-theme="midnight"][data-theme-inverted="true"] .recipe-card-icon,
 [data-theme="onyx"][data-theme-inverted="true"] .recipe-card-icon {
-  background: #f1f5f9;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: transparent;
+  border: none;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-active-pill,
@@ -29475,8 +29472,8 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip,
 [data-theme="midnight"][data-theme-inverted="true"] .recipe-card-ing-chip,
 [data-theme="onyx"][data-theme-inverted="true"] .recipe-card-ing-chip {
-  background: #f8fafc;
-  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: transparent;
+  border: none;
   color: #334155;
 }
 
@@ -29637,16 +29634,18 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 
 .mobile-h5-app .ladder-recipe-banner-ing-chip,
 .mobile-h5-html .ladder-recipe-banner-ing-chip {
-  padding: 2px 6px !important;
+  padding: 0 3px 0 0 !important;
   gap: 3px !important;
-  border-radius: 5px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background: transparent !important;
   flex-shrink: 0 !important;
 }
 
 .mobile-h5-app .ladder-banner-ing-icon,
 .mobile-h5-html .ladder-banner-ing-icon {
-  width: 18px !important;
-  height: 18px !important;
+  width: 21px !important;
+  height: 21px !important;
 }
 
 .mobile-h5-app .ladder-banner-ing-count,
@@ -29720,15 +29719,17 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   }
 
   .ladder-recipe-banner-ing-chip {
-    padding: 2px 6px !important;
+    padding: 0 3px 0 0 !important;
     gap: 3px !important;
-    border-radius: 5px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    background: transparent !important;
     flex-shrink: 0 !important;
   }
 
   .ladder-banner-ing-icon {
-    width: 18px !important;
-    height: 18px !important;
+    width: 21px !important;
+    height: 21px !important;
   }
 
   .ladder-banner-ing-count {
@@ -29859,13 +29860,13 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 }
 
 .pokedex-header-avatar {
-  width: 46px;
-  height: 46px;
+  width: 50px;
+  height: 50px;
   object-fit: contain;
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 2px;
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  border: none;
   flex-shrink: 0;
 }
 
@@ -36501,9 +36502,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .lab-growth-avatar-wrap {
   width: 52px;
   height: 52px;
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: transparent;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36512,8 +36512,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .lab-growth-avatar-img {
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   object-fit: contain;
 }
 

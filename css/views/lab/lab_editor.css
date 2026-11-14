@@ -545,22 +545,21 @@ input[type="number"] {
   min-width: 36px;
   min-height: 36px;
   border-radius: 50%;
-  background: var(--table-row-odd-solid, #0d1527);
-  border: 1.5px solid var(--border-color);
+  background: transparent;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
   box-sizing: border-box;
-  padding: 2px;
-  transition: border-color 0.2s ease;
+  padding: 0;
 }
 
 [data-theme="dawn"] .box-pkm-avatar-slot,
 [data-theme="emerald"] .box-pkm-avatar-slot {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
+  background: transparent;
+  border: none;
 }
 
 .box-pkm-selected-avatar {

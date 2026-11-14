@@ -2383,9 +2383,9 @@
     '美味尾巴': 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png',
     'Slowpoke Tail': 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png',
     'tail': 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png',
-    '一口堅果': 'assets/ingredients/snackablenuts_placeholder.svg',
-    'Snackable Nuts': 'assets/ingredients/snackablenuts_placeholder.svg',
-    'snackablenuts': 'assets/ingredients/snackablenuts_placeholder.svg'
+    '一口堅果': 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png',
+    'Snackable Nuts': 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png',
+    'snackablenuts': 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png'
   };
 
   function getIngredientIcon(ing) {

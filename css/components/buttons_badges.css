@@ -275,21 +275,16 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color-subtle);
-  border-radius: 8px;
-  padding: 3px 6px 3px 3px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0 3px 0 0;
   white-space: nowrap;
-  transition: border-color 0.15s;
-}
-
-.recipe-ing-chip:hover {
-  border-color: var(--border-color);
 }
 
 .recipe-ing-icon {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
   flex-shrink: 0;
 }

@@ -204,7 +204,7 @@ ING_MAP = {
     'rousingcoffee': {'name': '醒腦咖啡豆', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png'},
     'glossyavocado': {'name': '嫩亮酪梨', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png'},
     'plumppumpkin': {'name': '沉甸甸南瓜', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png'},
-    'snackablenuts': {'name': '一口堅果', 'icon': 'assets/ingredients/snackablenuts_placeholder.svg'}
+    'snackablenuts': {'name': '一口堅果', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png'}
 }
 
 NAME_CN_MAP = {
@@ -371,10 +371,7 @@ def sync_recipes_data() -> bool:
                 except Exception as e:
                     log.warning(f'無法獲取 {name_en_clean} 的基礎能量: {e}')
 
-                if norm_key in ('seed bomb naan and curry', 'grass knot salad wrap', 'slowpoke tail roll cake'):
-                    icon_url = 'assets/meals/meal_placeholder.svg'
-                else:
-                    icon_url = 'https://www.serebii.net' + icon if not icon.startswith('http') else icon
+                icon_url = 'https://www.serebii.net' + icon if not icon.startswith('http') else icon
 
                 all_dishes.append({
                     'name_cn': name_cn,

@@ -509,7 +509,7 @@ function scanNewsForPreviews(newsList) {
           name_cn: ingName,
           name_en: ingName === '一口堅果' ? 'Snackable Nuts' : ingName,
           slug: ingName === '一口堅果' ? 'snackablenuts' : ingName.toLowerCase(),
-          icon: ingName === '一口堅果' ? 'assets/ingredients/snackablenuts_placeholder.svg' : 'https://www.serebii.net/pokemonsleep/ingredients/unknown.png',
+          icon: `https://www.serebii.net/pokemonsleep/ingredients/${ingName === '一口堅果' ? 'snackablenuts' : 'unknown'}.png`,
           source_article: article.id
         });
       }

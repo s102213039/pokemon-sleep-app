@@ -37,9 +37,9 @@
 
 ---
 
-## 🍳 三、 19 種官方食材圖示對照表
+## 三、 20 種官方食材圖示對照表
 
-所有 19 種食材統一採用 Serebii 官方標準高清食材圖庫：
+所有 20 種食材統一採用 Serebii 官方標準高清食材圖庫與本機快取：
 
 | 食材中文名稱 | Serebii 標識名稱 | 官方正確圖片網址 |
 | :--- | :--- | :--- |
@@ -62,6 +62,16 @@
 | **醒腦咖啡豆** | `rousingcoffee` | `https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png` |
 | **嫩亮酪梨** | `glossyavocado` | `https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png` |
 | **沉甸甸南瓜** | `plumppumpkin` | `https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png` |
+| **一口堅果** | `snackablenuts` | `https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png` |
+
+---
+
+## 圖示排版與無外框視覺規範 (Frameless Icon Display Policy)
+
+> [!IMPORTANT]
+> **全站圖示顯示統一原則：凡顯示寶可夢、料理、食材、樹果、道具等視覺圖示之位置，原則上一律不要另外包覆外框、背景底框與冗餘內距（`border: none; background: transparent; padding: 0;`），直接讓圖示適度放大、簡潔清晰展示。**
+> - 例外情況僅限「必須表達點擊/選中互動狀態的按鈕（如篩選按鈕、編輯選項鈕）」或「排行前三名獎牌指示」。
+> - 料理列表之 `.recipe-ing-row` / `.recipe-ing-chip` / `.recipe-ing-icon`、料理圖片（桌面表格、卡片與行動版 `.h5-recipe-img`）、天梯橫幅與彈窗食材晶片等展示元素，皆應維持無外框呈現。
 
 ---
 

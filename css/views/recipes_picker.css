@@ -463,35 +463,40 @@
   min-width: 32px !important;
   min-height: 32px !important;
   border-radius: 50% !important;
-  padding: 1.5px !important;
+  padding: 0 !important;
   box-sizing: border-box !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.22) !important;
+  background: transparent !important;
+  border: none !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   flex-shrink: 0 !important;
   overflow: hidden !important;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: none !important;
 }
 
 .ing-rank-avatar-box.rank-1 {
+  background: transparent !important;
   border: 2px solid #fbbf24 !important;
   box-shadow: 0 0 10px rgba(251, 191, 36, 0.6) !important;
 }
 
 .ing-rank-avatar-box.rank-2 {
+  background: transparent !important;
   border: 2px solid #cbd5e1 !important;
   box-shadow: 0 0 8px rgba(203, 213, 225, 0.45) !important;
 }
 
 .ing-rank-avatar-box.rank-3 {
+  background: transparent !important;
   border: 2px solid #fb923c !important;
   box-shadow: 0 0 8px rgba(251, 146, 60, 0.45) !important;
 }
 
 .ing-rank-avatar-box.rank-other {
-  border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .ing-rank-avatar-img {
@@ -504,26 +509,30 @@
 
 [data-theme="dawn"] .ing-rank-avatar-box,
 [data-theme="emerald"] .ing-rank-avatar-box {
-  background: #ffffff !important;
-  border: 1.5px solid #cbd5e1 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
 [data-theme="dawn"] .ing-rank-avatar-box.rank-1,
 [data-theme="emerald"] .ing-rank-avatar-box.rank-1 {
-  border-color: #f59e0b !important;
+  background: transparent !important;
+  border: 2px solid #f59e0b !important;
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.45) !important;
 }
 
 [data-theme="dawn"] .ing-rank-avatar-box.rank-2,
 [data-theme="emerald"] .ing-rank-avatar-box.rank-2 {
-  border-color: #94a3b8 !important;
+  background: transparent !important;
+  border: 2px solid #94a3b8 !important;
   box-shadow: 0 0 6px rgba(148, 163, 184, 0.35) !important;
 }
 
 [data-theme="dawn"] .ing-rank-avatar-box.rank-3,
 [data-theme="emerald"] .ing-rank-avatar-box.rank-3 {
-  border-color: #ea580c !important;
+  background: transparent !important;
+  border: 2px solid #ea580c !important;
   box-shadow: 0 0 6px rgba(234, 88, 12, 0.35) !important;
 }
 

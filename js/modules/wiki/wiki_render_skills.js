@@ -372,7 +372,7 @@
                 ${INGREDIENT_DRAW_POKEMONS.map(p => `
                   <tr>
                     <td style="text-align: center; padding: 5px 4px;">
-                      <img src="${p.icon}" width="30" height="30" style="object-fit: contain; vertical-align: middle; border-radius: 6px;" alt="${isEN ? p.name_en : p.name}" title="${isEN ? (p.family_en || p.name_en) : (p.family || p.name)}">
+                      <img src="${p.icon}" width="34" height="34" style="object-fit: contain; vertical-align: middle;" alt="${isEN ? p.name_en : p.name}" title="${isEN ? (p.family_en || p.name_en) : (p.family || p.name)}">
                     </td>
                     <td style="text-align: center; padding: 5px 6px;">
                       <span class="wiki-skill-badge skill-badge-blue">${isEN ? p.skill_en : p.skill}</span>
@@ -381,8 +381,8 @@
                     <td style="text-align: center; padding: 5px 4px;">
                       <div style="display: inline-flex; align-items: center; gap: 4px; justify-content: center; flex-direction: row; flex-wrap: nowrap;">
                         ${p.ingredients.map(ig => `
-                          <div class="wiki-ing-badge" title="${isEN ? ig.name_en : ig.name}" style="display: inline-flex; align-items: center; justify-content: center; background: var(--bg-card-inner); padding: 2px 4px; border-radius: 5px; border: 1px solid var(--border-color-subtle); cursor: help;">
-                            <img src="${ig.icon}" width="20" height="20" alt="${isEN ? ig.name_en : ig.name}" style="object-fit: contain; vertical-align: middle;">
+                          <div class="wiki-ing-badge" title="${isEN ? ig.name_en : ig.name}" style="display: inline-flex; align-items: center; justify-content: center; background: transparent; border: none; padding: 0; cursor: help;">
+                            <img src="${ig.icon}" width="24" height="24" alt="${isEN ? ig.name_en : ig.name}" style="object-fit: contain; vertical-align: middle;">
                           </div>
                         `).join('')}
                       </div>

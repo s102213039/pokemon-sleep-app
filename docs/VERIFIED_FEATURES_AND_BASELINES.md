@@ -27,9 +27,10 @@
 1. **零 Emoji 原則 (Zero Emoji Policy)**：
    - 核心規則：所有 UI 介面、圖標、按鈕、說明文字、日誌輸出、程式碼註解、Markdown 文件中，**絕對禁止使用任何 Emoji 表情符號**。
    - 圖標一律使用乾淨向量圖（SVG / Canvas）或標準純文字標籤（如 `[v]`, `[-]`, `*`）。
-2. **嚴禁巢狀多重外框原則 (Single Frame Rule)**：
+2. **嚴禁巢狀多重外框與純圖示無外框原則 (Single Frame & Frameless Icon Rule)**：
    - 核心規則：當大區塊內部已經包含列表、表格、卡片網格或具備獨立框線的展示元件時，**最外層容器嚴禁再包覆額外邊框與背景底色**。
    - 最外層必須為無框結構（`border: none; background: transparent; padding: 0;`），邊框由內部具體卡片各自承擔，以極大化內容展示寬度。
+   - **圖示無外框準則 (No Icon Box/Frame Policy)**：全站凡放置寶可夢頭像、料理、食材、樹果、道具、獎勵緞帶或徽章圖示（`<img>` 或純展示包裹層如 `.recipe-ing-chip`、`.compact-chip`、`.pokedex-header-avatar` 等）之處，**一律禁止額外包覆方框邊線與實色底框**，維持 `border: none; background: transparent; padding: 0;` 讓圖示本身直接清晰放大展示（互動選擇按鈕或排行前三名獎牌指示等具備明確功能狀態者除外）。
 3. **不可中斷 226 項自動化測試通過基線**：
    - 每次提交前，必須執行 `rtk node tests/run_tests.js`，確保 226 / 226 項測試維持 100% 通過（0 失敗）。
 4. **版本快取標籤同步更新**：
