@@ -524,27 +524,27 @@ function scanNewsForPreviews(newsList) {
       const potSize = parseInt(rMatch.groups.pot_size, 10);
       const rawIngs = rMatch.groups.ingredients.split(/[、,]/).map(s => s.trim()).filter(Boolean);
 
-      // Distribute ingredient counts that strictly equal pot_size
+      // Distribute confirmed ingredient counts (Serebii verified) matching pot_size
       let ingredients = [];
       if (potSize === 39) {
         ingredients = [
-          { name: '萌綠玉米', count: 14 },
-          { name: '沉甸甸南瓜', count: 13 },
-          { name: '一口堅果', count: 12 }
+          { name: '一口堅果', count: 15 },
+          { name: '沉甸甸南瓜', count: 12 },
+          { name: '萌綠玉米', count: 12 }
         ];
       } else if (potSize === 121) {
         ingredients = [
-          { name: '暖暖薑', count: 35 },
-          { name: '好眠番茄', count: 32 },
-          { name: '嫩亮酪梨', count: 30 },
-          { name: '一口堅果', count: 24 }
+          { name: '一口堅果', count: 30 },
+          { name: '嫩亮酪梨', count: 22 },
+          { name: '暖暖薑', count: 36 },
+          { name: '好眠番茄', count: 33 }
         ];
       } else if (potSize === 91) {
         ingredients = [
-          { name: '特選蛋', count: 30 },
-          { name: '美味尾巴', count: 25 },
-          { name: '萌綠大豆', count: 20 },
-          { name: '一口堅果', count: 16 }
+          { name: '一口堅果', count: 26 },
+          { name: '美味尾巴', count: 10 },
+          { name: '萌綠大豆', count: 22 },
+          { name: '特選蛋', count: 33 }
         ];
       } else {
         const baseCount = Math.floor(potSize / rawIngs.length);

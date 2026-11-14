@@ -5,6 +5,18 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-14 已完成（徹底清除一口堅果 Service Worker 舊快取污染、側邊欄本地圖片映射與確認 3 道新料理配方數量，並建立下週一自動查詢新料理中文名稱排程）
+
+- **根因排查與修復（一口堅果顯示舊咖啡豆圖示問題）**：
+  1. `sw.js` 原先之 `IMG_CACHE_NAME` 長期停留在 `pksleep-img-cache-v20261106_04`（該版本快取曾存有早期 14,300 bytes 之假一口堅果／咖啡豆圖片），且 `js/modules/pokedex/pokedex_base.js` 啟動快取清理誤設 `!k.endsWith('20261106_04')`，導致已部署真實 21,250 bytes `assets/ingredients/snackablenuts.png` 後仍從瀏覽器端持續命中舊圖快取。
+  2. 已將 `sw.js` 之 `IMG_CACHE_NAME` 升級為 `pksleep-img-cache-v20261114_01` 並在同源讀取加上 `{ cache: 'no-cache' }`，同時修正 `pokedex_base.js` 啟動清理邏輯主動移除所有舊版 `pksleep-img-cache`（含 `20261106_04`）與 `pksleep-static-cache-v1`；`test_challenger_m1_cache_sync.js` 改為動態讀取 `sw.js` 版本。
+  3. `js/modules/recipes/recipes_state.js` 側邊欄「包含／排除食材篩選」改透過 `resolveIngIconUrl` 呼叫 `window.mapExternalToLocalAsset`，確保側邊欄亦直連本地 `assets/ingredients/` 圖檔。
+- **3 道新料理所需食材數量核對（Serebii / Ver.3.9.0 對齊確認）**：
+  - `Seed Bomb Naan and Curry`（鍋容量 39 / 基礎能量 7,950）：`一口堅果 x15`、`沉甸甸南瓜 x12`、`萌綠玉米 x12`。
+  - `Grass Knot Salad Wrap`（鍋容量 121 / 基礎能量 26,350）：`一口堅果 x30`、`嫩亮酪梨 x22`、`暖暖薑 x36`、`好眠番茄 x33`。
+  - `Slowpoke Tail Roll Cake`（鍋容量 91 / 基礎能量 19,846）：`一口堅果 x26`、`美味尾巴 x10`、`萌綠大豆 x22`、`特選蛋 x33`。
+  - 已同步更新 `scripts/sync_manager.js` 內建配方預覽數量與正式資料完全一致。
+
 ## 交接：2026-11-14 已完成（補齊 Serebii 官方實裝一口堅果與 3 道新料理高清圖示、全站展示圖示全面無外框化並放大優化、規範寫入 MD 基線與 288/288 全量測試通過）
 
 - **測試狀態**：

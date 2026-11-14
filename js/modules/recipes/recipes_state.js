@@ -811,9 +811,16 @@
     });
 
     const ingNames = Array.from(ingMap.keys()).sort();
+    const resolveIngIconUrl = (rawUrl) => {
+      if (!rawUrl || typeof rawUrl !== 'string') return '';
+      if (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function') {
+        return window.mapExternalToLocalAsset(rawUrl) || rawUrl;
+      }
+      return rawUrl;
+    };
 
     ingredientPickerContainer.innerHTML = ingNames.map(name => {
-      const icon   = ingMap.get(name);
+      const icon   = resolveIngIconUrl(ingMap.get(name));
       const active = selectedIngredients.has(name) ? 'active' : '';
       const ingTitle = window.I18N ? window.I18N.getIngredientName(name) : name;
       return `<button class="ing-picker-btn ${active}" data-name="${name}" title="${ingTitle}">
@@ -848,7 +855,7 @@
     const excludedPickerContainer = document.getElementById('excluded-ingredient-picker-tags');
     if (excludedPickerContainer) {
       excludedPickerContainer.innerHTML = ingNames.map(name => {
-        const icon   = ingMap.get(name);
+        const icon   = resolveIngIconUrl(ingMap.get(name));
         const active = excludedIngredients.has(name) ? 'active-exclude' : '';
         const ingTitle = window.I18N ? window.I18N.getIngredientName(name) : name;
         return `<button class="ing-picker-btn ${active}" data-name="${name}" title="${ingTitle}">

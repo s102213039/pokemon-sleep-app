@@ -395,7 +395,9 @@ function restoreAll() {
     const { events, mockCaches } = createSwSandbox();
     const stampData = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'));
     const currentStatic = `pksleep-static-v${stampData.version}`;
-    const currentImg = 'pksleep-img-cache-v20261106_04';
+    const swSrc = fs.readFileSync(SW_JS, 'utf8');
+    const imgMatch = swSrc.match(/IMG_CACHE_NAME\s*=\s*'([^']+)'/);
+    const currentImg = imgMatch ? imgMatch[1] : 'pksleep-img-cache-v20261114_01';
 
     // Populate stores with current and stale caches
     await mockCaches.open(currentStatic);
