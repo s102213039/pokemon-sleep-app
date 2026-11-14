@@ -60,7 +60,7 @@ The project strictly operates under a two-tier heterogeneous multi-agent collabo
 | M2 | Multi-Tab Data Ingestion & Integration | Ingest Snackable Nuts, 3 recipes, Cottonee/Whimsicott, Sun Stone linkage, sleep styles, 570 goal, and dictionary mappings; update manifest | M1 | DONE |
 | M3 | Anti-Regression, Bundle Sync & Verification | Synchronize production bundles (`npm run build:prod`), synchronize test invariants, ensure 100% passing tests on fast and full suites | M2 | DONE |
 | M4 | Final Milestone: E2E Test Suite Pass & Adversarial Hardening | Pass 100% E2E test suite (Tiers 1-4), adversarial test hardening (Tier 5) | M3 | DONE |
-| M5 | Security Remediation & Model Collaboration Hierarchy Update | Implement security hardening patches (Features 17-24), update agent and repo documentation for Hydrogen/Flash hierarchy (Feature 25), verify 100% tests and zero emojis/glyphs | M4 | IN_PROGRESS |
+| M5 | Security Remediation & Model Collaboration Hierarchy Update | Implement security hardening patches (Features 17-24), update agent and repo documentation for Hydrogen/Flash hierarchy (Feature 25), verify 100% tests and zero emojis/glyphs | M4 | DONE |
 
 ## Interface Contracts
 
