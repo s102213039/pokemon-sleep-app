@@ -2720,10 +2720,10 @@ if (typeof document !== 'undefined') {
           if (res.status === 204) {
             if (syncStatus) {
               syncStatus.innerHTML = `
-                <span style="color:#4ade80;">[✓] GitHub Actions 同步已觸發！</span><br>
+                <span style="color:#4ade80;">[v] GitHub Actions 同步已觸發！</span><br>
                 <span style="font-size:12px;color:#94a3b8;">約 60-120 秒後資料更新至 GitHub Pages。
-                  <a href="https://github.com/${GH_OWNER}/${GH_REPO}/actions" target="_blank"
-                    style="color:#38bdf8;">查看進度 ↗</a>
+                  <a href="https://github.com/${GH_OWNER}/${GH_REPO}/actions" target="_blank" rel="noopener noreferrer"
+                    style="color:#38bdf8;">查看進度 -></a>
                 </span>
               `;
             }
@@ -2732,10 +2732,16 @@ if (typeof document !== 'undefined') {
             if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">[X] PAT Token 無效或權限不足，請重新設定。</span>`;
           } else {
             const body = await res.text();
-            if (syncStatus) syncStatus.innerHTML = `<span style="color:#fbbf24;">[!] 回應 ${res.status}：${body.slice(0, 120)}</span>`;
+            const safeBody = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
+              ? window.DOMUtils.escapeHtml(body.slice(0, 120))
+              : String(body.slice(0, 120)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            if (syncStatus) syncStatus.innerHTML = `<span style="color:#fbbf24;">[!] 回應 ${res.status}：${safeBody}</span>`;
           }
         } catch (e) {
-          if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">[X] 網路錯誤：${e.message}</span>`;
+          const safeErr = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
+            ? window.DOMUtils.escapeHtml(e.message)
+            : String(e.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">[X] 網路錯誤：${safeErr}</span>`;
         } finally {
           syncBtn.disabled = false;
           syncBtn.textContent = '同步資料';
@@ -3505,7 +3511,10 @@ if (typeof document !== 'undefined') {
         if (typeof window.__renderInPlaceError === 'function') {
           window.__renderInPlaceError('content-area', '寶可夢資料庫載入失敗 (data.json)', err);
         } else if (contentArea) {
-          contentArea.innerHTML = `<div style="text-align:center; padding: 40px; color: #ef4444;">載入 data.json 失敗：${err.message}</div>`;
+          const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
+            ? window.DOMUtils.escapeHtml(err.message)
+            : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          contentArea.innerHTML = `<div style="text-align:center; padding: 40px; color: #ef4444;">載入 data.json 失敗：${safeMsg}</div>`;
         }
       });
 

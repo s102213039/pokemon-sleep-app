@@ -12,7 +12,7 @@
 
 // 歷史快取標記：用於 activate 事件自動清理歷史舊版快取 pksleep-img-cache-v1 與 pksleep-static-cache-v1
 const IMG_CACHE_NAME = 'pksleep-img-cache-v20261114_01';
-const STATIC_CACHE_NAME = 'pksleep-static-v20261114_1537';
+const STATIC_CACHE_NAME = 'pksleep-static-v20261114_1710';
 const VALID_CACHES = [IMG_CACHE_NAME, STATIC_CACHE_NAME];
 
 const FALLBACK_SVG_BODY = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#38bdf8"/></svg>';
@@ -52,6 +52,13 @@ function isImageRequest(request, url) {
 }
 
 function isStaticHeavyAsset(url) {
+  if (!url || !url.pathname) return false;
+  const isSameOrigin = (typeof self !== 'undefined' && self.location && url.origin === self.location.origin);
+  const isTrustedCdn = !!(url.hostname && url.hostname.includes('cdn.jsdelivr.net'));
+  if (!isSameOrigin && !isTrustedCdn) {
+    return false;
+  }
+
   const pathname = url.pathname.toLowerCase();
   if (
     pathname.endsWith('.traineddata') ||
@@ -62,14 +69,26 @@ function isStaticHeavyAsset(url) {
   ) {
     return true;
   }
-  // 針對帶有明確版本號 (?v=...) 的大型 CSS / JS 靜態資源或 CDN 函式庫啟用持久化快取
-  if (url.searchParams && url.searchParams.has('v') && (pathname.endsWith('.css') || pathname.endsWith('.js'))) {
+  // 針對同源帶有明確版本號 (?v=...) 的大型 CSS / JS 靜態資源啟用持久化快取
+  if (isSameOrigin && url.searchParams && url.searchParams.has('v') && (pathname.endsWith('.css') || pathname.endsWith('.js'))) {
     return true;
   }
-  if (url.hostname && url.hostname.includes('cdn.jsdelivr.net') && (pathname.endsWith('.js') || pathname.endsWith('.wasm'))) {
+  // 針對受信任 CDN (cdn.jsdelivr.net) 的 JS / WASM 函式庫啟用持久化快取
+  if (isTrustedCdn && (pathname.endsWith('.js') || pathname.endsWith('.wasm'))) {
     return true;
   }
   return false;
+}
+
+/**
+ * 嚴格路徑檔名無害化，杜絕目錄穿越攻擊 (Anti-Directory-Traversal)
+ */
+function sanitizePathFilename(raw) {
+  if (!raw || typeof raw !== 'string') return '';
+  if (raw.includes('..') || raw.includes('/') || raw.includes('\\') || raw.includes('%')) return '';
+  const clean = raw.trim();
+  if (!/^[a-zA-Z0-9_\-\.]+$/.test(clean)) return '';
+  return clean;
 }
 
 /**
@@ -83,35 +102,37 @@ function mapSerebiiToLocalRelPath(url) {
   } catch (e) {
     pathname = url.pathname || '';
   }
+  if (pathname.includes('..')) return '';
+
   if (pathname.includes('/pokemonsleep/pokemon/icon/')) {
-    const fn = pathname.split('/pokemonsleep/pokemon/icon/')[1];
+    const fn = sanitizePathFilename(pathname.split('/pokemonsleep/pokemon/icon/')[1]);
     if (fn) return 'assets/pokemon/icon/' + fn;
   }
   if (pathname.includes('/pokemonsleep/items/')) {
-    const fn = pathname.split('/pokemonsleep/items/')[1];
-    if (fn) return 'assets/items/' + fn.replace(/'/g, '');
+    const fn = sanitizePathFilename((pathname.split('/pokemonsleep/items/')[1] || '').replace(/'/g, ''));
+    if (fn) return 'assets/items/' + fn;
   }
   if (pathname.includes('/itemdex/sprites/')) {
-    const fn = pathname.split('/itemdex/sprites/')[1];
-    if (fn) return 'assets/items/' + fn.replace(/'/g, '');
+    const fn = sanitizePathFilename((pathname.split('/itemdex/sprites/')[1] || '').replace(/'/g, ''));
+    if (fn) return 'assets/items/' + fn;
   }
   if (pathname.includes('/pokemonsleep/locations/')) {
-    const fn = pathname.split('/pokemonsleep/locations/')[1];
+    const fn = sanitizePathFilename(pathname.split('/pokemonsleep/locations/')[1]);
     if (fn) {
       const stem = fn.replace(/\.(jpg|jpeg|png|webp)$/i, '');
       return 'assets/islands/original/' + stem + '-location.jpg';
     }
   }
   if (pathname.includes('/pokemonsleep/berries/')) {
-    const fn = pathname.split('/pokemonsleep/berries/')[1];
+    const fn = sanitizePathFilename(pathname.split('/pokemonsleep/berries/')[1]);
     if (fn) return 'assets/berries/' + fn;
   }
   if (pathname.includes('/pokemonsleep/ingredients/')) {
-    const fn = pathname.split('/pokemonsleep/ingredients/')[1];
+    const fn = sanitizePathFilename(pathname.split('/pokemonsleep/ingredients/')[1]);
     if (fn) return 'assets/ingredients/' + fn;
   }
   if (pathname.includes('/pokemonsleep/meals/')) {
-    const fn = pathname.split('/pokemonsleep/meals/')[1];
+    const fn = sanitizePathFilename(pathname.split('/pokemonsleep/meals/')[1]);
     if (fn) return 'assets/meals/' + fn;
   }
   if (pathname.endsWith('/pokemonsleep/star.png')) {
@@ -227,7 +248,7 @@ self.addEventListener('fetch', (event) => {
             return cachedResponse;
           }
           return fetch(request).then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
+            if (networkResponse && networkResponse.status === 200 && networkResponse.type !== 'opaque') {
               cache.put(request, networkResponse.clone()).catch(() => {});
             }
             return networkResponse;

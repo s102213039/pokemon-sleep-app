@@ -39,14 +39,16 @@ jobs:
           pip install requests beautifulsoup4 lxml
 
       - name: Check sync type
+        env:
+          SYNC_TYPE: ${{ github.event.inputs.sync_type || 'full' }}
         run: |
-          echo "Sync type: ${{ github.event.inputs.sync_type || 'full' }}"
+          echo "Sync type: $SYNC_TYPE"
 
       - name: Execute data sync
         env:
           SYNC_TYPE: ${{ github.event.inputs.sync_type || 'full' }}
         run: |
-          if [ "${{ github.event.inputs.sync_type }}" != "news_only" ]; then
+          if [ "$SYNC_TYPE" != "news_only" ]; then
             python scripts/sync_data.py
           fi
           python scripts/build_news.py

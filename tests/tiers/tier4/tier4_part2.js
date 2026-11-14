@@ -2624,7 +2624,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     sandbox.window.CloudSync.saveRememberedAuth('player99', 'mypass123', true);
     const remembered = sandbox.window.CloudSync.getRememberedAuth();
     assertEquals(remembered.account, 'player99', 'Remembered account must match');
-    assertEquals(remembered.password, 'mypass123', 'Remembered password must match');
+    assertEquals(remembered.password, undefined, 'Remembered password must be undefined (SEC-01/08 Plaintext Password Removal)');
+    assert(!fakeStorage['PKMSLEEP_REMEMBER_AUTH_V1'].includes('mypass123'), 'localStorage must never contain plaintext password');
 
     sandbox.window.CloudSync.saveRememberedAuth('player99', 'mypass123', false);
     assertEquals(sandbox.window.CloudSync.getRememberedAuth(), null, 'Clearing remember-me should return null');

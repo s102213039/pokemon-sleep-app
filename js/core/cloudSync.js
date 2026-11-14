@@ -41,7 +41,7 @@
   let lastToastSignature = '';
   let lastToastTime = 0;
 
-  /* ─── 記住帳號與密碼管理 ───────────────────────────────────── */
+  /* ─── 記住帳號管理 (密碼永不持久化儲存) ─────────────────────── */
   function getRememberedAuth() {
     try {
       if (typeof localStorage !== 'undefined') {
@@ -49,7 +49,9 @@
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && typeof parsed.account === 'string') {
-            return parsed;
+            // 安全防護：即便舊版資料存有密碼，亦強制抹除不對外輸出
+            delete parsed.password;
+            return { account: parsed.account };
           }
         }
       }
@@ -61,15 +63,31 @@
     try {
       if (typeof localStorage !== 'undefined') {
         if (remember) {
+          // 安全防護：僅持久化儲存帳號，絕不寫入密碼明文
           localStorage.setItem(STORAGE_KEY_REMEMBER, JSON.stringify({
-            account: (account || '').trim(),
-            password: password || ''
+            account: (account || '').trim()
           }));
         } else {
           localStorage.removeItem(STORAGE_KEY_REMEMBER);
         }
       }
     } catch (e) {}
+  }
+
+  /* ─── 雲端倉庫資料防護與無害化 (Sanitize Remote Box) ──────────── */
+  function sanitizeRemoteBox(box) {
+    if (!Array.isArray(box)) return [];
+    if (typeof window !== 'undefined' && window.PokemonBoxApp && typeof window.PokemonBoxApp.sanitizeImportedPokemon === 'function') {
+      return box.map(window.PokemonBoxApp.sanitizeImportedPokemon).filter(Boolean);
+    }
+    const DANGEROUS_PROTO_KEYS = ['__proto__', 'constructor', 'prototype'];
+    return box.filter(raw => {
+      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return false;
+      for (const key of DANGEROUS_PROTO_KEYS) {
+        if (Object.prototype.hasOwnProperty.call(raw, key)) return false;
+      }
+      return true;
+    });
   }
 
   /* ─── 讀取與儲存配置 ───────────────────────────────────────── */
@@ -473,7 +491,7 @@
       }
 
       if (data && Array.isArray(data.box_data)) {
-        return data.box_data;
+        return sanitizeRemoteBox(data.box_data);
       }
       return [];
     } catch (err) {
@@ -698,7 +716,8 @@
   }
 
   function handleRemoteUpdateReceived(remoteBox) {
-    const remoteData = Array.isArray(remoteBox) ? remoteBox : [];
+    const rawData = Array.isArray(remoteBox) ? remoteBox : [];
+    const remoteData = sanitizeRemoteBox(rawData);
     const remoteHash = JSON.stringify(remoteData);
     let localHash = '';
     try {
@@ -1018,14 +1037,12 @@
       if (signinView) signinView.style.display = 'block';
       if (signupView) signupView.style.display = 'none';
 
-      // 檢查是否有儲存的帳密
+      // 檢查是否有儲存的帳號 (安全防護：密碼絕不儲存亦不預填)
       const remembered = getRememberedAuth();
       const signinUser = document.getElementById('cloud-auth-username');
-      const signinPwd = document.getElementById('cloud-auth-password');
       const rememberCheck = document.getElementById('cloud-auth-remember-check');
       if (remembered) {
         if (signinUser && !signinUser.value) signinUser.value = remembered.account || '';
-        if (signinPwd && !signinPwd.value) signinPwd.value = remembered.password || '';
         if (rememberCheck) rememberCheck.checked = true;
       }
       if (signinUser && typeof signinUser.focus === 'function') signinUser.focus();
@@ -1302,7 +1319,7 @@
         signInBtn.textContent = '登入帳號';
 
         if (res.success) {
-          saveRememberedAuth(account, pwd, isRemember);
+          saveRememberedAuth(account, '', isRemember);
           // 立即關閉視窗與遮罩，直接進入主頁面，絕不展示任何確認框或過渡畫面
           closeAuthModal();
           dismissBoxAuthOverlay();
@@ -1342,7 +1359,7 @@
         signUpBtn.textContent = '立即建立帳號';
 
         if (res.success) {
-          saveRememberedAuth(account, pwd, true);
+          saveRememberedAuth(account, '', true);
           // 立即關閉視窗與遮罩，直接進入主頁面
           closeAuthModal();
           dismissBoxAuthOverlay();

@@ -528,7 +528,10 @@
       if (typeof window.__renderInPlaceError === 'function') {
         window.__renderInPlaceError('recipe-content-area', '料理食譜資料庫載入失敗 (recipes.json)', err);
       } else if (contentArea) {
-        contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">載入 recipes.json 失敗：${err.message}</div>`;
+        const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
+          ? window.DOMUtils.escapeHtml(err.message)
+          : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">載入 recipes.json 失敗：${safeMsg}</div>`;
       }
     });
 

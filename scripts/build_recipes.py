@@ -138,7 +138,7 @@ def get_bonus_pct(pot_size):
 def main():
     print('Fetching main dishes page from Serebii...')
     req = urllib.request.Request(URL_DISHES, headers={'User-Agent': 'Mozilla/5.0'})
-    html = urllib.request.urlopen(req).read().decode('utf-8', errors='ignore')
+    html = urllib.request.urlopen(req, timeout=30).read().decode('utf-8', errors='ignore')
 
     curry_part = html[html.find('<h2>List of Curry</h2>'):html.find('<h2>List of Salads</h2>')]
     salad_part = html[html.find('<h2>List of Salads</h2>'):html.find('<h2>List of Desserts</h2>')]
@@ -179,7 +179,7 @@ def main():
             base_energy = 0
             try:
                 dreq = urllib.request.Request(detail_url, headers={'User-Agent': 'Mozilla/5.0'})
-                dhtml = urllib.request.urlopen(dreq).read().decode('utf-8', errors='ignore')
+                dhtml = urllib.request.urlopen(dreq, timeout=30).read().decode('utf-8', errors='ignore')
                 m = re.search(r'<td class=\"fooinfo\">\s*Level 1\s*</td>\s*<td class=\"fooinfo\">\s*0\s*</td>\s*<td class=\"fooinfo\">\s*([0-9,]+)\s*</td>', dhtml)
                 if m:
                     base_energy = int(m.group(1).replace(',', ''))

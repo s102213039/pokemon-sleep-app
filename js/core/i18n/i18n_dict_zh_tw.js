@@ -386,7 +386,7 @@
       'appraisal.quick_pick': '快速切換倉庫寶可夢：',
 
       // Footer
-      'footer.copyright': 'Pokémon Sleep 寶可夢資料庫 &copy; 2026 · <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank">GitHub 原始碼</a> · Powered by <a href="https://www.serebii.net/" target="_blank">Serebii.net</a>',
+      'footer.copyright': 'Pokémon Sleep 寶可夢資料庫 &copy; 2026 · <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank" rel="noopener noreferrer">GitHub 原始碼</a> · Powered by <a href="https://www.serebii.net/" target="_blank" rel="noopener noreferrer">Serebii.net</a>',
       'footer.sync_note': '同步功能透過 GitHub Actions 執行，點擊「同步資料」後約需 60-120 秒生效。需先在「設定」中填入 GitHub PAT Token。',
 
       // News & Timeline

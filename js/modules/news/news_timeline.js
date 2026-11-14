@@ -221,9 +221,12 @@
       if (typeof window.__renderInPlaceError === 'function') {
         window.__renderInPlaceError('news-list-container', '最新新聞與公告載入失敗 (news.json)', err);
       } else if (newsListContainer) {
+        const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
+          ? window.DOMUtils.escapeHtml(err.message)
+          : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         newsListContainer.innerHTML = `
           <div class="empty-state" style="padding: 40px 20px; text-align: center;">
-            <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">新聞資料載入失敗：${err.message}</div>
+            <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">新聞資料載入失敗：${safeMsg}</div>
             <div style="font-size: 13px; color: var(--text-muted);">請稍後重整頁面，或點擊頂部「同步資料」更新最新官方新聞。</div>
           </div>
         `;

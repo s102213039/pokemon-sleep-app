@@ -55,12 +55,19 @@
     menuDiv.className = 'custom-select-menu';
     menuDiv.setAttribute('role', 'listbox');
 
+    function escapeAttr(str) {
+      return String(str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    function escapeHtml(str) {
+      return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
     function syncUI() {
       const options = selectElement.options ? Array.from(selectElement.options) : [];
       const selected = (selectElement.selectedIndex >= 0 && options[selectElement.selectedIndex]) || options[0] || null;
       const selectedIcon = selected ? selected.getAttribute('data-icon') : null;
       if (selectedIcon) {
-        labelSpan.innerHTML = '<img src="' + selectedIcon + '" class="custom-select-icon" alt="" /><span>' + (selected ? selected.text : '') + '</span>';
+        labelSpan.innerHTML = '<img src="' + escapeAttr(selectedIcon) + '" class="custom-select-icon" alt="" /><span>' + escapeHtml(selected ? selected.text : '') + '</span>';
       } else {
         labelSpan.textContent = selected ? selected.text : '';
       }
@@ -77,8 +84,8 @@
         const optIcon = opt.getAttribute('data-icon');
         item.innerHTML =
           '<div class="custom-select-item-content">' +
-            (optIcon ? '<img src="' + optIcon + '" class="custom-select-icon" alt="" />' : '') +
-            '<span class="custom-select-item-text">' + opt.text + '</span>' +
+            (optIcon ? '<img src="' + escapeAttr(optIcon) + '" class="custom-select-icon" alt="" />' : '') +
+            '<span class="custom-select-item-text">' + escapeHtml(opt.text) + '</span>' +
           '</div>';
 
         item.addEventListener('click', function (e) {

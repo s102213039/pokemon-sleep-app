@@ -14,7 +14,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cdn.jsdelivr.net https://raw.githubusercontent.com https://api.github.com https://tessdata.projectnaptha.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; worker-src 'self' blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cdn.jsdelivr.net https://raw.githubusercontent.com https://api.github.com https://tessdata.projectnaptha.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; base-uri 'self';">
   <title>Pokémon Sleep 寶可夢機率與料理食譜資料庫</title>
   <meta name="description" content="Pokémon Sleep 寶可夢機率、食材與料理食譜線上資料庫，支援即時搜尋、屬性得意篩選、食材產量與進階食譜計算。">
 
@@ -132,7 +132,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.min.css?v=20261114_1537">
+  <link rel="stylesheet" href="css/styles.min.css?v=20261114_1710">
   <!-- 全域錯誤診斷與日誌攔截器 (Global Error & Diagnostic Logger) -->
   <script>
     (function() {
@@ -274,13 +274,16 @@
             });
           }
         }
+        function escapeDiagHtml(str) {
+          return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
         var latestError = window.__APP_LOG_BUFFER__.filter(function(l) { return l.level === 'ERROR'; }).pop();
         var errorMsg = latestError ? (latestError.message + (latestError.source ? ' (' + latestError.source + ')' : '')) : '頁面載入異常';
         el.innerHTML = '<div class="diag-bar-content">' +
           '<span class="diag-bar-icon">[!]</span>' +
           '<div class="diag-bar-text">' +
           '<strong>系統偵測到異常：</strong>' +
-          '<span class="diag-bar-msg">' + errorMsg + '</span>' +
+          '<span class="diag-bar-msg">' + escapeDiagHtml(errorMsg) + '</span>' +
           '</div>' +
           '<button type="button" class="diag-copy-btn" onclick="window.__copyAppErrorLog(this)">複製錯誤日誌</button>' +
           '</div>';
@@ -288,6 +291,9 @@
       }
 
       window.__renderInPlaceError = function(containerId, title, errorObj) {
+        function escapeDiagHtml(str) {
+          return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
         var container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
         if (!container) return;
         var errMsg = errorObj ? (errorObj.message || errorObj.stack || String(errorObj)) : '未知錯誤';
@@ -296,14 +302,14 @@
           '<div class="content-error-header">' +
           '<span class="content-error-icon">[!]</span>' +
           '<div class="content-error-title-group">' +
-          '<h3 class="content-error-title">' + (title || '內容載入發生異常') + '</h3>' +
+          '<h3 class="content-error-title">' + escapeDiagHtml(title || '內容載入發生異常') + '</h3>' +
           '<p class="content-error-sub">請點擊下方按鈕複製完整診斷日誌並提供給開發者排查。</p>' +
           '</div>' +
           '<button type="button" class="diag-copy-btn-large" onclick="window.__copyAppErrorLog(this)">複製完整錯誤日誌</button>' +
           '</div>' +
           '<div class="content-error-box">' +
-          '<div class="content-error-msg"><strong>錯誤資訊：</strong> ' + errMsg + '</div>' +
-          (stack ? '<pre class="content-error-stack">' + stack + '</pre>' : '') +
+          '<div class="content-error-msg"><strong>錯誤資訊：</strong> ' + escapeDiagHtml(errMsg) + '</div>' +
+          (stack ? '<pre class="content-error-stack">' + escapeDiagHtml(stack) + '</pre>' : '') +
           '</div>' +
           '</div>';
       };
@@ -666,9 +672,9 @@
           <span id="count-badge" data-i18n="pokedex.loading">載入中...</span>
           <div style="display:flex;gap:12px;align-items:center;">
             <a href="https://docs.google.com/spreadsheets/d/1JkV2QxGGFDBzUfDxfOhTD3hrJJzu9qCS4A6c_HicIDc/edit#gid=87785598"
-               target="_blank" data-i18n="pokedex.ref_data" style="color:var(--accent-color);text-decoration:none;font-size:12px;">參考資料來源</a>
+               target="_blank" rel="noopener noreferrer" data-i18n="pokedex.ref_data" style="color:var(--accent-color);text-decoration:none;font-size:12px;">參考資料來源</a>
             <a href="https://docs.google.com/spreadsheets/d/1BD05wG8Gy3EUNzhg5mtErllr-Rkv20iFGsZ8kNsuUJ0/edit"
-               target="_blank" data-i18n="pokedex.target_sheet" style="color:var(--accent-color);text-decoration:none;font-size:12px;">目標試算表</a>
+               target="_blank" rel="noopener noreferrer" data-i18n="pokedex.target_sheet" style="color:var(--accent-color);text-decoration:none;font-size:12px;">目標試算表</a>
           </div>
         </div>
 
@@ -1522,8 +1528,8 @@
   <footer style="display: none;">
     <p data-i18n-html="footer.copyright">
       Pokémon Sleep 寶可夢資料庫 &copy; 2026 ·
-      <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank">GitHub 原始碼</a> ·
-      Powered by <a href="https://www.serebii.net/" target="_blank">Serebii.net</a>
+      <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank" rel="noopener noreferrer">GitHub 原始碼</a> ·
+      Powered by <a href="https://www.serebii.net/" target="_blank" rel="noopener noreferrer">Serebii.net</a>
     </p>
     <p style="margin-top:8px;color:var(--text-muted);font-size:11px;" data-i18n="footer.sync_note">
       同步功能透過 GitHub Actions 執行，點擊「同步資料」後約需 60-120 秒生效。
@@ -1540,21 +1546,21 @@
   </button>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
-  <script src="js/core/idbStorage.min.js?v=20261114_1537"></script>
-  <script src="js/core/gameConfig.min.js?v=20261114_1537"></script>
-  <script src="js/core/domUtils.min.js?v=20261114_1537"></script>
-  <script src="js/core/cloudSync.min.js?v=20261114_1537"></script>
-  <script src="js/core/i18n.min.js?v=20261114_1537"></script>
-  <script src="js/core/telemetry.min.js?v=20261114_1537"></script>
-  <script src="js/components/customSelect.min.js?v=20261114_1537"></script>
-  <script src="js/components/popoverCoordinator.min.js?v=20261114_1537"></script>
-  <script src="js/modules/app.min.js?v=20261114_1537"></script>
-  <script src="js/modules/recipes.min.js?v=20261114_1537"></script>
-  <script src="js/data/items.min.js?v=20261114_1537"></script>
-  <script src="js/data/ladder_data.min.js?v=20261114_1537"></script>
-  <script src="js/modules/wiki.min.js?v=20261114_1537"></script>
-  <script src="js/modules/box.min.js?v=20261114_1537"></script>
-  <script src="js/modules/news.min.js?v=20261114_1537"></script>
-  <script src="js/modules/appraisal.min.js?v=20261114_1537"></script>
+  <script src="js/core/idbStorage.min.js?v=20261114_1710"></script>
+  <script src="js/core/gameConfig.min.js?v=20261114_1710"></script>
+  <script src="js/core/domUtils.min.js?v=20261114_1710"></script>
+  <script src="js/core/cloudSync.min.js?v=20261114_1710"></script>
+  <script src="js/core/i18n.min.js?v=20261114_1710"></script>
+  <script src="js/core/telemetry.min.js?v=20261114_1710"></script>
+  <script src="js/components/customSelect.min.js?v=20261114_1710"></script>
+  <script src="js/components/popoverCoordinator.min.js?v=20261114_1710"></script>
+  <script src="js/modules/app.min.js?v=20261114_1710"></script>
+  <script src="js/modules/recipes.min.js?v=20261114_1710"></script>
+  <script src="js/data/items.min.js?v=20261114_1710"></script>
+  <script src="js/data/ladder_data.min.js?v=20261114_1710"></script>
+  <script src="js/modules/wiki.min.js?v=20261114_1710"></script>
+  <script src="js/modules/box.min.js?v=20261114_1710"></script>
+  <script src="js/modules/news.min.js?v=20261114_1710"></script>
+  <script src="js/modules/appraisal.min.js?v=20261114_1710"></script>
 </body>
 </html>

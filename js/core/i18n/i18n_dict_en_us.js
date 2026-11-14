@@ -386,7 +386,7 @@
       'appraisal.quick_pick': 'Quick Pick:',
 
       // Footer
-      'footer.copyright': 'Pokémon Sleep Database &copy; 2026 · <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank">GitHub Source</a> · Powered by <a href="https://www.serebii.net/" target="_blank">Serebii.net</a>',
+      'footer.copyright': 'Pokémon Sleep Database &copy; 2026 · <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank" rel="noopener noreferrer">GitHub Source</a> · Powered by <a href="https://www.serebii.net/" target="_blank" rel="noopener noreferrer">Serebii.net</a>',
       'footer.sync_note': 'Sync is executed via GitHub Actions. Takes 60-120s after clicking. Requires GitHub PAT Token in Settings.',
 
       // News & Timeline

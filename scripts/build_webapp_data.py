@@ -11,7 +11,7 @@ if hasattr(sys.stdout, 'reconfigure'):
 import pokemon_sleep_sync as sync
 
 url = 'https://docs.google.com/spreadsheets/d/1JkV2QxGGFDBzUfDxfOhTD3hrJJzu9qCS4A6c_HicIDc/export?format=csv&gid=87785598'
-req = urllib.request.urlopen(url)
+req = urllib.request.urlopen(url, timeout=30)
 content = req.read().decode('utf-8')
 rows_ref = list(csv.reader(io.StringIO(content)))
 

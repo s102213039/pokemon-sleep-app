@@ -17,13 +17,20 @@ The Dynamic Data Scan and Sync System introduces a unified CLI command (`npm run
 - Synchronize frontend dictionary linkages (i18n names, top meta recipes, evolution items).
 - Maintain 100% test pass rate with zero regressions.
 
+## Multi-Agent Model Configuration
+The project strictly operates under a two-tier heterogeneous multi-agent collaboration architecture:
+- Primary Model: Hydrogen (Tier 0 Top Orchestrator / Lead Architect / Final Release Auditor)
+  - Scope: Global system architecture, requirement analysis, milestone decomposition, interface contract specification, exclusive write boundary locking, core critical algorithm implementation, final gate verification, and release commits.
+- Secondary Model: Gemini 3.8 Flash (Tier 1-2 Delegated Execution Worker / Fast Explorer)
+  - Scope: Fast parallel code exploration, spec mining, subagent implementation within exclusive write boundaries, boilerplate and view controller updates, unit test authoring, and fast regression test execution.
+
 ## Feature Inventory
 | # | Feature | Description | Milestone | Source |
 |---|---------|-------------|-----------|--------|
-| 1 | Dynamic Sync CLI & Coordinator | Unified CLI script (`npm run sync:data` / `scripts/sync_manager.js`) coordinating news scan, external scraping, data transform, and manifest update | M1 (DONE) | Survey 1 |
-| 2 | Official Announcement Scanner | Parser scanning official `data/news.json` announcements for upcoming previews (ingredients, recipes, goals) | M1 (DONE) | Survey 1 |
-| 3 | Serebii & RaenonX Integration | Scraper/parser updating exact recipe ingredient counts, base energies, and Pokemon stats | M1 (DONE) | Survey 1 |
-| 4 | Defensive Health Gate & Atomic Writer | Pre-write validator enforcing `isRecipesHealthy` and schema validity with atomic file write | M1 (DONE) | Survey 1 |
+| 1 | Dynamic Sync CLI & Coordinator | Unified CLI script (`npm run sync:data` / `scripts/sync_manager.js`) coordinating news scan, external scraping, data transform, and manifest update | M1 | Survey 1 |
+| 2 | Official Announcement Scanner | Parser scanning official `data/news.json` announcements for upcoming previews (ingredients, recipes, goals) | M1 | Survey 1 |
+| 3 | Serebii & RaenonX Integration | Scraper/parser updating exact recipe ingredient counts, base energies, and Pokemon stats | M1 | Survey 1 |
+| 4 | Defensive Health Gate & Atomic Writer | Pre-write validator enforcing `isRecipesHealthy` and schema validity with atomic file write | M1 | Survey 1 |
 | 5 | New Ingredient: 一口堅果 (Snackable Nuts) | 20th ingredient record in `data/ladder_lv60.json`, `js/data/ladder_data.js`, and i18n dictionaries | M2 | Survey 2 |
 | 6 | 3 New Official Recipes | Bountiful Nut & Pumpkin Stew (Curry 39), Supreme Avocado Nut Feast Salad (Salad 121), Grand Tail Soy Nut Cake (Dessert 91) in `data/recipes.json` | M2 | Survey 2 |
 | 7 | New Pokemon: 木棉球 & 風妖精 | National Dex #546 Cottonee and #547 Whimsicott in `data/data.json` with Fairy type, ingredient specialty, snoozing sleep type | M2 | Survey 2 |
@@ -36,6 +43,15 @@ The Dynamic Data Scan and Sync System introduces a unified CLI command (`npm run
 | 14 | E2E & Fast Regression Guard | Ensure `npm run test:fast` (0.25s) and `npm test` pass 100%, updating invariant fixtures in `tests/stress_recipe_consumers_adversarial.js` and `tests/test_challenger_m1_1.js` | M3 | Survey 3 |
 | 15 | Multi-Page Visual & Interaction Parity | Verify Pokedex, Cooking, Ladder, and Wiki pages render new items seamlessly without runtime errors | M3 | Survey 3 |
 | 16 | Comprehensive E2E Testing Suite | Tier 1-4 opaque-box test suite verifying dynamic sync, multi-page data rendering, and anti-regression | M4 (E2E) | Dual Track |
+| 17 | Plaintext Password Removal | Remove password persistence from `saveRememberedAuth` in `cloudSync_data.js`, `cloudSync.js`, and `cloudSync_ui.js` | M5 | Security Survey |
+| 18 | Git Auth & Push Hardening | Eliminate plaintext token in `.git/config` and remove `--force` in `scripts/sync_all.py` | M5 | Security Survey |
+| 19 | Localhost Sync Server CORS Hardening | Restrict CORS in `scripts/sync_server.py` to localhost/127.0.0.1 and add auth validation | M5 | Security Survey |
+| 20 | GitHub Actions Script Injection Fix | Use `$SYNC_TYPE` environment variable in `.github/workflows/update-data.yml` | M5 | Security Survey |
+| 21 | DOM XSS Error Boundary Escaping | HTML-escape error messages and responses in `index.html`, `app/index.html`, `app.js`, `recipes.js`, `news.js` | M5 | Security Survey |
+| 22 | Service Worker Traversal & Origin Hardening | Sanitize Serebii path extraction and enforce same-origin / trusted CDN checks in `sw.js` | M5 | Security Survey |
+| 23 | External Link Tabnabbing Hardening | Add `rel="noopener noreferrer"` to external `target="_blank"` links across HTML and JS files | M5 | Security Survey |
+| 24 | Agent Safety Script Hardening & Emoji Cleanse | Sanitize path traversal in `sync-brain.sh`, remove unescaped glyphs, remove emojis from `agent-docs/README.md` | M5 | Security Survey |
+| 25 | Model Collaboration Documentation Hierarchy Update | Update `PROTOCOL.md`, `HETERO_MODEL_HARNESS.md`, `walkthrough.md`, `AGENTS.md`, `GEMINI.md` to designate Hydrogen (primary) and Gemini 3.8 Flash (secondary) | M5 | Security Survey |
 
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
@@ -44,6 +60,7 @@ The Dynamic Data Scan and Sync System introduces a unified CLI command (`npm run
 | M2 | Multi-Tab Data Ingestion & Integration | Ingest Snackable Nuts, 3 recipes, Cottonee/Whimsicott, Sun Stone linkage, sleep styles, 570 goal, and dictionary mappings; update manifest | M1 | DONE |
 | M3 | Anti-Regression, Bundle Sync & Verification | Synchronize production bundles (`npm run build:prod`), synchronize test invariants, ensure 100% passing tests on fast and full suites | M2 | DONE |
 | M4 | Final Milestone: E2E Test Suite Pass & Adversarial Hardening | Pass 100% E2E test suite (Tiers 1-4), adversarial test hardening (Tier 5) | M3 | DONE |
+| M5 | Security Remediation & Model Collaboration Hierarchy Update | Implement security hardening patches (Features 17-24), update agent and repo documentation for Hydrogen/Flash hierarchy (Feature 25), verify 100% tests and zero emojis/glyphs | M4 | IN_PROGRESS |
 
 ## Interface Contracts
 

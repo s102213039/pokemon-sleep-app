@@ -42,7 +42,7 @@ def log(msg):
     print(f"[SYNC] {msg}", flush=True)
 
 def step1_sync_google_sheet():
-    log("Step 1: Syncing reference → target Google Sheet...")
+    log("Step 1: Syncing reference -> target Google Sheet...")
     res = subprocess.run(
         [sys.executable, SYNC_SCRIPT],
         cwd=BASE_DIR,
@@ -71,19 +71,33 @@ def step3_push_to_github():
         log("Step 3 Warning: No GH_TOKEN found, skipping manual push step in local runner.")
         return
 
-    remote_url = f"https://x-access-token:{token}@github.com/{GH_USERNAME}/{GH_REPO}.git"
-
     try:
-        subprocess.run(["git", "remote", "remove", "origin"], cwd=WEBAPP_DIR, capture_output=True)
-        subprocess.run(["git", "remote", "add", "origin", remote_url], cwd=WEBAPP_DIR, check=True)
-        subprocess.run(["git", "add", "."], cwd=WEBAPP_DIR, check=True)
+        # 安全防護：僅針對特定資料更新檔案執行 git add，絕不使用全域盲目 git add .
+        target_files = [
+            "data/data.json",
+            "data/recipes.json",
+            "data/news.json",
+            "data/manifest.json"
+        ]
+        existing_targets = [f for f in target_files if os.path.exists(os.path.join(WEBAPP_DIR, f))]
+        if existing_targets:
+            subprocess.run(["git", "add", "--"] + existing_targets, cwd=WEBAPP_DIR, check=True)
+
         subprocess.run(
-            ["git", "commit", "-m", "Sync: Update Pokémon Sleep data & recipes"],
+            ["git", "commit", "-m", "Sync: Update Pokemon Sleep data & recipes"],
             cwd=WEBAPP_DIR,
             capture_output=True
         )
+
+        # 安全防護：使用短暫認證 (ephemeral auth) 執行推送，絕不將 PAT 寫入本機 .git/config，且嚴禁 --force
+        push_cmd = [
+            "git",
+            "push",
+            f"https://x-access-token:{token}@github.com/{GH_USERNAME}/{GH_REPO}.git",
+            "HEAD:main"
+        ]
         push_res = subprocess.run(
-            ["git", "push", "-u", "origin", "main", "--force"],
+            push_cmd,
             cwd=WEBAPP_DIR,
             capture_output=True,
             text=True

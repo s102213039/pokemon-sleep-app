@@ -9,23 +9,68 @@ import subprocess
 import sys
 import threading
 import os
+import re
 
 PORT = 18765
 SYNC_SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sync_all.py')
+SYNC_TOKEN = os.environ.get('SYNC_SERVER_TOKEN', 'pkmsleep-local-sync-token')
+
+ALLOWED_ORIGIN_REGEX = re.compile(r'^https?://(localhost|127\.0\.0\.1)(:\d+)?$')
 
 class SyncHandler(http.server.BaseHTTPRequestHandler):
+    def get_validated_origin(self):
+        origin = self.headers.get('Origin')
+        if not origin:
+            return None
+        if ALLOWED_ORIGIN_REGEX.match(origin):
+            return origin
+        return False
+
+    def is_authenticated(self):
+        token = self.headers.get('X-Sync-Token', '')
+        if not token:
+            auth_header = self.headers.get('Authorization', '')
+            if auth_header.startswith('Bearer '):
+                token = auth_header[7:].strip()
+        return token == SYNC_TOKEN
+
+    def send_cors_headers(self, origin):
+        if origin:
+            self.send_header('Access-Control-Allow-Origin', origin)
+            self.send_header('Vary', 'Origin')
+
     def do_OPTIONS(self):
+        origin = self.get_validated_origin()
+        if origin is False:
+            self.send_response(403)
+            self.end_headers()
+            return
+
         self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_cors_headers(origin)
         self.send_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, X-Sync-Token, Authorization')
         self.end_headers()
 
     def do_POST(self):
+        origin = self.get_validated_origin()
+        if origin is False:
+            self.send_response(403)
+            self.end_headers()
+            return
+
         if self.path == '/sync':
+            if not self.is_authenticated():
+                self.send_response(401)
+                self.send_header('Content-Type', 'application/json')
+                self.send_cors_headers(origin)
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": "Unauthorized: valid auth token required"}).encode())
+                return
+
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_cors_headers(origin)
             self.end_headers()
 
             def run_sync():
@@ -43,10 +88,16 @@ class SyncHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
 
     def do_GET(self):
+        origin = self.get_validated_origin()
+        if origin is False:
+            self.send_response(403)
+            self.end_headers()
+            return
+
         if self.path == '/status':
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_cors_headers(origin)
             self.end_headers()
             self.wfile.write(json.dumps({"status": "running", "message": "Sync server is running"}).encode())
         else:
@@ -58,6 +109,6 @@ class SyncHandler(http.server.BaseHTTPRequestHandler):
 
 if __name__ == '__main__':
     with http.server.HTTPServer(('localhost', PORT), SyncHandler) as httpd:
-        print(f"[SyncServer] Pokémon Sleep Sync Server running on http://localhost:{PORT}")
+        print(f"[SyncServer] Pokemon Sleep Sync Server running on http://localhost:{PORT}")
         print(f"[SyncServer] Keep this window open and click the Sync button in the webapp.")
         httpd.serve_forever()

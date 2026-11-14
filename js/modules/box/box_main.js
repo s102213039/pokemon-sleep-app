@@ -1,17 +1,8 @@
   /* ─── 多語言輔助函式 (zh-TW / zh-CN / en-US) ───────────────────── */
   function _tBox(zhTw, en) {
-    const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function')
-      ? window.I18N.getLanguage()
-      : 'zh-TW';
-    if (lang === 'en-US') {
-      return (en !== undefined) ? en : zhTw;
-    }
-    if (lang === 'zh-CN') {
-      if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function') {
-        return window.I18N.toSimplified(zhTw);
-      }
-      return zhTw;
-    }
+    const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
+    if (lang === 'en-US') return (en !== undefined) ? en : zhTw;
+    if (lang === 'zh-CN' && typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function') return window.I18N.toSimplified(zhTw);
     return zhTw;
   }
 
@@ -292,6 +283,9 @@
     if (typeof raw.specialty === 'string') clean.specialty = raw.specialty.slice(0, 20);
     if (typeof raw.type === 'string') clean.type = raw.type.slice(0, 20);
     if (typeof raw.main_skill === 'string') clean.main_skill = raw.main_skill.slice(0, 40);
+    if (raw.is_final !== undefined || raw.isFinal !== undefined) {
+      clean.is_final = Boolean(raw.is_final !== undefined ? raw.is_final : raw.isFinal);
+    }
 
     return clean;
   }
@@ -877,7 +871,13 @@
       upsertImportedPokemonToBox,
       makePokemonFingerprint: (typeof makePokemonFingerprint === 'function') ? makePokemonFingerprint : (typeof window !== 'undefined' && window.makePokemonFingerprint ? window.makePokemonFingerprint : null),
       getUserBox: () => userBox,
-      setUserBox: (box, skipCloudPush = false) => { userBox = box; saveUserBox(skipCloudPush); renderBox(); },
+      setUserBox: (box, skipCloudPush = false) => {
+        const sanitized = Array.isArray(box) ? box.map(sanitizeImportedPokemon).filter(Boolean) : [];
+        userBox = sanitized;
+        saveUserBox(skipCloudPush);
+        renderBox();
+      },
+      sanitizeImportedPokemon: sanitizeImportedPokemon,
       renderBox: renderBox,
       syncBoxVisibility,
       setBoxUserForcedGuideVisible: (v) => { boxUserForcedGuideVisible = v; },
@@ -940,7 +940,10 @@
       upsertImportedPokemonToBox,
       makePokemonFingerprint: (typeof makePokemonFingerprint === 'function') ? makePokemonFingerprint : null,
       getUserBox: () => userBox,
-      setUserBox: (box) => { userBox = Array.isArray(box) ? box : []; },
+      setUserBox: (box) => {
+        userBox = Array.isArray(box) ? box.map(sanitizeImportedPokemon).filter(Boolean) : [];
+      },
+      sanitizeImportedPokemon: sanitizeImportedPokemon,
       renderBox: renderBox,
       syncBoxVisibility,
       setBoxUserForcedGuideVisible: (v) => { boxUserForcedGuideVisible = v; },

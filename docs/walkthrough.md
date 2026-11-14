@@ -2900,3 +2900,27 @@
   - 更新 `tests/tiers/tier1_coverage.js` 驗證 20 項食材基礎能量與 19 項已實裝食材產量天梯一致性。
   - `npm run build`：建置 17 份壓縮產物成功（exit 0）。
   - `npm test`：全量 4 Tiers **288 / 288 Passed**（0 Failed）。
+
+---
+
+### [2026-11-14] 模型協同階層升級：確立 Hydrogen 為第一主力模型與 Gemini 3.8 Flash 為第二主力模型
+
+#### 1. 雙模型異質協作階層確立
+- **第一主力模型 (Primary Model): Hydrogen**
+  - 定位：頂層編排者與總架構師 (Tier 0 Top Orchestrator / Architect)。
+  - 職責：負責全域需求分析、系統架構規劃、任務分解、介面契約定義、互斥寫入邊界鎖定、核心演算法撰寫與發布審查。
+- **第二主力模型 (Secondary Model): Gemini 3.8 Flash**
+  - 定位：委派實作工兵與快速探索者 (Tier 1-2 Delegated Execution Worker / Fast Parallel Explorer)。
+  - 職責：負責高速檔案探索、規格盤點、樣板代碼生成、非核心業務邏輯編寫、單元測試編寫與極速測試回饋。
+
+#### 2. 協作流轉與喚醒機制
+- 主 Agent（Hydrogen）建立任務契約並劃定互斥邊界後，透過原生調度發起：
+  `invoke_subagent(TypeName: "self", Role: "Code Implementation Worker", Model: "flash", Prompt: "...")`
+- 子 Agent（Gemini 3.8 Flash）完成執行後，透過系統事件（Reactive Wakeup）自動喚醒 Hydrogen。
+- Hydrogen 執行跨模組差異比對、測試回歸驗收與 Git Commit / Push 發布。
+
+#### 3. 文件落盤同步
+- `~/.gemini/agent-docs/PROTOCOL.md`：第十二條更新為以 Hydrogen 為第一主力編排模型，Gemini 3.8 Flash 為第二主力執行模型。
+- `~/.gemini/agent-docs/HETERO_MODEL_HARNESS.md`：更新支援模型池、Tier 0 與 Tier 1/2 推薦模型配置與流程拓撲圖。
+- `~/.gemini/AGENTS.md` 與 `~/.gemini/GEMINI.md`：第十三條規範更新為 Hydrogen 與 Gemini 3.8 Flash 階層協作。
+- `PROJECT.md`：新增 Multi-Agent Model Configuration 規格區塊。
