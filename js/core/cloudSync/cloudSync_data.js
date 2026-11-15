@@ -41,38 +41,7 @@
   let lastToastSignature = '';
   let lastToastTime = 0;
 
-  /* ─── 記住帳號管理 (密碼永不持久化儲存) ─────────────────────── */
-  function getRememberedAuth() {
-    try {
-      if (typeof localStorage !== 'undefined') {
-        const raw = localStorage.getItem(STORAGE_KEY_REMEMBER);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (parsed && typeof parsed.account === 'string') {
-            // 安全防護：即便舊版資料存有密碼，亦強制抹除不對外輸出
-            delete parsed.password;
-            return { account: parsed.account };
-          }
-        }
-      }
-    } catch (e) {}
-    return null;
-  }
-
-  function saveRememberedAuth(account, password, remember) {
-    try {
-      if (typeof localStorage !== 'undefined') {
-        if (remember) {
-          // 安全防護：僅持久化儲存帳號，絕不寫入密碼明文
-          localStorage.setItem(STORAGE_KEY_REMEMBER, JSON.stringify({
-            account: (account || '').trim()
-          }));
-        } else {
-          localStorage.removeItem(STORAGE_KEY_REMEMBER);
-        }
-      }
-    } catch (e) {}
-  }
+  /* ─── 記住帳號與混合加密信封管理 (由 cloudSync_crypto.js 提供實作) ─── */
 
   /* ─── 雲端倉庫資料防護與無害化 (Sanitize Remote Box) ──────────── */
   function sanitizeRemoteBox(box) {

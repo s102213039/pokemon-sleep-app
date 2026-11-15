@@ -5,6 +5,24 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-15 已完成（軍規級混合信封加密金庫實裝、帳號密碼安全預填與全面回歸驗證）
+
+- 測試狀態：
+  - 全量回歸 npm test：288 / 288 PASS（npm run test:fast 166 / 166 PASS）。
+  - 安全審查測試：tests/test_security_audit.js 10 / 10 PASS（含混淆、竄改防護與非同步 WebCrypto 驗證）。
+- 核心交付內容：
+  1. 軍規級混合信封加密金庫架構 (Hybrid RSA-OAEP-2048 + AES-256-GCM + PBKDF2-HMAC-SHA256)：
+     - 實作於 js/core/cloudSync/cloudSync_crypto.js：
+       - Layer 1 (密鑰衍生與混淆)：PBKDF2-HMAC-SHA256（100,000 次疊代、128-bit Salt、專屬 Pepper）衍生 256-bit 混淆遮罩，與隨機 DEK 進行異或合成。
+       - Layer 2 (認證加密與防竄改)：AES-256-GCM 認證加密，包含 96-bit 隨機 IV、128-bit AuthTag，並以規範化帳號名稱作為 AAD (Additional Authenticated Data) 綁定。
+       - Layer 3 (非對稱封裝與金鑰硬體隔離)：RSA-OAEP-2048（SHA-256 雜湊）封裝隨機 DEK。在瀏覽器端使用 WebCrypto SubtleCrypto 生成 extractable: false 的金鑰對並持久化於 IndexedDB（PKMSLEEP_CRYPTO_VAULT_V1），杜絕第三方腳本或 XSS 匯出私鑰。
+  2. 介面安全預填與金庫匯出 (js/core/cloudSync/cloudSync_ui.js)：
+     - switchAuthView(mode) 於 signin 模式下讀取記住帳號，並透過 decryptRememberedPassword() 與 getRememberedAuthAsync() 自動解密預填密碼。
+     - 登入 (signInBtn) 與註冊 (signUpBtn) 成功後，將密碼傳入 saveRememberedAuth 進行信封加密持久化，永不留存明文密碼。
+     - 完整匯出金庫函式：getRememberedAuthAsync, decryptRememberedPassword, encryptCredentialEnvelope, decryptCredentialEnvelope, encryptCredentialEnvelopeAsync, decryptCredentialEnvelopeAsync, CRYPTO_SUITE_ID。
+  3. 安全審查回歸測試集擴充 (tests/test_security_audit.js)：
+     - Section 3 保留所有既有斷言，並新增 cipherEnvelope 結構驗證、解密一致性驗證、密文與標籤竄改拒絕測試、AAD 帳號不匹配防護測試及非同步 WebCrypto API 驗證。
+
 ## 交接：2026-11-14 已完成（徹底清除一口堅果 Service Worker 舊快取污染、側邊欄本地圖片映射與確認 3 道新料理配方數量，並建立下週一自動查詢新料理中文名稱排程）
 
 - **根因排查與修復（一口堅果顯示舊咖啡豆圖示問題）**：

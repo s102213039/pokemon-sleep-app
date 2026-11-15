@@ -23,10 +23,13 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 let total = 0;
 let passed = 0;
 
-function check(name, fn) {
+async function check(name, fn) {
   total++;
   try {
-    fn();
+    const res = fn();
+    if (res && typeof res.then === 'function') {
+      await res;
+    }
     passed++;
     console.log(`  [PASS] ${name}`);
   } catch (err) {
@@ -37,22 +40,15 @@ function check(name, fn) {
 }
 
 async function checkAsync(name, fn) {
-  total++;
-  try {
-    await fn();
-    passed++;
-    console.log(`  [PASS] ${name}`);
-  } catch (err) {
-    console.error(`  [FAIL] ${name}`);
-    console.error(err);
-    process.exit(1);
-  }
+  return check(name, fn);
 }
+
+(async () => {
 
 // ---------------------------------------------------------------------------
 // 1. Content Security Policy (CSP) Verification
 // ---------------------------------------------------------------------------
-check('CSP: index.html and app/index.html contain worker-src and exclude unused cdnjs', () => {
+await check('CSP: index.html and app/index.html contain worker-src and exclude unused cdnjs', () => {
   const indexHtml = fs.readFileSync(path.join(ROOT_DIR, 'index.html'), 'utf8');
   const appIndexHtml = fs.readFileSync(path.join(ROOT_DIR, 'app', 'index.html'), 'utf8');
 
@@ -71,7 +67,7 @@ check('CSP: index.html and app/index.html contain worker-src and exclude unused 
 // ---------------------------------------------------------------------------
 // 2. Reverse Tabnabbing Hardening (target="_blank" requires rel="noopener noreferrer")
 // ---------------------------------------------------------------------------
-check('Tabnabbing: All external target="_blank" links contain rel="noopener noreferrer"', () => {
+await check('Tabnabbing: All external target="_blank" links contain rel="noopener noreferrer"', () => {
   const filesToCheck = [
     'index.html',
     'app/index.html',
@@ -105,7 +101,7 @@ check('Tabnabbing: All external target="_blank" links contain rel="noopener nore
 // ---------------------------------------------------------------------------
 // 3. Credential Protection: Plaintext Password Removal from LocalStorage
 // ---------------------------------------------------------------------------
-check('Credentials: saveRememberedAuth never stores passwords and getRememberedAuth strips password', () => {
+await check('Credentials: saveRememberedAuth never stores passwords and getRememberedAuth strips password', async () => {
   const mockStorage = {};
   global.localStorage = {
     getItem: (k) => (Object.prototype.hasOwnProperty.call(mockStorage, k) ? mockStorage[k] : null),
@@ -117,7 +113,7 @@ check('Credentials: saveRememberedAuth never stores passwords and getRememberedA
   const cloudSync = require(path.join(ROOT_DIR, 'js', 'core', 'cloudSync.js'));
   assert(cloudSync && typeof cloudSync.saveRememberedAuth === 'function', 'CloudSync must export saveRememberedAuth');
 
-  // 1. Verify saving credentials does NOT write password
+  // 1. Verify saving credentials does NOT write password in plaintext
   cloudSync.saveRememberedAuth('testPlayer_123', 'SecretPassword987!', true);
   const rawStored = global.localStorage.getItem('PKMSLEEP_REMEMBER_AUTH_V1');
   assert(rawStored, 'Stored remembered auth payload must exist');
@@ -126,6 +122,67 @@ check('Credentials: saveRememberedAuth never stores passwords and getRememberedA
   const parsed = JSON.parse(rawStored);
   assert.strictEqual(parsed.account, 'testPlayer_123', 'Account name must be retained');
   assert.strictEqual(parsed.password, undefined, 'Password field must not exist in stored JSON');
+
+  // Verify Hybrid RSA-OAEP-2048 + AES-256-GCM + PBKDF2-SHA256 envelope structure
+  assert(parsed.cipherEnvelope && typeof parsed.cipherEnvelope === 'object', 'cipherEnvelope must be an object');
+  assert.strictEqual(parsed.cipherEnvelope.alg, 'RSA-OAEP-2048+AES-256-GCM+PBKDF2-SHA256', 'alg must match CRYPTO_SUITE_ID');
+  assert.strictEqual(parsed.cipherEnvelope.v, 2, 'Version must be 2');
+  assert.strictEqual(parsed.cipherEnvelope.rsaBits, 2048, 'RSA bits must be 2048');
+  assert.strictEqual(parsed.cipherEnvelope.aesBits, 256, 'AES bits must be 256');
+  assert.strictEqual(parsed.cipherEnvelope.kdfIterations, 100000, 'PBKDF2 iterations must be 100000');
+  assert(typeof parsed.cipherEnvelope.wrappedDek === 'string' && parsed.cipherEnvelope.wrappedDek.length > 0, 'wrappedDek must be non-empty string');
+  assert(typeof parsed.cipherEnvelope.iv === 'string' && parsed.cipherEnvelope.iv.length > 0, 'iv must be non-empty string');
+  assert(typeof parsed.cipherEnvelope.salt === 'string' && parsed.cipherEnvelope.salt.length > 0, 'salt must be non-empty string');
+  assert(typeof parsed.cipherEnvelope.tag === 'string' && parsed.cipherEnvelope.tag.length > 0, 'tag must be non-empty string');
+  assert(typeof parsed.cipherEnvelope.ciphertext === 'string' && parsed.cipherEnvelope.ciphertext.length > 0, 'ciphertext must be non-empty string');
+
+  // Verify decryptRememberedPassword
+  const decryptedSync = cloudSync.decryptRememberedPassword();
+  assert.strictEqual(decryptedSync, 'SecretPassword987!', 'decryptRememberedPassword must return original plaintext password');
+
+  // Verify tamper detection on cloudSync.decryptCredentialEnvelope
+  // 1. Mutate ciphertext
+  const tamperedCipher = {
+    ...parsed.cipherEnvelope,
+    ciphertext: parsed.cipherEnvelope.ciphertext[0] === 'A' ? 'B' + parsed.cipherEnvelope.ciphertext.slice(1) : 'A' + parsed.cipherEnvelope.ciphertext.slice(1)
+  };
+  assert.strictEqual(cloudSync.decryptCredentialEnvelope(tamperedCipher, 'testPlayer_123'), null, 'Tampered ciphertext must fail decryption');
+
+  // 2. Mutate tag
+  const tamperedTag = {
+    ...parsed.cipherEnvelope,
+    tag: parsed.cipherEnvelope.tag[0] === 'A' ? 'B' + parsed.cipherEnvelope.tag.slice(1) : 'A' + parsed.cipherEnvelope.tag.slice(1)
+  };
+  assert.strictEqual(cloudSync.decryptCredentialEnvelope(tamperedTag, 'testPlayer_123'), null, 'Tampered auth tag must fail decryption');
+
+  // 3. Mutate wrappedDek
+  const tamperedDek = {
+    ...parsed.cipherEnvelope,
+    wrappedDek: parsed.cipherEnvelope.wrappedDek[0] === 'A' ? 'B' + parsed.cipherEnvelope.wrappedDek.slice(1) : 'A' + parsed.cipherEnvelope.wrappedDek.slice(1)
+  };
+  assert.strictEqual(cloudSync.decryptCredentialEnvelope(tamperedDek, 'testPlayer_123'), null, 'Tampered wrappedDek must fail decryption');
+
+  // 4. Calling with wrong account (AAD & PBKDF2 mismatch)
+  assert.strictEqual(cloudSync.decryptCredentialEnvelope(parsed.cipherEnvelope, 'wrongAccount_999'), null, 'Mismatched account AAD must fail decryption');
+
+  // Verify Async WebCrypto envelope encryption and decryption
+  const asyncEnv = await cloudSync.encryptCredentialEnvelopeAsync('asyncUser_01', 'AsyncVaultPass#2026');
+  assert(asyncEnv && typeof asyncEnv === 'object', 'encryptCredentialEnvelopeAsync must return an envelope');
+  assert.strictEqual(asyncEnv.alg, 'RSA-OAEP-2048+AES-256-GCM+PBKDF2-SHA256', 'Async alg must match');
+  assert.strictEqual(asyncEnv.v, 2, 'Async v must be 2');
+  assert.strictEqual(asyncEnv.rsaBits, 2048, 'Async rsaBits must be 2048');
+  assert.strictEqual(asyncEnv.aesBits, 256, 'Async aesBits must be 256');
+  assert(typeof asyncEnv.wrappedDek === 'string' && asyncEnv.wrappedDek.length > 0, 'Async wrappedDek must be non-empty');
+  assert(typeof asyncEnv.iv === 'string' && asyncEnv.iv.length > 0, 'Async iv must be non-empty');
+  assert(typeof asyncEnv.salt === 'string' && asyncEnv.salt.length > 0, 'Async salt must be non-empty');
+  assert(typeof asyncEnv.tag === 'string' && asyncEnv.tag.length > 0, 'Async tag must be non-empty');
+  assert(typeof asyncEnv.ciphertext === 'string' && asyncEnv.ciphertext.length > 0, 'Async ciphertext must be non-empty');
+
+  const decryptedAsync = await cloudSync.decryptCredentialEnvelopeAsync(asyncEnv, 'asyncUser_01');
+  assert.strictEqual(decryptedAsync, 'AsyncVaultPass#2026', 'decryptCredentialEnvelopeAsync must decrypt async envelope');
+
+  const wrongUserAsync = await cloudSync.decryptCredentialEnvelopeAsync(asyncEnv, 'wrongUser_02');
+  assert.strictEqual(wrongUserAsync, null, 'decryptCredentialEnvelopeAsync with wrong account must return null');
 
   // 2. Verify reading legacy data strips any existing password
   global.localStorage.setItem('PKMSLEEP_REMEMBER_AUTH_V1', JSON.stringify({
@@ -146,7 +203,7 @@ check('Credentials: saveRememberedAuth never stores passwords and getRememberedA
 // ---------------------------------------------------------------------------
 // 4. Remote Data Sanitization and Prototype Pollution Defense
 // ---------------------------------------------------------------------------
-check('Sanitization: sanitizeImportedPokemon rejects prototype pollution and normalizes fields', () => {
+await check('Sanitization: sanitizeImportedPokemon rejects prototype pollution and normalizes fields', () => {
   const boxApp = require(path.join(ROOT_DIR, 'js', 'modules', 'box.js'));
   assert(typeof boxApp.sanitizeImportedPokemon === 'function', 'sanitizeImportedPokemon must be exported on PokemonBoxApp');
   const sanitize = boxApp.sanitizeImportedPokemon;
@@ -185,7 +242,7 @@ check('Sanitization: sanitizeImportedPokemon rejects prototype pollution and nor
 // ---------------------------------------------------------------------------
 // 5. Service Worker Path Traversal Rejection & Origin Isolation
 // ---------------------------------------------------------------------------
-check('Service Worker: mapSerebiiToLocalRelPath rejects path traversal and enforces origin rules', () => {
+await check('Service Worker: mapSerebiiToLocalRelPath rejects path traversal and enforces origin rules', () => {
   const swCode = fs.readFileSync(path.join(ROOT_DIR, 'sw.js'), 'utf8');
 
   // Create isolated sandbox to test sw helper functions
@@ -238,7 +295,7 @@ check('Service Worker: mapSerebiiToLocalRelPath rejects path traversal and enfor
 // ---------------------------------------------------------------------------
 // 6. CI/CD Workflow Script Injection Mitigation
 // ---------------------------------------------------------------------------
-check('CI/CD: update-data.yml uses $SYNC_TYPE environment variable instead of inline interpolation', () => {
+await check('CI/CD: update-data.yml uses $SYNC_TYPE environment variable instead of inline interpolation', () => {
   const workflowContent = fs.readFileSync(path.join(ROOT_DIR, '.github', 'workflows', 'update-data.yml'), 'utf8');
 
   // Look for dangerous inline expressions inside run: blocks
@@ -263,7 +320,7 @@ check('CI/CD: update-data.yml uses $SYNC_TYPE environment variable instead of in
 // ---------------------------------------------------------------------------
 // 7. Localhost Sync Server Security Hardening
 // ---------------------------------------------------------------------------
-check('Sync Server: sync_server.py validates Origin header and enforces token authentication', () => {
+await check('Sync Server: sync_server.py validates Origin header and enforces token authentication', () => {
   const serverCode = fs.readFileSync(path.join(ROOT_DIR, 'scripts', 'sync_server.py'), 'utf8');
 
   assert(!serverCode.includes("Access-Control-Allow-Origin', '*'"), 'Wildcard Access-Control-Allow-Origin must be eliminated');
@@ -276,7 +333,7 @@ check('Sync Server: sync_server.py validates Origin header and enforces token au
 // ---------------------------------------------------------------------------
 // 8. Python Scripts Timeout Verification
 // ---------------------------------------------------------------------------
-check('Network Timeouts: build_webapp_data.py and build_recipes.py include timeout=30', () => {
+await check('Network Timeouts: build_webapp_data.py and build_recipes.py include timeout=30', () => {
   const dataScript = fs.readFileSync(path.join(ROOT_DIR, 'scripts', 'build_webapp_data.py'), 'utf8');
   assert(dataScript.includes('urlopen(url, timeout=30)'), 'build_webapp_data.py must specify timeout=30 in urlopen');
 
@@ -288,7 +345,7 @@ check('Network Timeouts: build_webapp_data.py and build_recipes.py include timeo
 // ---------------------------------------------------------------------------
 // 9. Agent Safety Scripts & Documentation Zero-Glyph Policy Verification
 // ---------------------------------------------------------------------------
-check('Agent Safety: sync-brain.sh validates UUID and project boundaries, zero emojis in agent-docs', () => {
+await check('Agent Safety: sync-brain.sh validates UUID and project boundaries, zero emojis in agent-docs', () => {
   const syncBrainCode = fs.readFileSync(path.join(process.env.HOME, '.gemini', 'agent-docs', 'scripts', 'sync-brain.sh'), 'utf8');
 
   assert(syncBrainCode.includes('UUID_PATTERN'), 'sync-brain.sh must define UUID regex pattern');
@@ -304,7 +361,7 @@ check('Agent Safety: sync-brain.sh validates UUID and project boundaries, zero e
 // ---------------------------------------------------------------------------
 // 10. Model Collaboration Documentation Hierarchy
 // ---------------------------------------------------------------------------
-check('Model Collaboration: Hydrogen established as Tier 0 Primary and Gemini 3.8 Flash as Tier 1-2 Secondary', () => {
+await check('Model Collaboration: Hydrogen established as Tier 0 Primary and Gemini 3.8 Flash as Tier 1-2 Secondary', () => {
   const protocol = fs.readFileSync(path.join(process.env.HOME, '.gemini', 'agent-docs', 'PROTOCOL.md'), 'utf8');
   assert(protocol.includes('Hydrogen'), 'PROTOCOL.md must establish Hydrogen as primary model');
   assert(protocol.includes('Gemini 3.8 Flash'), 'PROTOCOL.md must establish Gemini 3.8 Flash as secondary model');
@@ -326,6 +383,10 @@ check('Model Collaboration: Hydrogen established as Tier 0 Primary and Gemini 3.
   assert(projectMd.includes('Secondary Model: Gemini 3.8 Flash'), 'PROJECT.md must document Gemini 3.8 Flash as secondary model');
 });
 
-console.log(`\n======================================================`);
-console.log(`Security Audit Test Results: ${passed} / ${total} Passed (0 Failed)`);
-console.log(`======================================================\n`);
+  console.log(`\n======================================================`);
+  console.log(`Security Audit Test Results: ${passed} / ${total} Passed (0 Failed)`);
+  console.log(`======================================================\n`);
+})().catch(err => {
+  console.error(err);
+  process.exit(1);
+});

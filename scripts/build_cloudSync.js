@@ -14,6 +14,7 @@ const OUTPUT_FILE = path.join(ROOT_DIR, 'js', 'core', 'cloudSync.js');
 
 const CLOUDSYNC_MODULES = [
   'cloudSync_data.js',
+  'cloudSync_crypto.js',
   'cloudSync_ui.js'
 ];
 

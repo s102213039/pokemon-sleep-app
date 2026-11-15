@@ -52,6 +52,7 @@ The project strictly operates under a two-tier heterogeneous multi-agent collabo
 | 23 | External Link Tabnabbing Hardening | Add `rel="noopener noreferrer"` to external `target="_blank"` links across HTML and JS files | M5 | Security Survey |
 | 24 | Agent Safety Script Hardening & Emoji Cleanse | Sanitize path traversal in `sync-brain.sh`, remove unescaped glyphs, remove emojis from `agent-docs/README.md` | M5 | Security Survey |
 | 25 | Model Collaboration Documentation Hierarchy Update | Update `PROTOCOL.md`, `HETERO_MODEL_HARNESS.md`, `walkthrough.md`, `AGENTS.md`, `GEMINI.md` to designate Hydrogen (primary) and Gemini 3.8 Flash (secondary) | M5 | Security Survey |
+| 26 | Hybrid RSA-OAEP + AES-256-GCM Credential Vault | Multi-layer hybrid envelope encryption (RSA-OAEP-2048, AES-256-GCM, PBKDF2-HMAC-SHA256, WebCrypto IndexedDB non-extractable keys) for remembered cloud sync credentials in js/core/cloudSync/cloudSync_crypto.js | M6 | Security Remediation |
 
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
@@ -61,6 +62,7 @@ The project strictly operates under a two-tier heterogeneous multi-agent collabo
 | M3 | Anti-Regression, Bundle Sync & Verification | Synchronize production bundles (`npm run build:prod`), synchronize test invariants, ensure 100% passing tests on fast and full suites | M2 | DONE |
 | M4 | Final Milestone: E2E Test Suite Pass & Adversarial Hardening | Pass 100% E2E test suite (Tiers 1-4), adversarial test hardening (Tier 5) | M3 | DONE |
 | M5 | Security Remediation & Model Collaboration Hierarchy Update | Implement security hardening patches (Features 17-24), update agent and repo documentation for Hydrogen/Flash hierarchy (Feature 25), verify 100% tests and zero emojis/glyphs | M4 | DONE |
+| M6 | Hybrid Cryptographic Credential Vault Architecture | Modularize CloudSync crypto engine (cloudSync_crypto.js), implement RSA-OAEP-2048 + AES-256-GCM + PBKDF2 envelope encryption, update cloudSync_ui.js prefill and exports, add comprehensive regression tests in test_security_audit.js | M5 | DONE |
 
 ## Interface Contracts
 
@@ -89,6 +91,7 @@ The project strictly operates under a two-tier heterogeneous multi-agent collabo
 - `scripts/`: Data fetching, synchronization, and manifest scripts (`sync_manager.js`, `sync_data.py`, `build_recipes.py`, `build_news.py`, `generate_manifest.py`, `format_data.js`, `minify_data.js`, `build_prod.js`).
 - `data/`: Master JSON databases (`data.json`, `recipes.json`, `items.json`, `news.json`, `sleep_styles.json`, `ladder_lv60.json`, `manifest.json`).
 - `js/data/`: Mirrored CommonJS datasets (`items.js`, `ladder_data.js`).
-- `js/core/`: Common utilities and i18n (`domUtils.js`, `DataCacheManager.js`, `i18n/i18n_core.js`, `i18n/i18n_entities.js`).
+- `js/core/`: Common utilities and i18n (`domUtils.js`, `DataCacheManager.js`, `i18n/i18n_core.js`, `i18n/i18n_entities.js`, `cloudSync.js`).
+  - `cloudSync/`: Modular CloudSync engine (`cloudSync_data.js`, `cloudSync_crypto.js`, `cloudSync_ui.js`) implementing Hybrid RSA-OAEP-2048 + AES-256-GCM + PBKDF2-HMAC-SHA256 Credential Vault and Supabase Realtime synchronization.
 - `js/modules/`: Application view controllers (`pokedex/`, `recipes/`, `wiki/`, `lab/`, `camps/`).
 - `tests/`: Automated test suite (`run_tests.js`, `tiers/tier1_coverage.js`, `tiers/tier2_boundary.js`, `tiers/tier3_combinations.js`, `tiers/tier4/*.js`, `e2e_sync_and_multitab.js`).

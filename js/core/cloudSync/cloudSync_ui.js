@@ -268,12 +268,23 @@
       if (signinView) signinView.style.display = 'block';
       if (signupView) signupView.style.display = 'none';
 
-      // 檢查是否有儲存的帳號 (安全防護：密碼絕不儲存亦不預填)
+      // 檢查是否有儲存的帳號與混合加密信封金庫
       const remembered = getRememberedAuth();
-      const signinUser = document.getElementById('cloud-auth-username');
+      const usernameInput = document.getElementById('cloud-auth-username');
+      const passwordInput = document.getElementById('cloud-auth-password');
       const rememberCheck = document.getElementById('cloud-auth-remember-check');
+      const signinUser = usernameInput;
       if (remembered) {
-        if (signinUser && !signinUser.value) signinUser.value = remembered.account || '';
+        if (usernameInput) usernameInput.value = remembered.account || '';
+        if (passwordInput) {
+          const syncPwd = decryptRememberedPassword();
+          if (syncPwd) passwordInput.value = syncPwd;
+          getRememberedAuthAsync().then(res => {
+            if (res && res.password && passwordInput && !passwordInput.value) {
+              passwordInput.value = res.password;
+            }
+          }).catch(() => {});
+        }
         if (rememberCheck) rememberCheck.checked = true;
       }
       if (signinUser && typeof signinUser.focus === 'function') signinUser.focus();
@@ -550,7 +561,7 @@
         signInBtn.textContent = '登入帳號';
 
         if (res.success) {
-          saveRememberedAuth(account, '', isRemember);
+          saveRememberedAuth(account, pwd, isRemember);
           // 立即關閉視窗與遮罩，直接進入主頁面，絕不展示任何確認框或過渡畫面
           closeAuthModal();
           dismissBoxAuthOverlay();
@@ -590,7 +601,7 @@
         signUpBtn.textContent = '立即建立帳號';
 
         if (res.success) {
-          saveRememberedAuth(account, '', true);
+          saveRememberedAuth(account, pwd, true);
           // 立即關閉視窗與遮罩，直接進入主頁面
           closeAuthModal();
           dismissBoxAuthOverlay();
@@ -677,6 +688,13 @@
     dismissBoxAuthOverlay,
     getRememberedAuth,
     saveRememberedAuth,
+    getRememberedAuthAsync,
+    decryptRememberedPassword,
+    encryptCredentialEnvelope,
+    decryptCredentialEnvelope,
+    encryptCredentialEnvelopeAsync,
+    decryptCredentialEnvelopeAsync,
+    CRYPTO_SUITE_ID,
     showToast,
     onRemoteUpdate,
     onAuthStateChange,
