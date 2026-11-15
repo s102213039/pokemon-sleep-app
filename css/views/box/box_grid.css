@@ -147,6 +147,73 @@
   display: none !important;
 }
 
+/* ─── PR 評分標籤與快速快選標籤樣式 (PR Potential Badge & Quick Filters) ─── */
+.box-pr-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 7px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.box-shiny-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.45);
+  color: #fbbf24;
+  line-height: 1.3;
+}
+
+.box-quick-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0 10px 0;
+  margin: 0;
+  width: 100%;
+}
+
+.box-quick-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--bg-card, rgba(30, 41, 59, 0.7));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  color: var(--text-secondary, #94a3b8);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.box-quick-chip:hover {
+  background: var(--bg-card-hover, rgba(51, 65, 85, 0.85));
+  color: var(--text-primary, #f8fafc);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.box-quick-chip.active {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: #38bdf8;
+  color: #38bdf8;
+  font-weight: 700;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.25);
+}
+
 /* 副技能插槽外框樣式統一 (所有插槽均使用一致的實線邊框與背景) */
 #pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased,
 .box-subskill-slot-btn.slot-unreleased {

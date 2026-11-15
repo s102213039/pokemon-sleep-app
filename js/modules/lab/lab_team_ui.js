@@ -1,3 +1,74 @@
+  function setPotSize(size) {
+    const val = parseInt(size, 10);
+    if (!isNaN(val)) {
+      labState.potSize = Math.max(15, Math.min(100, val));
+      if (typeof updateLabUI === 'function') updateLabUI();
+    }
+  }
+
+  function stepPotSize(delta) {
+    const cur = labState.potSize || 57;
+    const next = Math.max(15, Math.min(100, cur + delta));
+    labState.potSize = next;
+    if (typeof updateLabUI === 'function') updateLabUI();
+  }
+
+  function toggleSundayPotExpansion() {
+    labState.sundayPotExpansion = !labState.sundayPotExpansion;
+    if (typeof updateLabUI === 'function') updateLabUI();
+  }
+
+  function toggleGoodCampTicket() {
+    labState.goodCampTicket = !labState.goodCampTicket;
+    if (typeof updateLabUI === 'function') updateLabUI();
+  }
+
+  if (typeof window !== 'undefined') {
+    window.setPotSize = setPotSize;
+    window.stepPotSize = stepPotSize;
+    window.toggleSundayPotExpansion = toggleSundayPotExpansion;
+    window.toggleGoodCampTicket = toggleGoodCampTicket;
+
+    let _appraisalLabRef = window.AppraisalLab || {};
+    try {
+      Object.defineProperty(window, 'AppraisalLab', {
+        configurable: true,
+        enumerable: true,
+        get: function () {
+          return _appraisalLabRef;
+        },
+        set: function (newVal) {
+          _appraisalLabRef = newVal;
+          if (_appraisalLabRef && typeof _appraisalLabRef === 'object') {
+            _appraisalLabRef.setPotSize = setPotSize;
+            _appraisalLabRef.stepPotSize = stepPotSize;
+            _appraisalLabRef.toggleSundayPotExpansion = toggleSundayPotExpansion;
+            _appraisalLabRef.toggleGoodCampTicket = toggleGoodCampTicket;
+            if (typeof calculateProjectedSnorlaxRank === 'function') {
+              _appraisalLabRef.calculateProjectedSnorlaxRank = calculateProjectedSnorlaxRank;
+            }
+            if (typeof ISLAND_SNORLAX_THRESHOLDS !== 'undefined') {
+              _appraisalLabRef.ISLAND_SNORLAX_THRESHOLDS = ISLAND_SNORLAX_THRESHOLDS;
+            }
+          }
+        }
+      });
+    } catch (e) {}
+
+    if (_appraisalLabRef && typeof _appraisalLabRef === 'object') {
+      _appraisalLabRef.setPotSize = setPotSize;
+      _appraisalLabRef.stepPotSize = stepPotSize;
+      _appraisalLabRef.toggleSundayPotExpansion = toggleSundayPotExpansion;
+      _appraisalLabRef.toggleGoodCampTicket = toggleGoodCampTicket;
+      if (typeof calculateProjectedSnorlaxRank === 'function') {
+        _appraisalLabRef.calculateProjectedSnorlaxRank = calculateProjectedSnorlaxRank;
+      }
+      if (typeof ISLAND_SNORLAX_THRESHOLDS !== 'undefined') {
+        _appraisalLabRef.ISLAND_SNORLAX_THRESHOLDS = ISLAND_SNORLAX_THRESHOLDS;
+      }
+    }
+  }
+
   function renderGreengrassBerrySelect(idx, currentBerryName, isEN) {
     const optionsHtml = BERRY_VALUES_DATA.map(b => {
       const bDisp = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b.name) : b.name) : b.name;
@@ -84,6 +155,48 @@
       : (targetRecipe.category || '咖哩');
     const isTargetRecipeStrategy = labState.teamStrategy === 'recipe';
 
+    // ─── 料理鍋容量與加成 (Pot Size Controls & Modifiers) ─────────
+    labState.potSize = labState.potSize || 57;
+    labState.sundayPotExpansion = Boolean(labState.sundayPotExpansion);
+    labState.goodCampTicket = Boolean(labState.goodCampTicket);
+
+    const basePotSize = labState.potSize;
+    let potMultiplier = 1.0;
+    if (labState.goodCampTicket) potMultiplier *= 1.5;
+    if (labState.sundayPotExpansion) potMultiplier *= 2.0;
+    const effectivePotSize = Math.floor(basePotSize * potMultiplier);
+
+    const targetPotReq = (targetRecipe && targetRecipe.pot_size) || 0;
+    const isPotFeasible = targetPotReq > 0 ? (effectivePotSize >= targetPotReq) : true;
+    const potFeasibilityBadge = targetPotReq > 0
+      ? (isPotFeasible
+          ? `<span class="lab-pot-feasibility feasible">[OK] ${isEN ? 'Capacity OK' : '容量充裕'} (${targetPotReq}/${effectivePotSize})</span>`
+          : `<span class="lab-pot-feasibility deficit">[!] ${isEN ? 'Insufficient Pot' : '鍋容量不足'} (${targetPotReq}/${effectivePotSize})</span>`)
+      : '';
+
+    const potControlHtml = `
+      <div class="lab-team-config-group lab-pot-config-group">
+        <span class="lab-team-config-label">${isEN ? 'Pot Size:' : '鍋子容量:'}</span>
+        <div class="lab-pot-stepper-wrap">
+          <button type="button" class="lab-pot-step-btn" onclick="window.AppraisalLab.stepPotSize(-3)" title="${isEN ? 'Decrease Pot Size by 3' : '鍋容量 -3'}">-</button>
+          <span class="lab-pot-size-display" title="${isEN ? 'Base Pot Size: ' + basePotSize : '基礎鍋容量: ' + basePotSize}">${basePotSize}</span>
+          <button type="button" class="lab-pot-step-btn" onclick="window.AppraisalLab.stepPotSize(3)" title="${isEN ? 'Increase Pot Size by 3' : '鍋容量 +3'}">+</button>
+        </div>
+        <div class="lab-pot-modifiers">
+          <button type="button" class="lab-pot-toggle-btn ${labState.sundayPotExpansion ? 'active' : ''}" onclick="window.AppraisalLab.toggleSundayPotExpansion()" title="${isEN ? 'Sunday Pot Expansion: 2x Pot Capacity' : '週日特別擴鍋：料理鍋容量 2 倍'}">
+            ${isEN ? 'Sunday 2x' : '週日2倍'}
+          </button>
+          <button type="button" class="lab-pot-toggle-btn ${labState.goodCampTicket ? 'active' : ''}" onclick="window.AppraisalLab.toggleGoodCampTicket()" title="${isEN ? 'Good Camp Ticket: +50% Pot Capacity' : '好露營券：料理鍋容量 +50%'}">
+            ${isEN ? 'Good Camp (+50%)' : '好露營券(+50%)'}
+          </button>
+        </div>
+        <div class="lab-effective-pot-wrap">
+          <span class="lab-effective-pot-label">${isEN ? 'Effective:' : '實際容納:'} <strong class="lab-effective-pot-num">${effectivePotSize}</strong></span>
+          ${potFeasibilityBadge}
+        </div>
+      </div>
+    `;
+
     const teamVariablesBarHtml = `
       <div class="lab-team-config-col lab-team-config-panel">
         <div class="lab-team-config-group">
@@ -116,6 +229,8 @@
             </div>
           </div>
         `}
+
+        ${potControlHtml}
       </div>
     `;
 
@@ -399,7 +514,7 @@
       }).join('');
 
       const overallStatusBadge = targetAnalysis.isFullySatisfied
-        ? `<span class="lab-supply-overall-badge satisfied">[✓] ${isEN ? '100% Self-Sufficient' : '100% 達成 · 可完全自給自足'}</span>`
+        ? `<span class="lab-supply-overall-badge satisfied">[OK] ${isEN ? '100% Self-Sufficient' : '100% 達成 · 可完全自給自足'}</span>`
         : `<span class="lab-supply-overall-badge pending">${isEN ? `Overall: ${targetAnalysis.overallFulfillmentPct}%` : `全體達成率: ${targetAnalysis.overallFulfillmentPct}%`}</span>`;
 
       supplyDemandBoardHtml = `
@@ -466,11 +581,21 @@
         ${supplyDemandBoardHtml}
 
         <div class="lab-team-metrics-grid">
-          <div class="lab-metric-card">
-            <div style="font-size:11.5px;font-weight:700;color:var(--text-muted);">${isEN ? 'Estimated Daily Total Energy' : '預估每日能量總產出'}</div>
-            <div class="lab-metric-value">${simulation.totalDailyBerryEnergy.toLocaleString()} <span style="font-size:12px;font-weight:600;color:var(--text-muted);">${isEN ? 'pts/day' : '能量/日'}</span></div>
+          <div class="lab-metric-card lab-metric-headline-card">
+            <div class="lab-metric-headline-top" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px;">
+              <span class="lab-metric-title" style="font-size:11.5px;font-weight:700;color:var(--text-muted);">${isEN ? 'Estimated Daily Total Energy' : '預估每日能量總產出'}</span>
+              <span class="lab-projected-rank-badge" title="${isEN ? 'Estimated Sunday Snorlax Rank at 7x Daily Energy' : '依據每日產能 x7 預估週日卡比獸可達階級'}">
+                ${isEN ? 'Projected Sunday Snorlax Rank: ' : '預估週日卡比獸階級: '}<strong>${simulation.projectedSundayRank}</strong>
+              </span>
+            </div>
+            <div class="lab-metric-value">${simulation.totalDailyEnergy.toLocaleString()} <span style="font-size:12px;font-weight:600;color:var(--text-muted);">${isEN ? 'pts/day' : '能量/日'}</span></div>
+            <div class="lab-metric-breakdown-chips">
+              <span class="breakdown-chip chip-berry">${isEN ? 'Berry: ' : '樹果: '}${simulation.totalDailyBerryEnergy.toLocaleString()}</span>
+              <span class="breakdown-chip chip-cooking">${isEN ? 'Cooking (3 meals): ' : '料理 (3餐): '}${simulation.dailyCookingEnergy.toLocaleString()}</span>
+              <span class="breakdown-chip chip-skill">${isEN ? 'Skill: ' : '技能: '}${simulation.dailySkillEnergy.toLocaleString()}</span>
+            </div>
             <div class="lab-metric-sub">
-              ${isEN ? `Calculated based on ${island.name_en || island.name} 2x berry energy bonus, helping speed, and subskill multipliers.` : `依據【${island.name}】喜愛樹果 2 倍能量加成、幫手速度與副技能協同倍率精確計算。`}
+              ${isEN ? `Comprehensive simulation based on ${island.name_en || island.name} 2x berry power, 3-meal cooking synergy, and direct skill triggers.` : `依據【${island.name}】喜愛樹果加成、每日 3 餐料理產能與主技能發動綜合精算。`}
             </div>
           </div>
 

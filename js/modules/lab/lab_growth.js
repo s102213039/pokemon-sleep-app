@@ -213,9 +213,9 @@
     const skillDisp = isEN && window.I18N ? window.I18N.getMainSkillName(skillName) : skillName;
     const curSkillLv = parseInt(targetPkm.skillLevel || 1, 10) || 1;
 
-    // 大多數主技能上限為 Lv.6；能量填充S/M 與 活力加油 上限開放至 Lv.7
+    // 主技能上限判定：優先採用主技能等級上限查詢函式，支援 Lv.7 及 Lv.8
     const isLv7Skill = ['能量填充M', '能量填充S', '活力加油S', 'Charge Strength M', 'Charge Strength S', 'Energizing Cheer S'].some(s => skillName.includes(s));
-    const maxSkillLv = isLv7Skill ? 7 : 6;
+    const maxSkillLv = (typeof getMainSkillMaxLevel === 'function') ? getMainSkillMaxLevel(skillName) : (typeof window !== 'undefined' && typeof window.getMainSkillMaxLevel === 'function') ? window.getMainSkillMaxLevel(skillName) : (isLv7Skill ? 7 : 6);
     const seedsNeeded = Math.max(0, maxSkillLv - curSkillLv);
 
     const spec = basePkm.specialty || '樹果';
@@ -228,7 +228,7 @@
     const hasSkillBuff = nat && (nat.buffType === 'skill' || (nat.buff && (nat.buff.includes('主技能') || nat.buff.includes('Skill'))));
     const hasSkillDebuff = nat && (nat.debuffType === 'skill' || (nat.debuff && (nat.debuff.includes('主技能') || nat.debuff.includes('Skill'))));
 
-    const isHealer = ['活力療癒', '能量療癒', 'Energy for Everyone', 'Heal', '新月祈禱', '樹果汁', '治癒波動', '蹭蹭臉頰'].some(s => skillName.includes(s));
+    const isHealer = ['活力療癒', '活力全體療癒', '能量療癒', 'Energy for Everyone', 'Energizing Cheer', 'Heal', '新月祈禱', '樹果汁', '治癒波動', '蹭蹭臉頰'].some(s => skillName.includes(s));
     const isHighImpact = ['幫手加速', 'Helper Boost', '樹果遽增', 'Berry Burst', '料理大成功', '料理成功', 'Extra Tasty', '料理擴鍋', '料理強化', 'Cooking Power Up', '精神擊破', '畫皮', '流星群', '魔法火焰', '健美', '負電'].some(s => skillName.includes(s));
 
     let roiGrade = 'B';

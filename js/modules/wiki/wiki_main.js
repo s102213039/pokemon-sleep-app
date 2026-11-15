@@ -342,7 +342,7 @@
                                   : s.name.replace('技能機率提升', '機率提升');
                                 return `<span class="wiki-skill-badge skill-badge-${s.color}" style="white-space: nowrap;">${sName}</span>`;
                               }).join('') 
-                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`}
+                            : `<span class="text-muted font-bold" style="font-size: 13px;">-</span>`}
                         </div>
                       </td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
@@ -350,7 +350,7 @@
                           ? `<span class="matrix-rate-up">${isEN ? '▲ Up' : '▲ 上升'}</span>` 
                           : (row.natureBadge === 'down' 
                             ? `<span class="matrix-rate-down">${isEN ? '▼ Down' : '▼ 下降'}</span>` 
-                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`)}
+                            : `<span class="text-muted font-bold" style="font-size: 13px;" data-symbol="-">-</span>`)}
                       </td>
                       <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
@@ -423,7 +423,7 @@
                                 const sName = isEN ? (s.name_en || s.name) : s.name;
                                 return `<span class="wiki-skill-badge skill-badge-${s.color}" style="white-space: nowrap;">${sName}</span>`;
                               }).join('') 
-                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`}
+                            : `<span class="text-muted font-bold" style="font-size: 13px;">-</span>`}
                         </div>
                       </td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
@@ -431,7 +431,7 @@
                           ? `<span class="matrix-rate-up">${isEN ? '▲ Up' : '▲ 上升'}</span>` 
                           : (row.natureBadge === 'down' 
                             ? `<span class="matrix-rate-down">${isEN ? '▼ Down' : '▼ 下降'}</span>` 
-                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`)}
+                            : `<span class="text-muted font-bold" style="font-size: 13px;" data-symbol="-">-</span>`)}
                       </td>
                       <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">

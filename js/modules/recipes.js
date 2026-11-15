@@ -1,6 +1,6 @@
 /**
  * recipes.js — Pokémon Sleep 料理食譜大全
- * 功能：篩選、排序、等級滑桿、島嶼加成、活動加成、漂亮成功分數、localStorage 記憶
+ * 功能：篩選、排序、等級滑桿、島嶼加成、活動加成、漂亮成功分數、食材庫存反查、填鍋最佳化、localStorage 記憶
  */
 (function () {
   'use strict';
@@ -14,7 +14,6 @@
         const r = data[i];
         if (!r || typeof r !== 'object') return false;
 
-        // Identity validation: must have own string property with non-whitespace content
         let name = null;
         if (hasOwn.call(r, 'name_cn') && typeof r.name_cn === 'string' && r.name_cn.trim()) {
           name = r.name_cn;
@@ -24,37 +23,22 @@
           return false;
         }
 
-        // Category validation: must be own string property with non-whitespace content
-        if (!hasOwn.call(r, 'category') || typeof r.category !== 'string' || !r.category.trim()) {
-          return false;
-        }
+        if (!hasOwn.call(r, 'category') || typeof r.category !== 'string' || !r.category.trim()) return false;
 
-        // Energy validation: must have own finite positive number
         let energy = null;
-        if (hasOwn.call(r, 'base_energy') && typeof r.base_energy !== 'undefined') {
-          energy = r.base_energy;
-        } else if (hasOwn.call(r, 'energy')) {
-          energy = r.energy;
-        } else {
-          return false;
-        }
+        if (hasOwn.call(r, 'base_energy') && typeof r.base_energy !== 'undefined') energy = r.base_energy;
+        else if (hasOwn.call(r, 'energy')) energy = r.energy;
+        else return false;
         if (typeof energy !== 'number' || !Number.isFinite(energy) || energy <= 0) return false;
 
-        // Ingredients array validation
-        if (!hasOwn.call(r, 'ingredients') || !Array.isArray(r.ingredients) || r.ingredients.length === 0) {
-          return false;
-        }
+        if (!hasOwn.call(r, 'ingredients') || !Array.isArray(r.ingredients) || r.ingredients.length === 0) return false;
 
         for (let j = 0; j < r.ingredients.length; j++) {
           if (!hasOwn.call(r.ingredients, j)) return false;
           const ing = r.ingredients[j];
           if (!ing || typeof ing !== 'object') return false;
-          if (!hasOwn.call(ing, 'name') || typeof ing.name !== 'string' || !ing.name.trim()) {
-            return false;
-          }
-          if (!hasOwn.call(ing, 'count') || typeof ing.count !== 'number' || !Number.isFinite(ing.count) || ing.count <= 0) {
-            return false;
-          }
+          if (!hasOwn.call(ing, 'name') || typeof ing.name !== 'string' || !ing.name.trim()) return false;
+          if (!hasOwn.call(ing, 'count') || typeof ing.count !== 'number' || !Number.isFinite(ing.count) || ing.count <= 0) return false;
         }
       }
       return true;
@@ -65,39 +49,233 @@
 
   if (typeof window !== 'undefined') {
     window.isRecipesHealthy = isRecipesHealthy;
-    if (!window.RecipesApp) {
-      window.RecipesApp = {};
-    }
+    if (!window.RecipesApp) window.RecipesApp = {};
     window.RecipesApp.isRecipesHealthy = isRecipesHealthy;
   }
-  if (typeof global !== 'undefined') {
-    global.isRecipesHealthy = isRecipesHealthy;
-  }
+  if (typeof global !== 'undefined') global.isRecipesHealthy = isRecipesHealthy;
 
   function initRecipesModule() {
 
   /* ─── 狀態變數 ──────────────────────────────────────── */
   let allRecipes          = [];
   let selectedCategory    = 'ALL';
-  let selectedIngredients = new Set();   // 包含食材篩選
-  let excludedIngredients = new Set();   // 排除食材篩選
+  let selectedIngredients = new Set();
+  let excludedIngredients = new Set();
   let matchMode           = 'any';
   let currentSearch       = '';
   let sortOption          = 'energy-desc';
   let viewMode            = 'table';
   let minBonus            = 0;
   let minPot              = 0;
-  let recipeLevel         = 1;       // 1-70 (dynamic)
-  let islandBonus         = 0;       // 0-85 (%) (dynamic)
-  let eventBonus          = 1.0;     // 1.00 - 1.50 (step 0.25)
-  let potExpansion        = 0;       // 0 - 700 (多餘食材追加個數)
-  let showTasty           = false;   // 漂亮成功 (2x / 3x) 開關
+  let recipeLevel         = 1;
+  let islandBonus         = 0;
+  let eventBonus          = 1.0;
+  let potExpansion        = 0;
+  let showTasty           = false;
+  let filterCookableOnly  = false;
+  let potCapacity         = 57;
+  let campTicketActive    = false;
+  let sundayExpansionActive = false;
+  let pantryInventory     = {};
+
+  /* ─── 20 種官方食材基礎能量庫 ──────────────────────────── */
+  const INGREDIENTS_ENERGY_MAP = {
+    '特選蘋果': 90, 'Fancy Apple': 90, '哞哞鮮奶': 98, 'Moomoo Milk': 98,
+    '萌綠大豆': 100, 'Greengrass Soybeans': 100, '甜甜蜜': 101, 'Honey': 101,
+    '豆製肉': 103, 'Bean Sausage': 103, '暖暖薑': 109, 'Warming Ginger': 109,
+    '好眠番茄': 110, 'Snoozy Tomato': 110, '一口堅果': 112, 'Snackable Nuts': 112,
+    '特選蛋': 115, 'Fancy Egg': 115, '純粹油': 121, 'Pure Oil': 121,
+    '窩心洋芋': 124, 'Soft Potato': 124, '火辣香草': 130, 'Fiery Herb': 130,
+    '萌綠玉米': 140, 'Greengrass Corn': 140, '放鬆可可': 151, 'Soothing Cacao': 151,
+    '醒腦咖啡豆': 153, 'Rousing Coffee': 153, '嫩亮酪梨': 162, 'Glossy Avocado': 162,
+    '品鮮蘑菇': 167, 'Tasty Mushroom': 167, '粗枝大蔥': 185, 'Large Leek': 185,
+    '沉甸甸南瓜': 250, 'Plump Pumpkin': 250, '美味尾巴': 342, 'Slowpoke Tail': 342
+  };
+
+  const CANONICAL_INGREDIENTS = [
+    '特選蘋果', '哞哞鮮奶', '萌綠大豆', '甜甜蜜', '豆製肉',
+    '暖暖薑', '好眠番茄', '一口堅果', '特選蛋', '純粹油', '窩心洋芋',
+    '火辣香草', '萌綠玉米', '放鬆可可', '醒腦咖啡豆', '嫩亮酪梨',
+    '品鮮蘑菇', '粗枝大蔥', '沉甸甸南瓜', '美味尾巴'
+  ];
+
+  const FILLER_RECOMMENDED_ORDER = [
+    { name: '美味尾巴', enName: 'Slowpoke Tail', energy: 342 },
+    { name: '沉甸甸南瓜', enName: 'Plump Pumpkin', energy: 250 },
+    { name: '粗枝大蔥', enName: 'Large Leek', energy: 185 },
+    { name: '品鮮蘑菇', enName: 'Tasty Mushroom', energy: 167 },
+    { name: '嫩亮酪梨', enName: 'Glossy Avocado', energy: 162 },
+    { name: '醒腦咖啡豆', enName: 'Rousing Coffee', energy: 153 },
+    { name: '放鬆可可', enName: 'Soothing Cacao', energy: 151 },
+    { name: '萌綠玉米', enName: 'Greengrass Corn', energy: 140 },
+    { name: '火辣香草', enName: 'Fiery Herb', energy: 130 },
+    { name: '窩心洋芋', enName: 'Soft Potato', energy: 124 },
+    { name: '純粹油', enName: 'Pure Oil', energy: 121 },
+    { name: '特選蛋', enName: 'Fancy Egg', energy: 115 },
+    { name: '一口堅果', enName: 'Snackable Nuts', energy: 112 },
+    { name: '好眠番茄', enName: 'Snoozy Tomato', energy: 110 },
+    { name: '暖暖薑', enName: 'Warming Ginger', energy: 109 },
+    { name: '豆製肉', enName: 'Bean Sausage', energy: 103 },
+    { name: '甜甜蜜', enName: 'Honey', energy: 101 },
+    { name: '萌綠大豆', enName: 'Greengrass Soybeans', energy: 100 },
+    { name: '哞哞鮮奶', enName: 'Moomoo Milk', energy: 98 },
+    { name: '特選蘋果', enName: 'Fancy Apple', energy: 90 }
+  ];
+
+  /* ─── 食材庫存管理 ──────────────────────────────────── */
+  const PANTRY_LS_KEY = 'pksleep_pantry_v1';
+
+  function loadPantry() {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const raw = window.localStorage.getItem(PANTRY_LS_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            const clean = {};
+            for (const [k, v] of Object.entries(parsed)) {
+              const num = parseInt(v, 10);
+              if (!isNaN(num) && num > 0) clean[k] = num;
+            }
+            return clean;
+          }
+        }
+      }
+    } catch (e) {}
+    return {};
+  }
+
+  function savePantry() {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(PANTRY_LS_KEY, JSON.stringify(pantryInventory));
+      }
+    } catch (e) {}
+  }
+
+  function getPantry() {
+    return Object.assign({}, pantryInventory);
+  }
+
+  function setPantryIngredient(name, quantity) {
+    if (!name || typeof name !== 'string') return;
+    const qty = Math.max(0, parseInt(quantity, 10) || 0);
+    if (qty > 0) pantryInventory[name] = qty;
+    else delete pantryInventory[name];
+    savePantry();
+    if (typeof syncPantryUI === 'function') syncPantryUI();
+    if (typeof render === 'function') render();
+  }
+
+  function clearPantry() {
+    pantryInventory = {};
+    savePantry();
+    if (typeof syncPantryUI === 'function') syncPantryUI();
+    if (typeof render === 'function') render();
+  }
+
+  function calculateRecipeMissingCount(recipe, pantry = pantryInventory) {
+    if (!recipe || typeof recipe !== 'object') return 0;
+    const ings = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+    let missing = 0;
+    for (let i = 0; i < ings.length; i++) {
+      const req = ings[i];
+      if (!req || typeof req !== 'object') continue;
+      const onHand = (pantry && typeof pantry[req.name] === 'number') ? pantry[req.name] : (pantry && pantry[req.name] ? parseInt(pantry[req.name], 10) || 0 : 0);
+      const count = (typeof req.count === 'number' && Number.isFinite(req.count)) ? req.count : 0;
+      missing += Math.max(0, count - onHand);
+    }
+    return missing;
+  }
+
+  function getRecipeMissingDetails(recipe, pantry = pantryInventory) {
+    if (!recipe || typeof recipe !== 'object') return { missingCount: 0, missingItems: [], isCookable: true };
+    const ings = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+    let missingCount = 0;
+    const missingItems = [];
+    for (let i = 0; i < ings.length; i++) {
+      const req = ings[i];
+      if (!req || typeof req !== 'object') continue;
+      const onHand = (pantry && typeof pantry[req.name] === 'number') ? pantry[req.name] : (pantry && pantry[req.name] ? parseInt(pantry[req.name], 10) || 0 : 0);
+      const count = (typeof req.count === 'number' && Number.isFinite(req.count)) ? req.count : 0;
+      const diff = Math.max(0, count - onHand);
+      if (diff > 0) {
+        missingCount += diff;
+        missingItems.push({ name: req.name, icon: req.icon || '', required: count, onHand: onHand, missing: diff });
+      }
+    }
+    return { missingCount, missingItems, isCookable: missingCount === 0 };
+  }
+
+  /* ─── 鍋子容量與填鍋最佳化計算 ───────────────────────────── */
+  function getEffectivePotCapacity(base = potCapacity, camp = campTicketActive, sunday = sundayExpansionActive) {
+    let eff = Math.max(15, Math.min(200, Number(base) || 57));
+    if (camp) eff = Math.floor(eff * 1.5);
+    if (sunday) eff = eff * 2;
+    return eff;
+  }
+
+  function getRecommendedFillers(recipe, effectivePotSize, fromPantryOnly = false, pantry = pantryInventory) {
+    if (!recipe || typeof recipe !== 'object') return { fillerSlots: 0, remainingSlots: 0, recommendations: [], totalFillerEnergy: 0 };
+    const reqPot = Number(recipe.pot_size) || 0;
+    const effPot = Math.max(reqPot, Number(effectivePotSize) || getEffectivePotCapacity());
+    const fillerSlots = Math.max(0, effPot - reqPot);
+    if (fillerSlots === 0) return { fillerSlots: 0, remainingSlots: 0, recommendations: [], totalFillerEnergy: 0 };
+
+    const recs = [];
+    let remainingSlots = fillerSlots, totalFillerEnergy = 0;
+
+    if (fromPantryOnly) {
+      const reqMap = {};
+      (Array.isArray(recipe.ingredients) ? recipe.ingredients : []).forEach(i => {
+        if (i && i.name) reqMap[i.name] = (reqMap[i.name] || 0) + (Number(i.count) || 0);
+      });
+      for (let i = 0; i < FILLER_RECOMMENDED_ORDER.length && remainingSlots > 0; i++) {
+        const ing = FILLER_RECOMMENDED_ORDER[i];
+        const onHand = (pantry && pantry[ing.name]) ? Math.max(0, Number(pantry[ing.name]) || 0) : 0;
+        const available = Math.max(0, onHand - (reqMap[ing.name] || 0));
+        if (available > 0) {
+          const alloc = Math.min(available, remainingSlots);
+          const energy = alloc * ing.energy;
+          recs.push({ name: ing.name, enName: ing.enName, count: alloc, unitEnergy: ing.energy, totalEnergy: energy });
+          totalFillerEnergy += energy;
+          remainingSlots -= alloc;
+        }
+      }
+    } else {
+      const topIng = FILLER_RECOMMENDED_ORDER[0];
+      const energy = remainingSlots * topIng.energy;
+      recs.push({ name: topIng.name, enName: topIng.enName, count: remainingSlots, unitEnergy: topIng.energy, totalEnergy: energy });
+      totalFillerEnergy += energy;
+      remainingSlots = 0;
+    }
+    return { fillerSlots, remainingSlots, recommendations: recs, totalFillerEnergy };
+  }
+
+  function calculateMealEnergyWithFillers(recipe, fillerMapOrEnergy, level = recipeLevel, islandBonusPct = islandBonus, eventMult = eventBonus) {
+    if (!recipe || typeof recipe !== 'object') return 0;
+    const baseEnergy = Number(recipe.base_energy) || 0;
+    const lvBonus = getLevelBonus(level);
+    const recipeBaseWithLv = baseEnergy * (1 + lvBonus / 100);
+
+    let fillerBaseEnergy = 0;
+    if (typeof fillerMapOrEnergy === 'number') {
+      fillerBaseEnergy = Math.max(0, fillerMapOrEnergy);
+    } else if (fillerMapOrEnergy && typeof fillerMapOrEnergy === 'object') {
+      for (const [ingName, count] of Object.entries(fillerMapOrEnergy)) {
+        const c = Math.max(0, Number(count) || 0);
+        fillerBaseEnergy += c * (INGREDIENTS_ENERGY_MAP[ingName] || 100);
+      }
+    }
+    const subtotal = recipeBaseWithLv + fillerBaseEnergy;
+    const islandMult = 1 + (islandBonusPct / 100);
+    return Math.round(subtotal * islandMult * eventMult);
+  }
 
   const _RECIPES_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
 
   function _getRecipesGameConfig() {
-    return (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
-           (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+    return (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) || (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
   }
 
   function _getRecipesGameCaps() {
@@ -105,42 +283,24 @@
     return (gc && typeof gc.getCaps === 'function') ? gc.getCaps() : _RECIPES_FALLBACK_CAPS;
   }
 
-  /* ─── 食譜等級加成倉率表（Lv.1-70）
-     資料來源：ポケモンスリープ攻略・検証 Wiki (wikiwiki.jp/poke_sleep)
-     Ver.3.6.0 更新：等級上限 70、最大加成 258% (×3.58)
-     注：此加成為「等級加成」，不包含食材數量加成（bonus_pct）
-  */
   const LEVEL_BONUS_TABLE = {
-     1:   0,  2:   2,  3:   4,  4:   6,  5:   8,  6:   9,  7:  11,  8:  13,
-     9:  16, 10:  18, 11:  19, 12:  21, 13:  23, 14:  24, 15:  26, 16:  28,
-    17:  30, 18:  31, 19:  33, 20:  35, 21:  37, 22:  40, 23:  42, 24:  45,
-    25:  47, 26:  50, 27:  52, 28:  55, 29:  58, 30:  61, 31:  64, 32:  67,
-    33:  70, 34:  74, 35:  77, 36:  81, 37:  84, 38:  88, 39:  92, 40:  96,
-    41: 100, 42: 104, 43: 108, 44: 113, 45: 117, 46: 122, 47: 127, 48: 132,
-    49: 137, 50: 142, 51: 148, 52: 153, 53: 159, 54: 165, 55: 171, 56: 177,
-    57: 183, 58: 190, 59: 197, 60: 203, 61: 209, 62: 215, 63: 221, 64: 227,
-    65: 234, 66: 239, 67: 243, 68: 248, 69: 252, 70: 258
+     1:   0,  2:   2,  3:   4,  4:   6,  5:   8,  6:   9,  7:  11,  8:  13,  9:  16, 10:  18,
+    11:  19, 12:  21, 13:  23, 14:  24, 15:  26, 16:  28, 17:  30, 18:  31, 19:  33, 20:  35,
+    21:  37, 22:  40, 23:  42, 24:  45, 25:  47, 26:  50, 27:  52, 28:  55, 29:  58, 30:  61,
+    31:  64, 32:  67, 33:  70, 34:  74, 35:  77, 36:  81, 37:  84, 38:  88, 39:  92, 40:  96,
+    41: 100, 42: 104, 43: 108, 44: 113, 45: 117, 46: 122, 47: 127, 48: 132, 49: 137, 50: 142,
+    51: 148, 52: 153, 53: 159, 54: 165, 55: 171, 56: 177, 57: 183, 58: 190, 59: 197, 60: 203,
+    61: 209, 62: 215, 63: 221, 64: 227, 65: 234, 66: 239, 67: 243, 68: 248, 69: 252, 70: 258
   };
 
-  /* 取得指定等級的加成倍率 (百分比) */
   function getLevelBonus(lv) {
-    const gc = _getRecipesGameConfig();
-    const caps = _getRecipesGameCaps();
-    const recipeCap = caps.RECIPE_LEVEL_CAP || 70;
-    if (gc && typeof gc.getRecipeLevelBonus === 'function') {
-      return gc.getRecipeLevelBonus(lv, recipeCap);
-    }
+    const gc = _getRecipesGameConfig(), caps = _getRecipesGameCaps(), recipeCap = caps.RECIPE_LEVEL_CAP || 70;
+    if (gc && typeof gc.getRecipeLevelBonus === 'function') return gc.getRecipeLevelBonus(lv, recipeCap);
     const clampedLv = Math.min(Math.max(parseInt(lv, 10) || 1, 1), recipeCap);
-    if (Object.prototype.hasOwnProperty.call(LEVEL_BONUS_TABLE, clampedLv)) {
-      return LEVEL_BONUS_TABLE[clampedLv];
-    }
-    if (clampedLv > 70) {
-      return 258 + (clampedLv - 70) * (258 - 252);
-    }
-    return 0;
+    if (Object.prototype.hasOwnProperty.call(LEVEL_BONUS_TABLE, clampedLv)) return LEVEL_BONUS_TABLE[clampedLv];
+    return clampedLv > 70 ? 258 + (clampedLv - 70) * (258 - 252) : 0;
   }
 
-  /* ─── LocalStorage 鍵值 ─────────────────────────────── */
   const LS_KEY = 'pksleep_recipe_prefs_v3';
 
   function loadPrefs() {
@@ -150,44 +310,36 @@
       selectedCategory = saved.selectedCategory || 'ALL';
       minBonus         = Number(saved.minBonus) || 0;
       minPot           = Number(saved.minPot)   || 0;
-      const rawLevel   = Number(saved.recipeLevel) || 1;
-      recipeLevel      = Math.min(Math.max(rawLevel, 1), caps.RECIPE_LEVEL_CAP || 70);
-      const rawIsland  = Number(saved.islandBonus) || 0;
-      islandBonus      = Math.min(Math.max(rawIsland, 0), caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85);
+      recipeLevel      = Math.min(Math.max(Number(saved.recipeLevel) || 1, 1), caps.RECIPE_LEVEL_CAP || 70);
+      islandBonus      = Math.min(Math.max(Number(saved.islandBonus) || 0, 0), caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85);
       eventBonus       = saved.eventBonus !== undefined ? Math.min(1.5, Math.max(1.0, Number(saved.eventBonus))) : 1.0;
       potExpansion     = Number(saved.potExpansion) || 0;
       showTasty        = Boolean(saved.showTasty);
       sortOption       = saved.sortOption || 'energy-desc';
       viewMode         = saved.viewMode || 'table';
       matchMode        = saved.matchMode || 'any';
-      const savedIngs  = saved.selectedIngredients || [];
-      selectedIngredients = new Set(savedIngs);
-      const savedExcl  = saved.excludedIngredients || [];
-      excludedIngredients = new Set(savedExcl);
+      filterCookableOnly = Boolean(saved.filterCookableOnly);
+      potCapacity      = Math.max(15, Math.min(200, Number(saved.potCapacity) || 57));
+      campTicketActive = Boolean(saved.campTicketActive);
+      sundayExpansionActive = Boolean(saved.sundayExpansionActive);
+      selectedIngredients = new Set(saved.selectedIngredients || []);
+      excludedIngredients = new Set(saved.excludedIngredients || []);
+      pantryInventory  = loadPantry();
     } catch (e) {}
   }
 
   function savePrefs() {
     try {
       localStorage.setItem(LS_KEY, JSON.stringify({
-        selectedCategory,
-        minBonus,
-        minPot,
-        recipeLevel,
-        islandBonus,
-        eventBonus,
-        potExpansion,
-        showTasty,
-        sortOption,
-        viewMode,
-        matchMode,
-        selectedIngredients: [...selectedIngredients],
-        excludedIngredients:  [...excludedIngredients],
+        selectedCategory, minBonus, minPot, recipeLevel, islandBonus, eventBonus,
+        potExpansion, showTasty, sortOption, viewMode, matchMode, filterCookableOnly,
+        potCapacity, campTicketActive, sundayExpansionActive,
+        selectedIngredients: [...selectedIngredients], excludedIngredients: [...excludedIngredients]
       }));
     } catch (e) {}
   }
 
-  /* ─── DOM 元素 ──────────────────────────────────────── */
+  /* ─── DOM 元素與滑桿控制 ──────────────────────────────── */
   const searchInput          = document.getElementById('recipe-search-input');
   const sortSelect           = document.getElementById('recipe-sort-select');
   const categoryContainer    = document.getElementById('category-filter-tags');
@@ -208,48 +360,34 @@
   const potExpansionSlider   = document.getElementById('pot-expansion-slider');
   const potExpansionBadge    = document.getElementById('pot-expansion-badge');
   const tastyToggleBtn       = document.getElementById('tasty-toggle-btn');
+  const recipeSearchClear    = document.getElementById('recipe-search-clear');
 
-  /* ─── 滑桿顏色 fill 更新 ────────────────────────────── */
   function updateSliderFill(slider, min, max) {
     if (!slider) return;
-    const pct = ((slider.value - min) / (max - min)) * 100;
-    slider.style.setProperty('--slider-fill', pct + '%');
+    slider.style.setProperty('--slider-fill', (((slider.value - min) / (max - min)) * 100) + '%');
   }
 
-  /* ─── 初始化滑桿與開關顯示 ─────────────────────────────── */
   function syncLevelUI() {
     if (!levelSlider || !levelBadge) return;
-    const caps = _getRecipesGameCaps();
-    const recipeCap = caps.RECIPE_LEVEL_CAP || 70;
-    levelSlider.min = '1';
-    levelSlider.max = String(recipeCap);
+    const recipeCap = (_getRecipesGameCaps().RECIPE_LEVEL_CAP || 70);
+    levelSlider.min = '1'; levelSlider.max = String(recipeCap);
     const maxLabel = document.getElementById('recipe-level-max-label');
-    if (maxLabel) {
-      maxLabel.textContent = `Lv.${recipeCap}`;
-    }
+    if (maxLabel) maxLabel.textContent = `Lv.${recipeCap}`;
     recipeLevel = Math.min(Math.max(recipeLevel, 1), recipeCap);
     levelSlider.value = recipeLevel;
-    const bonusPct = getLevelBonus(recipeLevel);
-    levelBadge.textContent = `Lv.${recipeLevel}  +${bonusPct}%`;
+    levelBadge.textContent = `Lv.${recipeLevel}  +${getLevelBonus(recipeLevel)}%`;
     updateSliderFill(levelSlider, 1, recipeCap);
   }
 
   function syncIslandUI() {
     if (!islandSlider || !islandBadge) return;
-    const caps = _getRecipesGameCaps();
-    const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85;
-    const islandStep = caps.ISLAND_BONUS_STEP || 5;
-    islandSlider.min = '0';
-    islandSlider.max = String(islandCap);
-    islandSlider.step = String(islandStep);
+    const caps = _getRecipesGameCaps(), islandCap = (caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85);
+    islandSlider.min = '0'; islandSlider.max = String(islandCap); islandSlider.step = String(caps.ISLAND_BONUS_STEP || 5);
     const maxLabel = document.getElementById('island-bonus-max-label');
-    if (maxLabel) {
-      maxLabel.textContent = `${islandCap}%`;
-    }
+    if (maxLabel) maxLabel.textContent = `${islandCap}%`;
     islandBonus = Math.min(Math.max(islandBonus, 0), islandCap);
     islandSlider.value = islandBonus;
-    const mult = (1 + islandBonus / 100).toFixed(2);
-    islandBadge.textContent = `+${islandBonus}% (×${mult})`;
+    islandBadge.textContent = `+${islandBonus}% (×${(1 + islandBonus / 100).toFixed(2)})`;
     updateSliderFill(islandSlider, 0, islandCap);
   }
 
@@ -265,37 +403,162 @@
     potExpansionSlider.value = potExpansion;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
-    if (potExpansion === 0) {
-      potExpansionBadge.textContent = isEN ? '+0 (None)' : (isCN ? '+0 (无追加)' : '+0 (無追加)');
-    } else {
-      potExpansionBadge.textContent = `+${potExpansion} (+${(potExpansion * 100).toLocaleString()})`;
-    }
+    potExpansionBadge.textContent = potExpansion === 0 ? (isEN ? '+0 (None)' : (isCN ? '+0 (无追加)' : '+0 (無追加)')) : `+${potExpansion} (+${(potExpansion * 100).toLocaleString()})`;
     updateSliderFill(potExpansionSlider, 0, 700);
   }
 
   function syncTastyUI() {
     if (!tastyToggleBtn) return;
-    if (tastyToggleBtn.type === 'checkbox') {
-      tastyToggleBtn.checked = showTasty;
-    } else {
-      if (showTasty) {
-        tastyToggleBtn.classList.add('active');
-        tastyToggleBtn.setAttribute('aria-checked', 'true');
-      } else {
-        tastyToggleBtn.classList.remove('active');
-        tastyToggleBtn.setAttribute('aria-checked', 'false');
-      }
+    if (tastyToggleBtn.type === 'checkbox') tastyToggleBtn.checked = showTasty;
+    else {
+      tastyToggleBtn.classList.toggle('active', showTasty);
+      tastyToggleBtn.setAttribute('aria-checked', String(showTasty));
     }
   }
 
-  /* ─── 載入 recipes.json ─────────────────────────────── */
+  function setupCustomSelect(selectElement) {
+    if (typeof window !== 'undefined' && window.CustomSelect && typeof window.CustomSelect.setup === 'function') {
+      return window.CustomSelect.setup(selectElement);
+    }
+    if (!selectElement || selectElement._customized || !selectElement.parentNode) return;
+    selectElement._customized = true;
+    selectElement.style.display = 'none';
+
+    const container = document.createElement('div');
+    container.className = 'custom-select-container' + (selectElement.classList.contains('sort-select') ? ' custom-select-sort' : ' custom-select-rf');
+
+    const triggerBtn = document.createElement('button');
+    triggerBtn.type = 'button'; triggerBtn.className = 'custom-select-trigger';
+    triggerBtn.setAttribute('aria-haspopup', 'listbox'); triggerBtn.setAttribute('aria-expanded', 'false');
+
+    const labelSpan = document.createElement('span');
+    labelSpan.className = 'custom-select-label';
+    const arrowSpan = document.createElement('span');
+    arrowSpan.className = 'custom-select-arrow';
+    arrowSpan.innerHTML = `<svg viewBox="0 0 12 8" width="7" height="4.5"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>`;
+
+    triggerBtn.appendChild(labelSpan); triggerBtn.appendChild(arrowSpan);
+    const menuDiv = document.createElement('div');
+    menuDiv.className = 'custom-select-menu'; menuDiv.setAttribute('role', 'listbox');
+
+    function syncUI() {
+      const options = selectElement.options ? Array.from(selectElement.options) : [];
+      const selected = (selectElement.selectedIndex >= 0 && options[selectElement.selectedIndex]) || options[0] || null;
+      labelSpan.textContent = selected ? selected.text : '';
+      menuDiv.innerHTML = '';
+      options.forEach(opt => {
+        const item = document.createElement('div');
+        item.className = 'custom-select-item' + (opt.value === selectElement.value ? ' active' : '');
+        item.setAttribute('role', 'option'); item.setAttribute('data-value', opt.value);
+        item.innerHTML = `<div class="custom-select-item-content"><span class="custom-select-item-text">${opt.text}</span></div>`;
+        item.addEventListener('click', (e) => {
+          e.stopPropagation(); selectElement.value = opt.value;
+          container.classList.remove('open'); triggerBtn.setAttribute('aria-expanded', 'false');
+          syncUI(); selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        menuDiv.appendChild(item);
+      });
+    }
+
+    syncUI();
+    triggerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = container.classList.contains('open');
+      document.querySelectorAll('.custom-select-container.open').forEach(c => {
+        c.classList.remove('open');
+        const btn = c.querySelector('.custom-select-trigger');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) { container.classList.add('open'); triggerBtn.setAttribute('aria-expanded', 'true'); }
+    });
+
+    selectElement.addEventListener('sync-ui', syncUI);
+    container.appendChild(triggerBtn); container.appendChild(menuDiv);
+    if (selectElement.parentNode) selectElement.parentNode.insertBefore(container, selectElement.nextSibling);
+  }
+
+  window.setupCustomSelect = setupCustomSelect;
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.custom-select-container.open').forEach(c => {
+      c.classList.remove('open');
+      const btn = c.querySelector('.custom-select-trigger');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.custom-select-container.open').forEach(c => {
+        c.classList.remove('open');
+        const btn = c.querySelector('.custom-select-trigger');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+    }
+  });
+
+  function initSelectFilters() {
+    if (bonusSelect) {
+      bonusSelect.value = minBonus;
+      setupCustomSelect(bonusSelect);
+      bonusSelect.addEventListener('change', () => { minBonus = Number(bonusSelect.value); savePrefs(); render(); });
+    }
+    if (potSelect) {
+      potSelect.value = minPot;
+      setupCustomSelect(potSelect);
+      potSelect.addEventListener('change', () => { minPot = Number(potSelect.value); savePrefs(); render(); });
+    }
+  }
+
+  function initSliders() {
+    if (levelSlider) {
+      syncLevelUI();
+      levelSlider.addEventListener('input', () => {
+        const caps = _getRecipesGameCaps(), parsed = parseInt(levelSlider.value, 10);
+        recipeLevel = Math.min(Math.max(isNaN(parsed) ? 1 : parsed, 1), caps.RECIPE_LEVEL_CAP || 70);
+        syncLevelUI(); savePrefs(); render();
+      });
+    }
+    if (islandSlider) {
+      syncIslandUI();
+      islandSlider.addEventListener('input', () => {
+        const caps = _getRecipesGameCaps(), parsed = parseInt(islandSlider.value, 10);
+        islandBonus = Math.min(Math.max(isNaN(parsed) ? 0 : parsed, 0), caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85);
+        syncIslandUI(); savePrefs(); render();
+      });
+    }
+    if (eventSlider) {
+      syncEventUI();
+      eventSlider.addEventListener('input', () => {
+        eventBonus = parseFloat(eventSlider.value);
+        syncEventUI(); savePrefs(); render();
+      });
+    }
+    if (potExpansionSlider) {
+      syncPotExpansionUI();
+      potExpansionSlider.addEventListener('input', () => {
+        potExpansion = parseInt(potExpansionSlider.value, 10) || 0;
+        syncPotExpansionUI(); savePrefs(); render();
+      });
+    }
+  }
+
+  function initTastyToggle() {
+    if (!tastyToggleBtn) return;
+    syncTastyUI();
+    tastyToggleBtn.addEventListener(tastyToggleBtn.type === 'checkbox' ? 'change' : 'click', () => {
+      showTasty = tastyToggleBtn.type === 'checkbox' ? tastyToggleBtn.checked : !showTasty;
+      syncTastyUI(); savePrefs(); render();
+    });
+  }
+
+  /* ─── 載入 recipes.json 與動態同步 ─────────────────────── */
   loadPrefs();
 
   const CACHE_KEY_RECIPES_JSON = 'pksleep_cache_recipes_json';
   const CACHE_KEY_RECIPES_JSON_TIME = 'pksleep_cache_recipes_json_time';
 
   const fetchRecipesWithFallback = async (...customUrls) => {
-    // 1. 優先自本機快取瞬間載入 (Cache-First 0ms 秒開：IndexedDB / LocalStorage)，背景再由 manifest 檢查是否需更新
     try {
       if (typeof window !== 'undefined') {
         let cachedData = null;
@@ -303,14 +566,11 @@
           cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_RECIPES_JSON);
         } else if (window.localStorage) {
           const cachedText = window.localStorage.getItem(CACHE_KEY_RECIPES_JSON);
-          if (cachedText) {
-            cachedData = JSON.parse(cachedText);
-          }
+          if (cachedText) cachedData = JSON.parse(cachedText);
         }
         if (Array.isArray(cachedData) && cachedData.length > 0) {
-          if (isRecipesHealthy(cachedData)) {
-            return cachedData;
-          } else if (window.DataCacheManager && typeof window.DataCacheManager.invalidateCache === 'function') {
+          if (isRecipesHealthy(cachedData)) return cachedData;
+          if (window.DataCacheManager && typeof window.DataCacheManager.invalidateCache === 'function') {
             window.DataCacheManager.invalidateCache(CACHE_KEY_RECIPES_JSON, 'recipes.json');
           }
         }
@@ -319,39 +579,26 @@
 
     const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
     const defaultCandidates = [
-      `${base}data/recipes.json`,
-      `data/recipes.json`,
-      `../data/recipes.json`,
-      `${base}recipes.json`,
-      `recipes.json`,
-      `../recipes.json`,
+      `${base}data/recipes.json`, `data/recipes.json`, `../data/recipes.json`,
+      `${base}recipes.json`, `recipes.json`, `../recipes.json`,
       `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json`
     ];
     const rawUrls = customUrls.length > 0 ? customUrls : defaultCandidates;
     const cleanUrls = Array.from(new Set(rawUrls.filter(Boolean).map(u => u.split('?')[0])));
-
-    const maxAttempts = 3;
     let lastErr = null;
 
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
       const uniqueUrls = attempt === 1 ? cleanUrls : cleanUrls.map(u => `${u}?t=${Date.now()}`);
-
       for (const url of uniqueUrls) {
         try {
           const res = await fetch(url, { cache: attempt === 1 ? 'no-cache' : 'no-store' });
           if (res && res.ok) {
-            const text = await res.text();
-            const parsed = JSON.parse(text);
-            if (!isRecipesHealthy(parsed)) {
-              console.warn('[Recipe Engine] 候選來源返回之食譜未通過健全性檢查，跳過：', url);
-              continue;
-            }
+            const text = await res.text(), parsed = JSON.parse(text);
+            if (!isRecipesHealthy(parsed)) continue;
             try {
               if (typeof window !== 'undefined' && window.localStorage) {
-                try {
-                  window.localStorage.setItem(CACHE_KEY_RECIPES_JSON, text);
-                  window.localStorage.setItem(CACHE_KEY_RECIPES_JSON_TIME, String(Date.now()));
-                } catch (e) {}
+                window.localStorage.setItem(CACHE_KEY_RECIPES_JSON, text);
+                window.localStorage.setItem(CACHE_KEY_RECIPES_JSON_TIME, String(Date.now()));
               }
               if (typeof window !== 'undefined' && window.DataCacheManager) {
                 window.DataCacheManager.saveCachedJson(CACHE_KEY_RECIPES_JSON, 'recipes.json', parsed);
@@ -359,40 +606,20 @@
             } catch (e) {}
             return parsed;
           }
-        } catch (e) {
-          lastErr = e;
-        }
+        } catch (e) { lastErr = e; }
       }
-
-      // 若前次嘗試未成功，短暫退避等待後重試 (平滑跨過 GitHub Pages 部署瞬間)
-      if (attempt < maxAttempts) {
-        await new Promise(r => setTimeout(r, attempt * 600));
-      }
+      if (attempt < 3) await new Promise(r => setTimeout(r, attempt * 600));
     }
 
-    // 若所有網路請求重試皆失敗，嘗試自本機快取 (IndexedDB / LocalStorage) 離線載入
     try {
       if (typeof window !== 'undefined') {
-        if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
-          const cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_RECIPES_JSON);
-          if (Array.isArray(cachedData) && cachedData.length > 0) {
-            console.warn('[Recipe Engine] 網路請求暫時失敗，已自動自本機離線快取載入 recipes.json (' + cachedData.length + ' 筆料理)');
-            return cachedData;
-          }
-        } else if (window.localStorage) {
-          const cachedText = window.localStorage.getItem(CACHE_KEY_RECIPES_JSON);
-          if (cachedText) {
-            const cachedData = JSON.parse(cachedText);
-            if (Array.isArray(cachedData) && cachedData.length > 0) {
-              console.warn('[Recipe Engine] 網路請求暫時失敗，已自動自本機離線快取載入 recipes.json (' + cachedData.length + ' 筆料理)');
-              return cachedData;
-            }
-          }
+        const cachedText = window.localStorage && window.localStorage.getItem(CACHE_KEY_RECIPES_JSON);
+        if (cachedText) {
+          const cachedData = JSON.parse(cachedText);
+          if (Array.isArray(cachedData) && cachedData.length > 0) return cachedData;
         }
       }
-    } catch (cacheErr) {
-      console.warn('[Recipe Engine] 讀取離線快取失敗:', cacheErr);
-    }
+    } catch (cacheErr) {}
 
     throw lastErr || new Error('Failed to load recipes.json from candidate paths: ' + cleanUrls.join(', '));
   };
@@ -408,9 +635,7 @@
         let remoteHash = '';
         if (window.DataCacheManager && typeof window.DataCacheManager.checkFileNeedsUpdate === 'function') {
           const check = await window.DataCacheManager.checkFileNeedsUpdate('recipes.json', CACHE_KEY_RECIPES_JSON, forceManifest);
-          if (!check.needsUpdate && Array.isArray(allRecipes) && allRecipes.length >= 78) {
-            return;
-          }
+          if (!check.needsUpdate && Array.isArray(allRecipes) && allRecipes.length >= 78) return;
           remoteHash = check.remoteHash || '';
         }
 
@@ -423,34 +648,21 @@
           `recipes.json?v=${remoteHash || Date.now()}`,
           `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json?t=${Date.now()}`
         ];
-        const uniqueSyncUrls = Array.from(new Set(syncCandidates));
-        let res = null;
-        let rawText = '';
-        let freshData = null;
+        let res = null, rawText = '', freshData = null;
 
-        for (const url of uniqueSyncUrls) {
+        for (const url of Array.from(new Set(syncCandidates))) {
           try {
             const r = await fetch(url, { cache: 'no-cache' });
             if (r && r.ok) {
-              const txt = await r.text();
-              const json = JSON.parse(txt);
-              if (isRecipesHealthy(json)) {
-                res = r;
-                rawText = txt;
-                freshData = json;
-                break;
-              } else {
-                console.warn('[Recipe Engine] 同步來源回傳食譜未通過健全性檢查，跳過：', url);
-              }
+              const txt = await r.text(), json = JSON.parse(txt);
+              if (isRecipesHealthy(json)) { res = r; rawText = txt; freshData = json; break; }
             }
           } catch (e) {}
         }
 
         if (!res || !freshData) return;
-
-        if (window.DataCacheManager) {
-          window.DataCacheManager.saveCachedJson(CACHE_KEY_RECIPES_JSON, 'recipes.json', rawText, remoteHash);
-        } else if (window.localStorage) {
+        if (window.DataCacheManager) window.DataCacheManager.saveCachedJson(CACHE_KEY_RECIPES_JSON, 'recipes.json', rawText, remoteHash);
+        else if (window.localStorage) {
           try {
             window.localStorage.setItem(CACHE_KEY_RECIPES_JSON, rawText);
             window.localStorage.setItem(CACHE_KEY_RECIPES_JSON_TIME, String(Date.now()));
@@ -460,28 +672,16 @@
         const currentLen = Array.isArray(allRecipes) ? allRecipes.length : 0;
         let isDifferent = true;
         if (currentLen === freshData.length && currentLen > 0) {
-          try {
-            isDifferent = JSON.stringify(freshData) !== JSON.stringify(allRecipes);
-          } catch (e) {
-            isDifferent = true;
-          }
+          try { isDifferent = JSON.stringify(freshData) !== JSON.stringify(allRecipes); } catch (e) { isDifferent = true; }
         }
 
         if (isDifferent || !currentLen) {
-          console.log(`[Recipe Engine] 動態連線取得最新食譜料理 (${freshData.length} 道)，正在原地更新...`);
           allRecipes = freshData;
-          if (typeof window !== 'undefined') {
-            window.allRecipes = freshData;
-            window.__RECIPES_CACHE__ = freshData;
-          }
-
-          if (typeof render === 'function') {
-            render();
-          }
+          if (typeof window !== 'undefined') { window.allRecipes = freshData; window.__RECIPES_CACHE__ = freshData; }
+          if (typeof render === 'function') render();
           window.dispatchEvent(new CustomEvent('recipes-data-updated', { detail: freshData }));
         }
       } catch (err) {
-        // 靜默處理網路異常
       } finally {
         isSyncing = false;
       }
@@ -491,31 +691,26 @@
     setInterval(() => runSyncCheck(false), 30 * 60 * 1000);
     if (typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-          runSyncCheck(false);
-        }
+        if (document.visibilityState === 'visible') runSyncCheck(false);
       });
     }
   }
 
   fetchRecipesWithFallback(
     (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/recipes.json`,
-    `data/recipes.json`,
-    `../data/recipes.json`,
-    `recipes.json`,
+    `data/recipes.json`, `../data/recipes.json`, `recipes.json`,
     `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json`
   )
     .then(data => {
       allRecipes = data;
-      if (typeof window !== 'undefined') {
-        window.allRecipes = data;
-        window.__RECIPES_CACHE__ = data;
-      }
+      if (typeof window !== 'undefined') { window.allRecipes = data; window.__RECIPES_CACHE__ = data; }
       initCategoryFilters();
       initSelectFilters();
       initSliders();
       initTastyToggle();
       initIngredientPicker();
+      initPantryUI();
+      initQuickFilterPill();
       initViewToggle();
       initSort();
       initSearch();
@@ -540,479 +735,388 @@
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     if (isEN) return r.name_en || r.name_cn;
-    if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') {
-      return window.I18N.toSimplified(r.name_cn);
-    }
+    if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') return window.I18N.toSimplified(r.name_cn);
     return r.name_cn;
   }
+  /* ─── 食材庫存 UI ────────────────────────────────────── */
+  function initPantryUI() {
+    const sidebarScrollable = document.querySelector('#recipe-filter-sidebar .sidebar-scrollable-content');
+    if (!sidebarScrollable) return;
 
-  /* ─── 料理種類 Filter ────────────────────────────────── */
-  function initCategoryFilters() {
-    if (!categoryContainer) return;
+    let pantrySection = document.getElementById('recipe-pantry-sidebar-section');
+    if (!pantrySection) {
+      pantrySection = document.createElement('div');
+      pantrySection.id = 'recipe-pantry-sidebar-section';
+      pantrySection.className = 'sidebar-section recipe-pantry-section';
+      const catSection = sidebarScrollable.querySelector('.sidebar-section');
+      if (catSection && catSection.nextSibling) sidebarScrollable.insertBefore(pantrySection, catSection.nextSibling);
+      else sidebarScrollable.prepend(pantrySection);
+    }
+
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
-    const categories = ['ALL', '咖哩', '沙拉', '甜點'];
-    const catLabels  = {
-      ALL: isEN ? 'All' : '全部',
-      '咖哩': isEN ? 'Curries' : (isCN ? '咖喱' : '咖哩'),
-      '沙拉': isEN ? 'Salads' : '沙拉',
-      '甜點': isEN ? 'Desserts' : (isCN ? '甜点' : '甜點')
-    };
-    const catCounts  = { '咖哩': 0, '沙拉': 0, '甜點': 0 };
-    for (let i = 0; i < allRecipes.length; i++) {
-      const r = allRecipes[i];
-      if (!r || typeof r !== 'object') continue;
-      const c = r.category;
-      if (catCounts[c] !== undefined) catCounts[c]++;
+
+    pantrySection.innerHTML = `
+      <div class="sidebar-section-header pantry-section-header">
+        <div class="pantry-header-title-row">
+          <span class="sidebar-section-title" data-i18n="recipe.pantry_title">${isEN ? 'Pantry Inventory' : (isCN ? '食材库存' : '食材庫存')}</span>
+          <span class="pantry-count-badge" id="pantry-total-count-badge">0</span>
+        </div>
+        <div class="pantry-header-actions">
+          <button type="button" id="pantry-clear-all-btn" class="sidebar-section-clear-btn">${isEN ? 'Clear' : '清空'}</button>
+          <button type="button" id="pantry-collapse-toggle-btn" class="pantry-toggle-btn" aria-expanded="true" title="收合/展開">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+        </div>
+      </div>
+      <div id="pantry-content-body" class="pantry-body">
+        <div class="pantry-quick-toolbar">
+          <button type="button" class="pantry-quick-btn" id="pantry-fill-demo-btn">${isEN ? '+10 All' : '+10 全食材'}</button>
+          <button type="button" class="pantry-quick-btn" id="pantry-reset-zero-btn">${isEN ? 'Zero All' : '全設為 0'}</button>
+        </div>
+        <div class="pantry-items-grid" id="pantry-items-grid"></div>
+      </div>
+    `;
+
+    renderPantryItemsGrid();
+
+    const collapseBtn = document.getElementById('pantry-collapse-toggle-btn');
+    const body = document.getElementById('pantry-content-body');
+    if (collapseBtn && body) {
+      collapseBtn.addEventListener('click', () => {
+        const isCollapsed = body.classList.toggle('collapsed');
+        collapseBtn.setAttribute('aria-expanded', String(!isCollapsed));
+        collapseBtn.classList.toggle('rotated', isCollapsed);
+      });
     }
 
-    categoryContainer.innerHTML = categories.map(cat => {
-      const count = cat === 'ALL' ? allRecipes.length : (catCounts[cat] || 0);
-      const active = cat === selectedCategory ? 'active' : '';
-      return `<button class="tag-btn ${active}" data-cat="${cat}">
-        ${catLabels[cat] || cat} (${count})
-      </button>`;
+    const clearBtn = document.getElementById('pantry-clear-all-btn');
+    if (clearBtn) clearBtn.addEventListener('click', () => clearPantry());
+
+    const fillDemoBtn = document.getElementById('pantry-fill-demo-btn');
+    if (fillDemoBtn) {
+      fillDemoBtn.addEventListener('click', () => {
+        CANONICAL_INGREDIENTS.forEach(ing => { pantryInventory[ing] = (Number(pantryInventory[ing]) || 0) + 10; });
+        savePantry();
+        syncPantryUI();
+        render();
+      });
+    }
+
+    const resetZeroBtn = document.getElementById('pantry-reset-zero-btn');
+    if (resetZeroBtn) resetZeroBtn.addEventListener('click', () => clearPantry());
+  }
+
+  function renderPantryItemsGrid() {
+    const grid = document.getElementById('pantry-items-grid');
+    if (!grid) return;
+
+    const ingIconMap = {};
+    allRecipes.forEach(r => {
+      (Array.isArray(r.ingredients) ? r.ingredients : []).forEach(i => {
+        if (i && i.name && !ingIconMap[i.name]) ingIconMap[i.name] = _resolveRecipeAssetUrl(i.icon);
+      });
+    });
+
+    grid.innerHTML = CANONICAL_INGREDIENTS.map(name => {
+      const count = Number(pantryInventory[name]) || 0;
+      const icon = ingIconMap[name] || '';
+      const displayName = window.I18N ? window.I18N.getIngredientName(name) : name;
+      return `
+        <div class="pantry-item-row" data-ing="${name}">
+          <div class="pantry-item-info">
+            ${icon ? `<img src="${icon}" class="pantry-item-icon" alt="${displayName}">` : ''}
+            <span class="pantry-item-name" title="${displayName}">${displayName}</span>
+          </div>
+          <div class="pantry-stepper">
+            <button type="button" class="pantry-step-btn pantry-btn-minus" data-ing="${name}">-</button>
+            <input type="number" class="pantry-stepper-input" data-ing="${name}" min="0" max="999" value="${count}">
+            <button type="button" class="pantry-step-btn pantry-btn-plus" data-ing="${name}">+</button>
+          </div>
+        </div>
+      `;
     }).join('');
 
-    if (!categoryContainer._hasListener) {
-      categoryContainer._hasListener = true;
-      categoryContainer.addEventListener('click', e => {
-        const btn = e.target.closest('.tag-btn');
-        if (btn) {
-          selectedCategory = btn.getAttribute('data-cat');
-          categoryContainer.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          savePrefs();
-          render();
-        }
+    grid.querySelectorAll('.pantry-stepper-input').forEach(input => {
+      input.addEventListener('change', e => {
+        setPantryIngredient(e.target.getAttribute('data-ing'), Math.max(0, parseInt(e.target.value, 10) || 0));
       });
-    }
+    });
+
+    grid.querySelectorAll('.pantry-btn-minus').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const name = btn.getAttribute('data-ing');
+        const step = e.shiftKey ? 5 : 1;
+        setPantryIngredient(name, Math.max(0, (Number(pantryInventory[name]) || 0) - step));
+      });
+    });
+
+    grid.querySelectorAll('.pantry-btn-plus').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const name = btn.getAttribute('data-ing');
+        const step = e.shiftKey ? 5 : 1;
+        setPantryIngredient(name, (Number(pantryInventory[name]) || 0) + step);
+      });
+    });
+
+    syncPantryUI();
   }
 
-  /* ─── 自訂下拉選單系統（嚴格向下展開對齊） ────────── */
-  function setupCustomSelect(selectElement) {
-    if (typeof window !== 'undefined' && window.CustomSelect && typeof window.CustomSelect.setup === 'function') {
-      return window.CustomSelect.setup(selectElement);
-    }
-    if (!selectElement || selectElement._customized || !selectElement.parentNode) return;
-    selectElement._customized = true;
-
-    selectElement.style.display = 'none';
-
-    const container = document.createElement('div');
-    container.className = 'custom-select-container';
-    if (selectElement.classList.contains('sort-select')) {
-      container.classList.add('custom-select-sort');
-    } else if (selectElement.classList.contains('calc-select')) {
-      container.classList.add('custom-select-calc');
+  function syncPantryUI() {
+    const grid = document.getElementById('pantry-items-grid');
+    let totalItems = 0;
+    if (grid) {
+      grid.querySelectorAll('.pantry-stepper-input').forEach(input => {
+        const count = Number(pantryInventory[input.getAttribute('data-ing')]) || 0;
+        input.value = count;
+        totalItems += count;
+      });
     } else {
-      container.classList.add('custom-select-rf');
+      totalItems = Object.values(pantryInventory).reduce((acc, c) => acc + (Number(c) || 0), 0);
     }
+    const badge = document.getElementById('pantry-total-count-badge');
+    if (badge) badge.textContent = totalItems;
+  }
 
-    const triggerBtn = document.createElement('button');
-    triggerBtn.type = 'button';
-    triggerBtn.className = 'custom-select-trigger';
-    triggerBtn.setAttribute('aria-haspopup', 'listbox');
-    triggerBtn.setAttribute('aria-expanded', 'false');
+  function initQuickFilterPill() {
+    const controlsContainer = document.querySelector('.controls-container .search-filter-row');
+    if (!controlsContainer || document.getElementById('recipe-cookable-filter-btn')) return;
 
-    const labelSpan = document.createElement('span');
-    labelSpan.className = 'custom-select-label';
+    const cookableBtn = document.createElement('button');
+    cookableBtn.type = 'button';
+    cookableBtn.id = 'recipe-cookable-filter-btn';
+    cookableBtn.className = `recipe-filter-pill-btn ${filterCookableOnly ? 'active' : ''}`;
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
+    cookableBtn.textContent = isEN ? 'Cookable (100%)' : (isCN ? '可立即烹饪 (100%)' : '可立即烹飪 (100%)');
+    cookableBtn.setAttribute('data-i18n', 'recipe.filter_cookable');
 
-    const arrowSpan = document.createElement('span');
-    arrowSpan.className = 'custom-select-arrow';
-    arrowSpan.innerHTML = `<svg viewBox="0 0 12 8" width="7" height="4.5"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>`;
+    cookableBtn.addEventListener('click', () => {
+      filterCookableOnly = !filterCookableOnly;
+      cookableBtn.classList.toggle('active', filterCookableOnly);
+      savePrefs();
+      updateRecipeActiveFilterBadge();
+      render();
+    });
 
-    triggerBtn.appendChild(labelSpan);
-    triggerBtn.appendChild(arrowSpan);
+    const sortBox = controlsContainer.querySelector('.sort-box');
+    if (sortBox) controlsContainer.insertBefore(cookableBtn, sortBox);
+    else controlsContainer.appendChild(cookableBtn);
+  }
 
-    const menuDiv = document.createElement('div');
-    menuDiv.className = 'custom-select-menu';
-    menuDiv.setAttribute('role', 'listbox');
+  /* ─── 填鍋最佳化彈窗 ─────────────────────────────────── */
+  let potFillerMode = 'pantry';
 
-    function syncUI() {
-      const options = selectElement.options ? Array.from(selectElement.options) : [];
-      const selected = (selectElement.selectedIndex >= 0 && options[selectElement.selectedIndex]) || options[0] || null;
-      const selectedIcon = selected ? selected.getAttribute('data-icon') : null;
-      if (selectedIcon) {
-        labelSpan.innerHTML = `<img src="${selectedIcon}" class="custom-select-icon" alt="" /><span>${selected.text}</span>`;
-      } else {
-        labelSpan.textContent = selected ? selected.text : '';
-      }
+  function openPotFillerModal(recipe) {
+    if (!recipe || typeof recipe !== 'object') return;
+    let modal = document.getElementById('recipe-pot-filler-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'recipe-pot-filler-modal';
+      modal.className = 'recipe-modal-overlay';
+      document.body.appendChild(modal);
+    }
+    renderPotFillerModalContent(modal, recipe);
+    modal.classList.add('active');
+  }
 
-      menuDiv.innerHTML = '';
-      options.forEach(opt => {
-        const item = document.createElement('div');
-        item.className = 'custom-select-item';
-        if (opt.value === selectElement.value) {
-          item.classList.add('active');
-        }
-        item.setAttribute('role', 'option');
-        item.setAttribute('data-value', opt.value);
-        const optIcon = opt.getAttribute('data-icon');
-        item.innerHTML = `
-          <div class="custom-select-item-content">
-            ${optIcon ? `<img src="${optIcon}" class="custom-select-icon" alt="" />` : ''}
-            <span class="custom-select-item-text">${opt.text}</span>
+  function renderPotFillerModalContent(modal, recipe) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
+    const primaryName = getRecipeName(recipe);
+    const reqPot = Number(recipe.pot_size) || 0;
+    const effPot = getEffectivePotCapacity(potCapacity, campTicketActive, sundayExpansionActive);
+    const fillerSlots = Math.max(0, effPot - reqPot);
+    const fromPantry = potFillerMode === 'pantry';
+    const fillerRes = getRecommendedFillers(recipe, effPot, fromPantry, pantryInventory);
+    const potentialEnergy = calculateMealEnergyWithFillers(recipe, fillerRes.totalFillerEnergy, recipeLevel, islandBonus, eventBonus);
+
+    modal.innerHTML = `
+      <div class="recipe-pot-filler-dialog" role="dialog" aria-modal="true" aria-labelledby="filler-dialog-title">
+        <div class="filler-dialog-header">
+          <div class="filler-header-title-group">
+            <h3 id="filler-dialog-title" class="filler-dialog-title">${isEN ? 'Pot Capacity & Filler Optimizer' : (isCN ? '锅子容量与填锅最佳化' : '鍋子容量與填鍋最佳化')}</h3>
+            <span class="filler-dialog-recipe-sub">${primaryName} (${recipe.category} · ${reqPot}料)</span>
           </div>
-        `;
+          <button type="button" class="filler-dialog-close-btn" id="filler-dialog-close-btn" aria-label="關閉">&times;</button>
+        </div>
+        <div class="filler-dialog-body">
+          <div class="filler-section-card">
+            <div class="filler-section-title">${isEN ? '1. Pot Capacity Configuration' : '1. 鍋子容量配置'}</div>
+            <div class="filler-controls-grid">
+              <div class="filler-control-item">
+                <label class="filler-control-label">${isEN ? 'Base Pot Size' : '基礎鍋子容量'}: <strong id="filler-pot-cap-val">${potCapacity}</strong></label>
+                <div class="filler-pot-stepper">
+                  <input type="range" id="filler-pot-slider" class="rf-slider pot-slider" min="15" max="200" step="1" value="${potCapacity}">
+                </div>
+                <div class="filler-presets-row">
+                  <button type="button" class="filler-preset-pill ${potCapacity === 35 ? 'active' : ''}" data-val="35">35</button>
+                  <button type="button" class="filler-preset-pill ${potCapacity === 57 ? 'active' : ''}" data-val="57">57</button>
+                  <button type="button" class="filler-preset-pill ${potCapacity === 69 ? 'active' : ''}" data-val="69">69</button>
+                  <button type="button" class="filler-preset-pill ${potCapacity === 77 ? 'active' : ''}" data-val="77">77</button>
+                  <button type="button" class="filler-preset-pill ${potCapacity === 100 ? 'active' : ''}" data-val="100">100</button>
+                </div>
+              </div>
+              <div class="filler-switches-item">
+                <label class="filler-toggle-label">
+                  <input type="checkbox" id="filler-camp-ticket-check" ${campTicketActive ? 'checked' : ''}>
+                  <span>${isEN ? 'Good Camp Ticket (+50%)' : '好露營券 (+50%)'}</span>
+                </label>
+                <label class="filler-toggle-label">
+                  <input type="checkbox" id="filler-sunday-check" ${sundayExpansionActive ? 'checked' : ''}>
+                  <span>${isEN ? 'Sunday Cooking (2x)' : '週末料理加倍 (×2)'}</span>
+                </label>
+              </div>
+            </div>
+            <div class="filler-effective-banner">
+              <span>${isEN ? 'Effective Pot' : '有效總容量'}: <strong>${effPot}</strong></span>
+              <span class="filler-effective-divider">·</span>
+              <span>${isEN ? 'Base Required' : '料理基礎需求'}: <strong>${reqPot}</strong></span>
+              <span class="filler-effective-divider">·</span>
+              <span>${isEN ? 'Filler Slots' : '剩餘填鍋格數'}: <strong class="filler-highlight-slots">${fillerSlots}</strong></span>
+            </div>
+          </div>
 
-        item.addEventListener('click', (e) => {
-          e.stopPropagation();
-          selectElement.value = opt.value;
-          container.classList.remove('open');
-          triggerBtn.setAttribute('aria-expanded', 'false');
-          syncUI();
-          selectElement.dispatchEvent(new Event('change', { bubbles: true }));
-        });
+          <div class="filler-section-card">
+            <div class="filler-section-header-row">
+              <div class="filler-section-title">${isEN ? '2. Optimal Filler Ingredients' : '2. 填鍋加料最佳推薦'}</div>
+              <div class="filler-mode-selector">
+                <button type="button" class="filler-mode-btn ${potFillerMode === 'pantry' ? 'active' : ''}" id="filler-mode-pantry-btn">${isEN ? 'From Pantry' : '依庫存食材'}</button>
+                <button type="button" class="filler-mode-btn ${potFillerMode === 'all' ? 'active' : ''}" id="filler-mode-all-btn">${isEN ? 'Theoretical Best' : '理論最高能量'}</button>
+              </div>
+            </div>
+            <div class="filler-table-wrapper">
+              ${fillerSlots === 0 ? `
+                <div class="filler-empty-hint">${isEN ? 'Pot capacity matches recipe requirement (0 filler slots).' : '有效鍋容量等於料理基礎需求，無需追加多餘食材。'}</div>
+              ` : (fillerRes.recommendations.length === 0 ? `
+                <div class="filler-empty-hint">${isEN ? 'No available pantry ingredients for filling. Switch to Theoretical Best.' : '目前食材庫存已無剩餘多餘食材可供加料。可切換為「理論最高能量」。'}</div>
+              ` : `
+                <table class="pokemon-table filler-recommend-table">
+                  <thead>
+                    <tr>
+                      <th style="width:140px;">${isEN ? 'Ingredient' : '推薦食材'}</th>
+                      <th style="width:70px;text-align:right;">${isEN ? 'Base' : '單個能量'}</th>
+                      <th style="width:80px;text-align:right;">${isEN ? 'Count' : '填入數量'}</th>
+                      <th style="width:110px;text-align:right;">${isEN ? 'Added Base' : '追加基礎分'}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${fillerRes.recommendations.map(r => `
+                      <tr>
+                        <td><strong>${isEN ? r.enName : r.name}</strong></td>
+                        <td style="text-align:right;">+${r.unitEnergy}</td>
+                        <td style="text-align:right;color:var(--text-accent);font-weight:700;">×${r.count}</td>
+                        <td style="text-align:right;font-weight:700;">+${r.totalEnergy.toLocaleString()}</td>
+                      </tr>
+                    `).join('')}
+                    ${fillerRes.remainingSlots > 0 ? `
+                      <tr class="filler-unfilled-row">
+                        <td colspan="2" style="color:var(--text-muted);">${isEN ? 'Unfilled Slots (Exhausted)' : '庫存已耗盡之未填格數'}</td>
+                        <td style="text-align:right;color:#ef4444;font-weight:700;">×${fillerRes.remainingSlots}</td>
+                        <td style="text-align:right;color:var(--text-muted);">+0</td>
+                      </tr>
+                    ` : ''}
+                  </tbody>
+                </table>
+              `)}
+            </div>
+          </div>
 
-        menuDiv.appendChild(item);
+          <div class="filler-summary-banner">
+            <div class="filler-summary-col">
+              <span class="filler-summary-label">${isEN ? 'Total Projected Meal Energy' : '最終試算預估總能量'}</span>
+              <div class="filler-summary-val-row">
+                <span class="filler-summary-value">${potentialEnergy.toLocaleString()}</span>
+                <span class="filler-summary-sub">Lv.${recipeLevel} · ×${(1 + islandBonus / 100).toFixed(2)} · ×${Number(eventBonus).toFixed(2)}</span>
+              </div>
+            </div>
+            <div class="filler-summary-actions">
+              <button type="button" class="filler-action-btn filler-apply-btn" id="filler-apply-to-expansion-btn">
+                ${isEN ? 'Apply to Pot Expansion Slider' : '一鍵同步至主介面擴鍋滑桿'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const closeBtn = modal.querySelector('#filler-dialog-close-btn');
+    if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+    const potSlider = modal.querySelector('#filler-pot-slider');
+    const potVal = modal.querySelector('#filler-pot-cap-val');
+    if (potSlider) {
+      potSlider.addEventListener('input', () => {
+        potCapacity = parseInt(potSlider.value, 10) || 57;
+        if (potVal) potVal.textContent = potCapacity;
+        savePrefs();
+        renderPotFillerModalContent(modal, recipe);
       });
     }
 
-    syncUI();
-
-    triggerBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = container.classList.contains('open');
-      document.querySelectorAll('.custom-select-container.open').forEach(c => {
-        c.classList.remove('open');
-        const btn = c.querySelector('.custom-select-trigger');
-        if (btn) btn.setAttribute('aria-expanded', 'false');
+    modal.querySelectorAll('.filler-preset-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = parseInt(btn.getAttribute('data-val'), 10);
+        if (val) {
+          potCapacity = val;
+          savePrefs();
+          renderPotFillerModalContent(modal, recipe);
+        }
       });
-      if (!isOpen) {
-        container.classList.add('open');
-        triggerBtn.setAttribute('aria-expanded', 'true');
-      }
     });
 
-    selectElement.addEventListener('sync-ui', syncUI);
-
-    container.appendChild(triggerBtn);
-    container.appendChild(menuDiv);
-    if (selectElement.parentNode) {
-      selectElement.parentNode.insertBefore(container, selectElement.nextSibling);
-    }
-  }
-
-  window.setupCustomSelect = setupCustomSelect;
-
-  // 全域點擊外部關閉所有下拉選單
-  document.addEventListener('click', () => {
-    document.querySelectorAll('.custom-select-container.open').forEach(c => {
-      c.classList.remove('open');
-      const btn = c.querySelector('.custom-select-trigger');
-      if (btn) btn.setAttribute('aria-expanded', 'false');
-    });
-  });
-
-  // ESC 鍵關閉所有下拉選單
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      document.querySelectorAll('.custom-select-container.open').forEach(c => {
-        c.classList.remove('open');
-        const btn = c.querySelector('.custom-select-trigger');
-        if (btn) btn.setAttribute('aria-expanded', 'false');
-      });
-    }
-  });
-
-  /* ─── Dropdown 選擇器 ───────────────────────────────── */
-  function initSelectFilters() {
-    if (bonusSelect) {
-      bonusSelect.value = minBonus;
-      setupCustomSelect(bonusSelect);
-      bonusSelect.addEventListener('change', () => {
-        minBonus = Number(bonusSelect.value);
+    const campCheck = modal.querySelector('#filler-camp-ticket-check');
+    if (campCheck) {
+      campCheck.addEventListener('change', () => {
+        campTicketActive = campCheck.checked;
         savePrefs();
-        render();
+        renderPotFillerModalContent(modal, recipe);
       });
     }
 
-    if (potSelect) {
-      potSelect.value = minPot;
-      setupCustomSelect(potSelect);
-      potSelect.addEventListener('change', () => {
-        minPot = Number(potSelect.value);
+    const sundayCheck = modal.querySelector('#filler-sunday-check');
+    if (sundayCheck) {
+      sundayCheck.addEventListener('change', () => {
+        sundayExpansionActive = sundayCheck.checked;
         savePrefs();
-        render();
-      });
-    }
-  }
-
-  /* ─── 滑桿控制 ───────────────────────────────────────── */
-  function initSliders() {
-    if (levelSlider) {
-      syncLevelUI();
-      levelSlider.addEventListener('input', () => {
-        const caps = _getRecipesGameCaps();
-        const recipeCap = caps.RECIPE_LEVEL_CAP || 70;
-        const parsed = parseInt(levelSlider.value, 10);
-        recipeLevel = Math.min(Math.max(isNaN(parsed) ? 1 : parsed, 1), recipeCap);
-        syncLevelUI();
-        savePrefs();
-        render();
+        renderPotFillerModalContent(modal, recipe);
       });
     }
 
-    if (islandSlider) {
-      syncIslandUI();
-      islandSlider.addEventListener('input', () => {
-        const caps = _getRecipesGameCaps();
-        const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85;
-        const parsed = parseInt(islandSlider.value, 10);
-        islandBonus = Math.min(Math.max(isNaN(parsed) ? 0 : parsed, 0), islandCap);
-        syncIslandUI();
-        savePrefs();
-        render();
+    const pantryModeBtn = modal.querySelector('#filler-mode-pantry-btn');
+    const allModeBtn = modal.querySelector('#filler-mode-all-btn');
+    if (pantryModeBtn) {
+      pantryModeBtn.addEventListener('click', () => {
+        potFillerMode = 'pantry';
+        renderPotFillerModalContent(modal, recipe);
+      });
+    }
+    if (allModeBtn) {
+      allModeBtn.addEventListener('click', () => {
+        potFillerMode = 'all';
+        renderPotFillerModalContent(modal, recipe);
       });
     }
 
-    if (eventSlider) {
-      syncEventUI();
-      eventSlider.addEventListener('input', () => {
-        eventBonus = parseFloat(eventSlider.value);
-        syncEventUI();
-        savePrefs();
-        render();
-      });
-    }
-
-    if (potExpansionSlider) {
-      syncPotExpansionUI();
-      potExpansionSlider.addEventListener('input', () => {
-        potExpansion = parseInt(potExpansionSlider.value, 10) || 0;
+    const applyBtn = modal.querySelector('#filler-apply-to-expansion-btn');
+    if (applyBtn) {
+      applyBtn.addEventListener('click', () => {
+        potExpansion = Math.min(700, Math.max(0, fillerSlots));
         syncPotExpansionUI();
         savePrefs();
         render();
+        modal.classList.remove('active');
       });
     }
   }
-
-  /* ─── 漂亮成功開關 ───────────────────────────────────── */
-  function initTastyToggle() {
-    if (!tastyToggleBtn) return;
-    syncTastyUI();
-    const evt = tastyToggleBtn.type === 'checkbox' ? 'change' : 'click';
-    tastyToggleBtn.addEventListener(evt, () => {
-      showTasty = tastyToggleBtn.type === 'checkbox' ? tastyToggleBtn.checked : !showTasty;
-      syncTastyUI();
-      savePrefs();
-      render();
-    });
-  }
-
-  /* ─── 食材選擇器 ─────────────────────────────────────── */
-  function initIngredientPicker() {
-    if (!ingredientPickerContainer) return;
-    const ingMap = new Map();
-    allRecipes.forEach(r => {
-      if (!r || typeof r !== 'object' || !Array.isArray(r.ingredients)) return;
-      r.ingredients.forEach(ing => {
-        if (!ing || typeof ing !== 'object' || typeof ing.name !== 'string' || !ing.name.trim()) return;
-        if (!ingMap.has(ing.name)) ingMap.set(ing.name, ing.icon || '');
-      });
-    });
-
-    const ingNames = Array.from(ingMap.keys()).sort();
-    const resolveIngIconUrl = (rawUrl) => {
-      if (!rawUrl || typeof rawUrl !== 'string') return '';
-      if (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function') {
-        return window.mapExternalToLocalAsset(rawUrl) || rawUrl;
-      }
-      return rawUrl;
-    };
-
-    ingredientPickerContainer.innerHTML = ingNames.map(name => {
-      const icon   = resolveIngIconUrl(ingMap.get(name));
-      const active = selectedIngredients.has(name) ? 'active' : '';
-      const ingTitle = window.I18N ? window.I18N.getIngredientName(name) : name;
-      return `<button class="ing-picker-btn ${active}" data-name="${name}" title="${ingTitle}">
-        ${icon ? `<img src="${icon}" class="ing-picker-icon" alt="${ingTitle}">` : ''}
-      </button>`;
-    }).join('');
-
-    if (!ingredientPickerContainer._hasListener) {
-      ingredientPickerContainer._hasListener = true;
-      ingredientPickerContainer.addEventListener('click', e => {
-        const btn = e.target.closest('.ing-picker-btn');
-        if (btn) {
-          const name = btn.getAttribute('data-name');
-          if (excludedIngredients.has(name)) {
-            excludedIngredients.delete(name);
-            const exBtn = excludedPickerContainer && excludedPickerContainer.querySelector(`[data-name="${CSS.escape(name)}"]`);
-            if (exBtn) exBtn.classList.remove('active-exclude');
-          }
-          if (selectedIngredients.has(name)) {
-            selectedIngredients.delete(name);
-            btn.classList.remove('active');
-          } else {
-            selectedIngredients.add(name);
-            btn.classList.add('active');
-          }
-          savePrefs();
-          render();
-        }
-      });
-    }
-
-    const excludedPickerContainer = document.getElementById('excluded-ingredient-picker-tags');
-    if (excludedPickerContainer) {
-      excludedPickerContainer.innerHTML = ingNames.map(name => {
-        const icon   = resolveIngIconUrl(ingMap.get(name));
-        const active = excludedIngredients.has(name) ? 'active-exclude' : '';
-        const ingTitle = window.I18N ? window.I18N.getIngredientName(name) : name;
-        return `<button class="ing-picker-btn ${active}" data-name="${name}" title="${ingTitle}">
-          ${icon ? `<img src="${icon}" class="ing-picker-icon" alt="${ingTitle}">` : ''}
-        </button>`;
-      }).join('');
-
-      if (!excludedPickerContainer._hasListener) {
-        excludedPickerContainer._hasListener = true;
-        excludedPickerContainer.addEventListener('click', e => {
-          const btn = e.target.closest('.ing-picker-btn');
-          if (btn) {
-            const name = btn.getAttribute('data-name');
-            if (selectedIngredients.has(name)) {
-              selectedIngredients.delete(name);
-              const incBtn = ingredientPickerContainer.querySelector(`[data-name="${CSS.escape(name)}"]`);
-              if (incBtn) incBtn.classList.remove('active');
-            }
-            if (excludedIngredients.has(name)) {
-              excludedIngredients.delete(name);
-              btn.classList.remove('active-exclude');
-            } else {
-              excludedIngredients.add(name);
-              btn.classList.add('active-exclude');
-            }
-            savePrefs();
-            render();
-          }
-        });
-      }
-    }
-
-    if (clearIngredientsBtn) {
-      clearIngredientsBtn.addEventListener('click', () => {
-        selectedIngredients.clear();
-        excludedIngredients.clear();
-        ingredientPickerContainer.querySelectorAll('.ing-picker-btn').forEach(b => b.classList.remove('active'));
-        if (excludedPickerContainer) {
-          excludedPickerContainer.querySelectorAll('.ing-picker-btn').forEach(b => b.classList.remove('active-exclude'));
-        }
-        savePrefs();
-        render();
-      });
-    }
-
-    const clearExcludedBtn = document.getElementById('clear-excluded-btn');
-    if (clearExcludedBtn) {
-      clearExcludedBtn.addEventListener('click', () => {
-        excludedIngredients.clear();
-        if (excludedPickerContainer) {
-          excludedPickerContainer.querySelectorAll('.ing-picker-btn').forEach(b => b.classList.remove('active-exclude'));
-        }
-        savePrefs();
-        render();
-      });
-    }
-
-    document.querySelectorAll('input[name="ingredient-match-mode"]').forEach(radio => {
-      if (radio.value === matchMode) radio.checked = true;
-      radio.addEventListener('change', e => {
-        matchMode = e.target.value;
-        savePrefs();
-        render();
-      });
-    });
-  }
-
-  /* ─── 視圖切換 ──────────────────────────────────────── */
-  function initViewToggle() {
-    if (!toggleGridBtn || !toggleTableBtn) return;
-    if (viewMode === 'grid') {
-      toggleGridBtn.classList.add('active');
-      toggleTableBtn.classList.remove('active');
-    } else {
-      toggleTableBtn.classList.add('active');
-      toggleGridBtn.classList.remove('active');
-    }
-    toggleGridBtn.addEventListener('click', () => {
-      viewMode = 'grid';
-      toggleGridBtn.classList.add('active');
-      toggleTableBtn.classList.remove('active');
-      savePrefs();
-      render();
-    });
-    toggleTableBtn.addEventListener('click', () => {
-      viewMode = 'table';
-      toggleTableBtn.classList.add('active');
-      toggleGridBtn.classList.remove('active');
-      savePrefs();
-      render();
-    });
-  }
-
-  /* ─── 排序 ──────────────────────────────────────────── */
-  function initSort() {
-    if (!sortSelect) return;
-    sortSelect.value = sortOption;
-    setupCustomSelect(sortSelect);
-    sortSelect.addEventListener('change', () => {
-      sortOption = sortSelect.value;
-      savePrefs();
-      render();
-    });
-  }
-
-  /* ─── 搜尋與一鍵清空 ─────────────────────────────────── */
-  const recipeSearchClear = document.getElementById('recipe-search-clear');
-
-  function updateRecipeClearBtn() {
-    if (!searchInput) return;
-    if (typeof window !== 'undefined' && typeof window.updateSearchInputHighlight === 'function') {
-      window.updateSearchInputHighlight(searchInput, recipeSearchClear);
-    } else if (recipeSearchClear) {
-      recipeSearchClear.style.display = searchInput.value.trim() ? 'flex' : 'none';
-    }
-  }
-
-  function initSearch() {
-    if (!searchInput) return;
-    searchInput.addEventListener('input', e => {
-      currentSearch = e.target.value.trim().toLowerCase();
-      updateRecipeClearBtn();
-      render();
-    });
-
-    if (recipeSearchClear) {
-      recipeSearchClear.addEventListener('click', () => {
-        searchInput.value = '';
-        currentSearch = '';
-        updateRecipeClearBtn();
-        searchInput.focus();
-        render();
-      });
-    }
-  }
-
-  /* ─── 能量計算 (含食譜等級、多餘食材追加擴鍋、島嶼加成與活動加成) ──────────────────────── */
   function calcEnergy(base, level, islandBonusPct, eventBonusMult = 1.0, extraCount = potExpansion, extraUnitEnergy = 100) {
-    // 1. 食譜等級加成（僅乘在食譜本體需求食材上，追加食材不享等級加成）
     const validBase        = (typeof base === 'number' && Number.isFinite(base)) ? base : 0;
     const lvMultiplier     = 1 + (getLevelBonus(level) / 100);
     const recipeBaseWithLv = validBase * lvMultiplier;
-
-    // 2. 多餘食材追加能量（依官方機制，預設以每個 100 點基礎能量計算）
     const validExtraCount  = Math.max(0, Number(extraCount) || 0);
     const extraBaseEnergy  = validExtraCount * (extraUnitEnergy || 100);
-
-    // 3. 鍋內所有食材小計
     const potSubtotal      = recipeBaseWithLv + extraBaseEnergy;
-
-    // 4. 島嶼加成（適用於整鍋所有食材）
     const islandMultiplier = 1 + (islandBonusPct / 100);
-
-    // 5. 活動加成（適用於最終總能量倍率）與整數四捨五入
     return Math.round(potSubtotal * islandMultiplier * eventBonusMult);
   }
 
@@ -1051,28 +1155,38 @@
           if (recipe._ingNameSet.has(exName)) return false;
         }
       }
+
+      const missingInfo = getRecipeMissingDetails(recipe, pantryInventory);
+      recipe._missingCount = missingInfo.missingCount;
+      recipe._missingDetails = missingInfo.missingItems;
+      recipe._isCookable = missingInfo.isCookable;
+
+      if (filterCookableOnly && recipe._missingCount > 0) return false;
       return true;
     });
 
-    if (sortOption === 'energy-desc' || sortOption === 'energy-asc') {
+    if (sortOption === 'energy-desc' || sortOption === 'energy-asc' || sortOption === 'missing-asc') {
       for (let i = 0; i < filtered.length; i++) {
-        const r = filtered[i];
-        r._cachedEnergy = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
+        filtered[i]._cachedEnergy = calcEnergy(filtered[i].base_energy, recipeLevel, islandBonus, eventBonus);
       }
     }
 
     return filtered.sort((a, b) => {
-      if (sortOption === 'energy-desc')  return (Number.isFinite(b._cachedEnergy) ? b._cachedEnergy : 0) - (Number.isFinite(a._cachedEnergy) ? a._cachedEnergy : 0);
-      if (sortOption === 'energy-asc')   return (Number.isFinite(a._cachedEnergy) ? a._cachedEnergy : 0) - (Number.isFinite(b._cachedEnergy) ? b._cachedEnergy : 0);
-      if (sortOption === 'pot-asc')      return (a.pot_size || 0) - (b.pot_size || 0);
-      if (sortOption === 'pot-desc')     return (b.pot_size || 0) - (a.pot_size || 0);
-      if (sortOption === 'bonus-desc')   return (b.bonus_pct || 0) - (a.bonus_pct || 0);
-      if (sortOption === 'name-asc')     return (a.name_cn || a.name || '').localeCompare(b.name_cn || b.name || '', 'zh-TW');
+      if (sortOption === 'energy-desc') return (Number.isFinite(b._cachedEnergy) ? b._cachedEnergy : 0) - (Number.isFinite(a._cachedEnergy) ? a._cachedEnergy : 0);
+      if (sortOption === 'energy-asc')  return (Number.isFinite(a._cachedEnergy) ? a._cachedEnergy : 0) - (Number.isFinite(b._cachedEnergy) ? b._cachedEnergy : 0);
+      if (sortOption === 'pot-asc')     return (a.pot_size || 0) - (b.pot_size || 0);
+      if (sortOption === 'pot-desc')    return (b.pot_size || 0) - (a.pot_size || 0);
+      if (sortOption === 'bonus-desc')  return (b.bonus_pct || 0) - (a.bonus_pct || 0);
+      if (sortOption === 'name-asc')    return (a.name_cn || a.name || '').localeCompare(b.name_cn || b.name || '', 'zh-TW');
+      if (sortOption === 'missing-asc') {
+        const diff = (a._missingCount || 0) - (b._missingCount || 0);
+        return diff !== 0 ? diff : (Number.isFinite(b._cachedEnergy) ? b._cachedEnergy : 0) - (Number.isFinite(a._cachedEnergy) ? a._cachedEnergy : 0);
+      }
       return 0;
     });
   }
 
-  /* ─── Badge 輔助 ────────────────────────────────────── */
+  /* ─── Badge 與圖示輔助 ───────────────────────────────── */
   function getBonusEmoji(pct) {
     if (pct >= 78) return 'S';
     if (pct >= 61) return 'A';
@@ -1128,18 +1242,46 @@
     </div>`;
   }
 
+  function renderPantryBadge(recipe) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
+    const missing = recipe._missingCount || 0;
+    if (missing === 0) {
+      return `<span class="recipe-pantry-badge pantry-ready">${isEN ? 'Ready' : (isCN ? '可烹饪' : '可烹飪')}</span>`;
+    }
+    const details = recipe._missingDetails || [];
+    const tooltip = details.map(d => `${d.name}: ${d.onHand}/${d.required} (-${d.missing})`).join('\n');
+    return `<span class="recipe-pantry-badge pantry-missing" title="${tooltip}">${isEN ? 'Missing ' : (isCN ? '缺 ' : '缺 ')}${missing}</span>`;
+  }
+
+  function renderEnergyStack(finalE) {
+    return `
+      <div class="desktop-energy-stack ${showTasty ? 'has-tasty' : 'single-energy'}">
+        <div class="desktop-energy-row energy-1x">
+          <span class="energy-multiplier">1x</span>
+          <span class="energy-number">${finalE.toLocaleString()}</span>
+        </div>
+        ${showTasty ? `
+          <div class="desktop-energy-row energy-2x">
+            <span class="energy-multiplier">2x</span>
+            <span class="energy-number">${Math.round(finalE * 2).toLocaleString()}</span>
+          </div>
+          <div class="desktop-energy-row energy-3x">
+            <span class="energy-multiplier">3x</span>
+            <span class="energy-number">${Math.round(finalE * 3).toLocaleString()}</span>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
   /* ─── 側邊欄展開/收合事件與計數 ───────────────────────── */
   function updateRecipeActiveFilterBadge() {
     const badge = document.getElementById('recipe-sidebar-bookmark-badge');
     const clearIncBtn = document.getElementById('clear-ingredients-btn');
     const clearExcBtn = document.getElementById('clear-excluded-btn');
-
-    if (clearIncBtn) {
-      clearIncBtn.style.display = selectedIngredients.size > 0 ? 'inline-block' : 'none';
-    }
-    if (clearExcBtn) {
-      clearExcBtn.style.display = excludedIngredients.size > 0 ? 'inline-block' : 'none';
-    }
+    if (clearIncBtn) clearIncBtn.style.display = selectedIngredients.size > 0 ? 'inline-block' : 'none';
+    if (clearExcBtn) clearExcBtn.style.display = excludedIngredients.size > 0 ? 'inline-block' : 'none';
 
     let activeCount = 0;
     if (selectedCategory && selectedCategory !== 'ALL') activeCount++;
@@ -1148,15 +1290,16 @@
     if (selectedIngredients.size > 0) activeCount += 1;
     if (excludedIngredients.size > 0) activeCount += 1;
     if (recipeLevel > 1 || islandBonus > 0 || eventBonus > 1.0 || showTasty) activeCount++;
+    if (filterCookableOnly) activeCount++;
+    if (Object.keys(pantryInventory).length > 0) activeCount++;
 
     if (badge) {
-      if (activeCount > 0) {
-        badge.textContent = activeCount;
-        badge.style.display = 'inline-flex';
-      } else {
-        badge.style.display = 'none';
-      }
+      badge.textContent = activeCount;
+      badge.style.display = activeCount > 0 ? 'inline-flex' : 'none';
     }
+
+    const cookableBtn = document.getElementById('recipe-cookable-filter-btn');
+    if (cookableBtn) cookableBtn.classList.toggle('active', filterCookableOnly);
   }
 
   function initRecipeSidebarEvents() {
@@ -1165,7 +1308,6 @@
     const closeBtn = document.getElementById('recipe-sidebar-close-btn');
     const backdrop = document.getElementById('recipe-sidebar-backdrop');
     const resetAllBtn = document.getElementById('recipe-sidebar-reset-all-btn') || document.getElementById('recipe-reset-all-btn');
-
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
 
     function toggleRecipeSidebar(forceState) {
@@ -1180,20 +1322,13 @@
           bookmarkHandle.classList.remove('drawer-open');
           bookmarkHandle.setAttribute('aria-expanded', 'false');
           bookmarkHandle.title = '展開食譜篩選側邊欄';
-          bookmarkHandle.style.opacity = '1';
-          bookmarkHandle.style.pointerEvents = 'auto';
-          bookmarkHandle.style.display = 'flex';
-          bookmarkHandle.style.visibility = 'visible';
+          Object.assign(bookmarkHandle.style, { opacity: '1', pointerEvents: 'auto', display: 'flex', visibility: 'visible' });
         }
-        if (typeof window.setSidebarSavedState === 'function') {
-          window.setSidebarSavedState('pksleep_recipe_sidebar_open', false);
-        }
+        if (typeof window.setSidebarSavedState === 'function') window.setSidebarSavedState('pksleep_recipe_sidebar_open', false);
       } else {
         if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(sidebar);
         sidebar.classList.remove('collapsed');
-        if (backdrop) {
-          backdrop.classList.add('active');
-        }
+        if (backdrop) backdrop.classList.add('active');
         if (bookmarkHandle) {
           bookmarkHandle.classList.add('drawer-open');
           bookmarkHandle.setAttribute('aria-expanded', 'true');
@@ -1203,29 +1338,20 @@
           bookmarkHandle.style.display = 'none';
           bookmarkHandle.style.visibility = 'hidden';
         }
-        if (typeof window.setSidebarSavedState === 'function') {
-          window.setSidebarSavedState('pksleep_recipe_sidebar_open', true);
-        }
+        if (typeof window.setSidebarSavedState === 'function') window.setSidebarSavedState('pksleep_recipe_sidebar_open', true);
       }
       if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
     }
     window.toggleRecipeSidebar = toggleRecipeSidebar;
 
-    // 依暫存狀態初始化食譜側邊欄展開/收合
-    const initialRecipeOpen = (function() {
-      if (typeof window.getSidebarSavedState === 'function') {
-        return window.getSidebarSavedState('pksleep_recipe_sidebar_open', true);
-      }
-      try {
-        const saved = sessionStorage.getItem('pksleep_recipe_sidebar_open');
-        if (saved !== null) return saved === 'true';
-      } catch (e) {}
-      return isMobileH5 ? false : true;
-    })();
+    const initialOpen = (typeof window.getSidebarSavedState === 'function')
+      ? window.getSidebarSavedState('pksleep_recipe_sidebar_open', !isMobileH5)
+      : (!isMobileH5);
 
     if (sidebar) {
-      if (initialRecipeOpen) {
+      if (initialOpen) {
         sidebar.classList.remove('collapsed');
+        if (backdrop) backdrop.classList.add('active');
         if (bookmarkHandle) {
           bookmarkHandle.classList.add('drawer-open');
           bookmarkHandle.setAttribute('aria-expanded', 'true');
@@ -1234,8 +1360,6 @@
           bookmarkHandle.style.pointerEvents = 'none';
           bookmarkHandle.style.visibility = 'hidden';
         }
-        if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(sidebar);
-        if (backdrop) backdrop.classList.add('active');
       } else {
         sidebar.classList.add('collapsed');
         if (bookmarkHandle) {
@@ -1249,93 +1373,234 @@
       }
     }
 
-    if (bookmarkHandle && sidebar && !bookmarkHandle._hasListener) {
+    if (bookmarkHandle && !bookmarkHandle._hasListener) {
       bookmarkHandle._hasListener = true;
-      if (typeof window.makeFloatingDraggable === 'function' && isMobileH5) {
-        window.makeFloatingDraggable(bookmarkHandle, () => toggleRecipeSidebar());
-      } else {
-        bookmarkHandle.addEventListener('click', (e) => {
-          e.stopPropagation();
-          toggleRecipeSidebar();
-        });
-      }
+      bookmarkHandle.addEventListener('click', (e) => { e.stopPropagation(); toggleRecipeSidebar(); });
     }
-
-    if (closeBtn && sidebar && !closeBtn._hasListener) {
+    if (closeBtn && !closeBtn._hasListener) {
       closeBtn._hasListener = true;
-      closeBtn.addEventListener('click', () => {
-        toggleRecipeSidebar(false);
-      });
+      closeBtn.addEventListener('click', () => toggleRecipeSidebar(false));
     }
-
-    if (backdrop && sidebar && !backdrop._hasListener) {
+    if (backdrop && !backdrop._hasListener) {
       backdrop._hasListener = true;
-      if (typeof window.bindBackdropDismiss === 'function') {
-        window.bindBackdropDismiss(backdrop, () => toggleRecipeSidebar(false));
-      } else {
-        backdrop.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: false });
-        backdrop.addEventListener('touchend', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          toggleRecipeSidebar(false);
-        }, { passive: false });
-        backdrop.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          toggleRecipeSidebar(false);
-        });
-      }
+      backdrop.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); toggleRecipeSidebar(false); });
     }
-
-    if (sidebar) {
-      if (typeof window.bindSidebarSwipeRightToClose === 'function') {
-        window.bindSidebarSwipeRightToClose(sidebar, () => {
-          toggleRecipeSidebar(false);
-        });
-      }
+    if (sidebar && typeof window.bindSidebarSwipeRightToClose === 'function') {
+      window.bindSidebarSwipeRightToClose(sidebar, () => toggleRecipeSidebar(false));
     }
 
     if (resetAllBtn && !resetAllBtn._hasListener) {
       resetAllBtn._hasListener = true;
       resetAllBtn.addEventListener('click', () => {
-        // 重設分類、食材與搜尋條件（保留「鍋子容量」與「能量試算設定」不重設，以符合使用者持久化保存需求）
         selectedCategory = 'ALL';
         minBonus = 0;
+        filterCookableOnly = false;
         selectedIngredients.clear();
         excludedIngredients.clear();
         currentSearch = '';
-
         if (searchInput) searchInput.value = '';
         updateRecipeClearBtn();
-
-        if (bonusSelect) {
-          bonusSelect.value = '0';
-          bonusSelect.dispatchEvent(new Event('sync-ui'));
-        }
-
+        if (bonusSelect) { bonusSelect.value = '0'; bonusSelect.dispatchEvent(new Event('sync-ui')); }
         if (categoryContainer) {
-          categoryContainer.querySelectorAll('.tag-btn').forEach(b => {
-            if (b.getAttribute('data-cat') === 'ALL') b.classList.add('active');
-            else b.classList.remove('active');
-          });
+          categoryContainer.querySelectorAll('.tag-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-cat') === 'ALL'));
         }
-
-        const ingContainer = document.getElementById('ingredient-picker-tags');
-        if (ingContainer) {
-          ingContainer.querySelectorAll('.ing-picker-btn').forEach(b => b.classList.remove('active'));
-        }
-        const excContainer = document.getElementById('excluded-ingredient-picker-tags');
-        if (excContainer) {
-          excContainer.querySelectorAll('.ing-picker-btn').forEach(b => b.classList.remove('active-exclude'));
-        }
-
+        document.querySelectorAll('#ingredient-picker-tags .ing-picker-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('#excluded-ingredient-picker-tags .ing-picker-btn').forEach(b => b.classList.remove('active-exclude'));
         savePrefs();
         updateRecipeActiveFilterBadge();
         render();
       });
     }
-
     updateRecipeActiveFilterBadge();
+  }
+
+  /* ─── 選擇器與互動初始化 ─────────────────────────────── */
+  function initCategoryFilters() {
+    if (!categoryContainer) return;
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
+    const categories = ['ALL', '咖哩', '沙拉', '甜點'];
+    const catLabels  = { ALL: isEN ? 'All' : '全部', '咖哩': isEN ? 'Curries' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salads' : '沙拉', '甜點': isEN ? 'Desserts' : (isCN ? '甜点' : '甜點') };
+    const catCounts  = { '咖哩': 0, '沙拉': 0, '甜點': 0 };
+    for (let i = 0; i < allRecipes.length; i++) {
+      const c = allRecipes[i] && allRecipes[i].category;
+      if (catCounts[c] !== undefined) catCounts[c]++;
+    }
+
+    categoryContainer.innerHTML = categories.map(cat => {
+      const count = cat === 'ALL' ? allRecipes.length : (catCounts[cat] || 0);
+      const active = cat === selectedCategory ? 'active' : '';
+      return `<button class="tag-btn ${active}" data-cat="${cat}">${catLabels[cat] || cat} (${count})</button>`;
+    }).join('');
+
+    if (!categoryContainer._hasListener) {
+      categoryContainer._hasListener = true;
+      categoryContainer.addEventListener('click', e => {
+        const btn = e.target.closest('.tag-btn');
+        if (btn) {
+          selectedCategory = btn.getAttribute('data-cat');
+          categoryContainer.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          savePrefs();
+          render();
+        }
+      });
+    }
+  }
+
+  function initIngredientPicker() {
+    if (!ingredientPickerContainer) return;
+    const ingMap = new Map();
+    allRecipes.forEach(r => {
+      (Array.isArray(r.ingredients) ? r.ingredients : []).forEach(ing => {
+        if (ing && ing.name && !ingMap.has(ing.name)) ingMap.set(ing.name, ing.icon || '');
+      });
+    });
+
+    const ingNames = Array.from(ingMap.keys()).sort();
+    const excludedPickerContainer = document.getElementById('excluded-ingredient-picker-tags');
+
+    const renderPickerButtons = (container, set, activeCls) => {
+      if (!container) return;
+      container.innerHTML = ingNames.map(name => {
+        const icon = _resolveRecipeAssetUrl(ingMap.get(name));
+        const active = set.has(name) ? activeCls : '';
+        const ingTitle = window.I18N ? window.I18N.getIngredientName(name) : name;
+        return `<button class="ing-picker-btn ${active}" data-name="${name}" title="${ingTitle}">
+          ${icon ? `<img src="${icon}" class="ing-picker-icon" alt="${ingTitle}">` : ''}
+        </button>`;
+      }).join('');
+    };
+
+    renderPickerButtons(ingredientPickerContainer, selectedIngredients, 'active');
+    renderPickerButtons(excludedPickerContainer, excludedIngredients, 'active-exclude');
+
+    const bindPickerClicks = (container, set, oppositeSet, activeCls, oppCls, oppContainer) => {
+      if (!container || container._hasListener) return;
+      container._hasListener = true;
+      container.addEventListener('click', e => {
+        const btn = e.target.closest('.ing-picker-btn');
+        if (!btn) return;
+        const name = btn.getAttribute('data-name');
+        if (oppositeSet.has(name)) {
+          oppositeSet.delete(name);
+          const oppBtn = oppContainer && oppContainer.querySelector(`[data-name="${CSS.escape(name)}"]`);
+          if (oppBtn) oppBtn.classList.remove(oppCls);
+        }
+        if (set.has(name)) {
+          set.delete(name);
+          btn.classList.remove(activeCls);
+        } else {
+          set.add(name);
+          btn.classList.add(activeCls);
+        }
+        savePrefs();
+        render();
+      });
+    };
+
+    bindPickerClicks(ingredientPickerContainer, selectedIngredients, excludedIngredients, 'active', 'active-exclude', excludedPickerContainer);
+    bindPickerClicks(excludedPickerContainer, excludedIngredients, selectedIngredients, 'active-exclude', 'active', ingredientPickerContainer);
+
+    if (clearIngredientsBtn && !clearIngredientsBtn._hasListener) {
+      clearIngredientsBtn._hasListener = true;
+      clearIngredientsBtn.addEventListener('click', () => {
+        selectedIngredients.clear();
+        excludedIngredients.clear();
+        document.querySelectorAll('.ing-picker-btn').forEach(b => b.classList.remove('active', 'active-exclude'));
+        savePrefs();
+        render();
+      });
+    }
+
+    const clearExcludedBtn = document.getElementById('clear-excluded-btn');
+    if (clearExcludedBtn && !clearExcludedBtn._hasListener) {
+      clearExcludedBtn._hasListener = true;
+      clearExcludedBtn.addEventListener('click', () => {
+        excludedIngredients.clear();
+        if (excludedPickerContainer) excludedPickerContainer.querySelectorAll('.ing-picker-btn').forEach(b => b.classList.remove('active-exclude'));
+        savePrefs();
+        render();
+      });
+    }
+
+    document.querySelectorAll('input[name="ingredient-match-mode"]').forEach(radio => {
+      if (radio.value === matchMode) radio.checked = true;
+      radio.addEventListener('change', e => {
+        matchMode = e.target.value;
+        savePrefs();
+        render();
+      });
+    });
+  }
+
+  function initViewToggle() {
+    if (!toggleGridBtn || !toggleTableBtn) return;
+    toggleGridBtn.classList.toggle('active', viewMode === 'grid');
+    toggleTableBtn.classList.toggle('active', viewMode === 'table');
+
+    toggleGridBtn.addEventListener('click', () => {
+      viewMode = 'grid';
+      toggleGridBtn.classList.add('active');
+      toggleTableBtn.classList.remove('active');
+      savePrefs();
+      render();
+    });
+    toggleTableBtn.addEventListener('click', () => {
+      viewMode = 'table';
+      toggleTableBtn.classList.add('active');
+      toggleGridBtn.classList.remove('active');
+      savePrefs();
+      render();
+    });
+  }
+
+  function initSort() {
+    if (!sortSelect) return;
+    if (!sortSelect.querySelector('option[value="missing-asc"]')) {
+      const opt = document.createElement('option');
+      opt.value = 'missing-asc';
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+      const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
+      opt.textContent = isEN ? 'Fewest Missing' : (isCN ? '缺件最少（优先可煮）' : '缺件最少（優先可煮）');
+      opt.setAttribute('data-i18n', 'recipe.sort_missing_asc');
+      sortSelect.appendChild(opt);
+    }
+    sortSelect.value = sortOption;
+    setupCustomSelect(sortSelect);
+    sortSelect.addEventListener('change', () => {
+      sortOption = sortSelect.value;
+      savePrefs();
+      render();
+    });
+  }
+
+  function updateRecipeClearBtn() {
+    if (!searchInput) return;
+    if (typeof window !== 'undefined' && typeof window.updateSearchInputHighlight === 'function') {
+      window.updateSearchInputHighlight(searchInput, recipeSearchClear);
+    } else if (recipeSearchClear) {
+      recipeSearchClear.style.display = searchInput.value.trim() ? 'flex' : 'none';
+    }
+  }
+
+  function initSearch() {
+    if (!searchInput) return;
+    searchInput.addEventListener('input', e => {
+      currentSearch = e.target.value.trim().toLowerCase();
+      updateRecipeClearBtn();
+      render();
+    });
+
+    if (recipeSearchClear) {
+      recipeSearchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        currentSearch = '';
+        updateRecipeClearBtn();
+        searchInput.focus();
+        render();
+      });
+    }
   }
 
   /* ─── 渲染主入口 ────────────────────────────────────── */
@@ -1355,17 +1620,14 @@
     const breakdownHTML = Object.entries(catCounts).map(([cat, c]) => `${catLabels[cat] || cat} <strong>${c}</strong>`).join(' · ');
 
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
-
     const lvBonus = getLevelBonus(recipeLevel);
     const islandMult = (1 + islandBonus / 100).toFixed(2);
     const eventMult = Number(eventBonus).toFixed(2);
 
-    let formulaParts = [];
-    formulaParts.push(`Lv.${recipeLevel}${lvBonus > 0 ? ` (+${lvBonus}%)` : ''}`);
+    let formulaParts = [`Lv.${recipeLevel}${lvBonus > 0 ? ` (+${lvBonus}%)` : ''}`];
     if (islandBonus > 0) formulaParts.push(`+${islandBonus}% (×${islandMult})`);
     if (eventBonus > 1.0) formulaParts.push(`×${eventMult}`);
     if (potExpansion > 0) formulaParts.push(`+${potExpansion}料 (+${(potExpansion * 100).toLocaleString()})`);
-
     const formulaText = formulaParts.join(' · ');
 
     if (isMobileH5) {
@@ -1398,6 +1660,7 @@
     const islandMult = (1 + islandBonus / 100).toFixed(2);
     const eventSub = eventBonus > 1.0 ? ` · ×${eventBonus.toFixed(2)}` : '';
     const potSub = potExpansion > 0 ? ` · +${potExpansion}料` : '';
+
     contentArea.innerHTML = `
       <div class="table-container">
         <table class="pokemon-table recipe-table">
@@ -1419,55 +1682,49 @@
               const finalE        = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
               const primaryName   = getRecipeName(r);
               const secondaryName = isEN ? (r.name_cn !== primaryName ? r.name_cn : '') : (r.name_en || '');
-              const energyCellHTML = `
-                <td class="recipe-energy-cell" style="vertical-align:middle;text-align:right;padding-right:32px;">
-                  <div class="desktop-energy-stack ${showTasty ? 'has-tasty' : 'single-energy'}">
-                    <div class="desktop-energy-row energy-1x">
-                      <span class="energy-multiplier">${showTasty ? '1x' : '1x'}</span>
-                      <span class="energy-number">${finalE.toLocaleString()}</span>
-                    </div>
-                    ${showTasty ? `
-                      <div class="desktop-energy-row energy-2x">
-                        <span class="energy-multiplier">2x</span>
-                        <span class="energy-number">${Math.round(finalE * 2).toLocaleString()}</span>
-                      </div>
-                      <div class="desktop-energy-row energy-3x">
-                        <span class="energy-multiplier">3x</span>
-                        <span class="energy-number">${Math.round(finalE * 3).toLocaleString()}</span>
-                      </div>
-                    ` : ''}
-                  </div>
-                </td>
-              `;
+              const pantryBadgeHTML = renderPantryBadge(r);
               return `
               <tr>
                 <td style="vertical-align:middle;text-align:center;">
-                  <img src="${_resolveRecipeAssetUrl(r.icon)}" width="58" height="58" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';"
-                    style="object-fit:contain;display:block;margin:0 auto;">
+                  <img src="${_resolveRecipeAssetUrl(r.icon)}" width="58" height="58" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';" style="object-fit:contain;display:block;margin:0 auto;">
                 </td>
                 <td class="recipe-name-cell" style="vertical-align:middle;">
                   <div class="recipe-name-wrapper" style="display:flex;flex-direction:column;justify-content:center;min-height:52px;">
-                    <span class="recipe-name-primary" style="font-weight:700;font-size:15px;color:var(--text-main);line-height:1.3;">${primaryName}</span>
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                      <span class="recipe-name-primary" style="font-weight:700;font-size:15px;color:var(--text-main);line-height:1.3;">${primaryName}</span>
+                      ${pantryBadgeHTML}
+                    </div>
                     ${secondaryName ? `<span class="recipe-name-sub" style="color:var(--text-muted);font-size:11px;font-weight:400;margin-top:2px;line-height:1.2;">${secondaryName}</span>` : ''}
                   </div>
                 </td>
                 <td style="vertical-align:middle;"><span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span></td>
-                <td style="vertical-align:middle;"><span class="pot-badge">${r.pot_size}</span></td>
+                <td style="vertical-align:middle;">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                    <span class="pot-badge">${r.pot_size}</span>
+                    <button type="button" class="pot-filler-open-btn" data-recipe-id="${r.name_cn}" title="${isEN ? 'Optimize Pot Fillers' : '填鍋與容量最佳化'}">
+                      ${isEN ? 'Optimizer' : '最佳加料'}
+                    </button>
+                  </div>
+                </td>
                 <td style="vertical-align:middle;">${renderIngRow(r.ingredients)}</td>
-                ${energyCellHTML}
+                <td class="recipe-energy-cell" style="vertical-align:middle;text-align:right;padding-right:32px;">
+                  ${renderEnergyStack(finalE)}
+                </td>
               </tr>
             `}).join('')}
           </tbody>
         </table>
       </div>
     `;
+
+    bindTableActionEvents();
   }
 
   function renderGrid(recipes) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const catLabels = { '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
     const islandMult = (1 + islandBonus / 100).toFixed(2);
     const eventSub = eventBonus > 1.0 ? ` · ×${eventBonus.toFixed(2)}` : '';
@@ -1476,8 +1733,9 @@
       contentArea.innerHTML = `
         <div class="h5-recipe-cards-list">
           ${recipes.map(r => {
-            const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
+            const finalE = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
             const primaryName = getRecipeName(r);
+            const pantryBadgeHTML = renderPantryBadge(r);
             return `
             <div class="h5-recipe-card">
               <div class="h5-recipe-left-col">
@@ -1488,49 +1746,43 @@
                     <div class="h5-recipe-tags-row">
                       <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
                       <span class="h5-recipe-pot">${r.pot_size}</span>
+                      ${pantryBadgeHTML}
+                      <button type="button" class="pot-filler-open-btn compact-filler-btn" data-recipe-id="${r.name_cn}">${isEN ? 'Opt' : '加料'}</button>
                     </div>
                   </div>
                 </div>
-                <div class="h5-recipe-ing-section">
-                  ${renderIngRow(r.ingredients)}
-                </div>
+                <div class="h5-recipe-ing-section">${renderIngRow(r.ingredients)}</div>
               </div>
               <div class="h5-recipe-energy-col ${showTasty ? 'has-tasty' : 'single-energy'}">
-                <div class="h5-energy-score energy-1x">
-                  <span class="energy-multiplier">1x</span>
-                  <span class="energy-number">${finalE.toLocaleString()}</span>
-                </div>
+                <div class="h5-energy-score energy-1x"><span class="energy-multiplier">1x</span><span class="energy-number">${finalE.toLocaleString()}</span></div>
                 ${showTasty ? `
-                  <div class="h5-energy-score energy-2x">
-                    <span class="energy-multiplier">2x</span>
-                    <span class="energy-number">${(finalE * 2).toLocaleString()}</span>
-                  </div>
-                  <div class="h5-energy-score energy-3x">
-                    <span class="energy-multiplier">3x</span>
-                    <span class="energy-number">${(finalE * 3).toLocaleString()}</span>
-                  </div>
+                  <div class="h5-energy-score energy-2x"><span class="energy-multiplier">2x</span><span class="energy-number">${(finalE * 2).toLocaleString()}</span></div>
+                  <div class="h5-energy-score energy-3x"><span class="energy-multiplier">3x</span><span class="energy-number">${(finalE * 3).toLocaleString()}</span></div>
                 ` : ''}
               </div>
             </div>
           `}).join('')}
         </div>
       `;
+      bindTableActionEvents();
       return;
     }
 
     contentArea.innerHTML = `
       <div class="pokemon-grid">
         ${recipes.map(r => {
-          const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
+          const finalE = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
           const primaryName = getRecipeName(r);
+          const pantryBadgeHTML = renderPantryBadge(r);
           return `
           <div class="pokemon-card recipe-desktop-card">
             <div class="card-header" style="align-items:center;margin-bottom:6px;">
               <img class="card-icon" src="${r.icon}" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';" style="width:56px;height:56px;object-fit:contain;">
               <div class="card-title-group" style="flex:1;min-width:0;">
                 <h3 class="pokemon-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px;margin-bottom:3px;">${primaryName}</h3>
-                <div style="display:flex;gap:6px;align-items:center;">
+                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
                   <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
+                  ${pantryBadgeHTML}
                 </div>
               </div>
             </div>
@@ -1538,29 +1790,19 @@
             <div class="recipe-desktop-stats">
               <div class="recipe-stat-row">
                 <span class="stat-label">${t('recipe.th_pot', '鍋子容量')}</span>
-                <span class="stat-value pot-value">${r.pot_size}</span>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span class="stat-value pot-value">${r.pot_size}</span>
+                  <button type="button" class="pot-filler-open-btn" data-recipe-id="${r.name_cn}" title="${isEN ? 'Optimize Pot Fillers' : '填鍋與容量最佳化'}">
+                    ${isEN ? 'Optimizer' : '最佳加料'}
+                  </button>
+                </div>
               </div>
               <div class="recipe-stat-row ${showTasty ? 'has-tasty-energy' : ''}" style="${showTasty ? 'align-items:flex-start;' : 'align-items:center;'}">
                 <div style="display:flex;flex-direction:column;align-items:flex-start;">
                   <span class="stat-label">${t('recipe.th_final_energy', '預估能量')}</span>
                   <span style="color:var(--text-muted);font-size:10.5px;font-weight:400;margin-top:1px;">Lv.${recipeLevel} · ×${islandMult}${eventSub}</span>
                 </div>
-                <div class="desktop-energy-stack ${showTasty ? 'has-tasty' : 'single-energy'}">
-                  <div class="desktop-energy-row energy-1x">
-                    <span class="energy-multiplier">1x</span>
-                    <span class="energy-number">${finalE.toLocaleString()}</span>
-                  </div>
-                  ${showTasty ? `
-                    <div class="desktop-energy-row energy-2x">
-                      <span class="energy-multiplier">2x</span>
-                      <span class="energy-number">${Math.round(finalE * 2).toLocaleString()}</span>
-                    </div>
-                    <div class="desktop-energy-row energy-3x">
-                      <span class="energy-multiplier">3x</span>
-                      <span class="energy-number">${Math.round(finalE * 3).toLocaleString()}</span>
-                    </div>
-                  ` : ''}
-                </div>
+                ${renderEnergyStack(finalE)}
               </div>
             </div>
 
@@ -1568,7 +1810,7 @@
               <div class="recipe-ing-row compact-4-row">
                 ${(Array.isArray(r.ingredients) ? r.ingredients : []).map(i => {
                   if (!i || typeof i !== 'object') return '';
-                  const rawName = typeof i.name === 'string' ? i.name : (typeof i.name !== 'symbol' ? String(i.name || '') : '');
+                  const rawName = typeof i.name === 'string' ? i.name : String(i.name || '');
                   const ingDisplayName = (window.I18N && rawName) ? window.I18N.getIngredientName(rawName) : rawName;
                   const count = (typeof i.count === 'number' && Number.isFinite(i.count)) ? i.count : 0;
                   return `
@@ -1584,51 +1826,93 @@
         `}).join('')}
       </div>
     `;
+
+    bindTableActionEvents();
   }
 
-    window.RecipesApp = {
-      render: function() {
-        initCategoryFilters();
-        initIngredientPicker();
-        render();
-      },
-      calcEnergy: calcEnergy,
-      getLevelBonus: getLevelBonus,
-      isRecipesHealthy: isRecipesHealthy,
-      getPotExpansion: function() { return potExpansion; },
-      setPotExpansion: function(val) {
-        potExpansion = Math.min(700, Math.max(0, Number(val) || 0));
-        syncPotExpansionUI();
-        savePrefs();
-        render();
-      }
-    };
+  function bindTableActionEvents() {
+    if (!contentArea) return;
+    contentArea.querySelectorAll('.pot-filler-open-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const recipeId = btn.getAttribute('data-recipe-id');
+        const targetRecipe = allRecipes.find(r => r.name_cn === recipeId || r.name === recipeId);
+        if (targetRecipe) openPotFillerModal(targetRecipe);
+      });
+    });
   }
 
-  if (typeof window !== 'undefined') {
-    window.isRecipesHealthy = isRecipesHealthy;
-    if (!window.RecipesApp) {
-      window.RecipesApp = {};
-    }
-    window.RecipesApp.isRecipesHealthy = isRecipesHealthy;
-  }
+  window.RecipesApp = {
+    render: function() {
+      initCategoryFilters();
+      initIngredientPicker();
+      initPantryUI();
+      render();
+    },
+    calcEnergy: calcEnergy,
+    getLevelBonus: getLevelBonus,
+    isRecipesHealthy: isRecipesHealthy,
+    getPotExpansion: function() { return potExpansion; },
+    setPotExpansion: function(val) {
+      potExpansion = Math.min(700, Math.max(0, Number(val) || 0));
+      syncPotExpansionUI();
+      savePrefs();
+      render();
+    },
+    getPantry: getPantry,
+    setPantryIngredient: setPantryIngredient,
+    clearPantry: clearPantry,
+    calculateRecipeMissingCount: calculateRecipeMissingCount,
+    getRecipeMissingDetails: getRecipeMissingDetails,
+    getFilterCookableOnly: function() { return filterCookableOnly; },
+    setFilterCookableOnly: function(val) {
+      filterCookableOnly = Boolean(val);
+      savePrefs();
+      updateRecipeActiveFilterBadge();
+      render();
+    },
+    getEffectivePotCapacity: getEffectivePotCapacity,
+    getPotCapacity: function() { return potCapacity; },
+    setPotCapacity: function(val) {
+      potCapacity = Math.max(15, Math.min(200, Number(val) || 57));
+      savePrefs();
+      render();
+    },
+    setCampTicket: function(val) {
+      campTicketActive = Boolean(val);
+      savePrefs();
+      render();
+    },
+    setSundayExpansion: function(val) {
+      sundayExpansionActive = Boolean(val);
+      savePrefs();
+      render();
+    },
+    getRecommendedFillers: getRecommendedFillers,
+    calculateMealEnergyWithFillers: calculateMealEnergyWithFillers,
+    openPotFillerModal: openPotFillerModal
+  };
+}
 
-  if (typeof global !== 'undefined') {
-    global.isRecipesHealthy = isRecipesHealthy;
-  }
+if (typeof window !== 'undefined') {
+  window.isRecipesHealthy = isRecipesHealthy;
+  if (!window.RecipesApp) window.RecipesApp = {};
+  window.RecipesApp.isRecipesHealthy = isRecipesHealthy;
+}
 
-  if (typeof document !== 'undefined') {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initRecipesModule);
-    } else {
-      initRecipesModule();
-    }
-  }
+if (typeof global !== 'undefined') {
+  global.isRecipesHealthy = isRecipesHealthy;
+}
 
-  if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-      isRecipesHealthy: isRecipesHealthy,
-      RecipesApp: (typeof window !== 'undefined' && window.RecipesApp) ? window.RecipesApp : { isRecipesHealthy: isRecipesHealthy }
-    };
-  }
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initRecipesModule);
+  else initRecipesModule();
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    isRecipesHealthy: isRecipesHealthy,
+    RecipesApp: (typeof window !== 'undefined' && window.RecipesApp) ? window.RecipesApp : { isRecipesHealthy: isRecipesHealthy }
+  };
+}
 })();

@@ -17,8 +17,8 @@
     const ribbonBonus = getRibbonBonus(base, ribbon);
     const skillLevel = parseInt(item.skillLevel || item.skill_level || 1, 10) || 1;
 
-    // 依基準等級判定解鎖的副技能 (解鎖門檻: Lv.10, 25, 50, 75, 100)
-    const unlockTiers = [10, 25, 50, 75, 100];
+    // 依基準等級判定解鎖的副技能 (解鎖門檻: Lv.10, 25, 50, 70, 80)
+    const unlockTiers = (typeof _getCompareCaps === 'function' && _getCompareCaps().SUBSKILL_UNLOCK_LEVELS) ? _getCompareCaps().SUBSKILL_UNLOCK_LEVELS : [10, 25, 50, 70, 80];
     const activeSubskills = subskills.filter((s, idx) => s && level >= (unlockTiers[idx] || 10));
     const hasSub = name => activeSubskills.includes(name);
 
@@ -504,7 +504,7 @@
       </div>`;
 
     // ── 3. 副技能與性格配置橫向對照 (Subskills & Nature Build Matchup) ──
-    const unlockLevels = [10, 25, 50, 75, 100];
+    const unlockLevels = (typeof _getCompareCaps === 'function' && _getCompareCaps().SUBSKILL_UNLOCK_LEVELS) ? _getCompareCaps().SUBSKILL_UNLOCK_LEVELS : [10, 25, 50, 70, 80];
     const subskillSlotRows = unlockLevels.map((tierLv, slotIdx) => {
       return {
         label: `Lv.${tierLv}`,

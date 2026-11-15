@@ -1,0 +1,593 @@
+/* ==========================================================================
+   recipes_pantry.css — Pantry Reverse-Search & Pot Filler Optimization UI
+   Single Frame Rule Compliant: Containers wrapping cards/tables have border: none.
+   ========================================================================== */
+
+/* ─── Pantry Inventory Section (Sidebar) ─────────────────────────────────── */
+.recipe-pantry-section {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+.pantry-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.pantry-header-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pantry-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 9px;
+  background: var(--bg-tertiary, #334155);
+  color: var(--text-primary, #f8fafc);
+}
+
+.pantry-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pantry-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted, #94a3b8);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: transform 0.2s ease, color 0.15s ease;
+}
+
+.pantry-toggle-btn:hover {
+  color: var(--text-primary, #f8fafc);
+  background: var(--bg-secondary, #1e293b);
+}
+
+.pantry-chevron-icon {
+  transition: transform 0.2s ease;
+}
+
+.pantry-toggle-btn.rotated .pantry-chevron-icon {
+  transform: rotate(-90deg);
+}
+
+.pantry-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pantry-body.collapsed {
+  display: none;
+}
+
+.pantry-quick-toolbar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.pantry-quick-btn {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 4px;
+  background: var(--bg-secondary, #1e293b);
+  color: var(--text-secondary, #cbd5e1);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pantry-quick-btn:hover {
+  background: var(--bg-tertiary, #334155);
+  color: var(--text-primary, #f8fafc);
+}
+
+.pantry-items-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.pantry-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background: var(--bg-secondary, #1e293b);
+  border-radius: 6px;
+  gap: 8px;
+}
+
+.pantry-item-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.pantry-item-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.pantry-item-name {
+  font-size: 11.5px;
+  color: var(--text-primary, #f8fafc);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pantry-stepper {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.pantry-step-btn {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color, #334155);
+  background: var(--bg-tertiary, #334155);
+  color: var(--text-primary, #f8fafc);
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  padding: 0;
+  transition: background 0.15s ease;
+}
+
+.pantry-step-btn:hover {
+  background: var(--accent-color, #3b82f6);
+  color: #fff;
+}
+
+.pantry-stepper-input {
+  width: 40px;
+  height: 22px;
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 4px;
+  background: var(--bg-primary, #0f172a);
+  color: var(--text-primary, #f8fafc);
+  padding: 0 2px;
+  -moz-appearance: textfield;
+}
+
+.pantry-stepper-input::-webkit-outer-spin-button,
+.pantry-stepper-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ─── Pantry Badges & Filter Pill ────────────────────────────────────────── */
+.recipe-pantry-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.2;
+}
+
+.recipe-pantry-badge.pantry-ready {
+  background: rgba(34, 197, 94, 0.16);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.32);
+}
+
+.recipe-pantry-badge.pantry-missing {
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--text-muted, #94a3b8);
+  border: 1px solid rgba(148, 163, 184, 0.24);
+}
+
+.recipe-filter-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 6px;
+  background: var(--bg-secondary, #1e293b);
+  color: var(--text-secondary, #cbd5e1);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.recipe-filter-pill-btn:hover {
+  background: var(--bg-tertiary, #334155);
+  color: var(--text-primary, #f8fafc);
+}
+
+.recipe-filter-pill-btn.active {
+  background: rgba(34, 197, 94, 0.18);
+  color: #22c55e;
+  border-color: #22c55e;
+  font-weight: 600;
+}
+
+.pot-filler-open-btn {
+  padding: 2px 7px;
+  font-size: 10.5px;
+  font-weight: 600;
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 4px;
+  background: var(--bg-tertiary, #334155);
+  color: var(--text-secondary, #cbd5e1);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.3;
+}
+
+.pot-filler-open-btn:hover {
+  background: var(--accent-color, #3b82f6);
+  color: #fff;
+  border-color: var(--accent-color, #3b82f6);
+}
+
+/* ─── Pot Capacity & Filler Optimizer Modal ──────────────────────────────── */
+.recipe-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.recipe-modal-overlay.active {
+  display: flex;
+}
+
+.recipe-pot-filler-dialog {
+  max-width: 580px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary, #0f172a);
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.filler-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color, #334155);
+  background: var(--bg-secondary, #1e293b);
+}
+
+.filler-header-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.filler-dialog-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary, #f8fafc);
+}
+
+.filler-dialog-recipe-sub {
+  font-size: 12px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.filler-dialog-close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--text-muted, #94a3b8);
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.filler-dialog-close-btn:hover {
+  color: var(--text-primary, #f8fafc);
+  background: var(--bg-tertiary, #334155);
+}
+
+.filler-dialog-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Single Frame Rule: container cards must be borderless and transparent */
+.filler-section-card {
+  border: none;
+  background: transparent;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filler-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary, #f8fafc);
+}
+
+.filler-controls-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--bg-secondary, #1e293b);
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.filler-control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filler-control-label {
+  font-size: 12px;
+  color: var(--text-secondary, #cbd5e1);
+}
+
+.filler-pot-stepper {
+  width: 100%;
+}
+
+.filler-presets-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.filler-preset-pill {
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 12px;
+  background: var(--bg-tertiary, #334155);
+  color: var(--text-secondary, #cbd5e1);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filler-preset-pill:hover {
+  border-color: var(--accent-color, #3b82f6);
+  color: var(--text-primary, #f8fafc);
+}
+
+.filler-preset-pill.active {
+  background: var(--accent-color, #3b82f6);
+  color: #fff;
+  border-color: var(--accent-color, #3b82f6);
+  font-weight: 600;
+}
+
+.filler-switches-item {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.filler-toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary, #cbd5e1);
+  cursor: pointer;
+}
+
+.filler-effective-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-secondary, #1e293b);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-secondary, #cbd5e1);
+  flex-wrap: wrap;
+}
+
+.filler-effective-divider {
+  color: var(--text-muted, #94a3b8);
+}
+
+.filler-highlight-slots {
+  color: var(--accent-color, #3b82f6);
+  font-size: 13.5px;
+}
+
+.filler-section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filler-mode-selector {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-secondary, #1e293b);
+  padding: 2px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color, #334155);
+}
+
+.filler-mode-btn {
+  border: none;
+  background: transparent;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: var(--text-muted, #94a3b8);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filler-mode-btn:hover {
+  color: var(--text-primary, #f8fafc);
+}
+
+.filler-mode-btn.active {
+  background: var(--bg-tertiary, #334155);
+  color: var(--text-primary, #f8fafc);
+  font-weight: 600;
+}
+
+.filler-table-wrapper {
+  overflow-x: auto;
+  border-radius: 6px;
+  border: 1px solid var(--border-color, #334155);
+}
+
+.filler-recommend-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.filler-recommend-table th {
+  padding: 8px 10px;
+  background: var(--bg-secondary, #1e293b);
+  color: var(--text-secondary, #cbd5e1);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color, #334155);
+}
+
+.filler-recommend-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-primary, #f8fafc);
+}
+
+.filler-recommend-table tr:last-child td {
+  border-bottom: none;
+}
+
+.filler-empty-hint {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-muted, #94a3b8);
+  font-size: 12px;
+}
+
+.filler-summary-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--bg-secondary, #1e293b);
+  border-radius: 8px;
+  gap: 12px;
+}
+
+.filler-summary-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.filler-summary-label {
+  font-size: 11px;
+  color: var(--text-muted, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.filler-summary-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.filler-summary-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-accent, #10b981);
+}
+
+.filler-summary-sub {
+  font-size: 11.5px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.filler-action-btn {
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--border-color, #334155);
+  background: var(--bg-tertiary, #334155);
+  color: var(--text-primary, #f8fafc);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.filler-action-btn:hover {
+  background: var(--accent-color, #3b82f6);
+  border-color: var(--accent-color, #3b82f6);
+  color: #fff;
+}

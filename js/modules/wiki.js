@@ -9613,18 +9613,18 @@
   const ITEM_POKEMON_FAMILY_MAP = {
     'thunder_stone': ['25', '26', '133', '135', '82', '462', '737', '738'],
     'fire_stone': ['133', '136', '37', '38', '58', '59'],
-    'water_stone': ['133', '134', '60', '61', '62'],
-    'leaf_stone': ['44', '45', '70', '71', '133', '470'],
+    'water_stone': ['133', '134'],
+    'leaf_stone': ['70', '71', '133', '470'],
     'moon_stone': ['35', '36', '39', '40', '517', '518'],
-    'sun_stone': ['44', '182', '546', '547'],
-    'ice_stone': ['37', '38', '133', '471', '974', '975', '7007'],
+    'sun_stone': ['546', '547'],
+    'ice_stone': ['37', '38', '133', '471', '974', '975', '7006', '7007'],
     'shiny_stone': ['176', '468'],
     'dusk_stone': ['200', '429', '198', '430'],
-    'dawn_stone': ['281', '475', '361', '478'],
+    'dawn_stone': ['281', '475'],
     'oval_stone': ['440', '113'],
-    'linking_cord': ['64', '65', '67', '68', '75', '76', '93', '94', '95', '208', '79', '199', '137', '233', '710', '711'],
-    'metal_coat': ['95', '208', '123', '212'],
-    'kings_rock': ['79', '199', '61', '186'],
+    'linking_cord': ['75', '76', '93', '94', '95', '208', '79', '199', '710', '711'],
+    'metal_coat': ['95', '208'],
+    'kings_rock': ['79', '199'],
     'razor_claw': ['215', '461']
   };
 
@@ -10899,7 +10899,7 @@
                                   : s.name.replace('技能機率提升', '機率提升');
                                 return `<span class="wiki-skill-badge skill-badge-${s.color}" style="white-space: nowrap;">${sName}</span>`;
                               }).join('') 
-                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`}
+                            : `<span class="text-muted font-bold" style="font-size: 13px;">-</span>`}
                         </div>
                       </td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
@@ -10907,7 +10907,7 @@
                           ? `<span class="matrix-rate-up">${isEN ? '▲ Up' : '▲ 上升'}</span>` 
                           : (row.natureBadge === 'down' 
                             ? `<span class="matrix-rate-down">${isEN ? '▼ Down' : '▼ 下降'}</span>` 
-                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`)}
+                            : `<span class="text-muted font-bold" style="font-size: 13px;" data-symbol="-">-</span>`)}
                       </td>
                       <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
@@ -10980,7 +10980,7 @@
                                 const sName = isEN ? (s.name_en || s.name) : s.name;
                                 return `<span class="wiki-skill-badge skill-badge-${s.color}" style="white-space: nowrap;">${sName}</span>`;
                               }).join('') 
-                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`}
+                            : `<span class="text-muted font-bold" style="font-size: 13px;">-</span>`}
                         </div>
                       </td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
@@ -10988,7 +10988,7 @@
                           ? `<span class="matrix-rate-up">${isEN ? '▲ Up' : '▲ 上升'}</span>` 
                           : (row.natureBadge === 'down' 
                             ? `<span class="matrix-rate-down">${isEN ? '▼ Down' : '▼ 下降'}</span>` 
-                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`)}
+                            : `<span class="text-muted font-bold" style="font-size: 13px;" data-symbol="-">-</span>`)}
                       </td>
                       <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">

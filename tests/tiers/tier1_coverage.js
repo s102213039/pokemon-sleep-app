@@ -1600,7 +1600,7 @@ test('Tier 1 - Feature Coverage', 'Wiki Subskills Helping Speed Matrix Nature/In
   // 1. Check nature arrow formatting: only ▲, ▼, - in the content
   assert(html.includes('▲ 上升'), 'Nature up must render as ▲ 上升');
   assert(html.includes('▼ 下降'), 'Nature down must render as ▼ 下降');
-  assert(html.includes('✕'), 'Nature neutral must render as ✕');
+  assert(html.includes('data-symbol="-"') || html.includes('>-</span>'), 'Nature neutral must render as -');
 
   // 2. Check helping interval ratio format: ${row.intervalRatio}x
   assert(html.includes('0.585x'), 'Interval ratio should include 0.585x');

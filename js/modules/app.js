@@ -7292,7 +7292,7 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-var" title="${isEN ? (f.cleanseMint ? 'Nature (Cleanse Mint used)' : 'Nature') : (f.cleanseMint ? '性格修正（使用淨白薄荷消除個性效果）' : '性格修正')}">${natureIngMultStr}</span>
             <span class="formula-op">=</span>
             <span class="formula-res font-bold calc-color-ing">${f.finalIngRate.toFixed(2)}%</span>
-            <span class="formula-op">➜</span>
+            <span class="formula-op">-&gt;</span>
             <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-ing font-bold">${f.finalIngRate.toFixed(2)}%</span> = <strong class="calc-color-yield">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops' : '次掉落'}</strong></span>
           </div>
           <div class="pokedex-yield-items-grid">
@@ -7322,7 +7322,7 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-var" title="${isEN ? (f.cleanseMint ? 'Nature (Cleanse Mint used)' : 'Nature') : (f.cleanseMint ? '性格修正（使用淨白薄荷消除個性效果）' : '性格修正')}">${natureSkillMultStr}</span>
             <span class="formula-op">=</span>
             <span class="formula-res font-bold calc-color-skill">${f.finalSkillRate.toFixed(2)}%</span>
-            <span class="formula-op">➜</span>
+            <span class="formula-op">-&gt;</span>
             <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-skill font-bold">${f.finalSkillRate.toFixed(2)}%</span> = <strong class="calc-color-triggers">${f.dailyTriggers.toFixed(2)} ${isEN ? 'triggers' : '次'}</strong></span>
           </div>
           ${f.mainSkillLabel ? `

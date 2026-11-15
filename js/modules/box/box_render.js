@@ -1,4 +1,5 @@
     if (typeof document === 'undefined') return;
+    if (typeof renderBoxQuickFilterChips === 'function') renderBoxQuickFilterChips();
     syncBoxVisibility();
     updateBoxActiveFilterBadge();
     const container = document.getElementById('box-content-area');
@@ -171,6 +172,7 @@
                     ${boxShowNo ? `<span class="box-card-dex-no" style="font-size:11px;color:var(--text-muted);font-weight:600;margin-right:2px;">No.${base ? (base.formatted_no || base.id) : (p.pokemonId || '')}</span>` : ''}
                     <span class="box-card-name">${escapeHtml(pkmDisplayName)}</span>
                     <span class="box-card-level">Lv.${p.level || 1}</span>
+                    <span class="box-pr-badge ${prInfo.tierBadgeClass || 'pr-tier-b'}" title="${isEN ? 'PR Potential Score: ' + (prInfo.pr || prInfo.score) + '%' : 'PR 潛力評分: ' + (prInfo.pr || prInfo.score) + '%'}">PR ${prInfo.pr || prInfo.score}</span>
                     <div class="box-card-actions">
                       <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '深度診斷報告書與六維雷達圖'}">
                         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -195,6 +197,9 @@
                   </div>
                   ${p.nickname ? `<div class="box-card-nickname">${escapeHtml(p.nickname)}</div>` : ''}
                   <div class="box-card-tags">
+                    ${(p.shiny || p.isShiny || p.is_shiny) ? `
+                      <span class="box-shiny-tag" title="${isEN ? 'Shiny Pokémon' : '異色寶可夢'}">${isEN ? 'Shiny' : '異色'}</span>
+                    ` : ''}
                     ${berry && berry.icon ? `
                     <span class="pkm-berry-icon-wrapper" title="${berryName}">
                       <img src="${berry.icon}" alt="${berryName}" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;">
@@ -327,7 +332,10 @@
                     </div>
                   </td>
                   <td style="text-align:center;">
-                    <span class="box-table-lvl" style="font-weight:700;">Lv.${p.level || 1}</span>
+                    <div style="display:flex;align-items:center;justify-content:center;gap:3px;flex-direction:column;">
+                      <span class="box-table-lvl" style="font-weight:700;">Lv.${p.level || 1}</span>
+                      <span class="box-pr-badge ${prInfo.tierBadgeClass || 'pr-tier-b'}" style="font-size:10px;padding:1px 5px;line-height:1.2;">PR ${prInfo.pr || prInfo.score}</span>
+                    </div>
                   </td>
                   <td style="text-align:center;">
                     <div class="table-name-cn" style="display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;text-align:center;">

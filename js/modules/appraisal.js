@@ -3532,14 +3532,190 @@ const TARGET_TOP_RECIPES = [
     `;
   }
 
+  /* ─── 卡比獸島嶼週日階級評級標準 (Snorlax Island Master Rank Energy Tiers) ─── */
+  const ISLAND_SNORLAX_THRESHOLDS = {
+    greengrass: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 23385 },
+      { rank: 'Ultra 1', energy: 79197 },
+      { rank: 'Master 1', energy: 187832 },
+      { rank: 'Master 5', energy: 321146 },
+      { rank: 'Master 10', energy: 532707 },
+      { rank: 'Master 15', energy: 1199506 },
+      { rank: 'Master 20', energy: 3245795 }
+    ],
+    cyan: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 36164 },
+      { rank: 'Ultra 1', energy: 122474 },
+      { rank: 'Master 1', energy: 256544 },
+      { rank: 'Master 5', energy: 420363 },
+      { rank: 'Master 10', energy: 735875 },
+      { rank: 'Master 15', energy: 1379432 },
+      { rank: 'Master 20', energy: 3732664 }
+    ],
+    beach: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 36164 },
+      { rank: 'Ultra 1', energy: 122474 },
+      { rank: 'Master 1', energy: 256544 },
+      { rank: 'Master 5', energy: 420363 },
+      { rank: 'Master 10', energy: 735875 },
+      { rank: 'Master 15', energy: 1379432 },
+      { rank: 'Master 20', energy: 3732664 }
+    ],
+    taupe: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 51635 },
+      { rank: 'Ultra 1', energy: 174869 },
+      { rank: 'Master 1', energy: 366295 },
+      { rank: 'Master 5', energy: 600197 },
+      { rank: 'Master 10', energy: 1050688 },
+      { rank: 'Master 15', energy: 1776213 },
+      { rank: 'Master 20', energy: 4219534 }
+    ],
+    snowdrop: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 78645 },
+      { rank: 'Ultra 1', energy: 266344 },
+      { rank: 'Master 1', energy: 557907 },
+      { rank: 'Master 5', energy: 914159 },
+      { rank: 'Master 10', energy: 1600296 },
+      { rank: 'Master 15', energy: 2705329 },
+      { rank: 'Master 20', energy: 4706403 }
+    ],
+    lapis: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 97031 },
+      { rank: 'Ultra 1', energy: 328610 },
+      { rank: 'Master 1', energy: 675330 },
+      { rank: 'Master 5', energy: 1075709 },
+      { rank: 'Master 10', energy: 1825483 },
+      { rank: 'Master 15', energy: 2925574 },
+      { rank: 'Master 20', energy: 5193272 }
+    ],
+    powerplant: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 151061 },
+      { rank: 'Ultra 1', energy: 511595 },
+      { rank: 'Master 1', energy: 1038306 },
+      { rank: 'Master 5', energy: 1582395 },
+      { rank: 'Master 10', energy: 2476059 },
+      { rank: 'Master 15', energy: 3744954 },
+      { rank: 'Master 20', energy: 6674166 }
+    ],
+    oldgold: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 151061 },
+      { rank: 'Ultra 1', energy: 511595 },
+      { rank: 'Master 1', energy: 1038306 },
+      { rank: 'Master 5', energy: 1582395 },
+      { rank: 'Master 10', energy: 2476059 },
+      { rank: 'Master 15', energy: 3744954 },
+      { rank: 'Master 20', energy: 6674166 }
+    ],
+    amber: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 198585 },
+      { rank: 'Ultra 1', energy: 654607 },
+      { rank: 'Master 1', energy: 1325740 },
+      { rank: 'Master 5', energy: 2015408 },
+      { rank: 'Master 10', energy: 3179971 },
+      { rank: 'Master 15', energy: 4815792 },
+      { rank: 'Master 20', energy: 8528976 }
+    ]
+  };
+
+  function calculateProjectedSnorlaxRank(weeklyEnergy, islandId) {
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+    if (typeof weeklyEnergy !== 'number' || isNaN(weeklyEnergy) || !isFinite(weeklyEnergy) || weeklyEnergy <= 0) {
+      return isEN ? 'Basic 1' : '普通 1';
+    }
+    const key = (islandId || 'greengrass').toLowerCase();
+    const tiers = ISLAND_SNORLAX_THRESHOLDS[key] || ISLAND_SNORLAX_THRESHOLDS.greengrass;
+    const m1 = tiers.find(t => t.rank === 'Master 1') || { energy: 187832 };
+    const m5 = tiers.find(t => t.rank === 'Master 5') || { energy: 321146 };
+    const m10 = tiers.find(t => t.rank === 'Master 10') || { energy: 532707 };
+    const m15 = tiers.find(t => t.rank === 'Master 15') || { energy: 1199506 };
+    const m20 = tiers.find(t => t.rank === 'Master 20') || { energy: 3245795 };
+
+    if (weeklyEnergy >= m20.energy) {
+      return isEN ? 'Master 20' : '大師 20';
+    }
+    if (weeklyEnergy >= m15.energy) {
+      const step = (m20.energy - m15.energy) / 5;
+      const rankNum = Math.max(15, Math.min(20, 15 + Math.floor((weeklyEnergy - m15.energy) / Math.max(1, step))));
+      return isEN ? `Master ${rankNum}` : `大師 ${rankNum}`;
+    }
+    if (weeklyEnergy >= m10.energy) {
+      const step = (m15.energy - m10.energy) / 5;
+      const rankNum = Math.max(10, Math.min(15, 10 + Math.floor((weeklyEnergy - m10.energy) / Math.max(1, step))));
+      return isEN ? `Master ${rankNum}` : `大師 ${rankNum}`;
+    }
+    if (weeklyEnergy >= m5.energy) {
+      const step = (m10.energy - m5.energy) / 5;
+      const rankNum = Math.max(5, Math.min(10, 5 + Math.floor((weeklyEnergy - m5.energy) / Math.max(1, step))));
+      return isEN ? `Master ${rankNum}` : `大師 ${rankNum}`;
+    }
+    if (weeklyEnergy >= m1.energy) {
+      const step = (m5.energy - m1.energy) / 4;
+      const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - m1.energy) / Math.max(1, step))));
+      return isEN ? `Master ${rankNum}` : `大師 ${rankNum}`;
+    }
+    const u1 = tiers.find(t => t.rank === 'Ultra 1') || { energy: 79197 };
+    if (weeklyEnergy >= u1.energy) {
+      const step = (m1.energy - u1.energy) / 5;
+      const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - u1.energy) / Math.max(1, step))));
+      return isEN ? `Ultra ${rankNum}` : `超級 ${rankNum}`;
+    }
+    const g1 = tiers.find(t => t.rank === 'Great 1') || { energy: 23385 };
+    if (weeklyEnergy >= g1.energy) {
+      const step = (u1.energy - g1.energy) / 5;
+      const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - g1.energy) / Math.max(1, step))));
+      return isEN ? `Great ${rankNum}` : `進階 ${rankNum}`;
+    }
+    const b1 = tiers.find(t => t.rank === 'Basic 1') || { energy: 0 };
+    const step = (g1.energy - b1.energy) / 5;
+    const rankNum = Math.max(1, Math.min(5, 1 + Math.floor(weeklyEnergy / Math.max(1, step))));
+    return isEN ? `Basic ${rankNum}` : `普通 ${rankNum}`;
+  }
+
   /* ─── 幫手隊伍效益模擬器 (Team Synergy & Output Simulator) ─────────────── */
-  function simulateTeamPerformance(teamPokemonItems, islandId) {
+  function simulateTeamPerformance(teamPokemonItems, islandId, targetRecipeArg, potSize, options) {
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
     const island = LAB_ISLANDS.find(i => i.id === islandId) || LAB_ISLANDS[0];
+    const validItems = Array.isArray(teamPokemonItems) ? teamPokemonItems.filter(Boolean) : [];
+
+    // If team is completely empty or null, immediately return zero output
+    if (!teamPokemonItems || !Array.isArray(teamPokemonItems) || teamPokemonItems.length === 0 || validItems.length === 0) {
+      return {
+        island,
+        totalDailyBerryEnergy: 0,
+        dailyCookingEnergy: 0,
+        dailySkillEnergy: 0,
+        totalDailyEnergy: 0,
+        projectedSundayRank: isEN ? 'Basic 1' : '普通 1',
+        weeklyProjectedEnergy: 0,
+        totalDailyIngredientsCount: 0,
+        ingredientsMap: {},
+        totalDailySkillProcs: '0.0',
+        helpingBonusCount: 0,
+        sleepExpBonusCount: 0,
+        energyRecoveryBonusCount: 0,
+        researchExpBonusCount: 0,
+        dreamShardBonusCount: 0,
+        hasHealer: false,
+        slotResults: Array.isArray(teamPokemonItems) ? teamPokemonItems.map(() => null) : [],
+        targetRecipeAnalysis: null
+      };
+    }
+
     const favBerries = getIslandFavoredBerries(islandId);
     const favTypes = getIslandFavoredTypes(islandId);
 
     let totalDailyBerryEnergy = 0;
     let totalDailySkillProcs = 0;
+    let totalDailySkillEnergy = 0;
     let totalDailyIngredientsCount = 0;
     const ingredientsMap = {};
     let helpingBonusCount = 0;
@@ -3548,8 +3724,6 @@ const TARGET_TOP_RECIPES = [
     let researchExpBonusCount = 0;
     let dreamShardBonusCount = 0;
     let hasHealer = false;
-
-    const validItems = (teamPokemonItems || []).filter(Boolean);
 
     validItems.forEach(item => {
       const subs = Array.isArray(item.subskills) ? item.subskills : [];
@@ -3675,6 +3849,25 @@ const TARGET_TOP_RECIPES = [
       const dailySkillProcs = dailyHelps * skillRate;
       totalDailySkillProcs += dailySkillProcs;
 
+      let slotSkillEnergy = 0;
+      const rawSkill = (base && (base.main_skill || (base.skill && base.skill.name))) || item.main_skill || '';
+      let avgPower = 0;
+      if (rawSkill.includes('能量填充M') || rawSkill.includes('Charge Strength M') || rawSkill.includes('Charge Energy M')) {
+        avgPower = 3800;
+      } else if (rawSkill.includes('能量填充') || rawSkill.includes('Charge Strength') || rawSkill.includes('Charge Energy')) {
+        avgPower = 2400;
+      } else if (rawSkill.includes('幫手激勵') || rawSkill.includes('Helper Boost')) {
+        avgPower = 3500;
+      } else if (rawSkill.includes('幫手支援') || rawSkill.includes('Extra Helpful')) {
+        avgPower = 2000;
+      } else if (rawSkill.includes('料理擴大') || rawSkill.includes('Cooking Power-Up')) {
+        avgPower = 1500;
+      } else if (rawSkill.includes('食材獲取') || rawSkill.includes('Ingredient Magnet')) {
+        avgPower = 1200;
+      }
+      slotSkillEnergy = Math.round(dailySkillProcs * avgPower);
+      totalDailySkillEnergy += slotSkillEnergy;
+
       return {
         item,
         base,
@@ -3683,12 +3876,30 @@ const TARGET_TOP_RECIPES = [
         effectiveInterval,
         dailyHelps,
         dailyBerryEnergy,
+        dailySkillEnergy: slotSkillEnergy,
         dailySkillProcs: dailySkillProcs.toFixed(1)
       };
     });
 
+    let targetRecipe = null;
+    if (targetRecipeArg) {
+      if (typeof targetRecipeArg === 'string' && typeof findTargetRecipe === 'function') {
+        targetRecipe = findTargetRecipe(targetRecipeArg);
+      } else if (typeof targetRecipeArg === 'object') {
+        targetRecipe = targetRecipeArg;
+      }
+    }
+    if (!targetRecipe && typeof labState !== 'undefined' && labState.targetRecipeName && typeof findTargetRecipe === 'function') {
+      targetRecipe = findTargetRecipe(labState.targetRecipeName);
+    }
+
+    const effectivePotSize = (typeof potSize === 'number' && potSize > 0)
+      ? potSize
+      : ((options && typeof options.potSize === 'number')
+          ? options.potSize
+          : ((typeof labState !== 'undefined' && labState.potSize) || 57));
+
     let targetRecipeAnalysis = null;
-    const targetRecipe = findTargetRecipe(labState.targetRecipeName);
     if (targetRecipe && Array.isArray(targetRecipe.ingredients) && targetRecipe.ingredients.length > 0) {
       const items = targetRecipe.ingredients.map(ing => {
         const perMeal = ing.count || 0;
@@ -3708,17 +3919,47 @@ const TARGET_TOP_RECIPES = [
         };
       });
       const overallFulfillmentPct = items.length > 0 ? Math.min(...items.map(i => i.fulfillmentPct)) : 0;
+      const targetPotReq = (targetRecipe && targetRecipe.pot_size) || 0;
+      const isPotFeasible = targetPotReq > 0 ? (effectivePotSize >= targetPotReq) : true;
       targetRecipeAnalysis = {
         recipe: targetRecipe,
         items,
         overallFulfillmentPct,
-        isFullySatisfied: items.every(i => i.teamYield >= i.dailyDemand)
+        isFullySatisfied: items.every(i => i.teamYield >= i.dailyDemand),
+        effectivePotSize,
+        isPotFeasible
       };
     }
+
+    let dailyCookingEnergy = 0;
+    if (targetRecipe && targetRecipe.base_energy) {
+      const recipeLevelMultiplier = 1 + ((targetRecipe.bonus_pct || 25) / 100);
+      const islandMultiplier = 1.0;
+      let fulfillmentRatio = 0.0;
+      if (targetRecipeAnalysis && typeof targetRecipeAnalysis.overallFulfillmentPct === 'number') {
+        fulfillmentRatio = Math.min(1.0, Math.max(0.0, targetRecipeAnalysis.overallFulfillmentPct / 100));
+      }
+      dailyCookingEnergy = Math.round(targetRecipe.base_energy * recipeLevelMultiplier * islandMultiplier * 3 * fulfillmentRatio);
+    } else {
+      const ingBaseSum = Object.entries(ingredientsMap).reduce((sum, [iName, count]) => {
+        const ingVal = (typeof INGREDIENT_ENERGY_DICT !== 'undefined' && INGREDIENT_ENERGY_DICT[iName]) ? INGREDIENT_ENERGY_DICT[iName] : 110;
+        return sum + count * ingVal;
+      }, 0);
+      dailyCookingEnergy = ingBaseSum > 0 ? Math.round(ingBaseSum * 1.25) : 0;
+    }
+
+    const totalDailyEnergy = totalDailyBerryEnergy + dailyCookingEnergy + totalDailySkillEnergy;
+    const weeklyProjectedEnergy = totalDailyEnergy * 7;
+    const projectedSundayRank = calculateProjectedSnorlaxRank(weeklyProjectedEnergy, islandId);
 
     return {
       island,
       totalDailyBerryEnergy,
+      dailyCookingEnergy,
+      dailySkillEnergy: totalDailySkillEnergy,
+      totalDailyEnergy,
+      projectedSundayRank,
+      weeklyProjectedEnergy,
       totalDailyIngredientsCount,
       ingredientsMap,
       totalDailySkillProcs: totalDailySkillProcs.toFixed(1),
@@ -4853,6 +5094,77 @@ const TARGET_TOP_RECIPES = [
   }
 
 
+  function setPotSize(size) {
+    const val = parseInt(size, 10);
+    if (!isNaN(val)) {
+      labState.potSize = Math.max(15, Math.min(100, val));
+      if (typeof updateLabUI === 'function') updateLabUI();
+    }
+  }
+
+  function stepPotSize(delta) {
+    const cur = labState.potSize || 57;
+    const next = Math.max(15, Math.min(100, cur + delta));
+    labState.potSize = next;
+    if (typeof updateLabUI === 'function') updateLabUI();
+  }
+
+  function toggleSundayPotExpansion() {
+    labState.sundayPotExpansion = !labState.sundayPotExpansion;
+    if (typeof updateLabUI === 'function') updateLabUI();
+  }
+
+  function toggleGoodCampTicket() {
+    labState.goodCampTicket = !labState.goodCampTicket;
+    if (typeof updateLabUI === 'function') updateLabUI();
+  }
+
+  if (typeof window !== 'undefined') {
+    window.setPotSize = setPotSize;
+    window.stepPotSize = stepPotSize;
+    window.toggleSundayPotExpansion = toggleSundayPotExpansion;
+    window.toggleGoodCampTicket = toggleGoodCampTicket;
+
+    let _appraisalLabRef = window.AppraisalLab || {};
+    try {
+      Object.defineProperty(window, 'AppraisalLab', {
+        configurable: true,
+        enumerable: true,
+        get: function () {
+          return _appraisalLabRef;
+        },
+        set: function (newVal) {
+          _appraisalLabRef = newVal;
+          if (_appraisalLabRef && typeof _appraisalLabRef === 'object') {
+            _appraisalLabRef.setPotSize = setPotSize;
+            _appraisalLabRef.stepPotSize = stepPotSize;
+            _appraisalLabRef.toggleSundayPotExpansion = toggleSundayPotExpansion;
+            _appraisalLabRef.toggleGoodCampTicket = toggleGoodCampTicket;
+            if (typeof calculateProjectedSnorlaxRank === 'function') {
+              _appraisalLabRef.calculateProjectedSnorlaxRank = calculateProjectedSnorlaxRank;
+            }
+            if (typeof ISLAND_SNORLAX_THRESHOLDS !== 'undefined') {
+              _appraisalLabRef.ISLAND_SNORLAX_THRESHOLDS = ISLAND_SNORLAX_THRESHOLDS;
+            }
+          }
+        }
+      });
+    } catch (e) {}
+
+    if (_appraisalLabRef && typeof _appraisalLabRef === 'object') {
+      _appraisalLabRef.setPotSize = setPotSize;
+      _appraisalLabRef.stepPotSize = stepPotSize;
+      _appraisalLabRef.toggleSundayPotExpansion = toggleSundayPotExpansion;
+      _appraisalLabRef.toggleGoodCampTicket = toggleGoodCampTicket;
+      if (typeof calculateProjectedSnorlaxRank === 'function') {
+        _appraisalLabRef.calculateProjectedSnorlaxRank = calculateProjectedSnorlaxRank;
+      }
+      if (typeof ISLAND_SNORLAX_THRESHOLDS !== 'undefined') {
+        _appraisalLabRef.ISLAND_SNORLAX_THRESHOLDS = ISLAND_SNORLAX_THRESHOLDS;
+      }
+    }
+  }
+
   function renderGreengrassBerrySelect(idx, currentBerryName, isEN) {
     const optionsHtml = BERRY_VALUES_DATA.map(b => {
       const bDisp = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b.name) : b.name) : b.name;
@@ -4939,6 +5251,48 @@ const TARGET_TOP_RECIPES = [
       : (targetRecipe.category || '咖哩');
     const isTargetRecipeStrategy = labState.teamStrategy === 'recipe';
 
+    // ─── 料理鍋容量與加成 (Pot Size Controls & Modifiers) ─────────
+    labState.potSize = labState.potSize || 57;
+    labState.sundayPotExpansion = Boolean(labState.sundayPotExpansion);
+    labState.goodCampTicket = Boolean(labState.goodCampTicket);
+
+    const basePotSize = labState.potSize;
+    let potMultiplier = 1.0;
+    if (labState.goodCampTicket) potMultiplier *= 1.5;
+    if (labState.sundayPotExpansion) potMultiplier *= 2.0;
+    const effectivePotSize = Math.floor(basePotSize * potMultiplier);
+
+    const targetPotReq = (targetRecipe && targetRecipe.pot_size) || 0;
+    const isPotFeasible = targetPotReq > 0 ? (effectivePotSize >= targetPotReq) : true;
+    const potFeasibilityBadge = targetPotReq > 0
+      ? (isPotFeasible
+          ? `<span class="lab-pot-feasibility feasible">[OK] ${isEN ? 'Capacity OK' : '容量充裕'} (${targetPotReq}/${effectivePotSize})</span>`
+          : `<span class="lab-pot-feasibility deficit">[!] ${isEN ? 'Insufficient Pot' : '鍋容量不足'} (${targetPotReq}/${effectivePotSize})</span>`)
+      : '';
+
+    const potControlHtml = `
+      <div class="lab-team-config-group lab-pot-config-group">
+        <span class="lab-team-config-label">${isEN ? 'Pot Size:' : '鍋子容量:'}</span>
+        <div class="lab-pot-stepper-wrap">
+          <button type="button" class="lab-pot-step-btn" onclick="window.AppraisalLab.stepPotSize(-3)" title="${isEN ? 'Decrease Pot Size by 3' : '鍋容量 -3'}">-</button>
+          <span class="lab-pot-size-display" title="${isEN ? 'Base Pot Size: ' + basePotSize : '基礎鍋容量: ' + basePotSize}">${basePotSize}</span>
+          <button type="button" class="lab-pot-step-btn" onclick="window.AppraisalLab.stepPotSize(3)" title="${isEN ? 'Increase Pot Size by 3' : '鍋容量 +3'}">+</button>
+        </div>
+        <div class="lab-pot-modifiers">
+          <button type="button" class="lab-pot-toggle-btn ${labState.sundayPotExpansion ? 'active' : ''}" onclick="window.AppraisalLab.toggleSundayPotExpansion()" title="${isEN ? 'Sunday Pot Expansion: 2x Pot Capacity' : '週日特別擴鍋：料理鍋容量 2 倍'}">
+            ${isEN ? 'Sunday 2x' : '週日2倍'}
+          </button>
+          <button type="button" class="lab-pot-toggle-btn ${labState.goodCampTicket ? 'active' : ''}" onclick="window.AppraisalLab.toggleGoodCampTicket()" title="${isEN ? 'Good Camp Ticket: +50% Pot Capacity' : '好露營券：料理鍋容量 +50%'}">
+            ${isEN ? 'Good Camp (+50%)' : '好露營券(+50%)'}
+          </button>
+        </div>
+        <div class="lab-effective-pot-wrap">
+          <span class="lab-effective-pot-label">${isEN ? 'Effective:' : '實際容納:'} <strong class="lab-effective-pot-num">${effectivePotSize}</strong></span>
+          ${potFeasibilityBadge}
+        </div>
+      </div>
+    `;
+
     const teamVariablesBarHtml = `
       <div class="lab-team-config-col lab-team-config-panel">
         <div class="lab-team-config-group">
@@ -4971,6 +5325,8 @@ const TARGET_TOP_RECIPES = [
             </div>
           </div>
         `}
+
+        ${potControlHtml}
       </div>
     `;
 
@@ -5254,7 +5610,7 @@ const TARGET_TOP_RECIPES = [
       }).join('');
 
       const overallStatusBadge = targetAnalysis.isFullySatisfied
-        ? `<span class="lab-supply-overall-badge satisfied">[✓] ${isEN ? '100% Self-Sufficient' : '100% 達成 · 可完全自給自足'}</span>`
+        ? `<span class="lab-supply-overall-badge satisfied">[OK] ${isEN ? '100% Self-Sufficient' : '100% 達成 · 可完全自給自足'}</span>`
         : `<span class="lab-supply-overall-badge pending">${isEN ? `Overall: ${targetAnalysis.overallFulfillmentPct}%` : `全體達成率: ${targetAnalysis.overallFulfillmentPct}%`}</span>`;
 
       supplyDemandBoardHtml = `
@@ -5321,11 +5677,21 @@ const TARGET_TOP_RECIPES = [
         ${supplyDemandBoardHtml}
 
         <div class="lab-team-metrics-grid">
-          <div class="lab-metric-card">
-            <div style="font-size:11.5px;font-weight:700;color:var(--text-muted);">${isEN ? 'Estimated Daily Total Energy' : '預估每日能量總產出'}</div>
-            <div class="lab-metric-value">${simulation.totalDailyBerryEnergy.toLocaleString()} <span style="font-size:12px;font-weight:600;color:var(--text-muted);">${isEN ? 'pts/day' : '能量/日'}</span></div>
+          <div class="lab-metric-card lab-metric-headline-card">
+            <div class="lab-metric-headline-top" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px;">
+              <span class="lab-metric-title" style="font-size:11.5px;font-weight:700;color:var(--text-muted);">${isEN ? 'Estimated Daily Total Energy' : '預估每日能量總產出'}</span>
+              <span class="lab-projected-rank-badge" title="${isEN ? 'Estimated Sunday Snorlax Rank at 7x Daily Energy' : '依據每日產能 x7 預估週日卡比獸可達階級'}">
+                ${isEN ? 'Projected Sunday Snorlax Rank: ' : '預估週日卡比獸階級: '}<strong>${simulation.projectedSundayRank}</strong>
+              </span>
+            </div>
+            <div class="lab-metric-value">${simulation.totalDailyEnergy.toLocaleString()} <span style="font-size:12px;font-weight:600;color:var(--text-muted);">${isEN ? 'pts/day' : '能量/日'}</span></div>
+            <div class="lab-metric-breakdown-chips">
+              <span class="breakdown-chip chip-berry">${isEN ? 'Berry: ' : '樹果: '}${simulation.totalDailyBerryEnergy.toLocaleString()}</span>
+              <span class="breakdown-chip chip-cooking">${isEN ? 'Cooking (3 meals): ' : '料理 (3餐): '}${simulation.dailyCookingEnergy.toLocaleString()}</span>
+              <span class="breakdown-chip chip-skill">${isEN ? 'Skill: ' : '技能: '}${simulation.dailySkillEnergy.toLocaleString()}</span>
+            </div>
             <div class="lab-metric-sub">
-              ${isEN ? `Calculated based on ${island.name_en || island.name} 2x berry energy bonus, helping speed, and subskill multipliers.` : `依據【${island.name}】喜愛樹果 2 倍能量加成、幫手速度與副技能協同倍率精確計算。`}
+              ${isEN ? `Comprehensive simulation based on ${island.name_en || island.name} 2x berry power, 3-meal cooking synergy, and direct skill triggers.` : `依據【${island.name}】喜愛樹果加成、每日 3 餐料理產能與主技能發動綜合精算。`}
             </div>
           </div>
 
@@ -5360,8 +5726,8 @@ const TARGET_TOP_RECIPES = [
     const ribbonBonus = getRibbonBonus(base, ribbon);
     const skillLevel = parseInt(item.skillLevel || item.skill_level || 1, 10) || 1;
 
-    // 依基準等級判定解鎖的副技能 (解鎖門檻: Lv.10, 25, 50, 75, 100)
-    const unlockTiers = [10, 25, 50, 75, 100];
+    // 依基準等級判定解鎖的副技能 (解鎖門檻: Lv.10, 25, 50, 70, 80)
+    const unlockTiers = (typeof _getCompareCaps === 'function' && _getCompareCaps().SUBSKILL_UNLOCK_LEVELS) ? _getCompareCaps().SUBSKILL_UNLOCK_LEVELS : [10, 25, 50, 70, 80];
     const activeSubskills = subskills.filter((s, idx) => s && level >= (unlockTiers[idx] || 10));
     const hasSub = name => activeSubskills.includes(name);
 
@@ -5847,7 +6213,7 @@ const TARGET_TOP_RECIPES = [
       </div>`;
 
     // ── 3. 副技能與性格配置橫向對照 (Subskills & Nature Build Matchup) ──
-    const unlockLevels = [10, 25, 50, 75, 100];
+    const unlockLevels = (typeof _getCompareCaps === 'function' && _getCompareCaps().SUBSKILL_UNLOCK_LEVELS) ? _getCompareCaps().SUBSKILL_UNLOCK_LEVELS : [10, 25, 50, 70, 80];
     const subskillSlotRows = unlockLevels.map((tierLv, slotIdx) => {
       return {
         label: `Lv.${tierLv}`,
@@ -6254,9 +6620,9 @@ const TARGET_TOP_RECIPES = [
     const skillDisp = isEN && window.I18N ? window.I18N.getMainSkillName(skillName) : skillName;
     const curSkillLv = parseInt(targetPkm.skillLevel || 1, 10) || 1;
 
-    // 大多數主技能上限為 Lv.6；能量填充S/M 與 活力加油 上限開放至 Lv.7
+    // 主技能上限判定：優先採用主技能等級上限查詢函式，支援 Lv.7 及 Lv.8
     const isLv7Skill = ['能量填充M', '能量填充S', '活力加油S', 'Charge Strength M', 'Charge Strength S', 'Energizing Cheer S'].some(s => skillName.includes(s));
-    const maxSkillLv = isLv7Skill ? 7 : 6;
+    const maxSkillLv = (typeof getMainSkillMaxLevel === 'function') ? getMainSkillMaxLevel(skillName) : (typeof window !== 'undefined' && typeof window.getMainSkillMaxLevel === 'function') ? window.getMainSkillMaxLevel(skillName) : (isLv7Skill ? 7 : 6);
     const seedsNeeded = Math.max(0, maxSkillLv - curSkillLv);
 
     const spec = basePkm.specialty || '樹果';
@@ -6269,7 +6635,7 @@ const TARGET_TOP_RECIPES = [
     const hasSkillBuff = nat && (nat.buffType === 'skill' || (nat.buff && (nat.buff.includes('主技能') || nat.buff.includes('Skill'))));
     const hasSkillDebuff = nat && (nat.debuffType === 'skill' || (nat.debuff && (nat.debuff.includes('主技能') || nat.debuff.includes('Skill'))));
 
-    const isHealer = ['活力療癒', '能量療癒', 'Energy for Everyone', 'Heal', '新月祈禱', '樹果汁', '治癒波動', '蹭蹭臉頰'].some(s => skillName.includes(s));
+    const isHealer = ['活力療癒', '活力全體療癒', '能量療癒', 'Energy for Everyone', 'Energizing Cheer', 'Heal', '新月祈禱', '樹果汁', '治癒波動', '蹭蹭臉頰'].some(s => skillName.includes(s));
     const isHighImpact = ['幫手加速', 'Helper Boost', '樹果遽增', 'Berry Burst', '料理大成功', '料理成功', 'Extra Tasty', '料理擴鍋', '料理強化', 'Cooking Power Up', '精神擊破', '畫皮', '流星群', '魔法火焰', '健美', '負電'].some(s => skillName.includes(s));
 
     let roiGrade = 'B';

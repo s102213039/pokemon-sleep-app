@@ -134,8 +134,10 @@ const { isRecipesHealthy } = require(recipesBundlePath);
 // =============================================================================
 console.log('[Section 1] Canonical Recipe Dataset Parity & Ground-Truth Invariants');
 
-check('Dataset', 'Exact 78 canonical recipes in data/recipes.json', () => {
-  assertEquals(canonicalRecipes.length, 78, 'Recipe count must be exactly 78');
+check('Dataset', 'Canonical recipes count in data/recipes.json matches manifest', () => {
+  const manifest = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'manifest.json'), 'utf8'));
+  const expectedCount = (manifest.files && manifest.files['recipes.json'] && manifest.files['recipes.json'].count) || 81;
+  assertEquals(canonicalRecipes.length, expectedCount, `Recipe count must match manifest count (${expectedCount})`);
 });
 
 check('Dataset', 'Category distribution matches official 3 meal types (Curry, Salad, Dessert)', () => {
@@ -144,13 +146,13 @@ check('Dataset', 'Category distribution matches official 3 meal types (Curry, Sa
     assert(catCounts[r.category] !== undefined, `Category [${r.category}] must be valid`);
     catCounts[r.category]++;
   }
-  assertEquals(catCounts['咖哩'], 25, 'Curry count must be 25');
-  assertEquals(catCounts['沙拉'], 26, 'Salad count must be 26');
-  assertEquals(catCounts['甜點'], 27, 'Dessert count must be 27');
-  assertEquals(catCounts['咖哩'] + catCounts['沙拉'] + catCounts['甜點'], 78, 'Total sum must be 78');
+  assertEquals(catCounts['咖哩'], 26, 'Curry count must be 26');
+  assertEquals(catCounts['沙拉'], 27, 'Salad count must be 27');
+  assertEquals(catCounts['甜點'], 28, 'Dessert count must be 28');
+  assertEquals(catCounts['咖哩'] + catCounts['沙拉'] + catCounts['甜點'], canonicalRecipes.length, 'Total sum must match recipe count');
 });
 
-check('Dataset', 'Ingredient count sum strictly equals pot_size for all 78 recipes', () => {
+check('Dataset', 'Ingredient count sum strictly equals pot_size for all recipes', () => {
   for (const r of canonicalRecipes) {
     assert(Array.isArray(r.ingredients) && r.ingredients.length > 0, `Recipe [${r.name_cn}] must have non-empty ingredients`);
     const ingSum = r.ingredients.reduce((acc, ing) => acc + ing.count, 0);
@@ -158,12 +160,12 @@ check('Dataset', 'Ingredient count sum strictly equals pot_size for all 78 recip
   }
 });
 
-check('Dataset', 'Pot sizes span from minimum 7 to maximum 115 with boundary values present', () => {
+check('Dataset', 'Pot sizes span from minimum 7 to maximum 121 with boundary values present', () => {
   const potSizes = canonicalRecipes.map(r => r.pot_size);
   const minPot = Math.min(...potSizes);
   const maxPot = Math.max(...potSizes);
   assertEquals(minPot, 7, 'Minimum pot size must be 7');
-  assertEquals(maxPot, 115, 'Maximum pot size must be 115');
+  assertEquals(maxPot, 121, 'Maximum pot size must be 121');
 
   const hasPot15 = canonicalRecipes.some(r => r.pot_size === 15);
   const hasPot77 = canonicalRecipes.some(r => r.pot_size === 77);
@@ -703,7 +705,7 @@ async function runAsyncTests() {
     assertEquals(calc(748, 1, 0, 1.0, -10), 748, 'Negative extraCount clamped to 0');
   });
 
-  check('RecipesRender', 'render() executes without error and populates desktop table with 78 dishes', () => {
+  check('RecipesRender', `render() executes without error and populates desktop table with ${canonicalRecipes.length} dishes`, () => {
     envRecipes.window.RecipesApp.render();
 
     const contentArea = domRecipes.get('recipe-content-area');
@@ -712,7 +714,7 @@ async function runAsyncTests() {
     assert(contentArea.innerHTML.includes('<table class="pokemon-table recipe-table">'), 'Desktop table markup rendered');
     assert(contentArea.innerHTML.includes('特選蘋果咖哩'), 'First dish rendered in table');
     assert(contentArea.innerHTML.includes('採蜜巧克力格子鬆餅'), 'Last dish rendered in table');
-    assert(countBadge.innerHTML.includes('78'), 'Count badge displays 78 dishes');
+    assert(countBadge.innerHTML.includes(String(canonicalRecipes.length)), `Count badge displays ${canonicalRecipes.length} dishes`);
   });
 
   await checkAsync('RecipesRender', 'render() in mobile H5 mode renders single-column compact cards without throwing', async () => {
@@ -728,7 +730,7 @@ async function runAsyncTests() {
 
     assert(contentArea.innerHTML.includes('<div class="h5-recipe-cards-list">'), 'Mobile H5 card list rendered');
     assert(contentArea.innerHTML.includes('h5-recipe-card'), 'h5-recipe-card class present');
-    assert(countBadge.innerHTML.includes('78'), 'Count badge reflects 78 dishes');
+    assert(countBadge.innerHTML.includes(String(canonicalRecipes.length)), `Count badge reflects ${canonicalRecipes.length} dishes`);
   });
 
   check('RecipesRender', 'Boundary pot size dishes (15, 77, 100, 115) render correctly in table and card views', () => {

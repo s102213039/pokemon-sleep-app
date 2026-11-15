@@ -14,6 +14,7 @@ const OUTPUT_FILE = path.join(ROOT_DIR, 'js', 'modules', 'recipes.js');
 
 const RECIPES_MODULES = [
   'recipes_state.js',
+  'recipes_pantry.js',
   'recipes_render.js'
 ];
 

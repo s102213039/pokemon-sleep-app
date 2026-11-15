@@ -144,6 +144,18 @@
   let boxOnlyFinal = false;
   let boxOnlyInitialIng = false;
   let boxShowNo = false;
+  let boxShinyOnly = false;
+  let boxRibbonOnly = false;
+  const boxSelectedKeySubskills = new Set();
+
+  const BOX_QUICK_FILTERS = [
+    { id: 'shiny', label: '異色', label_en: 'Shiny', type: 'shiny' },
+    { id: 'ribbon', label: '睡飽飽獎章', label_en: 'Ribbon', type: 'ribbon' },
+    { id: 'hb', label: '幫手獎勵', label_en: 'Helping Bonus', type: 'subskill', subskill: '幫手獎勵' },
+    { id: 'bfs', label: '樹果數量S', label_en: 'Berry Finding S', type: 'subskill', subskill: '樹果數量S' },
+    { id: 'ing_m', label: '食材機率提升M', label_en: 'Ingredient Finder M', type: 'subskill', subskill: '食材機率提升M' },
+    { id: 'skill_m', label: '技能機率提升M', label_en: 'Skill Trigger M', type: 'subskill', subskill: '技能機率提升M' }
+  ];
 
   const DEFAULT_BERRY_DATA = [
     { name: '柿仔果', type: '一般', icon: 'https://www.serebii.net/pokemonsleep/berries/persimberry.png' },
@@ -320,6 +332,9 @@
     if (boxSelectedSkills && boxSelectedSkills.size > 0) count += 1;
     if (boxOnlyInitialIng) count += 1;
     if (boxOnlyFinal) count += 1;
+    if (boxShinyOnly) count += 1;
+    if (boxRibbonOnly) count += 1;
+    if (boxSelectedKeySubskills && boxSelectedKeySubskills.size > 0) count += boxSelectedKeySubskills.size;
 
     const badge = document.getElementById('box-sidebar-bookmark-badge');
     if (badge) {
@@ -384,6 +399,68 @@
     }
   }
 
+  function renderBoxQuickFilterChips() {
+    if (typeof document === 'undefined' || typeof document.getElementById !== 'function') return;
+    let bar = document.getElementById('box-quick-filter-chips');
+    if (!bar) {
+      if (typeof document.createElement !== 'function') return;
+      const contentArea = document.getElementById('box-content-area');
+      const searchRow = (typeof document.querySelector === 'function')
+        ? document.querySelector('#panel-box .search-filter-row, #view-box .search-filter-row, .search-filter-row')
+        : null;
+      bar = document.createElement('div');
+      bar.id = 'box-quick-filter-chips';
+      bar.className = 'box-quick-filter-bar';
+      if (searchRow && searchRow.parentNode && typeof searchRow.parentNode.insertBefore === 'function') {
+        searchRow.parentNode.insertBefore(bar, searchRow.nextSibling);
+      } else if (contentArea && contentArea.parentNode && typeof contentArea.parentNode.insertBefore === 'function') {
+        contentArea.parentNode.insertBefore(bar, contentArea);
+      } else {
+        return;
+      }
+    }
+
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+    const escapeText = (s) => (s ? String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : '');
+    bar.innerHTML = BOX_QUICK_FILTERS.map(qf => {
+      let isActive = false;
+      if (qf.type === 'shiny') isActive = boxShinyOnly;
+      else if (qf.type === 'ribbon') isActive = boxRibbonOnly;
+      else if (qf.type === 'subskill') isActive = boxSelectedKeySubskills.has(qf.subskill);
+
+      const label = isEN ? qf.label_en : qf.label;
+      return `<button type="button" class="box-quick-chip ${isActive ? 'active' : ''}" data-qf-id="${qf.id}">${escapeText(label)}</button>`;
+    }).join('');
+
+    if (!bar._hasQuickChipListener) {
+      bar._hasQuickChipListener = true;
+      if (typeof bar.addEventListener === 'function') {
+        bar.addEventListener('click', (e) => {
+          const btn = e.target.closest('.box-quick-chip');
+          if (!btn) return;
+          const qfId = btn.getAttribute('data-qf-id');
+          const qf = BOX_QUICK_FILTERS.find(f => f.id === qfId);
+          if (!qf) return;
+
+          if (qf.type === 'shiny') {
+            boxShinyOnly = !boxShinyOnly;
+          } else if (qf.type === 'ribbon') {
+            boxRibbonOnly = !boxRibbonOnly;
+          } else if (qf.type === 'subskill') {
+            if (boxSelectedKeySubskills.has(qf.subskill)) {
+              boxSelectedKeySubskills.delete(qf.subskill);
+            } else {
+              boxSelectedKeySubskills.add(qf.subskill);
+            }
+          }
+          renderBoxQuickFilterChips();
+          updateBoxActiveFilterBadge();
+          if (typeof renderBox === 'function') renderBox();
+        });
+      }
+    }
+  }
+
   function resetBoxFilters() {
     boxSelectedSpecialties.clear();
     boxSelectedBerries.clear();
@@ -392,6 +469,9 @@
     boxOnlyFinal = false;
     boxOnlyInitialIng = false;
     boxShowNo = false;
+    boxShinyOnly = false;
+    boxRibbonOnly = false;
+    boxSelectedKeySubskills.clear();
     sortBy = 'id-asc';
     if (typeof document !== 'undefined') {
       const sortSelect = document.getElementById('box-sort-select');
@@ -406,6 +486,7 @@
       renderBoxBerryButtons();
       renderBoxIngredientButtons();
       renderBoxSkillButtons();
+      renderBoxQuickFilterChips();
       updateBoxActiveFilterBadge();
       renderBox();
     }
@@ -419,7 +500,10 @@
       selectedSkills: new Set(boxSelectedSkills),
       onlyFinal: boxOnlyFinal,
       onlyInitialIng: boxOnlyInitialIng,
-      showNo: boxShowNo
+      showNo: boxShowNo,
+      shinyOnly: boxShinyOnly,
+      ribbonOnly: boxRibbonOnly,
+      selectedKeySubskills: new Set(boxSelectedKeySubskills)
     };
   }
 
@@ -441,9 +525,16 @@
       boxSelectedSkills.clear();
       state.selectedSkills.forEach(k => boxSelectedSkills.add(k));
     }
+    if (state.selectedKeySubskills) {
+      boxSelectedKeySubskills.clear();
+      state.selectedKeySubskills.forEach(k => boxSelectedKeySubskills.add(k));
+    }
     if (state.onlyFinal !== undefined) boxOnlyFinal = Boolean(state.onlyFinal);
     if (state.onlyInitialIng !== undefined) boxOnlyInitialIng = Boolean(state.onlyInitialIng);
     if (state.showNo !== undefined) boxShowNo = Boolean(state.showNo);
+    if (state.shinyOnly !== undefined) boxShinyOnly = Boolean(state.shinyOnly);
+    if (state.ribbonOnly !== undefined) boxRibbonOnly = Boolean(state.ribbonOnly);
+    renderBoxQuickFilterChips();
     updateBoxActiveFilterBadge();
   }
 
@@ -453,6 +544,7 @@
     renderBoxBerryButtons();
     renderBoxIngredientButtons();
     renderBoxSkillButtons();
+    renderBoxQuickFilterChips();
     updateBoxActiveFilterBadge();
 
     if (boxFiltersInitialized) return;
@@ -640,6 +732,9 @@
     window.toggleBoxSidebar = toggleBoxSidebar;
     window.resetBoxFilters = resetBoxFilters;
     window.initBoxFilters = initBoxFilters;
+    window.renderBoxQuickFilterChips = renderBoxQuickFilterChips;
+    window.getBoxFilterState = getBoxFilterState;
+    window.setBoxFilterState = setBoxFilterState;
   }
 
   /* ─── 初始化與資料載入 ───────────────────────────────────── */
@@ -1126,6 +1221,31 @@
         if (!hasMatchedSkill) return false;
       }
 
+      // 5.5. 快速標籤篩選 (Quick Filter Chips: Shiny, Ribbon, Key Subskills)
+      if (typeof boxShinyOnly !== 'undefined' && boxShinyOnly) {
+        const isShinyPkm = !!(p.shiny || p.isShiny || p.is_shiny);
+        if (!isShinyPkm) return false;
+      }
+      if (typeof boxRibbonOnly !== 'undefined' && boxRibbonOnly) {
+        const ribVal = parseInt(p.ribbon, 10) || 0;
+        if (ribVal < 1) return false;
+      }
+      if (typeof boxSelectedKeySubskills !== 'undefined' && boxSelectedKeySubskills && boxSelectedKeySubskills.size > 0) {
+        const pSubs = p.subskills || [];
+        for (const reqSk of boxSelectedKeySubskills) {
+          const hasMatch = pSubs.some(s => {
+            if (!s) return false;
+            if (s === reqSk) return true;
+            if (typeof SUBSKILLS_DATA !== 'undefined' && Array.isArray(SUBSKILLS_DATA)) {
+              const found = SUBSKILLS_DATA.find(item => item.name === reqSk);
+              if (found && (s === found.name || s === found.name_en)) return true;
+            }
+            return false;
+          });
+          if (!hasMatch) return false;
+        }
+      }
+
       // 6. 搜尋文字 (中/英/暱稱/性格/副技能/圖鑑編號)
       if (q) {
         const nameCN = (p.name || (base && base.name_cn) || '').toLowerCase();
@@ -1321,6 +1441,7 @@
   function renderBox() {
 
     if (typeof document === 'undefined') return;
+    if (typeof renderBoxQuickFilterChips === 'function') renderBoxQuickFilterChips();
     syncBoxVisibility();
     updateBoxActiveFilterBadge();
     const container = document.getElementById('box-content-area');
@@ -1493,6 +1614,7 @@
                     ${boxShowNo ? `<span class="box-card-dex-no" style="font-size:11px;color:var(--text-muted);font-weight:600;margin-right:2px;">No.${base ? (base.formatted_no || base.id) : (p.pokemonId || '')}</span>` : ''}
                     <span class="box-card-name">${escapeHtml(pkmDisplayName)}</span>
                     <span class="box-card-level">Lv.${p.level || 1}</span>
+                    <span class="box-pr-badge ${prInfo.tierBadgeClass || 'pr-tier-b'}" title="${isEN ? 'PR Potential Score: ' + (prInfo.pr || prInfo.score) + '%' : 'PR 潛力評分: ' + (prInfo.pr || prInfo.score) + '%'}">PR ${prInfo.pr || prInfo.score}</span>
                     <div class="box-card-actions">
                       <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '深度診斷報告書與六維雷達圖'}">
                         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1517,6 +1639,9 @@
                   </div>
                   ${p.nickname ? `<div class="box-card-nickname">${escapeHtml(p.nickname)}</div>` : ''}
                   <div class="box-card-tags">
+                    ${(p.shiny || p.isShiny || p.is_shiny) ? `
+                      <span class="box-shiny-tag" title="${isEN ? 'Shiny Pokémon' : '異色寶可夢'}">${isEN ? 'Shiny' : '異色'}</span>
+                    ` : ''}
                     ${berry && berry.icon ? `
                     <span class="pkm-berry-icon-wrapper" title="${berryName}">
                       <img src="${berry.icon}" alt="${berryName}" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;">
@@ -1649,7 +1774,10 @@
                     </div>
                   </td>
                   <td style="text-align:center;">
-                    <span class="box-table-lvl" style="font-weight:700;">Lv.${p.level || 1}</span>
+                    <div style="display:flex;align-items:center;justify-content:center;gap:3px;flex-direction:column;">
+                      <span class="box-table-lvl" style="font-weight:700;">Lv.${p.level || 1}</span>
+                      <span class="box-pr-badge ${prInfo.tierBadgeClass || 'pr-tier-b'}" style="font-size:10px;padding:1px 5px;line-height:1.2;">PR ${prInfo.pr || prInfo.score}</span>
+                    </div>
                   </td>
                   <td style="text-align:center;">
                     <div class="table-name-cn" style="display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;text-align:center;">

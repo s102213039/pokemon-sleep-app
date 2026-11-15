@@ -481,6 +481,31 @@
         if (!hasMatchedSkill) return false;
       }
 
+      // 5.5. 快速標籤篩選 (Quick Filter Chips: Shiny, Ribbon, Key Subskills)
+      if (typeof boxShinyOnly !== 'undefined' && boxShinyOnly) {
+        const isShinyPkm = !!(p.shiny || p.isShiny || p.is_shiny);
+        if (!isShinyPkm) return false;
+      }
+      if (typeof boxRibbonOnly !== 'undefined' && boxRibbonOnly) {
+        const ribVal = parseInt(p.ribbon, 10) || 0;
+        if (ribVal < 1) return false;
+      }
+      if (typeof boxSelectedKeySubskills !== 'undefined' && boxSelectedKeySubskills && boxSelectedKeySubskills.size > 0) {
+        const pSubs = p.subskills || [];
+        for (const reqSk of boxSelectedKeySubskills) {
+          const hasMatch = pSubs.some(s => {
+            if (!s) return false;
+            if (s === reqSk) return true;
+            if (typeof SUBSKILLS_DATA !== 'undefined' && Array.isArray(SUBSKILLS_DATA)) {
+              const found = SUBSKILLS_DATA.find(item => item.name === reqSk);
+              if (found && (s === found.name || s === found.name_en)) return true;
+            }
+            return false;
+          });
+          if (!hasMatch) return false;
+        }
+      }
+
       // 6. 搜尋文字 (中/英/暱稱/性格/副技能/圖鑑編號)
       if (q) {
         const nameCN = (p.name || (base && base.name_cn) || '').toLowerCase();

@@ -90,7 +90,8 @@ const { registerTier4Tests } = require('./tiers/tier4_scenarios');
       { name: 'Standalone: Box Import Deduplication & Upgrade Logic', file: 'test_box_import_dedup.js' },
       { name: 'Standalone: Wiki Main Skill Ladder Integration Suite', file: 'test_wiki_skill_ladder.js' },
       { name: 'Standalone: Dynamic Game Config Single-Source Suite', file: 'test_dynamic_game_config.js' },
-      { name: 'Standalone: Security Audit & Hardening Regression Suite', file: 'test_security_audit.js' }
+      { name: 'Standalone: Security Audit & Hardening Regression Suite', file: 'test_security_audit.js' },
+      { name: 'Standalone: Milestone 3 Recipes Reverse-Search & Pot Optimization Suite', file: 'test_milestone3_recipes.js' }
     ];
 
     for (const suite of standaloneSuites) {

@@ -106,7 +106,7 @@
   font-feature-settings: 'tnum';
 }
 
-/*  方案 C: 主技能精華單行速查 (Lv.1 ➔ Lv.Max) */
+/*  方案 C: 主技能精華單行速查 (Lv.1 -> Lv.Max) */
 .wiki-skill-card.clickable-card {
   cursor: pointer;
   user-select: none;

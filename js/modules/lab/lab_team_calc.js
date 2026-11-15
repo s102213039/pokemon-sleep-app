@@ -1,11 +1,187 @@
+  /* ─── 卡比獸島嶼週日階級評級標準 (Snorlax Island Master Rank Energy Tiers) ─── */
+  const ISLAND_SNORLAX_THRESHOLDS = {
+    greengrass: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 23385 },
+      { rank: 'Ultra 1', energy: 79197 },
+      { rank: 'Master 1', energy: 187832 },
+      { rank: 'Master 5', energy: 321146 },
+      { rank: 'Master 10', energy: 532707 },
+      { rank: 'Master 15', energy: 1199506 },
+      { rank: 'Master 20', energy: 3245795 }
+    ],
+    cyan: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 36164 },
+      { rank: 'Ultra 1', energy: 122474 },
+      { rank: 'Master 1', energy: 256544 },
+      { rank: 'Master 5', energy: 420363 },
+      { rank: 'Master 10', energy: 735875 },
+      { rank: 'Master 15', energy: 1379432 },
+      { rank: 'Master 20', energy: 3732664 }
+    ],
+    beach: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 36164 },
+      { rank: 'Ultra 1', energy: 122474 },
+      { rank: 'Master 1', energy: 256544 },
+      { rank: 'Master 5', energy: 420363 },
+      { rank: 'Master 10', energy: 735875 },
+      { rank: 'Master 15', energy: 1379432 },
+      { rank: 'Master 20', energy: 3732664 }
+    ],
+    taupe: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 51635 },
+      { rank: 'Ultra 1', energy: 174869 },
+      { rank: 'Master 1', energy: 366295 },
+      { rank: 'Master 5', energy: 600197 },
+      { rank: 'Master 10', energy: 1050688 },
+      { rank: 'Master 15', energy: 1776213 },
+      { rank: 'Master 20', energy: 4219534 }
+    ],
+    snowdrop: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 78645 },
+      { rank: 'Ultra 1', energy: 266344 },
+      { rank: 'Master 1', energy: 557907 },
+      { rank: 'Master 5', energy: 914159 },
+      { rank: 'Master 10', energy: 1600296 },
+      { rank: 'Master 15', energy: 2705329 },
+      { rank: 'Master 20', energy: 4706403 }
+    ],
+    lapis: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 97031 },
+      { rank: 'Ultra 1', energy: 328610 },
+      { rank: 'Master 1', energy: 675330 },
+      { rank: 'Master 5', energy: 1075709 },
+      { rank: 'Master 10', energy: 1825483 },
+      { rank: 'Master 15', energy: 2925574 },
+      { rank: 'Master 20', energy: 5193272 }
+    ],
+    powerplant: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 151061 },
+      { rank: 'Ultra 1', energy: 511595 },
+      { rank: 'Master 1', energy: 1038306 },
+      { rank: 'Master 5', energy: 1582395 },
+      { rank: 'Master 10', energy: 2476059 },
+      { rank: 'Master 15', energy: 3744954 },
+      { rank: 'Master 20', energy: 6674166 }
+    ],
+    oldgold: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 151061 },
+      { rank: 'Ultra 1', energy: 511595 },
+      { rank: 'Master 1', energy: 1038306 },
+      { rank: 'Master 5', energy: 1582395 },
+      { rank: 'Master 10', energy: 2476059 },
+      { rank: 'Master 15', energy: 3744954 },
+      { rank: 'Master 20', energy: 6674166 }
+    ],
+    amber: [
+      { rank: 'Basic 1', energy: 0 },
+      { rank: 'Great 1', energy: 198585 },
+      { rank: 'Ultra 1', energy: 654607 },
+      { rank: 'Master 1', energy: 1325740 },
+      { rank: 'Master 5', energy: 2015408 },
+      { rank: 'Master 10', energy: 3179971 },
+      { rank: 'Master 15', energy: 4815792 },
+      { rank: 'Master 20', energy: 8528976 }
+    ]
+  };
+
+  function calculateProjectedSnorlaxRank(weeklyEnergy, islandId) {
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+    if (typeof weeklyEnergy !== 'number' || isNaN(weeklyEnergy) || !isFinite(weeklyEnergy) || weeklyEnergy <= 0) {
+      return isEN ? 'Basic 1' : '普通 1';
+    }
+    const key = (islandId || 'greengrass').toLowerCase();
+    const tiers = ISLAND_SNORLAX_THRESHOLDS[key] || ISLAND_SNORLAX_THRESHOLDS.greengrass;
+    const m1 = tiers.find(t => t.rank === 'Master 1') || { energy: 187832 };
+    const m5 = tiers.find(t => t.rank === 'Master 5') || { energy: 321146 };
+    const m10 = tiers.find(t => t.rank === 'Master 10') || { energy: 532707 };
+    const m15 = tiers.find(t => t.rank === 'Master 15') || { energy: 1199506 };
+    const m20 = tiers.find(t => t.rank === 'Master 20') || { energy: 3245795 };
+
+    if (weeklyEnergy >= m20.energy) {
+      return isEN ? 'Master 20' : '大師 20';
+    }
+    if (weeklyEnergy >= m15.energy) {
+      const step = (m20.energy - m15.energy) / 5;
+      const rankNum = Math.max(15, Math.min(20, 15 + Math.floor((weeklyEnergy - m15.energy) / Math.max(1, step))));
+      return isEN ? `Master ${rankNum}` : `大師 ${rankNum}`;
+    }
+    if (weeklyEnergy >= m10.energy) {
+      const step = (m15.energy - m10.energy) / 5;
+      const rankNum = Math.max(10, Math.min(15, 10 + Math.floor((weeklyEnergy - m10.energy) / Math.max(1, step))));
+      return isEN ? `Master ${rankNum}` : `大師 ${rankNum}`;
+    }
+    if (weeklyEnergy >= m5.energy) {
+      const step = (m10.energy - m5.energy) / 5;
+      const rankNum = Math.max(5, Math.min(10, 5 + Math.floor((weeklyEnergy - m5.energy) / Math.max(1, step))));
+      return isEN ? `Master ${rankNum}` : `大師 ${rankNum}`;
+    }
+    if (weeklyEnergy >= m1.energy) {
+      const step = (m5.energy - m1.energy) / 4;
+      const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - m1.energy) / Math.max(1, step))));
+      return isEN ? `Master ${rankNum}` : `大師 ${rankNum}`;
+    }
+    const u1 = tiers.find(t => t.rank === 'Ultra 1') || { energy: 79197 };
+    if (weeklyEnergy >= u1.energy) {
+      const step = (m1.energy - u1.energy) / 5;
+      const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - u1.energy) / Math.max(1, step))));
+      return isEN ? `Ultra ${rankNum}` : `超級 ${rankNum}`;
+    }
+    const g1 = tiers.find(t => t.rank === 'Great 1') || { energy: 23385 };
+    if (weeklyEnergy >= g1.energy) {
+      const step = (u1.energy - g1.energy) / 5;
+      const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - g1.energy) / Math.max(1, step))));
+      return isEN ? `Great ${rankNum}` : `進階 ${rankNum}`;
+    }
+    const b1 = tiers.find(t => t.rank === 'Basic 1') || { energy: 0 };
+    const step = (g1.energy - b1.energy) / 5;
+    const rankNum = Math.max(1, Math.min(5, 1 + Math.floor(weeklyEnergy / Math.max(1, step))));
+    return isEN ? `Basic ${rankNum}` : `普通 ${rankNum}`;
+  }
+
   /* ─── 幫手隊伍效益模擬器 (Team Synergy & Output Simulator) ─────────────── */
-  function simulateTeamPerformance(teamPokemonItems, islandId) {
+  function simulateTeamPerformance(teamPokemonItems, islandId, targetRecipeArg, potSize, options) {
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
     const island = LAB_ISLANDS.find(i => i.id === islandId) || LAB_ISLANDS[0];
+    const validItems = Array.isArray(teamPokemonItems) ? teamPokemonItems.filter(Boolean) : [];
+
+    // If team is completely empty or null, immediately return zero output
+    if (!teamPokemonItems || !Array.isArray(teamPokemonItems) || teamPokemonItems.length === 0 || validItems.length === 0) {
+      return {
+        island,
+        totalDailyBerryEnergy: 0,
+        dailyCookingEnergy: 0,
+        dailySkillEnergy: 0,
+        totalDailyEnergy: 0,
+        projectedSundayRank: isEN ? 'Basic 1' : '普通 1',
+        weeklyProjectedEnergy: 0,
+        totalDailyIngredientsCount: 0,
+        ingredientsMap: {},
+        totalDailySkillProcs: '0.0',
+        helpingBonusCount: 0,
+        sleepExpBonusCount: 0,
+        energyRecoveryBonusCount: 0,
+        researchExpBonusCount: 0,
+        dreamShardBonusCount: 0,
+        hasHealer: false,
+        slotResults: Array.isArray(teamPokemonItems) ? teamPokemonItems.map(() => null) : [],
+        targetRecipeAnalysis: null
+      };
+    }
+
     const favBerries = getIslandFavoredBerries(islandId);
     const favTypes = getIslandFavoredTypes(islandId);
 
     let totalDailyBerryEnergy = 0;
     let totalDailySkillProcs = 0;
+    let totalDailySkillEnergy = 0;
     let totalDailyIngredientsCount = 0;
     const ingredientsMap = {};
     let helpingBonusCount = 0;
@@ -14,8 +190,6 @@
     let researchExpBonusCount = 0;
     let dreamShardBonusCount = 0;
     let hasHealer = false;
-
-    const validItems = (teamPokemonItems || []).filter(Boolean);
 
     validItems.forEach(item => {
       const subs = Array.isArray(item.subskills) ? item.subskills : [];
@@ -141,6 +315,25 @@
       const dailySkillProcs = dailyHelps * skillRate;
       totalDailySkillProcs += dailySkillProcs;
 
+      let slotSkillEnergy = 0;
+      const rawSkill = (base && (base.main_skill || (base.skill && base.skill.name))) || item.main_skill || '';
+      let avgPower = 0;
+      if (rawSkill.includes('能量填充M') || rawSkill.includes('Charge Strength M') || rawSkill.includes('Charge Energy M')) {
+        avgPower = 3800;
+      } else if (rawSkill.includes('能量填充') || rawSkill.includes('Charge Strength') || rawSkill.includes('Charge Energy')) {
+        avgPower = 2400;
+      } else if (rawSkill.includes('幫手激勵') || rawSkill.includes('Helper Boost')) {
+        avgPower = 3500;
+      } else if (rawSkill.includes('幫手支援') || rawSkill.includes('Extra Helpful')) {
+        avgPower = 2000;
+      } else if (rawSkill.includes('料理擴大') || rawSkill.includes('Cooking Power-Up')) {
+        avgPower = 1500;
+      } else if (rawSkill.includes('食材獲取') || rawSkill.includes('Ingredient Magnet')) {
+        avgPower = 1200;
+      }
+      slotSkillEnergy = Math.round(dailySkillProcs * avgPower);
+      totalDailySkillEnergy += slotSkillEnergy;
+
       return {
         item,
         base,
@@ -149,12 +342,30 @@
         effectiveInterval,
         dailyHelps,
         dailyBerryEnergy,
+        dailySkillEnergy: slotSkillEnergy,
         dailySkillProcs: dailySkillProcs.toFixed(1)
       };
     });
 
+    let targetRecipe = null;
+    if (targetRecipeArg) {
+      if (typeof targetRecipeArg === 'string' && typeof findTargetRecipe === 'function') {
+        targetRecipe = findTargetRecipe(targetRecipeArg);
+      } else if (typeof targetRecipeArg === 'object') {
+        targetRecipe = targetRecipeArg;
+      }
+    }
+    if (!targetRecipe && typeof labState !== 'undefined' && labState.targetRecipeName && typeof findTargetRecipe === 'function') {
+      targetRecipe = findTargetRecipe(labState.targetRecipeName);
+    }
+
+    const effectivePotSize = (typeof potSize === 'number' && potSize > 0)
+      ? potSize
+      : ((options && typeof options.potSize === 'number')
+          ? options.potSize
+          : ((typeof labState !== 'undefined' && labState.potSize) || 57));
+
     let targetRecipeAnalysis = null;
-    const targetRecipe = findTargetRecipe(labState.targetRecipeName);
     if (targetRecipe && Array.isArray(targetRecipe.ingredients) && targetRecipe.ingredients.length > 0) {
       const items = targetRecipe.ingredients.map(ing => {
         const perMeal = ing.count || 0;
@@ -174,17 +385,47 @@
         };
       });
       const overallFulfillmentPct = items.length > 0 ? Math.min(...items.map(i => i.fulfillmentPct)) : 0;
+      const targetPotReq = (targetRecipe && targetRecipe.pot_size) || 0;
+      const isPotFeasible = targetPotReq > 0 ? (effectivePotSize >= targetPotReq) : true;
       targetRecipeAnalysis = {
         recipe: targetRecipe,
         items,
         overallFulfillmentPct,
-        isFullySatisfied: items.every(i => i.teamYield >= i.dailyDemand)
+        isFullySatisfied: items.every(i => i.teamYield >= i.dailyDemand),
+        effectivePotSize,
+        isPotFeasible
       };
     }
+
+    let dailyCookingEnergy = 0;
+    if (targetRecipe && targetRecipe.base_energy) {
+      const recipeLevelMultiplier = 1 + ((targetRecipe.bonus_pct || 25) / 100);
+      const islandMultiplier = 1.0;
+      let fulfillmentRatio = 0.0;
+      if (targetRecipeAnalysis && typeof targetRecipeAnalysis.overallFulfillmentPct === 'number') {
+        fulfillmentRatio = Math.min(1.0, Math.max(0.0, targetRecipeAnalysis.overallFulfillmentPct / 100));
+      }
+      dailyCookingEnergy = Math.round(targetRecipe.base_energy * recipeLevelMultiplier * islandMultiplier * 3 * fulfillmentRatio);
+    } else {
+      const ingBaseSum = Object.entries(ingredientsMap).reduce((sum, [iName, count]) => {
+        const ingVal = (typeof INGREDIENT_ENERGY_DICT !== 'undefined' && INGREDIENT_ENERGY_DICT[iName]) ? INGREDIENT_ENERGY_DICT[iName] : 110;
+        return sum + count * ingVal;
+      }, 0);
+      dailyCookingEnergy = ingBaseSum > 0 ? Math.round(ingBaseSum * 1.25) : 0;
+    }
+
+    const totalDailyEnergy = totalDailyBerryEnergy + dailyCookingEnergy + totalDailySkillEnergy;
+    const weeklyProjectedEnergy = totalDailyEnergy * 7;
+    const projectedSundayRank = calculateProjectedSnorlaxRank(weeklyProjectedEnergy, islandId);
 
     return {
       island,
       totalDailyBerryEnergy,
+      dailyCookingEnergy,
+      dailySkillEnergy: totalDailySkillEnergy,
+      totalDailyEnergy,
+      projectedSundayRank,
+      weeklyProjectedEnergy,
       totalDailyIngredientsCount,
       ingredientsMap,
       totalDailySkillProcs: totalDailySkillProcs.toFixed(1),
