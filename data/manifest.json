@@ -1,41 +1,41 @@
 {
   "version": 1,
-  "manifestHash": "6416edd837c89746",
-  "updatedAt": "2026-11-15T05:28:51.510Z",
+  "manifestHash": "e75b6a60f9f008cf",
+  "updatedAt": "2026-11-15T05:39:10.356Z",
   "files": {
     "data.json": {
-      "hash": "71eaced0a0369d63",
-      "size": 271081,
+      "hash": "ec373877edff510f",
+      "size": 200182,
       "count": 253
     },
     "recipes.json": {
-      "hash": "e9bdc0d7f81a088b",
-      "size": 58869,
+      "hash": "25d809750af4ab69",
+      "size": 43856,
       "count": 81
     },
     "news.json": {
-      "hash": "7fa94f41c44b1284",
-      "size": 171771,
+      "hash": "4fd1f6878d418128",
+      "size": 160820,
       "count": 25
     },
     "sleep_styles.json": {
-      "hash": "7e69dbfd2a82f388",
-      "size": 501245,
+      "hash": "ccc66d554daf2be6",
+      "size": 303451,
       "count": 276
     },
     "items.json": {
-      "hash": "4388b80b83abefef",
-      "size": 51178,
+      "hash": "0161979a00c13fab",
+      "size": 40152,
       "count": 34
     },
     "special_icons.json": {
-      "hash": "580f1cc3ae5f15df",
-      "size": 3057,
+      "hash": "c46ece7481cda9d1",
+      "size": 2919,
       "count": 34
     },
     "ladder_lv60.json": {
-      "hash": "8d35a4db264189e2",
-      "size": 263500,
+      "hash": "53e005d85a62c831",
+      "size": 143185,
       "count": 19
     }
   }

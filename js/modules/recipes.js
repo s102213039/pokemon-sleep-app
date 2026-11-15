@@ -40,6 +40,11 @@
           if (!hasOwn.call(ing, 'name') || typeof ing.name !== 'string' || !ing.name.trim()) return false;
           if (!hasOwn.call(ing, 'count') || typeof ing.count !== 'number' || !Number.isFinite(ing.count) || ing.count <= 0) return false;
         }
+
+        // 防護 Serebii 官網表格漏植「彈跳咖哩烏龍麵 (Bounce Curry Udon)」之火辣香草 x22 (正確為 4 種食材、鍋容量 112)
+        if ((r.name_en === 'Bounce Curry Udon' || name === '彈跳咖哩烏龍麵') && (r.ingredients.length < 4 || (typeof r.pot_size === 'number' && r.pot_size !== 112))) {
+          return false;
+        }
       }
       return true;
     } catch (err) {

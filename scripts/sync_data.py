@@ -332,6 +332,15 @@ def sync_recipes_data() -> bool:
         categories = [('咖哩', curry_part), ('沙拉', salad_part), ('甜點', dessert_part)]
         all_dishes = []
 
+        recipe_ing_overrides = {
+            'bounce curry udon': [
+                {'name': '暖暖薑', 'count': 39, 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png'},
+                {'name': '品鮮蘑菇', 'count': 31, 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png'},
+                {'name': '火辣香草', 'count': 22, 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png'},
+                {'name': '豆製肉', 'count': 20, 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png'}
+            ]
+        }
+
         for cat_name, part in categories:
             rows = re.findall(
                 r'<tr>\s*<td class=\"cen\"><a href=\"(/pokemonsleep/dishes/[^\"]+)\"><img src=\"([^\"]+)\"[^>]*>(?:</a>)?\s*</td>\s*<td class=\"fooinfo\"><a href=\"[^\"]+\"><u>([^<]+)</u></a></td>\s*<td class=\"fooinfo\">([^<]*)</td>\s*<td class=\"fooinfo\">(.*?)</td>\s*</tr>',
@@ -345,12 +354,15 @@ def sync_recipes_data() -> bool:
                 norm_key = name_en_clean.lower()
                 name_cn = NAME_CN_MAP.get(norm_key, name_en_clean)
 
-                ings = []
-                ing_matches = re.findall(r'/pokemonsleep/ingredients/([a-z0-9_]+)\.shtml[^>]*>[^<]+</a>\s*\*\s*(\d+)', ings_html)
-                for ing_slug, count_str in ing_matches:
-                    count = int(count_str)
-                    info = ING_MAP.get(ing_slug, {'name': ing_slug, 'icon': f'https://www.serebii.net/pokemonsleep/ingredients/{ing_slug}.png'})
-                    ings.append({'name': info['name'], 'count': count, 'icon': info['icon']})
+                if norm_key in recipe_ing_overrides:
+                    ings = [dict(x) for x in recipe_ing_overrides[norm_key]]
+                else:
+                    ings = []
+                    ing_matches = re.findall(r'/pokemonsleep/ingredients/([a-z0-9_]+)\.shtml[^>]*>[^<]+</a>\s*\*\s*(\d+)', ings_html)
+                    for ing_slug, count_str in ing_matches:
+                        count = int(count_str)
+                        info = ING_MAP.get(ing_slug, {'name': ing_slug, 'icon': f'https://www.serebii.net/pokemonsleep/ingredients/{ing_slug}.png'})
+                        ings.append({'name': info['name'], 'count': count, 'icon': info['icon']})
 
                 pot_size = sum(i['count'] for i in ings)
                 bonus_pct = _get_bonus_pct(pot_size)

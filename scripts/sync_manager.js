@@ -192,6 +192,10 @@ function isRecipesHealthy(data) {
           return false;
         }
       }
+
+      if ((r.name_en === 'Bounce Curry Udon' || name === '彈跳咖哩烏龍麵') && (r.ingredients.length < 4 || (typeof r.pot_size === 'number' && r.pot_size !== 112))) {
+        return false;
+      }
     }
     return true;
   } catch (err) {

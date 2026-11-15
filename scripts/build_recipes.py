@@ -26,7 +26,20 @@ ING_MAP = {
     'greengrasscorn': {'name': '萌綠玉米', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png'},
     'rousingcoffee': {'name': '醒腦咖啡豆', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png'},
     'glossyavocado': {'name': '嫩亮酪梨', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png'},
-    'plumppumpkin': {'name': '沉甸甸南瓜', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png'}
+    'plumppumpkin': {'name': '沉甸甸南瓜', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png'},
+    'snackablenuts': {'name': '一口堅果', 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png'}
+}
+
+# Ground-truth ingredient overrides for upstream Serebii HTML table omissions
+# Bounce Curry Udon base energy 25,539 (+78%) = round((39*109 + 31*167 + 22*130 + 20*103) * 1.78);
+# Serebii's HTML omits Fiery Herb * 22.
+RECIPE_INGREDIENTS_OVERRIDES = {
+    'bounce curry udon': [
+        {'name': '暖暖薑', 'count': 39, 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png'},
+        {'name': '品鮮蘑菇', 'count': 31, 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png'},
+        {'name': '火辣香草', 'count': 22, 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png'},
+        {'name': '豆製肉', 'count': 20, 'icon': 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png'}
+    ]
 }
 
 # Standard Chinese Translation Mapping for Pokémon Sleep Dishes
@@ -164,12 +177,15 @@ def main():
             name_cn = NAME_CN_MAP.get(norm_key, name_en_clean)
 
             # Parse ingredients
-            ings = []
-            ing_matches = re.findall(r'/pokemonsleep/ingredients/([a-z0-9_]+)\.shtml[^>]*>[^<]+</a>\s*\*\s*(\d+)', ings_html)
-            for ing_slug, count_str in ing_matches:
-                count = int(count_str)
-                info = ING_MAP.get(ing_slug, {'name': ing_slug, 'icon': f'https://www.serebii.net/pokemonsleep/ingredients/{ing_slug}.png'})
-                ings.append({'name': info['name'], 'count': count, 'icon': info['icon']})
+            if norm_key in RECIPE_INGREDIENTS_OVERRIDES:
+                ings = [dict(x) for x in RECIPE_INGREDIENTS_OVERRIDES[norm_key]]
+            else:
+                ings = []
+                ing_matches = re.findall(r'/pokemonsleep/ingredients/([a-z0-9_]+)\.shtml[^>]*>[^<]+</a>\s*\*\s*(\d+)', ings_html)
+                for ing_slug, count_str in ing_matches:
+                    count = int(count_str)
+                    info = ING_MAP.get(ing_slug, {'name': ing_slug, 'icon': f'https://www.serebii.net/pokemonsleep/ingredients/{ing_slug}.png'})
+                    ings.append({'name': info['name'], 'count': count, 'icon': info['icon']})
 
             pot_size = sum(i['count'] for i in ings)
             bonus_pct = get_bonus_pct(pot_size)
