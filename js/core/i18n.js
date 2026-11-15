@@ -420,7 +420,13 @@
       'news.cat_bundle': '禮包資訊',
       'news.loading': '最新消息載入中，請稍候...',
       'news.source_hint': '由 AI 自動提煉核心亮點 · 來源：',
-      'news.source_full_hint': '由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>'
+      'news.source_full_hint': '由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>',
+      'pokedex.evo_family_title': '進化家族與條件',
+      'pokedex.evo_single_stage': '無進化形態 (單一階段)',
+      'pokedex.evo_branch_stage': '分支進化鏈',
+      'wiki.island_uncollected_only': '僅未收集',
+      'wiki.island_collected_progress': '睡姿收集進度:',
+      'wiki.island_rec_sleep_type': '今晚推薦睡眠類型:'
     },
 
     'zh-CN': {
@@ -819,12 +825,12 @@
       'appraisal.quick_pick': '快速切换仓库宝可梦：',
 
       // Footer
-      'footer.copyright': 'Pokémon Sleep 宝可梦资料库 &copy; 2026 · <a href=',
-      'footer.sync_note': '同步功能透过 GitHub Actions 执行，点击「同步资料」后约需 60-120 秒生效。需先在「 设定」中填入 GitHub PAT Token。',
+      'footer.copyright': 'Pokémon Sleep 宝可梦资料库 &copy; 2026 · <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank" rel="noopener noreferrer">GitHub 源代码</a> · Powered by <a href="https://www.serebii.net/" target="_blank" rel="noopener noreferrer">Serebii.net</a>',
+      'footer.sync_note': '同步功能透过 GitHub Actions 执行，点击「同步资料」后约需 60-120 秒生效。需先在「设定」中填入 GitHub PAT Token。',
 
       // News & Timeline
       'news.title': '最新活动与官方更新公告',
-      'news.timeline_title': '⏰ 官方活动日程时间轴',
+      'news.timeline_title': '官方活动日程时间轴',
       'news.search_placeholder': '搜索公告标题、关键字、宝可梦...',
       'news.cat_all': '全部公告',
       'news.cat_event': '活动预告',
@@ -833,9 +839,13 @@
       'news.cat_bundle': '礼包信息',
       'news.loading': '最新消息载入中，请稍候...',
       'news.source_hint': '由 AI 自动提炼核心亮点 · 来源：',
-      'news.source_full_hint': '由 AI 自动提炼核心亮点 · 来源：<a href=',
-
-
+      'news.source_full_hint': '由 AI 自动提炼核心亮点 · 来源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 官方网站</a>',
+      'pokedex.evo_family_title': '进化家族与条件',
+      'pokedex.evo_single_stage': '无进化形态 (单一阶段)',
+      'pokedex.evo_branch_stage': '分支进化链',
+      'wiki.island_uncollected_only': '仅未收集',
+      'wiki.island_collected_progress': '睡姿收集进度:',
+      'wiki.island_rec_sleep_type': '今晚推荐睡眠类型:'
     },
 
     'en-US': {
@@ -1248,7 +1258,13 @@
       'news.cat_bundle': 'Bundles',
       'news.loading': 'Loading news...',
       'news.source_hint': 'AI Summary · Source: ',
-      'news.source_full_hint': 'AI Summary · Source: <a href="https://www.pokemonsleep.net/en/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep Official Website</a>'
+      'news.source_full_hint': 'AI Summary · Source: <a href="https://www.pokemonsleep.net/en/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep Official Website</a>',
+      'pokedex.evo_family_title': 'Evolution Family & Conditions',
+      'pokedex.evo_single_stage': 'Single Stage (No Evolution)',
+      'pokedex.evo_branch_stage': 'Branching Evolution Chain',
+      'wiki.island_uncollected_only': 'Uncollected Only',
+      'wiki.island_collected_progress': 'Collected Styles:',
+      'wiki.island_rec_sleep_type': "Tonight's Recommended Sleep Type:"
     }
   };
 

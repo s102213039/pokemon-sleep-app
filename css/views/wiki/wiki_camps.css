@@ -854,3 +854,80 @@
   font-weight: 700;
   color: var(--text-secondary);
 }
+
+/* ─── 島嶼睡姿收集追蹤列與勾選控制項 (Island Sleep Style Tracker) ─── */
+.island-sleep-tracker-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 6px 2px 2px;
+  border: none;
+  background: transparent;
+}
+
+.island-sleep-progress-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.island-sleep-progress-pill .tracker-pct {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.island-sleep-rec-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: var(--accent, #38bdf8);
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.island-sleep-rec-pill:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.55);
+}
+
+.island-sleep-cell-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.island-sleep-cell-wrap.is-style-collected .rank-badge {
+  opacity: 0.52;
+}
+
+.island-style-check-btn {
+  border: none;
+  background: transparent;
+  padding: 1px 2px;
+  font-size: 10.5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 700;
+  color: var(--text-muted, #64748b);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.12s ease, transform 0.12s ease;
+}
+
+.island-style-check-btn:hover {
+  color: var(--accent, #38bdf8);
+  transform: scale(1.08);
+}
+
+.island-style-check-btn.is-checked {
+  color: #10b981;
+}

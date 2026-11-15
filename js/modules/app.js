@@ -5214,7 +5214,8 @@ function openPokemonDetailModal(pokemonIdOrObject) {
     pkm = pokemonIdOrObject.id ? pokemonIdOrObject : null;
   }
   if (!pkm) {
-    pkm = pokemons.find(p => String(p.id) === String(pokemonIdOrObject) || p.formatted_no === pokemonIdOrObject || p.name_cn === pokemonIdOrObject || p.name_en === pokemonIdOrObject);
+    pkm = pokemons.find(p => p.name_cn === pokemonIdOrObject || p.name_en === pokemonIdOrObject) ||
+          pokemons.find(p => String(p.id) === String(pokemonIdOrObject) || p.formatted_no === pokemonIdOrObject);
   }
   if (!pkm) return;
 
@@ -5887,10 +5888,202 @@ function updatePokedexSubskillUI() {
   }
 }
 
+function formatPokemonEvoReq(evoReq, isEN, isCN) {
+  if (!evoReq || typeof evoReq !== 'string') return '';
+  let text = evoReq.trim();
+  if (isEN) {
+    const itemMap = [
+      ['雷之石', 'Thunder Stone'], ['火之石', 'Fire Stone'], ['水之石', 'Water Stone'],
+      ['葉之石', 'Leaf Stone'], ['月之石', 'Moon Stone'], ['太陽之石', 'Sun Stone'], ['日之石', 'Sun Stone'],
+      ['冰之石', 'Ice Stone'], ['光之石', 'Shiny Stone'], ['暗之石', 'Dusk Stone'],
+      ['覺醒之石', 'Dawn Stone'], ['渾圓之石', 'Oval Stone'], ['聯繫繩', 'Linking Cord'],
+      ['金屬膜', 'Metal Coat'], ['王者之證', "King's Rock"], ['銳利之爪', 'Razor Claw']
+    ];
+    itemMap.forEach(([zh, en]) => { text = text.split(zh).join(en); });
+    text = text.replace(/睡\s*(\d+)\s*小時/g, 'Sleep $1h')
+               .replace(/(\d+)\s*糖/g, '$1 Candies')
+               .replace(/，EXP\s*需求\s*([\d.]+)\s*倍/g, '')
+               .replace(/雄性/g, 'Male')
+               .replace(/指定性格/g, 'Nature')
+               .replace(/Lv(\d+)/g, 'Lv.$1');
+    return text;
+  }
+  text = text.replace(/，EXP\s*需求\s*([\d.]+)\s*倍/g, '').replace(/Lv(\d+)/g, 'Lv.$1');
+  if (isCN && typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function') {
+    return window.I18N.toSimplified(text);
+  }
+  return text;
+}
+
+function getPokemonEvolutionFamily(pkmOrId, allList) {
+  const all = Array.isArray(allList) && allList.length > 0
+    ? allList
+    : ((typeof PokemonApp !== 'undefined' && Array.isArray(PokemonApp.allPokemons) && PokemonApp.allPokemons.length > 0)
+      ? PokemonApp.allPokemons
+      : ((typeof window !== 'undefined' && Array.isArray(window.allPokemons)) ? window.allPokemons : []));
+  if (!pkmOrId) return [];
+  const pkm = (typeof pkmOrId === 'object' && pkmOrId.id)
+    ? pkmOrId
+    : (all.find(p => p.name_cn === pkmOrId || p.name_en === pkmOrId) ||
+       all.find(p => String(p.id) === String(pkmOrId) || p.formatted_no === pkmOrId));
+  if (!pkm) return [];
+  if (!all || all.length === 0) return [[pkm]];
+
+  const byCn = (cn) => all.find(x => x && x.name_cn === cn);
+  const byId = (id) => all.find(x => x && String(x.id) === String(id));
+  const idStr = String(pkm.id || '');
+  const cn = pkm.name_cn || '';
+
+  if (['9001', '9002', '9004', '9005', '9006', '9007'].includes(idStr)) return [[pkm]];
+  if (['37', '38'].includes(idStr)) return [[byId('37')], [byId('38')]].filter(s => s[0]);
+  if (['7006', '7007'].includes(idStr)) return [[byId('7006')], [byId('7007')]].filter(s => s[0]);
+  if (['194', '195'].includes(idStr)) return [[byId('194')], [byId('195')]].filter(s => s[0]);
+  if (['7054', '980'].includes(idStr)) {
+    const s1 = byId('7054');
+    const s2Raw = byId('980');
+    const s2 = s2Raw ? Object.assign({}, s2Raw, { evo_req: s2Raw.evo_req || 'Lv.15 + 40 糖' }) : null;
+    return [s1 ? [s1] : [], s2 ? [s2] : []].filter(s => s.length > 0);
+  }
+  if (['133', '134', '135', '136', '196', '197', '470', '471', '700'].includes(idStr)) {
+    const s1 = byId('133');
+    const s2 = ['134', '135', '136', '196', '197', '470', '471', '700'].map(byId).filter(Boolean);
+    return [s1 ? [s1] : [], s2].filter(s => s.length > 0);
+  }
+  if (['79', '80', '199'].includes(idStr)) {
+    const s1 = byId('79');
+    const s2 = ['80', '199'].map(byId).filter(Boolean);
+    return [s1 ? [s1] : [], s2].filter(s => s.length > 0);
+  }
+  if (['280', '281', '282', '475'].includes(idStr)) {
+    const s1 = byId('280');
+    const s2 = byId('281');
+    const s3 = ['282', '475'].map(byId).filter(Boolean);
+    return [s1 ? [s1] : [], s2 ? [s2] : [], s3].filter(s => s.length > 0);
+  }
+  if (['848', '849', '8001'].includes(idStr)) {
+    const s1 = byId('848');
+    const s2 = ['849', '8001'].map(byId).filter(Boolean);
+    return [s1 ? [s1] : [], s2].filter(s => s.length > 0);
+  }
+  if (cn.startsWith('南瓜精') || cn.startsWith('南瓜怪人')) {
+    const m = cn.match(/\((.+?)\)/);
+    const suffix = m ? ' (' + m[1] + ')' : '';
+    const s1 = byCn('南瓜精' + suffix);
+    const s2 = byCn('南瓜怪人' + suffix);
+    return (s1 && s2) ? [[s1], [s2]] : [[pkm]];
+  }
+
+  const clean = all.filter(x => x && !['9001', '9002', '9004', '9005', '9006', '9007'].includes(String(x.id)));
+  const idx = clean.findIndex(x => x.name_cn === pkm.name_cn && String(x.id) === idStr);
+  if (idx === -1) return [[pkm]];
+  if (!pkm.evo_req && pkm.is_final === '〇') return [[pkm]];
+
+  let start = idx;
+  while (start > 0 && clean[start].evo_req) start--;
+  const stages = [[clean[start]]];
+  let cur = start + 1;
+  while (cur < clean.length && clean[cur].evo_req) {
+    stages.push([clean[cur]]);
+    if (clean[cur].is_final === '〇') break;
+    cur++;
+  }
+  return stages;
+}
+
+function renderPokedexEvolutionTreeHTML(pkm) {
+  if (!pkm) return '';
+  const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function')
+    ? window.I18N.getLanguage()
+    : 'zh-TW';
+  const isEN = lang === 'en-US';
+  const isCN = lang === 'zh-CN';
+  const t = (k, def) => (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t(k, def) : def;
+  const stages = getPokemonEvolutionFamily(pkm);
+  if (!stages || stages.length === 0) return '';
+
+  const totalMembers = stages.reduce((acc, s) => acc + s.length, 0);
+  const hasBranch = stages.some(s => s.length > 1);
+  let stageBadgeText = '';
+  if (stages.length === 1 && totalMembers === 1) {
+    stageBadgeText = t('pokedex.evo_single_stage', isEN ? 'Single Stage (No Evolution)' : (isCN ? '无进化形态（单一阶段）' : '無進化形態（單一階段）'));
+  } else if (hasBranch) {
+    stageBadgeText = t('pokedex.evo_branch_stage', isEN ? `${stages.length}-Stage Branching Evolution` : (isCN ? `${stages.length} 阶分支进化链` : `${stages.length} 階分支進化鏈`));
+  } else {
+    stageBadgeText = isEN ? `${stages.length}-Stage Evolution Chain` : (isCN ? `${stages.length} 阶进化链` : `${stages.length} 階進化鏈`);
+  }
+
+  const stagesHtml = stages.map((stageNodes, sIdx) => {
+    const nodesHtml = stageNodes.map(node => {
+      const isCurrent = (node.name_cn && pkm.name_cn)
+        ? (node.name_cn === pkm.name_cn && String(node.id) === String(pkm.id))
+        : (String(node.id) === String(pkm.id));
+      const nodeName = isEN
+        ? (node.name_en || node.name_cn)
+        : (isCN && window.I18N && typeof window.I18N.toSimplified === 'function' ? window.I18N.toSimplified(node.name_cn || node.name_en) : (node.name_cn || node.name_en));
+      const rawIcon = (typeof getIconUrl === 'function') ? getIconUrl(node) : (node.icon_url || node.icon || '');
+      const iconSrc = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
+        ? (window.mapExternalToLocalAsset(rawIcon) || rawIcon)
+        : rawIcon;
+      const reqStr = sIdx > 0 ? formatPokemonEvoReq(node.evo_req, isEN, isCN) : '';
+      const targetKey = (String(node.id) === '710' || String(node.id) === '711') ? (node.name_cn || node.id) : (node.id || node.name_cn);
+      const safeKey = String(targetKey).replace(/'/g, "\\'");
+      const clickAttr = isCurrent ? '' : `onclick="window.PokemonApp.openPokemonDetailModal('${safeKey}')"`;
+      const tipText = isCurrent
+        ? (isEN ? `Current: ${nodeName}` : (isCN ? `当前检视：${nodeName}` : `當前檢視：${nodeName}`))
+        : (isEN ? `Click to switch to ${nodeName}` : (isCN ? `点击切换至 ${nodeName}` : `點擊切換至 ${nodeName}`));
+
+      return `
+        <button type="button" class="pokedex-evo-node-btn ${isCurrent ? 'is-current' : ''}" data-evo-pkm-id="${escapeHtml(String(node.id || ''))}" data-evo-pkm-name="${escapeHtml(node.name_cn || '')}" ${clickAttr} title="${escapeHtml(tipText)}">
+          ${reqStr ? `<span class="pokedex-evo-req-pill">${escapeHtml(reqStr)}</span>` : ''}
+          <div class="pokedex-evo-node-main">
+            ${iconSrc ? `<img src="${iconSrc}" class="pokedex-evo-node-icon" alt="${escapeHtml(nodeName)}" loading="lazy" onerror="handlePokemonIconError(this)">` : ''}
+            <div class="pokedex-evo-node-meta">
+              <span class="pokedex-evo-node-no">#${escapeHtml(String(node.formatted_no || node.id || ''))}</span>
+              <span class="pokedex-evo-node-name font-bold">${escapeHtml(nodeName)}</span>
+            </div>
+          </div>
+        </button>
+      `;
+    }).join('');
+
+    const arrowHtml = sIdx > 0
+      ? `<div class="pokedex-evo-stage-arrow" aria-hidden="true">-&gt;</div>`
+      : '';
+
+    return `
+      ${arrowHtml}
+      <div class="pokedex-evo-stage-col ${stageNodes.length > 1 ? 'is-branch-col' : ''}" data-stage-idx="${sIdx + 1}">
+        ${nodesHtml}
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="pokedex-evo-tree-section" id="pokedex-evo-tree-section">
+      <div class="pokedex-evo-tree-header">
+        <span class="box-form-label" style="margin-bottom:0;">${t('pokedex.evo_family_title', isEN ? 'Evolution Family & Conditions' : (isCN ? '进化家族与条件' : '進化家族與條件'))}</span>
+        <span class="pokedex-evo-stage-badge">${escapeHtml(stageBadgeText)}</span>
+      </div>
+      <div class="pokedex-evo-tree-track ${hasBranch ? 'has-branch' : ''}">
+        ${stagesHtml}
+      </div>
+    </div>
+  `;
+}
+
+if (typeof window !== 'undefined') {
+  window.getPokemonEvolutionFamily = getPokemonEvolutionFamily;
+  window.formatPokemonEvoReq = formatPokemonEvoReq;
+  window.renderPokedexEvolutionTreeHTML = renderPokedexEvolutionTreeHTML;
+}
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     getMainSkillMaxLevel,
-    getPokedexMainSkillMaxLvl
+    getPokedexMainSkillMaxLvl,
+    getPokemonEvolutionFamily,
+    formatPokemonEvoReq,
+    renderPokedexEvolutionTreeHTML
   };
 }
 
@@ -7028,9 +7221,14 @@ function renderPokedexDetailModalContent() {
           </div>
         </div>
 
-        <!-- 右欄：表單控制項 (等級軌道圖釘、食材平鋪、主技能一行展示、性格、睡飽飽獎章、副技能) -->
+        <!-- 右欄：表單控制項 (進化家族樹、等級軌道圖釘、食材平鋪、主技能一行展示、性格、睡飽飽獎章、副技能) -->
         <div class="pokedex-modal-col pokedex-right-col box-modal-form">
           <div class="box-form-grid pokedex-controls-container">
+            <!-- 0. 互動式進化家族樹與條件跳轉 -->
+            <div class="box-form-group box-full-width pokedex-evo-tree-group">
+              ${typeof renderPokedexEvolutionTreeHTML === 'function' ? renderPokedexEvolutionTreeHTML(pkm) : ''}
+            </div>
+
             <!-- 1. 等級軌道錨定滑桿 + 畢業神配置與重置預設快捷按鈕 -->
             <div class="box-form-group box-full-width pokedex-level-ctrl-group">
               <div class="pokedex-level-header-row">
@@ -7611,6 +7809,9 @@ PokemonApp.getSkillDescription = getSkillDescription;
 PokemonApp.BASE_SKILL_DETAILS = BASE_SKILL_DETAILS;
 PokemonApp.getPokemonEvolutionItems = getPokemonEvolutionItems;
 PokemonApp.renderPokedexEvoItemChipsHTML = renderPokedexEvoItemChipsHTML;
+PokemonApp.getPokemonEvolutionFamily = getPokemonEvolutionFamily;
+PokemonApp.formatPokemonEvoReq = formatPokemonEvoReq;
+PokemonApp.renderPokedexEvolutionTreeHTML = renderPokedexEvolutionTreeHTML;
 
 if (typeof window !== 'undefined') {
   window.openPokemonDetailModal = openPokemonDetailModal;
@@ -7619,6 +7820,9 @@ if (typeof window !== 'undefined') {
   window.renderPokedexEvoGuardBadgeHTML = renderPokedexEvoGuardBadgeHTML;
   window.getPokemonEvolutionItems = getPokemonEvolutionItems;
   window.renderPokedexEvoItemChipsHTML = renderPokedexEvoItemChipsHTML;
+  window.getPokemonEvolutionFamily = getPokemonEvolutionFamily;
+  window.formatPokemonEvoReq = formatPokemonEvoReq;
+  window.renderPokedexEvolutionTreeHTML = renderPokedexEvolutionTreeHTML;
   window.renderPokedexRibbonOptionsHTML = renderPokedexRibbonOptionsHTML;
   window.renderPokedexStrategyCardHTML = renderPokedexStrategyCardHTML;
   window.isBerryBurstSkillSpecialist = isBerryBurstSkillSpecialist;
@@ -7666,6 +7870,9 @@ if (typeof module !== 'undefined' && module.exports) {
     renderPokedexEvoGuardBadgeHTML,
     getPokemonEvolutionItems,
     renderPokedexEvoItemChipsHTML,
+    getPokemonEvolutionFamily,
+    formatPokemonEvoReq,
+    renderPokedexEvolutionTreeHTML,
     BASE_SKILLS,
     COMPOSITE_SKILL_MAP,
     SPECIAL_SKILL_DETAILS,

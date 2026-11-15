@@ -926,6 +926,9 @@
   if (typeof attachSkillLadderExports === 'function') {
     attachSkillLadderExports(WikiDBExport, window);
   }
+  if (typeof attachIslandSleepTrackerExports === 'function') {
+    attachIslandSleepTrackerExports(WikiDBExport, window);
+  }
 
   window.WikiDB = WikiDBExport;
   window.filterItemsByCategory = filterItemsByCategory;

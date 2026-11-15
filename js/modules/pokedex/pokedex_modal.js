@@ -138,9 +138,14 @@ function renderPokedexDetailModalContent() {
           </div>
         </div>
 
-        <!-- 右欄：表單控制項 (等級軌道圖釘、食材平鋪、主技能一行展示、性格、睡飽飽獎章、副技能) -->
+        <!-- 右欄：表單控制項 (進化家族樹、等級軌道圖釘、食材平鋪、主技能一行展示、性格、睡飽飽獎章、副技能) -->
         <div class="pokedex-modal-col pokedex-right-col box-modal-form">
           <div class="box-form-grid pokedex-controls-container">
+            <!-- 0. 互動式進化家族樹與條件跳轉 -->
+            <div class="box-form-group box-full-width pokedex-evo-tree-group">
+              ${typeof renderPokedexEvolutionTreeHTML === 'function' ? renderPokedexEvolutionTreeHTML(pkm) : ''}
+            </div>
+
             <!-- 1. 等級軌道錨定滑桿 + 畢業神配置與重置預設快捷按鈕 -->
             <div class="box-form-group box-full-width pokedex-level-ctrl-group">
               <div class="pokedex-level-header-row">
@@ -721,6 +726,9 @@ PokemonApp.getSkillDescription = getSkillDescription;
 PokemonApp.BASE_SKILL_DETAILS = BASE_SKILL_DETAILS;
 PokemonApp.getPokemonEvolutionItems = getPokemonEvolutionItems;
 PokemonApp.renderPokedexEvoItemChipsHTML = renderPokedexEvoItemChipsHTML;
+PokemonApp.getPokemonEvolutionFamily = getPokemonEvolutionFamily;
+PokemonApp.formatPokemonEvoReq = formatPokemonEvoReq;
+PokemonApp.renderPokedexEvolutionTreeHTML = renderPokedexEvolutionTreeHTML;
 
 if (typeof window !== 'undefined') {
   window.openPokemonDetailModal = openPokemonDetailModal;
@@ -729,6 +737,9 @@ if (typeof window !== 'undefined') {
   window.renderPokedexEvoGuardBadgeHTML = renderPokedexEvoGuardBadgeHTML;
   window.getPokemonEvolutionItems = getPokemonEvolutionItems;
   window.renderPokedexEvoItemChipsHTML = renderPokedexEvoItemChipsHTML;
+  window.getPokemonEvolutionFamily = getPokemonEvolutionFamily;
+  window.formatPokemonEvoReq = formatPokemonEvoReq;
+  window.renderPokedexEvolutionTreeHTML = renderPokedexEvolutionTreeHTML;
   window.renderPokedexRibbonOptionsHTML = renderPokedexRibbonOptionsHTML;
   window.renderPokedexStrategyCardHTML = renderPokedexStrategyCardHTML;
   window.isBerryBurstSkillSpecialist = isBerryBurstSkillSpecialist;
@@ -776,6 +787,9 @@ if (typeof module !== 'undefined' && module.exports) {
     renderPokedexEvoGuardBadgeHTML,
     getPokemonEvolutionItems,
     renderPokedexEvoItemChipsHTML,
+    getPokemonEvolutionFamily,
+    formatPokemonEvoReq,
+    renderPokedexEvolutionTreeHTML,
     BASE_SKILLS,
     COMPOSITE_SKILL_MAP,
     SPECIAL_SKILL_DETAILS,

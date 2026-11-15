@@ -221,14 +221,21 @@
       }
       const badgeHtml = formatSnorlaxRankBadge(rankStr, isEN);
       const style = getSleepStyleData(p.name, star);
+      const safePkmName = (p.name || '').replace(/'/g, "\\'");
+      const isCollected = typeof isSleepStyleCollected === 'function' ? isSleepStyleCollected(p.name, star) : false;
+      const checkBtnTitle = isCollected
+        ? (isEN ? 'Collected (Click to mark uncollected)' : '已收集 (點擊標記為未收集)')
+        : (isEN ? 'Uncollected (Click to mark collected)' : '未收集 (點擊標記為已收集)');
+      const checkBtnHtml = `
+        <button type="button" class="island-style-check-btn ${isCollected ? 'is-checked' : ''}" data-pkm="${safePkmName}" data-star="${star}" onclick="window.WikiDB.toggleCollectedSleepStyle('${safePkmName}', ${star}, event)" title="${checkBtnTitle}" aria-label="${checkBtnTitle}">${isCollected ? '[✓]' : '[ ]'}</button>
+      `;
+
       if (!style) {
-        return `<div class="island-sleep-cell-wrap">${badgeHtml}</div>`;
+        return `<div class="island-sleep-cell-wrap ${isCollected ? 'is-style-collected' : 'is-style-uncollected'}">${badgeHtml}${checkBtnHtml}</div>`;
       }
 
-      const safePkmName = (p.name || '').replace(/'/g, "\\'");
-
       return `
-        <div class="island-sleep-cell-wrap" 
+        <div class="island-sleep-cell-wrap ${isCollected ? 'is-style-collected' : 'is-style-uncollected'}" 
              data-pkm="${safePkmName}" 
              data-star="${star}" 
              data-rank="${rankStr}"
@@ -236,6 +243,7 @@
              onmouseleave="window.WikiDB.closeSleepStylePopover()"
              onclick="window.WikiDB.showSleepStylePopover('${safePkmName}', ${star}, '${rankStr}', this, event)">
           ${badgeHtml}
+          ${checkBtnHtml}
         </div>
       `;
     }
@@ -340,6 +348,12 @@
       dozingList = dozingList.filter(isLegendaryPokemon);
       snoozingList = snoozingList.filter(isLegendaryPokemon);
       slumberingList = slumberingList.filter(isLegendaryPokemon);
+    }
+
+    if (typeof isIslandUncollectedOnly !== 'undefined' && isIslandUncollectedOnly && typeof hasUncollectedStylesOnRow === 'function') {
+      dozingList = dozingList.filter(hasUncollectedStylesOnRow);
+      snoozingList = snoozingList.filter(hasUncollectedStylesOnRow);
+      slumberingList = slumberingList.filter(hasUncollectedStylesOnRow);
     }
 
     let spawnList = [];
@@ -545,6 +559,11 @@
               <span class="ladder-switch-slider"></span>
               <span class="ladder-switch-text font-bold">${isEN ? 'Legendary' : '神獸寶可夢'}</span>
             </label>
+            <label class="island-legendary-switch-label island-uncollected-switch-label" title="${isEN ? 'Show Pokémon with Uncollected Sleep Styles Only' : '僅顯示尚有未收集睡姿之寶可夢'}">
+              <input type="checkbox" id="island-uncollected-switch" class="ladder-switch-input" ${(typeof isIslandUncollectedOnly !== 'undefined' && isIslandUncollectedOnly) ? 'checked' : ''} onchange="window.WikiDB.toggleIslandUncollectedOnly(this.checked)">
+              <span class="ladder-switch-slider"></span>
+              <span class="ladder-switch-text font-bold">${isEN ? 'Uncollected Only' : '僅未收集'}</span>
+            </label>
           </div>
           <div class="island-sleep-filters">
             <button type="button" class="island-sleep-btn ${currentIslandSleepType === 'all' ? 'active' : ''}" onclick="window.WikiDB.filterIslandSleepType('all')">
@@ -561,6 +580,29 @@
             </button>
           </div>
         </div>
+        ${(() => {
+          if (typeof getIslandSleepStyleStats !== 'function') return '';
+          const stats = getIslandSleepStyleStats(island.id);
+          const recType = stats.recommendedSleepType || 'dozing';
+          const recLabel = sleepTypeNameMap[recType] || recType;
+          const recText = stats.uncollectedStyles === 0
+            ? (isEN ? 'All Sleep Styles Collected on This Island' : '本島嶼睡姿已 100% 收集完成')
+            : (isEN
+                ? `Tonight's Recommended Sleep Type: ${recLabel} (${stats.recommendedUncollectedCount} uncollected)`
+                : `今晚推薦睡眠類型: ${recLabel} (尚有 ${stats.recommendedUncollectedCount} 種未收集)`);
+          return `
+            <div class="island-sleep-tracker-bar" id="island-sleep-tracker-bar">
+              <div class="island-sleep-progress-pill">
+                <span class="tracker-lbl">${isEN ? 'Collected Styles:' : '睡姿收集進度:'}</span>
+                <strong class="tracker-val text-accent">${stats.collectedStyles} / ${stats.totalStyles}</strong>
+                <span class="tracker-pct">(${stats.completionPct}%)</span>
+              </div>
+              <button type="button" class="island-sleep-rec-pill" onclick="window.WikiDB.filterIslandSleepType('${recType}')" title="${isEN ? 'Click to filter by recommended sleep type' : '點擊篩選推薦睡眠類型'}">
+                <span class="rec-text font-bold">${recText}</span>
+              </button>
+            </div>
+          `;
+        })()}
         <div class="wiki-table-wrapper" style="margin-top:8px;">
           <table class="wiki-data-table island-spawns-compact-table">
             <thead>

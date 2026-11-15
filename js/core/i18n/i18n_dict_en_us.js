@@ -408,7 +408,13 @@
       'news.cat_bundle': 'Bundles',
       'news.loading': 'Loading news...',
       'news.source_hint': 'AI Summary · Source: ',
-      'news.source_full_hint': 'AI Summary · Source: <a href="https://www.pokemonsleep.net/en/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep Official Website</a>'
+      'news.source_full_hint': 'AI Summary · Source: <a href="https://www.pokemonsleep.net/en/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep Official Website</a>',
+      'pokedex.evo_family_title': 'Evolution Family & Conditions',
+      'pokedex.evo_single_stage': 'Single Stage (No Evolution)',
+      'pokedex.evo_branch_stage': 'Branching Evolution Chain',
+      'wiki.island_uncollected_only': 'Uncollected Only',
+      'wiki.island_collected_progress': 'Collected Styles:',
+      'wiki.island_rec_sleep_type': "Tonight's Recommended Sleep Type:"
     }
   };
 

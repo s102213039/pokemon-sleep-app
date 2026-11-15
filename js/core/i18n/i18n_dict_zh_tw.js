@@ -408,6 +408,12 @@
       'news.cat_bundle': '禮包資訊',
       'news.loading': '最新消息載入中，請稍候...',
       'news.source_hint': '由 AI 自動提煉核心亮點 · 來源：',
-      'news.source_full_hint': '由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>'
+      'news.source_full_hint': '由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>',
+      'pokedex.evo_family_title': '進化家族與條件',
+      'pokedex.evo_single_stage': '無進化形態 (單一階段)',
+      'pokedex.evo_branch_stage': '分支進化鏈',
+      'wiki.island_uncollected_only': '僅未收集',
+      'wiki.island_collected_progress': '睡姿收集進度:',
+      'wiki.island_rec_sleep_type': '今晚推薦睡眠類型:'
     },
 

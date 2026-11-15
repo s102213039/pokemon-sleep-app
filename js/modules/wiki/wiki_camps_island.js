@@ -552,3 +552,183 @@
 
   let islandSpawnsTouchY = 0;
 
+  // --- 8.5. 島嶼睡姿未收集清單追蹤與今晚推薦睡眠類型 (Sleep Style Uncollected Tracker) ---
+  const STORAGE_KEY_COLLECTED_SLEEP_STYLES = 'pksleep_collected_sleep_styles_v1';
+  const STORAGE_KEY_ISLAND_UNCOLLECTED_ONLY = 'pksleep_island_uncollected_only';
+
+  function _getIslandStorage() {
+    try {
+      return (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function loadCollectedSleepStylesSet() {
+    const set = new Set();
+    try {
+      const storage = _getIslandStorage();
+      if (storage) {
+        const raw = storage.getItem(STORAGE_KEY_COLLECTED_SLEEP_STYLES);
+        if (raw) {
+          const arr = JSON.parse(raw);
+          if (Array.isArray(arr)) {
+            arr.forEach(k => { if (typeof k === 'string' && k) set.add(k); });
+          }
+        }
+      }
+    } catch (e) {}
+    return set;
+  }
+
+  function getSavedIslandUncollectedOnly() {
+    try {
+      const storage = _getIslandStorage();
+      if (storage) {
+        return storage.getItem(STORAGE_KEY_ISLAND_UNCOLLECTED_ONLY) === 'true';
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  let collectedSleepStylesSet = loadCollectedSleepStylesSet();
+  let isIslandUncollectedOnly = getSavedIslandUncollectedOnly();
+
+  function saveCollectedSleepStylesSet() {
+    try {
+      const storage = _getIslandStorage();
+      if (storage) {
+        storage.setItem(STORAGE_KEY_COLLECTED_SLEEP_STYLES, JSON.stringify(Array.from(collectedSleepStylesSet)));
+      }
+    } catch (e) {}
+  }
+
+  function getCollectedSleepStyleKey(pkmName, star) {
+    if (!pkmName || !star) return '';
+    return String(pkmName).trim() + ':' + Number(star);
+  }
+
+  function isSleepStyleCollected(pkmName, star) {
+    const key = getCollectedSleepStyleKey(pkmName, star);
+    return key ? collectedSleepStylesSet.has(key) : false;
+  }
+
+  function toggleCollectedSleepStyle(pkmName, star, event) {
+    if (event && typeof event.stopPropagation === 'function') event.stopPropagation();
+    const key = getCollectedSleepStyleKey(pkmName, star);
+    if (!key) return false;
+    if (collectedSleepStylesSet.has(key)) {
+      collectedSleepStylesSet.delete(key);
+    } else {
+      collectedSleepStylesSet.add(key);
+    }
+    saveCollectedSleepStylesSet();
+    refreshIslandsSubpanel();
+    return collectedSleepStylesSet.has(key);
+  }
+
+  function setCollectedSleepStyles(keysArray) {
+    collectedSleepStylesSet = new Set(Array.isArray(keysArray) ? keysArray.filter(Boolean) : []);
+    saveCollectedSleepStylesSet();
+    refreshIslandsSubpanel();
+  }
+
+  function toggleIslandUncollectedOnly(checked) {
+    isIslandUncollectedOnly = typeof checked === 'boolean' ? checked : !isIslandUncollectedOnly;
+    try {
+      const storage = _getIslandStorage();
+      if (storage) {
+        storage.setItem(STORAGE_KEY_ISLAND_UNCOLLECTED_ONLY, isIslandUncollectedOnly ? 'true' : 'false');
+      }
+    } catch (e) {}
+    refreshIslandsSubpanel();
+  }
+
+  function hasUncollectedStylesOnRow(pkmSpawnRow) {
+    if (!pkmSpawnRow || !pkmSpawnRow.name) return false;
+    const stars = [
+      { star: 1, rank: pkmSpawnRow.s1 },
+      { star: 2, rank: pkmSpawnRow.s2 },
+      { star: 3, rank: pkmSpawnRow.s3 },
+      { star: 4, rank: pkmSpawnRow.s4 }
+    ];
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+      if (s.rank && s.rank !== '-' && !isSleepStyleCollected(pkmSpawnRow.name, s.star)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function getIslandSleepStyleStats(islandId) {
+    const targetId = islandId || currentIslandId || 'greengrass';
+    const island = ISLANDS_DATA.find(i => i.id === targetId) || ISLANDS_DATA[0];
+    const bySleepType = {
+      dozing: { total: 0, collected: 0, uncollected: 0 },
+      snoozing: { total: 0, collected: 0, uncollected: 0 },
+      slumbering: { total: 0, collected: 0, uncollected: 0 }
+    };
+    if (island && island.spawns) {
+      ['dozing', 'snoozing', 'slumbering'].forEach(st => {
+        const list = Array.isArray(island.spawns[st]) ? island.spawns[st] : [];
+        list.forEach(p => {
+          if (isIslandLegendaryOnly && !isLegendaryPokemon(p)) return;
+          [1, 2, 3, 4].forEach(star => {
+            const rankStr = p['s' + star];
+            if (rankStr && rankStr !== '-') {
+              bySleepType[st].total += 1;
+              if (isSleepStyleCollected(p.name, star)) {
+                bySleepType[st].collected += 1;
+              } else {
+                bySleepType[st].uncollected += 1;
+              }
+            }
+          });
+        });
+      });
+    }
+    const totalStyles = bySleepType.dozing.total + bySleepType.snoozing.total + bySleepType.slumbering.total;
+    const collectedStyles = bySleepType.dozing.collected + bySleepType.snoozing.collected + bySleepType.slumbering.collected;
+    const uncollectedStyles = totalStyles - collectedStyles;
+    const completionPct = totalStyles > 0 ? Math.round((collectedStyles / totalStyles) * 100) : 0;
+
+    let recommendedSleepType = 'dozing';
+    let maxUncollected = -1;
+    ['dozing', 'snoozing', 'slumbering'].forEach(st => {
+      if (bySleepType[st].uncollected > maxUncollected) {
+        maxUncollected = bySleepType[st].uncollected;
+        recommendedSleepType = st;
+      }
+    });
+
+    return {
+      islandId: targetId,
+      totalStyles,
+      collectedStyles,
+      uncollectedStyles,
+      completionPct,
+      bySleepType,
+      recommendedSleepType,
+      recommendedUncollectedCount: Math.max(0, maxUncollected)
+    };
+  }
+
+  function attachIslandSleepTrackerExports(targetObj, winObj) {
+    const api = {
+      STORAGE_KEY_COLLECTED_SLEEP_STYLES,
+      STORAGE_KEY_ISLAND_UNCOLLECTED_ONLY,
+      getCollectedSleepStyleKey,
+      isSleepStyleCollected,
+      toggleCollectedSleepStyle,
+      setCollectedSleepStyles,
+      getCollectedSleepStyles: () => Array.from(collectedSleepStylesSet),
+      toggleIslandUncollectedOnly,
+      getIsIslandUncollectedOnly: () => isIslandUncollectedOnly,
+      hasUncollectedStylesOnRow,
+      getIslandSleepStyleStats
+    };
+    if (targetObj) Object.assign(targetObj, api);
+    if (winObj) Object.assign(winObj, api);
+  }
+

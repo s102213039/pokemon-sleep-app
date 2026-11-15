@@ -5623,6 +5623,186 @@
 
   let islandSpawnsTouchY = 0;
 
+  // --- 8.5. 島嶼睡姿未收集清單追蹤與今晚推薦睡眠類型 (Sleep Style Uncollected Tracker) ---
+  const STORAGE_KEY_COLLECTED_SLEEP_STYLES = 'pksleep_collected_sleep_styles_v1';
+  const STORAGE_KEY_ISLAND_UNCOLLECTED_ONLY = 'pksleep_island_uncollected_only';
+
+  function _getIslandStorage() {
+    try {
+      return (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function loadCollectedSleepStylesSet() {
+    const set = new Set();
+    try {
+      const storage = _getIslandStorage();
+      if (storage) {
+        const raw = storage.getItem(STORAGE_KEY_COLLECTED_SLEEP_STYLES);
+        if (raw) {
+          const arr = JSON.parse(raw);
+          if (Array.isArray(arr)) {
+            arr.forEach(k => { if (typeof k === 'string' && k) set.add(k); });
+          }
+        }
+      }
+    } catch (e) {}
+    return set;
+  }
+
+  function getSavedIslandUncollectedOnly() {
+    try {
+      const storage = _getIslandStorage();
+      if (storage) {
+        return storage.getItem(STORAGE_KEY_ISLAND_UNCOLLECTED_ONLY) === 'true';
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  let collectedSleepStylesSet = loadCollectedSleepStylesSet();
+  let isIslandUncollectedOnly = getSavedIslandUncollectedOnly();
+
+  function saveCollectedSleepStylesSet() {
+    try {
+      const storage = _getIslandStorage();
+      if (storage) {
+        storage.setItem(STORAGE_KEY_COLLECTED_SLEEP_STYLES, JSON.stringify(Array.from(collectedSleepStylesSet)));
+      }
+    } catch (e) {}
+  }
+
+  function getCollectedSleepStyleKey(pkmName, star) {
+    if (!pkmName || !star) return '';
+    return String(pkmName).trim() + ':' + Number(star);
+  }
+
+  function isSleepStyleCollected(pkmName, star) {
+    const key = getCollectedSleepStyleKey(pkmName, star);
+    return key ? collectedSleepStylesSet.has(key) : false;
+  }
+
+  function toggleCollectedSleepStyle(pkmName, star, event) {
+    if (event && typeof event.stopPropagation === 'function') event.stopPropagation();
+    const key = getCollectedSleepStyleKey(pkmName, star);
+    if (!key) return false;
+    if (collectedSleepStylesSet.has(key)) {
+      collectedSleepStylesSet.delete(key);
+    } else {
+      collectedSleepStylesSet.add(key);
+    }
+    saveCollectedSleepStylesSet();
+    refreshIslandsSubpanel();
+    return collectedSleepStylesSet.has(key);
+  }
+
+  function setCollectedSleepStyles(keysArray) {
+    collectedSleepStylesSet = new Set(Array.isArray(keysArray) ? keysArray.filter(Boolean) : []);
+    saveCollectedSleepStylesSet();
+    refreshIslandsSubpanel();
+  }
+
+  function toggleIslandUncollectedOnly(checked) {
+    isIslandUncollectedOnly = typeof checked === 'boolean' ? checked : !isIslandUncollectedOnly;
+    try {
+      const storage = _getIslandStorage();
+      if (storage) {
+        storage.setItem(STORAGE_KEY_ISLAND_UNCOLLECTED_ONLY, isIslandUncollectedOnly ? 'true' : 'false');
+      }
+    } catch (e) {}
+    refreshIslandsSubpanel();
+  }
+
+  function hasUncollectedStylesOnRow(pkmSpawnRow) {
+    if (!pkmSpawnRow || !pkmSpawnRow.name) return false;
+    const stars = [
+      { star: 1, rank: pkmSpawnRow.s1 },
+      { star: 2, rank: pkmSpawnRow.s2 },
+      { star: 3, rank: pkmSpawnRow.s3 },
+      { star: 4, rank: pkmSpawnRow.s4 }
+    ];
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+      if (s.rank && s.rank !== '-' && !isSleepStyleCollected(pkmSpawnRow.name, s.star)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function getIslandSleepStyleStats(islandId) {
+    const targetId = islandId || currentIslandId || 'greengrass';
+    const island = ISLANDS_DATA.find(i => i.id === targetId) || ISLANDS_DATA[0];
+    const bySleepType = {
+      dozing: { total: 0, collected: 0, uncollected: 0 },
+      snoozing: { total: 0, collected: 0, uncollected: 0 },
+      slumbering: { total: 0, collected: 0, uncollected: 0 }
+    };
+    if (island && island.spawns) {
+      ['dozing', 'snoozing', 'slumbering'].forEach(st => {
+        const list = Array.isArray(island.spawns[st]) ? island.spawns[st] : [];
+        list.forEach(p => {
+          if (isIslandLegendaryOnly && !isLegendaryPokemon(p)) return;
+          [1, 2, 3, 4].forEach(star => {
+            const rankStr = p['s' + star];
+            if (rankStr && rankStr !== '-') {
+              bySleepType[st].total += 1;
+              if (isSleepStyleCollected(p.name, star)) {
+                bySleepType[st].collected += 1;
+              } else {
+                bySleepType[st].uncollected += 1;
+              }
+            }
+          });
+        });
+      });
+    }
+    const totalStyles = bySleepType.dozing.total + bySleepType.snoozing.total + bySleepType.slumbering.total;
+    const collectedStyles = bySleepType.dozing.collected + bySleepType.snoozing.collected + bySleepType.slumbering.collected;
+    const uncollectedStyles = totalStyles - collectedStyles;
+    const completionPct = totalStyles > 0 ? Math.round((collectedStyles / totalStyles) * 100) : 0;
+
+    let recommendedSleepType = 'dozing';
+    let maxUncollected = -1;
+    ['dozing', 'snoozing', 'slumbering'].forEach(st => {
+      if (bySleepType[st].uncollected > maxUncollected) {
+        maxUncollected = bySleepType[st].uncollected;
+        recommendedSleepType = st;
+      }
+    });
+
+    return {
+      islandId: targetId,
+      totalStyles,
+      collectedStyles,
+      uncollectedStyles,
+      completionPct,
+      bySleepType,
+      recommendedSleepType,
+      recommendedUncollectedCount: Math.max(0, maxUncollected)
+    };
+  }
+
+  function attachIslandSleepTrackerExports(targetObj, winObj) {
+    const api = {
+      STORAGE_KEY_COLLECTED_SLEEP_STYLES,
+      STORAGE_KEY_ISLAND_UNCOLLECTED_ONLY,
+      getCollectedSleepStyleKey,
+      isSleepStyleCollected,
+      toggleCollectedSleepStyle,
+      setCollectedSleepStyles,
+      getCollectedSleepStyles: () => Array.from(collectedSleepStylesSet),
+      toggleIslandUncollectedOnly,
+      getIsIslandUncollectedOnly: () => isIslandUncollectedOnly,
+      hasUncollectedStylesOnRow,
+      getIslandSleepStyleStats
+    };
+    if (targetObj) Object.assign(targetObj, api);
+    if (winObj) Object.assign(winObj, api);
+  }
+
 
   function getIslandSpawnsCoordinatorEls() {
     const scroller = document.getElementById('panel-wiki');
@@ -5847,14 +6027,21 @@
       }
       const badgeHtml = formatSnorlaxRankBadge(rankStr, isEN);
       const style = getSleepStyleData(p.name, star);
+      const safePkmName = (p.name || '').replace(/'/g, "\\'");
+      const isCollected = typeof isSleepStyleCollected === 'function' ? isSleepStyleCollected(p.name, star) : false;
+      const checkBtnTitle = isCollected
+        ? (isEN ? 'Collected (Click to mark uncollected)' : '已收集 (點擊標記為未收集)')
+        : (isEN ? 'Uncollected (Click to mark collected)' : '未收集 (點擊標記為已收集)');
+      const checkBtnHtml = `
+        <button type="button" class="island-style-check-btn ${isCollected ? 'is-checked' : ''}" data-pkm="${safePkmName}" data-star="${star}" onclick="window.WikiDB.toggleCollectedSleepStyle('${safePkmName}', ${star}, event)" title="${checkBtnTitle}" aria-label="${checkBtnTitle}">${isCollected ? '[✓]' : '[ ]'}</button>
+      `;
+
       if (!style) {
-        return `<div class="island-sleep-cell-wrap">${badgeHtml}</div>`;
+        return `<div class="island-sleep-cell-wrap ${isCollected ? 'is-style-collected' : 'is-style-uncollected'}">${badgeHtml}${checkBtnHtml}</div>`;
       }
 
-      const safePkmName = (p.name || '').replace(/'/g, "\\'");
-
       return `
-        <div class="island-sleep-cell-wrap" 
+        <div class="island-sleep-cell-wrap ${isCollected ? 'is-style-collected' : 'is-style-uncollected'}" 
              data-pkm="${safePkmName}" 
              data-star="${star}" 
              data-rank="${rankStr}"
@@ -5862,6 +6049,7 @@
              onmouseleave="window.WikiDB.closeSleepStylePopover()"
              onclick="window.WikiDB.showSleepStylePopover('${safePkmName}', ${star}, '${rankStr}', this, event)">
           ${badgeHtml}
+          ${checkBtnHtml}
         </div>
       `;
     }
@@ -5966,6 +6154,12 @@
       dozingList = dozingList.filter(isLegendaryPokemon);
       snoozingList = snoozingList.filter(isLegendaryPokemon);
       slumberingList = slumberingList.filter(isLegendaryPokemon);
+    }
+
+    if (typeof isIslandUncollectedOnly !== 'undefined' && isIslandUncollectedOnly && typeof hasUncollectedStylesOnRow === 'function') {
+      dozingList = dozingList.filter(hasUncollectedStylesOnRow);
+      snoozingList = snoozingList.filter(hasUncollectedStylesOnRow);
+      slumberingList = slumberingList.filter(hasUncollectedStylesOnRow);
     }
 
     let spawnList = [];
@@ -6171,6 +6365,11 @@
               <span class="ladder-switch-slider"></span>
               <span class="ladder-switch-text font-bold">${isEN ? 'Legendary' : '神獸寶可夢'}</span>
             </label>
+            <label class="island-legendary-switch-label island-uncollected-switch-label" title="${isEN ? 'Show Pokémon with Uncollected Sleep Styles Only' : '僅顯示尚有未收集睡姿之寶可夢'}">
+              <input type="checkbox" id="island-uncollected-switch" class="ladder-switch-input" ${(typeof isIslandUncollectedOnly !== 'undefined' && isIslandUncollectedOnly) ? 'checked' : ''} onchange="window.WikiDB.toggleIslandUncollectedOnly(this.checked)">
+              <span class="ladder-switch-slider"></span>
+              <span class="ladder-switch-text font-bold">${isEN ? 'Uncollected Only' : '僅未收集'}</span>
+            </label>
           </div>
           <div class="island-sleep-filters">
             <button type="button" class="island-sleep-btn ${currentIslandSleepType === 'all' ? 'active' : ''}" onclick="window.WikiDB.filterIslandSleepType('all')">
@@ -6187,6 +6386,29 @@
             </button>
           </div>
         </div>
+        ${(() => {
+          if (typeof getIslandSleepStyleStats !== 'function') return '';
+          const stats = getIslandSleepStyleStats(island.id);
+          const recType = stats.recommendedSleepType || 'dozing';
+          const recLabel = sleepTypeNameMap[recType] || recType;
+          const recText = stats.uncollectedStyles === 0
+            ? (isEN ? 'All Sleep Styles Collected on This Island' : '本島嶼睡姿已 100% 收集完成')
+            : (isEN
+                ? `Tonight's Recommended Sleep Type: ${recLabel} (${stats.recommendedUncollectedCount} uncollected)`
+                : `今晚推薦睡眠類型: ${recLabel} (尚有 ${stats.recommendedUncollectedCount} 種未收集)`);
+          return `
+            <div class="island-sleep-tracker-bar" id="island-sleep-tracker-bar">
+              <div class="island-sleep-progress-pill">
+                <span class="tracker-lbl">${isEN ? 'Collected Styles:' : '睡姿收集進度:'}</span>
+                <strong class="tracker-val text-accent">${stats.collectedStyles} / ${stats.totalStyles}</strong>
+                <span class="tracker-pct">(${stats.completionPct}%)</span>
+              </div>
+              <button type="button" class="island-sleep-rec-pill" onclick="window.WikiDB.filterIslandSleepType('${recType}')" title="${isEN ? 'Click to filter by recommended sleep type' : '點擊篩選推薦睡眠類型'}">
+                <span class="rec-text font-bold">${recText}</span>
+              </button>
+            </div>
+          `;
+        })()}
         <div class="wiki-table-wrapper" style="margin-top:8px;">
           <table class="wiki-data-table island-spawns-compact-table">
             <thead>
@@ -11482,6 +11704,9 @@
 
   if (typeof attachSkillLadderExports === 'function') {
     attachSkillLadderExports(WikiDBExport, window);
+  }
+  if (typeof attachIslandSleepTrackerExports === 'function') {
+    attachIslandSleepTrackerExports(WikiDBExport, window);
   }
 
   window.WikiDB = WikiDBExport;

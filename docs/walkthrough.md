@@ -5,6 +5,29 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-15 已完成（全站功能深度剖析與 5 大里程碑擴充工程、彈跳咖哩烏龍麵 Serebii 爬蟲覆寫防退化修復、291/291 全量測試通過）
+
+- **測試狀態**：
+  - 全量回歸 `npm test`：**291 / 291 PASS**（`npm run test:fast` **168 / 168 PASS**）。
+  - 獨立驗收套件：`tests/test_milestone3_recipes.js` (**PASS**)、`tests/test_milestone4_pokedex_camps.js` (**PASS**)、`tests/test_security_audit.js` (**10 / 10 PASS**)。
+- **核心交付內容**：
+  1. **Milestone 1 — 演算法精度統一與資料修正 (`js/modules/lab/lab_compare.js`, `js/modules/lab/lab_growth.js`, `js/modules/wiki/wiki_items.js`, `data/data.json`)**：
+     - 統一 `lab_compare.js` 副技能解鎖等級門檻為 `[10, 25, 50, 70, 80]`（修正舊版 `[10, 25, 50, 75, 100]` 偏差）。
+     - 修正 `lab_growth.js` 金色主技能種子 ROI 最大等級上限判定（透過 `getMainSkillMaxLevel` 動態支援 Lv.6 / Lv.7 / Lv.8 上限）。
+     - 清理 `wiki_items.js` 孤兒 ID、補齊阿羅拉六尾冰之石進化關聯，並修正 `data/data.json` 夢幻 (`#151`) 與達克萊伊 (`#491`) 全食材池。
+     - 全面清除殘留非合規符號（`css/views/box/box_themes.css`、`js/modules/pokedex/pokedex_modal.js`、`js/modules/wiki/wiki_main.js`、`js/core/i18n/i18n_dict_zh_cn.js`）。
+  2. **Milestone 2 — 寶可夢倉庫快捷標籤與組隊週日大師評級預估 (`js/modules/box/`, `js/modules/lab/lab_team_*.js`)**：
+     - 於倉庫篩選列新增 6 枚高頻一鍵切換篩選晶片：`閃光 (Shiny)`、`睡飽飽獎章 (Ribbon)`、`樹果S (BFS)`、`幫手獎勵 (Helping Bonus)`、`食材機率M (Ing M)`、`技能機率M (Skill M)`。
+     - 升級組隊模擬器 (`lab_team_calc.js` & `lab_team_ui.js`)，新增「綜合單日總能量 (`樹果 + 3餐料理 + 技能能量`)」與「週日卡比獸預估評級 (`大師 1 ~ 20`)」雙向試算看板。
+  3. **Milestone 3 — 背包食材反查可做料理與鍋子擴充填充精算 (`js/modules/recipes/recipes_pantry.js`, `recipes_state.js`, `recipes_render.js`)**：
+     - 實作背包食材庫存抽屜 (`localStorage: 'pksleep_pantry_v1'`)、100% 可製作料理篩選開關 (`#recipe-cookable-only-toggle`)、差額食材數排序 (`missing-asc`) 與卡片/表格缺少食材數量徽章。
+     - 實作鍋子容量設定 (`15 ~ 200`)、好露營券 (`+50%`)、週日翻倍 (`2x`) 及剩餘空間高能量填充食材最佳化推薦器。
+  4. **Milestone 4 — 圖鑑互動式進化家族樹與島嶼睡姿未收集追蹤 (`js/modules/pokedex/pokedex_detail_ctrl.js`, `pokedex_modal.js`, `js/modules/wiki/wiki_camps_island.js`, `wiki_camps_render.js`)**：
+     - 圖鑑詳情彈窗新增互動式「進化家族與條件 (`#pokedex-evo-tree-section`)」，完整支援全 253 隻寶可夢之單階、二階、三階、分支進化（伊布 8 分支、拉魯拉絲、呆呆獸、毒電嬰）、地區形態（阿羅拉六尾、帕底亞烏波）與南瓜精尺寸品種，點擊任一家族節點即可無縫切換彈窗檢視。
+     - 島嶼營地棲息表新增睡姿收集勾選按鈕 (`[✓]` / `[ ]`, `localStorage: 'pksleep_collected_sleep_styles_v1'`)、「僅未收集 (`#island-uncollected-switch`)」篩選開關、島嶼睡姿收集進度條 (`X / Y (Z%)`) 與「今晚推薦睡眠類型」智慧建議。
+  5. **彈跳咖哩烏龍麵 (`Bounce Curry Udon`) 防爬蟲覆寫永久修復 (`scripts/build_recipes.py`, `scripts/sync_data.py`, `js/modules/recipes/recipes_state.js`, `scripts/sync_manager.js`)**：
+     - 針對 Serebii HTML 原始碼遺漏「火辣香草 x22」導致 GitHub Actions Auto-Sync 覆寫回 3 種食材 (`pot_size: 90`) 之問題，於 `scripts/build_recipes.py` 與 `scripts/sync_data.py` 建立 `RECIPE_INGREDIENTS_OVERRIDES` 權威覆寫表，並於 `recipes_state.js` 及 `sync_manager.js` 加入 `isRecipesHealthy` 4 食材防退化斷言與 `CACHE_SCHEMA_VERSION = '20261115_02'`。
+
 ## 交接：2026-11-15 已完成（軍規級混合信封加密金庫實裝、帳號密碼安全預填與全面回歸驗證）
 
 - 測試狀態：
