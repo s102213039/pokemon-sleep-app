@@ -477,11 +477,11 @@ console.log('\n[Suite 4] Pokémon Database & Main Skill Coverage Verification');
     }
   }
 
-  assertEquals(unreleasedCount, 2, 'Exactly 2 unreleased Pokemon without main skills');
+  assertEquals(unreleasedCount, 0, 'Exactly 0 unreleased Pokemon without main skills');
   assertEquals(excludedCount, 10, 'Exactly 10 Pokemon excluded due to random/copy skills');
-  assertEquals(coveredCount, 241, 'Exactly 241 released non-random Pokemon covered');
+  assertEquals(coveredCount, 243, 'Exactly 243 released non-random Pokemon covered');
   assertEquals(compositeCount, 17, 'Exactly 17 Pokemon with composite dual-track skills');
-  assertEquals(totalPlacements, 258, 'Total track placements across 9 tracks equals 258 (241 - 17 + 34)');
+  assertEquals(totalPlacements, 260, 'Total track placements across 9 tracks equals 260 (243 - 17 + 34)');
 }
 
 // -----------------------------------------------------------------------------
