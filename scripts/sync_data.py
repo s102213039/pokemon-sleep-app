@@ -234,6 +234,7 @@ NAME_CN_MAP = {
     'overgrow avocado gratin': '茂盛焗烤酪梨',
     'greengrass curry bun': '萌綠咖哩麵包',
     'bounce curry udon': '彈跳咖哩烏龍麵',
+    'seed bomb naan and curry': '種子炸彈烤餅咖哩',
 
     # 沙拉 (Salad)
     'slowpoke tail pepper salad': '呆呆獸尾巴的胡椒沙拉',
@@ -262,6 +263,7 @@ NAME_CN_MAP = {
     'luscious avocado salad': '碎裂酪梨沙拉',
     'bulldoze guacamole and chips': '重踏酪梨醬脆片',
     'scald chunky salad': '大塊滿滿熱水沙拉',
+    'grass knot salad wrap': '打草結沙拉捲',
 
     # 甜點 (Dessert)
     'fluffy sweet potatoes': '熟成甜薯燒',
@@ -291,7 +293,8 @@ NAME_CN_MAP = {
     'clodsire eclair': '土王閃電泡芙',
     'scary face pancakes': '心跳加速鬼面鬆餅',
     'leaf tornado smoothie': '青草攪拌器冰沙',
-    'honey gather chocolate waffles': '採蜜巧克力格子鬆餅'
+    'honey gather chocolate waffles': '採蜜巧克力格子鬆餅',
+    'slowpoke tail roll cake': '美味尾巴蛋糕捲'
 }
 
 def _get_bonus_pct(pot_size: int) -> int:

@@ -147,41 +147,12 @@
   display: none !important;
 }
 
-/* ─── PR 評分標籤與快速快選標籤樣式 (PR Potential Badge & Quick Filters) ─── */
-.box-pr-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1px 7px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  line-height: 1.3;
-  white-space: nowrap;
-}
-
-.box-shiny-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 700;
-  background: rgba(234, 179, 8, 0.15);
-  border: 1px solid rgba(234, 179, 8, 0.45);
-  color: #fbbf24;
-  line-height: 1.3;
-}
-
-.box-quick-filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 0 10px 0;
-  margin: 0;
-  width: 100%;
+/* ─── PR 評分標籤與快速快選標籤樣式 (預設隱藏過度設計之額外標籤列) ─── */
+.box-pr-badge,
+.box-shiny-tag,
+.box-quick-filter-bar,
+#box-quick-filters-container {
+  display: none !important;
 }
 
 .box-quick-chip {

@@ -855,16 +855,11 @@
   color: var(--text-secondary);
 }
 
-/* ─── 島嶼睡姿收集追蹤列與勾選控制項 (Island Sleep Style Tracker) ─── */
-.island-sleep-tracker-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px 12px;
-  padding: 6px 2px 2px;
-  border: none;
-  background: transparent;
+/* ─── 島嶼睡姿收集追蹤列與勾選控制項 (預設隱藏過度設計之追蹤列與勾選框) ─── */
+.island-uncollected-switch-label,
+.island-sleep-tracker-bar,
+.island-style-check-btn {
+  display: none !important;
 }
 
 .island-sleep-progress-pill {

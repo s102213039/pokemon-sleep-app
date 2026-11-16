@@ -5,13 +5,11 @@
  * projected Snorlax rank badges in Research Lab Team Builder.
  */
 
-/* ─── 能量產出分解標籤與週日卡比獸預估階級 (Energy Breakdown & Snorlax Rank) ─── */
-.lab-metric-breakdown-chips {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin: 6px 0 8px 0;
+/* ─── 能量產出分解標籤與週日卡比獸預估階級 (預設隱藏過度設計之控制與膠囊) ─── */
+.lab-metric-breakdown-chips,
+.lab-projected-rank-badge,
+.lab-pot-config-group {
+  display: none !important;
 }
 
 .breakdown-chip {

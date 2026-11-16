@@ -449,18 +449,10 @@
   align-items: center;
 }
 
-/* ─── Pokédex Interactive Evolution Family Tree (Single Frame & Frameless Icon) ─── */
-.pokedex-evo-tree-group {
-  margin-bottom: 4px;
-}
-
+/* ─── Pokédex Interactive Evolution Family Tree (預設隱藏過度設計之進化家族樹) ─── */
+.pokedex-evo-tree-group,
 .pokedex-evo-tree-section {
-  border: none;
-  background: transparent;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: none !important;
 }
 
 .pokedex-evo-tree-header {

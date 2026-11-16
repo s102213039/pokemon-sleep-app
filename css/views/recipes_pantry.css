@@ -3,12 +3,19 @@
    Single Frame Rule Compliant: Containers wrapping cards/tables have border: none.
    ========================================================================== */
 
-/* ─── Pantry Inventory Section (Sidebar) ─────────────────────────────────── */
-.recipe-pantry-section {
-  border: none;
-  background: transparent;
-  padding: 0;
-  margin-bottom: 16px;
+/* ─── Pantry Inventory Section & Pot Filler UI (預設隱藏過度設計之面板與按鈕) ─── */
+.recipe-pantry-section,
+#recipe-pantry-sidebar-section,
+#recipe-pantry-sidebar-container,
+#recipe-cookable-filter-section,
+#recipe-cookable-filter-btn,
+.recipe-filter-pill-btn,
+.recipe-pantry-badge,
+.pot-filler-open-btn,
+.pot-filler-inline-btn,
+#recipe-pot-optimizer-modal,
+#recipe-pot-filler-modal {
+  display: none !important;
 }
 
 .pantry-section-header {

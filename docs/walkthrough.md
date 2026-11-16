@@ -5,6 +5,19 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-16 已完成（Ver.3.9.0 3道新料理官方中文正式名稱實裝、關閉排程計時器、隱藏過度設計之擴充 UI 元件並維持 291/291 全量測試通過）
+
+- **測試狀態**：
+  - 全量回歸 `npm test`：**291 / 291 PASS**（`npm run test:fast` **168 / 168 PASS**）。
+- **核心交付內容**：
+  1. **Ver.3.9.0 3 道新料理官方繁簡中文名稱正式實裝**：
+     - `Seed Bomb Naan and Curry` -> 繁中 **`種子炸彈烤餅咖哩`** / 簡中 **`种子炸弹烤饼咖喱`**（鍋容量 39，基礎能量 7,950：一口堅果 x15、沉甸甸南瓜 x12、萌綠玉米 x12）
+     - `Grass Knot Salad Wrap` -> 繁中 **`打草結沙拉捲`** / 簡中 **`打草结沙拉卷`**（鍋容量 121，基礎能量 26,350：一口堅果 x30、嫩亮酪梨 x22、暖暖薑 x36、好眠番茄 x33）
+     - `Slowpoke Tail Roll Cake` -> 繁中 **`美味尾巴蛋糕捲`** / 簡中 **`美味尾巴蛋糕卷`**（鍋容量 91，基礎能量 19,846：一口堅果 x26、美味尾巴 x10、萌綠大豆 x22、特選蛋 x33）
+     - 同步更新 `data/recipes.json`、`scripts/build_recipes.py`、`scripts/sync_data.py`、`js/modules/lab/lab_milestone.js` 與 `js/core/domUtils.js` (`CACHE_SCHEMA_VERSION = '20261116_01'`)，並確認週一排程計時器 (`task-1977`) 已完成關閉。
+  2. **隱藏 Milestones 2–4 過度設計之擴充 UI 區塊（恢復極簡乾淨版面）**：
+     - 於 `css/views/box/box_grid.css`、`css/views/lab/lab_team_pot.css`、`css/views/recipes_pantry.css`、`css/views/pokedex.css` 與 `css/views/wiki/wiki_camps.css` 將新增之 6 項過度設計 UI 元件預設隱藏 (`display: none !important;`)，僅保留底層演算法與資料修正。
+
 ## 交接：2026-11-15 已完成（全站功能深度剖析與 5 大里程碑擴充工程、彈跳咖哩烏龍麵 Serebii 爬蟲覆寫防退化修復、291/291 全量測試通過）
 
 - **測試狀態**：
