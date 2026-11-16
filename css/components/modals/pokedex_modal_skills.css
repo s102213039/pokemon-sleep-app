@@ -777,24 +777,38 @@ body.mobile-h5-app.values-active,
 }
 
 .mobile-h5-app .ladder-tail-standalone-box {
-  width: 230px !important;
+  width: 210px !important;
   max-width: 100% !important;
   background: var(--bg-card) !important;
   border: 1px solid var(--border-color) !important;
   box-shadow: var(--shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.08)) !important;
   margin-left: 0 !important;
-  padding: 2px 5px 3px !important;
+  padding: 1px 4px 2px !important;
   border-radius: 8px !important;
   box-sizing: border-box !important;
 }
 
 .mobile-h5-app .ladder-tail-ruler {
-  height: 13px !important;
+  height: 11px !important;
 }
 
 .mobile-h5-app .ladder-tail-track-row {
-  height: 23px !important;
-  min-height: 23px !important;
+  height: 20px !important;
+  min-height: 20px !important;
+}
+
+.mobile-h5-app .ladder-tail-track-row .ladder-ing-icon {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+.mobile-h5-app .ladder-tail-track-row .ladder-track-header {
+  width: 18px !important;
+  min-width: 18px !important;
 }
 
 .mobile-h5-app .ladder-tail-ruler-spacer {
+  width: 18px !important;
+  min-width: 18px !important;
+}
+

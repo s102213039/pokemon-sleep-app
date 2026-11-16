@@ -5,6 +5,27 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-16 已完成（Milestone 1 — 非預期 UI 徹底隱藏持久化、食材天梯第20軌一口堅果實裝、呆呆尾巴圖標尺寸平衡、高階模型協調規範與全量測試通過）
+
+- **測試狀態**：
+  - 極速反饋 `npm run test:fast`：**168 / 168 PASS**（0 失敗）。
+  - 全量回歸 `npm test`：**291 / 291 PASS**（0 失敗）。
+  - 對抗性驗證 `node tests/test_challenger_m2_multitab_adversarial.js`：**22 / 22 PASS**（0 失敗）。
+- **核心交付內容**：
+  1. **R1: 非預期 UI 功能 (UI-3 ~ UI-6) 徹底隱藏並保留底層邏輯**：
+     - 在權威樣式表 `css/styles.css` 中為 UI-3 & UI-4（背包庫存、100% 可烹飪按鈕、缺件徽章、填鍋彈窗）、UI-5（圖鑑進化樹）、UI-6（島嶼睡姿收集進度列與勾選框）及 Box/Lab 過度設計元件加入 `display: none !important;`。
+     - 透過 `build_prod.js` 重新編譯生成最新 `css/styles.min.css`，確保桌面版與行動端 H5 均徹底隱藏非預期功能，且底層演算法與無頭測試零退化。
+  2. **R2: 食材天梯第 20 軌「一口堅果 (Snackable Nuts)」實裝**：
+     - 於 `data/ladder_lv60.json` 與 `js/data/ladder_data.js` 新增第 20 軌 `snackablenuts`（基礎能量 112），並關聯 #547 風妖精（Whimsicott, AAA 產量 90, isTop: true）與 #546 木棉球（Cottonee, AAA 產量 46）。
+     - 於 `js/modules/wiki/wiki_ladder_recipes.js` 之 `TOP_RECIPES_FOR_INGREDIENTS` 映射 `打草結沙拉捲`（需求 30，基礎能量 26,350）。
+     - 於 `js/modules/wiki/wiki_render_ratings.js` 配置 `snackablenuts: 20` 門檻，並透過 `build_wiki.js` 重新編譯 `wiki.js`。
+     - 重新生成 `data/manifest.json`，軌道數由 19 提升為 20，雜湊與大小精確更新。
+  3. **R3: 呆呆尾巴天梯圖標與看板排版等比縮減**：
+     - 桌面版 tail 圖標縮至 18px、看板寬度縮至 250px、軌道高度 28px、容器上邊距 8px，並調整 clamp 公式為 `calc((100vh - 270px) / 19)`。
+     - 行動端 tail 圖標縮至 15px、看板寬度 210px、軌道高度 20px、尺標間距 18px，排版緊湊精緻無重疊與滾動溢出。
+  4. **R4: 非預期功能與高階模型協調規範文件化**：
+     - 於 `docs/VERIFIED_FEATURES_AND_BASELINES.md`、`docs/MAINTENANCE_AND_DEVELOPMENT_GUIDE.md`、`~/.gemini/agent-docs/projects/pokemon-sleep-app/` 以及 `~/.gemini/agent-docs/PROTOCOL.md` 完整記錄 UI-3~6 不重現政策（免於深度追蹤遊戲內玩家庫存）與 Argon/Opus/Sonnet 作為架構規劃者主動委派 Hydrogen 擔任主力代碼實作者之協作規範。
+
 ## 交接：2026-11-16 已完成（Ver.3.9.0 3道新料理官方中文正式名稱實裝、關閉排程計時器、隱藏過度設計之擴充 UI 元件並維持 291/291 全量測試通過）
 
 - **測試狀態**：

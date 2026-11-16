@@ -185,6 +185,19 @@ npm test
 2. 開啟 [scripts/build_css.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/scripts/build_css.js)，在 `CSS_MODULES` 陣列中加入該檔案路徑。
 3. 執行 `npm run build:css` 或 `npm run build:all`，新樣式將自動被納入 `css/styles.css`。
 
+### 4.3 非預期功能防重現規範與高階模型協同指引 (Unwanted Features Policy & Model Delegation)
+
+1. **非預期功能防重現規範 (UI-3 ~ UI-6)**:
+   - **UI-3**: 食材背包庫存抽屜與 100% 可烹飪篩選按鈕（`recipes_pantry.css` / `css/styles.css` 中 `.recipe-pantry-section`, `#recipe-pantry-sidebar-section`, `#recipe-cookable-filter-btn`, `.recipe-filter-pill-btn`）。
+   - **UI-4**: 食譜卡片缺件徽章、填鍋最佳化按鈕與彈窗（`recipes_pantry.css` / `css/styles.css` 中 `.recipe-pantry-badge`, `.pot-filler-open-btn`, `#recipe-pot-optimizer-modal`, `#recipe-pot-filler-modal`）。
+   - **UI-5**: 圖鑑詳細彈窗互動式進化家族樹（`pokedex.css` / `css/styles.css` 中 `.pokedex-evo-tree-group`, `.pokedex-evo-tree-section`）。
+   - **UI-6**: 島嶼睡姿收集進度列、未收集篩選切換與睡姿勾選框（`wiki_camps.css` / `css/styles.css` 中 `.island-uncollected-switch-label`, `.island-sleep-tracker-bar`, `.island-style-check-btn`）。
+   - **核心原則**：本網站定位為輕量、極速之策略數值與參考工具，**不需要且嚴禁深度追蹤遊戲內玩家的實體庫存與收集進度**。上述功能必須全數維持 `display: none !important;` 隱藏，後續開發與 AI Agent 嚴禁主動建議或重新引入。
+
+2. **高階模型協調分工規範**:
+   - 當使用第一主力超高階模型（Argon, Claude Opus, Claude Sonnet）作業時，高階模型專注於頂層宏觀架構規劃、規格契約制定與方向指導（Architect / Planner）。
+   - 高階模型**必須主動調度 Hydrogen 作為主要代碼實作者 (Lead Code Implementer)** 執行具體核心程式碼編寫與架構實作，大量常規樣板與測試執行任務可進一步委派 Gemini 3.8 Flash，以達成最佳推理深度與成本效率。
+
 ---
 
 ## 五、 自動化測試維護與極速執行策略 (Testing Guide & Fast Execution)
@@ -241,3 +254,5 @@ node tests/run_tests.js --tier=2,3
 - [ ] **6. 嚴禁巢狀雙重外框 (Rule 9)**: UI 容器邊框不重疊，卡片與表格內部自帶邊框時最外層容器保持無框。
 - [ ] **7. 跨工具共用文件同步 (Rule 7)**: 依規範將最新文件同步至 `~/.gemini/agent-docs/projects/pokemon-sleep-app/`。
 - [ ] **8. 推送遠端觸發 Pages 部署**: 執行 `git push origin main`，確保 GitHub Pages 自動化流程順利發布。
+- [ ] **9. 非預期 UI 功能 (UI-3 ~ UI-6) 隱藏確認**: 確認 UI-3（背包庫存/可煮篩選）、UI-4（食譜缺件徽章/填鍋優化）、UI-5（圖鑑進化樹）、UI-6（島嶼睡姿進度列/勾選框）維持 `display: none !important;`，絕不重新引入或主動建議遊戲內庫存追蹤功能。
+- [ ] **10. 高階模型協調規範遵守**: 使用 Argon / Opus / Sonnet 等高階模型時，確認其擔任架構規劃者，並主動調度 Hydrogen 執行核心代碼實作。

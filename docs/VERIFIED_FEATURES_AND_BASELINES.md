@@ -39,6 +39,9 @@
    - 修改任何專案文件後，必須同步更新 `docs/` 與全域 `~/.gemini/agent-docs/projects/pokemon-sleep-app/` 目錄。
 6. **修改完成強制自動推送 GitHub 鐵則 (Mandatory Commit & Push)**：
    - 任何程式碼、資料或文件修改並通過測試驗證後，**必須自動執行 `git add`、`git commit` 與 `git push origin main`**，嚴禁將修改僅留在本機工作區而不推送至遠端。
+7. **非預期功能禁用與高階模型協調鐵則 (Unwanted Features Policy & High-Tier Model Coordination)**：
+   - **非預期功能 (UI-3 ~ UI-6) 嚴禁重現或主動建議**：UI-3（食材背包庫存抽屜與 100% 可做篩選）、UI-4（食譜缺少食材徽章、填鍋最佳化按鈕與彈窗）、UI-5（圖鑑詳細彈窗互動式進化家族樹）、UI-6（島嶼睡姿收集進度列、未收集篩選切換與睡姿勾選框）已全數透過 CSS `display: none !important;` 隱藏。**後續開發與 AI Agent 絕對禁止主動建議或重新引入這些功能**，因為本網站定位為輕量、極速之策略數值與參考工具，**不需要且嚴禁深度追蹤遊戲內玩家的實體庫存與收集進度**。
+   - **高階模型協調分工規範**：當使用超高階模型（Argon, Claude Opus, Claude Sonnet）作業時，高階模型專注於頂層架構規劃、任務拆解與方向指導（Architect / Planner），並**主動調度 Hydrogen 作為主要代碼實作者 (Lead Code Implementer)**，大量常規工兵任務由 Gemini 3.8 Flash 執行，以達成最佳推理深度與成本效率。
 
 ---
 
@@ -384,7 +387,7 @@
 
 ---
 
-## 十、 十一項歷史修復缺陷與嚴禁退化紅線 (Top 11 Fixed Defects Anti-Regression Checklist)
+## 十、 十三項歷史修復缺陷與嚴禁退化紅線 (Top 13 Fixed Defects Anti-Regression Checklist)
 
 以下為歷來排除之重大系統缺陷。**任何後續開發均必須將此表作為最高防呆標準，嚴禁改回錯誤版本！**
 
@@ -402,6 +405,7 @@
 | **10** | **全域表情符號 (Emoji) 混入** | UI 介面、圖標、按鈕或說明文字中使用 Emoji 充當裝飾。 | 嚴格遵守零 Emoji 規範 (Zero Emoji Policy)，採用乾淨向量圖或純文字標籤。 | **嚴禁**在任何 UI、註解或回應中插入 Emoji。 |
 | **11** | **測試執行超時與 OCR 無快取窮舉** | 每次提需求測試跑 5-10 分鐘，Tier 4 萬次 OCR 解析對 247 隻重複清洗字串與窮舉子字串，單項測試耗時 >8.2 秒。 | 1. `box_ocr_parse.js` 預清洗快取 + 完全相符快速通道（Exact Match Fast-Path），提速 102x，Test 194 降至 1.2s，全套降至 2.1s。<br>2. 提供 `npm run test:fast`（0.25s 執行 Tier 1~3）。<br>3. 支援 `-g` 關鍵字過濾。 | **嚴禁**在未快取情況下對全寶可夢執行窮舉搜尋；**嚴禁**寫死調用路徑；日常開發**優先使用 `npm run test:fast`**。 |
 | **12** | **倉庫阻塞原生彈窗與匯入/OCR 升級衝突** | 刪除/OCR 錯誤使用原生 `alert`/`confirm` 阻斷執行緒，且 JSON 匯入與批次 OCR 去重規則不一致，重複或升級個體未保留暱稱與獎章。 | 1. 全倉庫零原生 `alert`/`confirm`/`prompt`，改用 `showBoxConfirmModal` 與 `showBoxToast`。<br>2. 統一 `upsertImportedPokemonToBox` 處理指紋略過與高訓練度原地升級（保留自訂暱稱、獎章與異色）並報告批次失敗檔名。 | **嚴禁**在模組內使用原生阻塞彈窗；**嚴禁**匯入升級時遺失自訂暱稱與獎章。 |
+| **13** | **過度設計之背包庫存追蹤與收集功能 (UI-3 ~ UI-6)** | 頁面加入過度複雜的食材庫存輸入、填鍋計算彈窗、圖鑑進化樹及島嶼睡姿收集勾選，導致版面擁擠厚重且偏離工具定位。 | 於 `recipes_pantry.css`、`pokedex.css`、`wiki_camps.css` 與 `css/styles.css` 全數配置 `display: none !important;` 徹底隱藏，維持純粹極簡之料理與數值查詢體驗。 | **嚴禁**移除 `display: none !important;`；**嚴禁**向使用者主動建議或重新引入任何遊戲內庫存/背包追蹤相關 UI。 |
 
 ---
 

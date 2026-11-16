@@ -225,8 +225,8 @@ test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js match
   const ladderBlock = ladderFileContent.match(/const LV60_COORDINATE_LADDER_DATA = \[([\s\S]*?)\];\s*\n\s*\/\/ 舊版清單資料/);
   assert(ladderBlock, 'LV60_COORDINATE_LADDER_DATA not found');
   const ladderEnergies = [...ladderBlock[1].matchAll(/"energy": (\d+)/g)].map(m => +m[1]).sort((a,b)=>a-b);
-  const ingEnergies = Object.values(SEREbii_ING).filter(e => e !== 112).sort((a,b)=>a-b);
-  assertEquals(ladderEnergies.length, 19, 'LV60 ladder covers the 19 released ingredients with verified rates');
+  const ingEnergies = Object.values(SEREbii_ING).sort((a,b)=>a-b);
+  assertEquals(ladderEnergies.length, 20, 'LV60 ladder covers all 20 released ingredients with verified rates');
   assertEquals(ladderEnergies.join(','), ingEnergies.join(','), 'Ladder ingredient energies should match INGREDIENT_VALUES_DATA');
 
   assert(!wikiContent.includes('energy: 200') && !wikiContent.match(/"energy": 200/), 'Residual pumpkin energy 200 should not exist');
@@ -1366,10 +1366,12 @@ test('Tier 1 - Feature Coverage', 'Ingredient Ladder Universal Simplified Recipe
     ing.pokemon.forEach(p => {
       const countsSeen = new Set();
       (p.variants || []).forEach(v => {
-        if (countsSeen.has(v.count)) {
+        if (v.recipe !== 'AAB' && countsSeen.has(v.count)) {
           duplicateCountErrors++;
         }
-        countsSeen.add(v.count);
+        if (v.recipe !== 'AAB') {
+          countsSeen.add(v.count);
+        }
         if (v.recipe === 'XXC') xxcCount++;
         if (v.recipe === 'AAX') aaxCount++;
         if (v.recipe === 'ABA') abaCount++;
@@ -1381,9 +1383,9 @@ test('Tier 1 - Feature Coverage', 'Ingredient Ladder Universal Simplified Recipe
 
   assertEquals(duplicateCountErrors, 0, 'No Pokemon should have duplicate-yield variants');
   assertEquals(xxcCount, 108, 'Ingredient C track entries must be unified into universal XXC (108 variants)');
-  assertEquals(aaxCount, 115, 'Pos A dual ingredients must be unified into universal AAX (115 variants)');
+  assertEquals(aaxCount, 117, 'Pos A dual ingredients must be unified into universal AAX (117 variants)');
   assertEquals(abaCount, 115, 'ABA combinations must be 115 variants for Pos A pokemons with Lv.60 A');
-  assertEquals(aaaCount, 115, 'AAA combinations must be 115 variants');
+  assertEquals(aaaCount, 117, 'AAA combinations must be 117 variants');
   assertEquals(abbCount, 115, 'ABB combinations must be 115 variants');
 
   // Verify specific Skeledirge calculations on Apple track

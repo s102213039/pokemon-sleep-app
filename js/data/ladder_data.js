@@ -1,6 +1,6 @@
 /**
  * js/data/ladder_data.js - Pokémon Sleep Lv.60 Ingredient Ladder Master Data
- * Canonical dataset for all 19 ingredients, coordinates, rankings and yield tiers.
+ * Canonical dataset for all 20 ingredients, coordinates, rankings and yield tiers.
  */
 
 (function (global) {
@@ -4714,6 +4714,94 @@
             "note": "XXC 單好眠番茄 補足",
             "origRecipes": [
               "AAC",
+              "ABC"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "snackablenuts",
+    "name": "一口堅果",
+    "enName": "Snackable Nuts",
+    "energy": 112,
+    "icon": "https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png",
+    "pokemon": [
+      {
+        "name": "風妖精",
+        "specialty": "食材",
+        "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/547.png",
+        "recipe": "AAA",
+        "count": 90,
+        "note": "AAA 一口堅果 純種產出",
+        "isTop": true,
+        "variants": [
+          {
+            "recipe": "AAA",
+            "count": 90,
+            "note": "AAA 一口堅果 純種產出",
+            "isTop": true
+          },
+          {
+            "recipe": "AAB",
+            "count": 56,
+            "note": "AAB 一口堅果 雙堅果產出"
+          },
+          {
+            "recipe": "AAX",
+            "count": 56,
+            "note": "AAX 一口堅果 雙堅果產出",
+            "origRecipes": [
+              "AAB",
+              "AAC"
+            ]
+          },
+          {
+            "recipe": "ABX",
+            "count": 22,
+            "note": "ABX 一口堅果 混產",
+            "origRecipes": [
+              "ABB",
+              "ABC"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "木棉球",
+        "specialty": "食材",
+        "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/546.png",
+        "recipe": "AAA",
+        "count": 46,
+        "note": "AAA 一口堅果 純種產出",
+        "isTop": false,
+        "variants": [
+          {
+            "recipe": "AAA",
+            "count": 46,
+            "note": "AAA 一口堅果 純種產出"
+          },
+          {
+            "recipe": "AAB",
+            "count": 28,
+            "note": "AAB 一口堅果 雙堅果產出"
+          },
+          {
+            "recipe": "AAX",
+            "count": 28,
+            "note": "AAX 一口堅果 雙堅果產出",
+            "origRecipes": [
+              "AAB",
+              "AAC"
+            ]
+          },
+          {
+            "recipe": "ABX",
+            "count": 11,
+            "note": "ABX 一口堅果 混產",
+            "origRecipes": [
+              "ABB",
               "ABC"
             ]
           }
@@ -10308,6 +10396,5 @@
   }
   if (typeof global !== 'undefined') {
     global.LV60_COORDINATE_LADDER_DATA = LV60_COORDINATE_LADDER_DATA;
-    global.__LADDER_DATA__ = LV60_COORDINATE_LADDER_DATA;
   }
-})(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));
+})(typeof window !== 'undefined' ? window : this);

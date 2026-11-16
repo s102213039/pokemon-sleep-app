@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "manifestHash": "0e6d7e3cb85e4a4c",
-  "updatedAt": "2026-11-16T14:41:16.706Z",
+  "manifestHash": "fff450ba1950c2bc",
+  "updatedAt": "2026-11-16T16:01:34Z",
   "files": {
     "data.json": {
       "hash": "9df16481389f31fd",
@@ -34,9 +34,9 @@
       "count": 34
     },
     "ladder_lv60.json": {
-      "hash": "53e005d85a62c831",
-      "size": 143185,
-      "count": 19
+      "hash": "5b5f9b9cbab706c0",
+      "size": 265741,
+      "count": 20
     }
   }
 }

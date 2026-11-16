@@ -237,6 +237,7 @@
     cacao: 20,
     herb: 20,
     glossyavocado: 20,
+    snackablenuts: 20,
     pumpkin: 20,
     tail: 1
   };
