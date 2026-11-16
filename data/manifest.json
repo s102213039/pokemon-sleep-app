@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "manifestHash": "612a8d843df20410",
-  "updatedAt": "2026-11-16T14:38:17.601Z",
+  "manifestHash": "0e6d7e3cb85e4a4c",
+  "updatedAt": "2026-11-16T14:41:16.706Z",
   "files": {
     "data.json": {
-      "hash": "ec373877edff510f",
-      "size": 200182,
+      "hash": "9df16481389f31fd",
+      "size": 200710,
       "count": 253
     },
     "recipes.json": {
