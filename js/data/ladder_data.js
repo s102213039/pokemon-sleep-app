@@ -4734,23 +4734,23 @@
         "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/547.png",
         "recipe": "AAA",
         "count": 90,
-        "note": "AAA 一口堅果 純種產出",
+        "note": "AAA 一口堅果 單一食材最高產出",
         "isTop": true,
         "variants": [
           {
             "recipe": "AAA",
             "count": 90,
-            "note": "AAA 一口堅果 純種產出",
+            "note": "AAA 一口堅果 單一食材最高產出",
             "isTop": true
           },
           {
-            "recipe": "AAB",
-            "count": 56,
-            "note": "AAB 一口堅果 雙堅果產出"
+            "recipe": "ABA",
+            "count": 58,
+            "note": "ABA 一口堅果 雙堅果產出"
           },
           {
             "recipe": "AAX",
-            "count": 56,
+            "count": 45,
             "note": "AAX 一口堅果 雙堅果產出",
             "origRecipes": [
               "AAB",
@@ -4759,8 +4759,8 @@
           },
           {
             "recipe": "ABX",
-            "count": 22,
-            "note": "ABX 一口堅果 混產",
+            "count": 13,
+            "note": "ABX 一口堅果 單堅果產出",
             "origRecipes": [
               "ABB",
               "ABC"
@@ -4774,22 +4774,22 @@
         "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/546.png",
         "recipe": "AAA",
         "count": 46,
-        "note": "AAA 一口堅果 純種產出",
+        "note": "AAA 一口堅果 單一食材最高產出",
         "isTop": false,
         "variants": [
           {
             "recipe": "AAA",
             "count": 46,
-            "note": "AAA 一口堅果 純種產出"
+            "note": "AAA 一口堅果 單一食材最高產出"
           },
           {
-            "recipe": "AAB",
-            "count": 28,
-            "note": "AAB 一口堅果 雙堅果產出"
+            "recipe": "ABA",
+            "count": 30,
+            "note": "ABA 一口堅果 雙堅果產出"
           },
           {
             "recipe": "AAX",
-            "count": 28,
+            "count": 23,
             "note": "AAX 一口堅果 雙堅果產出",
             "origRecipes": [
               "AAB",
@@ -4798,8 +4798,8 @@
           },
           {
             "recipe": "ABX",
-            "count": 11,
-            "note": "ABX 一口堅果 混產",
+            "count": 7,
+            "note": "ABX 一口堅果 單堅果產出",
             "origRecipes": [
               "ABB",
               "ABC"

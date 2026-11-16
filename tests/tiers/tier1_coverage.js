@@ -1366,12 +1366,10 @@ test('Tier 1 - Feature Coverage', 'Ingredient Ladder Universal Simplified Recipe
     ing.pokemon.forEach(p => {
       const countsSeen = new Set();
       (p.variants || []).forEach(v => {
-        if (v.recipe !== 'AAB' && countsSeen.has(v.count)) {
+        if (countsSeen.has(v.count)) {
           duplicateCountErrors++;
         }
-        if (v.recipe !== 'AAB') {
-          countsSeen.add(v.count);
-        }
+        countsSeen.add(v.count);
         if (v.recipe === 'XXC') xxcCount++;
         if (v.recipe === 'AAX') aaxCount++;
         if (v.recipe === 'ABA') abaCount++;
@@ -1384,9 +1382,30 @@ test('Tier 1 - Feature Coverage', 'Ingredient Ladder Universal Simplified Recipe
   assertEquals(duplicateCountErrors, 0, 'No Pokemon should have duplicate-yield variants');
   assertEquals(xxcCount, 108, 'Ingredient C track entries must be unified into universal XXC (108 variants)');
   assertEquals(aaxCount, 117, 'Pos A dual ingredients must be unified into universal AAX (117 variants)');
-  assertEquals(abaCount, 115, 'ABA combinations must be 115 variants for Pos A pokemons with Lv.60 A');
+  assertEquals(abaCount, 117, 'ABA combinations must be 117 variants for Pos A pokemons with Lv.60 A');
   assertEquals(aaaCount, 117, 'AAA combinations must be 117 variants');
   assertEquals(abbCount, 115, 'ABB combinations must be 115 variants');
+
+  // Verify specific Whimsicott calculations on Snackable Nuts track
+  const nutsTrack = ladderData.find(i => i.id === 'snackablenuts');
+  assert(nutsTrack, 'Snackable Nuts track must exist');
+  const whimsicott = nutsTrack.pokemon.find(p => p.name === '風妖精');
+  assert(whimsicott, 'Whimsicott must exist in snackablenuts track');
+  const whimVariants = whimsicott.variants.reduce((acc, v) => { acc[v.recipe] = v.count; return acc; }, {});
+  assertEquals(whimVariants['AAA'], 90, 'Whimsicott AAA nuts count should be 90');
+  assertEquals(whimVariants['ABA'], 58, 'Whimsicott ABA nuts count should be 58');
+  assertEquals(whimVariants['AAX'], 45, 'Whimsicott AAX nuts count should be 45');
+  assertEquals(whimVariants['ABX'], 13, 'Whimsicott ABX nuts count should be 13');
+  assertEquals(whimsicott.variants.length, 4, 'Whimsicott should have exactly 4 variants (AAA, ABA, AAX, ABX)');
+
+  const cottonee = nutsTrack.pokemon.find(p => p.name === '木棉球');
+  assert(cottonee, 'Cottonee must exist in snackablenuts track');
+  const cotVariants = cottonee.variants.reduce((acc, v) => { acc[v.recipe] = v.count; return acc; }, {});
+  assertEquals(cotVariants['AAA'], 46, 'Cottonee AAA nuts count should be 46');
+  assertEquals(cotVariants['ABA'], 30, 'Cottonee ABA nuts count should be 30');
+  assertEquals(cotVariants['AAX'], 23, 'Cottonee AAX nuts count should be 23');
+  assertEquals(cotVariants['ABX'], 7, 'Cottonee ABX nuts count should be 7');
+  assertEquals(cottonee.variants.length, 4, 'Cottonee should have exactly 4 variants (AAA, ABA, AAX, ABX)');
 
   // Verify specific Skeledirge calculations on Apple track
   const appleTrack = ladderData.find(i => i.id === 'apple');
