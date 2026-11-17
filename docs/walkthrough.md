@@ -5,19 +5,21 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
-## 交接：2026-11-17 已完成（風妖精 #547 透明去背重製、圖鑑/倉庫表格圖示欄寬擴增與快取版本更新）
+## 交接：2026-11-17 已完成（風妖精 #547 透明去背重製、圖鑑/倉庫表格圖示欄寬擴增至 72px/64px 與快取版本更新）
 
-- **測試狀態**：
+- **測試與視覺驗證狀態**：
   - 極速反饋 `npm run test:fast`：**168 / 168 PASS**（0 失敗）。
   - 全量回歸 `npm test`：**291 / 291 PASS**（Tier 1: 73, Tier 2: 70, Tier 3: 25, Tier 4: 123；0 失敗）。
   - 快取版本對抗驗證 `node tests/test_challenger_m1_cache_sync.js`：**18 / 18 PASS**（0 失敗）。
+  - 無頭 Chrome 實機截圖驗證：`1920x1080` 桌機版與 `390x844` 手機版皆確認 `.table-icon` (`38px`) 完全置中容納於圖示欄內、兩側留白充裕且無邊界裁切。
 - **核心修復內容**：
   1. **風妖精 (`assets/pokemon/icon/547.png`) 去背修復與圖片快取失效刷新**：
      - 確認 Serebii 原版 `icon/547.png` 誤帶有實心米黃底色（0% 透明通道），改採 Serebii 官方透明通道 Pokémon Sleep 立繪進行底部投影移除與去背裁切重製為 `150 x 150 RGBA` PNG（四角完全透明、透明比例 47.1%，無背景色塊或雜邊）。
      - 同步檢查木棉球 `546.png` 等其餘圖鑑頭像之透明通道狀態，並將 `sw.js` 與 `js/modules/pokedex/pokedex_base.js` 之 `IMG_CACHE_NAME` 升級至 `pksleep-img-cache-v20261117_02`，確保線上用戶端清除舊圖快取。
-  2. **圖鑑 / 倉庫表格 `.th-icon` / `.td-icon` 欄寬擴增（維持 `38px` 圖示大小，修正邊緣超出裁切問題）**：
-     - 修正桌機版 (`css/views/pokedex.css`) 保留 `.table-icon` 為 `38px x 38px`，同時將 `.pokemon-table .th-icon` 與 `.td-icon` 欄寬由過窄的 `34px` 擴增至 `56px`（內距調整為表頭 `8px 6px`、儲存格 `4px 8px`），使 `38px` 圖示與「圖示▲」排序表頭完全置中容納於欄內且不致溢出左側表格邊框。
-     - 同步擴增行動端 H5 表格 (`css/components/theme_preview.css`) `.th-icon` / `.td-icon` 至 `52px`（內距 `4px 6px`），更新 `js/modules/pokedex/pokedex_ui.js` (`width="38" height="38"`)、`js/modules/box/box_render.js` (`.table-icon-wrapper` `38px x 38px`) 及 `tests/tiers/tier1_coverage.js` 對應斷言，並執行 `npm run build` 重新產出所有 CSS/JS 打包檔案。
+  2. **圖鑑 / 倉庫表格 `.th-icon` / `.td-icon` 欄寬擴增並修復 CSS 打包主幹未同步問題（維持 `38px` 圖示大小）**：
+     - 發現 `scripts/build_css.js` 僅校驗 `css/styles.css` 語法而不重新合併模組檔，導致前次僅修改 `css/views/pokedex.css` 與 `css/components/theme_preview.css` 時，線上載入的 `css/styles.css` / `css/styles.min.css` 仍維持舊版 `34px` 寬度。
+     - 同步更新 `css/styles.css` 與模組檔：保留 `.table-icon` 為 `38px x 38px`，將桌機版 `.pokemon-table .th-icon` / `.td-icon` 欄寬擴大至 **`72px`**（`.th-icon` 內距 `8px 6px`、`.td-icon` 內距 `5px 12px`），提供充裕左右留白並完整容納 `圖示 (新)` / `Icon (New)` 排序標籤；行動端 H5 同步擴大至 **`64px`**（內距 `5px 8px`）。
+     - 更新 `js/modules/pokedex/pokedex_ui.js` (`width="38" height="38"`)、`js/modules/box/box_render.js` (`.table-icon-wrapper` `38px x 38px`)，並將 `tests/tiers/tier1_coverage.js` 改為精準比對 `.th-icon` / `.td-icon` (`72px`) 與 `.table-icon` (`38px`) 規則區塊斷言，重新執行 `npm run build` 產生最新 `css/styles.min.css`。
 
 ## 交接：2026-11-17 已完成（更新木棉球 #546 與風妖精 #547 官方 Serebii 頭像圖示並刷新圖片快取版本）
 

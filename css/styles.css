@@ -2831,10 +2831,10 @@ body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-cont
   background-color: var(--table-th-solid, #0a0f1d) !important;
   color: var(--text-th) !important;
   font-weight: 700 !important;
-  min-width: 34px !important;
-  max-width: 34px !important;
-  width: 34px !important;
-  padding: 8px 0 !important;
+  min-width: 72px !important;
+  max-width: 72px !important;
+  width: 72px !important;
+  padding: 8px 6px !important;
   box-sizing: border-box !important;
   text-align: center !important;
   border-right: 1px solid var(--border-color) !important;
@@ -2847,10 +2847,10 @@ body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-cont
   position: sticky !important;
   left: 44px !important;
   z-index: 20 !important;
-  min-width: 34px !important;
-  max-width: 34px !important;
-  width: 34px !important;
-  padding: 3px 0 !important;
+  min-width: 72px !important;
+  max-width: 72px !important;
+  width: 72px !important;
+  padding: 5px 12px !important;
   box-sizing: border-box !important;
   text-align: center !important;
   border-right: 1px solid var(--border-color) !important;
@@ -4975,10 +4975,10 @@ input[type=range].rf-slider.pot-slider {
     position: sticky !important;
     left: 44px !important;
     z-index: 20 !important;
-    min-width: 34px !important;
-    max-width: 34px !important;
-    width: 34px !important;
-    padding: 3px 0 !important;
+    min-width: 64px !important;
+    max-width: 64px !important;
+    width: 64px !important;
+    padding: 5px 8px !important;
     border-right: 1px solid var(--border-color) !important;
     box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
   }
