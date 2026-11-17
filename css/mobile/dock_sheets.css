@@ -987,3 +987,26 @@
   position: relative;
   min-width: 0;
 }
+
+/* 食材基礎庫：固定單行展示，不換行 (食材數量變動時自動延展欄數；窄螢幕橫向捲動) */
+.values-compact-grid.values-ing-grid {
+  grid-template-columns: none !important;
+  grid-auto-flow: column !important;
+  grid-auto-columns: minmax(0, 1fr) !important;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.values-compact-grid.values-ing-grid::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .values-compact-grid.values-ing-grid,
+  .mobile-h5-app .values-compact-grid.values-ing-grid {
+    grid-template-columns: none !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: minmax(44px, 1fr) !important;
+    gap: 4px !important;
+  }
+}

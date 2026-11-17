@@ -5,6 +5,12 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-18 已完成（數據百科「食材基礎庫」改為固定單行展示）
+
+- 原因：`.values-ing-grid` 寫死 19 欄，食材增至 20 種後換行。
+- 修正：`css/mobile/dock_sheets.css` 與 `css/styles.css` 新增 `.values-compact-grid.values-ing-grid`，改用 `grid-auto-flow: column` 依食材數量自動延展為單行；900px 以下每欄最小 44px 並可橫向捲動。
+- 測試：`npm run test:fast` 168 / 168 PASS。
+
 ## 交接：2026-11-17 已完成（風妖精 #547 透明去背重製、圖鑑/倉庫表格圖示欄寬定為 50px 與列高鎖定 38px 圖示高度）
 
 - **測試與視覺驗證狀態**：
