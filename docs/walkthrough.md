@@ -5,6 +5,17 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-17 已完成（更新木棉球 #546 與風妖精 #547 官方 Serebii 頭像圖示並刷新圖片快取版本）
+
+- **更新內容**：
+  1. **抓取並替換為官方 Serebii Pokémon Sleep 圖示**：
+     - 自 `https://www.serebii.net/pokemonsleep/pokemon/icon/546.png` 與 `547.png` 抓取最新官方 `150 x 150 RGBA` PNG 圖示，替換原先佔位之 PokeAPI 小圖：
+       - `assets/pokemon/icon/546.png`（木棉球 Cottonee，1.5 KB -> `24,388` bytes，MD5 `bb3ce3dd4f1c83c0d92efa3a98aca8f5`）
+       - `assets/pokemon/icon/547.png`（風妖精 Whimsicott，770 B -> `15,195` bytes，MD5 `402b07795aaa6dcbb36740bc94d87f49`）
+     - 移除 `scripts/sync_local_assets.js` 中舊版 `URL_FALLBACKS` PokeAPI 備援條目。
+  2. **Service Worker 圖片快取失效刷新 (`sw.js`, `js/modules/pokedex/pokedex_base.js`)**：
+     - 將 `IMG_CACHE_NAME` 由 `pksleep-img-cache-v20261114_01` 升級至 `pksleep-img-cache-v20261117_01`，確保線上瀏覽器自動清除舊版點陣圖快取並載入最新高解析官方頭像。
+
 ## 交接：2026-11-16 已完成（Milestone 1 — 非預期 UI 徹底隱藏持久化、食材天梯第20軌一口堅果實裝、呆呆尾巴圖標尺寸平衡、高階模型協調規範與全量測試通過）
 
 - **測試狀態**：

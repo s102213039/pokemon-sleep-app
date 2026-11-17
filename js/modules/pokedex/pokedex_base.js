@@ -339,7 +339,7 @@ if (typeof window !== 'undefined') {
         keys.forEach(function (k) {
           if (
             k === 'pksleep-static-cache-v1' ||
-            (k.startsWith('pksleep-img-cache') && k !== 'pksleep-img-cache-v20261114_01')
+            (k.startsWith('pksleep-img-cache') && k !== 'pksleep-img-cache-v20261117_01')
           ) {
             caches.delete(k).catch(function () {});
           }

@@ -24,11 +24,8 @@ const TARGET_FILES = [
   'js/modules/wiki/wiki_camps_island.js'
 ];
 
-// Fallback sources for known 404s
-const URL_FALLBACKS = {
-  'https://www.serebii.net/pokemonsleep/pokemon/icon/546.png': 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/546.png',
-  'https://www.serebii.net/pokemonsleep/pokemon/icon/547.png': 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/547.png'
-};
+// Fallback sources for known 404s (none currently needed; Serebii hosts all released icons)
+const URL_FALLBACKS = {};
 
 function collectSerebiiUrls() {
   const urls = new Set();
