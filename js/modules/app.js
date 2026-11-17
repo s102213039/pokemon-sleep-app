@@ -339,7 +339,7 @@ if (typeof window !== 'undefined') {
         keys.forEach(function (k) {
           if (
             k === 'pksleep-static-cache-v1' ||
-            (k.startsWith('pksleep-img-cache') && k !== 'pksleep-img-cache-v20261117_01')
+            (k.startsWith('pksleep-img-cache') && k !== 'pksleep-img-cache-v20261117_02')
           ) {
             caches.delete(k).catch(function () {});
           }
@@ -4383,7 +4383,7 @@ if (typeof document !== 'undefined') {
                 <tr>
                   ${isShowNo ? `<td class="td-no">${p.formatted_no}</td>` : ''}
                   <td class="td-icon">
-                    ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" class="table-icon" alt="${pkmName}" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}" loading="lazy" onerror="handlePokemonIconError(this)" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;">` : ''}
+                    ${iconUrl ? `<img src="${iconUrl}" width="38" height="38" class="table-icon" alt="${pkmName}" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}" loading="lazy" onerror="handlePokemonIconError(this)" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;">` : ''}
                   </td>
                   <td class="td-name pokemon-name-cell" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">${pkmName}</td>
                   <td class="td-berry">${berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}" loading="lazy" onerror="this.style.display='none';">` : `<span class="berry-name-text">${berryName}</span>`}</td>

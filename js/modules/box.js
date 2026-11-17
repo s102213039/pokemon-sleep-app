@@ -1769,7 +1769,7 @@
               return `
                 <tr data-uid="${p.uid}" title="${escapeHtml(stripHtml(prInfo.summaryNote || ''))}">
                   <td class="td-icon" style="text-align:center;">
-                    <div class="table-icon-wrapper" style="margin:0 auto;width:34px;height:34px;">
+                    <div class="table-icon-wrapper" style="margin:0 auto;width:38px;height:38px;">
                       ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="table-icon" onerror="this.style.display='none';">` : ''}
                     </div>
                   </td>

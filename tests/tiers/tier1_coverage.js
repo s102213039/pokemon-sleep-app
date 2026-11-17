@@ -2059,10 +2059,10 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
     const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
 
-    // 1. Snug icon column width matching icon dimensions 100%
-    assert(stylesCss.includes('.pokemon-table .th-icon') && stylesCss.includes('width: 34px !important;'), 'th-icon must be 34px wide');
-    assert(stylesCss.includes('.pokemon-table .td-icon') && stylesCss.includes('width: 34px !important;'), 'td-icon must be 34px wide');
-    assert(stylesCss.includes('.table-icon') && stylesCss.includes('width: 34px !important;'), 'table-icon must be 34px wide');
+    // 1. Roomy icon column width containing 38px icons without horizontal clipping
+    assert(stylesCss.includes('.pokemon-table .th-icon') && stylesCss.includes('width: 56px !important;'), 'th-icon must be 56px wide');
+    assert(stylesCss.includes('.pokemon-table .td-icon') && stylesCss.includes('width: 56px !important;'), 'td-icon must be 56px wide');
+    assert(stylesCss.includes('.table-icon') && stylesCss.includes('width: 38px !important;'), 'table-icon must be 38px wide');
     assert(boxJs.includes('<th class="th-icon"'), 'box.js table must use th-icon class for icon column');
     assert(boxJs.includes('<td class="td-icon"'), 'box.js table must use td-icon class for icon column');
     assert(stylesCss.includes('.pokemon-table.box-table .th-icon') && stylesCss.includes('left: 0 !important;'), 'box-table icon header must stick to left: 0');
