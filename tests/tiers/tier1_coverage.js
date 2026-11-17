@@ -2059,9 +2059,10 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
     const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
 
-    // 1. Generous icon column width containing 38px icons cleanly without horizontal clipping
-    assert(/\.pokemon-table\s+\.th-icon[\s\S]{0,450}?width:\s*72px\s*!important;/.test(stylesCss), 'th-icon must be 72px wide');
-    assert(/\.pokemon-table\s+\.td-icon[\s\S]{0,450}?width:\s*72px\s*!important;/.test(stylesCss), 'td-icon must be 72px wide');
+    // 1. Snug icon column width (50px: 38px icon + tight horizontal padding, 0 vertical padding)
+    assert(/\.pokemon-table\s+\.th-icon[\s\S]{0,450}?width:\s*50px\s*!important;/.test(stylesCss), 'th-icon must be 50px wide');
+    assert(/\.pokemon-table\s+\.td-icon[\s\S]{0,450}?width:\s*50px\s*!important;/.test(stylesCss), 'td-icon must be 50px wide');
+    assert(/\.pokemon-table\s+\.td-icon[\s\S]{0,450}?padding:\s*0\s+5px\s*!important;/.test(stylesCss), 'td-icon must have 0 vertical padding');
     assert(/\.table-icon\s*\{[\s\S]{0,250}?width:\s*38px\s*!important;/.test(stylesCss), 'table-icon must be 38px wide');
     assert(boxJs.includes('<th class="th-icon"'), 'box.js table must use th-icon class for icon column');
     assert(boxJs.includes('<td class="td-icon"'), 'box.js table must use td-icon class for icon column');

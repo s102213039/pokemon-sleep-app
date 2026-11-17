@@ -71,7 +71,7 @@
 }
 
 .pokemon-table td {
-  padding: 10px 5px;
+  padding: 4px 5px;
   text-align: center;
   border-bottom: 1px solid var(--border-color);
   font-size: 13px;
@@ -139,10 +139,10 @@
   background-color: var(--table-th-solid, #0a0f1d) !important;
   color: var(--text-th) !important;
   font-weight: 700 !important;
-  min-width: 72px !important;
-  max-width: 72px !important;
-  width: 72px !important;
-  padding: 8px 6px !important;
+  min-width: 50px !important;
+  max-width: 50px !important;
+  width: 50px !important;
+  padding: 8px 2px !important;
   box-sizing: border-box !important;
   text-align: center !important;
   border-right: 1px solid var(--border-color) !important;
@@ -155,10 +155,12 @@
   position: sticky !important;
   left: 44px !important;
   z-index: 20 !important;
-  min-width: 72px !important;
-  max-width: 72px !important;
-  width: 72px !important;
-  padding: 5px 12px !important;
+  min-width: 50px !important;
+  max-width: 50px !important;
+  width: 50px !important;
+  height: 38px !important;
+  padding: 0 5px !important;
+  line-height: 0 !important;
   box-sizing: border-box !important;
   text-align: center !important;
   border-right: 1px solid var(--border-color) !important;
