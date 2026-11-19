@@ -656,7 +656,7 @@
   height: 4px !important;
   background: rgba(255, 255, 255, 0.25) !important;
   border-radius: 999px !important;
-  margin: 8px auto 4px auto !important;
+  margin: 5px auto 1px auto !important;
   flex-shrink: 0 !important;
 }
 
@@ -709,8 +709,8 @@
   grid-template-areas:
     "main actions"
     "stats stats" !important;
-  gap: 6px 8px !important;
-  padding: 6px 10px 6px 12px !important;
+  gap: 2px 8px !important;
+  padding: 2px 10px 4px 12px !important;
   position: static !important;
   align-items: center !important;
   border-top-left-radius: 20px !important;
@@ -784,7 +784,7 @@
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-end !important;
-  gap: 3px !important;
+  gap: 2px !important;
   margin-left: auto !important;
   margin-right: 0 !important;
 }
@@ -798,20 +798,20 @@
   justify-content: center !important;
   align-items: center !important;
   gap: 20px !important;
-  padding: 4px 0 2px !important;
+  padding: 0 !important;
   box-sizing: border-box !important;
   border-radius: 0 !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  margin: 2px auto 0 !important;
+  margin: 0 auto !important;
 }
 
 .mobile-h5-app #pokedex-detail-modal .pokedex-header-stat-col,
 .mobile-h5-app .pokedex-header-stat-col {
   display: flex !important;
   flex-direction: column !important;
-  gap: 2px !important;
+  gap: 1px !important;
   flex: 0 0 auto !important;
 }
 
@@ -823,6 +823,7 @@
   justify-content: flex-start !important;
   gap: 6px !important;
   font-size: 13px !important;
+  line-height: 1.15 !important;
   white-space: nowrap !important;
   text-align: left !important;
 }

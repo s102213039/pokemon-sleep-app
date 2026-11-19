@@ -5,6 +5,17 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-19 已完成（H5 寶可夢詳情浮窗上方表頭與四項數值面板垂直緊湊化）
+
+- **調整內容（僅限 `.mobile-h5-app #pokedex-detail-modal`，不影響桌機版）**：
+  - 修改 `css/views/wiki/wiki_layout.css` 與 `css/styles.css`（同步重新建置 `css/styles.min.css` 與版號標記）：
+    1. 縮減頂部拖曳指示條外距：`.sheet-drag-handle` 由 `margin: 8px auto 4px auto` 收緊至 `margin: 5px auto 1px auto`。
+    2. 收緊表頭上下內距與「名稱/潛力評級列」對「四項基礎數值面板」之垂直間距：`.pokedex-modal-header` 由 `gap: 6px 8px; padding: 6px 10px 6px 12px` 收緊至 `gap: 2px 8px; padding: 2px 10px 4px 12px`；`.pokedex-dual-verdict-column` 由 `gap: 3px` 收緊至 `gap: 2px`。
+    3. 移除數值面板多餘上下留白並微縮行高：`.pokedex-header-stats-row.pokedex-header-stats-dual` 改為 `padding: 0; margin: 0 auto`；`.pokedex-header-stat-col` 設為 `gap: 1px`；`.pokedex-header-stat-item` 補上 `line-height: 1.15`。
+- **驗證結果**：
+  - 無頭 Chrome 實機 `390x844` H5 視口截圖對比確認：上方表頭與四項數值區上下留白顯著縮減，整體高度更精煉（首屏即可露出下方產能拆解更多資訊），且懸浮白圈 `X` 關閉鈕、右靠齊雙軌潛力卡片與置中四項數值無重疊或偏移。
+  - `npm run test:fast`：**169 / 169 PASS**；`npm test`：**292 / 292 PASS**；`node tests/test_challenger_m1_cache_sync.js`：**18 / 18 PASS**。
+
 ## 交接：2026-11-19 已完成（H5 寶可夢詳情浮窗懸浮透明白圈關閉鈕、頂部潛力評級右靠齊與四項基礎數值整體置中）
 
 - **調整內容**：
