@@ -5,6 +5,19 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-19 已完成（H5 寶可夢詳情浮窗懸浮透明白圈關閉鈕、頂部潛力評級右靠齊與四項基礎數值整體置中）
+
+- **調整內容**：
+  1. **H5 上方置中懸浮透明白圈關閉鈕 (`js/modules/pokedex/pokedex_modal.js`, `css/views/wiki/wiki_layout.css`, `css/styles.css`)**：
+     - 將 `.pokedex-modal-close-btn` 內圖示改為幾何置中之向量 SVG `X`。
+     - 於 `.mobile-h5-app #pokedex-detail-modal` 將 `.pokedex-modal-dialog` 高度調為 `90dvh` 並改為 `overflow: visible`（表頭補上 `20px` 頂部圓角、內容區由 `.pokedex-modal-body` 維持捲動），將關閉鈕絕對定位至 `top: -40px; left: 50%; transform: translateX(-50%)`（`34px` 圓形、純白 `1.5px` 外框與純白 `X`、背景完全透明），緊貼浮窗上方空白處正中央且不影響桌機版排版。
+  2. **上方潛力評級右靠齊與下方四數值平移置中**：
+     - 關閉鈕移出流後，將 `.mobile-h5-app #pokedex-detail-modal .pokedex-header-actions` 設為 `gap: 0; justify-content: flex-end; justify-self: end`（表頭右內距 `10px`），使「當前 Lv.xx」與「滿級潛力」雙軌卡片整體右靠齊。
+     - 將 `.mobile-h5-app #pokedex-detail-modal .pokedex-header-stats-row.pokedex-header-stats-dual` 由 `justify-content: flex-start` 改為 `justify-content: center`（雙欄間距 `20px`），保留原雙欄上下對齊結構並將四項基礎數值整體平移置中展示。
+- **驗證結果**：
+  - 實機無頭 Chrome `390x844`（H5 行動版）與 `1440x900`（桌機版）截圖確認：白圈透明 `X` 精準置中緊貼浮窗頂緣、雙潛力卡片靠右對齊、四項數值置中對稱，桌機版未受影響。
+  - `npm run test:fast`：**169 / 169 PASS**；`npm test`：**292 / 292 PASS**；`node tests/test_challenger_m1_cache_sync.js`：**18 / 18 PASS**。
+
 ## 交接：2026-11-19 已完成（食材天梯全面動態化、雙軌自動建構引擎、統一 Lv.60 滿活力 0.45x 公式與最終進化開關）
 
 - **問題根因**：先前食材天梯僅依賴手寫靜態檔 `data/ladder_lv60.json` / `js/data/ladder_data.js`，且每日自動同步 (`scripts/sync_all.py` / `.github/workflows/sync.yml`) 未重建天梯資料，導致實測全圖鑑存在 52 組最終進化寶可夢遺漏（如敗露球菇缺番茄、超夢缺大豆、夢幻缺蘋果/蜂蜜、達克萊伊缺咖啡豆、風妖精最初缺酪梨/番茄等）與一口堅果手填公式不一致。
