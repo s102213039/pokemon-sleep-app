@@ -177,6 +177,11 @@
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Supply Tier' : '產量供餐梯隊'}</span>
+              <label class="ladder-top15-switch-label" title="${isEN ? 'Show Final Evolution Only (rare ingredients <2 final evos auto-include pre-evos)' : '僅顯示最終進化（稀有食材不足 2 種時自動補入未進化）'}">
+                <input type="checkbox" id="ladder-final-only-switch" class="ladder-switch-input" ${(typeof getLadderFinalOnly === 'function' ? getLadderFinalOnly() : true) ? 'checked' : ''} onchange="window.WikiDB.toggleLadderFinalOnly(this.checked)">
+                <span class="ladder-switch-slider"></span>
+                <span class="ladder-switch-text">${isEN ? 'Final Evo' : '最終進化'}</span>
+              </label>
             </div>
             <div class="sidebar-skills-list">
               <button type="button" class="tag-btn ${ladderSupplyFilter === 'ALL' ? 'active' : ''}" data-supply-filter="ALL" onclick="window.WikiDB.setLadderSupplyFilter('ALL')">${isEN ? 'All' : '全部'}</button>
@@ -558,7 +563,7 @@
         <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? '' : 'display:none;'}">
           <!-- 橫向視覺天梯座標圖 (預設顯示) -->
           <div id="wiki-ingredient-ladder-coordinate">
-            ${renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA)}
+            ${renderCoordinateLadder()}
           </div>
         </div>
 
@@ -829,6 +834,12 @@
     toggleFavorite: toggleBerryFavorite,
     toggleLadderTop15: toggleLadderTop15,
     getLadderTop15Only: getLadderTop15Only,
+    toggleLadderFinalOnly: typeof toggleLadderFinalOnly === 'function' ? toggleLadderFinalOnly : null,
+    getLadderFinalOnly: typeof getLadderFinalOnly === 'function' ? getLadderFinalOnly : null,
+    buildDynamicIngredientLadder: typeof buildDynamicIngredientLadder === 'function' ? buildDynamicIngredientLadder : null,
+    getActiveCoordinateLadderData: typeof getActiveCoordinateLadderData === 'function' ? getActiveCoordinateLadderData : null,
+    getDynamicTopRecipeForIngredient: typeof getDynamicTopRecipeForIngredient === 'function' ? getDynamicTopRecipeForIngredient : null,
+    invalidateDynamicLadderCache: typeof invalidateDynamicLadderCache === 'function' ? invalidateDynamicLadderCache : null,
     toggleLadderIngM: toggleLadderIngM,
     toggleLadderIngS: toggleLadderIngS,
     toggleLadderSpeedM: toggleLadderSpeedM,

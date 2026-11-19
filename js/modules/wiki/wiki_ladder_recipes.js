@@ -609,7 +609,13 @@
 
   function getPokemonLadderSpecialty(pkmName) {
     if (!pkmName) return '食材';
-    const pkmDataLen = (typeof window !== 'undefined' && Array.isArray(window.POKEMON_DATA)) ? window.POKEMON_DATA.length : 0;
+    const livePkmArr = (typeof window !== 'undefined')
+      ? ((Array.isArray(window.POKEMON_DATA) && window.POKEMON_DATA.length > 0 && window.POKEMON_DATA)
+        || (window.PokemonApp && Array.isArray(window.PokemonApp.allPokemons) && window.PokemonApp.allPokemons.length > 0 && window.PokemonApp.allPokemons)
+        || (Array.isArray(window.allPokemons) && window.allPokemons.length > 0 && window.allPokemons)
+        || null)
+      : null;
+    const pkmDataLen = livePkmArr ? livePkmArr.length : 0;
     if (pkmDataLen !== _ladderSpecCachePkmLen) {
       _ladderSpecCache = Object.create(null);
       _ladderSpecCachePkmLen = pkmDataLen;
@@ -619,9 +625,9 @@
 
     const clean = pkmName.replace(/（.*）|\(.*\)/g, '').trim();
     let res = '食材';
-    // 1. 若全域寶可夢資料庫（window.POKEMON_DATA）已載入，優先使用官方資料集
+    // 1. 若全域寶可夢資料庫（window.POKEMON_DATA / allPokemons）已載入，優先使用官方資料集
     if (pkmDataLen > 0) {
-      const idx = _getWikiPkmIndex(window.POKEMON_DATA);
+      const idx = _getWikiPkmIndex(livePkmArr);
       const match = idx['cn:' + pkmName] || idx['cn:' + clean] || idx['cn:' + pkmName.replace('大綱蛇', '大鋼蛇')] || idx['cn:' + pkmName.replace('大鋼蛇', '大綱蛇')] || idx['en:' + pkmName];
       if (match && match.specialty) {
         _ladderSpecCache[pkmName] = match.specialty;

@@ -1,7 +1,10 @@
   function openIngredientRankingModal(ingId) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const mult = getLadderMultiplier();
-    const ingData = LV60_COORDINATE_LADDER_DATA.find(i => i.id === ingId);
+    const activeData = (typeof getActiveCoordinateLadderData === 'function')
+      ? getActiveCoordinateLadderData()
+      : (LV60_COORDINATE_LADDER_DATA || []);
+    const ingData = activeData.find(i => i.id === ingId);
     if (!ingData) return;
 
     // 若當前有高亮料理，且點選的食材非該料理所需食材，則禁止開啟與選取
@@ -12,7 +15,9 @@
     }
 
     const ingName = isEN ? ((window.I18N && window.I18N.getIngredientName(ingData.name)) || ingData.name) : ingData.name;
-    const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ingId] || { name: isEN ? 'Key Dish' : '核心大菜', name_en: 'Key Dish', need: 20 };
+    const dishInfo = (typeof getDynamicTopRecipeForIngredient === 'function')
+      ? getDynamicTopRecipeForIngredient(ingId, ingData.name)
+      : (TOP_RECIPES_FOR_INGREDIENTS[ingId] || { name: isEN ? 'Key Dish' : '核心大菜', name_en: 'Key Dish', need: 20 });
     const dishName = isEN ? (dishInfo.name_en || dishInfo.name) : dishInfo.name;
     const dishIcon = dishInfo.icon || getLadderDishIcon(dishInfo.name);
 
@@ -29,7 +34,7 @@
     }
 
     ingData.pokemon.forEach((p, pIdx) => {
-      const pkmSpec = getPokemonLadderSpecialty(p.name);
+      const pkmSpec = p.specialty || getPokemonLadderSpecialty(p.name);
       if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return;
       if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return;
       if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return;

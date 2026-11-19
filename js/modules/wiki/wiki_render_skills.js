@@ -87,7 +87,9 @@
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     return ladders.map(ing => {
       const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
-      const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { need: 20 };
+      const dishInfo = (typeof getDynamicTopRecipeForIngredient === 'function')
+        ? getDynamicTopRecipeForIngredient(ing.id, ing.name)
+        : (TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { need: 20 });
       
       let filteredTiers = ing.tiers.filter((t, tIdx) => {
         const pkmSpec = getPokemonLadderSpecialty(t.name);

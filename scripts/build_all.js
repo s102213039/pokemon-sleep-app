@@ -12,6 +12,7 @@
  */
 
 const { buildCss } = require('./build_css');
+const { buildIngredientLadder } = require('./build_ingredient_ladder');
 const { buildWiki } = require('./build_wiki');
 const { buildAppraisal } = require('./build_appraisal');
 const { buildBox } = require('./build_box');
@@ -23,6 +24,7 @@ const { buildNews } = require('./build_news');
 
 function buildAll() {
   const startTime = Date.now();
+  const ladderRes = buildIngredientLadder();
   const cssRes = buildCss();
   const wikiRes = buildWiki();
   const appraisalRes = buildAppraisal();
@@ -35,6 +37,7 @@ function buildAll() {
   const elapsed = Date.now() - startTime;
 
   return {
+    ladder: ladderRes,
     css: cssRes,
     wiki: wikiRes,
     appraisal: appraisalRes,

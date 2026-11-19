@@ -5,6 +5,23 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-19 已完成（食材天梯全面動態化、雙軌自動建構引擎、統一 Lv.60 滿活力 0.45x 公式與最終進化開關）
+
+- **問題根因**：先前食材天梯僅依賴手寫靜態檔 `data/ladder_lv60.json` / `js/data/ladder_data.js`，且每日自動同步 (`scripts/sync_all.py` / `.github/workflows/sync.yml`) 未重建天梯資料，導致實測全圖鑑存在 52 組最終進化寶可夢遺漏（如敗露球菇缺番茄、超夢缺大豆、夢幻缺蘋果/蜂蜜、達克萊伊缺咖啡豆、風妖精最初缺酪梨/番茄等）與一口堅果手填公式不一致。
+- **架構解法（雙軌自動機制 + 100% 跨語言位元組一致）**：
+  1. **前端即時動態計算引擎 (`js/modules/wiki/wiki_ladder_builder.js`)**：
+     - 載入 `data/data.json` 與 `recipes.json` 後即時推算全食材天梯並緩存（保留靜態 `LV60_COORDINATE_LADDER_DATA` 作為離線與首屏備援），並監聽 `pokemon-data-updated` / `recipes-data-updated` 事件原地自動刷新。
+     - **統一 Lv.60 滿活力理想公式 (`0.45x`)**：採用與主技能天梯及介面說明完全一致的 `86400 / (Math.max(600, Math.round(interval * 0.882)) * 0.45) * ingRate * (slotQtySum / 3)`，展開 Slot A (`AAA/ABA/AAX/ABX`)、Slot B (`ABB/AAB/ABX`)、Slot C (`XXC`) 並自動去除重複產量變體與同格重複食材（如毒骷蛙 B==C 豆製肉 `ABB 64`）。
+     - **多形態去重與伊布家族整合**：同 ID 同圖示體型自動取最高產代表並去重（南瓜怪人四體型合併為 `南瓜怪人`），保留不同圖示形態（阿羅拉、節日皮卡丘/伊布、高低調顫弦蠑螈），並維持既有驗證良品之 `伊布家族（8種進化）` 整合規則。
+     - **側邊欄「最終進化」開關 (`#ladder-final-only-switch`) 與稀有食材保底**：預設開啟僅顯示最終進化；若某食材最終進化不足 2 種（如一口堅果僅風妖精 1 隻）則自動補入未進化階段（木棉球）；關閉開關可展開全進化階段。
+     - **未來第 21 種以上新食材全自動擴充**：偵測到 `data.json` 出現未知新食材時自動建立新軌道，並由 `getDynamicTopRecipeForIngredient` 即時從 `recipes.json` 挑選含該食材且基礎能量最高的料理作為三餐達標線基準。
+  2. **後端 / CI 與建置自動同步 (`scripts/build_ingredient_ladder.py`, `scripts/build_ingredient_ladder.js`)**：
+     - 純 Python 標準庫實作 `js_round`（`floor(x + 0.5)`）達成與前端 JS 引擎 **100% 位元組完全一致**；整合至 `scripts/sync_all.py`、`.github/workflows/sync.yml`（每日自動同步並提交 `data/ladder_lv60.json` 與 `js/data/ladder_data.js`）及 `scripts/build_all.js`（`npm run build` 同步重產並壓縮 `ladder_data.min.js`）。
+- **驗證結果**：
+  - `tests/test_dynamic_ingredient_ladder.js`：**44 / 44 PASS**（含 Python/JS 位元組一致性、130 隻最終進化零遺漏、多形態去重、最終進化開關、第 21 種合成新食材自動建軌與即時事件刷新驗證）。
+  - `npm run test:fast`：**169 / 169 PASS**；`npm test`：**292 / 292 PASS**。
+  - `node tests/test_challenger_m1_cache_sync.js`：**18 / 18 PASS**；`node tests/test_challenger_m2_multitab_adversarial.js`：**22 / 22 PASS**。
+
 ## 交接：2026-11-19 已完成（補齊風妖精於嫩亮酪梨與好眠番茄食材天梯排名、主技能天梯改為前 10 名並縮小節點與數字尺寸）
 
 - **食材天梯補齊風妖精 (`#547`) 全食材產量排名**：

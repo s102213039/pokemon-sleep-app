@@ -19,6 +19,7 @@ const WIKI_MODULES = [
   'wiki_skills_data.js',
   'wiki_skills_matrix.js',
   'wiki_ladder_recipes.js',
+  'wiki_ladder_builder.js',
   'wiki_ladder_modal.js',
   'wiki_ladder_filter.js',
   'wiki_calculators.js',

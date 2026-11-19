@@ -3504,6 +3504,9 @@ if (typeof document !== 'undefined') {
         if (window.initUserBox) {
           window.initUserBox(data);
         }
+        if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function' && typeof CustomEvent === 'function') {
+          window.dispatchEvent(new CustomEvent('pokemon-data-updated', { detail: data }));
+        }
         scheduleDynamicDataSync();
       })
       .catch(err => {

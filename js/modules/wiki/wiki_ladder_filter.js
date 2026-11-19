@@ -309,9 +309,13 @@
       }
     } catch (e) {}
     ladderTop15Only = true;
+    if (typeof ladderFinalOnly !== 'undefined') ladderFinalOnly = true;
+    if (typeof invalidateDynamicLadderCache === 'function') invalidateDynamicLadderCache();
 
     const top15 = document.getElementById('ladder-top15-switch');
     if (top15) top15.checked = true;
+    const finalOnlyEl = document.getElementById('ladder-final-only-switch');
+    if (finalOnlyEl) finalOnlyEl.checked = true;
     const skillDraw = document.getElementById('ladder-skill-draw-toggle');
     if (skillDraw) skillDraw.checked = false;
     const ingM = document.getElementById('ladder-ing-m-toggle');
@@ -376,6 +380,7 @@
     if (isLadderIngM || isLadderIngS || isLadderSpeedM || isLadderSpeedS || isLadderSkillM || isLadderSkillS) count++;
     if (ladderNature && ladderNature !== 'NONE') count++;
     if (isLadderSkillDrawExpected) count++;
+    if (typeof ladderFinalOnly !== 'undefined' && !ladderFinalOnly) count++;
 
     if (badge) {
       if (count > 0) {
@@ -390,7 +395,7 @@
   function refreshCoordinateLadder() {
     const container = document.getElementById('wiki-ingredient-ladder-coordinate');
     if (container) {
-      container.innerHTML = renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA);
+      container.innerHTML = renderCoordinateLadder();
       if (ladderSearchQuery) {
         applyLadderFiltersInPlace();
       }

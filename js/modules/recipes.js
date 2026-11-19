@@ -708,7 +708,13 @@
   )
     .then(data => {
       allRecipes = data;
-      if (typeof window !== 'undefined') { window.allRecipes = data; window.__RECIPES_CACHE__ = data; }
+      if (typeof window !== 'undefined') {
+        window.allRecipes = data;
+        window.__RECIPES_CACHE__ = data;
+        if (typeof window.dispatchEvent === 'function' && typeof CustomEvent === 'function') {
+          window.dispatchEvent(new CustomEvent('recipes-data-updated', { detail: data }));
+        }
+      }
       initCategoryFilters();
       initSelectFilters();
       initSliders();

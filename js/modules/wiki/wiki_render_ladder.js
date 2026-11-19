@@ -1,17 +1,23 @@
   // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、動態自適應最大刻度、美味尾巴獨立分離)
   function renderCoordinateLadder(ladderData) {
-    const data = ladderData || LV60_COORDINATE_LADDER_DATA || [];
+    const activeDefaultData = (typeof getActiveCoordinateLadderData === 'function')
+      ? getActiveCoordinateLadderData()
+      : (LV60_COORDINATE_LADDER_DATA || []);
+    const data = ladderData || activeDefaultData || [];
     const mult = getLadderMultiplier();
     const skillTrigMult = getLadderSkillTriggerMultiplier();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const langKey = (window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : (isEN ? 'en-US' : 'zh-TW');
-    const isDefaultData = (!ladderData || ladderData === LV60_COORDINATE_LADDER_DATA);
+    const isDefaultData = (!ladderData || ladderData === LV60_COORDINATE_LADDER_DATA || ladderData === activeDefaultData);
+    const livePkmLen = (typeof window !== 'undefined' && ((window.PokemonApp && window.PokemonApp.allPokemons && window.PokemonApp.allPokemons.length) || (window.allPokemons && window.allPokemons.length) || (window.allPokemon && window.allPokemon.length))) || 0;
+    const liveRecLen = (typeof window !== 'undefined' && ((window.allRecipes && window.allRecipes.length) || (window.__RECIPES_CACHE__ && window.__RECIPES_CACHE__.length))) || 0;
     const cacheKey = isDefaultData ? [
       langKey,
       mult.toFixed(6),
       skillTrigMult.toFixed(6),
       isLadderSkillDrawExpected ? 1 : 0,
       ladderTop15Only ? 1 : 0,
+      (typeof ladderFinalOnly !== 'undefined' && !ladderFinalOnly) ? 0 : 1,
       ladderSortOrder,
       ladderSupplyFilter,
       ladderRecipeFilter,
@@ -20,7 +26,9 @@
       ladderRecipeMultiSelect ? 1 : 0,
       ladderHighlightRecipe || '',
       Array.isArray(ladderHighlightRecipes) ? ladderHighlightRecipes.join(',') : '',
-      (typeof window !== 'undefined' && window.allPokemon && window.allPokemon.length) || 0
+      livePkmLen,
+      liveRecLen,
+      data.length
     ].join('|') : '';
 
     if (cacheKey && _coordLadderRenderCache.key === cacheKey && _coordLadderRenderCache.html) {
@@ -33,7 +41,7 @@
     const highlightMarks = highlightState.marks;
     const activeHighlightRecipe = activeHighlightRecipes[0] || null;
 
-    // 分離 18 種常規食材與 1 種獨立美味尾巴
+    // 分離常規食材與獨立美味尾巴
     const mainTracks = data.filter(ing => ing.id !== 'tail');
     const tailIng = data.find(ing => ing.id === 'tail');
 
@@ -42,10 +50,15 @@
     // 1. 預先過濾各常規食材軌道之寶可夢與變體，並計算目前篩選下的全局最高產量
     let globalMaxCount = 20;
     const processedMainTracks = mainTracks.map(ing => {
-      const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: isEN ? 'High Tier Dish' : '高階料理', name_en: 'High Tier Dish', need: 20, type: isEN ? 'Dish' : '料理', secondary: '' };
+      const dishInfo = (typeof getDynamicTopRecipeForIngredient === 'function')
+        ? getDynamicTopRecipeForIngredient(ing.id, ing.name)
+        : (TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: isEN ? 'High Tier Dish' : '高階料理', name_en: 'High Tier Dish', need: 20, type: isEN ? 'Dish' : '料理', secondary: '' });
       const dishName = isEN ? (dishInfo.name_en || dishInfo.name) : dishInfo.name;
       const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
-      const minDefaultThreshold = isUnfilteredDefault ? 30 : (DEFAULT_LADDER_MIN_THRESHOLDS[ing.id] || 20);
+      const trackRawMax = ing.pokemon && ing.pokemon[0] ? Math.round(ing.pokemon[0].count * mult) : 0;
+      const minDefaultThreshold = (isUnfilteredDefault && trackRawMax >= 30)
+        ? 30
+        : (trackRawMax > 0 && trackRawMax < 20 ? 1 : (DEFAULT_LADDER_MIN_THRESHOLDS[ing.id] || 20));
 
       const reqMarks = highlightMarks.get(ing.name) || [];
       const reqCount = highlightedIngMap ? highlightedIngMap.get(ing.name) : null;
@@ -76,7 +89,7 @@
 
       // 取得該軌道符合篩選之寶可夢與型態變體
       const filteredPokemonList = ing.pokemon.map((p, pIdx) => {
-        const pkmSpec = getPokemonLadderSpecialty(p.name);
+        const pkmSpec = p.specialty || getPokemonLadderSpecialty(p.name);
         if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return null;
         if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return null;
         if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return null;
@@ -534,7 +547,7 @@
               tailTop5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
             }
             const filteredTailPkm = tailIng.pokemon.map((p, pIdx) => {
-              const pkmSpec = getPokemonLadderSpecialty(p.name);
+              const pkmSpec = p.specialty || getPokemonLadderSpecialty(p.name);
               if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return null;
               if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return null;
               if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return null;

@@ -990,10 +990,10 @@ test('Tier 2 - Boundary & Corner Cases', 'Ingredient Ladder: Dense Ranking & Mul
   vm.createContext(ctx);
   vm.runInContext(wikiJs, ctx);
 
-  // Verify Tomato track in LV60_COORDINATE_LADDER_DATA has 3 isTop: true pokemons (大食花, 倫琴貓, 暴雪王)
+  // Verify Tomato track in LV60_COORDINATE_LADDER_DATA has 3 isTop: true pokemons (大食花, 倫琴貓, 暴雪王) tied at 85 (Lv.60 0.45x)
   const tomatoData = ctx.window.WikiDB.LV60_COORDINATE_LADDER_DATA.find(i => i.id === 'tomato');
   assert(tomatoData !== undefined, 'Tomato ladder data must exist');
-  const topTomatoPkms = tomatoData.pokemon.filter(p => p.isTop && p.variants.some(v => v.count === 76 && v.isTop));
+  const topTomatoPkms = tomatoData.pokemon.filter(p => p.isTop && p.variants.some(v => v.count === 85 && v.isTop));
   assertEquals(topTomatoPkms.length, 3, 'Tomato track must have 3 TOP 1 Pokemons (大食花, 倫琴貓, 暴雪王)');
   const topNames = topTomatoPkms.map(p => p.name);
   assert(topNames.includes('大食花') && topNames.includes('倫琴貓') && topNames.includes('暴雪王'), 'Top pokemons must be 大食花, 倫琴貓, 暴雪王');
@@ -1009,17 +1009,17 @@ test('Tier 2 - Boundary & Corner Cases', 'Ingredient Ladder: Dense Ranking & Mul
   assertEquals(cards[1][2], '#1', '2nd card must have #1 (tied)');
   assertEquals(cards[2][2], '#1', '3rd card must have #1 (tied)');
 
-  // Card 4 (魔牆人偶 71) must have #2 (Dense rank 2, NOT rank 4!)
-  assertEquals(cards[3][2], '#2', '4th card (魔牆人偶 71) must have #2 (Dense rank 2)');
+  // Card 4 (魔牆人偶 78) must have #2 (Dense rank 2, NOT rank 4!)
+  assertEquals(cards[3][2], '#2', '4th card (魔牆人偶 78) must have #2 (Dense rank 2)');
 
-  // Card 5 (妙蛙花 68) must have #3 (Dense rank 3)
-  assertEquals(cards[4][2], '#3', '5th card (妙蛙花 68) must have #3 (Dense rank 3)');
+  // Card 5 (妙蛙花 76) must have #3 (Dense rank 3)
+  assertEquals(cards[4][2], '#3', '5th card (妙蛙花 76) must have #3 (Dense rank 3)');
 
-  // Card 6 (三地鼠 66) must have #4
-  assertEquals(cards[5][2], '#4', '6th card (三地鼠 66) must have #4');
+  // Card 6 (三地鼠 73) must have #4
+  assertEquals(cards[5][2], '#4', '6th card (三地鼠 73) must have #4');
 
-  // Card 7 (請假王 43) must have #5
-  assertEquals(cards[6][2], '#5', '7th card (請假王 43) must have #5');
+  // Card 7 (風妖精 66) must have #5
+  assertEquals(cards[6][2], '#5', '7th card (風妖精 66) must have #5');
 });
 
 
