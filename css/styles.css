@@ -12209,12 +12209,12 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
   min-width: 0 !important;
 }
 
-/* Enlarged Pokemon Avatar Node (38px diameter) */
+/* Compact Pokemon Avatar Node (30px diameter) */
 .mobile-h5-app .wiki-skill-coordinate-ladder .node-avatar-wrapper,
 .wiki-skill-coordinate-ladder .node-avatar-wrapper {
   position: relative;
-  width: 38px !important;
-  height: 38px !important;
+  width: 30px !important;
+  height: 30px !important;
   flex-shrink: 0;
 }
 
@@ -12288,18 +12288,18 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
   box-shadow: none !important;
 }
 
-/* Refined Count Badge for 38px Avatar */
+/* Refined Count Badge for 30px Avatar */
 .wiki-skill-coordinate-ladder .node-count-badge {
-  font-size: 9.5px;
+  font-size: 8.5px;
   font-weight: 700;
   color: var(--text-primary);
   background: var(--bg-card-inner);
-  padding: 1px 4px;
+  padding: 0.5px 3px;
   border-radius: 3px;
-  margin-top: -5px;
+  margin-top: -4px;
   border: 1px solid var(--border-color);
   font-feature-settings: 'tnum';
-  line-height: 1.1;
+  line-height: 1.05;
   z-index: 2;
 }
 
@@ -12327,8 +12327,14 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
 
   .mobile-h5-app .wiki-skill-coordinate-ladder .node-avatar-wrapper,
   .wiki-skill-coordinate-ladder .node-avatar-wrapper {
-    width: 34px !important;
-    height: 34px !important;
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .wiki-skill-coordinate-ladder .node-count-badge {
+    font-size: 8px;
+    padding: 0 2.5px;
+    margin-top: -3px;
   }
 
   #wiki-skill-ranking-modal .ing-rank-num {

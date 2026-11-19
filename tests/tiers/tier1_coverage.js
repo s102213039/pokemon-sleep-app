@@ -1380,11 +1380,17 @@ test('Tier 1 - Feature Coverage', 'Ingredient Ladder Universal Simplified Recipe
   });
 
   assertEquals(duplicateCountErrors, 0, 'No Pokemon should have duplicate-yield variants');
-  assertEquals(xxcCount, 108, 'Ingredient C track entries must be unified into universal XXC (108 variants)');
+  assertEquals(xxcCount, 109, 'Ingredient C track entries must be unified into universal XXC (109 variants)');
+  const avocadoTrack = ladderData.find(i => i.id === 'glossyavocado');
+  const whimAvocado = avocadoTrack && avocadoTrack.pokemon.find(p => p.name === '風妖精');
+  assert(whimAvocado && whimAvocado.count === 43 && whimAvocado.recipe === 'ABB', 'Whimsicott must rank in glossyavocado track (ABB, 43)');
+  const tomatoTrack = ladderData.find(i => i.id === 'tomato');
+  const whimTomato = tomatoTrack && tomatoTrack.pokemon.find(p => p.name === '風妖精');
+  assert(whimTomato && whimTomato.count === 59 && whimTomato.recipe === 'XXC', 'Whimsicott must rank in tomato track (XXC, 59)');
   assertEquals(aaxCount, 117, 'Pos A dual ingredients must be unified into universal AAX (117 variants)');
   assertEquals(abaCount, 117, 'ABA combinations must be 117 variants for Pos A pokemons with Lv.60 A');
   assertEquals(aaaCount, 117, 'AAA combinations must be 117 variants');
-  assertEquals(abbCount, 115, 'ABB combinations must be 115 variants');
+  assertEquals(abbCount, 116, 'ABB combinations must be 116 variants');
 
   // Verify specific Whimsicott calculations on Snackable Nuts track
   const nutsTrack = ladderData.find(i => i.id === 'snackablenuts');

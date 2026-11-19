@@ -5,6 +5,19 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-19 已完成（補齊風妖精於嫩亮酪梨與好眠番茄食材天梯排名、主技能天梯改為前 10 名並縮小節點與數字尺寸）
+
+- **食材天梯補齊風妖精 (`#547`) 全食材產量排名**：
+  - 原因：先前新增第 20 軌「一口堅果」時僅寫入 `snackablenuts` 軌道，未同步更新既有的「嫩亮酪梨」(`glossyavocado`) 與「好眠番茄」(`tomato`) 靜態天梯資料。
+  - 修正：依全站一致的 Lv.60 日產係數（`2.262x`）計算並寫入 `data/ladder_lv60.json`、`js/data/ladder_data.js` 與重新產生 `data/manifest.json`：
+    - `glossyavocado`（嫩亮酪梨）：新增風妖精（`ABB: 43`, `AAB: 27`, `ABX: 16`），位列全遊戲第 2 名（僅次於沙漠蜻蜓 `58`，高於老翁龍 `38` 與岩殿居蟹 `34`）。
+    - `tomato`（好眠番茄）：新增風妖精（`XXC: 59`），位列全遊戲第 7 名（高於請假王 `43`、巨鍛匠 `35` 等）。
+  - 另順帶補上 `data/news.json` 自動同步新增公告「夢之碎片增量週同樂包vol.3」的英文標題 `Dream Shard Week Bundle Vol. 3`，確保雙語測試通過。
+- **主技能天梯改為前 10 名並縮小圖示與數字尺寸**：
+  - `js/modules/wiki/wiki_skill_ladder_render.js`：將預設篩選上限由 `15` 改為 `10`（側邊欄標籤更新為「前10名 / Top 10」）。
+  - `css/views/wiki/wiki_skill_ladder.css` 與 `css/styles.css`：將主技能天梯頭像 `.node-avatar-wrapper` 縮小為桌機 `30px` / 手機 `26px`（原 `38px` / `34px`），並將下方次數徽章 `.node-count-badge` 縮小為桌機 `8.5px` (`padding: 0.5px 3px`) / 手機 `8px` (`padding: 0 2.5px`)，大幅減輕擁擠感。
+- **驗證**：`npm run test:fast` **168 / 168 PASS**、`npm test` **291 / 291 PASS**、`node tests/test_challenger_m1_cache_sync.js` **18 / 18 PASS**，並經 `1920x1080` 無頭 Chrome 實機截圖確認每軌最多 10 隻、圖示與數字比例清爽不擁擠。
+
 ## 交接：2026-11-19 已完成（主技能天梯改為每條軌道獨立排列）
 
 - 原因：各軌道共用同一條橫座標（全軌最小到最大次數），低次數技能擠成一團；同次數區間的節點另以 px 位移錯開，導致圖示位置與刻度/次數對不上，看起來「次數多卻排在後面」。

@@ -281,15 +281,15 @@ console.log('\n[Suite 2] Avatar Dimensions & Layout CSS Rules');
   const skillLadderCss = fs.readFileSync(skillLadderCssPath, 'utf8');
   const stylesCss = fs.readFileSync(stylesCssPath, 'utf8');
 
-  // Desktop avatar wrapper: 38px
-  const desktopAvatarRegex = /\.wiki-skill-coordinate-ladder\s+\.node-avatar-wrapper[\s\S]*?width:\s*38px\s*!important;[\s\S]*?height:\s*38px\s*!important;/;
-  assert(desktopAvatarRegex.test(skillLadderCss), 'wiki_skill_ladder.css: node-avatar-wrapper is 38px x 38px !important on desktop');
-  assert(desktopAvatarRegex.test(stylesCss), 'styles.css: node-avatar-wrapper is 38px x 38px !important on desktop');
+  // Desktop avatar wrapper: 30px
+  const desktopAvatarRegex = /\.wiki-skill-coordinate-ladder\s+\.node-avatar-wrapper[\s\S]*?width:\s*30px\s*!important;[\s\S]*?height:\s*30px\s*!important;/;
+  assert(desktopAvatarRegex.test(skillLadderCss), 'wiki_skill_ladder.css: node-avatar-wrapper is 30px x 30px !important on desktop');
+  assert(desktopAvatarRegex.test(stylesCss), 'styles.css: node-avatar-wrapper is 30px x 30px !important on desktop');
 
-  // Mobile avatar wrapper: 34px
-  const mobileAvatarRegex = /@media[^{]+\{[\s\S]*?\.node-avatar-wrapper[\s\S]*?width:\s*34px\s*!important;[\s\S]*?height:\s*34px\s*!important;/;
-  assert(mobileAvatarRegex.test(skillLadderCss), 'wiki_skill_ladder.css: mobile media query sets node-avatar-wrapper to 34px !important');
-  assert(mobileAvatarRegex.test(stylesCss), 'styles.css: mobile media query sets node-avatar-wrapper to 34px !important');
+  // Mobile avatar wrapper: 26px
+  const mobileAvatarRegex = /@media[^{]+\{[\s\S]*?\.node-avatar-wrapper[\s\S]*?width:\s*26px\s*!important;[\s\S]*?height:\s*26px\s*!important;/;
+  assert(mobileAvatarRegex.test(skillLadderCss), 'wiki_skill_ladder.css: mobile media query sets node-avatar-wrapper to 26px !important');
+  assert(mobileAvatarRegex.test(stylesCss), 'styles.css: mobile media query sets node-avatar-wrapper to 26px !important');
 
   // Desktop header and spacer: 68px
   assert(skillLadderCss.includes('width: 68px !important;') && skillLadderCss.includes('min-width: 68px !important;') && skillLadderCss.includes('max-width: 68px !important;'),
@@ -662,6 +662,7 @@ console.log('\n[Suite 9] Independent Per-Track Rank-Ordered Layout');
   let checkedRows = 0;
   rows.forEach(row => {
     const nodes = [...row.matchAll(/data-pkm-id="[^"]*"\s+style="left:\s*clamp\(20px,\s*([\d.]+)%[\s\S]*?class="node-count-badge"[^>]*>\s*([\d.]+)\s*</g)];
+    assert(nodes.length <= 10, `Default Top 10 filter caps each track at <= 10 nodes (found ${nodes.length})`);
     if (nodes.length < 2) return;
     checkedRows++;
     for (let i = 1; i < nodes.length; i++) {

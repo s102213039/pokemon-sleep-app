@@ -4338,6 +4338,26 @@
         ]
       },
       {
+        "name": "風妖精",
+        "specialty": "食材",
+        "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/547.png",
+        "recipe": "XXC",
+        "count": 59,
+        "note": "XXC 單好眠番茄 補足",
+        "isTop": false,
+        "variants": [
+          {
+            "recipe": "XXC",
+            "count": 59,
+            "note": "XXC 單好眠番茄 補足",
+            "origRecipes": [
+              "AAC",
+              "ABC"
+            ]
+          }
+        ]
+      },
+      {
         "name": "請假王",
         "specialty": "樹果",
         "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/289.png",
@@ -8931,6 +8951,36 @@
             "note": "ABX 單嫩亮酪梨 混產",
             "origRecipes": [
               "ABB",
+              "ABC"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "風妖精",
+        "specialty": "食材",
+        "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/547.png",
+        "recipe": "ABB",
+        "count": 43,
+        "note": "ABB 嫩亮酪梨 主力產出",
+        "isTop": false,
+        "variants": [
+          {
+            "recipe": "ABB",
+            "count": 43,
+            "note": "ABB 嫩亮酪梨 主力產出"
+          },
+          {
+            "recipe": "AAB",
+            "count": 27,
+            "note": "AAB 嫩亮酪梨 後期主力"
+          },
+          {
+            "recipe": "ABX",
+            "count": 16,
+            "note": "ABX 嫩亮酪梨 兼顧",
+            "origRecipes": [
+              "ABA",
               "ABC"
             ]
           }

@@ -8956,8 +8956,8 @@
       if (nodes.length > 0) nodes[0].isTopNode = true;
 
       let visibleNodes = nodes;
-      if (skillLadderTop15Only && visibleNodes.length > 15) {
-        visibleNodes = visibleNodes.slice(0, 15);
+      if (skillLadderTop15Only && visibleNodes.length > 10) {
+        visibleNodes = visibleNodes.slice(0, 10);
       }
 
       visibleNodes.forEach(n => {
@@ -9184,10 +9184,10 @@
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${_tSkillLadder('天梯軌道排序', 'Track Sorting')}</span>
-              <label class="ladder-top15-switch-label" title="${_tSkillLadder('預設開啟前15名排行', 'Show Top 15 Only')}">
+              <label class="ladder-top15-switch-label" title="${_tSkillLadder('預設開啟前10名排行', 'Show Top 10 Only')}">
                 <input type="checkbox" id="skill-ladder-top15-switch" class="ladder-switch-input" ${(typeof getSkillLadderTop15Only === 'function' ? getSkillLadderTop15Only() : true) ? 'checked' : ''} onchange="window.WikiDB.toggleSkillLadderTop15(this.checked)">
                 <span class="ladder-switch-slider"></span>
-                <span class="ladder-switch-text">${_tSkillLadder('前15名', 'Top 15')}</span>
+                <span class="ladder-switch-text">${_tSkillLadder('前10名', 'Top 10')}</span>
               </label>
             </div>
             <div class="sidebar-skills-list sidebar-2col-tags">
