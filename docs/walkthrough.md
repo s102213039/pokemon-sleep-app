@@ -5,6 +5,12 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-19 已完成（主技能天梯改為每條軌道獨立排列）
+
+- 原因：各軌道共用同一條橫座標（全軌最小到最大次數），低次數技能擠成一團；同次數區間的節點另以 px 位移錯開，導致圖示位置與刻度/次數對不上，看起來「次數多卻排在後面」。
+- 修正：`js/modules/wiki/wiki_skill_ladder_render.js` 移除共用標尺、`次數/12h` 標示、格線與群聚位移；每條軌道依次數排名等距分布於整條橫向天梯（右側次數最多），圖示下方徽章仍顯示實際次數。
+- 測試：`tests/test_wiki_skill_ladder.js` Suite 9 改為驗證軌道獨立排列與由右至左遞減；`tier1_coverage.js` 相關斷言同步更新；順帶將「食材基礎庫」單行 CSS 由超過 1000 行的 `dock_sheets.css` 移至 `wiki_ladder_meals.css`（修復行數上限檢查）。`npm test` 291 / 291 PASS。
+
 ## 交接：2026-11-18 已完成（數據百科「食材基礎庫」改為固定單行展示）
 
 - 原因：`.values-ing-grid` 寫死 19 欄，食材增至 20 種後換行。

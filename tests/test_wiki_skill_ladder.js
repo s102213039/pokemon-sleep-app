@@ -357,11 +357,11 @@ console.log('\n[Suite 2] Avatar Dimensions & Layout CSS Rules');
   assert(html.includes('data-specialty="specialty-'), 'Rendered .ladder-node preserves specialty metadata via data-specialty');
   assert(html.includes('class="node-avatar-wrapper"'), 'Rendered HTML contains .node-avatar-wrapper');
   assert(html.includes('class="node-avatar-img"'), 'Rendered HTML contains .node-avatar-img');
-  assert(html.includes('skill-ruler-label') && html.includes('次數/12h'), 'Rendered HTML contains .skill-ruler-label with text 次數/12h (zh)');
+  assert(!html.includes('skill-ruler-label') && !html.includes('次數/12h'), 'Rendered HTML must NOT show the shared 次數/12h ruler label (each track is laid out independently)');
 
   const { sandbox: sandboxEN } = createLadderSandbox({ lang: 'en-US' });
   const htmlEN = sandboxEN.renderSkillCoordinateLadder();
-  assert(htmlEN.includes('skill-ruler-label') && htmlEN.includes('Procs/12h'), 'Rendered HTML contains .skill-ruler-label with text Procs/12h (en)');
+  assert(!htmlEN.includes('skill-ruler-label') && !htmlEN.includes('Procs/12h'), 'Rendered HTML (en) must NOT show the shared Procs/12h ruler label');
 }
 
 // -----------------------------------------------------------------------------
@@ -649,51 +649,34 @@ console.log('\n[Suite 8] Zero Emoji & Zero Decorative Glyph Policy Compliance');
 }
 
 // -----------------------------------------------------------------------------
-// Suite 9: Dynamic minVal and maxVal on .ladder-ruler-scale
+// Suite 9: Independent Per-Track Layout (no shared ruler, rank-ordered even spacing)
 // -----------------------------------------------------------------------------
-console.log('\n[Suite 9] Dynamic minVal and maxVal on Ruler Scale');
+console.log('\n[Suite 9] Independent Per-Track Rank-Ordered Layout');
 
 {
   const { sandbox } = createLadderSandbox();
   const html = sandbox.renderSkillCoordinateLadder();
+  assert(!html.includes('ladder-ruler-tick') && !html.includes('ladder-ruler-header'), 'No shared ruler ticks/header are rendered');
 
-  // Find all tick labels and their positions
-  const tickMatches = [...html.matchAll(/class="ladder-ruler-tick"\s+style="left:\s*([^;%]+)%;"[\s\S]*?<span class="tick-label">([^<]+)<\/span>/g)];
-  assert(tickMatches.length >= 2, `Rendered scale contains at least 2 ticks (found ${tickMatches.length})`);
-
-  const firstTick = tickMatches[0];
-  const firstPos = parseFloat(firstTick[1]);
-  const firstVal = parseFloat(firstTick[2]);
-
-  const lastTick = tickMatches[tickMatches.length - 1];
-  const lastPos = parseFloat(lastTick[1]);
-  const lastVal = parseFloat(lastTick[2]);
-
-  assertEquals(firstPos, 0, 'First ruler tick is positioned at 0.00%');
-  assertEquals(lastPos, 100, 'Last ruler tick is positioned at 100.00%');
-
-  // Verify dynamic minVal: it should match the minimum trigger count among visible nodes, NOT hardcoded 0!
-  assert(firstVal > 0, `minVal is dynamic and greater than 0 (Expected > 0, Got: ${firstVal})`);
-  assert(lastVal > firstVal, `maxVal is strictly greater than minVal (minVal: ${firstVal}, maxVal: ${lastVal})`);
-
-  // Verify intermediate ticks are strictly between minVal and maxVal
-  for (let i = 1; i < tickMatches.length - 1; i++) {
-    const midVal = parseFloat(tickMatches[i][2]);
-    const midPos = parseFloat(tickMatches[i][1]);
-    assert(midVal > firstVal && midVal < lastVal, `Intermediate tick value ${midVal} is strictly between minVal (${firstVal}) and maxVal (${lastVal})`);
-    assert(midPos > 0 && midPos < 100, `Intermediate tick position ${midPos}% is strictly between 0% and 100%`);
-  }
-
-  // Dynamic test with a single Pokemon or restricted filter
-  sandbox.setSkillLadderSearchQuery('皮卡丘');
-  const filteredHtml = sandbox.renderSkillCoordinateLadder();
-  const filteredTicks = [...filteredHtml.matchAll(/class="ladder-ruler-tick"\s+style="left:\s*([^;%]+)%;"[\s\S]*?<span class="tick-label">([^<]+)<\/span>/g)];
-  assert(filteredTicks.length >= 2, `Filtered scale contains at least 2 ticks for Pikachu (found ${filteredTicks.length})`);
-  const filteredFirstVal = parseFloat(filteredTicks[0][2]);
-  const filteredLastVal = parseFloat(filteredTicks[filteredTicks.length - 1][2]);
-  assert(filteredFirstVal > 0, `Filtered minVal is greater than 0 (Got: ${filteredFirstVal})`);
-  assert(filteredLastVal >= filteredFirstVal, `Filtered maxVal is >= minVal (Got: ${filteredLastVal})`);
-  sandbox.clearSkillLadderSearch();
+  const rows = html.split('data-skill-track="').slice(1);
+  let checkedRows = 0;
+  rows.forEach(row => {
+    const nodes = [...row.matchAll(/data-pkm-id="[^"]*"\s+style="left:\s*clamp\(20px,\s*([\d.]+)%[\s\S]*?class="node-count-badge"[^>]*>\s*([\d.]+)\s*</g)];
+    if (nodes.length < 2) return;
+    checkedRows++;
+    for (let i = 1; i < nodes.length; i++) {
+      const prevPos = parseFloat(nodes[i - 1][1]);
+      const curPos = parseFloat(nodes[i][1]);
+      const prevCnt = parseFloat(nodes[i - 1][2]);
+      const curCnt = parseFloat(nodes[i][2]);
+      assert(curPos < prevPos, `Nodes are strictly ordered right-to-left by rank (${prevPos}% -> ${curPos}%)`);
+      assert(prevCnt >= curCnt, `Higher proc counts always sit further right (${prevCnt} >= ${curCnt})`);
+    }
+    const first = parseFloat(nodes[0][1]);
+    const last = parseFloat(nodes[nodes.length - 1][1]);
+    assert(first >= 90 && last <= 10, `Each track spans the whole horizontal ladder (${last}% .. ${first}%)`);
+  });
+  assert(checkedRows > 0, 'At least one track with 2+ nodes was verified');
 }
 
 // -----------------------------------------------------------------------------

@@ -156,40 +156,13 @@
       processedTracks.sort((a, b) => b.nodes.length - a.nodes.length);
     }
 
-    let minVal = 0;
-    let maxVal = 4;
-    if (globalMinProcs !== Infinity && globalMaxProcs !== -Infinity) {
-      if (Math.abs(globalMaxProcs - globalMinProcs) < 0.01) {
-        minVal = Math.max(0, Number((globalMinProcs - 0.5).toFixed(2)));
-        maxVal = Number((globalMaxProcs + 0.5).toFixed(2));
-      } else {
-        minVal = Number(globalMinProcs.toFixed(2));
-        maxVal = Number(globalMaxProcs.toFixed(2));
-      }
-    }
-
-    const range = maxVal - minVal;
-    const ticks = [minVal];
-    if (range > 0.05) {
-      const step = range > 10 ? 2 : (range > 3.5 ? 1 : 0.5);
-      const minGap = range * 0.08;
-      let cand = Math.ceil(minVal / step) * step;
-      while (cand < maxVal) {
-        const cleanCand = Number(cand.toFixed(2));
-        if ((cleanCand - minVal) >= minGap && (maxVal - cleanCand) >= minGap) {
-          ticks.push(cleanCand);
-        }
-        cand += step;
-      }
-      ticks.push(maxVal);
-    } else {
-      ticks.push(maxVal);
-    }
-
-    function getPosPct(val) {
-      if (maxVal <= minVal) return '0.00';
-      const clamped = Math.min(Math.max(val, minVal), maxVal);
-      return (((clamped - minVal) / (maxVal - minVal)) * 100).toFixed(2);
+    // 每條軌道獨立排列：依次數由低到高等距分布於整條橫向天梯 (右側為次數最多)，
+    // 不共用橫座標、不顯示次數/12h 標尺，避免低次數技能擠成一團。
+    function getRankPosPct(idx, total) {
+      if (total <= 1) return 50;
+      const lo = 3;
+      const hi = 97;
+      return lo + ((total - 1 - idx) / (total - 1)) * (hi - lo);
     }
 
     return `
@@ -197,58 +170,9 @@
         <div class="wiki-coordinate-ladder wiki-skill-coordinate-ladder"
              onmouseover="window.WikiDB && window.WikiDB.handleLadderGroupHover && window.WikiDB.handleLadderGroupHover(event)"
              onmouseout="window.WikiDB && window.WikiDB.handleLadderGroupHoverOut && window.WikiDB.handleLadderGroupHoverOut(event)">
-          <div class="ladder-ruler-header">
-            <div class="ladder-ruler-spacer skill-ladder-ruler-spacer">
-              <span class="text-secondary font-bold skill-ruler-label" style="font-size: 11px; letter-spacing: 0.5px;">${_tSkillLadder('次數/12h', 'Procs/12h')}</span>
-            </div>
-            <div class="ladder-ruler-scale">
-              ${ticks.map(t => `
-                <div class="ladder-ruler-tick" style="left: ${getPosPct(t)}%;">
-                  <span class="tick-label">${typeof t === 'number' ? (Number.isInteger(t) ? t : Number(t.toFixed(2))) : t}</span>
-                  <div class="tick-line"></div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-
           ${processedTracks.map(({ track, trackName, trackDesc, nodes, isTrackEmpty }, trackIdx) => {
             const isTopTrack = trackIdx < 4;
             const popupDirectionClass = isTopTrack ? 'popup-down' : 'popup-up';
-
-            let minTrackCount = maxVal;
-            nodes.forEach(n => {
-              if (n.procs < minTrackCount) minTrackCount = n.procs;
-            });
-            if (minTrackCount >= maxVal || isTrackEmpty) minTrackCount = minVal;
-            const leadPct = getPosPct(minTrackCount);
-
-            const clusters = [];
-            let currentCluster = [];
-            nodes.forEach(n => {
-              if (currentCluster.length === 0) {
-                currentCluster.push(n);
-              } else {
-                const head = currentCluster[0];
-                const prev = currentCluster[currentCluster.length - 1];
-                if (Math.abs(prev.procs - n.procs) <= 0.30 && Math.abs(head.procs - n.procs) <= 0.65) {
-                  currentCluster.push(n);
-                } else {
-                  clusters.push(currentCluster);
-                  currentCluster = [n];
-                }
-              }
-            });
-            if (currentCluster.length > 0) clusters.push(currentCluster);
-
-            const nodeClusterMap = new Map();
-            clusters.forEach(cluster => {
-              cluster.forEach((nodeItem, cIdx) => {
-                nodeClusterMap.set(nodeItem, {
-                  groupSize: cluster.length,
-                  itemIdx: cIdx
-                });
-              });
-            });
 
             return `
               <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''}" data-skill-track="${track.id}">
@@ -265,31 +189,13 @@
                 </div>
 
                 <div class="ladder-track-canvas">
-                  <div class="ladder-grid-lines">
-                    ${ticks.map(t => `<div class="ladder-grid-line" style="left: ${getPosPct(t)}%;"></div>`).join('')}
-                  </div>
-                  <div class="ladder-track-lead-line" style="left: 0; width: ${leadPct}%;"></div>
-                  <div class="ladder-track-line" style="left: ${leadPct}%; right: 0;"></div>
+                  <div class="ladder-track-line" style="left: 0; right: 0;"></div>
 
                   <div class="ladder-nodes-container" data-boundary-protection="clamp(12px, calc(100% - 12px))">
                     ${nodes.map((node, nodeIdx) => {
-                      const clusterInfo = nodeClusterMap.get(node) || { groupSize: 1, itemIdx: 0 };
-                      const groupSize = clusterInfo.groupSize;
-                      const itemIdx = clusterInfo.itemIdx;
-
-                      let offsetPx = 0;
-                      if (groupSize > 1) {
-                        const staggerStep = groupSize >= 7 ? 30 : (groupSize >= 4 ? 36 : 42);
-                        // nodes is sorted descending, so itemIdx = 0 has highest procs and shifts right (+),
-                        // while itemIdx = groupSize - 1 has lowest procs and shifts left (-)
-                        offsetPx = Math.round(((groupSize - 1) / 2 - itemIdx) * staggerStep);
-                      }
-
-                      const basePosPct = parseFloat(getPosPct(node.procs));
+                      const basePosPct = getRankPosPct(nodeIdx, nodes.length);
                       const alignClass = basePosPct > 60 ? 'align-right' : (basePosPct < 40 ? 'align-left' : 'align-center');
-                      const leftStyle = offsetPx === 0
-                        ? `clamp(20px, ${basePosPct}%, calc(100% - 20px))`
-                        : `clamp(20px, calc(${basePosPct}% + ${offsetPx}px), calc(100% - 20px))`;
+                      const leftStyle = `clamp(20px, ${basePosPct.toFixed(2)}%, calc(100% - 20px))`;
                       const zIndex = node.isTopNode ? 50 : Math.max(40 - nodeIdx, 5);
 
                       const roundedIdealSec = Math.round(node.calcRes.idealIntervalSec);
@@ -298,7 +204,7 @@
                       const helpsDisplay = (node.calcRes.helps12h != null ? node.calcRes.helps12h : (43200 / node.calcRes.idealIntervalSec)).toFixed(1);
 
                       return `
-                        <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} ${groupSize > 1 ? 'node-in-cluster' : ''}"
+                        <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} "
                              data-specialty="specialty-${node.specialtyKey}"
                              data-pkm="${_escapeHtml(node.p.name_cn || node.p.name)}"
                              data-pkm-group="pkm-${node.p.id}"

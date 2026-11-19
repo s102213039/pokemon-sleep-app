@@ -2912,7 +2912,7 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
 
     // 4. Verify proximity cluster grouping and offset direction in rendered HTML
     const ladderHtml = WikiDB.renderSkillCoordinateLadder();
-    assert(ladderHtml.includes('node-in-cluster'), 'Rendered ladder must support and apply node-in-cluster for clustered nodes');
+    assert(!ladderHtml.includes('node-in-cluster') && !ladderHtml.includes('ladder-ruler-tick'), 'Rendered skill ladder must lay out each track independently (no shared ruler, no cluster px offsets)');
     assert(ladderHtml.includes('clamp(12px,'), 'Rendered ladder nodes must use clamp(12px, ..., calc(100% - 12px)) to protect canvas boundaries on narrow viewports');
 
     // 5. Verify rapid filter toggling with active search
@@ -2933,7 +2933,7 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     // 6. Verify empty track dotted lead line boundary (leadPct = 0.00% on empty track)
     WikiDB.onSkillLadderSearch('NonExistentPokemonNameXYZ');
     const emptyTrackHtml = WikiDB.renderSkillCoordinateLadder();
-    assert(emptyTrackHtml.includes('class="ladder-track-lead-line" style="left: 0; width: 0.00%;"'), 'Empty track must render 0.00% lead line instead of 100%');
+    assert(!emptyTrackHtml.includes('width: 100.00%;"></div>'), 'Empty track must not render a full-width lead line');
     WikiDB.clearSkillLadderSearch();
 
     // 7. Verify search support for Pokedex number and Japanese name (toggle off finalOnly to match pre-evo Pikachu 025)
