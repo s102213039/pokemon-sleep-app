@@ -5,6 +5,18 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-20 已完成（料理食譜表格英文副標題左對齊中文名稱起始位置）
+
+- **問題根因**：料理食譜表格 `.pokemon-table td` 預設繼承 `text-align: center`，`.recipe-name-wrapper` 為縱向 Flex 且未設定 `align-items: flex-start` 與 `text-align: left`；第一列中文名稱包在水平 Flex `div` 中故靠左排列，第二列英文副標題 `.recipe-name-sub` 則被拉伸滿寬並套用置中文字對齊，導致中英文名稱起始位置錯開。
+- **修正內容**：
+  - 修改 `css/views/pokedex_filters.css` 與 `js/modules/recipes/recipes_render.js`（並透過 `npm run build` 同步更新 `css/styles.css`、`css/styles.min.css`、`js/modules/recipes.js`、`js/modules/recipes.min.js` 與版號標記）：
+    - `.recipe-name-cell` 加上 `text-align: left !important`。
+    - `.recipe-name-wrapper` 加上 `align-items: flex-start; text-align: left`。
+    - `.recipe-name-sub` 加上 `text-align: left`，同時完整保留英文語系隱藏副標題與垂直置中規則。
+- **驗證結果**：
+  - 無頭 Chrome `1680x960` 實機截圖確認：全部料理列之英文名稱起始 X 座標與中文名稱完全左對齊。
+  - `npm run test:fast`：**169 / 169 PASS**；`npm test`：**292 / 292 PASS**；`node tests/test_challenger_m1_cache_sync.js`：**18 / 18 PASS**。
+
 ## 交接：2026-11-19 已完成（H5 寶可夢詳情浮窗上方表頭與四項數值面板垂直緊湊化）
 
 - **調整內容（僅限 `.mobile-h5-app #pokedex-detail-modal`，不影響桌機版）**：

@@ -426,13 +426,20 @@ footer {
 
 .recipe-name-cell {
   vertical-align: middle !important;
+  text-align: left !important;
 }
 
 .recipe-name-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: flex-start;
+  text-align: left;
   min-height: 52px;
+}
+
+.recipe-name-sub {
+  text-align: left;
 }
 
 html[lang="en"] .recipe-name-wrapper,

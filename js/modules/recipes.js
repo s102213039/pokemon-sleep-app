@@ -1699,13 +1699,13 @@
                 <td style="vertical-align:middle;text-align:center;">
                   <img src="${_resolveRecipeAssetUrl(r.icon)}" width="58" height="58" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';" style="object-fit:contain;display:block;margin:0 auto;">
                 </td>
-                <td class="recipe-name-cell" style="vertical-align:middle;">
-                  <div class="recipe-name-wrapper" style="display:flex;flex-direction:column;justify-content:center;min-height:52px;">
+                <td class="recipe-name-cell" style="vertical-align:middle;text-align:left;">
+                  <div class="recipe-name-wrapper" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left;min-height:52px;">
                     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
                       <span class="recipe-name-primary" style="font-weight:700;font-size:15px;color:var(--text-main);line-height:1.3;">${primaryName}</span>
                       ${pantryBadgeHTML}
                     </div>
-                    ${secondaryName ? `<span class="recipe-name-sub" style="color:var(--text-muted);font-size:11px;font-weight:400;margin-top:2px;line-height:1.2;">${secondaryName}</span>` : ''}
+                    ${secondaryName ? `<span class="recipe-name-sub" style="color:var(--text-muted);font-size:11px;font-weight:400;margin-top:2px;line-height:1.2;text-align:left;">${secondaryName}</span>` : ''}
                   </div>
                 </td>
                 <td style="vertical-align:middle;"><span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span></td>
