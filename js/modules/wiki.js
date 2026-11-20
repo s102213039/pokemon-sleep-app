@@ -2052,26 +2052,26 @@
   }
 
   const TOP_RECIPES_FOR_INGREDIENTS = {
-    apple: { name: '蘋果酸優格沙拉', name_en: 'Apple Acid Yogurt-Dressed Salad', need: 28, type: '沙拉', type_en: 'Salad', energy: 19293, icon: 'https://www.serebii.net/pokemonsleep/meals/appleacidyogurt-dressedsalad.png', secondary: '電光香料可樂 (35)', secondary_en: 'Zing Zap Spiced Cola (35)' },
+    apple: { name: '電光香料可樂', name_en: 'Zing Zap Spiced Cola', need: 35, type: '甜點', type_en: 'Dessert', energy: 17494, icon: 'https://www.serebii.net/pokemonsleep/meals/zingzapspicedcola.png', secondary: '蘋果酸優格沙拉 (28)', secondary_en: 'Apple Acid Yogurt-Dressed Salad (28)' },
     milk: { name: '茂盛焗烤酪梨', name_en: 'Overgrow Avocado Gratin', need: 41, type: '咖哩', type_en: 'Curry', energy: 24802, icon: 'https://www.serebii.net/pokemonsleep/meals/overgrowavocadogratin.png', secondary: '土王閃電泡芙 (26)', secondary_en: 'Clodsire Eclair (26)' },
-    soybeans: { name: '重踏酪梨醬脆片', name_en: 'Bulldoze Guacamole and Chips', need: 22, type: '沙拉', type_en: 'Salad', energy: 25162, icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png', secondary: '覺醒力量濃湯 (28)', secondary_en: 'Hidden Power Perk-Up Stew (28)' },
+    soybeans: { name: '覺醒力量濃湯', name_en: 'Hidden Power Perk-Up Stew', need: 28, type: '咖哩', type_en: 'Curry', energy: 19061, icon: 'https://www.serebii.net/pokemonsleep/meals/hiddenpowerperk-upstew.png', secondary: '忍者咖哩 (24)', secondary_en: 'Ninja Curry (24)' },
     honey: { name: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 38, type: '甜點', type_en: 'Dessert', energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', secondary: '心跳加速鬼面鬆餅 (32)', secondary_en: 'Scary Face Pancakes (32)' },
-    sausage: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 20, type: '咖哩', type_en: 'Curry', energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', secondary: '居合斬壽喜燒咖哩 (26)', secondary_en: 'Cut Sukiyaki Curry (26)' },
-    ginger: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 39, type: '咖哩', type_en: 'Curry', energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', secondary: '電光香料可樂 (20)', secondary_en: 'Zing Zap Spiced Cola (20)' },
-    tomato: { name: '心跳加速鬼面鬆餅', name_en: 'Scary Face Pancakes', need: 29, type: '甜點', type_en: 'Dessert', energy: 24354, icon: 'https://www.serebii.net/pokemonsleep/meals/scaryfacepancakes.png', secondary: '蘋果酸優格沙拉 (23)', secondary_en: 'Apple Acid Yogurt-Dressed Salad (23)' },
-    egg: { name: '心跳加速鬼面鬆餅', name_en: 'Scary Face Pancakes', need: 24, type: '甜點', type_en: 'Dessert', energy: 24354, icon: 'https://www.serebii.net/pokemonsleep/meals/scaryfacepancakes.png', secondary: '居合斬壽喜燒咖哩 (22)', secondary_en: 'Cut Sukiyaki Curry (22)' },
-    oil: { name: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 28, type: '甜點', type_en: 'Dessert', energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', secondary: '茂盛焗烤酪梨 (32)', secondary_en: 'Overgrow Avocado Gratin (32)' },
-    potato: { name: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', need: 30, type: '沙拉', type_en: 'Salad', energy: 25356, icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png', secondary: '茂盛焗烤酪梨 (20)', secondary_en: 'Overgrow Avocado Gratin (20)' },
-    herb: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 22, type: '咖哩', type_en: 'Curry', energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', secondary: '重踏酪梨醬脆片 (30)', secondary_en: 'Bulldoze Guacamole and Chips (30)' },
-    corn: { name: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 28, type: '甜點', type_en: 'Dessert', energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', secondary: '大塊滿滿熱水沙拉 (18)', secondary_en: 'Scald Chunky Salad (18)' },
-    cacao: { name: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 21, type: '甜點', type_en: 'Dessert', energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', secondary: '土王閃電泡芙 (30)', secondary_en: 'Clodsire Eclair (30)' },
-    coffee: { name: '土王閃電泡芙', name_en: 'Clodsire Eclair', need: 24, type: '甜點', type_en: 'Dessert', energy: 20885, icon: 'https://www.serebii.net/pokemonsleep/meals/clodsireeclair.png', secondary: '不服輸咖啡沙拉 (28)', secondary_en: 'Defiant Coffee-Dressed Salad (28)' },
-    glossyavocado: { name: '重踏酪梨醬脆片', name_en: 'Bulldoze Guacamole and Chips', need: 28, type: '沙拉', type_en: 'Salad', energy: 25162, icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png', secondary: '茂盛焗烤酪梨 (22)', secondary_en: 'Overgrow Avocado Gratin (22)' },
+    sausage: { name: '不服輸咖啡沙拉', name_en: 'Defiant Coffee-Dressed Salad', need: 28, type: '沙拉', type_en: 'Salad', energy: 20218, icon: 'https://www.serebii.net/pokemonsleep/meals/defiantcoffee-dressedsalad.png', secondary: '居合斬壽喜燒咖哩 (26)', secondary_en: 'Cut Sukiyaki Curry (26)' },
+    ginger: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 39, type: '咖哩', type_en: 'Curry', energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', secondary: '打草結沙拉捲 (36)', secondary_en: 'Grass Knot Salad Wrap (36)' },
+    tomato: { name: '打草結沙拉捲', name_en: 'Grass Knot Salad Wrap', need: 33, type: '沙拉', type_en: 'Salad', energy: 26350, icon: 'https://www.serebii.net/pokemonsleep/meals/grassknotsaladwrap.png', secondary: '心跳加速鬼面鬆餅 (29)', secondary_en: 'Scary Face Pancakes (29)' },
+    egg: { name: '蘋果酸優格沙拉', name_en: 'Apple Acid Yogurt-Dressed Salad', need: 35, type: '沙拉', type_en: 'Salad', energy: 19293, icon: 'https://www.serebii.net/pokemonsleep/meals/appleacidyogurt-dressedsalad.png', secondary: '美味尾巴蛋糕捲 (33)', secondary_en: 'Slowpoke Tail Roll Cake (33)' },
+    oil: { name: '茂盛焗烤酪梨', name_en: 'Overgrow Avocado Gratin', need: 32, type: '咖哩', type_en: 'Curry', energy: 24802, icon: 'https://www.serebii.net/pokemonsleep/meals/overgrowavocadogratin.png', secondary: '採蜜巧克力格子鬆餅 (28)', secondary_en: 'Honey Gather Chocolate Waffles (28)' },
+    potato: { name: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', need: 30, type: '沙拉', type_en: 'Salad', energy: 25356, icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png', secondary: '不服輸咖啡沙拉 (22)', secondary_en: 'Defiant Coffee-Dressed Salad (22)' },
+    herb: { name: '重踏酪梨醬脆片', name_en: 'Bulldoze Guacamole and Chips', need: 30, type: '沙拉', type_en: 'Salad', energy: 25162, icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png', secondary: '煉獄玉米乾咖哩 (27)', secondary_en: 'Inferno Corn Keema Curry (27)' },
+    corn: { name: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 28, type: '甜點', type_en: 'Dessert', energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', secondary: '重踏酪梨醬脆片 (25)', secondary_en: 'Bulldoze Guacamole and Chips (25)' },
+    cacao: { name: '土王閃電泡芙', name_en: 'Clodsire Eclair', need: 30, type: '甜點', type_en: 'Dessert', energy: 20885, icon: 'https://www.serebii.net/pokemonsleep/meals/clodsireeclair.png', secondary: '花之禮馬卡龍 (25)', secondary_en: 'Flower Gift Macarons (25)' },
+    coffee: { name: '不服輸咖啡沙拉', name_en: 'Defiant Coffee-Dressed Salad', need: 28, type: '沙拉', type_en: 'Salad', energy: 20218, icon: 'https://www.serebii.net/pokemonsleep/meals/defiantcoffee-dressedsalad.png', secondary: '土王閃電泡芙 (24)', secondary_en: 'Clodsire Eclair (24)' },
+    glossyavocado: { name: '重踏酪梨醬脆片', name_en: 'Bulldoze Guacamole and Chips', need: 28, type: '沙拉', type_en: 'Salad', energy: 25162, icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png', secondary: '打草結沙拉捲 (22)', secondary_en: 'Grass Knot Salad Wrap (22)' },
     mushroom: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 31, type: '咖哩', type_en: 'Curry', energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', secondary: '大塊滿滿熱水沙拉 (27)', secondary_en: 'Scald Chunky Salad (27)' },
     leek: { name: '居合斬壽喜燒咖哩', name_en: 'Cut Sukiyaki Curry', need: 27, type: '咖哩', type_en: 'Curry', energy: 20655, icon: 'https://www.serebii.net/pokemonsleep/meals/cutsukiyakicurry.png', secondary: '電光香料可樂 (20)', secondary_en: 'Zing Zap Spiced Cola (20)' },
     pumpkin: { name: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', need: 20, type: '沙拉', type_en: 'Salad', energy: 25356, icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png', secondary: '心跳加速鬼面鬆餅 (18)', secondary_en: 'Scary Face Pancakes (18)' },
     snackablenuts: { name: '打草結沙拉捲', name_en: 'Grass Knot Salad Wrap', need: 30, type: '沙拉', type_en: 'Salad', energy: 26350, icon: 'https://www.serebii.net/pokemonsleep/meals/grassknotsaladwrap.png', secondary: '美味尾巴蛋糕捲 (26)', secondary_en: 'Slowpoke Tail Roll Cake (26)' },
-    tail: { name: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', need: 10, type: '沙拉', type_en: 'Salad', energy: 8169, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png', secondary: '炙燒尾肉咖哩 (8)', secondary_en: 'Grilled Tail Curry (8)' }
+    tail: { name: '美味尾巴蛋糕捲', name_en: 'Slowpoke Tail Roll Cake', need: 10, type: '甜點', type_en: 'Dessert', energy: 19846, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailrollcake.png', secondary: '呆呆獸尾巴的胡椒沙拉 (10)', secondary_en: 'Slowpoke Tail Pepper Salad (10)' }
   };
 
   // 食材天梯各分類前 7 高基礎能量之頂級大菜 (咖哩、沙拉、甜點三大類各 7 種)
@@ -2354,12 +2354,7 @@
         pot_size: 67,
         base_energy: 10925,
         icon: 'https://www.serebii.net/pokemonsleep/meals/teatimecornscones.png',
-        ingredients: [
-          { name: '特選蘋果', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' },
-          { name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' },
-          { name: '萌綠玉米', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' },
-          { name: '哞哞鮮奶', count: 9, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }
-        ]
+        ingredients: [{ name: '特選蘋果', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }, { name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '萌綠玉米', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '哞哞鮮奶', count: 9, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }]
       },
       {
         name_cn: '青草攪拌器冰沙',
@@ -2368,34 +2363,16 @@
         pot_size: 48,
         base_energy: 8165,
         icon: 'https://www.serebii.net/pokemonsleep/meals/leaftornadosmoothie.png',
-        ingredients: [
-          { name: '嫩亮酪梨', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' },
-          { name: '好眠番茄', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' },
-          { name: '哞哞鮮奶', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }
-        ]
+        ingredients: [{ name: '嫩亮酪梨', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '好眠番茄', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '哞哞鮮奶', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }]
       }
     ]
   };
 
   const TAIL_FEATURED_RECIPES = [
-    {
-      name_cn: '炙燒尾肉咖哩',
-      name_en: 'Grilled Tail Curry',
-      category: '咖哩',
-      pot_size: 33,
-      base_energy: 7483,
-      icon: 'https://www.serebii.net/pokemonsleep/meals/grilledtailcurry.png',
-      ingredients: [{ name: '美味尾巴', count: 8, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }]
-    },
-    {
-      name_cn: '呆呆獸尾巴的胡椒沙拉',
-      name_en: 'Slowpoke Tail Pepper Salad',
-      category: '沙拉',
-      pot_size: 35,
-      base_energy: 8169,
-      icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png',
-      ingredients: [{ name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }]
-    }
+    { name_cn: '炙燒尾肉咖哩', name_en: 'Grilled Tail Curry', category: '咖哩', pot_size: 33, base_energy: 7483, icon: 'https://www.serebii.net/pokemonsleep/meals/grilledtailcurry.png', ingredients: [{ name: '美味尾巴', count: 8, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }] },
+    { name_cn: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', category: '沙拉', pot_size: 35, base_energy: 8169, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png', ingredients: [{ name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }] },
+    { name_cn: '打草結沙拉捲', name_en: 'Grass Knot Salad Wrap', category: '沙拉', pot_size: 121, base_energy: 26350, icon: 'https://www.serebii.net/pokemonsleep/meals/grassknotsaladwrap.png', ingredients: [{ name: '一口堅果', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '嫩亮酪梨', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '暖暖薑', count: 36, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '好眠番茄', count: 33, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }] },
+    { name_cn: '美味尾巴蛋糕捲', name_en: 'Slowpoke Tail Roll Cake', category: '甜點', pot_size: 91, base_energy: 19846, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailrollcake.png', ingredients: [{ name: '一口堅果', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '萌綠大豆', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '特選蛋', count: 33, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }] }
   ];
 
   const ALL_TOP_CATEGORY_RECIPES = [
@@ -2421,7 +2398,7 @@
 
   let ladderFinalOnly = true;
   let _dynamicLadderCache = { key: '', data: null };
-  let _dynamicRecipeCache = { len: -1, map: Object.create(null) };
+  let _dynamicRecipeCache = { len: -1, ref: null, map: Object.create(null) };
 
   const CANONICAL_INGREDIENT_META = [
     { id: 'apple', name: '特選蘋果', enName: 'Fancy Apple', energy: 90, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' },
@@ -2541,17 +2518,24 @@
 
   function getDynamicTopRecipeForIngredient(ingId, ingName, recipesOverride) {
     const staticMap = (typeof TOP_RECIPES_FOR_INGREDIENTS !== 'undefined' && TOP_RECIPES_FOR_INGREDIENTS) ? TOP_RECIPES_FOR_INGREDIENTS : {};
-    if (ingId && staticMap[ingId]) return staticMap[ingId];
-
     const recipes = Array.isArray(recipesOverride) ? recipesOverride : _getLiveRecipesSourceForLadder();
-    if (!recipes.length || !ingName) {
-      return { name: '高階料理', name_en: 'High Tier Dish', need: 20, type: '料理', type_en: 'Dish', energy: 0, icon: '', secondary: '' };
+    const metaById = ingId ? CANONICAL_INGREDIENT_META.find(m => m.id === ingId) : null;
+    const resolvedName = ingName || (metaById && metaById.name) || '';
+    const altCnName = (metaById && metaById.name) || '';
+    const altEnName = (metaById && metaById.enName) || '';
+
+    const fallback = (ingId && staticMap[ingId])
+      ? staticMap[ingId]
+      : { name: '高階料理', name_en: 'High Tier Dish', need: 20, type: '料理', type_en: 'Dish', energy: 0, icon: '', secondary: '' };
+
+    if (!recipes || !recipes.length || (!resolvedName && !ingId)) {
+      return fallback;
     }
 
-    if (!recipesOverride && _dynamicRecipeCache.len !== recipes.length) {
-      _dynamicRecipeCache = { len: recipes.length, map: Object.create(null) };
+    if (!recipesOverride && (_dynamicRecipeCache.len !== recipes.length || _dynamicRecipeCache.ref !== recipes)) {
+      _dynamicRecipeCache = { len: recipes.length, ref: recipes, map: Object.create(null) };
     }
-    const cacheKey = (ingId || '') + '|' + ingName;
+    const cacheKey = (ingId || '') + '|' + resolvedName;
     if (!recipesOverride && _dynamicRecipeCache.map[cacheKey]) {
       return _dynamicRecipeCache.map[cacheKey];
     }
@@ -2560,7 +2544,13 @@
     for (let i = 0; i < recipes.length; i++) {
       const r = recipes[i];
       if (!r || !Array.isArray(r.ingredients)) continue;
-      const found = r.ingredients.find(item => item && (item.name === ingName || item.name_cn === ingName || item.id === ingId));
+      const found = r.ingredients.find(item => item && (
+        (resolvedName && (item.name === resolvedName || item.name_cn === resolvedName)) ||
+        (altCnName && (item.name === altCnName || item.name_cn === altCnName)) ||
+        (altEnName && (item.name === altEnName || item.name_en === altEnName)) ||
+        (ingId && item.id === ingId) ||
+        (ingId === 'tail' && (item.name === '美味尾巴' || item.name === 'Slowpoke Tail'))
+      ));
       if (!found) continue;
       const need = Number(found.count || found.qty || 0);
       const energy = Number(r.base_energy || r.energy || 0);
@@ -2570,10 +2560,12 @@
     }
 
     if (matches.length === 0) {
-      return { name: '高階料理', name_en: 'High Tier Dish', need: 20, type: '料理', type_en: 'Dish', energy: 0, icon: '', secondary: '' };
+      return fallback;
     }
 
-    matches.sort((a, b) => (b.energy - a.energy) || (b.need - a.need));
+    // Prioritize highest single-meal ingredient consumption so yield coverage guarantees zero shortage,
+    // tie-broken by highest recipe base energy.
+    matches.sort((a, b) => (b.need - a.need) || (b.energy - a.energy));
     const top = matches[0];
     const sec = matches[1] || null;
     const topNameCn = top.recipe.name_cn || top.recipe.name || '高階料理';
@@ -2595,6 +2587,9 @@
 
     if (!recipesOverride) {
       _dynamicRecipeCache.map[cacheKey] = derived;
+      if (ingId && staticMap) {
+        staticMap[ingId] = derived;
+      }
     }
     return derived;
   }
@@ -2897,7 +2892,7 @@
 
   function invalidateDynamicLadderCache() {
     _dynamicLadderCache = { key: '', data: null };
-    _dynamicRecipeCache = { len: -1, map: Object.create(null) };
+    _dynamicRecipeCache = { len: -1, ref: null, map: Object.create(null) };
     if (typeof _coordLadderRenderCache !== 'undefined' && _coordLadderRenderCache) {
       _coordLadderRenderCache.key = '';
       _coordLadderRenderCache.html = '';
@@ -6948,9 +6943,9 @@
           const recType = stats.recommendedSleepType || 'dozing';
           const recLabel = sleepTypeNameMap[recType] || recType;
           const recText = stats.uncollectedStyles === 0
-            ? (isEN ? 'All Sleep Styles Collected on This Island' : '本島嶼睡姿已 100% 收集完成')
+            ? (isEN ? 'Rec. Sleep: Any (100% Done)' : '本島嶼睡姿已 100% 收集完成')
             : (isEN
-                ? `Tonight's Recommended Sleep Type: ${recLabel} (${stats.recommendedUncollectedCount} uncollected)`
+                ? `Rec. Sleep: ${recLabel} (${stats.recommendedUncollectedCount} left)`
                 : `今晚推薦睡眠類型: ${recLabel} (尚有 ${stats.recommendedUncollectedCount} 種未收集)`);
           return `
             <div class="island-sleep-tracker-bar" id="island-sleep-tracker-bar">
@@ -7785,7 +7780,9 @@
               const clamped = Math.min(Math.max(val, 0), tailMax);
               return ((clamped / tailMax) * 100).toFixed(2);
             }
-            const tailDishInfo = TOP_RECIPES_FOR_INGREDIENTS.tail || { need: 10 };
+            const tailDishInfo = (typeof getDynamicTopRecipeForIngredient === 'function')
+              ? getDynamicTopRecipeForIngredient('tail', (tailIng && tailIng.name) || '美味尾巴')
+              : (TOP_RECIPES_FOR_INGREDIENTS.tail || { need: 10 });
             let tailTop5Threshold = 0;
             if (ladderSupplyFilter === 'TOP') {
               const allMaxCounts = tailIng.pokemon.map(pkm => Math.max(...(pkm.variants || [{ count: pkm.count }]).map(v => v.count)));
@@ -9787,10 +9784,10 @@
               <span class="sidebar-section-title">${_tSkillLadder('副技能補正模擬', 'Sub-Skills')}</span>
             </div>
             <div class="sidebar-skills-list sidebar-2col-tags">
-              <button type="button" class="tag-btn ${typeof isSkillLadderSpeedM !== 'undefined' && isSkillLadderSpeedM ? 'active' : ''}" id="skill-ladder-speed-m-toggle" data-skill-subskill-boost="SPEED_M" onclick="window.WikiDB.toggleSkillLadderSubskill('SPEED_M')">${_tSkillLadder('幫忙速度M', 'Help Speed M')}</button>
-              <button type="button" class="tag-btn ${typeof isSkillLadderSpeedS !== 'undefined' && isSkillLadderSpeedS ? 'active' : ''}" id="skill-ladder-speed-s-toggle" data-skill-subskill-boost="SPEED_S" onclick="window.WikiDB.toggleSkillLadderSubskill('SPEED_S')">${_tSkillLadder('幫忙速度S', 'Help Speed S')}</button>
-              <button type="button" class="tag-btn ${typeof isSkillLadderSkillM !== 'undefined' && isSkillLadderSkillM ? 'active' : ''}" id="skill-ladder-skill-m-toggle" data-skill-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_M')">${_tSkillLadder('技能機率M', 'Trigger M')}</button>
-              <button type="button" class="tag-btn ${typeof isSkillLadderSkillS !== 'undefined' && isSkillLadderSkillS ? 'active' : ''}" id="skill-ladder-skill-s-toggle" data-skill-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_S')">${_tSkillLadder('技能機率S', 'Trigger S')}</button>
+              <button type="button" class="tag-btn ${typeof isSkillLadderSpeedM !== 'undefined' && isSkillLadderSpeedM ? 'active' : ''}" id="skill-ladder-speed-m-toggle" data-skill-subskill-boost="SPEED_M" onclick="window.WikiDB.toggleSkillLadderSubskill('SPEED_M')">${_tSkillLadder('幫忙速度M', 'Speed M')}</button>
+              <button type="button" class="tag-btn ${typeof isSkillLadderSpeedS !== 'undefined' && isSkillLadderSpeedS ? 'active' : ''}" id="skill-ladder-speed-s-toggle" data-skill-subskill-boost="SPEED_S" onclick="window.WikiDB.toggleSkillLadderSubskill('SPEED_S')">${_tSkillLadder('幫忙速度S', 'Speed S')}</button>
+              <button type="button" class="tag-btn ${typeof isSkillLadderSkillM !== 'undefined' && isSkillLadderSkillM ? 'active' : ''}" id="skill-ladder-skill-m-toggle" data-skill-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_M')">${_tSkillLadder('技能機率M', 'Skill M')}</button>
+              <button type="button" class="tag-btn ${typeof isSkillLadderSkillS !== 'undefined' && isSkillLadderSkillS ? 'active' : ''}" id="skill-ladder-skill-s-toggle" data-skill-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_S')">${_tSkillLadder('技能機率S', 'Skill S')}</button>
             </div>
           </div>
 
@@ -11509,10 +11506,10 @@
             <div class="sidebar-skills-list sidebar-2col-tags">
               <button type="button" class="tag-btn ${isLadderIngM ? 'active' : ''}" id="ladder-ing-m-toggle" data-subskill-boost="ING_M" onclick="window.WikiDB.toggleLadderSubskill('ING_M')">${isEN ? 'Ing Finder M' : '食材機率M'}</button>
               <button type="button" class="tag-btn ${isLadderIngS ? 'active' : ''}" id="ladder-ing-s-toggle" data-subskill-boost="ING_S" onclick="window.WikiDB.toggleLadderSubskill('ING_S')">${isEN ? 'Ing Finder S' : '食材機率S'}</button>
-              <button type="button" class="tag-btn ${isLadderSpeedM ? 'active' : ''}" id="ladder-speed-m-toggle" data-subskill-boost="SPEED_M" onclick="window.WikiDB.toggleLadderSubskill('SPEED_M')">${isEN ? 'Help Speed M' : '幫忙速度M'}</button>
-              <button type="button" class="tag-btn ${isLadderSpeedS ? 'active' : ''}" id="ladder-speed-s-toggle" data-subskill-boost="SPEED_S" onclick="window.WikiDB.toggleLadderSubskill('SPEED_S')">${isEN ? 'Help Speed S' : '幫忙速度S'}</button>
-              <button type="button" class="tag-btn ${isLadderSkillM ? 'active' : ''}" id="ladder-skill-m-toggle" data-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleLadderSubskill('SKILL_M')">${isEN ? 'Trigger M' : '技能機率M'}</button>
-              <button type="button" class="tag-btn ${isLadderSkillS ? 'active' : ''}" id="ladder-skill-s-toggle" data-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleLadderSubskill('SKILL_S')">${isEN ? 'Trigger S' : '技能機率S'}</button>
+              <button type="button" class="tag-btn ${isLadderSpeedM ? 'active' : ''}" id="ladder-speed-m-toggle" data-subskill-boost="SPEED_M" onclick="window.WikiDB.toggleLadderSubskill('SPEED_M')">${isEN ? 'Speed M' : '幫忙速度M'}</button>
+              <button type="button" class="tag-btn ${isLadderSpeedS ? 'active' : ''}" id="ladder-speed-s-toggle" data-subskill-boost="SPEED_S" onclick="window.WikiDB.toggleLadderSubskill('SPEED_S')">${isEN ? 'Speed S' : '幫忙速度S'}</button>
+              <button type="button" class="tag-btn ${isLadderSkillM ? 'active' : ''}" id="ladder-skill-m-toggle" data-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleLadderSubskill('SKILL_M')">${isEN ? 'Skill M' : '技能機率M'}</button>
+              <button type="button" class="tag-btn ${isLadderSkillS ? 'active' : ''}" id="ladder-skill-s-toggle" data-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleLadderSubskill('SKILL_S')">${isEN ? 'Skill S' : '技能機率S'}</button>
             </div>
           </div>
 
@@ -11538,10 +11535,10 @@
           <div class="wiki-subnav-tabs" role="tablist">
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isMobileH5 ? (isEN ? 'Skills' : (isCN ? '主技能' : '主技能')) : (isEN ? 'Main Skills' : (isCN ? '主技能数值库' : '主技能數值庫'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isMobileH5 ? (isEN ? 'Subskills' : (isCN ? '副技性格' : '副技性格')) : (isEN ? 'Sub-Skills' : (isCN ? '副技能与性格指南' : '副技能與性格指南'))}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isMobileH5 ? (isEN ? 'Ladder' : (isCN ? '食材天梯' : '食材天梯')) : (isEN ? 'Ingredient Ladder' : (isCN ? '食材产量天梯榜' : '食材產量天梯榜'))}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills_ladder' ? 'active' : ''}" data-subtab="skills_ladder" onclick="window.WikiDB.switchSubTab('skills_ladder')">${isMobileH5 ? (isEN ? 'Skill Ladder' : (isCN ? '技能天梯' : '技能天梯')) : (isEN ? 'Main Skill Ladder' : (isCN ? '主技能天梯榜' : '主技能天梯榜'))}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isMobileH5 ? (isEN ? 'Ing. Ladder' : (isCN ? '食材天梯' : '食材天梯')) : (isEN ? 'Ing. Ladder' : (isCN ? '食材产量天梯榜' : '食材產量天梯榜'))}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills_ladder' ? 'active' : ''}" data-subtab="skills_ladder" onclick="window.WikiDB.switchSubTab('skills_ladder')">${isMobileH5 ? (isEN ? 'Skill Ladder' : (isCN ? '技能天梯' : '技能天梯')) : (isEN ? 'Skill Ladder' : (isCN ? '主技能天梯榜' : '主技能天梯榜'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isMobileH5 ? (isEN ? 'Values' : (isCN ? '能量速查' : '能量速查')) : (isEN ? 'Berry & Ings' : (isCN ? '树果与食材能量' : '樹果與食材能量'))}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Growth' : (isCN ? '培育指南' : '培育指南')) : (isEN ? 'Tier Guide' : (isCN ? '培育与评级指南' : '培育與評級指南'))}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Guide' : (isCN ? '培育指南' : '培育指南')) : (isEN ? 'Guide' : (isCN ? '培育与评级指南' : '培育與評級指南'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'islands' ? 'active' : ''}" data-subtab="islands" onclick="window.WikiDB.switchSubTab('islands')">${isMobileH5 ? (isEN ? 'Islands' : (isCN ? '岛屿营地' : '島嶼營地')) : (isEN ? 'Camps & EX' : (isCN ? '岛屿营地与EX模式' : '島嶼營地與EX模式'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'items' ? 'active' : ''}" data-subtab="items" onclick="window.WikiDB.switchSubTab('items')">${isMobileH5 ? (isEN ? 'Items' : (isCN ? '道具百科' : '道具百科')) : (isEN ? 'Items' : (isCN ? '道具百科' : '道具百科'))}</button>
           </div>

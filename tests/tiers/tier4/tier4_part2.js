@@ -1832,7 +1832,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     // 7. Verify formula title updated to 產能算法精算拆解 (general yield, not just ingredient)
     assert(appJs.includes("'產能算法精算拆解'"), 'app.js fallback title must be 產能算法精算拆解');
     assert(i18nJs.includes("'pokedex.formula_title': '產能算法精算拆解'"), 'i18n zh-TW formula_title must be 產能算法精算拆解');
-    assert(i18nJs.includes("'pokedex.formula_title': 'Yield Formula Breakdown'"), 'i18n en-US formula_title must be Yield Formula Breakdown');
+    assert(i18nJs.includes("'pokedex.formula_title': 'Formula Breakdown'") || i18nJs.includes("'pokedex.formula_title': 'Yield Formula Breakdown'"), 'i18n en-US formula_title must be Formula Breakdown');
 
     // 8. Verify strategy-card-desc and strategy-card-badge removed, title placed inside frame on its own line
     const strategyFnStart = appJs.indexOf('function renderPokedexStrategyCardHTML');

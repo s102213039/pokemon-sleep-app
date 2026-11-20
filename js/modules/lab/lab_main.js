@@ -57,7 +57,7 @@
         <!-- 深度研究室 頂部子分頁導航 (Subnav Bar) -->
         <div class="lab-subnav-bar">
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'team' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('team')">
-            <span class="lab-subtab-title">${isEN ? 'Team Builder' : '幫手組隊'}</span>
+            <span class="lab-subtab-title">${isEN ? 'Team' : '幫手組隊'}</span>
           </button>
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'compare' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('compare')">
             <span class="lab-subtab-title">${isEN ? 'Compare' : '寶可夢對比'}</span>

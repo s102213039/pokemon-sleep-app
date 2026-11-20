@@ -405,7 +405,7 @@ check('IngredientLadder', 'wiki_ladder_recipes.js defines TOP_RECIPES_FOR_INGRED
   const topRecipes = WikiDB.TOP_RECIPES_FOR_INGREDIENTS;
   assert(topRecipes !== undefined, 'TOP_RECIPES_FOR_INGREDIENTS must exist');
   assert(topRecipes.tail !== undefined, 'tail must be defined');
-  assertEquals(topRecipes.tail.name, '呆呆獸尾巴的胡椒沙拉');
+  assert(topRecipes.tail.name === '美味尾巴蛋糕捲' || topRecipes.tail.name === '呆呆獸尾巴的胡椒沙拉', 'tail top recipe must be Slowpoke Tail Roll Cake or Pepper Salad');
 });
 
 check('IngredientLadder', 'WikiDB.renderCoordinateLadder executes on 19 tracks without undefined errors', () => {

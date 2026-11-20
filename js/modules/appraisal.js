@@ -1542,13 +1542,40 @@ const TARGET_TOP_RECIPES = [
 
     if (normIngs.length === 0) return '';
 
-    const pool = (typeof window !== 'undefined' && window.ALL_TOP_CATEGORY_RECIPES && window.ALL_TOP_CATEGORY_RECIPES.length > 0)
+    const topCategoryPool = (typeof window !== 'undefined' && Array.isArray(window.ALL_TOP_CATEGORY_RECIPES) && window.ALL_TOP_CATEGORY_RECIPES.length > 0)
       ? window.ALL_TOP_CATEGORY_RECIPES
-      : (typeof window !== 'undefined' && Array.isArray(window.__RECIPES_CACHE__) && window.__RECIPES_CACHE__.length > 0)
-        ? window.__RECIPES_CACHE__
-        : TARGET_TOP_RECIPES;
+      : null;
+    const liveCachePool = (typeof window !== 'undefined' && Array.isArray(window.__RECIPES_CACHE__) && window.__RECIPES_CACHE__.length > 0)
+      ? window.__RECIPES_CACHE__
+      : (typeof window !== 'undefined' && Array.isArray(window.allRecipes) && window.allRecipes.length > 0)
+        ? window.allRecipes
+        : null;
 
-    const cacheKey = (isEN ? '1:' : '0:') + pool.length + ':' + normIngs.join('|');
+    let pool;
+    if (liveCachePool && topCategoryPool) {
+      const seen = new Set();
+      pool = [];
+      const addRecipe = function(r) {
+        if (!r) return;
+        const key = r.name_cn || r.name || r.name_en || '';
+        if (!key || seen.has(key)) return;
+        seen.add(key);
+        pool.push(r);
+      };
+      liveCachePool.forEach(function(r) {
+        if (r && (r.base_energy || 0) >= 7000) addRecipe(r);
+      });
+      topCategoryPool.forEach(addRecipe);
+    } else if (liveCachePool) {
+      const highTier = liveCachePool.filter(function(r) { return r && (r.base_energy || 0) >= 7000; });
+      pool = highTier.length > 0 ? highTier : liveCachePool;
+    } else if (topCategoryPool) {
+      pool = topCategoryPool;
+    } else {
+      pool = TARGET_TOP_RECIPES;
+    }
+
+    const cacheKey = (isEN ? '1:' : '0:') + (liveCachePool ? liveCachePool.length : 0) + ':' + pool.length + ':' + normIngs.join('|');
     const cachedRec = _sigRecipeRecCache[cacheKey];
     if (cachedRec !== undefined) return cachedRec;
 
@@ -7207,7 +7234,7 @@ const TARGET_TOP_RECIPES = [
         <!-- 深度研究室 頂部子分頁導航 (Subnav Bar) -->
         <div class="lab-subnav-bar">
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'team' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('team')">
-            <span class="lab-subtab-title">${isEN ? 'Team Builder' : '幫手組隊'}</span>
+            <span class="lab-subtab-title">${isEN ? 'Team' : '幫手組隊'}</span>
           </button>
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'compare' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('compare')">
             <span class="lab-subtab-title">${isEN ? 'Compare' : '寶可夢對比'}</span>

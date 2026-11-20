@@ -5,6 +5,24 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-21 已完成（英文翻譯疑慮清單 10 項定案精簡與「最高單餐消耗量」動態核心料理引擎）
+
+- **調整內容（由 Argon 完成頂層規劃、排程等待 3 小時額度重置後委派兩組 Gemini Flash 子代理平行實作）**：
+  1. **Workstream A — 英文翻譯疑慮清單 10 項定案 (`js/core/i18n/i18n_dict_*.js`, `index.html`, `app/index.html`, `js/modules/box/box_filter.js`, `js/modules/wiki/wiki_main.js`, `wiki_skill_ladder_render.js`, `wiki_camps_render.js`, `js/modules/lab/lab_main.js`)**：
+     - 語系切換按鈕固定顯示母語自稱：`settings.lang_zh: '繁體中文'`、`settings.lang_zh_cn: '简体中文'`、`settings.lang_en: 'English'`。
+     - 倉庫快捷篩選膠囊 (`BOX_QUICK_FILTERS`) 英文改用社群常用縮寫：`Help Bonus`、`BFS`、`Ing. Finder M`、`Skill Trig. M`。
+     - 數據百科子分頁英文統一對稱：食材天梯 `Ing. Ladder`、技能天梯 `Skill Ladder`、培育指南（桌面與 H5）皆統一為 `Guide`。
+     - 研究所第一子分頁英文由 `Team Builder` 精簡為 `Team`（三子分頁為 `Team` / `Compare` / `Growth`）。
+     - 島嶼營地睡眠推薦膠囊英文精簡為 `Rec. Sleep: ... (N left)` / `Rec. Sleep: Any (100% Done)` 並維持 CSS 隱藏。
+     - 計算細節標題 (`pokedex.formula_title`) 精簡為 `Formula Breakdown`。
+     - 食材天梯與技能天梯篩選抽屜副技能按鈕英文統一為 `Speed M`、`Speed S`、`Skill M`、`Skill S`。
+  2. **Workstream B — 最高單餐消耗量 (`need`) 動態核心料理與大菜即時更新引擎 (`js/modules/wiki/wiki_ladder_builder.js`, `wiki_ladder_recipes.js`, `wiki_render_ladder.js`, `js/modules/lab/lab_summary.js`, `tests/test_dynamic_ingredient_ladder.js`, `tests/test_challenger_m2_multitab_adversarial.js`)**：
+     - `getDynamicTopRecipeForIngredient(ingId, ingName, recipesOverride)` 移除靜態短路，改為優先從即時食譜庫（`recipesOverride` 或 `_getLiveRecipesSourceForLadder()`）動態掃描所有含該食材的料理，並依 **`(b.need - a.need) || (b.energy - a.energy)`（該食材最高單餐消耗量優先，同消耗量取最高基礎能量）** 排序，計算後同步回寫 `TOP_RECIPES_FOR_INGREDIENTS[ingId]`。
+     - 更新 `wiki_ladder_recipes.js` 中 `TOP_RECIPES_FOR_INGREDIENTS` 全 20 種食材之最高消耗大菜基準（如特選蘋果 -> `電光香料可樂 (35)`、萌綠大豆 -> `覺醒力量濃湯 (28)`、豆製肉 -> `不服輸咖啡沙拉 (28)`、好眠番茄 -> `打草結沙拉捲 (33)`、特選蛋 -> `蘋果酸優格沙拉 (35)`、純粹油 -> `茂盛焗烤酪梨 (32)`、火辣香草 -> `重踏酪梨醬脆片 (30)`、放鬆可可 -> `土王閃電泡芙 (30)`、醒腦咖啡豆 -> `不服輸咖啡沙拉 (28)`、美味尾巴 -> `美味尾巴蛋糕捲 (10)`），並將 `打草結沙拉捲` 與 `美味尾巴蛋糕捲` 納入 `TAIL_FEATURED_RECIPES` / `ALL_TOP_CATEGORY_RECIPES`。
+     - `wiki_render_ladder.js` 美味尾巴軌道與 `lab_summary.js` 之 `getSignatureRecipeRecommendations` 同步串接即時食譜庫。
+- **驗證結果**：
+  - `npm run test:fast`：**170 / 170 PASS**；`npm test`：**293 / 293 PASS**；`node tests/test_dynamic_ingredient_ladder.js`：**49 / 49 PASS**；`node tests/test_e2e_r1_r7_acceptance.js`：**100 / 100 PASS**；`node tests/test_challenger_m1_cache_sync.js`：**18 / 18 PASS**。
+
 ## 交接：2026-11-21 已完成（滿版藍紫暮光 PWA 圖標重製、圖鑑浮窗清空全部單行按鈕、島嶼加成 95% 單一來源、篩選器與重設文案統一、H5 英文長度精簡、樹果食材能量由小到大統一排序常數與 Argon/Neon 協作規範）
 
 - **調整內容**：

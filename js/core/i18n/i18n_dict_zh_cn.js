@@ -38,7 +38,7 @@
       'settings.theme_invert_desc': '反转当前主题的深浅底色，拓展出 4 款高反差风格。',
       'settings.lang_section': '界面语言',
       'settings.lang_desc': '切换全站界面文字与宝可梦资料显示语系。',
-      'settings.lang_zh': '繁体中文',
+      'settings.lang_zh': '繁體中文',
       'settings.lang_zh_cn': '简体中文',
       'settings.lang_en': 'English',
       'settings.box_backup_section': '仓库备份与还原',

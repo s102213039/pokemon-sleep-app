@@ -12,7 +12,7 @@
 
   let ladderFinalOnly = true;
   let _dynamicLadderCache = { key: '', data: null };
-  let _dynamicRecipeCache = { len: -1, map: Object.create(null) };
+  let _dynamicRecipeCache = { len: -1, ref: null, map: Object.create(null) };
 
   const CANONICAL_INGREDIENT_META = [
     { id: 'apple', name: '特選蘋果', enName: 'Fancy Apple', energy: 90, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' },
@@ -132,17 +132,24 @@
 
   function getDynamicTopRecipeForIngredient(ingId, ingName, recipesOverride) {
     const staticMap = (typeof TOP_RECIPES_FOR_INGREDIENTS !== 'undefined' && TOP_RECIPES_FOR_INGREDIENTS) ? TOP_RECIPES_FOR_INGREDIENTS : {};
-    if (ingId && staticMap[ingId]) return staticMap[ingId];
-
     const recipes = Array.isArray(recipesOverride) ? recipesOverride : _getLiveRecipesSourceForLadder();
-    if (!recipes.length || !ingName) {
-      return { name: '高階料理', name_en: 'High Tier Dish', need: 20, type: '料理', type_en: 'Dish', energy: 0, icon: '', secondary: '' };
+    const metaById = ingId ? CANONICAL_INGREDIENT_META.find(m => m.id === ingId) : null;
+    const resolvedName = ingName || (metaById && metaById.name) || '';
+    const altCnName = (metaById && metaById.name) || '';
+    const altEnName = (metaById && metaById.enName) || '';
+
+    const fallback = (ingId && staticMap[ingId])
+      ? staticMap[ingId]
+      : { name: '高階料理', name_en: 'High Tier Dish', need: 20, type: '料理', type_en: 'Dish', energy: 0, icon: '', secondary: '' };
+
+    if (!recipes || !recipes.length || (!resolvedName && !ingId)) {
+      return fallback;
     }
 
-    if (!recipesOverride && _dynamicRecipeCache.len !== recipes.length) {
-      _dynamicRecipeCache = { len: recipes.length, map: Object.create(null) };
+    if (!recipesOverride && (_dynamicRecipeCache.len !== recipes.length || _dynamicRecipeCache.ref !== recipes)) {
+      _dynamicRecipeCache = { len: recipes.length, ref: recipes, map: Object.create(null) };
     }
-    const cacheKey = (ingId || '') + '|' + ingName;
+    const cacheKey = (ingId || '') + '|' + resolvedName;
     if (!recipesOverride && _dynamicRecipeCache.map[cacheKey]) {
       return _dynamicRecipeCache.map[cacheKey];
     }
@@ -151,7 +158,13 @@
     for (let i = 0; i < recipes.length; i++) {
       const r = recipes[i];
       if (!r || !Array.isArray(r.ingredients)) continue;
-      const found = r.ingredients.find(item => item && (item.name === ingName || item.name_cn === ingName || item.id === ingId));
+      const found = r.ingredients.find(item => item && (
+        (resolvedName && (item.name === resolvedName || item.name_cn === resolvedName)) ||
+        (altCnName && (item.name === altCnName || item.name_cn === altCnName)) ||
+        (altEnName && (item.name === altEnName || item.name_en === altEnName)) ||
+        (ingId && item.id === ingId) ||
+        (ingId === 'tail' && (item.name === '美味尾巴' || item.name === 'Slowpoke Tail'))
+      ));
       if (!found) continue;
       const need = Number(found.count || found.qty || 0);
       const energy = Number(r.base_energy || r.energy || 0);
@@ -161,10 +174,12 @@
     }
 
     if (matches.length === 0) {
-      return { name: '高階料理', name_en: 'High Tier Dish', need: 20, type: '料理', type_en: 'Dish', energy: 0, icon: '', secondary: '' };
+      return fallback;
     }
 
-    matches.sort((a, b) => (b.energy - a.energy) || (b.need - a.need));
+    // Prioritize highest single-meal ingredient consumption so yield coverage guarantees zero shortage,
+    // tie-broken by highest recipe base energy.
+    matches.sort((a, b) => (b.need - a.need) || (b.energy - a.energy));
     const top = matches[0];
     const sec = matches[1] || null;
     const topNameCn = top.recipe.name_cn || top.recipe.name || '高階料理';
@@ -186,6 +201,9 @@
 
     if (!recipesOverride) {
       _dynamicRecipeCache.map[cacheKey] = derived;
+      if (ingId && staticMap) {
+        staticMap[ingId] = derived;
+      }
     }
     return derived;
   }
@@ -488,7 +506,7 @@
 
   function invalidateDynamicLadderCache() {
     _dynamicLadderCache = { key: '', data: null };
-    _dynamicRecipeCache = { len: -1, map: Object.create(null) };
+    _dynamicRecipeCache = { len: -1, ref: null, map: Object.create(null) };
     if (typeof _coordLadderRenderCache !== 'undefined' && _coordLadderRenderCache) {
       _coordLadderRenderCache.key = '';
       _coordLadderRenderCache.html = '';

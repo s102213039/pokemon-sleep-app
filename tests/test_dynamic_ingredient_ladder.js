@@ -290,6 +290,23 @@ console.log('\n[Suite 5] Future 21st+ Ingredient Auto-Discovery & Live Event Ref
   assertEquals(derivedDish.name, '星塵特調蛋糕', 'Auto-derives highest-energy recipe for 21st ingredient');
   assertEquals(derivedDish.need, 25, 'Auto-derives exact per-meal need (25) for 3-meal passing line');
 
+  // Verify max-consumption priority over higher base_energy
+  const maxConsumpOverride = [
+    { name_cn: '高能量少料菜', name_en: 'High Energy Low Need', category: '咖哩', base_energy: 30000, ingredients: [{ name: '特選蘋果', count: 10 }] },
+    { name_cn: '最高消耗大菜', name_en: 'Max Consumption Dish', category: '甜點', base_energy: 18000, ingredients: [{ name: '特選蘋果', count: 40 }] }
+  ];
+  const overrideDish = WikiDB.getDynamicTopRecipeForIngredient('apple', '特選蘋果', maxConsumpOverride);
+  assertEquals(overrideDish.name, '最高消耗大菜', 'Prioritizes highest ingredient consumption over higher base_energy');
+  assertEquals(overrideDish.need, 40, 'Returns exact max consumption need (40)');
+
+  const liveAppleDish = WikiDB.getDynamicTopRecipeForIngredient('apple', '特選蘋果');
+  assertEquals(liveAppleDish.name, '電光香料可樂', 'Live apple key dish is Zing Zap Spiced Cola');
+  assertEquals(liveAppleDish.need, 35, 'Live apple key dish need is 35');
+
+  const liveTomatoDish = WikiDB.getDynamicTopRecipeForIngredient('tomato', '好眠番茄');
+  assertEquals(liveTomatoDish.name, '打草結沙拉捲', 'Live tomato key dish is Grass Knot Salad Wrap');
+  assertEquals(liveTomatoDish.need, 33, 'Live tomato key dish need is 33');
+
   assert(coordContainer.innerHTML.includes('星塵精靈'), 'Live pokemon-data-updated event refreshes coordinate ladder DOM automatically');
   assert(coordContainer.innerHTML.includes('星塵莓果'), 'Refreshed DOM displays brand-new 21st ingredient track');
   assert(!coordContainer.innerHTML.includes('undefined'), 'Refreshed DOM has zero undefined text tokens');

@@ -539,7 +539,9 @@
               const clamped = Math.min(Math.max(val, 0), tailMax);
               return ((clamped / tailMax) * 100).toFixed(2);
             }
-            const tailDishInfo = TOP_RECIPES_FOR_INGREDIENTS.tail || { need: 10 };
+            const tailDishInfo = (typeof getDynamicTopRecipeForIngredient === 'function')
+              ? getDynamicTopRecipeForIngredient('tail', (tailIng && tailIng.name) || '美味尾巴')
+              : (TOP_RECIPES_FOR_INGREDIENTS.tail || { need: 10 });
             let tailTop5Threshold = 0;
             if (ladderSupplyFilter === 'TOP') {
               const allMaxCounts = tailIng.pokemon.map(pkm => Math.max(...(pkm.variants || [{ count: pkm.count }]).map(v => v.count)));

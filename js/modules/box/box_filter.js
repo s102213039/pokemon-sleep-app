@@ -151,10 +151,10 @@
   const BOX_QUICK_FILTERS = [
     { id: 'shiny', label: '異色', label_en: 'Shiny', type: 'shiny' },
     { id: 'ribbon', label: '睡飽飽獎章', label_en: 'Ribbon', type: 'ribbon' },
-    { id: 'hb', label: '幫手獎勵', label_en: 'Helping Bonus', type: 'subskill', subskill: '幫手獎勵' },
-    { id: 'bfs', label: '樹果數量S', label_en: 'Berry Finding S', type: 'subskill', subskill: '樹果數量S' },
-    { id: 'ing_m', label: '食材機率提升M', label_en: 'Ingredient Finder M', type: 'subskill', subskill: '食材機率提升M' },
-    { id: 'skill_m', label: '技能機率提升M', label_en: 'Skill Trigger M', type: 'subskill', subskill: '技能機率提升M' }
+    { id: 'hb', label: '幫手獎勵', label_en: 'Help Bonus', type: 'subskill', subskill: '幫手獎勵' },
+    { id: 'bfs', label: '樹果數量S', label_en: 'BFS', type: 'subskill', subskill: '樹果數量S' },
+    { id: 'ing_m', label: '食材機率提升M', label_en: 'Ing. Finder M', type: 'subskill', subskill: '食材機率提升M' },
+    { id: 'skill_m', label: '技能機率提升M', label_en: 'Skill Trig. M', type: 'subskill', subskill: '技能機率提升M' }
   ];
 
   const _BOX_FALLBACK_BERRY_ORDER = {

@@ -39,7 +39,7 @@
       'settings.lang_section': '介面語言',
       'settings.lang_desc': '切換全站介面文字與寶可夢資料顯示語系。',
       'settings.lang_zh': '繁體中文',
-      'settings.lang_zh_cn': '簡體中文',
+      'settings.lang_zh_cn': '简体中文',
       'settings.lang_en': 'English',
       'settings.box_backup_section': '倉庫備份與還原',
       'settings.box_backup_desc': '將個人倉庫寶可夢匯出為 JSON 備份檔，或從本機檔案匯入還原。',

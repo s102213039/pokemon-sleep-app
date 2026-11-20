@@ -586,9 +586,9 @@
           const recType = stats.recommendedSleepType || 'dozing';
           const recLabel = sleepTypeNameMap[recType] || recType;
           const recText = stats.uncollectedStyles === 0
-            ? (isEN ? 'All Sleep Styles Collected on This Island' : '本島嶼睡姿已 100% 收集完成')
+            ? (isEN ? 'Rec. Sleep: Any (100% Done)' : '本島嶼睡姿已 100% 收集完成')
             : (isEN
-                ? `Tonight's Recommended Sleep Type: ${recLabel} (${stats.recommendedUncollectedCount} uncollected)`
+                ? `Rec. Sleep: ${recLabel} (${stats.recommendedUncollectedCount} left)`
                 : `今晚推薦睡眠類型: ${recLabel} (尚有 ${stats.recommendedUncollectedCount} 種未收集)`);
           return `
             <div class="island-sleep-tracker-bar" id="island-sleep-tracker-bar">
