@@ -351,6 +351,8 @@ TITLE_TRANSLATIONS = [
     (r"來什麼都吃光光！大餐週vol\.(\d+)", r"Eat Everything in Sight! Feast Week Vol. \1"),
     (r"「夢之碎片增量週vol\.(\d+)」", r'"Dream Shard Boost Week Vol. \1"'),
     (r"夢之碎片增量週vol\.(\d+)", r"Dream Shard Boost Week Vol. \1"),
+    (r"【把握機會獲得夢之碎片！】", r"[Special Pack] "),
+    (r"夢之碎片增量週同樂包vol\.(\d+)", r"Dream Shard Week Bundle Vol. \1"),
     (r"大餐週滿足包vol\.(\d+)", r"Feast Week Bundles Vol. \1"),
     (r"「備料週vol\.(\d+)」", r'"Preparation Week Vol. \1"'),
     (r"備料週vol\.(\d+)", r"Preparation Week Vol. \1"),
