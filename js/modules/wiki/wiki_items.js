@@ -486,7 +486,7 @@
 
         <div id="wiki-items-empty-state" class="wiki-items-empty-state" style="display:${emptyDisplay};">
           <p class="wiki-empty-text font-bold" style="margin-bottom: 8px;">${isEN ? 'No matching items found.' : (isCN ? '未找到符合条件的道具。' : '未找到符合條件的道具。')}</p>
-          <button type="button" class="sidebar-reset-btn" onclick="window.WikiDB.resetItemsFilters()">${isEN ? 'Reset Filters' : (isCN ? '重设条件' : '重設條件')}</button>
+          <button type="button" class="sidebar-reset-btn" onclick="window.WikiDB.resetItemsFilters()">${isEN ? 'Reset' : (isCN ? '重设' : '重設')}</button>
         </div>
       </div>
     `;

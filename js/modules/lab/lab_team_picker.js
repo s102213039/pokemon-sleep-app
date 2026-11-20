@@ -140,12 +140,20 @@
   /* ─── 自訂隊員/選手挑選彈窗 (Custom Pokémon Picker Modal) ────────────── */
   let activePickerState = null;
 
-  const CANONICAL_INGREDIENTS = [
+  const _FALLBACK_LAB_CANONICAL_INGREDIENTS = [
     '特選蘋果', '哞哞鮮奶', '萌綠大豆', '甜甜蜜', '豆製肉',
     '暖暖薑', '好眠番茄', '一口堅果', '特選蛋', '純粹油', '窩心洋芋',
     '火辣香草', '萌綠玉米', '放鬆可可', '醒腦咖啡豆', '嫩亮酪梨',
     '品鮮蘑菇', '粗枝大蔥', '沉甸甸南瓜', '美味尾巴'
   ];
+
+  function _getLabCanonicalIngredients() {
+    const gc = _getLabGameConfig();
+    if (gc && Array.isArray(gc.CANONICAL_INGREDIENTS) && gc.CANONICAL_INGREDIENTS.length > 0) {
+      return gc.CANONICAL_INGREDIENTS.map(item => item.name);
+    }
+    return _FALLBACK_LAB_CANONICAL_INGREDIENTS.slice();
+  }
 
   function openLabPicker(opts) {
     activePickerState = opts || {};
@@ -239,7 +247,7 @@
 
       const recipeIngChipsHtml = [
         `<button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === 'all' ? 'active' : ''}" data-recipe-ing="all" title="${isEN ? 'All Ingredients' : '全部食材'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
-        ...CANONICAL_INGREDIENTS.map(iName => {
+        ..._getLabCanonicalIngredients().map(iName => {
           const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
           const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
           return `
@@ -356,7 +364,7 @@
         ? (isEN ? 'Select Pokémon for Growth & Seeds Calculation' : '挑選培育精算對象')
         : (isEN ? `Select Pokémon for Player ${compareLetter}` : `挑選選手 ${compareLetter}`));
 
-    const berriesList = (typeof BERRY_VALUES_DATA !== 'undefined' ? BERRY_VALUES_DATA : []);
+    const berriesList = _getLabBerryValuesData();
 
     let currentFilter = 'all';
     let currentBerryFilter = 'all';
@@ -379,7 +387,7 @@
         const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : {});
         const bName = berry.name || '';
         const bType = berry.type || (base ? base.type : '') || '';
-        const isFav = favBerries.includes(bName) || favTypes.includes(bType);
+        const isFav = _isLabFavoredBerryOrType(bName, bType, favBerries, favTypes);
 
         const spec = (base && base.specialty) || '';
         if (currentFilter === 'fav' && !isFav) return false;
@@ -387,7 +395,15 @@
         if (currentFilter === 'ingredient' && !spec.includes('食材') && spec !== 'Ingredients') return false;
         if (currentFilter === 'skill' && !spec.includes('技能') && spec !== 'Skills') return false;
 
-        if (currentBerryFilter !== 'all' && bName !== currentBerryFilter) return false;
+        if (currentBerryFilter !== 'all') {
+          const bCid = _resolveLabBerryCanonicalId(bName);
+          const fCid = _resolveLabBerryCanonicalId(currentBerryFilter);
+          if (bCid && fCid) {
+            if (bCid !== fCid) return false;
+          } else if (bName !== currentBerryFilter) {
+            return false;
+          }
+        }
 
         if (currentIngFilter !== 'all') {
           const pLv = item.level || 1;
@@ -507,7 +523,7 @@
 
     const ingChipsHtml = [
       `<button type="button" class="lab-picker-ing-chip-btn ${currentIngFilter === 'all' ? 'active' : ''}" data-ing="all" title="${isEN ? 'All Ingredients' : '全部食材'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
-      ...CANONICAL_INGREDIENTS.map(iName => {
+      ..._getLabCanonicalIngredients().map(iName => {
         const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
         const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
         return `

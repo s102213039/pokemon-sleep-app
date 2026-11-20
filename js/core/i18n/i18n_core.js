@@ -162,7 +162,7 @@
     return null;
   }
 
-  const _I18N_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+  const _I18N_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
 
   function _resolveDynamicCaps(str) {
     if (typeof str !== 'string') return str;
@@ -179,7 +179,7 @@
       : ((gc && gc.CAPS && gc.CAPS.RECIPE_MAX_BONUS_PCT) || _I18N_FALLBACK_CAPS.RECIPE_MAX_BONUS_PCT || 258);
     const maxIslandPct = (gc && typeof gc.getIslandBonusCap === 'function')
       ? gc.getIslandBonusCap()
-      : ((gc && gc.CAPS && gc.CAPS.ISLAND_BONUS_CAP !== undefined) ? gc.CAPS.ISLAND_BONUS_CAP : (_I18N_FALLBACK_CAPS.ISLAND_BONUS_CAP || 85));
+      : ((gc && gc.CAPS && gc.CAPS.ISLAND_BONUS_CAP !== undefined) ? gc.CAPS.ISLAND_BONUS_CAP : _I18N_FALLBACK_CAPS.ISLAND_BONUS_CAP);
     const islandStep = (gc && typeof gc.getIslandBonusStep === 'function')
       ? gc.getIslandBonusStep()
       : ((gc && gc.CAPS && gc.CAPS.ISLAND_BONUS_STEP !== undefined) ? gc.CAPS.ISLAND_BONUS_STEP : (_I18N_FALLBACK_CAPS.ISLAND_BONUS_STEP || 5));

@@ -309,7 +309,7 @@
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const categories = ['ALL', '咖哩', '沙拉', '甜點'];
-    const catLabels  = { ALL: isEN ? 'All' : '全部', '咖哩': isEN ? 'Curries' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salads' : '沙拉', '甜點': isEN ? 'Desserts' : (isCN ? '甜点' : '甜點') };
+    const catLabels  = { ALL: isEN ? 'All' : '全部', '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
     const catCounts  = { '咖哩': 0, '沙拉': 0, '甜點': 0 };
     for (let i = 0; i < allRecipes.length; i++) {
       const c = allRecipes[i] && allRecipes[i].category;
@@ -346,7 +346,7 @@
       });
     });
 
-    const ingNames = Array.from(ingMap.keys()).sort();
+    const ingNames = _sortRecipesIngredientsByEnergyAsc(Array.from(ingMap.keys()));
     const excludedPickerContainer = document.getElementById('excluded-ingredient-picker-tags');
 
     const renderPickerButtons = (container, set, activeCls) => {

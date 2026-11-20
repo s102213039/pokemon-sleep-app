@@ -1,10 +1,20 @@
+  const _WIKI_RENDER_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+
   // 渲染樹果與食材基礎能量看板 (極簡無名無滾輪 18 格全展開版 + 等級滑桿、島嶼加成與順果 2x 開關)
   function renderValuesBoard() {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const caps = typeof _getWikiCaps === 'function' ? _getWikiCaps() : ((typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG && globalThis.GAME_CONFIG.getCaps) ? globalThis.GAME_CONFIG.getCaps() : { POKEMON_LEVEL_CAP: 70, ISLAND_BONUS_CAP: 85, ISLAND_BONUS_STEP: 5 });
-    const pokeCap = caps.POKEMON_LEVEL_CAP || 70;
-    const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85;
-    const islandStep = caps.ISLAND_BONUS_STEP || 5;
+    const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+               (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+    const caps = typeof _getWikiCaps === 'function' ? _getWikiCaps() : ((gc && gc.getCaps) ? gc.getCaps() : _WIKI_RENDER_FALLBACK_CAPS);
+    const pokeCap = caps.POKEMON_LEVEL_CAP || _WIKI_RENDER_FALLBACK_CAPS.POKEMON_LEVEL_CAP;
+    const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : _WIKI_RENDER_FALLBACK_CAPS.ISLAND_BONUS_CAP;
+    const islandStep = caps.ISLAND_BONUS_STEP || _WIKI_RENDER_FALLBACK_CAPS.ISLAND_BONUS_STEP;
+    const sortedBerries = (gc && typeof gc.sortBerriesByEnergyAsc === 'function')
+      ? gc.sortBerriesByEnergyAsc(BERRY_VALUES_DATA, b => b.id || b.name)
+      : BERRY_VALUES_DATA;
+    const sortedIngredients = (gc && typeof gc.sortIngredientsByEnergyAsc === 'function')
+      ? gc.sortIngredientsByEnergyAsc(INGREDIENT_VALUES_DATA, ing => ing.name || ing.id)
+      : INGREDIENT_VALUES_DATA;
     currentBerryLevel = Math.min(Math.max(currentBerryLevel || 1, 1), pokeCap);
     currentIslandBonus = Math.min(Math.max(currentIslandBonus || 0, 0), islandCap);
     return `
@@ -37,7 +47,7 @@
           </div>
 
           <div id="values-berry-grid" class="values-compact-grid values-berry-grid">
-            ${BERRY_VALUES_DATA.map(b => {
+            ${sortedBerries.map(b => {
               const energy1x = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, false);
               const energy2x = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, true);
               const bName = isEN ? (window.I18N.getBerryName(b.name) || b.name) : b.name;
@@ -63,7 +73,7 @@
           </div>
 
           <div class="values-compact-grid values-ing-grid">
-            ${INGREDIENT_VALUES_DATA.map(ing => {
+            ${sortedIngredients.map(ing => {
               const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
               const ingIcon = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function' && ing.icon && ing.icon.startsWith('assets/'))
                 ? (window.mapExternalToLocalAsset(ing.icon) || ing.icon)

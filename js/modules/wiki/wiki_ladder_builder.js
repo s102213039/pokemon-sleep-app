@@ -204,7 +204,13 @@
     const usedIds = new Set();
     const orderedTracks = [];
 
+    const ladderSeedGc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+                         (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+    const gcIngs = (ladderSeedGc && Array.isArray(ladderSeedGc.CANONICAL_INGREDIENTS))
+      ? ladderSeedGc.CANONICAL_INGREDIENTS
+      : [];
     const seedList = CANONICAL_INGREDIENT_META.concat(
+      gcIngs.filter(v => v && v.name && !CANONICAL_INGREDIENT_META.some(c => c.name === v.name)),
       ingValuesList.filter(v => v && v.name && !CANONICAL_INGREDIENT_META.some(c => c.name === v.name))
     );
     seedList.forEach(m => {
@@ -398,10 +404,16 @@
     });
 
     // 4. Sort tracks (energy ascending, tail always last) and apply finalOnly + rare-track floor
+    const ladderGc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+                     (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
     orderedTracks.sort((a, b) => {
       if (a.id === 'tail' && b.id !== 'tail') return 1;
       if (b.id === 'tail' && a.id !== 'tail') return -1;
-      return a.energy - b.energy;
+      if (a.energy !== b.energy) return a.energy - b.energy;
+      if (ladderGc && typeof ladderGc.getIngredientSortOrder === 'function') {
+        return ladderGc.getIngredientSortOrder(a.name || a.id) - ladderGc.getIngredientSortOrder(b.name || b.id);
+      }
+      return 0;
     });
 
     return orderedTracks.map(meta => {

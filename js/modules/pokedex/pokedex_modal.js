@@ -1,4 +1,4 @@
-const _FALLBACK_POKEDEX_MODAL_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+const _FALLBACK_POKEDEX_MODAL_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
 
 function _getPokedexModalCaps() {
   const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
@@ -272,7 +272,7 @@ function renderPokedexDetailModalContent() {
 
             <!-- 6. 副技能配置：單行 5 階插槽 + 平鋪副技能選擇盤 (清空全部按鈕) -->
             <div class="box-form-group box-full-width">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div class="pokedex-subskill-header-row" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:nowrap;">
                 <label class="box-form-label">${t('box.modal_poke_subskills', '副技能配置')}</label>
                 <button type="button" id="pokedex-subskill-clear-all-btn" class="box-subskill-clear-btn" onclick="window.PokemonApp.clearAllPokedexSubskills()" title="${t('box.modal_clear_all_subskills', '清空全部副技能')}">${t('box.modal_clear_all_subskills', '清空全部')}</button>
               </div>

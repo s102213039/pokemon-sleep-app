@@ -769,6 +769,13 @@ input[type="number"] {
   padding: 1px 6px;
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  line-height: 1.3;
 }
 
 .box-subskill-clear-btn:hover {

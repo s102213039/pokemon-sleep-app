@@ -97,12 +97,49 @@
     '沉甸甸南瓜': 250, 'Plump Pumpkin': 250, '美味尾巴': 342, 'Slowpoke Tail': 342
   };
 
-  const CANONICAL_INGREDIENTS = [
+  const _FALLBACK_CANONICAL_INGREDIENTS = [
     '特選蘋果', '哞哞鮮奶', '萌綠大豆', '甜甜蜜', '豆製肉',
     '暖暖薑', '好眠番茄', '一口堅果', '特選蛋', '純粹油', '窩心洋芋',
     '火辣香草', '萌綠玉米', '放鬆可可', '醒腦咖啡豆', '嫩亮酪梨',
     '品鮮蘑菇', '粗枝大蔥', '沉甸甸南瓜', '美味尾巴'
   ];
+
+  function _getRecipesGameConfig() {
+    return (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) || (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+  }
+
+  function _getRecipesCanonicalIngredients() {
+    const gc = _getRecipesGameConfig();
+    if (gc && Array.isArray(gc.CANONICAL_INGREDIENTS) && gc.CANONICAL_INGREDIENTS.length > 0) {
+      return gc.CANONICAL_INGREDIENTS.map(item => item.name);
+    }
+    return _FALLBACK_CANONICAL_INGREDIENTS.slice();
+  }
+
+  function _sortRecipesIngredientsByEnergyAsc(list) {
+    if (!Array.isArray(list)) return [];
+    const gc = _getRecipesGameConfig();
+    if (gc && typeof gc.sortIngredientsByEnergyAsc === 'function') {
+      return gc.sortIngredientsByEnergyAsc(list);
+    }
+    const orderMap = Object.create(null);
+    _FALLBACK_CANONICAL_INGREDIENTS.forEach((name, idx) => { orderMap[name] = idx; });
+    return list
+      .map((item, idx) => ({ item, idx }))
+      .sort((a, b) => {
+        const ka = typeof a.item === 'string' ? a.item : (a.item && (a.item.name || a.item.id));
+        const kb = typeof b.item === 'string' ? b.item : (b.item && (b.item.name || b.item.id));
+        const ra = Object.prototype.hasOwnProperty.call(orderMap, ka) ? orderMap[ka] : Number.MAX_SAFE_INTEGER;
+        const rb = Object.prototype.hasOwnProperty.call(orderMap, kb) ? orderMap[kb] : Number.MAX_SAFE_INTEGER;
+        if (ra !== rb) return ra - rb;
+        const ea = Object.prototype.hasOwnProperty.call(INGREDIENTS_ENERGY_MAP, ka) ? INGREDIENTS_ENERGY_MAP[ka] : Number.MAX_SAFE_INTEGER;
+        const eb = Object.prototype.hasOwnProperty.call(INGREDIENTS_ENERGY_MAP, kb) ? INGREDIENTS_ENERGY_MAP[kb] : Number.MAX_SAFE_INTEGER;
+        return ea !== eb ? ea - eb : a.idx - b.idx;
+      })
+      .map(x => x.item);
+  }
+
+  const CANONICAL_INGREDIENTS = _getRecipesCanonicalIngredients();
 
   const FILLER_RECOMMENDED_ORDER = [
     { name: '美味尾巴', enName: 'Slowpoke Tail', energy: 342 },
@@ -267,9 +304,11 @@
     if (typeof fillerMapOrEnergy === 'number') {
       fillerBaseEnergy = Math.max(0, fillerMapOrEnergy);
     } else if (fillerMapOrEnergy && typeof fillerMapOrEnergy === 'object') {
+      const gc = _getRecipesGameConfig();
       for (const [ingName, count] of Object.entries(fillerMapOrEnergy)) {
         const c = Math.max(0, Number(count) || 0);
-        fillerBaseEnergy += c * (INGREDIENTS_ENERGY_MAP[ingName] || 100);
+        const unitE = (gc && typeof gc.getIngredientBaseEnergy === 'function' ? gc.getIngredientBaseEnergy(ingName) : null) || INGREDIENTS_ENERGY_MAP[ingName] || 100;
+        fillerBaseEnergy += c * unitE;
       }
     }
     const subtotal = recipeBaseWithLv + fillerBaseEnergy;
@@ -277,15 +316,11 @@
     return Math.round(subtotal * islandMult * eventMult);
   }
 
-  const _RECIPES_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
-
-  function _getRecipesGameConfig() {
-    return (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) || (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
-  }
+  const _RECIPES_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
 
   function _getRecipesGameCaps() {
     const gc = _getRecipesGameConfig();
-    return (gc && typeof gc.getCaps === 'function') ? gc.getCaps() : _RECIPES_FALLBACK_CAPS;
+    return (gc && typeof gc.getCaps === 'function' ? gc.getCaps() : null) || _RECIPES_FALLBACK_CAPS;
   }
 
   const LEVEL_BONUS_TABLE = {
@@ -316,7 +351,7 @@
       minBonus         = Number(saved.minBonus) || 0;
       minPot           = Number(saved.minPot)   || 0;
       recipeLevel      = Math.min(Math.max(Number(saved.recipeLevel) || 1, 1), caps.RECIPE_LEVEL_CAP || 70);
-      islandBonus      = Math.min(Math.max(Number(saved.islandBonus) || 0, 0), caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85);
+      islandBonus      = Math.min(Math.max(Number(saved.islandBonus) || 0, 0), caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : _RECIPES_FALLBACK_CAPS.ISLAND_BONUS_CAP);
       eventBonus       = saved.eventBonus !== undefined ? Math.min(1.5, Math.max(1.0, Number(saved.eventBonus))) : 1.0;
       potExpansion     = Number(saved.potExpansion) || 0;
       showTasty        = Boolean(saved.showTasty);
@@ -386,7 +421,7 @@
 
   function syncIslandUI() {
     if (!islandSlider || !islandBadge) return;
-    const caps = _getRecipesGameCaps(), islandCap = (caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85);
+    const caps = _getRecipesGameCaps(), islandCap = (caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : _RECIPES_FALLBACK_CAPS.ISLAND_BONUS_CAP);
     islandSlider.min = '0'; islandSlider.max = String(islandCap); islandSlider.step = String(caps.ISLAND_BONUS_STEP || 5);
     const maxLabel = document.getElementById('island-bonus-max-label');
     if (maxLabel) maxLabel.textContent = `${islandCap}%`;
@@ -528,7 +563,7 @@
       syncIslandUI();
       islandSlider.addEventListener('input', () => {
         const caps = _getRecipesGameCaps(), parsed = parseInt(islandSlider.value, 10);
-        islandBonus = Math.min(Math.max(isNaN(parsed) ? 0 : parsed, 0), caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85);
+        islandBonus = Math.min(Math.max(isNaN(parsed) ? 0 : parsed, 0), caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : _RECIPES_FALLBACK_CAPS.ISLAND_BONUS_CAP);
         syncIslandUI(); savePrefs(); render();
       });
     }
@@ -807,7 +842,7 @@
     const fillDemoBtn = document.getElementById('pantry-fill-demo-btn');
     if (fillDemoBtn) {
       fillDemoBtn.addEventListener('click', () => {
-        CANONICAL_INGREDIENTS.forEach(ing => { pantryInventory[ing] = (Number(pantryInventory[ing]) || 0) + 10; });
+        _getRecipesCanonicalIngredients().forEach(ing => { pantryInventory[ing] = (Number(pantryInventory[ing]) || 0) + 10; });
         savePantry();
         syncPantryUI();
         render();
@@ -829,7 +864,7 @@
       });
     });
 
-    grid.innerHTML = CANONICAL_INGREDIENTS.map(name => {
+    grid.innerHTML = _getRecipesCanonicalIngredients().map(name => {
       const count = Number(pantryInventory[name]) || 0;
       const icon = ingIconMap[name] || '';
       const displayName = window.I18N ? window.I18N.getIngredientName(name) : name;
@@ -1431,7 +1466,7 @@
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const categories = ['ALL', '咖哩', '沙拉', '甜點'];
-    const catLabels  = { ALL: isEN ? 'All' : '全部', '咖哩': isEN ? 'Curries' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salads' : '沙拉', '甜點': isEN ? 'Desserts' : (isCN ? '甜点' : '甜點') };
+    const catLabels  = { ALL: isEN ? 'All' : '全部', '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
     const catCounts  = { '咖哩': 0, '沙拉': 0, '甜點': 0 };
     for (let i = 0; i < allRecipes.length; i++) {
       const c = allRecipes[i] && allRecipes[i].category;
@@ -1468,7 +1503,7 @@
       });
     });
 
-    const ingNames = Array.from(ingMap.keys()).sort();
+    const ingNames = _sortRecipesIngredientsByEnergyAsc(Array.from(ingMap.keys()));
     const excludedPickerContainer = document.getElementById('excluded-ingredient-picker-tags');
 
     const renderPickerButtons = (container, set, activeCls) => {

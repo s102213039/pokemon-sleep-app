@@ -92,7 +92,7 @@
       ` : ''}
 
       <!-- 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側滑動) -->
-      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialLadderCollapsed}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Filters' : '天梯篩選器'}">
+      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialLadderCollapsed}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Filter' : (isCN ? '筛选器' : '篩選器')}">
         ${!isMobileH5 ? `
           <!-- 側邊欄垂直中央書籤標籤 (Desktop: 抽屜把手，展開時自動隱藏，收合時展示) -->
           <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleLadderSidebar(true)" title="${isEN ? 'Expand Filter' : '展開天梯篩選側邊欄'}" aria-label="${isEN ? 'Expand Filter' : '展開天梯篩選側邊欄'}">
@@ -109,7 +109,7 @@
                 <line x1="17" y1="16" x2="23" y2="16"></line>
               </svg>
             </span>
-            <span class="bookmark-text">${isEN ? 'Filter' : '篩選'}</span>
+            <span class="bookmark-text">${isEN ? 'Filter' : (isCN ? '筛选' : '篩選')}</span>
             <span class="bookmark-arrow">◀</span>
             <span id="ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
           </button>
@@ -118,10 +118,10 @@
         <div class="sidebar-header">
           <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.toggleLadderSidebar(false)" title="${isEN ? 'Collapse Filter' : '收合側邊欄'}" aria-label="${isEN ? 'Collapse Filter' : '收合側邊欄'}">◀</button>
           <div class="sidebar-title-group" style="display:flex;align-items:center;gap:6px;">
-            <span class="sidebar-title">${isEN ? 'Filters' : '天梯篩選器'}</span>
+            <span class="sidebar-title">${isEN ? 'Filter' : (isCN ? '筛选器' : '篩選器')}</span>
             <button type="button" class="pokedex-formula-help-btn ladder-formula-help-btn" onclick="window.WikiDB.toggleLadderEnergyHelp(event)" title="${isEN ? 'Baseline: Lv.60 Ideal Energy (0.45x)' : '基準：Lv.60 滿活力 (0.45x)'}" aria-label="Ladder Energy Info">?</button>
           </div>
-          <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset Filters' : '重設所有條件'}">${isEN ? 'Reset' : '全部重設'}</button>
+          <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset Filters' : '重設所有條件'}">${isEN ? 'Reset' : (isCN ? '重设' : '重設')}</button>
 
           <!-- 天梯基準滿活力浮窗 (Toast-style Popover) -->
           <div id="ladder-energy-help-popover" class="ladder-energy-help-popover" style="display:none;" role="tooltip">
@@ -244,8 +244,8 @@
               <button type="button" class="tag-btn ${isLadderIngS ? 'active' : ''}" id="ladder-ing-s-toggle" data-subskill-boost="ING_S" onclick="window.WikiDB.toggleLadderSubskill('ING_S')">${isEN ? 'Ing Finder S' : '食材機率S'}</button>
               <button type="button" class="tag-btn ${isLadderSpeedM ? 'active' : ''}" id="ladder-speed-m-toggle" data-subskill-boost="SPEED_M" onclick="window.WikiDB.toggleLadderSubskill('SPEED_M')">${isEN ? 'Help Speed M' : '幫忙速度M'}</button>
               <button type="button" class="tag-btn ${isLadderSpeedS ? 'active' : ''}" id="ladder-speed-s-toggle" data-subskill-boost="SPEED_S" onclick="window.WikiDB.toggleLadderSubskill('SPEED_S')">${isEN ? 'Help Speed S' : '幫忙速度S'}</button>
-              <button type="button" class="tag-btn ${isLadderSkillM ? 'active' : ''}" id="ladder-skill-m-toggle" data-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleLadderSubskill('SKILL_M')">${isEN ? 'Skill Trigger M' : '技能機率M'}</button>
-              <button type="button" class="tag-btn ${isLadderSkillS ? 'active' : ''}" id="ladder-skill-s-toggle" data-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleLadderSubskill('SKILL_S')">${isEN ? 'Skill Trigger S' : '技能機率S'}</button>
+              <button type="button" class="tag-btn ${isLadderSkillM ? 'active' : ''}" id="ladder-skill-m-toggle" data-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleLadderSubskill('SKILL_M')">${isEN ? 'Trigger M' : '技能機率M'}</button>
+              <button type="button" class="tag-btn ${isLadderSkillS ? 'active' : ''}" id="ladder-skill-s-toggle" data-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleLadderSubskill('SKILL_S')">${isEN ? 'Trigger S' : '技能機率S'}</button>
             </div>
           </div>
 
@@ -256,8 +256,8 @@
             </div>
             <div class="sidebar-skills-list sidebar-2col-tags">
               <button type="button" class="tag-btn ${ladderNatureIng ? 'active' : ''}" data-nature-filter="ING" onclick="window.WikiDB.toggleLadderNatureFilter('ING')">${isEN ? 'Ing Rate ▲' : '食材機率▲'}</button>
-              <button type="button" class="tag-btn ${ladderNatureSpeed ? 'active' : ''}" data-nature-filter="SPEED" onclick="window.WikiDB.toggleLadderNatureFilter('SPEED')">${isEN ? 'Help Speed ▲' : '幫忙速度▲'}</button>
-              <button type="button" class="tag-btn ${ladderNatureSkill ? 'active' : ''}" data-nature-filter="SKILL" onclick="window.WikiDB.toggleLadderNatureFilter('SKILL')">${isEN ? 'Skill Chance ▲' : '技能機率▲'}</button>
+              <button type="button" class="tag-btn ${ladderNatureSpeed ? 'active' : ''}" data-nature-filter="SPEED" onclick="window.WikiDB.toggleLadderNatureFilter('SPEED')">${isEN ? 'Speed ▲' : '幫忙速度▲'}</button>
+              <button type="button" class="tag-btn ${ladderNatureSkill ? 'active' : ''}" data-nature-filter="SKILL" onclick="window.WikiDB.toggleLadderNatureFilter('SKILL')">${isEN ? 'Skill ▲' : '技能機率▲'}</button>
             </div>
           </div>
         </div>

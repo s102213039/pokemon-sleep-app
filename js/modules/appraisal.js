@@ -420,7 +420,7 @@
   }
 
 
-  const _FALLBACK_LAB_ENGINE_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+  const _FALLBACK_LAB_ENGINE_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
 
   function _getLabEngineCaps() {
     const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
@@ -2867,7 +2867,12 @@ const TARGET_TOP_RECIPES = [
   }
 
   /* ─── 獨立模擬評測實驗室 (Appraisal Lab & Box Linkage) ───────────────── */
-  const BERRY_VALUES_DATA = [
+  function _getLabGameConfig() {
+    return (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+           (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+  }
+
+  const _FALLBACK_BERRY_VALUES_DATA = [
     { id: 'pamtre', name: '椰木果', type: '飛行', energy: 24, icon: 'https://www.serebii.net/pokemonsleep/berries/pamtreberry.png' },
     { id: 'lum',    name: '木子果', type: '蟲',   energy: 24, icon: 'https://www.serebii.net/pokemonsleep/berries/lumberry.png' },
     { id: 'grepa',  name: '異奇果', type: '電',   energy: 25, icon: 'https://www.serebii.net/pokemonsleep/berries/grepaberry.png' },
@@ -2887,6 +2892,103 @@ const TARGET_TOP_RECIPES = [
     { id: 'belue',  name: '靛莓果', type: '鋼',   energy: 33, icon: 'https://www.serebii.net/pokemonsleep/berries/belueberry.png' },
     { id: 'yache',  name: '巧可果', type: '龍',   energy: 35, icon: 'https://www.serebii.net/pokemonsleep/berries/yacheberry.png' }
   ];
+
+  const _LAB_FALLBACK_BERRY_ID_ALIASES = {
+    '椰木果': 'pamtre', '藍異果': 'pamtre', 'pamtre': 'pamtre', '飛行': 'pamtre', '飛': 'pamtre',
+    '木子果': 'lum', '芭亞果': 'lum', 'lum': 'lum', '蟲': 'lum',
+    '異奇果': 'grepa', 'grepa': 'grepa', '電': 'grepa',
+    '檬果': 'bluk', 'bluk': 'bluk', '幽靈': 'bluk', '鬼': 'bluk',
+    '桃桃果': 'pecha', 'pecha': 'pecha', '妖精': 'pecha', '妖': 'pecha',
+    '芒念果': 'mago', '芒芒果': 'mago', 'mago': 'mago', '超能力': 'mago', '超能': 'mago', '超': 'mago',
+    '蘋野果': 'leppa', 'leppa': 'leppa', '火': 'leppa',
+    '櫻子果': 'cheri', 'cheri': 'cheri', '格鬥': 'cheri', '鬥': 'cheri',
+    '柿仔果': 'persim', 'persim': 'persim', '一般': 'persim',
+    '勿花果': 'figy', 'figy': 'figy', '地面': 'figy', '地': 'figy',
+    '文柚果': 'sitrus', 'sitrus': 'sitrus', '岩石': 'sitrus', '岩': 'sitrus',
+    '榴石果': 'durin', '墨莓果': 'durin', 'durin': 'durin', '草': 'durin',
+    '橙橙果': 'oran', 'oran': 'oran', '水': 'oran',
+    '芭拉果': 'wiki', '威嘻果': 'wiki', 'wiki': 'wiki', '惡': 'wiki',
+    '零餘果': 'chesto', 'chesto': 'chesto', '毒': 'chesto',
+    '生薑果': 'rawst', '羅子果': 'rawst', 'rawst': 'rawst', '冰': 'rawst',
+    '靛莓果': 'belue', '刺角果': 'belue', 'belue': 'belue', '鋼': 'belue',
+    '巧可果': 'yache', '亞雪果': 'yache', 'yache': 'yache', '龍': 'yache'
+  };
+
+  function _resolveLabBerryCanonicalId(nameOrType) {
+    if (!nameOrType) return null;
+    const gc = _getLabGameConfig();
+    if (gc && typeof gc.resolveBerryCanonicalId === 'function') {
+      const id = gc.resolveBerryCanonicalId(nameOrType);
+      if (id) return id;
+    }
+    const k = String(nameOrType).trim();
+    return _LAB_FALLBACK_BERRY_ID_ALIASES[k] || _LAB_FALLBACK_BERRY_ID_ALIASES[k.toLowerCase()] || null;
+  }
+
+  function _sortLabBerriesByEnergyAsc(list) {
+    if (!Array.isArray(list)) return [];
+    const gc = _getLabGameConfig();
+    if (gc && typeof gc.sortBerriesByEnergyAsc === 'function') {
+      return gc.sortBerriesByEnergyAsc(list, (b) => (typeof b === 'string' ? b : (b.id || b.name || b.type)));
+    }
+    const orderMap = Object.create(null);
+    _FALLBACK_BERRY_VALUES_DATA.forEach((b, idx) => { orderMap[b.id] = idx; });
+    return list
+      .map((item, idx) => ({ item, idx }))
+      .sort((a, b) => {
+        const ida = _resolveLabBerryCanonicalId(typeof a.item === 'string' ? a.item : (a.item && (a.item.id || a.item.name || a.item.type)));
+        const idb = _resolveLabBerryCanonicalId(typeof b.item === 'string' ? b.item : (b.item && (b.item.id || b.item.name || b.item.type)));
+        const ra = ida && Object.prototype.hasOwnProperty.call(orderMap, ida) ? orderMap[ida] : Number.MAX_SAFE_INTEGER;
+        const rb = idb && Object.prototype.hasOwnProperty.call(orderMap, idb) ? orderMap[idb] : Number.MAX_SAFE_INTEGER;
+        return ra !== rb ? ra - rb : a.idx - b.idx;
+      })
+      .map((x) => x.item);
+  }
+
+  function _getLabBerryValuesData() {
+    const gc = _getLabGameConfig();
+    if (gc && Array.isArray(gc.CANONICAL_BERRIES) && gc.CANONICAL_BERRIES.length > 0) {
+      const fallbackById = Object.create(null);
+      _FALLBACK_BERRY_VALUES_DATA.forEach((b) => { fallbackById[b.id] = b; });
+      return _sortLabBerriesByEnergyAsc(gc.CANONICAL_BERRIES.map((b) => {
+        const fb = fallbackById[b.id];
+        return {
+          id: b.id,
+          name: b.name,
+          type: (fb && fb.type) || b.type,
+          energy: b.energy,
+          icon: b.icon || (fb && fb.icon) || ''
+        };
+      }));
+    }
+    return _FALLBACK_BERRY_VALUES_DATA.slice();
+  }
+
+  const BERRY_VALUES_DATA = _getLabBerryValuesData();
+
+  function _findLabBerryData(nameOrType) {
+    if (!nameOrType) return null;
+    const list = _getLabBerryValuesData();
+    const direct = list.find((b) => b.name === nameOrType || b.id === nameOrType);
+    if (direct) return direct;
+    const cid = _resolveLabBerryCanonicalId(nameOrType);
+    if (!cid) return null;
+    return list.find((b) => b.id === cid) || null;
+  }
+
+  function _isLabFavoredBerryOrType(berryName, berryType, favBerries, favTypes) {
+    if (Array.isArray(favBerries)) {
+      if (berryName && favBerries.includes(berryName)) return true;
+      const bCid = _resolveLabBerryCanonicalId(berryName);
+      if (bCid && favBerries.some(fb => _resolveLabBerryCanonicalId(fb) === bCid)) return true;
+    }
+    if (Array.isArray(favTypes)) {
+      if (berryType && favTypes.includes(berryType)) return true;
+      const tCid = _resolveLabBerryCanonicalId(berryType);
+      if (tCid && favTypes.some(ft => _resolveLabBerryCanonicalId(ft) === tCid)) return true;
+    }
+    return false;
+  }
 
   const INGREDIENTS_ENERGY_MAP = {
     '特選蘋果': 90, 'Fancy Apple': 90,
@@ -3047,11 +3149,12 @@ const TARGET_TOP_RECIPES = [
     const island = LAB_ISLANDS.find(i => i.id === islandId) || LAB_ISLANDS[0];
     if (island.id === 'greengrass' && Array.isArray(labState.greengrassBerries) && labState.greengrassBerries.length === 3) {
       return labState.greengrassBerries.map(bName => {
-        const found = BERRY_VALUES_DATA.find(b => b.name === bName);
-        return found ? found.type : '';
+        const found = _findLabBerryData(bName);
+        if (!found || !found.type) return '';
+        return found.type === '超能' ? '超能力' : found.type;
       }).filter(Boolean);
     }
-    return island.types || [];
+    return (island.types || []).map(t => (t === '超能' ? '超能力' : t));
   }
 
   try {
@@ -3067,7 +3170,17 @@ const TARGET_TOP_RECIPES = [
       const sTargetRecipe = localStorage.getItem('pksleep_lab_target_recipe');
       if (sTargetRecipe) labState.targetRecipeName = sTargetRecipe;
       const sGgBerries = JSON.parse(localStorage.getItem('pksleep_lab_greengrass_berries') || 'null');
-      if (Array.isArray(sGgBerries) && sGgBerries.length === 3) labState.greengrassBerries = sGgBerries;
+      if (Array.isArray(sGgBerries) && sGgBerries.length === 3) {
+        const defaultGg = ['桃桃果', '橙橙果', '櫻子果', '椰木果', '木子果', '異奇果'];
+        const canonicalized = sGgBerries.map(b => (_findLabBerryData(b) || {}).name || null);
+        const usedSet = new Set(canonicalized.filter(Boolean));
+        labState.greengrassBerries = canonicalized.map((name, idx) => {
+          if (name) return name;
+          const fb = defaultGg.find(cand => !usedSet.has(cand)) || defaultGg[idx % defaultGg.length];
+          usedSet.add(fb);
+          return fb;
+        });
+      }
       const sCompareSlots = JSON.parse(localStorage.getItem('pksleep_lab_compare_slots') || 'null');
       if (Array.isArray(sCompareSlots) && sCompareSlots.length > 0) {
         labState.compareSlots = [sCompareSlots[0] || null, sCompareSlots[1] || null, sCompareSlots[2] || null];
@@ -3763,7 +3876,7 @@ const TARGET_TOP_RECIPES = [
       const berry = (typeof window.getPokemonBerry === 'function') ? window.getPokemonBerry(base) : (base.berry || {});
       const berryName = berry.name || '';
       const berryType = berry.type || base.type || '';
-      const isFavored = favBerries.includes(berryName) || favTypes.includes(berryType);
+      const isFavored = _isLabFavoredBerryOrType(berryName, berryType, favBerries, favTypes);
 
       const baseFreq = base.base_frequency || base.frequency || 3600;
       let freq = baseFreq * (1 - (level - 1) * 0.002);
@@ -3796,7 +3909,7 @@ const TARGET_TOP_RECIPES = [
         berryCount += 1;
       }
 
-      const bValueObj = (typeof BERRY_VALUES_DATA !== 'undefined' ? BERRY_VALUES_DATA : []).find(b => b.name === berryName);
+      const bValueObj = _findLabBerryData(berryName);
       const baseBerryEnergy = bValueObj ? bValueObj.energy : 28;
       const singleBerryEnergy = Math.max(1, baseBerryEnergy + level - 1);
       const favoriteMultiplier = isFavored ? 2.0 : 1.0;
@@ -3998,7 +4111,7 @@ const TARGET_TOP_RECIPES = [
       const berry = (typeof window.getPokemonBerry === 'function') ? window.getPokemonBerry(base) : (base.berry || {});
       const berryName = berry.name || '';
       const berryType = berry.type || base.type || '';
-      const isFavored = favBerries.includes(berryName) || favTypes.includes(berryType);
+      const isFavored = _isLabFavoredBerryOrType(berryName, berryType, favBerries, favTypes);
 
       const subs = Array.isArray(item.subskills) ? item.subskills : [];
       const isMint = !!(item.cleanseMint || item.mint);
@@ -4380,14 +4493,16 @@ const TARGET_TOP_RECIPES = [
     autoOptimizeTeam(false);
   }
 
-  const ALL_BERRY_NAMES = [
-    '桃桃果', '橙橙果', '櫻子果', '零餘果', '木子果', '蘋野果',
-    '藍橘果', '墨莓果', '文柚果', '利歐果', '金枕果', '勿忘果',
-    '柿仔果', '椰木果', '異奇果', '番荔果', '芭亞果', '芒芒果'
-  ];
+  function _getLabAllBerryNames() {
+    const gc = _getLabGameConfig();
+    if (gc && Array.isArray(gc.CANONICAL_BERRIES) && gc.CANONICAL_BERRIES.length > 0) {
+      return gc.CANONICAL_BERRIES.map(b => b.name);
+    }
+    return _getLabBerryValuesData().map(b => b.name);
+  }
 
   function rerollGreengrassBerries(autoBuild = false) {
-    const pool = ALL_BERRY_NAMES.slice();
+    const pool = _getLabAllBerryNames();
     for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       const temp = pool[i];
@@ -4581,12 +4696,20 @@ const TARGET_TOP_RECIPES = [
   /* ─── 自訂隊員/選手挑選彈窗 (Custom Pokémon Picker Modal) ────────────── */
   let activePickerState = null;
 
-  const CANONICAL_INGREDIENTS = [
+  const _FALLBACK_LAB_CANONICAL_INGREDIENTS = [
     '特選蘋果', '哞哞鮮奶', '萌綠大豆', '甜甜蜜', '豆製肉',
     '暖暖薑', '好眠番茄', '一口堅果', '特選蛋', '純粹油', '窩心洋芋',
     '火辣香草', '萌綠玉米', '放鬆可可', '醒腦咖啡豆', '嫩亮酪梨',
     '品鮮蘑菇', '粗枝大蔥', '沉甸甸南瓜', '美味尾巴'
   ];
+
+  function _getLabCanonicalIngredients() {
+    const gc = _getLabGameConfig();
+    if (gc && Array.isArray(gc.CANONICAL_INGREDIENTS) && gc.CANONICAL_INGREDIENTS.length > 0) {
+      return gc.CANONICAL_INGREDIENTS.map(item => item.name);
+    }
+    return _FALLBACK_LAB_CANONICAL_INGREDIENTS.slice();
+  }
 
   function openLabPicker(opts) {
     activePickerState = opts || {};
@@ -4680,7 +4803,7 @@ const TARGET_TOP_RECIPES = [
 
       const recipeIngChipsHtml = [
         `<button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === 'all' ? 'active' : ''}" data-recipe-ing="all" title="${isEN ? 'All Ingredients' : '全部食材'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
-        ...CANONICAL_INGREDIENTS.map(iName => {
+        ..._getLabCanonicalIngredients().map(iName => {
           const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
           const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
           return `
@@ -4797,7 +4920,7 @@ const TARGET_TOP_RECIPES = [
         ? (isEN ? 'Select Pokémon for Growth & Seeds Calculation' : '挑選培育精算對象')
         : (isEN ? `Select Pokémon for Player ${compareLetter}` : `挑選選手 ${compareLetter}`));
 
-    const berriesList = (typeof BERRY_VALUES_DATA !== 'undefined' ? BERRY_VALUES_DATA : []);
+    const berriesList = _getLabBerryValuesData();
 
     let currentFilter = 'all';
     let currentBerryFilter = 'all';
@@ -4820,7 +4943,7 @@ const TARGET_TOP_RECIPES = [
         const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : {});
         const bName = berry.name || '';
         const bType = berry.type || (base ? base.type : '') || '';
-        const isFav = favBerries.includes(bName) || favTypes.includes(bType);
+        const isFav = _isLabFavoredBerryOrType(bName, bType, favBerries, favTypes);
 
         const spec = (base && base.specialty) || '';
         if (currentFilter === 'fav' && !isFav) return false;
@@ -4828,7 +4951,15 @@ const TARGET_TOP_RECIPES = [
         if (currentFilter === 'ingredient' && !spec.includes('食材') && spec !== 'Ingredients') return false;
         if (currentFilter === 'skill' && !spec.includes('技能') && spec !== 'Skills') return false;
 
-        if (currentBerryFilter !== 'all' && bName !== currentBerryFilter) return false;
+        if (currentBerryFilter !== 'all') {
+          const bCid = _resolveLabBerryCanonicalId(bName);
+          const fCid = _resolveLabBerryCanonicalId(currentBerryFilter);
+          if (bCid && fCid) {
+            if (bCid !== fCid) return false;
+          } else if (bName !== currentBerryFilter) {
+            return false;
+          }
+        }
 
         if (currentIngFilter !== 'all') {
           const pLv = item.level || 1;
@@ -4948,7 +5079,7 @@ const TARGET_TOP_RECIPES = [
 
     const ingChipsHtml = [
       `<button type="button" class="lab-picker-ing-chip-btn ${currentIngFilter === 'all' ? 'active' : ''}" data-ing="all" title="${isEN ? 'All Ingredients' : '全部食材'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
-      ...CANONICAL_INGREDIENTS.map(iName => {
+      ..._getLabCanonicalIngredients().map(iName => {
         const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
         const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
         return `
@@ -5166,14 +5297,16 @@ const TARGET_TOP_RECIPES = [
   }
 
   function renderGreengrassBerrySelect(idx, currentBerryName, isEN) {
-    const optionsHtml = BERRY_VALUES_DATA.map(b => {
+    const berriesList = _getLabBerryValuesData();
+    const currentCid = _resolveLabBerryCanonicalId(currentBerryName);
+    const optionsHtml = berriesList.map(b => {
       const bDisp = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b.name) : b.name) : b.name;
       const tDisp = window.I18N ? window.I18N.getTypeName(b.type) : b.type;
-      const isSel = b.name === currentBerryName ? 'selected' : '';
+      const isSel = (currentCid && b.id === currentCid) || b.name === currentBerryName ? 'selected' : '';
       return `<option value="${escapeHtml(b.name)}" ${isSel}>${escapeHtml(bDisp)} (${tDisp})</option>`;
     }).join('');
 
-    const bObj = BERRY_VALUES_DATA.find(b => b.name === currentBerryName) || BERRY_VALUES_DATA[0];
+    const bObj = _findLabBerryData(currentBerryName) || berriesList[0];
 
     return `
       <div class="lab-greengrass-berry-item">
@@ -5211,8 +5344,9 @@ const TARGET_TOP_RECIPES = [
     }).join('');
 
     const favoredBerriesHtml = favBerries.map(bName => {
-      const bObj = BERRY_VALUES_DATA.find(b => b.name === bName) || {};
-      const bDisplayName = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(bName) : bName) : bName;
+      const bObj = _findLabBerryData(bName) || {};
+      const canonicalName = bObj.name || bName;
+      const bDisplayName = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(canonicalName) : canonicalName) : canonicalName;
       return `
         <span class="lab-favored-berry-icon-wrap" title="${escapeHtml(bDisplayName)}">
           ${bObj.icon ? `<img src="${bObj.icon}" class="lab-favored-berry-img" alt="${escapeHtml(bDisplayName)}">` : ''}
@@ -5267,7 +5401,7 @@ const TARGET_TOP_RECIPES = [
     const potFeasibilityBadge = targetPotReq > 0
       ? (isPotFeasible
           ? `<span class="lab-pot-feasibility feasible">[OK] ${isEN ? 'Capacity OK' : '容量充裕'} (${targetPotReq}/${effectivePotSize})</span>`
-          : `<span class="lab-pot-feasibility deficit">[!] ${isEN ? 'Insufficient Pot' : '鍋容量不足'} (${targetPotReq}/${effectivePotSize})</span>`)
+          : `<span class="lab-pot-feasibility deficit">[!] ${isEN ? 'Pot Short' : '鍋容量不足'} (${targetPotReq}/${effectivePotSize})</span>`)
       : '';
 
     const potControlHtml = `
@@ -5283,7 +5417,7 @@ const TARGET_TOP_RECIPES = [
             ${isEN ? 'Sunday 2x' : '週日2倍'}
           </button>
           <button type="button" class="lab-pot-toggle-btn ${labState.goodCampTicket ? 'active' : ''}" onclick="window.AppraisalLab.toggleGoodCampTicket()" title="${isEN ? 'Good Camp Ticket: +50% Pot Capacity' : '好露營券：料理鍋容量 +50%'}">
-            ${isEN ? 'Good Camp (+50%)' : '好露營券(+50%)'}
+            ${isEN ? 'Camp +50%' : '好露營券(+50%)'}
           </button>
         </div>
         <div class="lab-effective-pot-wrap">
@@ -5319,9 +5453,9 @@ const TARGET_TOP_RECIPES = [
           <div class="lab-team-config-group">
             <span class="lab-team-config-label">${isEN ? 'Cooking Goal:' : '料理種類:'}</span>
             <div class="lab-team-pills">
-              <button type="button" class="lab-team-pill ${labState.cookingType === 'curry' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('curry')">${isEN ? 'Curry/Stew' : '咖哩/濃湯'}</button>
+              <button type="button" class="lab-team-pill ${labState.cookingType === 'curry' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('curry')">${isEN ? 'Curry' : '咖哩/濃湯'}</button>
               <button type="button" class="lab-team-pill ${labState.cookingType === 'salad' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('salad')">${isEN ? 'Salad' : '沙拉'}</button>
-              <button type="button" class="lab-team-pill ${labState.cookingType === 'dessert' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('dessert')">${isEN ? 'Dessert/Drinks' : '點心/飲料'}</button>
+              <button type="button" class="lab-team-pill ${labState.cookingType === 'dessert' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('dessert')">${isEN ? 'Dessert' : '點心/飲料'}</button>
             </div>
           </div>
         `}
@@ -5707,7 +5841,7 @@ const TARGET_TOP_RECIPES = [
     `;
   }
 
-  const _FALLBACK_LAB_COMPARE_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+  const _FALLBACK_LAB_COMPARE_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
 
   function _getCompareCaps() {
     const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
@@ -5824,7 +5958,7 @@ const TARGET_TOP_RECIPES = [
     let berryCount = (base && base.specialty && (base.specialty.includes('樹果') || base.specialty === 'Berries')) ? 2 : 1;
     if (hasSub('樹果數量S')) berryCount += 1;
 
-    const bValueObj = (typeof BERRY_VALUES_DATA !== 'undefined' ? BERRY_VALUES_DATA : []).find(b => b.name === (berry.name || ''));
+    const bValueObj = _findLabBerryData(berry.name || '');
     const baseBerryEnergy = bValueObj ? bValueObj.energy : 28;
     const singleBerryPower = Math.max(1, baseBerryEnergy + level - 1);
     const dailyBerryHelps = dailyHelps * (1 - effectiveIngRate);
@@ -6405,7 +6539,7 @@ const TARGET_TOP_RECIPES = [
     `;
   }
 
-  const _FALLBACK_LAB_GROWTH_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+  const _FALLBACK_LAB_GROWTH_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
 
   function _getGrowthCaps() {
     const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
@@ -7076,10 +7210,10 @@ const TARGET_TOP_RECIPES = [
             <span class="lab-subtab-title">${isEN ? 'Team Builder' : '幫手組隊'}</span>
           </button>
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'compare' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('compare')">
-            <span class="lab-subtab-title">${isEN ? 'Pokémon Comparison' : '寶可夢對比'}</span>
+            <span class="lab-subtab-title">${isEN ? 'Compare' : '寶可夢對比'}</span>
           </button>
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'growth' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('growth')">
-            <span class="lab-subtab-title">${isEN ? 'Growth & Seeds' : '培育精算'}</span>
+            <span class="lab-subtab-title">${isEN ? 'Growth' : '培育精算'}</span>
           </button>
         </div>
         ` : ''}

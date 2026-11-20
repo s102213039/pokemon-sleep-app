@@ -136,7 +136,7 @@ check('GAME_CONFIG canonical defaults and extrapolation math', () => {
   assert.strictEqual(GAME_CONFIG.getPokemonLevelCap(), 70);
   assert.strictEqual(GAME_CONFIG.getRecipeLevelCap(), 70);
   assert.strictEqual(GAME_CONFIG.getTheoreticalMaxLevel(), 100);
-  assert.strictEqual(GAME_CONFIG.getIslandBonusCap(), 85);
+  assert.strictEqual(GAME_CONFIG.getIslandBonusCap(), 95);
   assert.strictEqual(GAME_CONFIG.getIslandBonusStep(), 5);
   assert.strictEqual(GAME_CONFIG.getRecipeLevelBonus(70), 258);
   assert.strictEqual(GAME_CONFIG.getRecipeMaxBonusPct(), 258);
@@ -243,6 +243,7 @@ await checkAsync('recipes.js dynamically adopts future RECIPE_LEVEL_CAP & ISLAND
       readyState: 'complete',
       addEventListener: () => {},
       getElementById: (id) => els[id] || null,
+      querySelector: () => null,
       querySelectorAll: () => []
     },
     localStorage: {
@@ -280,7 +281,7 @@ await checkAsync('recipes.js dynamically adopts future RECIPE_LEVEL_CAP & ISLAND
   assert.strictEqual(levelSlider.value, 75, 'Loaded Lv.75 must not be clamped to 70');
   assert.strictEqual(levelMaxLabel.textContent, 'Lv.75');
   assert.strictEqual(islandSlider.max, '100', 'Synced islandSlider.max must be 100');
-  assert.strictEqual(islandSlider.value, 100, 'Loaded 100% islandBonus must not be clamped to 85');
+  assert.strictEqual(islandSlider.value, 100, 'Loaded 100% islandBonus must not be clamped to 95');
   assert.strictEqual(islandMaxLabel.textContent, '100%');
 });
 
@@ -324,7 +325,7 @@ check('wiki.js dynamically scales Berry sliders, Sleep EXP options, and level cl
   WikiDB.updateBerryLevel(75);
   assert.strictEqual(berryDisplay.textContent, 'Lv. 75', 'Berry level 75 must not be clamped to 70');
   WikiDB.updateBerryIsland(100);
-  assert.strictEqual(islandDisplay.textContent, '+100%', 'Berry island bonus 100% must not be clamped to 85%');
+  assert.strictEqual(islandDisplay.textContent, '+100%', 'Berry island bonus 100% must not be clamped to 95%');
 
   WikiDB.renderWikiLayout(wikiPanel);
   assert(wikiPanel.innerHTML.includes('id="berry-level-slider" min="1" max="75"'), 'Rendered berry slider max must be 75');
@@ -443,6 +444,147 @@ check('appraisal.js & box.js adapt dynamic cap benchmarks, growth milestones, co
   boxSandbox.window.PokemonBoxApp.setAllPokemons(dataJson);
   const parsed80 = boxSandbox.window.PokemonBoxApp.parsePokemonFromOcr('Lv. 80 皮卡丘\n持有上限 17個', null, dataJson);
   assert.strictEqual(parsed80.level, 80, 'OCR parser must accept up to POKEMON_LEVEL_CAP + 5 (Lv.80 when cap=75)');
+});
+
+check('All @GAME_CONFIG_FALLBACK blocks match GAME_CONFIG.getCaps() (ISLAND_BONUS_CAP === 95)', () => {
+  const expectedCaps = GAME_CONFIG.getCaps();
+  const dirs = [
+    path.join(ROOT_DIR, 'js', 'core', 'i18n'),
+    path.join(ROOT_DIR, 'js', 'modules', 'box'),
+    path.join(ROOT_DIR, 'js', 'modules', 'lab'),
+    path.join(ROOT_DIR, 'js', 'modules', 'pokedex'),
+    path.join(ROOT_DIR, 'js', 'modules', 'recipes'),
+    path.join(ROOT_DIR, 'js', 'modules', 'wiki')
+  ];
+  const blockRe = /\/\*\s*@GAME_CONFIG_FALLBACK_START\s*\*\/([\s\S]*?)\/\*\s*@GAME_CONFIG_FALLBACK_END\s*\*\//g;
+  let blockCount = 0;
+
+  function walk(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (entry.name.endsWith('.js') && !entry.name.endsWith('.min.js')) {
+        const content = fs.readFileSync(full, 'utf8');
+        let m;
+        while ((m = blockRe.exec(content)) !== null) {
+          blockCount++;
+          const parsed = JSON.parse(m[1].trim());
+          assert.strictEqual(parsed.ISLAND_BONUS_CAP, 95, `${path.relative(ROOT_DIR, full)} fallback ISLAND_BONUS_CAP must be 95`);
+          assert.strictEqual(parsed.ISLAND_BONUS_CAP, expectedCaps.ISLAND_BONUS_CAP, `${path.relative(ROOT_DIR, full)} fallback ISLAND_BONUS_CAP must match GAME_CONFIG`);
+          assert.strictEqual(parsed.POKEMON_LEVEL_CAP, expectedCaps.POKEMON_LEVEL_CAP, `${path.relative(ROOT_DIR, full)} fallback POKEMON_LEVEL_CAP must match GAME_CONFIG`);
+          assert.strictEqual(parsed.RECIPE_LEVEL_CAP, expectedCaps.RECIPE_LEVEL_CAP, `${path.relative(ROOT_DIR, full)} fallback RECIPE_LEVEL_CAP must match GAME_CONFIG`);
+          assert.strictEqual(parsed.ISLAND_BONUS_STEP, expectedCaps.ISLAND_BONUS_STEP, `${path.relative(ROOT_DIR, full)} fallback ISLAND_BONUS_STEP must match GAME_CONFIG`);
+        }
+      }
+    }
+  }
+  dirs.forEach(walk);
+  assert(blockCount >= 11, `Expected at least 11 @GAME_CONFIG_FALLBACK blocks, found ${blockCount}`);
+});
+
+await checkAsync('Standalone VM execution without GAME_CONFIG supports 95% island bonus across i18n, recipes, and wiki', async () => {
+  // 1. i18n.js without GAME_CONFIG
+  const i18nCode = fs.readFileSync(path.join(ROOT_DIR, 'js', 'core', 'i18n.js'), 'utf8');
+  const i18nSandbox = {
+    window: {},
+    globalThis: null,
+    localStorage: { getItem: () => null, setItem: () => {} },
+    document: { documentElement: { setAttribute: () => {} }, readyState: 'loading', addEventListener: () => {} },
+    console
+  };
+  i18nSandbox.window.window = i18nSandbox.window;
+  i18nSandbox.globalThis = i18nSandbox;
+  vm.createContext(i18nSandbox);
+  vm.runInContext(i18nCode, i18nSandbox);
+  i18nSandbox.window.I18N.setLanguage('zh-TW');
+  assert(i18nSandbox.window.I18N.t('recipe.slider_island_desc').includes('95%'), 'Standalone i18n must interpolate 95%');
+  assert(i18nSandbox.window.I18N.t('recipe.slider_island_desc').includes('1.95'), 'Standalone i18n must interpolate 1.95x');
+
+  // 2. recipes.js without GAME_CONFIG
+  const recipesCode = fs.readFileSync(path.join(ROOT_DIR, 'js', 'modules', 'recipes.js'), 'utf8');
+  const recipesJsonText = fs.readFileSync(path.join(ROOT_DIR, 'data', 'recipes.json'), 'utf8');
+  const recipesJson = JSON.parse(recipesJsonText);
+  const rIslandSlider = makeMockElement('island-bonus-slider');
+  const rIslandBadge = makeMockElement('island-bonus-badge');
+  const rIslandMaxLabel = makeMockElement('island-bonus-max-label');
+  const rEls = {
+    'recipe-level-slider': makeMockElement('recipe-level-slider'),
+    'level-badge': makeMockElement('level-badge'),
+    'recipe-level-max-label': makeMockElement('recipe-level-max-label'),
+    'island-bonus-slider': rIslandSlider,
+    'island-bonus-badge': rIslandBadge,
+    'island-bonus-max-label': rIslandMaxLabel
+  };
+  const rSandbox = {
+    window: { innerWidth: 1200 },
+    document: {
+      readyState: 'complete',
+      addEventListener: () => {},
+      getElementById: (id) => rEls[id] || null,
+      querySelector: () => null,
+      querySelectorAll: () => []
+    },
+    localStorage: {
+      getItem: (k) => (k === 'pksleep_recipe_prefs_v3' ? JSON.stringify({ recipeLevel: 70, islandBonus: 95 }) : null),
+      setItem: () => {}
+    },
+    fetch: () => Promise.resolve({ ok: true, text: () => Promise.resolve(recipesJsonText), json: () => Promise.resolve(recipesJson) }),
+    setTimeout,
+    clearTimeout,
+    setInterval: () => 0,
+    clearInterval: () => {},
+    CustomEvent: function (type, init) { this.type = type; this.detail = init ? init.detail : null; },
+    dispatchEvent: () => true,
+    console
+  };
+  rSandbox.window.window = rSandbox.window;
+  rSandbox.window.document = rSandbox.document;
+  rSandbox.window.localStorage = rSandbox.localStorage;
+  rSandbox.window.CustomEvent = rSandbox.CustomEvent;
+  rSandbox.window.dispatchEvent = rSandbox.dispatchEvent;
+  rSandbox.globalThis = rSandbox;
+  vm.createContext(rSandbox);
+  vm.runInContext(recipesCode, rSandbox);
+  await new Promise(r => setTimeout(r, 60));
+  assert.strictEqual(rIslandSlider.max, '95', 'Standalone recipes.js islandSlider.max must be 95');
+  assert.strictEqual(rIslandSlider.value, 95, 'Standalone recipes.js must allow 95% islandBonus');
+  assert.strictEqual(rIslandMaxLabel.textContent, '95%');
+  assert(rIslandBadge.textContent.includes('95%') && rIslandBadge.textContent.includes('1.95'), 'Standalone recipes.js badge must show +95% (x1.95)');
+
+  // 3. wiki.js without GAME_CONFIG
+  const wikiCode = fs.readFileSync(path.join(ROOT_DIR, 'js', 'modules', 'wiki.js'), 'utf8');
+  const wIslandDisplay = makeMockElement('berry-island-display');
+  const wIslandSlider = makeMockElement('berry-island-slider');
+  const wPanel = makeMockElement('panel-wiki');
+  const wEls = {
+    'berry-level-display': makeMockElement('berry-level-display'),
+    'berry-level-slider': makeMockElement('berry-level-slider'),
+    'berry-island-display': wIslandDisplay,
+    'berry-island-slider': wIslandSlider,
+    'panel-wiki': wPanel
+  };
+  const wSandbox = {
+    window: { innerWidth: 1200, localStorage: { getItem: () => null, setItem: () => {} } },
+    document: {
+      readyState: 'complete',
+      addEventListener: () => {},
+      getElementById: (id) => wEls[id] || null,
+      querySelectorAll: () => [],
+      createElement: () => makeMockElement()
+    },
+    localStorage: { getItem: () => null, setItem: () => {} },
+    PokemonApp: { getAllData: () => [] },
+    console
+  };
+  wSandbox.window.window = wSandbox.window;
+  wSandbox.window.document = wSandbox.document;
+  wSandbox.globalThis = wSandbox;
+  vm.createContext(wSandbox);
+  vm.runInContext(wikiCode, wSandbox);
+  wSandbox.window.WikiDB.updateBerryIsland(95);
+  assert.strictEqual(wIslandDisplay.textContent, '+95%', 'Standalone wiki.js must allow +95%');
+  wSandbox.window.WikiDB.renderWikiLayout(wPanel);
+  assert(wPanel.innerHTML.includes('id="berry-island-slider" min="0" max="95"'), 'Standalone wiki.js must render island slider max="95"');
 });
 
 console.log(`\n[Result] Passed ${passed}/${total} dynamic game config checks.`);

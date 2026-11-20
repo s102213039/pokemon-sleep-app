@@ -56,7 +56,7 @@
     const fillDemoBtn = document.getElementById('pantry-fill-demo-btn');
     if (fillDemoBtn) {
       fillDemoBtn.addEventListener('click', () => {
-        CANONICAL_INGREDIENTS.forEach(ing => { pantryInventory[ing] = (Number(pantryInventory[ing]) || 0) + 10; });
+        _getRecipesCanonicalIngredients().forEach(ing => { pantryInventory[ing] = (Number(pantryInventory[ing]) || 0) + 10; });
         savePantry();
         syncPantryUI();
         render();
@@ -78,7 +78,7 @@
       });
     });
 
-    grid.innerHTML = CANONICAL_INGREDIENTS.map(name => {
+    grid.innerHTML = _getRecipesCanonicalIngredients().map(name => {
       const count = Number(pantryInventory[name]) || 0;
       const icon = ingIconMap[name] || '';
       const displayName = window.I18N ? window.I18N.getIngredientName(name) : name;

@@ -40,6 +40,12 @@ const BERRY_BASE_ENERGY_MAP = {
 
 function getBerryBaseEnergy(nameOrType) {
   if (!nameOrType) return 26;
+  const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+             (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+  if (gc && typeof gc.getBerryBaseEnergy === 'function') {
+    const e = gc.getBerryBaseEnergy(nameOrType);
+    if (typeof e === 'number' && Number.isFinite(e)) return e;
+  }
   if (BERRY_BASE_ENERGY_MAP[nameOrType]) return BERRY_BASE_ENERGY_MAP[nameOrType];
   const bName = TYPE_TO_BERRY[nameOrType];
   if (bName && BERRY_BASE_ENERGY_MAP[bName]) return BERRY_BASE_ENERGY_MAP[bName];

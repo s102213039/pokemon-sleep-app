@@ -667,26 +667,95 @@ function ingQtyBadges(ing, idx) {
 }
 
 /* ─── 樹果與屬性對應字典 (Berry & Type Mapping) ───────── */
-const BERRY_DATA = [
-  { name: '柿仔果', type: '一般',   icon: 'https://www.serebii.net/pokemonsleep/berries/persimberry.png' },
-  { name: '蘋野果', type: '火',     icon: 'https://www.serebii.net/pokemonsleep/berries/leppaberry.png' },
-  { name: '橙橙果', type: '水',     icon: 'https://www.serebii.net/pokemonsleep/berries/oranberry.png' },
-  { name: '異奇果', type: '電',     icon: 'https://www.serebii.net/pokemonsleep/berries/grepaberry.png' },
-  { name: '墨莓果', type: '草',     icon: 'https://www.serebii.net/pokemonsleep/berries/durinberry.png' },
-  { name: '生薑果', type: '冰',     icon: 'https://www.serebii.net/pokemonsleep/berries/rawstberry.png' },
-  { name: '櫻子果', type: '格鬥',   icon: 'https://www.serebii.net/pokemonsleep/berries/cheriberry.png' },
-  { name: '零餘果', type: '毒',     icon: 'https://www.serebii.net/pokemonsleep/berries/chestoberry.png' },
-  { name: '勿花果', type: '地面',   icon: 'https://www.serebii.net/pokemonsleep/berries/figyberry.png' },
+const _POKEDEX_FALLBACK_BERRY_ORDER = {
+  '椰木果': 0, '藍異果': 0, '飛行': 0, '飛': 0, 'pamtre': 0,
+  '木子果': 1, '芭亞果': 1, '蟲': 1, 'lum': 1,
+  '異奇果': 2, '電': 2, 'grepa': 2,
+  '檬果': 3, '幽靈': 3, '鬼': 3, 'bluk': 3,
+  '桃桃果': 4, '妖精': 4, '妖': 4, 'pecha': 4,
+  '芒念果': 5, '芒芒果': 5, '超能力': 5, '超能': 5, '超': 5, 'mago': 5,
+  '蘋野果': 6, '火': 6, 'leppa': 6,
+  '櫻子果': 7, '格鬥': 7, '鬥': 7, 'cheri': 7,
+  '柿仔果': 8, '一般': 8, 'persim': 8,
+  '勿花果': 9, '地面': 9, '地': 9, 'figy': 9,
+  '文柚果': 10, '岩石': 10, '岩': 10, 'sitrus': 10,
+  '榴石果': 11, '墨莓果': 11, '草': 11, 'durin': 11,
+  '橙橙果': 12, '水': 12, 'oran': 12,
+  '芭拉果': 13, '威嘻果': 13, '惡': 13, 'wiki': 13,
+  '零餘果': 14, '毒': 14, 'chesto': 14,
+  '生薑果': 15, '羅子果': 15, '冰': 15, 'rawst': 15,
+  '靛莓果': 16, '刺角果': 16, '鋼': 16, 'belue': 16,
+  '巧可果': 17, '亞雪果': 17, '龍': 17, 'yache': 17
+};
+
+const _POKEDEX_FALLBACK_ING_ORDER = {
+  '特選蘋果': 0, '哞哞鮮奶': 1, '純粹鮮奶': 1, '萌綠大豆': 2, '甜甜蜜': 3, '豆製肉': 4,
+  '暖暖薑': 5, '好眠番茄': 6, '一口堅果': 7, '特選蛋': 8, '純粹油': 9,
+  '窩心洋芋': 10, '火辣香草': 11, '萌綠玉米': 12, '放鬆可可': 13, '醒腦咖啡豆': 14,
+  '嫩亮酪梨': 15, '品鮮蘑菇': 16, '粗枝大蔥': 17, '沉甸甸南瓜': 18, '美味尾巴': 19
+};
+
+function _getPokedexSortGameConfig() {
+  return (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+         (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+}
+
+function _sortPokedexBerriesByEnergyAsc(list) {
+  if (!Array.isArray(list)) return [];
+  const gc = _getPokedexSortGameConfig();
+  if (gc && typeof gc.sortBerriesByEnergyAsc === 'function') {
+    return gc.sortBerriesByEnergyAsc(list);
+  }
+  return list
+    .map((item, idx) => ({ item, idx }))
+    .sort((a, b) => {
+      const ka = typeof a.item === 'string' ? a.item : (a.item && (a.item.name || a.item.id || a.item.type));
+      const kb = typeof b.item === 'string' ? b.item : (b.item && (b.item.name || b.item.id || b.item.type));
+      const ra = Object.prototype.hasOwnProperty.call(_POKEDEX_FALLBACK_BERRY_ORDER, ka) ? _POKEDEX_FALLBACK_BERRY_ORDER[ka] : Number.MAX_SAFE_INTEGER;
+      const rb = Object.prototype.hasOwnProperty.call(_POKEDEX_FALLBACK_BERRY_ORDER, kb) ? _POKEDEX_FALLBACK_BERRY_ORDER[kb] : Number.MAX_SAFE_INTEGER;
+      return ra !== rb ? ra - rb : a.idx - b.idx;
+    })
+    .map((x) => x.item);
+}
+
+function _sortPokedexIngredientsByEnergyAsc(list) {
+  if (!Array.isArray(list)) return [];
+  const gc = _getPokedexSortGameConfig();
+  if (gc && typeof gc.sortIngredientsByEnergyAsc === 'function') {
+    return gc.sortIngredientsByEnergyAsc(list);
+  }
+  return list
+    .map((item, idx) => ({ item, idx }))
+    .sort((a, b) => {
+      const ka = typeof a.item === 'string' ? a.item : (a.item && (a.item.name || a.item.id));
+      const kb = typeof b.item === 'string' ? b.item : (b.item && (b.item.name || b.item.id));
+      const ra = Object.prototype.hasOwnProperty.call(_POKEDEX_FALLBACK_ING_ORDER, ka) ? _POKEDEX_FALLBACK_ING_ORDER[ka] : Number.MAX_SAFE_INTEGER;
+      const rb = Object.prototype.hasOwnProperty.call(_POKEDEX_FALLBACK_ING_ORDER, kb) ? _POKEDEX_FALLBACK_ING_ORDER[kb] : Number.MAX_SAFE_INTEGER;
+      return ra !== rb ? ra - rb : a.idx - b.idx;
+    })
+    .map((x) => x.item);
+}
+
+const BERRY_DATA = _sortPokedexBerriesByEnergyAsc([
   { name: '椰木果', type: '飛行',   icon: 'https://www.serebii.net/pokemonsleep/berries/pamtreberry.png' },
-  { name: '芒念果', type: '超能力', icon: 'https://www.serebii.net/pokemonsleep/berries/magoberry.png' },
   { name: '芭亞果', type: '蟲',     icon: 'https://www.serebii.net/pokemonsleep/berries/lumberry.png' },
-  { name: '文柚果', type: '岩石',   icon: 'https://www.serebii.net/pokemonsleep/berries/sitrusberry.png' },
+  { name: '異奇果', type: '電',     icon: 'https://www.serebii.net/pokemonsleep/berries/grepaberry.png' },
   { name: '檬果',   type: '幽靈',   icon: 'https://www.serebii.net/pokemonsleep/berries/blukberry.png' },
-  { name: '巧可果', type: '龍',     icon: 'https://www.serebii.net/pokemonsleep/berries/yacheberry.png' },
+  { name: '桃桃果', type: '妖精',   icon: 'https://www.serebii.net/pokemonsleep/berries/pechaberry.png' },
+  { name: '芒念果', type: '超能力', icon: 'https://www.serebii.net/pokemonsleep/berries/magoberry.png' },
+  { name: '蘋野果', type: '火',     icon: 'https://www.serebii.net/pokemonsleep/berries/leppaberry.png' },
+  { name: '櫻子果', type: '格鬥',   icon: 'https://www.serebii.net/pokemonsleep/berries/cheriberry.png' },
+  { name: '柿仔果', type: '一般',   icon: 'https://www.serebii.net/pokemonsleep/berries/persimberry.png' },
+  { name: '勿花果', type: '地面',   icon: 'https://www.serebii.net/pokemonsleep/berries/figyberry.png' },
+  { name: '文柚果', type: '岩石',   icon: 'https://www.serebii.net/pokemonsleep/berries/sitrusberry.png' },
+  { name: '墨莓果', type: '草',     icon: 'https://www.serebii.net/pokemonsleep/berries/durinberry.png' },
+  { name: '橙橙果', type: '水',     icon: 'https://www.serebii.net/pokemonsleep/berries/oranberry.png' },
   { name: '芭拉果', type: '惡',     icon: 'https://www.serebii.net/pokemonsleep/berries/wikiberry.png' },
+  { name: '零餘果', type: '毒',     icon: 'https://www.serebii.net/pokemonsleep/berries/chestoberry.png' },
+  { name: '生薑果', type: '冰',     icon: 'https://www.serebii.net/pokemonsleep/berries/rawstberry.png' },
   { name: '靛莓果', type: '鋼',     icon: 'https://www.serebii.net/pokemonsleep/berries/belueberry.png' },
-  { name: '桃桃果', type: '妖精',   icon: 'https://www.serebii.net/pokemonsleep/berries/pechaberry.png' }
-];
+  { name: '巧可果', type: '龍',     icon: 'https://www.serebii.net/pokemonsleep/berries/yacheberry.png' }
+]);
 
 const TYPE_TO_BERRY = {};
 BERRY_DATA.forEach(b => {

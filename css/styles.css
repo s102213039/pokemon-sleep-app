@@ -8007,6 +8007,13 @@ input[type="number"] {
   padding: 1px 6px;
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  line-height: 1.3;
 }
 
 .box-subskill-clear-btn:hover {
@@ -26798,6 +26805,26 @@ body.box-lab-active #box-subpanel-lab {
   padding: 0 !important;
   display: block !important;
   width: 100% !important;
+}
+
+.pokedex-subskill-header-row .box-form-label,
+.mobile-h5-app .mobile-box-sheet .pokedex-subskill-header-row .box-form-label,
+.mobile-h5-app .mobile-box-sheet .box-form-group > div > .box-form-label {
+  width: auto !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+#pokedex-subskill-clear-all-btn,
+#box-subskill-clear-all-btn,
+#pokedex-detail-modal .box-subskill-clear-btn,
+.mobile-h5-app .mobile-box-sheet .box-subskill-clear-btn {
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  width: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .mobile-h5-app .mobile-box-sheet .box-form-input,

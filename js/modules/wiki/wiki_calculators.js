@@ -311,7 +311,7 @@
   }
 
   // 5.1 樹果能量動態等級 (Lv.1 ~ POKEMON_LEVEL_CAP)、島嶼加成 (0% ~ ISLAND_BONUS_CAP) 與 順果 2x 計算 (持久化保存)
-  const _WIKI_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+  const _WIKI_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
 
   function _getWikiGameConfig() {
     return (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
@@ -320,7 +320,7 @@
 
   function _getWikiCaps() {
     const gc = _getWikiGameConfig();
-    return (gc && typeof gc.getCaps === 'function') ? gc.getCaps() : _WIKI_FALLBACK_CAPS;
+    return (gc && typeof gc.getCaps === 'function' ? gc.getCaps() : null) || _WIKI_FALLBACK_CAPS;
   }
 
   const STORAGE_KEY_BERRY_LEVEL = 'pksleep_wiki_berry_level';
@@ -334,8 +334,8 @@
     try {
       if (typeof localStorage === 'undefined') return;
       const caps = _getWikiCaps();
-      const pokeCap = caps.POKEMON_LEVEL_CAP || 70;
-      const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85;
+      const pokeCap = caps.POKEMON_LEVEL_CAP || _WIKI_FALLBACK_CAPS.POKEMON_LEVEL_CAP;
+      const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : _WIKI_FALLBACK_CAPS.ISLAND_BONUS_CAP;
       const savedLv = localStorage.getItem(STORAGE_KEY_BERRY_LEVEL);
       if (savedLv !== null) {
         const parsedLv = parseInt(savedLv, 10);
@@ -389,8 +389,8 @@
 
   function updateBerryIsland(val) {
     const caps = _getWikiCaps();
-    const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : 85;
-    const islandStep = caps.ISLAND_BONUS_STEP || 5;
+    const islandCap = caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : _WIKI_FALLBACK_CAPS.ISLAND_BONUS_CAP;
+    const islandStep = caps.ISLAND_BONUS_STEP || _WIKI_FALLBACK_CAPS.ISLAND_BONUS_STEP;
     currentIslandBonus = Math.min(Math.max(parseInt(val, 10) || 0, 0), islandCap);
     try {
       if (typeof localStorage !== 'undefined') {
@@ -420,7 +420,11 @@
     const grid = document.getElementById('values-berry-grid');
     if (!grid) return;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    grid.innerHTML = BERRY_VALUES_DATA.map(b => {
+    const gc = _getWikiGameConfig();
+    const sortedBerries = (gc && typeof gc.sortBerriesByEnergyAsc === 'function')
+      ? gc.sortBerriesByEnergyAsc(BERRY_VALUES_DATA, b => b.id || b.name)
+      : BERRY_VALUES_DATA;
+    grid.innerHTML = sortedBerries.map(b => {
       const energy1x = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, false);
       const energy2x = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, true);
       const bName = isEN ? (window.I18N.getBerryName(b.name) || b.name) : b.name;

@@ -60,10 +60,10 @@
             <span class="lab-subtab-title">${isEN ? 'Team Builder' : '幫手組隊'}</span>
           </button>
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'compare' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('compare')">
-            <span class="lab-subtab-title">${isEN ? 'Pokémon Comparison' : '寶可夢對比'}</span>
+            <span class="lab-subtab-title">${isEN ? 'Compare' : '寶可夢對比'}</span>
           </button>
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'growth' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('growth')">
-            <span class="lab-subtab-title">${isEN ? 'Growth & Seeds' : '培育精算'}</span>
+            <span class="lab-subtab-title">${isEN ? 'Growth' : '培育精算'}</span>
           </button>
         </div>
         ` : ''}

@@ -15,7 +15,7 @@
  * 2. Cooking Recipe Calculations & Pot Expansions:
  *    - Curry #39 (Bountiful Nut & Pumpkin Stew), Salad #121 (Supreme Avocado Nut Feast Salad), Dessert #91 (Grand Tail Soy Nut Cake)
  *    - Strict pot size invariants (pot_size === sum(ingredients.count))
- *    - RecipesApp.calcEnergy under diverse levels (Lv.1 to Lv.70), island bonuses (0-85%), event multipliers (1.0-2.5), and pot expansions (0-700)
+ *    - RecipesApp.calcEnergy under diverse levels (Lv.1 to Lv.70), island bonuses (0-95%), event multipliers (1.0-2.5), and pot expansions (0-700)
  *    - Pot capacity expansions: 84 base capacity, Good Camp Ticket (126 capacity), Sunday cooking (168 capacity)
  *    - Category filtering, pot size filtering, and tasty multipliers (2x, 3x)
  * 3. Ingredient Ladder Rendering & 20th Track Resilience:

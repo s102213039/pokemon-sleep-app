@@ -659,9 +659,9 @@ function registerTier4Part3() {
 
     // 4. Verify i18n entries in js/core/i18n.js
     const i18nContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
-    assert(i18nContent.includes("'box.filter_sidebar_title': '倉庫篩選器'"), 'i18n zh-TW must have box.filter_sidebar_title');
+    assert(i18nContent.includes("'box.filter_sidebar_title': '篩選器'"), 'i18n zh-TW must have box.filter_sidebar_title');
     assert(i18nContent.includes("'box.filter_bookmark': '篩選'"), 'i18n zh-TW must have box.filter_bookmark');
-    assert(i18nContent.includes("'box.filter_sidebar_title': 'Box Filters'"), 'i18n en-US must have box.filter_sidebar_title');
+    assert(i18nContent.includes("'box.filter_sidebar_title': 'Filter'"), 'i18n en-US must have box.filter_sidebar_title');
     assert(i18nContent.includes("'box.filter_bookmark': 'Filter'"), 'i18n en-US must have box.filter_bookmark');
 
     // 5. Verify App Architecture in js/modules/app.js

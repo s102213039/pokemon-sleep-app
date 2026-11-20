@@ -5,6 +5,28 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-21 已完成（滿版藍紫暮光 PWA 圖標重製、圖鑑浮窗清空全部單行按鈕、島嶼加成 95% 單一來源、篩選器與重設文案統一、H5 英文長度精簡、樹果食材能量由小到大統一排序常數與 Argon/Neon 協作規範）
+
+- **調整內容**：
+  1. **R1 — 新版滿版藍紫暮光 PWA 圖標與消除白邊 (`scripts/generate_pwa_icons.py`, `assets/icons/favicon.svg`, `assets/icons/icon-192.png`, `assets/icons/icon-512.png`, `assets/icons/icon-maskable.png`, `assets/icons/apple-touch-icon.png`, `favicon.ico`, `sw.js`)**：
+     - 重新設計為「藍紫暮光漸層搭配發光新月與柔和星點意象」，移除舊版圓角透明裁切與 `icon-maskable.png` 的 12% 透明外框，使所有 PNG 圖標四角與全畫布 100% 不透明（`min_alpha === 255`、`transparent_pixels === 0`），徹底解決 Android Adaptive Icons 與 iOS 主畫面安裝後的白邊問題。
+     - `icon-maskable.png` 外圍 `<8%` 邊框區維持深邃暮光背景（`border_max_lum = 32.03 < 120`），核心發光新月與星點完整落於中央 `80%` 安全區內（`safe_bright_pixels = 17,009`）；同步升級 `sw.js` 之 `IMG_CACHE_NAME = 'pksleep-img-cache-v20261121_01'`。
+  2. **R2 — 圖鑑寶可夢詳細浮窗「清空全部」按鈕強制單行 (`js/modules/pokedex/pokedex_modal.js`, `css/views/lab/lab_editor.css`, `css/mobile/items.css`, `css/styles.css`)**：
+     - 為副技能標題列加上 `.pokedex-subskill-header-row`（`gap: 8px; flex-wrap: nowrap;`），修正 `.mobile-h5-app .mobile-box-sheet .box-form-label` 強制 `width: 100% !important` 擠壓右側按鈕的問題，並為 `.box-subskill-clear-btn` 與 `#pokedex-subskill-clear-all-btn` 加上 `white-space: nowrap; flex-shrink: 0; display: inline-flex;`。
+  3. **R3 — 島嶼加成上限調升至 `95%` 與全域單一來源 (`js/core/gameConfig.js`, `scripts/sync_game_config.js`)**：
+     - 將 `js/core/gameConfig.js` 之 `ISLAND_BONUS_CAP` 更新為 `95`，移除 `i18n_core.js`、`recipes_state.js`、`wiki_calculators.js`、`wiki_render_skills.js` 中殘留的 `: 85` / `|| 85` 硬編碼，統一由 `GAME_CONFIG` 與 `@GAME_CONFIG_FALLBACK` 單一來源控制。
+  4. **R4 — 全站篩選器標題統一為「篩選器」、移除前綴圖示、「全部重設」精簡為「重設」 (`index.html`, `app/index.html`, `js/core/i18n/i18n_dict_*.js`, `js/modules/wiki/wiki_main.js`, `wiki_skill_ladder_render.js`, `wiki_items.js`)**：
+     - 移除 `app/index.html` 三處篩選抽屜標題前方的 `<span class="sidebar-icon">` 圖示區塊。
+     - 全站五大篩選側邊欄與抽屜標題統一為 `篩選器` / `筛选器` / `Filter`，重設按鈕統一為 `重設` / `重设` / `Reset`。
+  5. **R5 — 全站 H5 英文翻譯長度精簡與未翻譯項目補齊 (`js/core/i18n/i18n_dict_en_us.js`, `recipes_render.js`, `wiki_main.js`, `wiki_skill_ladder_render.js`, `lab_main.js`, `lab_team_ui.js`)**：
+     - 精簡 H5 窄螢幕易溢出之英文文案（如語系切換 `Trad. CN` / `Simp. CN`、主題 `Light Slate`、食譜分類按鈕 `Curry` / `Salad` / `Dessert`、天梯排序與加成按鈕 `Procs: Desc` / `Count: Desc` / `Trigger M` / `Trigger S` / `Speed` / `Skill`、研究所子分頁 `Compare` / `Growth` 等），並補齊設定彈窗雲端同步與倉庫薄荷核取方塊的 `data-i18n` 英文翻譯；同時移除 `i18n_dict_zh_cn.js` 殘留的計時器符號。
+  6. **R6 — 統一食材與樹果「基礎能量由小到大」排序常數 (`js/core/gameConfig.js`, 各模組篩選器與選擇器)**：
+     - 於 `js/core/gameConfig.js` 建立深度凍結之 `CANONICAL_INGREDIENTS`（20 種食材，基礎能量 `90` 至 `342`）與 `CANONICAL_BERRIES`（18 種樹果，Lv.1 基礎能量 `24` 至 `35`）以及 `sortIngredientsByEnergyAsc`、`sortBerriesByEnergyAsc` 輔助函式，套用至圖鑑、食譜、倉庫、研究所與百科所有篩選器與選擇器，支援未來新增項目自動依能量排序。
+  7. **R7 — Teamwork 異質多代理協作規範更新 (`Argon` 大腦與規劃核心 + `Neon` 主力幫手)**：
+     - 同步更新全域規則（`~/.gemini/GEMINI.md`、`~/.gemini/AGENTS.md`、`~/.gemini/agent-docs/PROTOCOL.md`、`~/.gemini/agent-docs/HETERO_MODEL_HARNESS.md`）與專案文件（`PROJECT.md`、`README.md`、`docs/VERIFIED_FEATURES_AND_BASELINES.md`、`docs/MAINTENANCE_AND_DEVELOPMENT_GUIDE.md` 及 `~/.gemini/agent-docs/projects/pokemon-sleep-app/` 鏡像）。
+- **驗證結果**：
+  - `npm run test:fast`：**170 / 170 PASS**；`npm test`：**293 / 293 PASS**；`node tests/test_e2e_r1_r7_acceptance.js`：**100 / 100 PASS**；`node tests/test_challenger_m1_cache_sync.js`：**18 / 18 PASS**。
+
 ## 交接：2026-11-20 已完成（料理食譜表格英文副標題左對齊中文名稱起始位置）
 
 - **問題根因**：料理食譜表格 `.pokemon-table td` 預設繼承 `text-align: center`，`.recipe-name-wrapper` 為縱向 Flex 且未設定 `align-items: flex-start` 與 `text-align: left`；第一列中文名稱包在水平 Flex `div` 中故靠左排列，第二列英文副標題 `.recipe-name-sub` 則被拉伸滿寬並套用置中文字對齊，導致中英文名稱起始位置錯開。

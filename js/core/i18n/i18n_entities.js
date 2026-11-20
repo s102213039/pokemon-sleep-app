@@ -63,6 +63,7 @@
   const BERRY_NAMES = {
     '藍異果': { 'zh-TW': '藍異果', 'en-US': 'Pamtre Berry' },
     '木子果': { 'zh-TW': '木子果', 'en-US': 'Lum Berry' },
+    '芭亞果': { 'zh-TW': '芭亞果', 'en-US': 'Lum Berry' },
     '椰木果': { 'zh-TW': '椰木果', 'en-US': 'Pamtre Berry' },
     '異奇果': { 'zh-TW': '異奇果', 'en-US': 'Grepa Berry' },
     '檬果': { 'zh-TW': '檬果', 'en-US': 'Bluk Berry' },
@@ -75,6 +76,7 @@
     '勿花果': { 'zh-TW': '勿花果', 'en-US': 'Figy Berry' },
     '文柚果': { 'zh-TW': '文柚果', 'en-US': 'Sitrus Berry' },
     '榴石果': { 'zh-TW': '榴石果', 'en-US': 'Durin Berry' },
+    '墨莓果': { 'zh-TW': '墨莓果', 'en-US': 'Durin Berry' },
     '橙橙果': { 'zh-TW': '橙橙果', 'en-US': 'Oran Berry' },
     '芭拉果': { 'zh-TW': '芭拉果', 'en-US': 'Wiki Berry' },
     '零餘果': { 'zh-TW': '零餘果', 'en-US': 'Chesto Berry' },

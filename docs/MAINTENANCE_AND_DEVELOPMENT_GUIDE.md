@@ -195,8 +195,8 @@ npm test
    - **核心原則**：本網站定位為輕量、極速之策略數值與參考工具，**不需要且嚴禁深度追蹤遊戲內玩家的實體庫存與收集進度**。上述功能必須全數維持 `display: none !important;` 隱藏，後續開發與 AI Agent 嚴禁主動建議或重新引入。
 
 2. **高階模型協調分工規範**:
-   - 當使用第一主力超高階模型（Argon, Claude Opus, Claude Sonnet）作業時，高階模型專注於頂層宏觀架構規劃、規格契約制定與方向指導（Architect / Planner）。
-   - 高階模型**必須主動調度 Hydrogen 作為主要代碼實作者 (Lead Code Implementer)** 執行具體核心程式碼編寫與架構實作，大量常規樣板與測試執行任務可進一步委派 Gemini 3.8 Flash，以達成最佳推理深度與成本效率。
+   - 當使用超高階模型（Argon, Claude Opus, Claude Sonnet）作業時，Argon 作為大腦與規劃核心（Architect / Planner），專注於頂層宏觀架構規劃、規格契約制定與方向指導。
+   - 高階模型**必須優先主動調度 Neon 作為主力幫手與主要代碼實作者 (Primary Helper & Lead Code Implementer)** 執行具體核心程式碼編寫與架構實作，大量常規樣板與測試執行任務可進一步委派 Gemini 3.8 Flash，以達成最佳推理深度與成本效率。
 
 ---
 
@@ -255,4 +255,4 @@ node tests/run_tests.js --tier=2,3
 - [ ] **7. 跨工具共用文件同步 (Rule 7)**: 依規範將最新文件同步至 `~/.gemini/agent-docs/projects/pokemon-sleep-app/`。
 - [ ] **8. 推送遠端觸發 Pages 部署**: 執行 `git push origin main`，確保 GitHub Pages 自動化流程順利發布。
 - [ ] **9. 非預期 UI 功能 (UI-3 ~ UI-6) 隱藏確認**: 確認 UI-3（背包庫存/可煮篩選）、UI-4（食譜缺件徽章/填鍋優化）、UI-5（圖鑑進化樹）、UI-6（島嶼睡姿進度列/勾選框）維持 `display: none !important;`，絕不重新引入或主動建議遊戲內庫存追蹤功能。
-- [ ] **10. 高階模型協調規範遵守**: 使用 Argon / Opus / Sonnet 等高階模型時，確認其擔任架構規劃者，並主動調度 Hydrogen 執行核心代碼實作。
+- [ ] **10. 高階模型協調規範遵守**: 使用 Argon / Opus / Sonnet 等高階模型時，確認 Argon 擔任大腦與架構規劃核心，並優先主動調度 Neon 擔任主力幫手執行核心代碼實作。

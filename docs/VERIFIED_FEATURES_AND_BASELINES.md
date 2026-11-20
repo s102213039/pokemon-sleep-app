@@ -41,7 +41,7 @@
    - 任何程式碼、資料或文件修改並通過測試驗證後，**必須自動執行 `git add`、`git commit` 與 `git push origin main`**，嚴禁將修改僅留在本機工作區而不推送至遠端。
 7. **非預期功能禁用與高階模型協調鐵則 (Unwanted Features Policy & High-Tier Model Coordination)**：
    - **非預期功能 (UI-3 ~ UI-6) 嚴禁重現或主動建議**：UI-3（食材背包庫存抽屜與 100% 可做篩選）、UI-4（食譜缺少食材徽章、填鍋最佳化按鈕與彈窗）、UI-5（圖鑑詳細彈窗互動式進化家族樹）、UI-6（島嶼睡姿收集進度列、未收集篩選切換與睡姿勾選框）已全數透過 CSS `display: none !important;` 隱藏。**後續開發與 AI Agent 絕對禁止主動建議或重新引入這些功能**，因為本網站定位為輕量、極速之策略數值與參考工具，**不需要且嚴禁深度追蹤遊戲內玩家的實體庫存與收集進度**。
-   - **高階模型協調分工規範**：當使用超高階模型（Argon, Claude Opus, Claude Sonnet）作業時，高階模型專注於頂層架構規劃、任務拆解與方向指導（Architect / Planner），並**主動調度 Hydrogen 作為主要代碼實作者 (Lead Code Implementer)**，大量常規工兵任務由 Gemini 3.8 Flash 執行，以達成最佳推理深度與成本效率。
+   - **高階模型協調分工規範**：當使用超高階模型（Argon, Claude Opus, Claude Sonnet）作業時，Argon 作為大腦與規劃核心（Architect / Planner），專注於頂層架構規劃、任務拆解與方向指導，並**優先主動調度 Neon 作為主力幫手與主要代碼實作者 (Primary Helper & Lead Code Implementer)**，大量常規工兵任務由 Gemini 3.8 Flash 執行，以達成最佳推理深度與成本效率。
 
 ---
 

@@ -16,7 +16,7 @@
  *      - Boundary pot sizes (15, 77, 100, 115, 0, missing pot_size)
  *      - Prototype pollution resistance (own-property enforcement)
  *   3. Consumer 1: recipes_render.js
- *      - calcEnergy formula precision under multi-tier levels (1-70), island bonus (0-85%), event bonus (1.0-1.5), and pot expansion (0-700)
+ *      - calcEnergy formula precision under multi-tier levels (1-70), island bonus (0-95%), event bonus (1.0-1.5), and pot expansion (0-700)
  *      - Boundary filtering: pot sizes (0, 15, 35, 55, 67, 77, 87, 100), bonus percentage, categories, ingredient inclusion/exclusion
  *      - Multi-mode rendering: Desktop Table, Desktop Grid, and Mobile H5 Cards
  *      - Graceful handling of boundary pot sizes (15, 77, 100, 115) and extreme pot expansions without runtime exceptions

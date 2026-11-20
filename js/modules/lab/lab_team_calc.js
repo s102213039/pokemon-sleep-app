@@ -229,7 +229,7 @@
       const berry = (typeof window.getPokemonBerry === 'function') ? window.getPokemonBerry(base) : (base.berry || {});
       const berryName = berry.name || '';
       const berryType = berry.type || base.type || '';
-      const isFavored = favBerries.includes(berryName) || favTypes.includes(berryType);
+      const isFavored = _isLabFavoredBerryOrType(berryName, berryType, favBerries, favTypes);
 
       const baseFreq = base.base_frequency || base.frequency || 3600;
       let freq = baseFreq * (1 - (level - 1) * 0.002);
@@ -262,7 +262,7 @@
         berryCount += 1;
       }
 
-      const bValueObj = (typeof BERRY_VALUES_DATA !== 'undefined' ? BERRY_VALUES_DATA : []).find(b => b.name === berryName);
+      const bValueObj = _findLabBerryData(berryName);
       const baseBerryEnergy = bValueObj ? bValueObj.energy : 28;
       const singleBerryEnergy = Math.max(1, baseBerryEnergy + level - 1);
       const favoriteMultiplier = isFavored ? 2.0 : 1.0;
@@ -464,7 +464,7 @@
       const berry = (typeof window.getPokemonBerry === 'function') ? window.getPokemonBerry(base) : (base.berry || {});
       const berryName = berry.name || '';
       const berryType = berry.type || base.type || '';
-      const isFavored = favBerries.includes(berryName) || favTypes.includes(berryType);
+      const isFavored = _isLabFavoredBerryOrType(berryName, berryType, favBerries, favTypes);
 
       const subs = Array.isArray(item.subskills) ? item.subskills : [];
       const isMint = !!(item.cleanseMint || item.mint);
@@ -846,14 +846,16 @@
     autoOptimizeTeam(false);
   }
 
-  const ALL_BERRY_NAMES = [
-    '桃桃果', '橙橙果', '櫻子果', '零餘果', '木子果', '蘋野果',
-    '藍橘果', '墨莓果', '文柚果', '利歐果', '金枕果', '勿忘果',
-    '柿仔果', '椰木果', '異奇果', '番荔果', '芭亞果', '芒芒果'
-  ];
+  function _getLabAllBerryNames() {
+    const gc = _getLabGameConfig();
+    if (gc && Array.isArray(gc.CANONICAL_BERRIES) && gc.CANONICAL_BERRIES.length > 0) {
+      return gc.CANONICAL_BERRIES.map(b => b.name);
+    }
+    return _getLabBerryValuesData().map(b => b.name);
+  }
 
   function rerollGreengrassBerries(autoBuild = false) {
-    const pool = ALL_BERRY_NAMES.slice();
+    const pool = _getLabAllBerryNames();
     for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       const temp = pool[i];

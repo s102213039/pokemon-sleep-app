@@ -361,26 +361,26 @@ await check('Agent Safety: sync-brain.sh validates UUID and project boundaries, 
 // ---------------------------------------------------------------------------
 // 10. Model Collaboration Documentation Hierarchy
 // ---------------------------------------------------------------------------
-await check('Model Collaboration: Hydrogen established as Tier 0 Primary and Gemini 3.8 Flash as Tier 1-2 Secondary', () => {
+await check('Model Collaboration: Argon as Planning Brain, Neon as Primary Helper, and Gemini 3.8 Flash as Secondary Worker', () => {
   const protocol = fs.readFileSync(path.join(process.env.HOME, '.gemini', 'agent-docs', 'PROTOCOL.md'), 'utf8');
-  assert(protocol.includes('Hydrogen'), 'PROTOCOL.md must establish Hydrogen as primary model');
+  assert(protocol.includes('Argon') && protocol.includes('Neon'), 'PROTOCOL.md must establish Argon and Neon');
   assert(protocol.includes('Gemini 3.8 Flash'), 'PROTOCOL.md must establish Gemini 3.8 Flash as secondary model');
 
   const harness = fs.readFileSync(path.join(process.env.HOME, '.gemini', 'agent-docs', 'HETERO_MODEL_HARNESS.md'), 'utf8');
-  assert(harness.includes('第一主力模型：Hydrogen'), 'HETERO_MODEL_HARNESS.md must designate Hydrogen as primary model');
+  assert(harness.includes('Argon') && harness.includes('Neon'), 'HETERO_MODEL_HARNESS.md must designate Argon and Neon');
   assert(harness.includes('第二主力模型：Gemini 3.8 Flash'), 'HETERO_MODEL_HARNESS.md must designate Gemini 3.8 Flash as secondary model');
 
   const agentsMd = fs.readFileSync(path.join(process.env.HOME, '.gemini', 'AGENTS.md'), 'utf8');
-  assert(agentsMd.includes('第一主力模型 Hydrogen'), 'AGENTS.md must designate Hydrogen as primary model');
+  assert(agentsMd.includes('Argon') && agentsMd.includes('第一主力模型 Neon'), 'AGENTS.md must designate Argon and Neon');
   assert(agentsMd.includes('第二主力模型 Gemini 3.8 Flash'), 'AGENTS.md must designate Gemini 3.8 Flash as secondary model');
 
   const geminiMd = fs.readFileSync(path.join(process.env.HOME, '.gemini', 'GEMINI.md'), 'utf8');
-  assert(geminiMd.includes('第一主力模型 Hydrogen'), 'GEMINI.md must designate Hydrogen as primary model');
+  assert(geminiMd.includes('Argon') && geminiMd.includes('第一主力模型 Neon'), 'GEMINI.md must designate Argon and Neon');
   assert(geminiMd.includes('第二主力模型 Gemini 3.8 Flash'), 'GEMINI.md must designate Gemini 3.8 Flash as secondary model');
 
   const projectMd = fs.readFileSync(path.join(ROOT_DIR, 'PROJECT.md'), 'utf8');
-  assert(projectMd.includes('Primary Model: Hydrogen'), 'PROJECT.md must document Hydrogen as primary model');
-  assert(projectMd.includes('Secondary Model: Gemini 3.8 Flash'), 'PROJECT.md must document Gemini 3.8 Flash as secondary model');
+  assert(projectMd.includes('Argon') && projectMd.includes('Neon'), 'PROJECT.md must document Argon and Neon');
+  assert(projectMd.includes('Gemini 3.8 Flash'), 'PROJECT.md must document Gemini 3.8 Flash as secondary model');
 });
 
   console.log(`\n======================================================`);

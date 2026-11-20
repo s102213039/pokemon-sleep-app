@@ -676,7 +676,12 @@
   }
 
   /* ─── 獨立模擬評測實驗室 (Appraisal Lab & Box Linkage) ───────────────── */
-  const BERRY_VALUES_DATA = [
+  function _getLabGameConfig() {
+    return (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+           (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+  }
+
+  const _FALLBACK_BERRY_VALUES_DATA = [
     { id: 'pamtre', name: '椰木果', type: '飛行', energy: 24, icon: 'https://www.serebii.net/pokemonsleep/berries/pamtreberry.png' },
     { id: 'lum',    name: '木子果', type: '蟲',   energy: 24, icon: 'https://www.serebii.net/pokemonsleep/berries/lumberry.png' },
     { id: 'grepa',  name: '異奇果', type: '電',   energy: 25, icon: 'https://www.serebii.net/pokemonsleep/berries/grepaberry.png' },
@@ -696,6 +701,103 @@
     { id: 'belue',  name: '靛莓果', type: '鋼',   energy: 33, icon: 'https://www.serebii.net/pokemonsleep/berries/belueberry.png' },
     { id: 'yache',  name: '巧可果', type: '龍',   energy: 35, icon: 'https://www.serebii.net/pokemonsleep/berries/yacheberry.png' }
   ];
+
+  const _LAB_FALLBACK_BERRY_ID_ALIASES = {
+    '椰木果': 'pamtre', '藍異果': 'pamtre', 'pamtre': 'pamtre', '飛行': 'pamtre', '飛': 'pamtre',
+    '木子果': 'lum', '芭亞果': 'lum', 'lum': 'lum', '蟲': 'lum',
+    '異奇果': 'grepa', 'grepa': 'grepa', '電': 'grepa',
+    '檬果': 'bluk', 'bluk': 'bluk', '幽靈': 'bluk', '鬼': 'bluk',
+    '桃桃果': 'pecha', 'pecha': 'pecha', '妖精': 'pecha', '妖': 'pecha',
+    '芒念果': 'mago', '芒芒果': 'mago', 'mago': 'mago', '超能力': 'mago', '超能': 'mago', '超': 'mago',
+    '蘋野果': 'leppa', 'leppa': 'leppa', '火': 'leppa',
+    '櫻子果': 'cheri', 'cheri': 'cheri', '格鬥': 'cheri', '鬥': 'cheri',
+    '柿仔果': 'persim', 'persim': 'persim', '一般': 'persim',
+    '勿花果': 'figy', 'figy': 'figy', '地面': 'figy', '地': 'figy',
+    '文柚果': 'sitrus', 'sitrus': 'sitrus', '岩石': 'sitrus', '岩': 'sitrus',
+    '榴石果': 'durin', '墨莓果': 'durin', 'durin': 'durin', '草': 'durin',
+    '橙橙果': 'oran', 'oran': 'oran', '水': 'oran',
+    '芭拉果': 'wiki', '威嘻果': 'wiki', 'wiki': 'wiki', '惡': 'wiki',
+    '零餘果': 'chesto', 'chesto': 'chesto', '毒': 'chesto',
+    '生薑果': 'rawst', '羅子果': 'rawst', 'rawst': 'rawst', '冰': 'rawst',
+    '靛莓果': 'belue', '刺角果': 'belue', 'belue': 'belue', '鋼': 'belue',
+    '巧可果': 'yache', '亞雪果': 'yache', 'yache': 'yache', '龍': 'yache'
+  };
+
+  function _resolveLabBerryCanonicalId(nameOrType) {
+    if (!nameOrType) return null;
+    const gc = _getLabGameConfig();
+    if (gc && typeof gc.resolveBerryCanonicalId === 'function') {
+      const id = gc.resolveBerryCanonicalId(nameOrType);
+      if (id) return id;
+    }
+    const k = String(nameOrType).trim();
+    return _LAB_FALLBACK_BERRY_ID_ALIASES[k] || _LAB_FALLBACK_BERRY_ID_ALIASES[k.toLowerCase()] || null;
+  }
+
+  function _sortLabBerriesByEnergyAsc(list) {
+    if (!Array.isArray(list)) return [];
+    const gc = _getLabGameConfig();
+    if (gc && typeof gc.sortBerriesByEnergyAsc === 'function') {
+      return gc.sortBerriesByEnergyAsc(list, (b) => (typeof b === 'string' ? b : (b.id || b.name || b.type)));
+    }
+    const orderMap = Object.create(null);
+    _FALLBACK_BERRY_VALUES_DATA.forEach((b, idx) => { orderMap[b.id] = idx; });
+    return list
+      .map((item, idx) => ({ item, idx }))
+      .sort((a, b) => {
+        const ida = _resolveLabBerryCanonicalId(typeof a.item === 'string' ? a.item : (a.item && (a.item.id || a.item.name || a.item.type)));
+        const idb = _resolveLabBerryCanonicalId(typeof b.item === 'string' ? b.item : (b.item && (b.item.id || b.item.name || b.item.type)));
+        const ra = ida && Object.prototype.hasOwnProperty.call(orderMap, ida) ? orderMap[ida] : Number.MAX_SAFE_INTEGER;
+        const rb = idb && Object.prototype.hasOwnProperty.call(orderMap, idb) ? orderMap[idb] : Number.MAX_SAFE_INTEGER;
+        return ra !== rb ? ra - rb : a.idx - b.idx;
+      })
+      .map((x) => x.item);
+  }
+
+  function _getLabBerryValuesData() {
+    const gc = _getLabGameConfig();
+    if (gc && Array.isArray(gc.CANONICAL_BERRIES) && gc.CANONICAL_BERRIES.length > 0) {
+      const fallbackById = Object.create(null);
+      _FALLBACK_BERRY_VALUES_DATA.forEach((b) => { fallbackById[b.id] = b; });
+      return _sortLabBerriesByEnergyAsc(gc.CANONICAL_BERRIES.map((b) => {
+        const fb = fallbackById[b.id];
+        return {
+          id: b.id,
+          name: b.name,
+          type: (fb && fb.type) || b.type,
+          energy: b.energy,
+          icon: b.icon || (fb && fb.icon) || ''
+        };
+      }));
+    }
+    return _FALLBACK_BERRY_VALUES_DATA.slice();
+  }
+
+  const BERRY_VALUES_DATA = _getLabBerryValuesData();
+
+  function _findLabBerryData(nameOrType) {
+    if (!nameOrType) return null;
+    const list = _getLabBerryValuesData();
+    const direct = list.find((b) => b.name === nameOrType || b.id === nameOrType);
+    if (direct) return direct;
+    const cid = _resolveLabBerryCanonicalId(nameOrType);
+    if (!cid) return null;
+    return list.find((b) => b.id === cid) || null;
+  }
+
+  function _isLabFavoredBerryOrType(berryName, berryType, favBerries, favTypes) {
+    if (Array.isArray(favBerries)) {
+      if (berryName && favBerries.includes(berryName)) return true;
+      const bCid = _resolveLabBerryCanonicalId(berryName);
+      if (bCid && favBerries.some(fb => _resolveLabBerryCanonicalId(fb) === bCid)) return true;
+    }
+    if (Array.isArray(favTypes)) {
+      if (berryType && favTypes.includes(berryType)) return true;
+      const tCid = _resolveLabBerryCanonicalId(berryType);
+      if (tCid && favTypes.some(ft => _resolveLabBerryCanonicalId(ft) === tCid)) return true;
+    }
+    return false;
+  }
 
   const INGREDIENTS_ENERGY_MAP = {
     '特選蘋果': 90, 'Fancy Apple': 90,

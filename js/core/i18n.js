@@ -57,6 +57,9 @@
       'settings.box_backup_desc': '將個人倉庫寶可夢匯出為 JSON 備份檔，或從本機檔案匯入還原。',
       'settings.box_export_btn': '匯出備份 JSON',
       'settings.box_import_btn': '匯入還原 JSON',
+      'settings.cloud_sync_title': '雲端即時同步',
+      'settings.cloud_sync_desc': '跨裝置自動同步倉庫資料',
+      'settings.cloud_sync_btn': '登入 / 註冊',
       'settings.telemetry_section': '系統健康與診斷',
       'settings.telemetry_desc': '監控首屏載入耗時、Web Vitals 與本地快取健康狀態。若遇到功能異常，可一鍵複製診斷報告排查問題。',
       'settings.copy_diag_btn': '複製系統診斷日誌報告',
@@ -66,8 +69,8 @@
       // Search & Filters (Pokedex)
       'pokedex.search_placeholder': '搜尋寶可夢名稱 (中/英/日) 或 No. 編號...',
       'pokedex.filter_bookmark': '篩選',
-      'pokedex.filter_sidebar_title': '圖鑑篩選器',
-      'pokedex.reset_all': '全部重設',
+      'pokedex.filter_sidebar_title': '篩選器',
+      'pokedex.reset_all': '重設',
       'pokedex.only_final': '最終進化',
       'pokedex.only_initial_ing': '初始食材',
       'pokedex.show_no': '編號',
@@ -150,7 +153,7 @@
       'recipe.pot_filler_btn': '填鍋最佳化',
       'recipe.pot_capacity_title': '鍋子容量與填鍋最佳化',
       'recipe.filter_bookmark': '篩選',
-      'recipe.filter_sidebar_title': '食譜篩選器',
+      'recipe.filter_sidebar_title': '篩選器',
       'recipe.calc_settings': '能量試算設定',
       'recipe.all_categories': '全部',
       'recipe.category_label': '料理種類',
@@ -197,8 +200,8 @@
       'recipe.th_base_energy': '基礎能量',
       'recipe.th_bonus': '加成',
       'recipe.th_final_energy': '預估能量',
-      'recipes.filter_title': '食譜篩選器',
-      'recipes.reset_all': '全部重設',
+      'recipes.filter_title': '篩選器',
+      'recipes.reset_all': '重設',
       'recipes.search_placeholder': '搜尋食譜名稱 (中/英) 或食材關鍵字...',
       'recipes.loading': '食譜資料載入中，請稍候...',
 
@@ -262,7 +265,7 @@
       'ladder.speed_m_toggle': '幫速M (+16.3%)',
 
       // Box & Appraisal
-      'box.filter_sidebar_title': '倉庫篩選器',
+      'box.filter_sidebar_title': '篩選器',
       'box.filter_bookmark': '篩選',
       'box.sort_title': '排序方式',
       'box.edit_stats': '修改數值',
@@ -328,6 +331,7 @@
       'box.modal_white_skills': '白色基礎技能',
       'box.modal_poke_ing': '食材組合',
       'box.modal_poke_nature': '性格',
+      'box.modal_cleanse_mint_desc': '使用淨白薄荷消除個性效果',
       'box.modal_poke_subskills': '副技能組合',
       'box.modal_poke_ribbon': '睡飽飽獎章',
       'box.modal_main_skill': '主技能資訊',
@@ -476,6 +480,9 @@
       'settings.box_backup_desc': '将个人仓库宝可梦导出为 JSON 备份文件，或从本机文件导入还原。',
       'settings.box_export_btn': '导出备份 JSON',
       'settings.box_import_btn': '导入还原 JSON',
+      'settings.cloud_sync_title': '云端即时同步',
+      'settings.cloud_sync_desc': '跨设备自动同步仓库数据',
+      'settings.cloud_sync_btn': '登录 / 注册',
       'settings.telemetry_section': '系统健康与诊断',
       'settings.telemetry_desc': '监控首屏加载耗时、Web Vitals 与本地缓存健康状态。若遇到功能异常，可一键复制诊断报告排查问题。',
       'settings.copy_diag_btn': '复制系统诊断日志报告',
@@ -485,8 +492,8 @@
       // Search & Filters (Pokedex)
       'pokedex.search_placeholder': '搜索宝可梦名称 (中/英/日) 或 No. 编号...',
       'pokedex.filter_bookmark': '筛选',
-      'pokedex.filter_sidebar_title': '图鉴筛选器',
-      'pokedex.reset_all': '全部重设',
+      'pokedex.filter_sidebar_title': '筛选器',
+      'pokedex.reset_all': '重设',
       'pokedex.only_final': '最终进化',
       'pokedex.only_initial_ing': '初始食材',
       'pokedex.show_no': '编号',
@@ -503,7 +510,7 @@
       'pokedex.sort_carry_desc': '携带上限 (高到低)',
       'pokedex.sort_ingredient_desc': '食材几率 (高到低)',
       'pokedex.sort_skill_desc': '技能发动率 (高到低)',
-      'pokedex.sort_interval_asc': '⏱ 帮忙间隔 (快到慢)',
+      'pokedex.sort_interval_asc': '帮忙间隔 (快到慢)',
       'pokedex.loading': '资料载入中，请稍候...',
       'pokedex.no_results': '没有符合筛选条件的宝可梦',
       'pokedex.no_results_desc': '找不到符合条件的宝可梦，请调整筛选条件或重置搜索。',
@@ -569,7 +576,7 @@
       'recipe.pot_filler_btn': '填锅最佳化',
       'recipe.pot_capacity_title': '锅子容量与填锅最佳化',
       'recipe.filter_bookmark': '筛选',
-      'recipe.filter_sidebar_title': '食谱筛选器',
+      'recipe.filter_sidebar_title': '筛选器',
       'recipe.calc_settings': '能量试算设定',
       'recipe.all_categories': '全部',
       'recipe.category_label': '料理种类',
@@ -616,8 +623,8 @@
       'recipe.th_base_energy': '基础能量',
       'recipe.th_bonus': '加成',
       'recipe.th_final_energy': '预估能量',
-      'recipes.filter_title': '食谱筛选器',
-      'recipes.reset_all': '全部重设',
+      'recipes.filter_title': '筛选器',
+      'recipes.reset_all': '重设',
       'recipes.search_placeholder': '搜索食谱名称 (中/英) 或食材关键字...',
       'recipes.loading': '食谱资料载入中，请稍候...',
 
@@ -681,7 +688,7 @@
       'ladder.speed_m_toggle': '帮速M (+16.3%)',
 
       // Box & Appraisal
-      'box.filter_sidebar_title': '仓库筛选器',
+      'box.filter_sidebar_title': '筛选器',
       'box.filter_bookmark': '筛选',
       'box.sort_title': '排序方式',
       'box.edit_stats': '修改数值',
@@ -747,6 +754,7 @@
       'box.modal_white_skills': '白色基础技能',
       'box.modal_poke_ing': '食材组合',
       'box.modal_poke_nature': '性格',
+      'box.modal_cleanse_mint_desc': '使用净白薄荷消除个性效果',
       'box.modal_poke_subskills': '副技能组合',
       'box.modal_poke_ribbon': '睡饱饱奖章',
       'box.modal_main_skill': '主技能信息',
@@ -881,23 +889,26 @@
       'settings.theme_onyx_sub': 'Pure OLED Black · Slate Titanium Accents',
       'settings.theme_dawn': 'Dawn Amber',
       'settings.theme_dawn_sub': 'Warm Cream White · Cyan Sun Accents',
-      'settings.theme_emerald': 'Minimalist Slate',
+      'settings.theme_emerald': 'Light Slate',
       'settings.theme_emerald_sub': 'Clean Light Slate · Titanium Slate Accents',
       'settings.theme_active': '✓ Active',
       'settings.theme_invert': 'Invert Colors',
       'settings.theme_invert_desc': 'Invert base lightness for 4 additional high-contrast variations.',
       'settings.lang_section': 'Language',
       'settings.lang_desc': 'Switch interface display language.',
-      'settings.lang_zh': 'Traditional Chinese',
-      'settings.lang_zh_cn': 'Simplified Chinese',
+      'settings.lang_zh': 'Trad. CN',
+      'settings.lang_zh_cn': 'Simp. CN',
       'settings.lang_en': 'English',
       'settings.box_backup_section': 'Box Backup',
       'settings.box_backup_desc': 'Export your Pokémon box to JSON backup or import from file.',
       'settings.box_export_btn': 'Export JSON',
       'settings.box_import_btn': 'Import JSON',
+      'settings.cloud_sync_title': 'Cloud Sync',
+      'settings.cloud_sync_desc': 'Auto-sync box across devices',
+      'settings.cloud_sync_btn': 'Sign In',
       'settings.telemetry_section': 'System Diagnostics',
       'settings.telemetry_desc': 'Monitor Web Vitals and local cache health. Copy diagnostic logs with one click for support.',
-      'settings.copy_diag_btn': 'Copy Diagnostic Report',
+      'settings.copy_diag_btn': 'Copy Diagnostics',
       'settings.save': 'Save',
       'settings.close': 'Close',
 
@@ -1100,7 +1111,7 @@
       'ladder.speed_m_toggle': 'Speed M (+16.3%)',
 
       // Box & Appraisal
-      'box.filter_sidebar_title': 'Box Filters',
+      'box.filter_sidebar_title': 'Filter',
       'box.filter_bookmark': 'Filter',
       'box.sort_title': 'Sort By',
       'box.edit_stats': 'Edit Stats',
@@ -1166,14 +1177,15 @@
       'box.modal_white_skills': 'White Sub-Skills',
       'box.modal_poke_ing': 'Ingredients',
       'box.modal_poke_nature': 'Nature',
+      'box.modal_cleanse_mint_desc': 'Use Cleanse Mint (neutralize nature)',
       'box.modal_poke_subskills': 'Sub-Skills',
       'box.modal_poke_ribbon': 'Good-Night Ribbon',
       'box.modal_main_skill': 'Main Skill',
       'box.modal_skill_level': 'Skill Level',
       'box.conflict_title': 'Similar Pokémon Found in Box',
       'box.conflict_desc': 'Found matching Pokémon in your box. Choose to overwrite or save as new.',
-      'box.conflict_btn_overwrite': 'Overwrite & Update Existing',
-      'box.conflict_btn_save_new': 'Save as New Pokémon',
+      'box.conflict_btn_overwrite': 'Overwrite Existing',
+      'box.conflict_btn_save_new': 'Save as New',
       'box.conflict_btn_cancel': 'Cancel',
       'box.conflict_tag_same': 'Same',
       'box.conflict_tag_diff': 'Updated',
@@ -1333,6 +1345,7 @@
   const BERRY_NAMES = {
     '藍異果': { 'zh-TW': '藍異果', 'en-US': 'Pamtre Berry' },
     '木子果': { 'zh-TW': '木子果', 'en-US': 'Lum Berry' },
+    '芭亞果': { 'zh-TW': '芭亞果', 'en-US': 'Lum Berry' },
     '椰木果': { 'zh-TW': '椰木果', 'en-US': 'Pamtre Berry' },
     '異奇果': { 'zh-TW': '異奇果', 'en-US': 'Grepa Berry' },
     '檬果': { 'zh-TW': '檬果', 'en-US': 'Bluk Berry' },
@@ -1345,6 +1358,7 @@
     '勿花果': { 'zh-TW': '勿花果', 'en-US': 'Figy Berry' },
     '文柚果': { 'zh-TW': '文柚果', 'en-US': 'Sitrus Berry' },
     '榴石果': { 'zh-TW': '榴石果', 'en-US': 'Durin Berry' },
+    '墨莓果': { 'zh-TW': '墨莓果', 'en-US': 'Durin Berry' },
     '橙橙果': { 'zh-TW': '橙橙果', 'en-US': 'Oran Berry' },
     '芭拉果': { 'zh-TW': '芭拉果', 'en-US': 'Wiki Berry' },
     '零餘果': { 'zh-TW': '零餘果', 'en-US': 'Chesto Berry' },
@@ -2204,7 +2218,7 @@
     return null;
   }
 
-  const _I18N_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":85,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+  const _I18N_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
 
   function _resolveDynamicCaps(str) {
     if (typeof str !== 'string') return str;
@@ -2221,7 +2235,7 @@
       : ((gc && gc.CAPS && gc.CAPS.RECIPE_MAX_BONUS_PCT) || _I18N_FALLBACK_CAPS.RECIPE_MAX_BONUS_PCT || 258);
     const maxIslandPct = (gc && typeof gc.getIslandBonusCap === 'function')
       ? gc.getIslandBonusCap()
-      : ((gc && gc.CAPS && gc.CAPS.ISLAND_BONUS_CAP !== undefined) ? gc.CAPS.ISLAND_BONUS_CAP : (_I18N_FALLBACK_CAPS.ISLAND_BONUS_CAP || 85));
+      : ((gc && gc.CAPS && gc.CAPS.ISLAND_BONUS_CAP !== undefined) ? gc.CAPS.ISLAND_BONUS_CAP : _I18N_FALLBACK_CAPS.ISLAND_BONUS_CAP);
     const islandStep = (gc && typeof gc.getIslandBonusStep === 'function')
       ? gc.getIslandBonusStep()
       : ((gc && gc.CAPS && gc.CAPS.ISLAND_BONUS_STEP !== undefined) ? gc.CAPS.ISLAND_BONUS_STEP : (_I18N_FALLBACK_CAPS.ISLAND_BONUS_STEP || 5));

@@ -132,7 +132,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.min.css?v=20261120_1004">
+  <link rel="stylesheet" href="css/styles.min.css?v=20261120_1623">
   <!-- 全域錯誤診斷與日誌攔截器 (Global Error & Diagnostic Logger) -->
   <script>
     (function() {
@@ -507,14 +507,14 @@
             </label>
           </div>
 
-          <div style="margin-top:12px;padding:10px 14px;background:var(--bg-hover, rgba(255,255,255,0.03));border:1px solid var(--border-color);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+          <div class="app-cloud-sync-card" style="margin-top:12px;padding:10px 14px;background:var(--bg-hover, rgba(255,255,255,0.03));border:1px solid var(--border-color);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
             <div style="font-size:12px;color:var(--text-secondary);">
-              <strong style="color:var(--text-primary);display:block;margin-bottom:2px;">雲端即時同步 (手機與電腦)</strong>
-              <span>登入帳號即可跨裝置秒級雙向同步個人倉庫</span>
+              <strong style="color:var(--text-primary);display:block;margin-bottom:2px;" data-i18n="settings.cloud_sync_title">雲端即時同步 (手機與電腦)</strong>
+              <span data-i18n="settings.cloud_sync_desc">登入帳號即可跨裝置秒級雙向同步個人倉庫</span>
             </div>
             <button type="button" class="box-btn box-btn-cloud-sync is-guest" onclick="window.CloudSync && window.CloudSync.openAuthModal()" style="padding:6px 12px;font-size:12px;">
               <span class="sync-dot dot-guest"></span>
-              <span class="sync-text">登入 / 註冊</span>
+              <span class="sync-text" data-i18n="settings.cloud_sync_btn">登入 / 註冊</span>
             </button>
           </div>
         </div>
@@ -565,9 +565,9 @@
         <div class="sidebar-header">
           <button type="button" id="sidebar-close-btn" class="sidebar-close-btn" title="收合側邊欄" aria-label="收合側邊欄">◀</button>
           <div class="sidebar-title-group">
-            <span class="sidebar-title" data-i18n="pokedex.filter_sidebar_title">圖鑑篩選器</span>
+            <span class="sidebar-title" data-i18n="pokedex.filter_sidebar_title">篩選器</span>
           </div>
-          <button type="button" id="sidebar-reset-all-btn" class="sidebar-reset-btn" title="重設所有篩選條件" data-i18n="pokedex.reset_all">全部重設</button>
+          <button type="button" id="sidebar-reset-all-btn" class="sidebar-reset-btn" title="重設所有篩選條件" data-i18n="pokedex.reset_all">重設</button>
         </div>
 
         <div class="sidebar-scrollable-content">
@@ -706,9 +706,9 @@
         <div class="sidebar-header">
           <button type="button" id="recipe-sidebar-close-btn" class="sidebar-close-btn" title="收合側邊欄" aria-label="收合側邊欄">◀</button>
           <div class="sidebar-title-group">
-            <span class="sidebar-title" data-i18n="recipe.filter_sidebar_title">食譜篩選器</span>
+            <span class="sidebar-title" data-i18n="recipe.filter_sidebar_title">篩選器</span>
           </div>
-          <button type="button" id="recipe-sidebar-reset-all-btn" class="sidebar-reset-btn" title="重設所有食譜篩選條件" data-i18n="pokedex.reset_all">全部重設</button>
+          <button type="button" id="recipe-sidebar-reset-all-btn" class="sidebar-reset-btn" title="重設所有食譜篩選條件" data-i18n="pokedex.reset_all">重設</button>
         </div>
 
         <div class="sidebar-scrollable-content">
@@ -774,8 +774,8 @@
               </div>
               <div class="slider-row">
                 <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">0%</span>
-                <input type="range" id="island-bonus-slider" class="rf-slider island-slider" min="0" max="85" step="5" value="0" aria-label="島嶼能量加成">
-                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;" id="island-bonus-max-label">85%</span>
+                <input type="range" id="island-bonus-slider" class="rf-slider island-slider" min="0" max="95" step="5" value="0" aria-label="島嶼能量加成">
+                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;" id="island-bonus-max-label">95%</span>
               </div>
             </div>
 
@@ -914,9 +914,9 @@
         <div class="sidebar-header">
           <button type="button" id="box-sidebar-close-btn" class="sidebar-close-btn" title="收合側邊欄" aria-label="收合側邊欄">◀</button>
           <div class="sidebar-title-group">
-            <span class="sidebar-title" data-i18n="box.filter_sidebar_title">倉庫篩選器</span>
+            <span class="sidebar-title" data-i18n="box.filter_sidebar_title">篩選器</span>
           </div>
-          <button type="button" id="box-sidebar-reset-all-btn" class="sidebar-reset-btn" title="重設所有篩選條件" data-i18n="pokedex.reset_all">全部重設</button>
+          <button type="button" id="box-sidebar-reset-all-btn" class="sidebar-reset-btn" title="重設所有篩選條件" data-i18n="pokedex.reset_all">重設</button>
         </div>
 
         <div class="sidebar-scrollable-content">
@@ -1367,7 +1367,7 @@
                 <select id="modal-poke-nature" class="box-form-select" required></select>
                 <label class="mint-checkbox-label" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-secondary);cursor:pointer;user-select:none;">
                   <input type="checkbox" id="modal-poke-mint" style="cursor:pointer;" />
-                  <span>使用淨白薄荷消除個性效果</span>
+                  <span data-i18n="box.modal_cleanse_mint_desc">使用淨白薄荷消除個性效果</span>
                 </label>
               </div>
             </div>
@@ -1546,21 +1546,21 @@
   </button>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
-  <script src="js/core/idbStorage.min.js?v=20261120_1004"></script>
-  <script src="js/core/gameConfig.min.js?v=20261120_1004"></script>
-  <script src="js/core/domUtils.min.js?v=20261120_1004"></script>
-  <script src="js/core/cloudSync.min.js?v=20261120_1004"></script>
-  <script src="js/core/i18n.min.js?v=20261120_1004"></script>
-  <script src="js/core/telemetry.min.js?v=20261120_1004"></script>
-  <script src="js/components/customSelect.min.js?v=20261120_1004"></script>
-  <script src="js/components/popoverCoordinator.min.js?v=20261120_1004"></script>
-  <script src="js/modules/app.min.js?v=20261120_1004"></script>
-  <script src="js/modules/recipes.min.js?v=20261120_1004"></script>
-  <script src="js/data/items.min.js?v=20261120_1004"></script>
-  <script src="js/data/ladder_data.min.js?v=20261120_1004"></script>
-  <script src="js/modules/wiki.min.js?v=20261120_1004"></script>
-  <script src="js/modules/box.min.js?v=20261120_1004"></script>
-  <script src="js/modules/news.min.js?v=20261120_1004"></script>
-  <script src="js/modules/appraisal.min.js?v=20261120_1004"></script>
+  <script src="js/core/idbStorage.min.js?v=20261120_1623"></script>
+  <script src="js/core/gameConfig.min.js?v=20261120_1623"></script>
+  <script src="js/core/domUtils.min.js?v=20261120_1623"></script>
+  <script src="js/core/cloudSync.min.js?v=20261120_1623"></script>
+  <script src="js/core/i18n.min.js?v=20261120_1623"></script>
+  <script src="js/core/telemetry.min.js?v=20261120_1623"></script>
+  <script src="js/components/customSelect.min.js?v=20261120_1623"></script>
+  <script src="js/components/popoverCoordinator.min.js?v=20261120_1623"></script>
+  <script src="js/modules/app.min.js?v=20261120_1623"></script>
+  <script src="js/modules/recipes.min.js?v=20261120_1623"></script>
+  <script src="js/data/items.min.js?v=20261120_1623"></script>
+  <script src="js/data/ladder_data.min.js?v=20261120_1623"></script>
+  <script src="js/modules/wiki.min.js?v=20261120_1623"></script>
+  <script src="js/modules/box.min.js?v=20261120_1623"></script>
+  <script src="js/modules/news.min.js?v=20261120_1623"></script>
+  <script src="js/modules/appraisal.min.js?v=20261120_1623"></script>
 </body>
 </html>

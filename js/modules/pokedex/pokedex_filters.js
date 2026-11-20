@@ -21,7 +21,8 @@
     function renderBerryButtons() {
       if (!berryFilterContainer) return;
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-      berryFilterContainer.innerHTML = BERRY_DATA.map(b => {
+      const sortedBerries = _sortPokedexBerriesByEnergyAsc(BERRY_DATA);
+      berryFilterContainer.innerHTML = sortedBerries.map(b => {
         const isActive = selectedBerries.has(b.name);
         const berryName = window.I18N ? window.I18N.getBerryName(b.name) : b.name;
         const typeName = isEN && window.I18N ? window.I18N.getTypeName(b.type) : b.type;
@@ -39,7 +40,8 @@
 
     function renderIngredientButtons() {
       if (!ingredientFilterContainer) return;
-      ingredientFilterContainer.innerHTML = uniqueIngredients.map(ing => {
+      const sortedIngredients = _sortPokedexIngredientsByEnergyAsc(uniqueIngredients);
+      ingredientFilterContainer.innerHTML = sortedIngredients.map(ing => {
         const isActive = selectedIngredients.has(ing.name);
         const ingName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
         return `
@@ -91,7 +93,7 @@
           });
         }
       });
-      uniqueIngredients = Array.from(uniqueIngredientsMap.entries()).map(([name, icon]) => ({ name, icon }));
+      uniqueIngredients = _sortPokedexIngredientsByEnergyAsc(Array.from(uniqueIngredientsMap.entries()).map(([name, icon]) => ({ name, icon })));
       PokemonApp.uniqueIngredients = uniqueIngredients;
       if (typeof window !== 'undefined') window.uniqueIngredients = uniqueIngredients;
 

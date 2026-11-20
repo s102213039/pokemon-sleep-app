@@ -291,7 +291,7 @@
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const currentSubTab = subTab || (typeof currentWikiSubTab !== 'undefined' ? currentWikiSubTab : (typeof window !== 'undefined' && typeof window.getCurrentSubTab === 'function' ? window.getCurrentSubTab() : 'skills_ladder'));
     return `
-      <aside id="skill-ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialSkillLadderCollapsed}" style="${currentSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}" aria-label="${_tSkillLadder('技能天梯篩選器', 'Skill Filters')}">
+      <aside id="skill-ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialSkillLadderCollapsed}" style="${currentSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}" aria-label="${_tSkillLadder('篩選器', 'Filter')}">
         ${!isMobileH5 ? `
           <button type="button" id="skill-ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleSkillLadderSidebar(true)" title="${_tSkillLadder('展開技能天梯篩選側邊欄', 'Expand Filter')}" aria-label="${_tSkillLadder('展開技能天梯篩選側邊欄', 'Expand Filter')}">
             <span class="bookmark-icon">
@@ -316,10 +316,10 @@
         <div class="sidebar-header">
           <button type="button" id="skill-ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.toggleSkillLadderSidebar(false)" title="${_tSkillLadder('收合側邊欄', 'Collapse Filter')}" aria-label="${_tSkillLadder('收合側邊欄', 'Collapse Filter')}">◀</button>
           <div class="sidebar-title-group" style="display:flex;align-items:center;gap:6px;">
-            <span class="sidebar-title">${_tSkillLadder('技能天梯篩選器', 'Skill Filters')}</span>
+            <span class="sidebar-title">${_tSkillLadder('篩選器', 'Filter')}</span>
             <button type="button" class="pokedex-formula-help-btn ladder-formula-help-btn" onclick="window.WikiDB.toggleSkillLadderEnergyHelp(event)" title="${_tSkillLadder('基準：Lv.60 滿活力 (0.45x) 12小時', 'Baseline: Lv.60 Ideal Energy (0.45x) 12h')}" aria-label="Skill Ladder Energy Info">?</button>
           </div>
-          <button type="button" id="skill-ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetSkillLadderFilters()" title="${_tSkillLadder('重設所有條件', 'Reset Filters')}">${_tSkillLadder('全部重設', 'Reset')}</button>
+          <button type="button" id="skill-ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetSkillLadderFilters()" title="${_tSkillLadder('重設所有條件', 'Reset Filters')}">${_tSkillLadder('重設', 'Reset')}</button>
 
           <div id="skill-ladder-energy-help-popover" class="ladder-energy-help-popover" style="display:none;" role="tooltip">
             <div class="pokedex-energy-help-backdrop" onclick="window.WikiDB.closeSkillLadderEnergyHelp(event)"></div>
@@ -363,8 +363,8 @@
             </div>
             <div class="sidebar-skills-list sidebar-2col-tags">
               <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'DEFAULT') ? 'active' : ''}" data-skill-sort-order="DEFAULT" onclick="window.WikiDB.setSkillLadderSortOrder('DEFAULT')">${_tSkillLadder('預設分類', 'Default')}</button>
-              <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'PROCS_DESC') ? 'active' : ''}" data-skill-sort-order="PROCS_DESC" onclick="window.WikiDB.setSkillLadderSortOrder('PROCS_DESC')">${_tSkillLadder('次數：多到少', 'Procs: High-Low')}</button>
-              <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'COUNT_DESC') ? 'active' : ''}" data-skill-sort-order="COUNT_DESC" onclick="window.WikiDB.setSkillLadderSortOrder('COUNT_DESC')">${_tSkillLadder('數量：多到少', 'Species: High-Low')}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'PROCS_DESC') ? 'active' : ''}" data-skill-sort-order="PROCS_DESC" onclick="window.WikiDB.setSkillLadderSortOrder('PROCS_DESC')">${_tSkillLadder('次數：多到少', 'Procs: Desc')}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderSortOrder === 'function' && getSkillLadderSortOrder() === 'COUNT_DESC') ? 'active' : ''}" data-skill-sort-order="COUNT_DESC" onclick="window.WikiDB.setSkillLadderSortOrder('COUNT_DESC')">${_tSkillLadder('數量：多到少', 'Count: Desc')}</button>
             </div>
           </div>
 
@@ -392,8 +392,8 @@
             <div class="sidebar-skills-list sidebar-2col-tags">
               <button type="button" class="tag-btn ${typeof isSkillLadderSpeedM !== 'undefined' && isSkillLadderSpeedM ? 'active' : ''}" id="skill-ladder-speed-m-toggle" data-skill-subskill-boost="SPEED_M" onclick="window.WikiDB.toggleSkillLadderSubskill('SPEED_M')">${_tSkillLadder('幫忙速度M', 'Help Speed M')}</button>
               <button type="button" class="tag-btn ${typeof isSkillLadderSpeedS !== 'undefined' && isSkillLadderSpeedS ? 'active' : ''}" id="skill-ladder-speed-s-toggle" data-skill-subskill-boost="SPEED_S" onclick="window.WikiDB.toggleSkillLadderSubskill('SPEED_S')">${_tSkillLadder('幫忙速度S', 'Help Speed S')}</button>
-              <button type="button" class="tag-btn ${typeof isSkillLadderSkillM !== 'undefined' && isSkillLadderSkillM ? 'active' : ''}" id="skill-ladder-skill-m-toggle" data-skill-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_M')">${_tSkillLadder('技能機率M', 'Skill Trigger M')}</button>
-              <button type="button" class="tag-btn ${typeof isSkillLadderSkillS !== 'undefined' && isSkillLadderSkillS ? 'active' : ''}" id="skill-ladder-skill-s-toggle" data-skill-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_S')">${_tSkillLadder('技能機率S', 'Skill Trigger S')}</button>
+              <button type="button" class="tag-btn ${typeof isSkillLadderSkillM !== 'undefined' && isSkillLadderSkillM ? 'active' : ''}" id="skill-ladder-skill-m-toggle" data-skill-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_M')">${_tSkillLadder('技能機率M', 'Trigger M')}</button>
+              <button type="button" class="tag-btn ${typeof isSkillLadderSkillS !== 'undefined' && isSkillLadderSkillS ? 'active' : ''}" id="skill-ladder-skill-s-toggle" data-skill-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleSkillLadderSubskill('SKILL_S')">${_tSkillLadder('技能機率S', 'Trigger S')}</button>
             </div>
           </div>
 
@@ -402,8 +402,8 @@
               <span class="sidebar-section-title">${_tSkillLadder('性格補正模擬', 'Nature Boost')}</span>
             </div>
             <div class="sidebar-skills-list sidebar-2col-tags">
-              <button type="button" class="tag-btn ${(typeof getSkillLadderNature === 'function' && getSkillLadderNature() === 'SPEED') ? 'active' : ''}" data-skill-nature-filter="SPEED" onclick="window.WikiDB.toggleSkillLadderNatureFilter('SPEED')">${_tSkillLadder('幫忙速度▲', 'Help Speed ▲')}</button>
-              <button type="button" class="tag-btn ${(typeof getSkillLadderNature === 'function' && getSkillLadderNature() === 'SKILL') ? 'active' : ''}" data-skill-nature-filter="SKILL" onclick="window.WikiDB.toggleSkillLadderNatureFilter('SKILL')">${_tSkillLadder('技能機率▲', 'Skill Chance ▲')}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderNature === 'function' && getSkillLadderNature() === 'SPEED') ? 'active' : ''}" data-skill-nature-filter="SPEED" onclick="window.WikiDB.toggleSkillLadderNatureFilter('SPEED')">${_tSkillLadder('幫忙速度▲', 'Speed ▲')}</button>
+              <button type="button" class="tag-btn ${(typeof getSkillLadderNature === 'function' && getSkillLadderNature() === 'SKILL') ? 'active' : ''}" data-skill-nature-filter="SKILL" onclick="window.WikiDB.toggleSkillLadderNatureFilter('SKILL')">${_tSkillLadder('技能機率▲', 'Skill ▲')}</button>
             </div>
           </div>
         </div>

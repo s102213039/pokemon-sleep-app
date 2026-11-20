@@ -70,14 +70,16 @@
   }
 
   function renderGreengrassBerrySelect(idx, currentBerryName, isEN) {
-    const optionsHtml = BERRY_VALUES_DATA.map(b => {
+    const berriesList = _getLabBerryValuesData();
+    const currentCid = _resolveLabBerryCanonicalId(currentBerryName);
+    const optionsHtml = berriesList.map(b => {
       const bDisp = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b.name) : b.name) : b.name;
       const tDisp = window.I18N ? window.I18N.getTypeName(b.type) : b.type;
-      const isSel = b.name === currentBerryName ? 'selected' : '';
+      const isSel = (currentCid && b.id === currentCid) || b.name === currentBerryName ? 'selected' : '';
       return `<option value="${escapeHtml(b.name)}" ${isSel}>${escapeHtml(bDisp)} (${tDisp})</option>`;
     }).join('');
 
-    const bObj = BERRY_VALUES_DATA.find(b => b.name === currentBerryName) || BERRY_VALUES_DATA[0];
+    const bObj = _findLabBerryData(currentBerryName) || berriesList[0];
 
     return `
       <div class="lab-greengrass-berry-item">
@@ -115,8 +117,9 @@
     }).join('');
 
     const favoredBerriesHtml = favBerries.map(bName => {
-      const bObj = BERRY_VALUES_DATA.find(b => b.name === bName) || {};
-      const bDisplayName = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(bName) : bName) : bName;
+      const bObj = _findLabBerryData(bName) || {};
+      const canonicalName = bObj.name || bName;
+      const bDisplayName = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(canonicalName) : canonicalName) : canonicalName;
       return `
         <span class="lab-favored-berry-icon-wrap" title="${escapeHtml(bDisplayName)}">
           ${bObj.icon ? `<img src="${bObj.icon}" class="lab-favored-berry-img" alt="${escapeHtml(bDisplayName)}">` : ''}
@@ -171,7 +174,7 @@
     const potFeasibilityBadge = targetPotReq > 0
       ? (isPotFeasible
           ? `<span class="lab-pot-feasibility feasible">[OK] ${isEN ? 'Capacity OK' : '容量充裕'} (${targetPotReq}/${effectivePotSize})</span>`
-          : `<span class="lab-pot-feasibility deficit">[!] ${isEN ? 'Insufficient Pot' : '鍋容量不足'} (${targetPotReq}/${effectivePotSize})</span>`)
+          : `<span class="lab-pot-feasibility deficit">[!] ${isEN ? 'Pot Short' : '鍋容量不足'} (${targetPotReq}/${effectivePotSize})</span>`)
       : '';
 
     const potControlHtml = `
@@ -187,7 +190,7 @@
             ${isEN ? 'Sunday 2x' : '週日2倍'}
           </button>
           <button type="button" class="lab-pot-toggle-btn ${labState.goodCampTicket ? 'active' : ''}" onclick="window.AppraisalLab.toggleGoodCampTicket()" title="${isEN ? 'Good Camp Ticket: +50% Pot Capacity' : '好露營券：料理鍋容量 +50%'}">
-            ${isEN ? 'Good Camp (+50%)' : '好露營券(+50%)'}
+            ${isEN ? 'Camp +50%' : '好露營券(+50%)'}
           </button>
         </div>
         <div class="lab-effective-pot-wrap">
@@ -223,9 +226,9 @@
           <div class="lab-team-config-group">
             <span class="lab-team-config-label">${isEN ? 'Cooking Goal:' : '料理種類:'}</span>
             <div class="lab-team-pills">
-              <button type="button" class="lab-team-pill ${labState.cookingType === 'curry' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('curry')">${isEN ? 'Curry/Stew' : '咖哩/濃湯'}</button>
+              <button type="button" class="lab-team-pill ${labState.cookingType === 'curry' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('curry')">${isEN ? 'Curry' : '咖哩/濃湯'}</button>
               <button type="button" class="lab-team-pill ${labState.cookingType === 'salad' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('salad')">${isEN ? 'Salad' : '沙拉'}</button>
-              <button type="button" class="lab-team-pill ${labState.cookingType === 'dessert' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('dessert')">${isEN ? 'Dessert/Drinks' : '點心/飲料'}</button>
+              <button type="button" class="lab-team-pill ${labState.cookingType === 'dessert' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('dessert')">${isEN ? 'Dessert' : '點心/飲料'}</button>
             </div>
           </div>
         `}

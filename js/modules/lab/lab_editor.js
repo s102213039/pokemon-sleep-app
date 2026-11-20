@@ -10,11 +10,12 @@
     const island = LAB_ISLANDS.find(i => i.id === islandId) || LAB_ISLANDS[0];
     if (island.id === 'greengrass' && Array.isArray(labState.greengrassBerries) && labState.greengrassBerries.length === 3) {
       return labState.greengrassBerries.map(bName => {
-        const found = BERRY_VALUES_DATA.find(b => b.name === bName);
-        return found ? found.type : '';
+        const found = _findLabBerryData(bName);
+        if (!found || !found.type) return '';
+        return found.type === '超能' ? '超能力' : found.type;
       }).filter(Boolean);
     }
-    return island.types || [];
+    return (island.types || []).map(t => (t === '超能' ? '超能力' : t));
   }
 
   try {
@@ -30,7 +31,17 @@
       const sTargetRecipe = localStorage.getItem('pksleep_lab_target_recipe');
       if (sTargetRecipe) labState.targetRecipeName = sTargetRecipe;
       const sGgBerries = JSON.parse(localStorage.getItem('pksleep_lab_greengrass_berries') || 'null');
-      if (Array.isArray(sGgBerries) && sGgBerries.length === 3) labState.greengrassBerries = sGgBerries;
+      if (Array.isArray(sGgBerries) && sGgBerries.length === 3) {
+        const defaultGg = ['桃桃果', '橙橙果', '櫻子果', '椰木果', '木子果', '異奇果'];
+        const canonicalized = sGgBerries.map(b => (_findLabBerryData(b) || {}).name || null);
+        const usedSet = new Set(canonicalized.filter(Boolean));
+        labState.greengrassBerries = canonicalized.map((name, idx) => {
+          if (name) return name;
+          const fb = defaultGg.find(cand => !usedSet.has(cand)) || defaultGg[idx % defaultGg.length];
+          usedSet.add(fb);
+          return fb;
+        });
+      }
       const sCompareSlots = JSON.parse(localStorage.getItem('pksleep_lab_compare_slots') || 'null');
       if (Array.isArray(sCompareSlots) && sCompareSlots.length > 0) {
         labState.compareSlots = [sCompareSlots[0] || null, sCompareSlots[1] || null, sCompareSlots[2] || null];

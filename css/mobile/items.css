@@ -197,6 +197,26 @@
   width: 100% !important;
 }
 
+.pokedex-subskill-header-row .box-form-label,
+.mobile-h5-app .mobile-box-sheet .pokedex-subskill-header-row .box-form-label,
+.mobile-h5-app .mobile-box-sheet .box-form-group > div > .box-form-label {
+  width: auto !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+#pokedex-subskill-clear-all-btn,
+#box-subskill-clear-all-btn,
+#pokedex-detail-modal .box-subskill-clear-btn,
+.mobile-h5-app .mobile-box-sheet .box-subskill-clear-btn {
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  width: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 .mobile-h5-app .mobile-box-sheet .box-form-input,
 .mobile-h5-app .mobile-box-sheet select.box-form-select:not(.box-mainskill-select) {
   height: 36px !important;

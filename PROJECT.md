@@ -18,10 +18,12 @@ The Dynamic Data Scan and Sync System introduces a unified CLI command (`npm run
 - Maintain 100% test pass rate with zero regressions.
 
 ## Multi-Agent Model Configuration
-The project strictly operates under a two-tier heterogeneous multi-agent collaboration architecture:
-- Primary Model: Hydrogen (Tier 0 Top Orchestrator / Lead Architect / Final Release Auditor)
-  - Scope: Global system architecture, requirement analysis, milestone decomposition, interface contract specification, exclusive write boundary locking, core critical algorithm implementation, final gate verification, and release commits.
-- Secondary Model: Gemini 3.8 Flash (Tier 1-2 Delegated Execution Worker / Fast Explorer)
+The project strictly operates under a three-tier heterogeneous multi-agent collaboration architecture:
+- Planning Brain & Core Architect: Argon (Tier 00 Super-High-Tier Architect / Planner / Final Release Reviewer)
+  - Scope: Top-level requirement analysis, system architecture blueprint, specification contract definition, strategic direction, and delegating primary coding to Neon.
+- Primary Helper & Lead Implementer: Neon (Tier 0 Primary Helper / Top Orchestrator / Lead Code Implementer)
+  - Scope: Primary code implementation, core critical algorithm authoring, milestone decomposition, exclusive write boundary locking, subagent code review, and full gate verification.
+- Secondary Execution Worker: Gemini 3.8 Flash (Tier 1-2 Delegated Execution Worker / Fast Explorer)
   - Scope: Fast parallel code exploration, spec mining, subagent implementation within exclusive write boundaries, boilerplate and view controller updates, unit test authoring, and fast regression test execution.
 
 ## Feature Inventory
@@ -51,8 +53,9 @@ The project strictly operates under a two-tier heterogeneous multi-agent collabo
 | 22 | Service Worker Traversal & Origin Hardening | Sanitize Serebii path extraction and enforce same-origin / trusted CDN checks in `sw.js` | M5 | Security Survey |
 | 23 | External Link Tabnabbing Hardening | Add `rel="noopener noreferrer"` to external `target="_blank"` links across HTML and JS files | M5 | Security Survey |
 | 24 | Agent Safety Script Hardening & Emoji Cleanse | Sanitize path traversal in `sync-brain.sh`, remove unescaped glyphs, remove emojis from `agent-docs/README.md` | M5 | Security Survey |
-| 25 | Model Collaboration Documentation Hierarchy Update | Update `PROTOCOL.md`, `HETERO_MODEL_HARNESS.md`, `walkthrough.md`, `AGENTS.md`, `GEMINI.md` to designate Hydrogen (primary) and Gemini 3.8 Flash (secondary) | M5 | Security Survey |
+| 25 | Model Collaboration Documentation Hierarchy Update | Update `PROTOCOL.md`, `HETERO_MODEL_HARNESS.md`, `walkthrough.md`, `AGENTS.md`, `GEMINI.md` to designate Argon (planning brain), Neon (primary helper), and Gemini 3.8 Flash (secondary worker) | M5 | Security Survey |
 | 26 | Hybrid RSA-OAEP + AES-256-GCM Credential Vault | Multi-layer hybrid envelope encryption (RSA-OAEP-2048, AES-256-GCM, PBKDF2-HMAC-SHA256, WebCrypto IndexedDB non-extractable keys) for remembered cloud sync credentials in js/core/cloudSync/cloudSync_crypto.js | M6 | Security Remediation |
+| 27 | PWA Icons, 95% Island Bonus Cap & Canonical Energy-Asc Ordering | Full-bleed PWA icons (`icon-192.png`, `icon-512.png`, `icon-maskable.png`), `ISLAND_BONUS_CAP: 95` (95% island bonus cap across Recipes and Wiki Values), canonical energy-ascending order for all 18 berries and 20 ingredients, unified `篩選器`/`Filter` & `重設`/`Reset` without sidebar icons, and H5 English length optimization | M7 | UX & Game Cap Sync |
 
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
@@ -61,8 +64,9 @@ The project strictly operates under a two-tier heterogeneous multi-agent collabo
 | M2 | Multi-Tab Data Ingestion & Integration | Ingest Snackable Nuts, 3 recipes, Cottonee/Whimsicott, Sun Stone linkage, sleep styles, 570 goal, and dictionary mappings; update manifest | M1 | DONE |
 | M3 | Anti-Regression, Bundle Sync & Verification | Synchronize production bundles (`npm run build:prod`), synchronize test invariants, ensure 100% passing tests on fast and full suites | M2 | DONE |
 | M4 | Final Milestone: E2E Test Suite Pass & Adversarial Hardening | Pass 100% E2E test suite (Tiers 1-4), adversarial test hardening (Tier 5) | M3 | DONE |
-| M5 | Security Remediation & Model Collaboration Hierarchy Update | Implement security hardening patches (Features 17-24), update agent and repo documentation for Hydrogen/Flash hierarchy (Feature 25), verify 100% tests and zero emojis/glyphs | M4 | DONE |
+| M5 | Security Remediation & Model Collaboration Hierarchy Update | Implement security hardening patches (Features 17-24), update agent and repo documentation for Argon/Neon/Flash hierarchy (Feature 25), verify 100% tests and zero emojis/glyphs | M4 | DONE |
 | M6 | Hybrid Cryptographic Credential Vault Architecture | Modularize CloudSync crypto engine (cloudSync_crypto.js), implement RSA-OAEP-2048 + AES-256-GCM + PBKDF2 envelope encryption, update cloudSync_ui.js prefill and exports, add comprehensive regression tests in test_security_audit.js | M5 | DONE |
+| M7 | Full-Bleed PWA Icons, 95% Island Cap, Canonical Energy-Asc Sort & Unified Filter/EN UX | Deliver R1-R7 enhancements including `ISLAND_BONUS_CAP: 95` (95%), canonical berry/ingredient energy-ascending sorting, unified Filter/Reset headers, H5 English compact labels, and Argon + Neon teamwork documentation | M6 | DONE |
 
 ## Interface Contracts
 
