@@ -1359,10 +1359,12 @@
   function getSavedWikiSubTab() {
     try {
       if (typeof window !== 'undefined' && window.location && window.location.hash) {
-        const rawHash = window.location.hash.replace(/^#/, '');
-        const parts = rawHash.split(/[/_?]/);
-        if (parts[0] === 'wiki' && VALID_WIKI_SUBTABS.includes(parts[1])) {
-          return parts[1];
+        const rawClean = window.location.hash.replace(/^#/, '').split('?')[0];
+        const slashIdx = rawClean.indexOf('/');
+        const mainPart = slashIdx !== -1 ? rawClean.slice(0, slashIdx) : rawClean.split('_')[0];
+        const subPart = slashIdx !== -1 ? rawClean.slice(slashIdx + 1) : (rawClean.includes('_') ? rawClean.slice(rawClean.indexOf('_') + 1) : '');
+        if (mainPart === 'wiki' && VALID_WIKI_SUBTABS.includes(subPart)) {
+          return subPart;
         }
       }
       const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
@@ -1421,8 +1423,8 @@
         storage.setItem(STORAGE_KEY_WIKI_SUBTAB, targetTab);
       }
       if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
-        const curHash = (window.location && window.location.hash) ? window.location.hash.replace(/^#/, '') : '';
-        const mainPart = curHash.split(/[/_?]/)[0];
+        const curHash = (window.location && window.location.hash) ? window.location.hash.replace(/^#/, '').split('?')[0] : '';
+        const mainPart = curHash.split(/[/_]/)[0];
         if (mainPart === 'wiki' || !mainPart) {
           window.history.replaceState(null, '', '#wiki/' + targetTab);
         }
@@ -1451,23 +1453,27 @@
 
     const activePanel = document.getElementById(`wiki-subpanel-${targetTab}`);
     if (activePanel) {
-      activePanel.classList.add('active');
-      activePanel.style.display = '';
+      if (activePanel.classList) activePanel.classList.add('active');
+      if (activePanel.style) activePanel.style.display = '';
     }
 
-    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList && document.body.classList.contains('mobile-h5-app');
     const wikiPanel = document.getElementById('panel-wiki');
     const isWikiMainActive = !!(wikiPanel && (
-      (wikiPanel.style.display !== 'none' && !wikiPanel.hidden) ||
-      (typeof document !== 'undefined' && document.getElementById('tab-wiki') && document.getElementById('tab-wiki').classList.contains('active'))
+      (wikiPanel.style && wikiPanel.style.display !== 'none' && !wikiPanel.hidden) ||
+      (typeof document !== 'undefined' && document.getElementById('tab-wiki') && document.getElementById('tab-wiki').classList && document.getElementById('tab-wiki').classList.contains('active'))
     ));
 
-    if (isMobileH5) {
+    if (isMobileH5 && document.body && document.body.classList) {
       if (isWikiMainActive && (targetTab === 'ingredients' || targetTab === 'skills_ladder')) {
         document.body.classList.add('ladder-active');
       } else {
         document.body.classList.remove('ladder-active');
       }
+      if (isWikiMainActive && targetTab === 'ingredients') document.body.classList.add('ing-ladder-active');
+      else document.body.classList.remove('ing-ladder-active');
+      if (isWikiMainActive && targetTab === 'skills_ladder') document.body.classList.add('skill-ladder-active');
+      else document.body.classList.remove('skill-ladder-active');
       if (isWikiMainActive && targetTab === 'values') {
         document.body.classList.add('values-active');
       } else {
@@ -1482,28 +1488,30 @@
     const ladderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
     const ladderBackdrop = document.getElementById('ladder-sidebar-backdrop');
 
-    if (ladderSidebar) {
+    if (ladderSidebar && ladderSidebar.classList && ladderSidebar.style) {
       if (isWikiMainActive && targetTab === 'ingredients') {
+        if (typeof ladderSidebar.style.removeProperty === 'function') ladderSidebar.style.removeProperty('display');
         ladderSidebar.style.display = 'flex';
         const isLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_ladder_sidebar_open', true) : true;
         if (isLadderOpen && !isMobileH5 && window.innerWidth > 1024) {
           ladderSidebar.classList.remove('collapsed');
         } else {
           ladderSidebar.classList.add('collapsed');
-          if (ladderBackdrop) ladderBackdrop.classList.remove('active');
+          if (ladderBackdrop && ladderBackdrop.classList) ladderBackdrop.classList.remove('active');
         }
       } else {
         ladderSidebar.style.display = 'none';
         ladderSidebar.classList.add('collapsed');
-        if (ladderBackdrop) ladderBackdrop.classList.remove('active');
+        if (ladderBackdrop && ladderBackdrop.classList) ladderBackdrop.classList.remove('active');
       }
     }
 
-    if (ladderHandle) {
+    if (ladderHandle && ladderHandle.classList && ladderHandle.style) {
       if (isWikiMainActive && targetTab === 'ingredients') {
-        const isCollapsed = ladderSidebar ? ladderSidebar.classList.contains('collapsed') : true;
+        const isCollapsed = (ladderSidebar && ladderSidebar.classList) ? ladderSidebar.classList.contains('collapsed') : true;
         if (isCollapsed) {
           ladderHandle.classList.remove('drawer-open');
+          if (typeof ladderHandle.style.removeProperty === 'function') ladderHandle.style.removeProperty('display');
           ladderHandle.style.display = 'flex';
           ladderHandle.style.opacity = '1';
           ladderHandle.style.pointerEvents = 'auto';
@@ -1521,6 +1529,7 @@
         ladderHandle.style.display = 'none';
         ladderHandle.style.opacity = '0';
         ladderHandle.style.pointerEvents = 'none';
+        ladderHandle.style.visibility = 'hidden';
       }
     }
 
@@ -1594,16 +1603,29 @@
     if (shouldCollapse) {
       sidebar.classList.add('collapsed');
       if (backdrop) backdrop.classList.remove('active');
+      const wikiPanel = document.getElementById('panel-wiki');
+      const isWikiMainActive = !!(wikiPanel && wikiPanel.style.display !== 'none' && !wikiPanel.hidden);
+      const isIngActive = isWikiMainActive && currentWikiSubTab === 'ingredients';
       if (bookmarkHandle) {
-        bookmarkHandle.classList.remove('drawer-open');
-        bookmarkHandle.setAttribute('aria-expanded', 'false');
-        bookmarkHandle.title = isEN ? 'Expand Filter' : '展開天梯篩選側邊欄';
-        bookmarkHandle.style.opacity = '1';
-        bookmarkHandle.style.pointerEvents = 'auto';
-        bookmarkHandle.style.display = 'flex';
-        bookmarkHandle.style.visibility = 'visible';
+        if (isIngActive) {
+          bookmarkHandle.classList.remove('drawer-open');
+          bookmarkHandle.setAttribute('aria-expanded', 'false');
+          bookmarkHandle.title = isEN ? 'Expand Filter' : '展開天梯篩選側邊欄';
+          if (bookmarkHandle.style && typeof bookmarkHandle.style.removeProperty === 'function') bookmarkHandle.style.removeProperty('display');
+          bookmarkHandle.style.opacity = '1';
+          bookmarkHandle.style.pointerEvents = 'auto';
+          bookmarkHandle.style.display = 'flex';
+          bookmarkHandle.style.visibility = 'visible';
+        } else {
+          bookmarkHandle.classList.add('drawer-open');
+          bookmarkHandle.setAttribute('aria-expanded', 'false');
+          bookmarkHandle.style.opacity = '0';
+          bookmarkHandle.style.pointerEvents = 'none';
+          bookmarkHandle.style.display = 'none';
+          bookmarkHandle.style.visibility = 'hidden';
+        }
       }
-      if (ladderRecipeFab && currentWikiSubTab === 'ingredients') {
+      if (ladderRecipeFab && isIngActive) {
         ladderRecipeFab.classList.remove('drawer-open');
         ladderRecipeFab.style.display = 'flex';
       }
@@ -6874,6 +6896,24 @@
     });
   }
 
+  function bindWikiFloatingFabs() {
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    if (!isMobileH5 || typeof window.makeFloatingDraggable !== 'function') return;
+    const ladderFab = document.getElementById('ladder-sidebar-bookmark-handle-fab') || document.getElementById('ladder-sidebar-bookmark-handle');
+    if (ladderFab && !ladderFab._hasDraggable) {
+      ladderFab._hasDraggable = true;
+      window.makeFloatingDraggable(ladderFab, () => openLadderSidebar());
+    }
+    const skillLadderFab = document.getElementById('skill-ladder-sidebar-bookmark-handle');
+    if (skillLadderFab && !skillLadderFab._hasDraggable) {
+      skillLadderFab._hasDraggable = true;
+      window.makeFloatingDraggable(skillLadderFab, () => {
+        if (typeof openSkillLadderSidebar === 'function') openSkillLadderSidebar();
+        else if (window.WikiDB && typeof window.WikiDB.openSkillLadderSidebar === 'function') window.WikiDB.openSkillLadderSidebar();
+      });
+    }
+  }
+
   // --- 初始化 Wiki 模組 ---
   function initWikiModule() {
     loadPersistedBerrySettings();
@@ -6889,12 +6929,7 @@
 
     try {
       renderWikiLayout(wikiContainer);
-      const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
-      const ladderFab = document.getElementById('ladder-sidebar-bookmark-handle-fab') || document.getElementById('ladder-sidebar-bookmark-handle');
-      if (ladderFab && typeof window.makeFloatingDraggable === 'function' && isMobileH5 && !ladderFab._hasDraggable) {
-        ladderFab._hasDraggable = true;
-        window.makeFloatingDraggable(ladderFab, () => openLadderSidebar());
-      }
+      bindWikiFloatingFabs();
     } catch (e) {
       console.error('Error rendering Wiki layout:', e);
       if (typeof window.__renderInPlaceError === 'function') {
@@ -8592,33 +8627,40 @@
   }
 
   function handleSkillLadderSubTabSwitch(targetTab, isWikiMainActive, isMobileH5) {
-    const sidebar = document.getElementById('skill-ladder-filter-sidebar');
+    const sidebar = (typeof window !== 'undefined' && typeof window.resolveUniqueOverlay === 'function')
+      ? window.resolveUniqueOverlay('skill-ladder-filter-sidebar')
+      : document.getElementById('skill-ladder-filter-sidebar');
     const handles = document.querySelectorAll('#skill-ladder-sidebar-bookmark-handle');
-    const backdrop = document.getElementById('skill-ladder-sidebar-backdrop');
+    const backdrop = (typeof window !== 'undefined' && typeof window.resolveUniqueOverlay === 'function')
+      ? window.resolveUniqueOverlay('skill-ladder-sidebar-backdrop')
+      : document.getElementById('skill-ladder-sidebar-backdrop');
 
-    if (sidebar) {
+    if (sidebar && sidebar.classList && sidebar.style) {
       if (isWikiMainActive && targetTab === 'skills_ladder') {
+        if (typeof sidebar.style.removeProperty === 'function') sidebar.style.removeProperty('display');
         sidebar.style.display = 'flex';
         const isOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_skill_ladder_sidebar_open', true) : true;
         if (isOpen && !isMobileH5 && window.innerWidth > 1024) {
           sidebar.classList.remove('collapsed');
         } else {
           sidebar.classList.add('collapsed');
-          if (backdrop) backdrop.classList.remove('active');
+          if (backdrop && backdrop.classList) backdrop.classList.remove('active');
         }
       } else {
         sidebar.style.display = 'none';
         sidebar.classList.add('collapsed');
-        if (backdrop) backdrop.classList.remove('active');
+        if (backdrop && backdrop.classList) backdrop.classList.remove('active');
       }
     }
 
     if (handles && handles.length > 0) {
       handles.forEach(handle => {
+        if (!handle || !handle.classList || !handle.style) return;
         if (isWikiMainActive && targetTab === 'skills_ladder') {
-          const isCollapsed = sidebar ? sidebar.classList.contains('collapsed') : true;
+          const isCollapsed = (sidebar && sidebar.classList) ? sidebar.classList.contains('collapsed') : true;
           if (isCollapsed) {
             handle.classList.remove('drawer-open');
+            if (typeof handle.style.removeProperty === 'function') handle.style.removeProperty('display');
             handle.style.display = 'flex';
             handle.style.opacity = '1';
             handle.style.pointerEvents = 'auto';
@@ -8635,6 +8677,7 @@
           handle.style.display = 'none';
           handle.style.opacity = '0';
           handle.style.pointerEvents = 'none';
+          handle.style.visibility = 'hidden';
         }
       });
       if (isWikiMainActive && targetTab === 'skills_ladder') {
@@ -8648,6 +8691,9 @@
           refreshSkillCoordinateLadder();
         }
       } catch (e) {}
+    }
+    if (typeof window !== 'undefined' && typeof window.syncOverlayOpenState === 'function') {
+      window.syncOverlayOpenState();
     }
   }
 
@@ -8937,9 +8983,13 @@
   }
 
   function toggleSkillLadderSidebar(forceOpen) {
-    const sidebar = document.getElementById('skill-ladder-filter-sidebar');
+    const sidebar = (typeof window !== 'undefined' && typeof window.resolveUniqueOverlay === 'function')
+      ? window.resolveUniqueOverlay('skill-ladder-filter-sidebar')
+      : document.getElementById('skill-ladder-filter-sidebar');
     const handles = document.querySelectorAll('#skill-ladder-sidebar-bookmark-handle');
-    const backdrop = document.getElementById('skill-ladder-sidebar-backdrop');
+    const backdrop = (typeof window !== 'undefined' && typeof window.resolveUniqueOverlay === 'function')
+      ? window.resolveUniqueOverlay('skill-ladder-sidebar-backdrop')
+      : document.getElementById('skill-ladder-sidebar-backdrop');
     if (!sidebar) return;
 
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
@@ -8951,36 +9001,63 @@
     }
 
     if (open) {
+      if (typeof window !== 'undefined' && typeof window.portalMobileOverlays === 'function') {
+        window.portalMobileOverlays(sidebar);
+      }
       sidebar.classList.remove('collapsed');
-      if (backdrop) backdrop.classList.add('active');
+      if (sidebar.style && typeof sidebar.style.setProperty === 'function') {
+        sidebar.style.setProperty('display', 'flex', 'important');
+      } else if (sidebar.style) {
+        sidebar.style.display = 'flex';
+      }
+      if (backdrop && (isMobileH5 || (typeof window !== 'undefined' && window.innerWidth <= 1024))) {
+        backdrop.classList.add('active');
+      }
       if (handles && handles.length > 0) {
         handles.forEach(handle => {
-          if (isMobileH5) {
-            handle.classList.add('drawer-open');
-          } else {
-            handle.classList.add('drawer-open');
-            handle.style.display = 'none';
-          }
+          handle.classList.add('drawer-open');
+          handle.setAttribute('aria-expanded', 'true');
+          handle.style.opacity = '0';
+          handle.style.pointerEvents = 'none';
+          handle.style.display = 'none';
+          handle.style.visibility = 'hidden';
         });
       }
-      if (typeof window.saveSidebarState === 'function') {
-        window.saveSidebarState('pksleep_skill_ladder_sidebar_open', true);
+      if (typeof window !== 'undefined' && typeof window.setSidebarSavedState === 'function') {
+        window.setSidebarSavedState('pksleep_skill_ladder_sidebar_open', true);
       }
     } else {
       sidebar.classList.add('collapsed');
       if (backdrop) backdrop.classList.remove('active');
+      const wikiPanel = document.getElementById('panel-wiki');
+      const isWikiMainActive = !!(wikiPanel && wikiPanel.style.display !== 'none' && !wikiPanel.hidden);
+      const isSkillLadderActive = isWikiMainActive && (typeof currentWikiSubTab !== 'undefined' ? currentWikiSubTab === 'skills_ladder' : true);
       if (handles && handles.length > 0) {
         handles.forEach(handle => {
-          handle.classList.remove('drawer-open');
-          handle.style.display = 'flex';
-          handle.style.opacity = '1';
-          handle.style.pointerEvents = 'auto';
-          handle.style.visibility = 'visible';
+          if (isSkillLadderActive) {
+            handle.classList.remove('drawer-open');
+            handle.setAttribute('aria-expanded', 'false');
+            if (handle.style && typeof handle.style.removeProperty === 'function') handle.style.removeProperty('display');
+            handle.style.display = 'flex';
+            handle.style.opacity = '1';
+            handle.style.pointerEvents = 'auto';
+            handle.style.visibility = 'visible';
+          } else {
+            handle.classList.add('drawer-open');
+            handle.setAttribute('aria-expanded', 'false');
+            handle.style.display = 'none';
+            handle.style.opacity = '0';
+            handle.style.pointerEvents = 'none';
+            handle.style.visibility = 'hidden';
+          }
         });
       }
-      if (typeof window.saveSidebarState === 'function') {
-        window.saveSidebarState('pksleep_skill_ladder_sidebar_open', false);
+      if (typeof window !== 'undefined' && typeof window.setSidebarSavedState === 'function') {
+        window.setSidebarSavedState('pksleep_skill_ladder_sidebar_open', false);
       }
+    }
+    if (typeof window !== 'undefined' && typeof window.syncOverlayOpenState === 'function') {
+      window.syncOverlayOpenState();
     }
     updateSkillLadderActiveFilterBadge();
   }
@@ -9542,9 +9619,10 @@
   }
 
   function renderSkillLadderMobileHandle(currentWikiSubTab, isEN) {
+    const isActive = currentWikiSubTab === 'skills_ladder';
     return `
       <!-- 右下懸浮技能天梯篩選按鈕 (Mobile FAB) -->
-      <button type="button" id="skill-ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openSkillLadderSidebar()" title="${_tSkillLadder('展開技能天梯篩選器', 'Filter')}" aria-label="${_tSkillLadder('展開技能天梯篩選器', 'Filter')}" style="${currentWikiSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}">
+      <button type="button" id="skill-ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn ${isActive ? '' : 'drawer-open'}" onclick="window.WikiDB.openSkillLadderSidebar()" title="${_tSkillLadder('展開技能天梯篩選器', 'Filter')}" aria-label="${_tSkillLadder('展開技能天梯篩選器', 'Filter')}" style="${isActive ? 'display:flex;' : 'display:none;'}">
         <span class="bookmark-icon">
           <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="4" y1="21" x2="4" y2="14"></line>
@@ -11217,7 +11295,7 @@
 
       ${isMobileH5 ? `
         <!-- 右下懸浮天梯篩選按鈕 (與圖鑑/料理完全一致的 FAB 結構) -->
-        <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Filter' : '展開天梯篩選器'}" aria-label="${isEN ? 'Filter' : '展開天梯篩選器'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
+        <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn ${currentWikiSubTab === 'ingredients' ? '' : 'drawer-open'}" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Filter' : '展開天梯篩選器'}" aria-label="${isEN ? 'Filter' : '展開天梯篩選器'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
           <span class="bookmark-icon">
             <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="4" y1="21" x2="4" y2="14"></line>
@@ -11904,6 +11982,7 @@
 
     try {
       initCalcCustomSelects();
+      if (typeof bindWikiFloatingFabs === 'function') bindWikiFloatingFabs();
     } catch (e) {}
   }
 

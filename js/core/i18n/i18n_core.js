@@ -55,6 +55,9 @@
         const wikiPanel = document.getElementById('panel-wiki');
         if (wikiPanel) {
           window.WikiDB.renderWikiLayout(wikiPanel);
+          if (wikiPanel.style && wikiPanel.style.display !== 'none' && typeof window.WikiDB.switchSubTab === 'function' && typeof window.WikiDB.getCurrentSubTab === 'function') {
+            try { window.WikiDB.switchSubTab(window.WikiDB.getCurrentSubTab()); } catch (e) {}
+          }
           // 重新渲染後執行必要的計算（renderWikiLayout 已包含座標天梯渲染，無須重複 refreshCoordinateLadder）
           if (typeof window.WikiDB.recalcTriggerChance === 'function') window.WikiDB.recalcTriggerChance();
           if (typeof window.WikiDB.recalcSleepDays === 'function') window.WikiDB.recalcSleepDays();

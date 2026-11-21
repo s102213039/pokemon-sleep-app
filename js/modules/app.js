@@ -2936,6 +2936,8 @@ if (typeof document !== 'undefined') {
         }
 
         if (target !== 'box') {
+          if (document.body) document.body.classList.remove('box-lab-active');
+          if (panelBox) panelBox.classList.remove('box-lab-active');
           if (boxBookmarkHandle) boxBookmarkHandle.style.display = 'none';
           if (boxSidebar) boxSidebar.style.display = 'none';
           if (boxBackdrop) boxBackdrop.classList.remove('active');
@@ -2948,6 +2950,8 @@ if (typeof document !== 'undefined') {
 
         if (target !== 'wiki') {
           document.body.classList.remove('ladder-active');
+          document.body.classList.remove('ing-ladder-active');
+          document.body.classList.remove('skill-ladder-active');
           document.body.classList.remove('values-active');
           const curLadderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
           if (curLadderHandle && curLadderHandle.style) {
@@ -3092,6 +3096,8 @@ if (typeof document !== 'undefined') {
             } else {
               document.body.classList.remove('ladder-active');
             }
+            document.body.classList.toggle('ing-ladder-active', isIng);
+            document.body.classList.toggle('skill-ladder-active', isSkillLadder);
             if (isVal) {
               document.body.classList.add('values-active');
             } else {
@@ -3100,6 +3106,7 @@ if (typeof document !== 'undefined') {
           }
           if (ladderSidebar) {
             if (isIng) {
+              if (ladderSidebar.style && typeof ladderSidebar.style.removeProperty === 'function') ladderSidebar.style.removeProperty('display');
               ladderSidebar.style.display = 'flex';
               const isLadderOpen = getSidebarSavedState('pksleep_ladder_sidebar_open', true);
               if (isLadderOpen && !isMobileH5 && window.innerWidth > 1024) {
@@ -3125,7 +3132,7 @@ if (typeof document !== 'undefined') {
               curLadderHandle.style.pointerEvents = 'auto';
               curLadderHandle.style.visibility = 'visible';
             } else {
-              if (isIng && !isCollapsed) curLadderHandle.classList.add('drawer-open');
+              curLadderHandle.classList.add('drawer-open');
               curLadderHandle.style.display = 'none';
               curLadderHandle.style.opacity = '0';
               curLadderHandle.style.pointerEvents = 'none';
@@ -3137,6 +3144,7 @@ if (typeof document !== 'undefined') {
           const skillLadderBackdrop = document.getElementById('skill-ladder-sidebar-backdrop');
           if (skillLadderSidebar) {
             if (isSkillLadder) {
+              if (skillLadderSidebar.style && typeof skillLadderSidebar.style.removeProperty === 'function') skillLadderSidebar.style.removeProperty('display');
               skillLadderSidebar.style.display = 'flex';
               const isSkillLadderOpen = getSidebarSavedState('pksleep_skill_ladder_sidebar_open', true);
               if (isSkillLadderOpen && !isMobileH5 && window.innerWidth > 1024) {
@@ -3162,7 +3170,7 @@ if (typeof document !== 'undefined') {
               curSkillLadderHandle.style.pointerEvents = 'auto';
               curSkillLadderHandle.style.visibility = 'visible';
             } else {
-              if (isSkillLadder && !isCollapsed) curSkillLadderHandle.classList.add('drawer-open');
+              curSkillLadderHandle.classList.add('drawer-open');
               curSkillLadderHandle.style.display = 'none';
               curSkillLadderHandle.style.opacity = '0';
               curSkillLadderHandle.style.pointerEvents = 'none';
@@ -3268,13 +3276,26 @@ if (typeof document !== 'undefined') {
       if (tabBox) tabBox.addEventListener('click', () => switchMainTab('box'));
       if (tabNews) tabNews.addEventListener('click', () => switchMainTab('news'));
 
+      function parseSpaHash(raw) {
+        const clean = (raw || '').replace(/^#/, '').split('?')[0];
+        if (!clean) return { main: '', sub: '' };
+        const slashIdx = clean.indexOf('/');
+        if (slashIdx !== -1) {
+          return { main: clean.slice(0, slashIdx), sub: clean.slice(slashIdx + 1) };
+        }
+        const underIdx = clean.indexOf('_');
+        if (underIdx !== -1) {
+          return { main: clean.slice(0, underIdx), sub: clean.slice(underIdx + 1) };
+        }
+        return { main: clean, sub: '' };
+      }
+
       // 監聽網址 hash 變更 (SPA 路由)
       window.addEventListener('hashchange', () => {
-        const rawHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
-        const parts = rawHash.split(/[/_?]/);
-        let main = parts[0];
+        const parsed = parseSpaHash(window.location.hash);
+        let main = parsed.main;
         if (main === 'pokedex') main = 'pokemon';
-        const sub = parts[1];
+        const sub = parsed.sub;
         if (VALID_MAIN_TABS.includes(main)) {
           const storage = getStorage();
           if (storage) {
@@ -3289,11 +3310,10 @@ if (typeof document !== 'undefined') {
       });
 
       // 依網址 hash 或 localStorage 載入預設 tab 與子 tab
-      const rawHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
-      const parts = rawHash.split(/[/_?]/);
-      let mainFromHash = parts[0];
+      const initialParsed = parseSpaHash(window.location.hash);
+      let mainFromHash = initialParsed.main;
       if (mainFromHash === 'pokedex') mainFromHash = 'pokemon';
-      const subFromHash = parts[1];
+      const subFromHash = initialParsed.sub;
 
       let savedMainTab = null;
       try {
@@ -4114,6 +4134,24 @@ if (typeof document !== 'undefined') {
         bindSidebarSwipeRightToClose(sidebar, () => toggleSidebar(false));
       }
 
+      function _getActiveWikiSubtabForDrawer() {
+        if (typeof window !== 'undefined' && window.WikiDB && typeof window.WikiDB.getCurrentSubTab === 'function') {
+          const live = window.WikiDB.getCurrentSubTab();
+          if (live) return live;
+        }
+        const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) ? window.location.hash.replace(/^#/, '').split('?')[0] : '';
+        const slashIdx = rawHash.indexOf('/');
+        if (slashIdx !== -1 && rawHash.slice(0, slashIdx) === 'wiki') {
+          return rawHash.slice(slashIdx + 1);
+        }
+        try {
+          if (typeof localStorage !== 'undefined') {
+            return localStorage.getItem('pksleep_active_wiki_subtab') || 'skills';
+          }
+        } catch (e) {}
+        return 'skills';
+      }
+
       function closeMobileDrawer() {
         if (typeof window.toggleRecipeSidebar === 'function') {
           window.toggleRecipeSidebar(false);
@@ -4134,17 +4172,18 @@ if (typeof document !== 'undefined') {
           sb.classList.add('collapsed');
         });
         document.querySelectorAll('.sidebar-backdrop').forEach(bd => bd.classList.remove('active'));
-        const curMainTab = (typeof window !== 'undefined' && window.location && window.location.hash)
-          ? window.location.hash.replace(/^#/, '').split(/[/_?]/)[0]
+        const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) ? window.location.hash.replace(/^#/, '').split('?')[0] : '';
+        const curMainTab = rawHash
+          ? rawHash.split(/[/_]/)[0]
           : (typeof localStorage !== 'undefined' ? localStorage.getItem('pksleep_active_main_tab') || 'pokemon' : 'pokemon');
         const isPoke = curMainTab === 'pokemon' || curMainTab === '';
         const isRecipe = curMainTab === 'recipes';
         const isWiki = curMainTab === 'wiki';
         const isBox = curMainTab === 'box';
 
-        const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) || '';
-        const isIngredientSubtab = rawHash.includes('/ingredients') || (typeof localStorage !== 'undefined' && localStorage.getItem('pksleep_active_wiki_subtab') === 'ingredients');
-        const isSkillLadderSubtab = window.WikiState && window.WikiState.currentSubtab === 'skills_ladder';
+        const wikiSubtab = _getActiveWikiSubtabForDrawer();
+        const isIngredientSubtab = isWiki && wikiSubtab === 'ingredients';
+        const isSkillLadderSubtab = isWiki && wikiSubtab === 'skills_ladder';
 
         const f1 = document.getElementById('sidebar-bookmark-handle');
         const f2 = document.getElementById('recipe-sidebar-bookmark-handle');
@@ -4152,37 +4191,24 @@ if (typeof document !== 'undefined') {
         const f4 = document.getElementById('box-sidebar-bookmark-handle');
         const f5 = document.getElementById('skill-ladder-sidebar-bookmark-handle');
 
-        if (f1) {
-          f1.style.opacity = isPoke ? '1' : '0';
-          f1.style.pointerEvents = isPoke ? 'auto' : 'none';
-          f1.style.display = isPoke ? 'flex' : 'none';
-          f1.style.visibility = isPoke ? 'visible' : 'hidden';
-        }
-        if (f2) {
-          f2.style.opacity = isRecipe ? '1' : '0';
-          f2.style.pointerEvents = isRecipe ? 'auto' : 'none';
-          f2.style.display = isRecipe ? 'flex' : 'none';
-          f2.style.visibility = isRecipe ? 'visible' : 'hidden';
-        }
-        if (f3) {
-          f3.style.display = (isWiki && !isIngredientSubtab && !isSkillLadderSubtab) ? 'inline-flex' : 'none';
-          f3.style.opacity = (isWiki && !isIngredientSubtab && !isSkillLadderSubtab) ? '1' : '0';
-          f3.style.pointerEvents = (isWiki && !isIngredientSubtab && !isSkillLadderSubtab) ? 'auto' : 'none';
-          f3.style.visibility = (isWiki && !isIngredientSubtab && !isSkillLadderSubtab) ? 'visible' : 'hidden';
-        }
-        if (f4) {
-          const isLabSubtab = rawHash.includes('/lab') || (typeof localStorage !== 'undefined' && localStorage.getItem('pksleep_active_box_subtab') === 'lab');
-          const showF4 = isBox && !isLabSubtab;
-          f4.style.opacity = showF4 ? '1' : '0';
-          f4.style.pointerEvents = showF4 ? 'auto' : 'none';
-          f4.style.display = showF4 ? 'flex' : 'none';
-          f4.style.visibility = showF4 ? 'visible' : 'hidden';
-        }
-        if (f5) {
-          f5.style.display = (isWiki && isSkillLadderSubtab) ? 'inline-flex' : 'none';
-          f5.style.opacity = (isWiki && isSkillLadderSubtab) ? '1' : '0';
-          f5.style.pointerEvents = (isWiki && isSkillLadderSubtab) ? 'auto' : 'none';
-          f5.style.visibility = (isWiki && isSkillLadderSubtab) ? 'visible' : 'hidden';
+        const syncFab = (el, show) => {
+          if (!el) return;
+          el.classList.toggle('drawer-open', !show);
+          if (show && el.style && typeof el.style.removeProperty === 'function') el.style.removeProperty('display');
+          el.style.opacity = show ? '1' : '0';
+          el.style.pointerEvents = show ? 'auto' : 'none';
+          el.style.display = show ? 'flex' : 'none';
+          el.style.visibility = show ? 'visible' : 'hidden';
+        };
+
+        syncFab(f1, isPoke);
+        syncFab(f2, isRecipe);
+        syncFab(f3, isIngredientSubtab);
+        const isLabSubtab = rawHash.includes('/lab') || (typeof localStorage !== 'undefined' && localStorage.getItem('pksleep_active_box_subtab') === 'lab');
+        syncFab(f4, isBox && !isLabSubtab);
+        syncFab(f5, isSkillLadderSubtab);
+        if (typeof window.syncOverlayOpenState === 'function') {
+          window.syncOverlayOpenState();
         }
       }
       window.closeMobileDrawer = closeMobileDrawer;
@@ -4198,22 +4224,35 @@ if (typeof document !== 'undefined') {
       }, { passive: false });
 
       window.addEventListener('resize', () => {
+        const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+        if (!isMobileH5 && window.innerWidth > 980) return;
         const f3 = document.getElementById('ladder-sidebar-bookmark-handle');
         const f5 = document.getElementById('skill-ladder-sidebar-bookmark-handle');
-        if (window.innerWidth > 980) {
-          if (f5) f5.style.display = 'none';
-        } else {
-          const curMainTab = (typeof window !== 'undefined' && window.location && window.location.hash)
-            ? window.location.hash.replace(/^#/, '').split(/[/_?]/)[0]
-            : (typeof localStorage !== 'undefined' ? localStorage.getItem('pksleep_active_main_tab') || 'pokemon' : 'pokemon');
-          const isWiki = curMainTab === 'wiki';
-          const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) || '';
-          const isIngredientSubtab = rawHash.includes('/ingredients') || (typeof localStorage !== 'undefined' && localStorage.getItem('pksleep_active_wiki_subtab') === 'ingredients');
-          const isSkillLadderSubtab = window.WikiState && window.WikiState.currentSubtab === 'skills_ladder';
-          const hasActiveDrawer = document.querySelector('.pokemon-filter-sidebar:not(.collapsed), .recipe-filter-sidebar:not(.collapsed), .box-filter-sidebar:not(.collapsed), .ladder-fixed-sidebar:not(.collapsed), .skill-ladder-filter-sidebar:not(.collapsed)');
-          if (!hasActiveDrawer) {
-            if (f5) f5.style.display = (isWiki && isSkillLadderSubtab) ? 'inline-flex' : 'none';
-            if (f3) f3.style.display = (isWiki && !isIngredientSubtab && !isSkillLadderSubtab) ? 'inline-flex' : 'none';
+        const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) ? window.location.hash.replace(/^#/, '').split('?')[0] : '';
+        const curMainTab = rawHash
+          ? rawHash.split(/[/_]/)[0]
+          : (typeof localStorage !== 'undefined' ? localStorage.getItem('pksleep_active_main_tab') || 'pokemon' : 'pokemon');
+        const isWiki = curMainTab === 'wiki';
+        const wikiSubtab = _getActiveWikiSubtabForDrawer();
+        const isIngredientSubtab = isWiki && wikiSubtab === 'ingredients';
+        const isSkillLadderSubtab = isWiki && wikiSubtab === 'skills_ladder';
+        const hasActiveDrawer = document.querySelector('.pokemon-filter-sidebar:not(.collapsed), .recipe-filter-sidebar:not(.collapsed), .box-filter-sidebar:not(.collapsed), .ladder-fixed-sidebar:not(.collapsed), .skill-ladder-filter-sidebar:not(.collapsed)');
+        if (!hasActiveDrawer) {
+          if (f5) {
+            f5.classList.toggle('drawer-open', !isSkillLadderSubtab);
+            if (isSkillLadderSubtab && f5.style && typeof f5.style.removeProperty === 'function') f5.style.removeProperty('display');
+            f5.style.display = isSkillLadderSubtab ? 'flex' : 'none';
+            f5.style.opacity = isSkillLadderSubtab ? '1' : '0';
+            f5.style.pointerEvents = isSkillLadderSubtab ? 'auto' : 'none';
+            f5.style.visibility = isSkillLadderSubtab ? 'visible' : 'hidden';
+          }
+          if (f3) {
+            f3.classList.toggle('drawer-open', !isIngredientSubtab);
+            if (isIngredientSubtab && f3.style && typeof f3.style.removeProperty === 'function') f3.style.removeProperty('display');
+            f3.style.display = isIngredientSubtab ? 'flex' : 'none';
+            f3.style.opacity = isIngredientSubtab ? '1' : '0';
+            f3.style.pointerEvents = isIngredientSubtab ? 'auto' : 'none';
+            f3.style.visibility = isIngredientSubtab ? 'visible' : 'hidden';
           }
         }
       }, { passive: true });

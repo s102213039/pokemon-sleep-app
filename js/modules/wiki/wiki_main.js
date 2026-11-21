@@ -71,7 +71,7 @@
 
       ${isMobileH5 ? `
         <!-- 右下懸浮天梯篩選按鈕 (與圖鑑/料理完全一致的 FAB 結構) -->
-        <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Filter' : '展開天梯篩選器'}" aria-label="${isEN ? 'Filter' : '展開天梯篩選器'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
+        <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn ${currentWikiSubTab === 'ingredients' ? '' : 'drawer-open'}" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Filter' : '展開天梯篩選器'}" aria-label="${isEN ? 'Filter' : '展開天梯篩選器'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
           <span class="bookmark-icon">
             <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="4" y1="21" x2="4" y2="14"></line>
@@ -758,6 +758,7 @@
 
     try {
       initCalcCustomSelects();
+      if (typeof bindWikiFloatingFabs === 'function') bindWikiFloatingFabs();
     } catch (e) {}
   }
 

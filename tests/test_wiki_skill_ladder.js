@@ -976,6 +976,119 @@ console.log('\n[Suite 14] Three-Language, Tooltips, Dual Hover & Final Evo Unifi
 }
 
 // -----------------------------------------------------------------------------
+// Suite 15: Filter Visibility, H5 FAB Isolation, Box Lab Cleanup & Hash Routing
+// -----------------------------------------------------------------------------
+console.log('\n[Suite 15] Filter Visibility, H5 FAB Isolation, Box Lab Cleanup & Hash Routing');
+
+{
+  const pokedexNavSrc = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'pokedex', 'pokedex_nav.js'), 'utf8');
+  const pokedexFiltersSrc = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'pokedex', 'pokedex_filters.js'), 'utf8');
+  const skillLadderCtrlSrc = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_skill_ladder.js'), 'utf8');
+  const skillLadderRenderSrc = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_skill_ladder_render.js'), 'utf8');
+  const wikiSkillsMatrixSrc = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_skills_matrix.js'), 'utf8');
+  const wikiRenderRatingsSrc = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_render_ratings.js'), 'utf8');
+  const ladderMealsCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'views', 'wiki', 'wiki_ladder_meals.css'), 'utf8');
+  const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // 1. Leaving box tab clears body.box-lab-active so Skill Ladder filter handle is never hidden
+  const nonBoxBlock = pokedexNavSrc.match(/if\s*\(target\s*!==\s*'box'\)\s*\{[\s\S]*?\n\s*\}/);
+  assert(nonBoxBlock && nonBoxBlock[0].includes("document.body.classList.remove('box-lab-active')"),
+    'pokedex_nav.js removes body.box-lab-active when switching away from box tab');
+  assert(nonBoxBlock && nonBoxBlock[0].includes("panelBox.classList.remove('box-lab-active')"),
+    'pokedex_nav.js removes panelBox.box-lab-active when switching away from box tab');
+
+  // 2. CSS drawer-open hide & active FAB show rules include skill-ladder and isolate ing vs skill FABs
+  for (const [label, css] of [['wiki_ladder_meals.css', ladderMealsCss], ['styles.css', stylesCss]]) {
+    assert(css.includes('#panel-wiki:has(#skill-ladder-filter-sidebar:not(.collapsed)) #skill-ladder-sidebar-bookmark-handle'),
+      `${label} hides skill-ladder FAB when #skill-ladder-filter-sidebar is open`);
+    assert(css.includes('.mobile-h5-app.skill-ladder-active #skill-ladder-sidebar-bookmark-handle:not(.drawer-open)'),
+      `${label} explicitly shows #skill-ladder-sidebar-bookmark-handle in skill-ladder-active mode`);
+    assert(css.includes('#panel-wiki:has(#wiki-subpanel-skills_ladder.active) #skill-ladder-sidebar-bookmark-handle:not(.drawer-open)'),
+      `${label} scopes skill-ladder FAB visibility to #wiki-subpanel-skills_ladder.active`);
+    assert(!css.includes('.mobile-h5-app.ladder-active #ladder-sidebar-bookmark-handle:not(.drawer-open)'),
+      `${label} does not leak #ladder-sidebar-bookmark-handle onto skills_ladder via shared .ladder-active`);
+  }
+
+  // 3. pokedex_filters.js never references non-existent window.WikiState and keeps f3/f5 accurate
+  assert(!pokedexFiltersSrc.includes('window.WikiState'),
+    'pokedex_filters.js must not reference undefined window.WikiState');
+  assert(pokedexFiltersSrc.includes('window.WikiDB.getCurrentSubTab'),
+    'pokedex_filters.js resolves active wiki subtab via window.WikiDB.getCurrentSubTab()');
+  assert(!pokedexFiltersSrc.includes('isWiki && !isIngredientSubtab && !isSkillLadderSubtab'),
+    'pokedex_filters.js must not invert isIngredientSubtab for ladder FAB');
+
+  // 4. toggleSkillLadderSidebar uses setSidebarSavedState, portalMobileOverlays & syncOverlayOpenState
+  assert(!skillLadderCtrlSrc.includes('window.saveSidebarState'),
+    'wiki_skill_ladder.js must not call non-existent window.saveSidebarState');
+  assert(skillLadderCtrlSrc.includes("window.setSidebarSavedState('pksleep_skill_ladder_sidebar_open', true)") &&
+    skillLadderCtrlSrc.includes("window.setSidebarSavedState('pksleep_skill_ladder_sidebar_open', false)"),
+    'wiki_skill_ladder.js persists sidebar state via window.setSidebarSavedState');
+  assert(skillLadderCtrlSrc.includes('window.portalMobileOverlays(sidebar)'),
+    'wiki_skill_ladder.js portals sidebar on H5 open');
+  assert(skillLadderCtrlSrc.includes('window.syncOverlayOpenState'),
+    'wiki_skill_ladder.js syncs overlay-open body state');
+  assert(wikiRenderRatingsSrc.includes("getElementById('skill-ladder-sidebar-bookmark-handle')") &&
+    wikiRenderRatingsSrc.includes('makeFloatingDraggable(skillLadderFab'),
+    'wiki_render_ratings.js binds makeFloatingDraggable to skill-ladder FAB on H5');
+  assert(skillLadderRenderSrc.includes("isActive ? '' : 'drawer-open'"),
+    'renderSkillLadderMobileHandle adds drawer-open class when skills_ladder subtab is inactive');
+
+  // 5. Hash routing preserves underscores in #wiki/skills_ladder without splitting into "skills"
+  assert(pokedexNavSrc.includes('function parseSpaHash('),
+    'pokedex_nav.js defines parseSpaHash() to keep underscore subtabs intact');
+  assert(!wikiSkillsMatrixSrc.includes("rawHash.split(/[/_?]/)"),
+    'wiki_skills_matrix.js getSavedWikiSubTab does not split #wiki/skills_ladder on underscore');
+
+  const { sandbox } = createLadderSandbox();
+  let savedKey = null;
+  let savedVal = null;
+  let portaledEl = null;
+  let syncedOverlayCount = 0;
+  const sbClasses = new Set();
+  const bdClasses = new Set();
+  const mockSidebar = {
+    id: 'skill-ladder-filter-sidebar',
+    style: {
+      display: 'none',
+      setProperty(k, v) { this[k] = v; },
+      removeProperty(k) { delete this[k]; }
+    },
+    classList: {
+      contains: (c) => sbClasses.has(c),
+      add: (c) => sbClasses.add(c),
+      remove: (c) => sbClasses.delete(c)
+    }
+  };
+  const mockBackdrop = {
+    id: 'skill-ladder-sidebar-backdrop',
+    classList: {
+      contains: (c) => bdClasses.has(c),
+      add: (c) => bdClasses.add(c),
+      remove: (c) => bdClasses.delete(c)
+    }
+  };
+  const mockPanelWiki = { id: 'panel-wiki', style: { display: 'block' }, hidden: false };
+  sandbox.document.body.appendChild(mockSidebar);
+  sandbox.document.body.appendChild(mockBackdrop);
+  sandbox.document.body.appendChild(mockPanelWiki);
+  sandbox.window.setSidebarSavedState = (k, v) => { savedKey = k; savedVal = v; };
+  sandbox.window.portalMobileOverlays = (el) => { portaledEl = el; };
+  sandbox.window.syncOverlayOpenState = () => { syncedOverlayCount++; };
+  sandbox.window.innerWidth = 1440;
+  sandbox.toggleSkillLadderSidebar(false);
+  assertEquals(savedKey, 'pksleep_skill_ladder_sidebar_open', 'toggleSkillLadderSidebar(false) calls setSidebarSavedState with correct key');
+  assertEquals(savedVal, false, 'toggleSkillLadderSidebar(false) persists false');
+  assert(sbClasses.has('collapsed'), 'toggleSkillLadderSidebar(false) adds collapsed class');
+  sandbox.toggleSkillLadderSidebar(true);
+  assertEquals(savedVal, true, 'toggleSkillLadderSidebar(true) persists true');
+  assert(!sbClasses.has('collapsed'), 'toggleSkillLadderSidebar(true) removes collapsed class');
+  assertEquals(mockSidebar.style.display, 'flex', 'toggleSkillLadderSidebar(true) sets sidebar display to flex');
+  assertEquals(portaledEl, mockSidebar, 'toggleSkillLadderSidebar(true) invokes portalMobileOverlays(sidebar)');
+  assert(!bdClasses.has('active'), 'toggleSkillLadderSidebar(true) on 1440px desktop does not activate backdrop');
+  assert(syncedOverlayCount >= 2, 'toggleSkillLadderSidebar invokes syncOverlayOpenState on both close and open');
+}
+
+// -----------------------------------------------------------------------------
 // Final Summary & Exit
 // -----------------------------------------------------------------------------
 console.log('\n================================================================');

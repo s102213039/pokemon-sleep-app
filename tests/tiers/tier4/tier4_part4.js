@@ -393,7 +393,7 @@ function registerTier4Part4() {
 
     // 2. App module scoping & tab switching isolation verification
     assert(appCode.includes('dismissAllFloatingTooltips();'), 'app.js switchMainTab must call dismissAllFloatingTooltips');
-    assert(appCode.includes("isPoke ? 'flex' : 'none'"), 'app.js sidebar-backdrop must only restore active tab bookmark handle');
+    assert(appCode.includes("isPoke ? 'flex' : 'none'") || (appCode.includes("syncFab(f1, isPoke)") && appCode.includes("syncFab(f5, isSkillLadderSubtab)")), 'app.js sidebar-backdrop must only restore active tab bookmark handle');
     assert(appCode.includes("pokedexModalEl = document.getElementById('pokedex-detail-modal')"), 'app.js updatePokedexModalAppraisalLive must resolve pokedexModalEl');
     assert(appCode.includes("pokedexModalEl.querySelector('.pokedex-val-badge')"), 'app.js must scope pokedex-val-badge query to pokedexModalEl');
     assert(appCode.includes("pokedexModalEl.querySelectorAll('.pokedex-track-pin-btn')"), 'app.js must scope pokedex-track-pin-btn query to pokedexModalEl');

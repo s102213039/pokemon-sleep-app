@@ -20129,7 +20129,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app #panel-pokemon:has(#pokemon-filter-sidebar:not(.collapsed)) #sidebar-bookmark-handle,
 .mobile-h5-app #panel-recipes:has(#recipe-filter-sidebar:not(.collapsed)) #recipe-sidebar-bookmark-handle,
 .mobile-h5-app #panel-box:has(#box-filter-sidebar:not(.collapsed)) #box-sidebar-bookmark-handle,
-.mobile-h5-app #panel-wiki:has(#ladder-filter-sidebar:not(.collapsed)) #ladder-sidebar-bookmark-handle {
+.mobile-h5-app #panel-wiki:has(#ladder-filter-sidebar:not(.collapsed)) #ladder-sidebar-bookmark-handle,
+.mobile-h5-app #panel-wiki:has(#skill-ladder-filter-sidebar:not(.collapsed)) #skill-ladder-sidebar-bookmark-handle {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -20141,7 +20142,10 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app #panel-pokemon:not([style*="display: none"]):not([style*="display:none"]) #sidebar-bookmark-handle:not(.drawer-open),
 .mobile-h5-app #panel-recipes:not([style*="display: none"]):not([style*="display:none"]) #recipe-sidebar-bookmark-handle:not(.drawer-open),
 .mobile-h5-app #panel-box:not(.box-lab-active):not([style*="display: none"]):not([style*="display:none"]):not(:has(#box-subpanel-lab:not([style*="display: none"]):not([style*="display:none"]))) #box-sidebar-bookmark-handle:not(.drawer-open),
-.mobile-h5-app.ladder-active #ladder-sidebar-bookmark-handle:not(.drawer-open) {
+.mobile-h5-app.ing-ladder-active #ladder-sidebar-bookmark-handle:not(.drawer-open),
+.mobile-h5-app.ladder-active #panel-wiki:has(#wiki-subpanel-ingredients.active) #ladder-sidebar-bookmark-handle:not(.drawer-open),
+.mobile-h5-app.skill-ladder-active #skill-ladder-sidebar-bookmark-handle:not(.drawer-open),
+.mobile-h5-app.ladder-active #panel-wiki:has(#wiki-subpanel-skills_ladder.active) #skill-ladder-sidebar-bookmark-handle:not(.drawer-open) {
   display: flex !important;
   opacity: 1 !important;
   visibility: visible !important;

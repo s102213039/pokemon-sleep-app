@@ -12,8 +12,8 @@
         storage.setItem(STORAGE_KEY_WIKI_SUBTAB, targetTab);
       }
       if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
-        const curHash = (window.location && window.location.hash) ? window.location.hash.replace(/^#/, '') : '';
-        const mainPart = curHash.split(/[/_?]/)[0];
+        const curHash = (window.location && window.location.hash) ? window.location.hash.replace(/^#/, '').split('?')[0] : '';
+        const mainPart = curHash.split(/[/_]/)[0];
         if (mainPart === 'wiki' || !mainPart) {
           window.history.replaceState(null, '', '#wiki/' + targetTab);
         }
@@ -42,23 +42,27 @@
 
     const activePanel = document.getElementById(`wiki-subpanel-${targetTab}`);
     if (activePanel) {
-      activePanel.classList.add('active');
-      activePanel.style.display = '';
+      if (activePanel.classList) activePanel.classList.add('active');
+      if (activePanel.style) activePanel.style.display = '';
     }
 
-    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList && document.body.classList.contains('mobile-h5-app');
     const wikiPanel = document.getElementById('panel-wiki');
     const isWikiMainActive = !!(wikiPanel && (
-      (wikiPanel.style.display !== 'none' && !wikiPanel.hidden) ||
-      (typeof document !== 'undefined' && document.getElementById('tab-wiki') && document.getElementById('tab-wiki').classList.contains('active'))
+      (wikiPanel.style && wikiPanel.style.display !== 'none' && !wikiPanel.hidden) ||
+      (typeof document !== 'undefined' && document.getElementById('tab-wiki') && document.getElementById('tab-wiki').classList && document.getElementById('tab-wiki').classList.contains('active'))
     ));
 
-    if (isMobileH5) {
+    if (isMobileH5 && document.body && document.body.classList) {
       if (isWikiMainActive && (targetTab === 'ingredients' || targetTab === 'skills_ladder')) {
         document.body.classList.add('ladder-active');
       } else {
         document.body.classList.remove('ladder-active');
       }
+      if (isWikiMainActive && targetTab === 'ingredients') document.body.classList.add('ing-ladder-active');
+      else document.body.classList.remove('ing-ladder-active');
+      if (isWikiMainActive && targetTab === 'skills_ladder') document.body.classList.add('skill-ladder-active');
+      else document.body.classList.remove('skill-ladder-active');
       if (isWikiMainActive && targetTab === 'values') {
         document.body.classList.add('values-active');
       } else {
@@ -73,28 +77,30 @@
     const ladderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
     const ladderBackdrop = document.getElementById('ladder-sidebar-backdrop');
 
-    if (ladderSidebar) {
+    if (ladderSidebar && ladderSidebar.classList && ladderSidebar.style) {
       if (isWikiMainActive && targetTab === 'ingredients') {
+        if (typeof ladderSidebar.style.removeProperty === 'function') ladderSidebar.style.removeProperty('display');
         ladderSidebar.style.display = 'flex';
         const isLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_ladder_sidebar_open', true) : true;
         if (isLadderOpen && !isMobileH5 && window.innerWidth > 1024) {
           ladderSidebar.classList.remove('collapsed');
         } else {
           ladderSidebar.classList.add('collapsed');
-          if (ladderBackdrop) ladderBackdrop.classList.remove('active');
+          if (ladderBackdrop && ladderBackdrop.classList) ladderBackdrop.classList.remove('active');
         }
       } else {
         ladderSidebar.style.display = 'none';
         ladderSidebar.classList.add('collapsed');
-        if (ladderBackdrop) ladderBackdrop.classList.remove('active');
+        if (ladderBackdrop && ladderBackdrop.classList) ladderBackdrop.classList.remove('active');
       }
     }
 
-    if (ladderHandle) {
+    if (ladderHandle && ladderHandle.classList && ladderHandle.style) {
       if (isWikiMainActive && targetTab === 'ingredients') {
-        const isCollapsed = ladderSidebar ? ladderSidebar.classList.contains('collapsed') : true;
+        const isCollapsed = (ladderSidebar && ladderSidebar.classList) ? ladderSidebar.classList.contains('collapsed') : true;
         if (isCollapsed) {
           ladderHandle.classList.remove('drawer-open');
+          if (typeof ladderHandle.style.removeProperty === 'function') ladderHandle.style.removeProperty('display');
           ladderHandle.style.display = 'flex';
           ladderHandle.style.opacity = '1';
           ladderHandle.style.pointerEvents = 'auto';
@@ -112,6 +118,7 @@
         ladderHandle.style.display = 'none';
         ladderHandle.style.opacity = '0';
         ladderHandle.style.pointerEvents = 'none';
+        ladderHandle.style.visibility = 'hidden';
       }
     }
 
@@ -185,16 +192,29 @@
     if (shouldCollapse) {
       sidebar.classList.add('collapsed');
       if (backdrop) backdrop.classList.remove('active');
+      const wikiPanel = document.getElementById('panel-wiki');
+      const isWikiMainActive = !!(wikiPanel && wikiPanel.style.display !== 'none' && !wikiPanel.hidden);
+      const isIngActive = isWikiMainActive && currentWikiSubTab === 'ingredients';
       if (bookmarkHandle) {
-        bookmarkHandle.classList.remove('drawer-open');
-        bookmarkHandle.setAttribute('aria-expanded', 'false');
-        bookmarkHandle.title = isEN ? 'Expand Filter' : '展開天梯篩選側邊欄';
-        bookmarkHandle.style.opacity = '1';
-        bookmarkHandle.style.pointerEvents = 'auto';
-        bookmarkHandle.style.display = 'flex';
-        bookmarkHandle.style.visibility = 'visible';
+        if (isIngActive) {
+          bookmarkHandle.classList.remove('drawer-open');
+          bookmarkHandle.setAttribute('aria-expanded', 'false');
+          bookmarkHandle.title = isEN ? 'Expand Filter' : '展開天梯篩選側邊欄';
+          if (bookmarkHandle.style && typeof bookmarkHandle.style.removeProperty === 'function') bookmarkHandle.style.removeProperty('display');
+          bookmarkHandle.style.opacity = '1';
+          bookmarkHandle.style.pointerEvents = 'auto';
+          bookmarkHandle.style.display = 'flex';
+          bookmarkHandle.style.visibility = 'visible';
+        } else {
+          bookmarkHandle.classList.add('drawer-open');
+          bookmarkHandle.setAttribute('aria-expanded', 'false');
+          bookmarkHandle.style.opacity = '0';
+          bookmarkHandle.style.pointerEvents = 'none';
+          bookmarkHandle.style.display = 'none';
+          bookmarkHandle.style.visibility = 'hidden';
+        }
       }
-      if (ladderRecipeFab && currentWikiSubTab === 'ingredients') {
+      if (ladderRecipeFab && isIngActive) {
         ladderRecipeFab.classList.remove('drawer-open');
         ladderRecipeFab.style.display = 'flex';
       }

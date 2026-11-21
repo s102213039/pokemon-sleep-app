@@ -108,33 +108,40 @@
   }
 
   function handleSkillLadderSubTabSwitch(targetTab, isWikiMainActive, isMobileH5) {
-    const sidebar = document.getElementById('skill-ladder-filter-sidebar');
+    const sidebar = (typeof window !== 'undefined' && typeof window.resolveUniqueOverlay === 'function')
+      ? window.resolveUniqueOverlay('skill-ladder-filter-sidebar')
+      : document.getElementById('skill-ladder-filter-sidebar');
     const handles = document.querySelectorAll('#skill-ladder-sidebar-bookmark-handle');
-    const backdrop = document.getElementById('skill-ladder-sidebar-backdrop');
+    const backdrop = (typeof window !== 'undefined' && typeof window.resolveUniqueOverlay === 'function')
+      ? window.resolveUniqueOverlay('skill-ladder-sidebar-backdrop')
+      : document.getElementById('skill-ladder-sidebar-backdrop');
 
-    if (sidebar) {
+    if (sidebar && sidebar.classList && sidebar.style) {
       if (isWikiMainActive && targetTab === 'skills_ladder') {
+        if (typeof sidebar.style.removeProperty === 'function') sidebar.style.removeProperty('display');
         sidebar.style.display = 'flex';
         const isOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_skill_ladder_sidebar_open', true) : true;
         if (isOpen && !isMobileH5 && window.innerWidth > 1024) {
           sidebar.classList.remove('collapsed');
         } else {
           sidebar.classList.add('collapsed');
-          if (backdrop) backdrop.classList.remove('active');
+          if (backdrop && backdrop.classList) backdrop.classList.remove('active');
         }
       } else {
         sidebar.style.display = 'none';
         sidebar.classList.add('collapsed');
-        if (backdrop) backdrop.classList.remove('active');
+        if (backdrop && backdrop.classList) backdrop.classList.remove('active');
       }
     }
 
     if (handles && handles.length > 0) {
       handles.forEach(handle => {
+        if (!handle || !handle.classList || !handle.style) return;
         if (isWikiMainActive && targetTab === 'skills_ladder') {
-          const isCollapsed = sidebar ? sidebar.classList.contains('collapsed') : true;
+          const isCollapsed = (sidebar && sidebar.classList) ? sidebar.classList.contains('collapsed') : true;
           if (isCollapsed) {
             handle.classList.remove('drawer-open');
+            if (typeof handle.style.removeProperty === 'function') handle.style.removeProperty('display');
             handle.style.display = 'flex';
             handle.style.opacity = '1';
             handle.style.pointerEvents = 'auto';
@@ -151,6 +158,7 @@
           handle.style.display = 'none';
           handle.style.opacity = '0';
           handle.style.pointerEvents = 'none';
+          handle.style.visibility = 'hidden';
         }
       });
       if (isWikiMainActive && targetTab === 'skills_ladder') {
@@ -164,6 +172,9 @@
           refreshSkillCoordinateLadder();
         }
       } catch (e) {}
+    }
+    if (typeof window !== 'undefined' && typeof window.syncOverlayOpenState === 'function') {
+      window.syncOverlayOpenState();
     }
   }
 
@@ -453,9 +464,13 @@
   }
 
   function toggleSkillLadderSidebar(forceOpen) {
-    const sidebar = document.getElementById('skill-ladder-filter-sidebar');
+    const sidebar = (typeof window !== 'undefined' && typeof window.resolveUniqueOverlay === 'function')
+      ? window.resolveUniqueOverlay('skill-ladder-filter-sidebar')
+      : document.getElementById('skill-ladder-filter-sidebar');
     const handles = document.querySelectorAll('#skill-ladder-sidebar-bookmark-handle');
-    const backdrop = document.getElementById('skill-ladder-sidebar-backdrop');
+    const backdrop = (typeof window !== 'undefined' && typeof window.resolveUniqueOverlay === 'function')
+      ? window.resolveUniqueOverlay('skill-ladder-sidebar-backdrop')
+      : document.getElementById('skill-ladder-sidebar-backdrop');
     if (!sidebar) return;
 
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
@@ -467,36 +482,63 @@
     }
 
     if (open) {
+      if (typeof window !== 'undefined' && typeof window.portalMobileOverlays === 'function') {
+        window.portalMobileOverlays(sidebar);
+      }
       sidebar.classList.remove('collapsed');
-      if (backdrop) backdrop.classList.add('active');
+      if (sidebar.style && typeof sidebar.style.setProperty === 'function') {
+        sidebar.style.setProperty('display', 'flex', 'important');
+      } else if (sidebar.style) {
+        sidebar.style.display = 'flex';
+      }
+      if (backdrop && (isMobileH5 || (typeof window !== 'undefined' && window.innerWidth <= 1024))) {
+        backdrop.classList.add('active');
+      }
       if (handles && handles.length > 0) {
         handles.forEach(handle => {
-          if (isMobileH5) {
-            handle.classList.add('drawer-open');
-          } else {
-            handle.classList.add('drawer-open');
-            handle.style.display = 'none';
-          }
+          handle.classList.add('drawer-open');
+          handle.setAttribute('aria-expanded', 'true');
+          handle.style.opacity = '0';
+          handle.style.pointerEvents = 'none';
+          handle.style.display = 'none';
+          handle.style.visibility = 'hidden';
         });
       }
-      if (typeof window.saveSidebarState === 'function') {
-        window.saveSidebarState('pksleep_skill_ladder_sidebar_open', true);
+      if (typeof window !== 'undefined' && typeof window.setSidebarSavedState === 'function') {
+        window.setSidebarSavedState('pksleep_skill_ladder_sidebar_open', true);
       }
     } else {
       sidebar.classList.add('collapsed');
       if (backdrop) backdrop.classList.remove('active');
+      const wikiPanel = document.getElementById('panel-wiki');
+      const isWikiMainActive = !!(wikiPanel && wikiPanel.style.display !== 'none' && !wikiPanel.hidden);
+      const isSkillLadderActive = isWikiMainActive && (typeof currentWikiSubTab !== 'undefined' ? currentWikiSubTab === 'skills_ladder' : true);
       if (handles && handles.length > 0) {
         handles.forEach(handle => {
-          handle.classList.remove('drawer-open');
-          handle.style.display = 'flex';
-          handle.style.opacity = '1';
-          handle.style.pointerEvents = 'auto';
-          handle.style.visibility = 'visible';
+          if (isSkillLadderActive) {
+            handle.classList.remove('drawer-open');
+            handle.setAttribute('aria-expanded', 'false');
+            if (handle.style && typeof handle.style.removeProperty === 'function') handle.style.removeProperty('display');
+            handle.style.display = 'flex';
+            handle.style.opacity = '1';
+            handle.style.pointerEvents = 'auto';
+            handle.style.visibility = 'visible';
+          } else {
+            handle.classList.add('drawer-open');
+            handle.setAttribute('aria-expanded', 'false');
+            handle.style.display = 'none';
+            handle.style.opacity = '0';
+            handle.style.pointerEvents = 'none';
+            handle.style.visibility = 'hidden';
+          }
         });
       }
-      if (typeof window.saveSidebarState === 'function') {
-        window.saveSidebarState('pksleep_skill_ladder_sidebar_open', false);
+      if (typeof window !== 'undefined' && typeof window.setSidebarSavedState === 'function') {
+        window.setSidebarSavedState('pksleep_skill_ladder_sidebar_open', false);
       }
+    }
+    if (typeof window !== 'undefined' && typeof window.syncOverlayOpenState === 'function') {
+      window.syncOverlayOpenState();
     }
     updateSkillLadderActiveFilterBadge();
   }

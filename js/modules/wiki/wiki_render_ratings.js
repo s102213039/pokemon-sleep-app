@@ -1,3 +1,21 @@
+  function bindWikiFloatingFabs() {
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    if (!isMobileH5 || typeof window.makeFloatingDraggable !== 'function') return;
+    const ladderFab = document.getElementById('ladder-sidebar-bookmark-handle-fab') || document.getElementById('ladder-sidebar-bookmark-handle');
+    if (ladderFab && !ladderFab._hasDraggable) {
+      ladderFab._hasDraggable = true;
+      window.makeFloatingDraggable(ladderFab, () => openLadderSidebar());
+    }
+    const skillLadderFab = document.getElementById('skill-ladder-sidebar-bookmark-handle');
+    if (skillLadderFab && !skillLadderFab._hasDraggable) {
+      skillLadderFab._hasDraggable = true;
+      window.makeFloatingDraggable(skillLadderFab, () => {
+        if (typeof openSkillLadderSidebar === 'function') openSkillLadderSidebar();
+        else if (window.WikiDB && typeof window.WikiDB.openSkillLadderSidebar === 'function') window.WikiDB.openSkillLadderSidebar();
+      });
+    }
+  }
+
   // --- 初始化 Wiki 模組 ---
   function initWikiModule() {
     loadPersistedBerrySettings();
@@ -13,12 +31,7 @@
 
     try {
       renderWikiLayout(wikiContainer);
-      const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
-      const ladderFab = document.getElementById('ladder-sidebar-bookmark-handle-fab') || document.getElementById('ladder-sidebar-bookmark-handle');
-      if (ladderFab && typeof window.makeFloatingDraggable === 'function' && isMobileH5 && !ladderFab._hasDraggable) {
-        ladderFab._hasDraggable = true;
-        window.makeFloatingDraggable(ladderFab, () => openLadderSidebar());
-      }
+      bindWikiFloatingFabs();
     } catch (e) {
       console.error('Error rendering Wiki layout:', e);
       if (typeof window.__renderInPlaceError === 'function') {

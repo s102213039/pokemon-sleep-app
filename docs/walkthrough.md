@@ -5,6 +5,28 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-21 已完成（技能天梯篩選器消失 5 項連動根因修復、H5 FAB 隔離與 `#wiki/skills_ladder` 路由修復）
+
+- **問題根因與修復內容**：
+  1. **清除 `body.box-lab-active` 殘留與補齊 H5 技能天梯篩選 FAB CSS (`js/modules/pokedex/pokedex_nav.js`, `css/views/wiki/wiki_ladder_meals.css`, `css/styles.css`)**：
+     - 離開「寶可夢倉庫 (`box`)」切換至其他主分頁時，強制移除 `document.body.classList.remove('box-lab-active')` 與 `panelBox.classList.remove('box-lab-active')`，避免曾進入「評測室 (`Lab`)」後全域隱藏其他分頁篩選按鈕。
+     - 於 `wiki_ladder_meals.css` 與 `styles.css` 補上 `.mobile-h5-app #panel-wiki:has(#skill-ladder-filter-sidebar:not(.collapsed)) #skill-ladder-sidebar-bookmark-handle` 抽屜展開淡出規則，以及 `.mobile-h5-app.skill-ladder-active` / `#panel-wiki:has(#wiki-subpanel-skills_ladder.active) #skill-ladder-sidebar-bookmark-handle:not(.drawer-open)` 顯式顯示規則。
+  2. **隔離食材天梯與技能天梯的 H5 懸浮篩選按鈕 (`js/modules/wiki/wiki_ladder_recipes.js`, `js/modules/pokedex/pokedex_nav.js`, `js/modules/wiki/wiki_main.js`, `js/modules/wiki/wiki_skill_ladder_render.js`)**：
+     - 保留共用 `ladder-active` 滿版樣式外，新增獨立 `ing-ladder-active` 與 `skill-ladder-active` 狀態類別，並在未啟用子分頁的 FAB 初始 HTML 補上 `drawer-open`，防止重繪或切換語系時將食材天梯按鈕疊顯在技能天梯上。
+     - 修正 `toggleLadderSidebar(false)` 與 `toggleSkillLadderSidebar(false)`，僅於自身所屬子分頁為活躍狀態時才重新顯示對應按鈕。
+  3. **修正 `closeMobileDrawer()` 與 `resize` 引用不存在的 `window.WikiState` (`js/modules/pokedex/pokedex_filters.js`)**：
+     - 移除 `window.WikiState` 參照並改由 `window.WikiDB.getCurrentSubTab()`（含 Hash / localStorage 備援）判讀目前百科子分頁；修正 `f3`（食材天梯）與 `f5`（技能天梯）條件反寫與桌面寬度 `> 980px` 縮放誤隱藏按鈕的問題，關閉抽屜後同步呼叫 `syncOverlayOpenState()`。
+  4. **對齊 `toggleSkillLadderSidebar`、H5 可拖曳 FAB 與語系切換同步 (`js/modules/wiki/wiki_skill_ladder.js`, `js/modules/wiki/wiki_render_ratings.js`, `js/modules/wiki/wiki_main.js`, `js/core/i18n/i18n_core.js`)**：
+     - 將無效的 `window.saveSidebarState` 修正為 `window.setSidebarSavedState('pksleep_skill_ladder_sidebar_open', ...)`，展開時對齊呼叫 `portalMobileOverlays(sidebar)`、`display: flex !important`、`syncOverlayOpenState()`，且僅於行動端或 `<= 1024px` 啟用遮罩層。
+     - 於 `bindWikiFloatingFabs()` 補齊 `#skill-ladder-sidebar-bookmark-handle` 的 `makeFloatingDraggable` 綁定，並於 `i18n_core.js` 切換語言重繪百科後自動重新同步當前子分頁與篩選按鈕狀態。
+  5. **修正 `#wiki/skills_ladder` Hash 切分正則 (`js/modules/pokedex/pokedex_nav.js`, `js/modules/wiki/wiki_skills_matrix.js`)**：
+     - 新增 `parseSpaHash()` 與無底線截斷解析，避免 `.split(/[/_?]/)` 將 `#wiki/skills_ladder` 誤切為 `['wiki', 'skills', 'ladder']` 而於重整或 PWA 冷啟動時跳回無篩選器的「主技能數值庫 (`#wiki/skills`)」。
+  6. **回歸測試 (`tests/test_wiki_skill_ladder.js` Suite 15)**：
+     - 新增 28 項靜態契約與沙盒執行期回歸測試，鎖定 `box-lab-active` 清理、CSS 隔離、無 `window.WikiState`、`setSidebarSavedState` 持久化與 `#wiki/skills_ladder` 路由行為。
+- **驗證結果**：
+  - `node tests/test_wiki_skill_ladder.js`：**982 / 982 PASS**；`npm run test:fast`：**170 / 170 PASS**；`npm test`：**293 / 293 PASS**；`node tests/test_e2e_r1_r7_acceptance.js`：**100 / 100 PASS**；`node tests/test_challenger_m1_cache_sync.js`：**18 / 18 PASS**。
+  - 無頭 Chrome CDP 實機與截圖驗證（Desktop `1440x900` 與 H5 `390x844`）：**32 / 32 PASS，0 runtime exceptions**（涵蓋 `#wiki/skills_ladder` 直連、PWA 冷啟動、`box/lab -> wiki/skills_ladder`、收合重整持久化、`closeMobileDrawer()`、`resize` 與 `en-US` 語系切換）。
+
 ## 交接：2026-11-21 已完成（食材天梯前 10 動態料理高亮、「最新」子頁籤 2 字精簡等寬填滿、寶可夢倉庫表格移除「得意」欄位）
 
 - **調整內容**：

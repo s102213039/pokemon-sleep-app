@@ -266,9 +266,10 @@
   }
 
   function renderSkillLadderMobileHandle(currentWikiSubTab, isEN) {
+    const isActive = currentWikiSubTab === 'skills_ladder';
     return `
       <!-- 右下懸浮技能天梯篩選按鈕 (Mobile FAB) -->
-      <button type="button" id="skill-ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openSkillLadderSidebar()" title="${_tSkillLadder('展開技能天梯篩選器', 'Filter')}" aria-label="${_tSkillLadder('展開技能天梯篩選器', 'Filter')}" style="${currentWikiSubTab === 'skills_ladder' ? 'display:flex;' : 'display:none;'}">
+      <button type="button" id="skill-ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn ${isActive ? '' : 'drawer-open'}" onclick="window.WikiDB.openSkillLadderSidebar()" title="${_tSkillLadder('展開技能天梯篩選器', 'Filter')}" aria-label="${_tSkillLadder('展開技能天梯篩選器', 'Filter')}" style="${isActive ? 'display:flex;' : 'display:none;'}">
         <span class="bookmark-icon">
           <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="4" y1="21" x2="4" y2="14"></line>

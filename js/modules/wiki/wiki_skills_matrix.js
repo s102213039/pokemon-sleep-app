@@ -559,10 +559,12 @@
   function getSavedWikiSubTab() {
     try {
       if (typeof window !== 'undefined' && window.location && window.location.hash) {
-        const rawHash = window.location.hash.replace(/^#/, '');
-        const parts = rawHash.split(/[/_?]/);
-        if (parts[0] === 'wiki' && VALID_WIKI_SUBTABS.includes(parts[1])) {
-          return parts[1];
+        const rawClean = window.location.hash.replace(/^#/, '').split('?')[0];
+        const slashIdx = rawClean.indexOf('/');
+        const mainPart = slashIdx !== -1 ? rawClean.slice(0, slashIdx) : rawClean.split('_')[0];
+        const subPart = slashIdx !== -1 ? rawClean.slice(slashIdx + 1) : (rawClean.includes('_') ? rawClean.slice(rawClean.indexOf('_') + 1) : '');
+        if (mainPart === 'wiki' && VALID_WIKI_SUBTABS.includes(subPart)) {
+          return subPart;
         }
       }
       const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);

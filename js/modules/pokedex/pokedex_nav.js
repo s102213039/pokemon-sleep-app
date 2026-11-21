@@ -107,6 +107,8 @@
         }
 
         if (target !== 'box') {
+          if (document.body) document.body.classList.remove('box-lab-active');
+          if (panelBox) panelBox.classList.remove('box-lab-active');
           if (boxBookmarkHandle) boxBookmarkHandle.style.display = 'none';
           if (boxSidebar) boxSidebar.style.display = 'none';
           if (boxBackdrop) boxBackdrop.classList.remove('active');
@@ -119,6 +121,8 @@
 
         if (target !== 'wiki') {
           document.body.classList.remove('ladder-active');
+          document.body.classList.remove('ing-ladder-active');
+          document.body.classList.remove('skill-ladder-active');
           document.body.classList.remove('values-active');
           const curLadderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
           if (curLadderHandle && curLadderHandle.style) {
@@ -263,6 +267,8 @@
             } else {
               document.body.classList.remove('ladder-active');
             }
+            document.body.classList.toggle('ing-ladder-active', isIng);
+            document.body.classList.toggle('skill-ladder-active', isSkillLadder);
             if (isVal) {
               document.body.classList.add('values-active');
             } else {
@@ -271,6 +277,7 @@
           }
           if (ladderSidebar) {
             if (isIng) {
+              if (ladderSidebar.style && typeof ladderSidebar.style.removeProperty === 'function') ladderSidebar.style.removeProperty('display');
               ladderSidebar.style.display = 'flex';
               const isLadderOpen = getSidebarSavedState('pksleep_ladder_sidebar_open', true);
               if (isLadderOpen && !isMobileH5 && window.innerWidth > 1024) {
@@ -296,7 +303,7 @@
               curLadderHandle.style.pointerEvents = 'auto';
               curLadderHandle.style.visibility = 'visible';
             } else {
-              if (isIng && !isCollapsed) curLadderHandle.classList.add('drawer-open');
+              curLadderHandle.classList.add('drawer-open');
               curLadderHandle.style.display = 'none';
               curLadderHandle.style.opacity = '0';
               curLadderHandle.style.pointerEvents = 'none';
@@ -308,6 +315,7 @@
           const skillLadderBackdrop = document.getElementById('skill-ladder-sidebar-backdrop');
           if (skillLadderSidebar) {
             if (isSkillLadder) {
+              if (skillLadderSidebar.style && typeof skillLadderSidebar.style.removeProperty === 'function') skillLadderSidebar.style.removeProperty('display');
               skillLadderSidebar.style.display = 'flex';
               const isSkillLadderOpen = getSidebarSavedState('pksleep_skill_ladder_sidebar_open', true);
               if (isSkillLadderOpen && !isMobileH5 && window.innerWidth > 1024) {
@@ -333,7 +341,7 @@
               curSkillLadderHandle.style.pointerEvents = 'auto';
               curSkillLadderHandle.style.visibility = 'visible';
             } else {
-              if (isSkillLadder && !isCollapsed) curSkillLadderHandle.classList.add('drawer-open');
+              curSkillLadderHandle.classList.add('drawer-open');
               curSkillLadderHandle.style.display = 'none';
               curSkillLadderHandle.style.opacity = '0';
               curSkillLadderHandle.style.pointerEvents = 'none';
@@ -439,13 +447,26 @@
       if (tabBox) tabBox.addEventListener('click', () => switchMainTab('box'));
       if (tabNews) tabNews.addEventListener('click', () => switchMainTab('news'));
 
+      function parseSpaHash(raw) {
+        const clean = (raw || '').replace(/^#/, '').split('?')[0];
+        if (!clean) return { main: '', sub: '' };
+        const slashIdx = clean.indexOf('/');
+        if (slashIdx !== -1) {
+          return { main: clean.slice(0, slashIdx), sub: clean.slice(slashIdx + 1) };
+        }
+        const underIdx = clean.indexOf('_');
+        if (underIdx !== -1) {
+          return { main: clean.slice(0, underIdx), sub: clean.slice(underIdx + 1) };
+        }
+        return { main: clean, sub: '' };
+      }
+
       // 監聽網址 hash 變更 (SPA 路由)
       window.addEventListener('hashchange', () => {
-        const rawHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
-        const parts = rawHash.split(/[/_?]/);
-        let main = parts[0];
+        const parsed = parseSpaHash(window.location.hash);
+        let main = parsed.main;
         if (main === 'pokedex') main = 'pokemon';
-        const sub = parts[1];
+        const sub = parsed.sub;
         if (VALID_MAIN_TABS.includes(main)) {
           const storage = getStorage();
           if (storage) {
@@ -460,11 +481,10 @@
       });
 
       // 依網址 hash 或 localStorage 載入預設 tab 與子 tab
-      const rawHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
-      const parts = rawHash.split(/[/_?]/);
-      let mainFromHash = parts[0];
+      const initialParsed = parseSpaHash(window.location.hash);
+      let mainFromHash = initialParsed.main;
       if (mainFromHash === 'pokedex') mainFromHash = 'pokemon';
-      const subFromHash = parts[1];
+      const subFromHash = initialParsed.sub;
 
       let savedMainTab = null;
       try {

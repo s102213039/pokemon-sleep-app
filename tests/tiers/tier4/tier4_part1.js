@@ -1861,7 +1861,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Healer Strategy, Seed Ev
   assert(cssCode.includes('.mobile-h5-app .sidebar-fab-btn'), 'styles.css must style mobile H5 FAB');
   assert(cssCode.includes('.mobile-h5-app .sidebar-fab-btn.drawer-open') && cssCode.includes('display: none !important;'), 'styles.css must strictly hide FAB when drawer is open');
   assert(cssCode.includes('.mobile-h5-app.pokemon-active #sidebar-bookmark-handle:not(.drawer-open)'), 'styles.css must show Pokemon FAB when collapsed');
-  assert(cssCode.includes('.mobile-h5-app.ladder-active #ladder-sidebar-bookmark-handle:not(.drawer-open)'), 'styles.css must show Ladder FAB when collapsed');
+  assert(cssCode.includes('.mobile-h5-app.ing-ladder-active #ladder-sidebar-bookmark-handle:not(.drawer-open)'), 'styles.css must show Ingredient Ladder FAB when collapsed');
+  assert(cssCode.includes('.mobile-h5-app.skill-ladder-active #skill-ladder-sidebar-bookmark-handle:not(.drawer-open)'), 'styles.css must show Skill Ladder FAB when collapsed');
 
   // 4. JS Drawer-open symmetric state tracking
   assert(appJs.includes("bookmarkHandle.classList.add('drawer-open')"), 'app.js must add drawer-open when expanding');
