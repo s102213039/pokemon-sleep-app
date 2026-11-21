@@ -2573,6 +2573,211 @@ function registerTier4Part4() {
     assert(/v=2026\d{4}_\d{2}/.test(indexHtml), 'index.html must reference assets with version');
     assert(/v=2026\d{4}_\d{2}/.test(appIndexHtml), 'app/index.html must reference assets with version');
   });
+
+  // Test 242: Island Tab Desktop & Mobile H5 DOM Rendering, EX Rules, 35-Rank Lookup & Async Sleep Style Refresh
+  test('Tier 4 - Real-World Application Scenarios', 'Island Tab Desktop & Mobile H5 DOM Rendering, EX Mode Spawns/Rules, 35-Rank Lookup & Async Hydration', () => {
+    const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+    const emojiRegex = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F000}-\u{1F02F}\u{1F0A0}-\u{1F0FF}]/u;
+    const glyphRegex = /(\[\u2605\]|\[\u2606\]|\u2605|\u2606|\[\*\]|\[\+\]|\[\#\])/;
+
+    function createIslandRenderEnv(isMobileH5) {
+      const listeners = {};
+      const subpanelEl = {
+        innerHTML: '',
+        style: {},
+        classList: { contains: () => true, add: () => {}, remove: () => {} }
+      };
+      let popoverEl = null;
+      const ctx = {
+        window: {
+          location: { hash: '#wiki/islands' },
+          localStorage: { getItem: () => null, setItem: () => {} },
+          addEventListener: (ev, fn) => {
+            if (!listeners[ev]) listeners[ev] = [];
+            listeners[ev].push(fn);
+          },
+          dispatchEvent: (evObj) => {
+            const name = evObj && evObj.type;
+            (listeners[name] || []).forEach(fn => fn(evObj));
+          },
+          history: { replaceState: () => {} }
+        },
+        document: {
+          documentElement: { setAttribute: () => {}, getAttribute: () => 'zh-TW' },
+          getElementById: (id) => {
+            if (id === 'wiki-subpanel-islands') return subpanelEl;
+            if (id === 'island-sleep-popover') return popoverEl;
+            return null;
+          },
+          querySelectorAll: () => [],
+          querySelector: () => null,
+          createElement: () => ({ setAttribute: () => {}, appendChild: () => {}, style: {}, innerHTML: '', id: '' }),
+          head: { appendChild: () => {} },
+          body: {
+            appendChild: (el) => {
+              if (el && el.id === 'island-sleep-popover') {
+                el.parentNode = ctx.document.body;
+                popoverEl = el;
+              }
+            },
+            removeChild: (el) => {
+              if (el === popoverEl) popoverEl = null;
+            },
+            classList: {
+              contains: (cls) => cls === 'mobile-h5-app' ? isMobileH5 : false,
+              add: () => {},
+              remove: () => {}
+            }
+          }
+        },
+        CustomEvent: function(type, opts) { this.type = type; this.detail = opts && opts.detail; },
+        console,
+        setTimeout
+      };
+      ctx.window.window = ctx.window;
+      ctx.window.document = ctx.document;
+      ctx.window.CustomEvent = ctx.CustomEvent;
+      vm.createContext(ctx);
+      vm.runInContext(i18nCode, ctx);
+      vm.runInContext(wikiCode, ctx);
+      return { ctx, subpanelEl, getPopoverHtml: () => (popoverEl ? popoverEl.innerHTML : '') };
+    }
+
+    const fullWidthPunctRegex = /[\uFF01-\uFF5E\u3001\u3002\u300C\u300D\u300E\u300F\u3010\u3011\uFF08\uFF09\uFF1A\uFF1B\uFF0C]/;
+    const cjkRegex = /[\u4E00-\u9FFF]/;
+    const stripInternalPkmAttrs = (html) => String(html || '')
+      .replace(/data-pkm="[^"]*"/g, '')
+      .replace(/on(?:click|mouseenter|mouseleave)="[^"]*"/g, '');
+    const allAreas = [
+      ['greengrass', false], ['cyan', false], ['taupe', false], ['snowdrop', false],
+      ['lapis', false], ['powerplant', false], ['amber', false],
+      ['greengrass', true], ['cyan', true]
+    ];
+
+    [false, true].forEach(isMobileH5 => {
+      const modeLabel = isMobileH5 ? 'Mobile H5' : 'Desktop';
+      const { ctx, subpanelEl, getPopoverHtml } = createIslandRenderEnv(isMobileH5);
+      const WikiDB = ctx.window.WikiDB;
+      const I18N = ctx.window.I18N;
+
+      // 1. Greengrass normal: includes Cottonee (#546), Whimsicott (#547), Farfetch'd (#083), Sinnoh starters (#387-#395), Hawlucha (#701), omits berries section
+      WikiDB.selectIsland('greengrass', false);
+      WikiDB.filterIslandSleepType('all');
+      const ggHtml = WikiDB.renderIslandsSubpanel();
+      assert(ggHtml.includes('#546 木棉球') && ggHtml.includes('data-pkm="木棉球"'), `${modeLabel} Greengrass must render Cottonee #546`);
+      assert(ggHtml.includes('#547 風妖精') && ggHtml.includes('data-pkm="風妖精"'), `${modeLabel} Greengrass must render Whimsicott #547`);
+      assert(ggHtml.includes('#083 大蔥鴨') && ggHtml.includes('#387 草苗龜') && ggHtml.includes('#395 帝王拿波') && ggHtml.includes('#701 摔角鷹人'), `${modeLabel} Greengrass must render all missing permanent species`);
+      assert(!ggHtml.includes('island-berries-section'), `${modeLabel} Greengrass normal must omit berries section`);
+
+      // 2. Greengrass EX: EX berry rule, EX hero meta chips (-10%, +15%), no island-ex-card
+      WikiDB.selectIsland('greengrass', true);
+      const ggExHtml = WikiDB.renderIslandsSubpanel();
+      assert(ggExHtml.includes('island-ex-berry-rule'), `${modeLabel} Greengrass EX must render EX berry rule`);
+      assert(ggExHtml.includes('island-hero-meta') && ggExHtml.includes('-10%') && ggExHtml.includes('+15%'), `${modeLabel} Greengrass EX must render -10%/+15% rule chips`);
+      assert(!ggExHtml.includes('island-ex-card'), `${modeLabel} Greengrass EX must not render island-ex-card`);
+
+      // 3. Cyan EX: Mewtwo (#150) present, -20%/+35%/+5 carry, berry rule, exact 35-rank 8-spawn lookup
+      WikiDB.selectIsland('cyan', true);
+      const cyanExHtml = WikiDB.renderIslandsSubpanel();
+      assert(cyanExHtml.includes('#150 超夢'), `${modeLabel} Cyan EX must render Mewtwo #150`);
+      assert(cyanExHtml.includes('island-ex-berry-rule') && cyanExHtml.includes('3選1主果 + 2隨機') && cyanExHtml.includes('-20%') && cyanExHtml.includes('+35%') && cyanExHtml.includes('+5'), `${modeLabel} Cyan EX must render Cyan EX berry rule & -20%/+35%/+5 chips`);
+      assert(!cyanExHtml.includes('island-ex-card'), `${modeLabel} Cyan EX must not render island-ex-card`);
+      assert(cyanExHtml.includes('超級 (Great) 5') && cyanExHtml.includes('≥ 973.7k'), `${modeLabel} Cyan EX 8 spawns must map to Great 5 (>= 973.7k) via 35-rank lookup`);
+
+      const statsNormal = WikiDB.getIslandSleepStyleStats('cyan', false);
+      const statsEx = WikiDB.getIslandSleepStyleStats('cyan', true);
+      assert(statsNormal.totalStyles !== statsEx.totalStyles, `${modeLabel} Cyan EX sleep style total must differ from Cyan normal`);
+
+      // 4. Amber Canyon: exact 35-rank lookup & Ditto 4S Great 2
+      WikiDB.selectIsland('amber', false);
+      const amberHtml = WikiDB.renderIslandsSubpanel();
+      assert(amberHtml.includes('普通 (Basic) 3') && amberHtml.includes('≥ 60.1k'), `${modeLabel} Amber 4 spawns must map to Basic 3 (>= 60.1k)`);
+      assert(!amberHtml.includes('#150 超夢'), `${modeLabel} Amber must not include Cyan EX Mewtwo`);
+
+      // 5. Async sleep-styles-updated refreshes islands subpanel when active
+      WikiDB.switchSubTab('islands');
+      subpanelEl.innerHTML = '';
+      ctx.window.dispatchEvent(new ctx.window.CustomEvent('sleep-styles-updated'));
+      assert(subpanelEl.innerHTML.includes('island-spawns-compact-table'), `${modeLabel} sleep-styles-updated must refresh active islands subpanel`);
+
+      // 6. Zero Emojis & Zero Decorative Glyphs across rendered HTML
+      assert(!emojiRegex.test(ggExHtml) && !emojiRegex.test(cyanExHtml) && !emojiRegex.test(amberHtml), `${modeLabel} rendered Island HTML must contain zero emojis`);
+      assert(!glyphRegex.test(ggExHtml) && !glyphRegex.test(cyanExHtml) && !glyphRegex.test(amberHtml), `${modeLabel} rendered Island HTML must contain zero decorative glyphs`);
+
+      // 7. Multi-language (zh-TW, zh-CN, en-US) regression across all 9 areas + #island-sleep-popover + _rankBadgeCache isolation
+      ['zh-TW', 'zh-CN', 'en-US'].forEach(lang => {
+        I18N.setLanguage(lang);
+        allAreas.forEach(([areaId, isEx]) => {
+          WikiDB.selectIsland(areaId, isEx);
+          WikiDB.filterIslandSleepType('all');
+          const html = WikiDB.renderIslandsSubpanel();
+          assert(!fullWidthPunctRegex.test(html), `${modeLabel} [${lang}] ${areaId}${isEx ? '_ex' : ''} must contain 0 full-width punctuation`);
+          assert(!html.includes('island-ex-card'), `${modeLabel} [${lang}] ${areaId}${isEx ? '_ex' : ''} must not render island-ex-card`);
+          assert(!emojiRegex.test(html), `${modeLabel} [${lang}] ${areaId}${isEx ? '_ex' : ''} must contain 0 emojis`);
+          assert(!glyphRegex.test(html), `${modeLabel} [${lang}] ${areaId}${isEx ? '_ex' : ''} must contain 0 decorative glyphs`);
+
+          const visibleAndAttrs = stripInternalPkmAttrs(html);
+          if (lang === 'zh-CN') {
+            assertEquals(visibleAndAttrs, I18N.toSimplified(visibleAndAttrs), `${modeLabel} [zh-CN] ${areaId}${isEx ? '_ex' : ''} must have zero Traditional Chinese leakage`);
+          } else if (lang === 'en-US') {
+            assert(!cjkRegex.test(visibleAndAttrs), `${modeLabel} [en-US] ${areaId}${isEx ? '_ex' : ''} visible HTML & attributes must contain 0 CJK characters`);
+          }
+        });
+
+        // Specific assertions per language
+        if (lang === 'zh-CN') {
+          WikiDB.selectIsland('cyan', true);
+          const cnCyanEx = WikiDB.renderIslandsSubpanel();
+          assert(cnCyanEx.includes('天青沙滩 EX'), `${modeLabel} [zh-CN] Cyan EX title must be simplified`);
+          assert(cnCyanEx.includes('3选1主果 + 2随机'), `${modeLabel} [zh-CN] Cyan EX berry rule must be simplified`);
+          assert(cnCyanEx.includes('超级 (Great) 5'), `${modeLabel} [zh-CN] _rankBadgeCache must not collide with zh-TW`);
+          assert(cnCyanEx.includes('#546 木棉球') && cnCyanEx.includes('#547 风妖精'), `${modeLabel} [zh-CN] #546/#547 tooltips must be simplified`);
+        } else if (lang === 'en-US') {
+          WikiDB.selectIsland('cyan', false);
+          const enCyan = WikiDB.renderIslandsSubpanel();
+          assert(enCyan.includes('title="Oran Berry (Water)"') && enCyan.includes('alt="Oran Berry"'), `${modeLabel} [en-US] Cyan berry title/alt must render Oran Berry`);
+        }
+
+        // Sleep Style Popover for Cottonee (#546) & Whimsicott (#547) stars 1..4
+        ['木棉球', '風妖精'].forEach(pkm => {
+          [1, 2, 3, 4].forEach(star => {
+            WikiDB.showSleepStylePopover(pkm, star, 'Basic 1', null, null);
+            const popHtml = getPopoverHtml();
+            assert(popHtml.length > 0, `${modeLabel} [${lang}] ${pkm} star ${star} popover must render`);
+            assert(!fullWidthPunctRegex.test(popHtml), `${modeLabel} [${lang}] ${pkm} star ${star} popover must have 0 full-width punctuation`);
+            if (lang === 'zh-TW') {
+              assert(popHtml.includes('夢之碎片: ') && popHtml.includes('研究EXP: ') && popHtml.includes('糖果數量: '), `${modeLabel} [zh-TW] popover must use half-width colons`);
+            } else if (lang === 'zh-CN') {
+              assert(popHtml.includes('梦之碎片: ') && popHtml.includes('研究EXP: ') && popHtml.includes('糖果数量: '), `${modeLabel} [zh-CN] popover must use Simplified Chinese with half-width colons`);
+              assertEquals(popHtml, I18N.toSimplified(popHtml), `${modeLabel} [zh-CN] popover must have zero Traditional Chinese leakage`);
+            } else if (lang === 'en-US') {
+              assert(popHtml.includes('Dream Shards: ') && popHtml.includes('Research EXP: ') && popHtml.includes('Candy: '), `${modeLabel} [en-US] popover must use English labels`);
+              assert(!cjkRegex.test(popHtml), `${modeLabel} [en-US] popover must contain 0 CJK characters`);
+            }
+          });
+        });
+      });
+
+      // Switch back to zh-TW and verify _rankBadgeCache still renders Traditional Chinese cleanly
+      I18N.setLanguage('zh-TW');
+      WikiDB.selectIsland('cyan', true);
+      const twCyanExAfter = WikiDB.renderIslandsSubpanel();
+      assert(twCyanExAfter.includes('超級 (Great) 5'), `${modeLabel} [zh-TW] after zh-CN must still render 超級 (Great) 5`);
+    });
+
+    // 7. Light-theme contrast rules present in styles.css, styles.min.css, and modular CSS
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+    const stylesMinCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.min.css'), 'utf8');
+    const wikiCampsCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'views', 'wiki', 'wiki_camps.css'), 'utf8');
+    const wikiNavCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'mobile', 'wiki_nav.css'), 'utf8');
+    [stylesCss, wikiCampsCss, wikiNavCss].forEach(cssText => {
+      assert(cssText.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .island-ex-berry-rule'), 'CSS must define light-theme .island-ex-berry-rule override');
+      assert(cssText.includes('color: #92400e'), 'Light-theme .island-ex-berry-rule must use high-contrast #92400e');
+      assert(cssText.includes('color: #0369a1'), 'Light-theme .island-chip-accent must use high-contrast #0369a1');
+    });
+    assert(stylesMinCss.includes('#92400e') && stylesMinCss.includes('#0369a1'), 'styles.min.css must include compiled light-theme EX pill colors');
+  });
 }
 
 module.exports = { registerTier4Part4 };

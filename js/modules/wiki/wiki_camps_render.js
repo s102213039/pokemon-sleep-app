@@ -150,13 +150,35 @@
   }
 
   function renderIslandsSubpanel() {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const i18n = (typeof window !== 'undefined' && window.I18N) ? window.I18N : null;
+    const lang = (i18n && typeof i18n.getLanguage === 'function') ? i18n.getLanguage() : 'zh-TW';
+    const isEN = lang === 'en-US';
+    const isCN = lang === 'zh-CN';
+    const toSimp = (s) => {
+      if (!s || !isCN) return s;
+      return (i18n && typeof i18n.toSimplified === 'function') ? i18n.toSimplified(s) : s;
+    };
+    const tStr = (tw, en) => (isEN ? en : toSimp(tw));
+    const getLocIslandName = (isl) => {
+      if (!isl) return '';
+      if (isEN) {
+        return (i18n && typeof i18n.getIslandName === 'function')
+          ? (i18n.getIslandName(isl.name) || isl.name_en)
+          : isl.name_en;
+      }
+      if (isCN) {
+        return (i18n && typeof i18n.getIslandName === 'function')
+          ? (i18n.getIslandName(isl.name) || toSimp(isl.name))
+          : toSimp(isl.name);
+      }
+      return isl.name;
+    };
     const island = ISLANDS_DATA.find(i => i.id === currentIslandId) || ISLANDS_DATA[0];
     const isExpert = island.hasExpertMode && isExpertModeActive;
 
     const normalNavHtml = ISLANDS_DATA.map(isl => {
       const isActive = !isExpert && isl.id === currentIslandId;
-      const islName = isEN ? isl.name_en : isl.name;
+      const islName = getLocIslandName(isl);
       const thumbSrc = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
         ? (window.mapExternalToLocalAsset(isl.image) || isl.image)
         : isl.image;
@@ -171,7 +193,7 @@
     const exIslands = ISLANDS_DATA.filter(isl => isl.hasExpertMode);
     const exNavHtml = exIslands.map(isl => {
       const isActive = isExpert && isl.id === currentIslandId;
-      const baseName = isEN ? isl.name_en : isl.name;
+      const baseName = getLocIslandName(isl);
       const islName = baseName + ' EX';
       const thumbSrc = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
         ? (window.mapExternalToLocalAsset(isl.image) || isl.image)
@@ -189,43 +211,58 @@
 
     let berriesHtml = '';
     if (island.berriesMode === 'random') {
-      // 萌綠森林為每週隨機樹果, 依需求不展示亦不說明
-      berriesHtml = '';
+      if (isExpert) {
+        berriesHtml = `
+          <div class="island-berries-section">
+            <span class="island-berries-label">${tStr('喜好樹果:', 'Favored:')}</span>
+            <span class="island-ex-berry-rule">${tStr('1種主樹果 + 2種副樹果 (每週隨機)', '1 Primary + 2 Random (Weekly)')}</span>
+          </div>
+        `;
+      } else {
+        // 萌綠森林為每週隨機樹果, 依需求不展示亦不說明
+        berriesHtml = '';
+      }
     } else {
       const activeFavBerries = (isExpert && island.expertMode && island.expertMode.favoriteBerries)
         ? island.expertMode.favoriteBerries
         : (island.favoriteBerries || []);
+      const hasGetBerry = !!(i18n && typeof i18n.getBerryName === 'function');
+      const hasGetType = !!(i18n && typeof i18n.getTypeName === 'function');
       const berryChips = activeFavBerries.map(bName => {
         const bInfo = BERRY_VALUES_DATA.find(b => b.name === bName);
-        const displayName = isEN ? (window.I18N && window.I18N.t(bName) || bName) : bName;
+        const displayName = (isEN || isCN) ? ((hasGetBerry && i18n.getBerryName(bName)) || toSimp(bName)) : bName;
         const iconSrc = bInfo ? bInfo.icon : '';
         const rawType = bInfo ? bInfo.type : '';
-        const typeLabel = isEN ? (window.I18N && window.I18N.getTypeName ? window.I18N.getTypeName(rawType) : rawType) : rawType;
+        const typeLabel = (isEN || isCN) ? ((hasGetType && i18n.getTypeName(rawType)) || toSimp(rawType)) : rawType;
         return `
           <div class="island-berry-chip island-berry-icon-only" title="${displayName} (${typeLabel})">
             ${iconSrc ? `<img src="${iconSrc}" class="island-berry-icon" alt="${displayName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">` : ''}
           </div>
         `;
       }).join('');
+      const exBerryRuleHtml = isExpert
+        ? `<span class="island-ex-berry-rule">${tStr('3選1主果 + 2隨機', '1 of 3 Primary + 2 Random')}</span>`
+        : '';
       berriesHtml = `
         <div class="island-berries-section">
-          <span class="island-berries-label">${isEN ? 'Favored:' : '喜好樹果:'}</span>
+          <span class="island-berries-label">${tStr('喜好樹果:', 'Favored:')}</span>
           <div class="island-berries-list">${berryChips}</div>
+          ${exBerryRuleHtml}
         </div>
       `;
     }
 
     function renderIslandSleepCell(p, star, rankStr) {
       if (!rankStr || rankStr === '-') {
-        return `<span class="rank-badge rank-dash" title="${isEN ? 'Unavailable' : '未出現'}">-</span>`;
+        return `<span class="rank-badge rank-dash" title="${tStr('未出現', 'Unavailable')}">-</span>`;
       }
       const badgeHtml = formatSnorlaxRankBadge(rankStr, isEN);
       const style = getSleepStyleData(p.name, star);
       const safePkmName = (p.name || '').replace(/'/g, "\\'");
       const isCollected = typeof isSleepStyleCollected === 'function' ? isSleepStyleCollected(p.name, star) : false;
       const checkBtnTitle = isCollected
-        ? (isEN ? 'Collected (Click to mark uncollected)' : '已收集 (點擊標記為未收集)')
-        : (isEN ? 'Uncollected (Click to mark collected)' : '未收集 (點擊標記為已收集)');
+        ? tStr('已收集 (點擊標記為未收集)', 'Collected (Click to mark uncollected)')
+        : tStr('未收集 (點擊標記為已收集)', 'Uncollected (Click to mark collected)');
       const checkBtnHtml = `
         <button type="button" class="island-style-check-btn ${isCollected ? 'is-checked' : ''}" data-pkm="${safePkmName}" data-star="${star}" onclick="window.WikiDB.toggleCollectedSleepStyle('${safePkmName}', ${star}, event)" title="${checkBtnTitle}" aria-label="${checkBtnTitle}">${isCollected ? '[✓]' : '[ ]'}</button>
       `;
@@ -254,7 +291,7 @@
 
     const energyRows = activeEnergyTiers.map(t => `
       <tr>
-        <td class="font-bold" style="vertical-align:middle;">${formatSnorlaxRankBadge(t.rank)}</td>
+        <td class="font-bold" style="vertical-align:middle;">${formatSnorlaxRankBadge(t.rank, isEN)}</td>
         <td class="font-bold text-accent" style="vertical-align:middle;">${t.energy.toLocaleString()}</td>
       </tr>
     `).join('');
@@ -275,6 +312,18 @@
       const cleanNum = parseInt(String(powerStr).replace(/[^0-9]/g, ''), 10) || 0;
       if (cleanNum === 0) return { rank: 'Basic 1', energy: 0 };
       const minEnergyNeeded = Math.ceil(cleanNum / 100);
+
+      if (tiers.length >= 35) {
+        let rank = tiers[0].rank || 'Basic 1';
+        for (let i = 0; i < tiers.length; i++) {
+          if (minEnergyNeeded >= tiers[i].energy) {
+            rank = tiers[i].rank;
+          } else {
+            break;
+          }
+        }
+        return { rank, energy: minEnergyNeeded };
+      }
 
       const great1Obj = tiers.find(t => t.rank === 'Great 1') || { energy: 23385 };
       const ultra1Obj = tiers.find(t => t.rank === 'Ultra 1') || { energy: 79197 };
@@ -317,16 +366,23 @@
       return { rank, energy: minEnergyNeeded };
     }
 
-    const drowsyRows = island.drowsyPowerSpawns.map(d => {
-      const match = getMinRankForDrowsyPower(d.power, activeEnergyTiers);
+    const activeFullEnergyTiers = (isExpert && island.expertMode && Array.isArray(island.expertMode.fullRankEnergyTiers))
+      ? island.expertMode.fullRankEnergyTiers
+      : (Array.isArray(island.fullRankEnergyTiers) ? island.fullRankEnergyTiers : activeEnergyTiers);
+    const activeDrowsyPowerSpawns = (isExpert && island.expertMode && Array.isArray(island.expertMode.drowsyPowerSpawns))
+      ? island.expertMode.drowsyPowerSpawns
+      : (island.drowsyPowerSpawns || []);
+
+    const drowsyRows = activeDrowsyPowerSpawns.map(d => {
+      const match = getMinRankForDrowsyPower(d.power, activeFullEnergyTiers);
       const energyText = formatEnergyK(match.energy);
       return `
         <tr>
-          <td class="font-bold text-success" style="vertical-align:middle;">${d.count} ${isEN ? 'Pokemon' : '隻'}</td>
+          <td class="font-bold text-success" style="vertical-align:middle;">${d.count} ${tStr('隻', 'Pokemon')}</td>
           <td class="font-bold" style="vertical-align:middle;">${d.power}</td>
           <td style="vertical-align:middle; text-align:center; padding:5px 4px;">
             <div style="display:inline-flex; flex-direction:column; align-items:center; gap:2px;">
-              ${formatSnorlaxRankBadge(match.rank)}
+              ${formatSnorlaxRankBadge(match.rank, isEN)}
               <span style="font-size:10px; color:var(--text-secondary); line-height:1; font-weight:600;">${energyText}</span>
             </div>
           </td>
@@ -335,14 +391,18 @@
     }).join('');
 
     const sleepTypeNameMap = {
-      dozing: isEN ? 'Dozing' : '淺淺入夢',
-      snoozing: isEN ? 'Snoozing' : '安然入睡',
-      slumbering: isEN ? 'Slumbering' : '深深入眠'
+      dozing: tStr('淺淺入夢', 'Dozing'),
+      snoozing: tStr('安然入睡', 'Snoozing'),
+      slumbering: tStr('深深入眠', 'Slumbering')
     };
 
-    let dozingList = (island.spawns && island.spawns.dozing) ? island.spawns.dozing.map(p => ({ ...p, sleepType: 'dozing' })) : [];
-    let snoozingList = (island.spawns && island.spawns.snoozing) ? island.spawns.snoozing.map(p => ({ ...p, sleepType: 'snoozing' })) : [];
-    let slumberingList = (island.spawns && island.spawns.slumbering) ? island.spawns.slumbering.map(p => ({ ...p, sleepType: 'slumbering' })) : [];
+    const activeSpawns = (typeof getActiveIslandSpawns === 'function')
+      ? getActiveIslandSpawns(island, isExpert)
+      : (island.spawns || { dozing: [], snoozing: [], slumbering: [] });
+
+    let dozingList = (activeSpawns && activeSpawns.dozing) ? activeSpawns.dozing.map(p => ({ ...p, sleepType: 'dozing' })) : [];
+    let snoozingList = (activeSpawns && activeSpawns.snoozing) ? activeSpawns.snoozing.map(p => ({ ...p, sleepType: 'snoozing' })) : [];
+    let slumberingList = (activeSpawns && activeSpawns.slumbering) ? activeSpawns.slumbering.map(p => ({ ...p, sleepType: 'slumbering' })) : [];
 
     if (isIslandLegendaryOnly) {
       dozingList = dozingList.filter(isLegendaryPokemon);
@@ -415,8 +475,8 @@
     let spawnsRows = '';
     if (spawnList.length === 0) {
       const emptyMsg = isIslandLegendaryOnly
-        ? (isEN ? 'No legendary Pokémon found for current selection' : '目前選取條件下無棲息之神獸寶可夢')
-        : (isEN ? 'No Pokémon found' : '目前無符合條件之寶可夢');
+        ? tStr('目前選取條件下無棲息之神獸寶可夢', 'No legendary Pokémon found for current selection')
+        : tStr('目前無符合條件之寶可夢', 'No Pokémon found');
       spawnsRows = `
         <tr>
           <td colspan="5" style="vertical-align:middle; text-align:center; padding:24px 12px; color:var(--text-secondary); font-size:13px;">
@@ -425,8 +485,11 @@
         </tr>
       `;
     } else {
+      const hasGetPokemonName = !!(i18n && typeof i18n.getPokemonName === 'function');
       spawnsRows = spawnList.map(p => {
-        const pName = isEN ? p.name_en : p.name;
+        const pName = isEN
+          ? p.name_en
+          : (isCN ? ((hasGetPokemonName && i18n.getPokemonName(p.name)) || toSimp(p.name)) : p.name);
         const pkmAvatar = getPokemonAvatarUrl(p, p.name_en);
         const pkmDex = getIslandPokemonDexCode(p);
         const dexNum = parseInt(pkmDex, 10);
@@ -462,16 +525,16 @@
       let arrowSvg = '';
       if (isSorted) {
         if (islandSpawnsSortDir === 'desc') {
-          arrowSvg = `<svg class="island-sort-arrow-svg active" viewBox="0 0 10 6" width="10" height="6" fill="currentColor" aria-label="${isEN ? 'Descending' : '降冪'}"><path d="M0 0l5 6 5-6z"/></svg>`;
+          arrowSvg = `<svg class="island-sort-arrow-svg active" viewBox="0 0 10 6" width="10" height="6" fill="currentColor" aria-label="${tStr('降冪', 'Descending')}"><path d="M0 0l5 6 5-6z"/></svg>`;
         } else if (islandSpawnsSortDir === 'asc') {
-          arrowSvg = `<svg class="island-sort-arrow-svg active" viewBox="0 0 10 6" width="10" height="6" fill="currentColor" aria-label="${isEN ? 'Ascending' : '升冪'}"><path d="M0 6l5-6 5 6z"/></svg>`;
+          arrowSvg = `<svg class="island-sort-arrow-svg active" viewBox="0 0 10 6" width="10" height="6" fill="currentColor" aria-label="${tStr('升冪', 'Ascending')}"><path d="M0 6l5-6 5 6z"/></svg>`;
         }
       } else {
         arrowSvg = `<svg class="island-sort-arrow-svg inactive" viewBox="0 0 10 12" width="8" height="10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4.5L5 1.5L8 4.5M2 7.5L5 10.5L8 7.5"/></svg>`;
       }
 
       if (colKey === 'pokemon') {
-        return `<th class="island-sort-th ${isSorted ? 'active-sort' : ''}" style="${styleStr || 'text-align:center;'}" onclick="window.WikiDB.sortIslandSpawns('${colKey}')" title="${titleText}" data-col="${colKey}"><span class="island-sort-arrow-wrap" style="margin-right:2px; vertical-align:middle;">${arrowSvg}</span>${isEN ? 'Pokemon' : '寶可夢'}</th>`;
+        return `<th class="island-sort-th ${isSorted ? 'active-sort' : ''}" style="${styleStr || 'text-align:center;'}" onclick="window.WikiDB.sortIslandSpawns('${colKey}')" title="${titleText}" data-col="${colKey}"><span class="island-sort-arrow-wrap" style="margin-right:2px; vertical-align:middle;">${arrowSvg}</span>${tStr('寶可夢', 'Pokemon')}</th>`;
       }
 
       return `
@@ -484,7 +547,18 @@
       `;
     }
 
+    const exMetaHtml = (isExpert && island.expertMode) ? `
+      <div class="island-hero-meta">
+        <span class="island-info-chip">${tStr(island.expertMode.unlockReq || '', island.expertMode.unlockReq_en || '')}</span>
+        <span class="island-info-chip">${tStr('需消耗 EX券 1張', 'Requires 1 EX Pass')}</span>
+        <span class="island-info-chip island-chip-accent">${tStr(island.expertMode.primaryBonus || island.expertMode.bonus || '', island.expertMode.primaryBonus_en || island.expertMode.bonus_en || '')}</span>
+        <span class="island-info-chip">${tStr(island.expertMode.penalty || '', island.expertMode.penalty_en || '')}</span>
+        <span class="island-info-chip">${tStr('獨立 EX 營地加成', 'Independent EX Bonus')}</span>
+      </div>
+    ` : '';
+
     const sceneSrc = islandSceneSrc(island);
+    const heroIslandTitle = isExpert ? (getLocIslandName(island) + ' EX') : getLocIslandName(island);
     return `
       <div class="island-scene-layer" aria-hidden="true">
         <img class="island-scene-photo" src="${sceneSrc}" alt="" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
@@ -492,7 +566,7 @@
       </div>
       <div class="island-nav-strip">
         ${normalNavHtml}
-        <div class="island-nav-divider" title="${isEN ? 'EX Expert Mode' : 'EX 專家模式'}"></div>
+        <div class="island-nav-divider" title="${tStr('EX 專家模式', 'EX Expert Mode')}"></div>
         ${exNavHtml}
       </div>
 
@@ -501,21 +575,22 @@
           <div class="island-hero-body">
           <div class="island-hero-content">
             <div class="island-title-group">
-              <h3 class="island-hero-title">${isEN ? (isExpert ? island.name_en + ' EX' : island.name_en) : (isExpert ? island.name + ' EX' : island.name)}</h3>
+              <h3 class="island-hero-title">${heroIslandTitle}</h3>
             </div>
             ${berriesHtml}
           </div>
+          ${exMetaHtml}
           <div class="island-dual-grid">
         <div class="island-table-card">
           <div class="wiki-card-header">
-            <h3 class="wiki-card-title">${isEN ? 'Rank Energy' : '評級所需能量'}</h3>
+            <h3 class="wiki-card-title">${tStr('評級所需能量', 'Rank Energy')}</h3>
           </div>
           <div class="wiki-table-wrapper" style="margin-top:8px;">
             <table class="wiki-data-table">
               <thead>
                 <tr>
-                  <th style="width:45%;">${isEN ? 'Rank' : '評級'}</th>
-                  <th style="width:55%;">${isEN ? 'Energy' : '所需能量'}</th>
+                  <th style="width:45%;">${tStr('評級', 'Rank')}</th>
+                  <th style="width:55%;">${tStr('所需能量', 'Energy')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -527,15 +602,15 @@
 
         <div class="island-table-card">
           <div class="wiki-card-header">
-            <h3 class="wiki-card-title">${isEN ? 'Spawn Thresholds' : '出現數門檻'}</h3>
+            <h3 class="wiki-card-title">${tStr('出現數門檻', 'Spawn Thresholds')}</h3>
           </div>
           <div class="wiki-table-wrapper" style="margin-top:8px;">
             <table class="wiki-data-table">
               <thead>
                 <tr>
-                  <th style="width:28%;">${isEN ? 'Spawns' : '出現數'}</th>
-                  <th style="width:40%;">${isEN ? 'Min Power' : '最低門檻'}</th>
-                  <th style="width:32%; text-align:center;">${isEN ? '100pt Rank' : '分數100分'}</th>
+                  <th style="width:28%;">${tStr('出現數', 'Spawns')}</th>
+                  <th style="width:40%;">${tStr('最低門檻', 'Min Power')}</th>
+                  <th style="width:32%; text-align:center;">${tStr('分數100分', '100pt Rank')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -553,51 +628,49 @@
       <div class="island-spawns-card">
         <div class="wiki-card-header" style="flex-wrap:wrap; gap:10px 14px; justify-content:space-between; align-items:center;">
           <div class="island-spawns-title-wrap" style="display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap;">
-            <h3 class="wiki-card-title" style="margin:0;">${isEN ? 'Habitats & Sleep Styles' : '棲息寶可夢與各星級睡姿解鎖門檻'}</h3>
-            <label class="island-legendary-switch-label" title="${isEN ? 'Show Legendary Pokémon Only' : '僅展示神獸寶可夢'}">
+            <h3 class="wiki-card-title" style="margin:0;">${tStr('棲息寶可夢與各星級睡姿解鎖門檻', 'Habitats & Sleep Styles')}</h3>
+            <label class="island-legendary-switch-label" title="${tStr('僅展示神獸寶可夢', 'Show Legendary Pokémon Only')}">
               <input type="checkbox" id="island-legendary-switch" class="ladder-switch-input" ${isIslandLegendaryOnly ? 'checked' : ''} onchange="window.WikiDB.toggleIslandLegendaryOnly(this.checked)">
               <span class="ladder-switch-slider"></span>
-              <span class="ladder-switch-text font-bold">${isEN ? 'Legendary' : '神獸寶可夢'}</span>
+              <span class="ladder-switch-text font-bold">${tStr('神獸寶可夢', 'Legendary')}</span>
             </label>
-            <label class="island-legendary-switch-label island-uncollected-switch-label" title="${isEN ? 'Show Pokémon with Uncollected Sleep Styles Only' : '僅顯示尚有未收集睡姿之寶可夢'}">
+            <label class="island-legendary-switch-label island-uncollected-switch-label" title="${tStr('僅顯示尚有未收集睡姿之寶可夢', 'Show Pokémon with Uncollected Sleep Styles Only')}">
               <input type="checkbox" id="island-uncollected-switch" class="ladder-switch-input" ${(typeof isIslandUncollectedOnly !== 'undefined' && isIslandUncollectedOnly) ? 'checked' : ''} onchange="window.WikiDB.toggleIslandUncollectedOnly(this.checked)">
               <span class="ladder-switch-slider"></span>
-              <span class="ladder-switch-text font-bold">${isEN ? 'Uncollected Only' : '僅未收集'}</span>
+              <span class="ladder-switch-text font-bold">${tStr('僅未收集', 'Uncollected Only')}</span>
             </label>
           </div>
           <div class="island-sleep-filters">
             <button type="button" class="island-sleep-btn ${currentIslandSleepType === 'all' ? 'active' : ''}" onclick="window.WikiDB.filterIslandSleepType('all')">
-              ${isEN ? 'All' : '全部'} <span class="island-sleep-count">${totalCount}</span>
+              ${tStr('全部', 'All')} <span class="island-sleep-count">${totalCount}</span>
             </button>
             <button type="button" class="island-sleep-btn ${currentIslandSleepType === 'dozing' ? 'active' : ''}" onclick="window.WikiDB.filterIslandSleepType('dozing')">
-              ${isEN ? 'Dozing' : '淺淺入夢'} <span class="island-sleep-count">${dozingCount}</span>
+              ${tStr('淺淺入夢', 'Dozing')} <span class="island-sleep-count">${dozingCount}</span>
             </button>
             <button type="button" class="island-sleep-btn ${currentIslandSleepType === 'snoozing' ? 'active' : ''}" onclick="window.WikiDB.filterIslandSleepType('snoozing')">
-              ${isEN ? 'Snoozing' : '安然入睡'} <span class="island-sleep-count">${snoozingCount}</span>
+              ${tStr('安然入睡', 'Snoozing')} <span class="island-sleep-count">${snoozingCount}</span>
             </button>
             <button type="button" class="island-sleep-btn ${currentIslandSleepType === 'slumbering' ? 'active' : ''}" onclick="window.WikiDB.filterIslandSleepType('slumbering')">
-              ${isEN ? 'Slumbering' : '深深入眠'} <span class="island-sleep-count">${slumberingCount}</span>
+              ${tStr('深深入眠', 'Slumbering')} <span class="island-sleep-count">${slumberingCount}</span>
             </button>
           </div>
         </div>
         ${(() => {
           if (typeof getIslandSleepStyleStats !== 'function') return '';
-          const stats = getIslandSleepStyleStats(island.id);
+          const stats = getIslandSleepStyleStats(island.id, isExpert);
           const recType = stats.recommendedSleepType || 'dozing';
           const recLabel = sleepTypeNameMap[recType] || recType;
           const recText = stats.uncollectedStyles === 0
-            ? (isEN ? 'Rec. Sleep: Any (100% Done)' : '本島嶼睡姿已 100% 收集完成')
-            : (isEN
-                ? `Rec. Sleep: ${recLabel} (${stats.recommendedUncollectedCount} left)`
-                : `今晚推薦睡眠類型: ${recLabel} (尚有 ${stats.recommendedUncollectedCount} 種未收集)`);
+            ? tStr('本島嶼睡姿已 100% 收集完成', 'Rec. Sleep: Any (100% Done)')
+            : tStr(`今晚推薦睡眠類型: ${recLabel} (尚有 ${stats.recommendedUncollectedCount} 種未收集)`, `Rec. Sleep: ${recLabel} (${stats.recommendedUncollectedCount} left)`);
           return `
             <div class="island-sleep-tracker-bar" id="island-sleep-tracker-bar">
               <div class="island-sleep-progress-pill">
-                <span class="tracker-lbl">${isEN ? 'Collected Styles:' : '睡姿收集進度:'}</span>
+                <span class="tracker-lbl">${tStr('睡姿收集進度:', 'Collected Styles:')}</span>
                 <strong class="tracker-val text-accent">${stats.collectedStyles} / ${stats.totalStyles}</strong>
                 <span class="tracker-pct">(${stats.completionPct}%)</span>
               </div>
-              <button type="button" class="island-sleep-rec-pill" onclick="window.WikiDB.filterIslandSleepType('${recType}')" title="${isEN ? 'Click to filter by recommended sleep type' : '點擊篩選推薦睡眠類型'}">
+              <button type="button" class="island-sleep-rec-pill" onclick="window.WikiDB.filterIslandSleepType('${recType}')" title="${tStr('點擊篩選推薦睡眠類型', 'Click to filter by recommended sleep type')}">
                 <span class="rec-text font-bold">${recText}</span>
               </button>
             </div>
@@ -607,11 +680,11 @@
           <table class="wiki-data-table island-spawns-compact-table">
             <thead>
               <tr>
-                ${renderIslandSortTh('pokemon', `<span>${isEN ? 'Pokemon' : '寶可夢'}</span>`, isEN ? 'Sort by Pokemon Dex No. (Desc -> Asc -> Default)' : '點選依寶可夢編號排序 (降冪 -> 升冪 -> 回復預設)', 'width:70px; text-align:center;')}
-                ${renderIslandSortTh('s1', `<span class="sleep-star-label">1<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, isEN ? 'Sort by 1-Star Unlock Rank (Desc -> Asc -> Default)' : '點選依 1 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)', 'text-align:center;')}
-                ${renderIslandSortTh('s2', `<span class="sleep-star-label">2<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, isEN ? 'Sort by 2-Star Unlock Rank (Desc -> Asc -> Default)' : '點選依 2 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)', 'text-align:center;')}
-                ${renderIslandSortTh('s3', `<span class="sleep-star-label">3<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, isEN ? 'Sort by 3-Star Unlock Rank (Desc -> Asc -> Default)' : '點選依 3 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)', 'text-align:center;')}
-                ${renderIslandSortTh('s4', `<span class="sleep-star-label">4<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, isEN ? 'Sort by 4-Star Unlock Rank (Desc -> Asc -> Default)' : '點選依 4 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)', 'text-align:center;')}
+                ${renderIslandSortTh('pokemon', `<span>${tStr('寶可夢', 'Pokemon')}</span>`, tStr('點選依寶可夢編號排序 (降冪 -> 升冪 -> 回復預設)', 'Sort by Pokemon Dex No. (Desc -> Asc -> Default)'), 'width:70px; text-align:center;')}
+                ${renderIslandSortTh('s1', `<span class="sleep-star-label">1<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, tStr('點選依 1 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)', 'Sort by 1-Star Unlock Rank (Desc -> Asc -> Default)'), 'text-align:center;')}
+                ${renderIslandSortTh('s2', `<span class="sleep-star-label">2<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, tStr('點選依 2 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)', 'Sort by 2-Star Unlock Rank (Desc -> Asc -> Default)'), 'text-align:center;')}
+                ${renderIslandSortTh('s3', `<span class="sleep-star-label">3<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, tStr('點選依 3 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)', 'Sort by 3-Star Unlock Rank (Desc -> Asc -> Default)'), 'text-align:center;')}
+                ${renderIslandSortTh('s4', `<span class="sleep-star-label">4<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, tStr('點選依 4 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)', 'Sort by 4-Star Unlock Rank (Desc -> Asc -> Default)'), 'text-align:center;')}
               </tr>
             </thead>
             <tbody>
@@ -624,13 +697,15 @@
     `;
   }
 
-  // 監聽寶可夢資料庫載入與更新事件，確保非同步載入完成後島嶼分頁若為活動狀態能無縫重刷圖示
+  // 監聽寶可夢與睡姿資料庫載入與更新事件，確保非同步載入完成後島嶼分頁若為活動狀態能無縫重刷圖示與睡姿彈窗
   if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
-    window.addEventListener('pokemon-data-updated', function() {
+    const refreshIfIslandsActive = function() {
       try {
         if (typeof getCurrentSubTab === 'function' && getCurrentSubTab() === 'islands') {
           refreshIslandsSubpanel();
         }
       } catch (e) {}
-    });
+    };
+    window.addEventListener('pokemon-data-updated', refreshIfIslandsActive);
+    window.addEventListener('sleep-styles-updated', refreshIfIslandsActive);
   }

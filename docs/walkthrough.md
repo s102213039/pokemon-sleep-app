@@ -5,6 +5,30 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-21 已完成（島嶼 Tab 遺漏木棉球等 13 種常駐寶可夢根因修復、全 7 島 + 2 EX 完整核對與三語睡姿浮窗對齊）
+
+- **R1 問題根因**：
+  1. `js/modules/wiki/wiki_camps_data.js` 的 `ISLANDS_DATA` 為完全靜態寫死物件，與 `data/data.json`、`data/sleep_styles.json` 及 `data/news.json` 脫鉤，且所有同步腳本（`sync_manager.js`、`sync_data.py`、`build_webapp_data.py`、`sync_all.py`）皆未更新該檔；因此 `#546 木棉球`、`#547 風妖精` 及另 11 種常駐島嶼寶可夢（`#083 大蔥鴨`、`#387-#395` 神奧御三家、`#701 摔角鷹人`）雖已存在於圖鑑與公告資料中，卻未顯示於島嶼 Tab。
+  2. `js/modules/wiki/wiki_camps_island.js` 的 `POKEMON_SPRITE_FALLBACK` 與 `js/modules/wiki/wiki_sleep_styles.js` 的 `SLEEP_STYLES_DATA`（237 鍵落後 `data/sleep_styles.json` 276 鍵）未同步；`showSleepStylePopover` 函式原本跨越 `wiki_sleep_styles.js` 與 `wiki_camps_data.js` 兩檔斷裂，`loadDynamicSleepStyles()` 完成後亦未通知島嶼 Tab 重繪，且 `data/sleep_styles.json` 存在 `byNo`/`byName` 覆寫污染（`#25`、`#132`、`#133`、`#363`、`#7054` 等）。
+- **R2 / R3 全面核對與修正內容**：
+  1. **7 座標準島嶼與 2 座 EX 模式完整對齊 (`js/modules/wiki/wiki_camps_data.js`, `js/modules/lab/lab_modal.js`, `data/data.json`)**：
+     - 補齊 7 座標準島嶼遺漏的 39 筆出沒資料（涵蓋上述 13 種常駐寶可夢，標準島嶼總數由 475 增至 514 筆）；依 Serebii / Bulbapedia / RaenonX 修正 12 筆階級錯誤（`哎呀球菇`、`敗露球菇`、`夢妖`與`夢妖魔`移除不存在的 4 星睡姿、`百變怪`琥褐 4 星），確認活動限定之 `#151 夢幻`、`#491 達克萊伊` 與 `9001..9007` 節慶造型不列入常駐出沒表。
+     - 補齊 `greengrass.expertMode.spawns`（180 種，包含高調/低調`顫弦蠑螈`修正為 `type: "毒"`）與 `cyan.expertMode.spawns`（59 種，含 EX 限定 `#150 超夢`）；修正天青沙灘 EX 大師 15 階能量為 `8,552,888`，補齊全 9 區 35 階 `fullRankEnergyTiers`、更新天青至琥褐及 EX 之 `drowsyPowerSpawns` 與 EX 規則（天青 EX 主果 `-20%`、持有上限 `+5`、非順果 `+35%`），並校準 `SLEEP_STYLE_GOALS_DATA`（維持 `570` 門檻並移除未實裝之 `630`/`690`）。
+     - 修正 `data/data.json` 中 `#329 超音波幼蟲` 與 `#330 沙漠蜻蜓` 之 `sleep_type` 為 `"深深入眠"`（與 Serebii/Bulbapedia 一致），並對齊 `lab_modal.js` 中 `LAB_ISLANDS` 之 `lapis` 與 `powerplant` 樹果及屬性順序。
+  2. **睡姿資料、頭像映射與專長修正 (`data/sleep_styles.json`, `data/manifest.json`, `wiki_sleep_styles.js`, `wiki_camps_island.js`, `wiki_ladder_recipes.js`)**：
+     - 修復 `data/sleep_styles.json`（276 筆 `byName`、247 筆 `byNo`），解決節慶覆寫、移除 54 筆冗餘補零鍵與無效 `烏波（阿羅拉的樣子）`/`9003`、補齊 `大鋼蛇`/`奇魯莉安`別名與 16 項條目數值並重算 `data/manifest.json`（`6661cfb8ce8dd5ce`）。
+     - 將 `showSleepStylePopover` 完整收斂回 `wiki_sleep_styles.js`、同步 276 鍵 `SLEEP_STYLES_DATA`、於非同步載入完成時發出 `sleep-styles-updated` 觸發 `refreshIslandsSubpanel()`、統一浮窗半形冒號 `: `，並將 `_rankBadgeCache` 改以 `langKey + ':' + rankStr`（`tw`/`cn`/`en`）分語系快取。
+     - 同步 `wiki_camps_island.js` 之 `POKEMON_SPRITE_FALLBACK`（786 鍵）、未解析改回空字串避免誤落回 `'001'`、新增 EX 睡姿統計與出沒查詢；`wiki_ladder_recipes.js` 補齊繁體 `奇魯莉安` 專長並移除無效 `烏波（阿羅拉的樣子）`。
+  3. **三語渲染、對比樣式、同步守門與自動化測試 (`wiki_camps_render.js`, `wiki_camps.css`, `wiki_nav.css`, `css/styles.css`, `scripts/sync_manager.js`, `scripts/build_ingredient_ladder.js`, `tests/tiers/tier1_coverage.js`, `tests/tiers/tier4/tier4_part4.js`)**：
+     - `wiki_camps_render.js` 全面支援 `zh-TW` / `zh-CN` / `en-US`（使用 `i18n.getBerryName`、`getTypeName`、`getPokemonName`、`getIslandName` 與 `3選1主果 + 2隨機` / `3选1主果 + 2随机` / `1 of 3 Primary + 2 Random`）。
+     - `wiki_camps.css`、`wiki_nav.css` 與 `styles.css` 補齊 4 種淺色主題對比覆寫並維持無巢狀雙層外框（Rule 9）。
+     - `sync_manager.js` 新增 `checkIslandsDataDrift`（含種族屬性一致性檢查）；`build_ingredient_ladder.js` 新增 `writeLadderJsonIfChanged` 防止建置覆寫壓縮後之 `data/ladder_lv60.json`；`tier4_part4.js`（Test 242）與 `tier1_coverage.js` 新增全 9 區 x 3 語系 x 雙端與睡姿浮窗回歸測試，重新編譯產出最新 `wiki.js`/`wiki.min.js`/`appraisal.js`/`appraisal.min.js`/`styles.css`/`styles.min.css`（版號 `20261121_1400`）。
+- **驗證結果**：
+  - `npm run test:fast`：**171 / 171 PASS**（Tier 1: 74, Tier 2: 70, Tier 3: 27）。
+  - `npm test`：**295 / 295 PASS**（Tier 1: 74, Tier 2: 70, Tier 3: 27, Tier 4: 124）。
+  - `node scripts/sync_manager.js --dry-run`：**0 drift warnings**（`Island Tab Parity Check: 0 drift warnings`）。
+  - 生產壓縮套件（`wiki.min.js` + `i18n.min.js` + `appraisal.min.js`）Node VM 獨立驗證：**54** 次區域渲染（9 區 x 3 語系 x 桌面/H5）、**16,602** 次睡姿浮窗檢查（涵蓋全部 753 筆出沒列與可用星級）及 **753** 筆出沒屬性/頭像/睡姿資料核對全數 **0 失敗**。
+
 ## 交接：2026-11-21 已完成（技能天梯篩選器消失 5 項連動根因修復、H5 FAB 隔離與 `#wiki/skills_ladder` 路由修復）
 
 - **問題根因與修復內容**：

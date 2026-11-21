@@ -660,6 +660,66 @@ html[data-theme="emerald"][data-theme-inverted="true"] body:not(.mobile-h5-app) 
   border-color: rgba(56, 189, 248, 0.35);
 }
 
+#wiki-subpanel-islands .island-hero-meta .island-info-chip {
+  background: var(--bg-card-solid, rgba(15, 23, 42, 0.85));
+  color: var(--text-primary);
+}
+
+#wiki-subpanel-islands .island-hero-meta .island-info-chip.island-chip-accent {
+  color: #38bdf8;
+  background: var(--bg-card-solid, rgba(15, 23, 42, 0.88));
+  border-color: rgba(56, 189, 248, 0.45);
+}
+
+.island-ex-berry-rule {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: var(--bg-card-solid, rgba(15, 23, 42, 0.85));
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.45);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .island-chip-accent,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .island-chip-accent,
+[data-theme="midnight"][data-theme-inverted="true"] .island-chip-accent,
+[data-theme="onyx"][data-theme-inverted="true"] .island-chip-accent,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #wiki-subpanel-islands .island-hero-meta .island-info-chip.island-chip-accent,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #wiki-subpanel-islands .island-hero-meta .island-info-chip.island-chip-accent,
+[data-theme="midnight"][data-theme-inverted="true"] #wiki-subpanel-islands .island-hero-meta .island-info-chip.island-chip-accent,
+[data-theme="onyx"][data-theme-inverted="true"] #wiki-subpanel-islands .island-hero-meta .island-info-chip.island-chip-accent {
+  color: #0369a1;
+  background: #f0f9ff;
+  border-color: #7dd3fc;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .island-ex-berry-rule,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .island-ex-berry-rule,
+[data-theme="midnight"][data-theme-inverted="true"] .island-ex-berry-rule,
+[data-theme="onyx"][data-theme-inverted="true"] .island-ex-berry-rule {
+  background: #fffbeb;
+  color: #92400e;
+  border-color: #f59e0b;
+}
+
+.mobile-h5-app .island-ex-berry-rule {
+  font-size: 11px;
+  padding: 2px 7px;
+}
+
+.mobile-h5-app #wiki-subpanel-islands .island-hero-meta {
+  gap: 6px;
+}
+
+.mobile-h5-app #wiki-subpanel-islands .island-hero-meta .island-info-chip {
+  font-size: 11px;
+  padding: 3px 7px;
+}
+
 .island-btn-ex-toggle {
   display: inline-flex;
   align-items: center;

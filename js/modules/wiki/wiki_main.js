@@ -894,6 +894,7 @@
     getCurrentIslandSleepType: () => currentIslandSleepType,
     getIslandPokemonDexOrder: getIslandPokemonDexOrder,
     getIslandPokemonDexCode: getIslandPokemonDexCode,
+    getPokemonAvatarUrl: getPokemonAvatarUrl,
     sortIslandSpawns: sortIslandSpawns,
     getIslandSpawnsSort: getIslandSpawnsSort,
     getSnorlaxRankScore: getSnorlaxRankScore,

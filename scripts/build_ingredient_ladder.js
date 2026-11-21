@@ -35,6 +35,22 @@ function writeIfChanged(filePath, content) {
   return true;
 }
 
+function writeLadderJsonIfChanged(filePath, tracks, prettyContent) {
+  if (fs.existsSync(filePath)) {
+    const existing = fs.readFileSync(filePath, 'utf8');
+    if (existing === prettyContent) {
+      return false;
+    }
+    try {
+      if (JSON.stringify(JSON.parse(existing)) === JSON.stringify(tracks)) {
+        return false;
+      }
+    } catch (_) {}
+  }
+  fs.writeFileSync(filePath, prettyContent, 'utf8');
+  return true;
+}
+
 function buildIngredientLadder() {
   const raw = JSON.parse(fs.readFileSync(DATA_JSON_PATH, 'utf8'));
   const pokemonList = Array.isArray(raw) ? raw : (raw.pokemon || []);
@@ -42,7 +58,7 @@ function buildIngredientLadder() {
   const tracks = buildFn(pokemonList, { finalOnly: true, minFinalSafetyFloor: 2 });
 
   const jsonStr = JSON.stringify(tracks, null, 2);
-  const jsonChanged = writeIfChanged(LADDER_JSON_PATH, jsonStr + '\n');
+  const jsonChanged = writeLadderJsonIfChanged(LADDER_JSON_PATH, tracks, jsonStr + '\n');
 
   const jsContent =
     '/**\n' +

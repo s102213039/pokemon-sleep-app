@@ -2290,6 +2290,118 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     assert(i18nCode.includes('"敗露球菇":"Amoonguss"'), 'i18n.js must map 敗露球菇 to Amoonguss');
   });
 
+  test('Tier 1 - Feature Coverage', 'Cottonee (#546) & Whimsicott (#547) Full-Stack Parity & Global Islands/SleepStyles Parity', () => {
+    const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
+    const sleepStylesJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/sleep_styles.json'), 'utf8'));
+    const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/wiki.js'), 'utf8');
+    const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/core/i18n.js'), 'utf8');
+
+    // 1. Cottonee & Whimsicott in data.json, sleep_styles.json, i18n.js
+    const cottonee = pkmData.find(p => String(p.id) === '546');
+    const whimsicott = pkmData.find(p => String(p.id) === '547');
+    assert(cottonee && cottonee.name_cn === '木棉球' && cottonee.sleep_type === '安然入睡', 'data.json #546 Cottonee valid');
+    assert(whimsicott && whimsicott.name_cn === '風妖精' && whimsicott.sleep_type === '安然入睡', 'data.json #547 Whimsicott valid');
+    assertEquals(sleepStylesJson.byName['木棉球']['1'].name, '撲動翅膀睡', 'Cottonee 1S must be 撲動翅膀睡');
+    assertEquals(sleepStylesJson.byName['木棉球']['4'].shards, 6054, 'Cottonee 4S shards must be 6054');
+    assertEquals(sleepStylesJson.byName['風妖精']['1'].exp, 1115, 'Whimsicott 1S EXP must be 1115');
+    assertEquals(sleepStylesJson.byName['風妖精']['4'].shards, 25593, 'Whimsicott 4S shards must be 25593');
+    assert(i18nCode.includes('"木棉球":"Cottonee"'), 'i18n.js must map 木棉球 to Cottonee');
+    assert(i18nCode.includes('"風妖精":"Whimsicott"'), 'i18n.js must map 風妖精 to Whimsicott');
+
+    // 2. Sleep styles integrity & cleanups
+    assert(!sleepStylesJson.byName['烏波（阿羅拉的樣子）'] && !sleepStylesJson.byName['烏波 (阿羅拉的樣子)'], 'Invalid Alolan Wooper keys must be removed');
+    assert(!sleepStylesJson.byNo['9003'], 'Orphan 9003 must be removed from sleep_styles.json byNo');
+    assert(Object.keys(sleepStylesJson.byNo).every(k => !/^0+\d+$/.test(k)), 'Zero-padded byNo keys must be removed');
+    assertEquals(sleepStylesJson.byName['皮卡丘']['1'].name, '蜷縮睡', 'Pikachu 1S must not be overwritten by Captain costume');
+    assertEquals(sleepStylesJson.byName['伊布']['2'].name, '垂耳睡', 'Eevee 2S must not be overwritten by Holiday costume');
+    assertEquals(sleepStylesJson.byName['海豹球']['2'].name, '打大哈欠睡', 'Spheal 2S must not be overwritten by Holiday costume');
+    assertEquals(sleepStylesJson.byNo['7054']['3'].name, '陷入泥中睡', 'Paldean Wooper byNo[7054] 3S must be 陷入泥中睡');
+    assertEquals(sleepStylesJson.byName['百變怪']['4'].name, '肚子上睡', 'Ditto byName 4S must match byNo[132]');
+    assert(!sleepStylesJson.byName['夢妖']['4'] && !sleepStylesJson.byName['夢妖魔']['4'], 'Misdreavus/Mismagius must not have bogus 4-star style');
+    assertEquals(sleepStylesJson.byName['水君']['1'].exp, 1054, 'Suicune 1S EXP must be 1054');
+    assert(sleepStylesJson.byName['大鋼蛇'] && sleepStylesJson.byName['奇魯莉安'], 'Steelix/Kirlia aliases must exist in byName');
+
+    // 3. Vibrava & Flygon sleep_type fix in data.json
+    const p329 = pkmData.find(p => String(p.id) === '329');
+    const p330 = pkmData.find(p => String(p.id) === '330');
+    assertEquals(p329.sleep_type, '深深入眠', 'Vibrava #329 sleep_type must be 深深入眠');
+    assertEquals(p330.sleep_type, '深深入眠', 'Flygon #330 sleep_type must be 深深入眠');
+
+    // 4. Evaluate wiki.js in VM & verify global ISLANDS_DATA <-> data.json <-> SLEEP_STYLES_DATA parity
+    const ctx = {
+      window: { localStorage: { getItem: () => null, setItem: () => {} }, location: { hash: '' }, addEventListener: () => {} },
+      document: { getElementById: () => null, querySelectorAll: () => [], addEventListener: () => {} },
+      console,
+      setTimeout
+    };
+    ctx.window.window = ctx.window;
+    ctx.window.document = ctx.document;
+    vm.createContext(ctx);
+    vm.runInContext(wikiCode, ctx);
+
+    const WikiDB = ctx.window.WikiDB;
+    assert(WikiDB.getPokemonLadderSpecialty('木棉球') === '食材' && WikiDB.getPokemonLadderSpecialty('風妖精') === '食材' && wikiCode.includes('"木棉球": "食材"') && wikiCode.includes('"風妖精": "食材"'), 'POKEMON_SPECIALTY_MAP must include Cottonee & Whimsicott');
+    assertEquals(WikiDB.getPokemonLadderSpecialty('奇魯莉安'), '技能', 'POKEMON_SPECIALTY_MAP must resolve traditional Chinese 奇魯莉安 to 技能 without window.allPokemons');
+    assert(!wikiCode.includes('"烏波（阿羅拉的樣子）"'), 'POKEMON_SPECIALTY_MAP must not retain invalid 烏波（阿羅拉的樣子）');
+    assertEquals(WikiDB.getIslandPokemonDexCode({ name: '未知不存在寶可夢', name_en: 'UnknownFake' }), '', 'Unknown Pokemon dex code must return empty string instead of 001');
+
+    const islands = WikiDB.ISLANDS_DATA;
+    ['greengrass', 'cyan', 'amber'].forEach(islId => {
+      const isl = islands.find(i => i.id === islId);
+      assert(isl.spawns.snoozing.some(r => r.name === '木棉球'), `${islId} snoozing must include 木棉球`);
+      assert(isl.spawns.snoozing.some(r => r.name === '風妖精'), `${islId} snoozing must include 風妖精`);
+    });
+    ['greengrass', 'cyan'].forEach(islId => {
+      const isl = islands.find(i => i.id === islId);
+      assert(isl.expertMode.spawns.snoozing.some(r => r.name === '木棉球'), `${islId} EX snoozing must include 木棉球`);
+      assert(isl.expertMode.spawns.snoozing.some(r => r.name === '風妖精'), `${islId} EX snoozing must include 風妖精`);
+    });
+
+    const { checkIslandsDataDrift } = require(path.join(WORKSPACE_ROOT, 'scripts/sync_manager.js'));
+    const drift = checkIslandsDataDrift(pkmData);
+    assert(drift.pass, `checkIslandsDataDrift must report 0 drift (missing=${drift.missingFromIslands.length}, mismatch=${drift.sleepTypeMismatches.length}, typeMismatch=${drift.typeMismatches.length}, fallback=${drift.missingFromSleepStylesFallback.length})`);
+
+    const normName = s => String(s || '').trim().replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）').replace('大鋼蛇', '大綱蛇').replace('奇魯莉安', '奇鲁莉安');
+    const pkmByNormCn = new Map();
+    const pkmByEn = new Map();
+    pkmData.forEach(p => {
+      if (p.name_cn) pkmByNormCn.set(normName(p.name_cn), p);
+      if (p.name_en) pkmByEn.set(String(p.name_en).toLowerCase(), p);
+    });
+    const p710 = pkmData.find(p => String(p.id) === '710');
+    const p711 = pkmData.find(p => String(p.id) === '711');
+    if (p710) pkmByNormCn.set('南瓜精', p710);
+    if (p711) pkmByNormCn.set('南瓜怪人', p711);
+
+    // Every spawn row in standard & EX islands must resolve avatar URL, dex code, type parity, and all non-dash sleep styles synchronously
+    const allAreas = [];
+    islands.forEach(isl => {
+      allAreas.push({ label: isl.id, spawns: isl.spawns });
+      if (isl.expertMode && isl.expertMode.spawns) {
+        allAreas.push({ label: isl.id + '_ex', spawns: isl.expertMode.spawns });
+      }
+    });
+    allAreas.forEach(area => {
+      ['dozing', 'snoozing', 'slumbering'].forEach(st => {
+        (area.spawns[st] || []).forEach(row => {
+          const matchedPkm = pkmByNormCn.get(normName(row.name)) || (row.name_en && pkmByEn.get(String(row.name_en).toLowerCase()));
+          assert(matchedPkm, `${area.label}.${st}.${row.name} must match entry in data.json`);
+          assertEquals(row.type, matchedPkm.type, `${area.label}.${st}.${row.name} type must match data.json`);
+          const code = WikiDB.getIslandPokemonDexCode(row);
+          assert(code && code !== '', `${area.label}.${st}.${row.name} must resolve dex code`);
+          const avatar = WikiDB.getPokemonAvatarUrl(row, row.name_en);
+          assert(avatar && avatar.startsWith('https://www.serebii.net/pokemonsleep/pokemon/icon/'), `${area.label}.${st}.${row.name} must resolve Serebii icon`);
+          const stars = [1, 2, 3, 4].filter(s => row['s' + s] && row['s' + s] !== '-');
+          assert(stars.length >= 1, `${area.label}.${st}.${row.name} must have at least 1 non-dash rank`);
+          stars.forEach(s => {
+            const style = WikiDB.getSleepStyleData(row.name, s);
+            assert(style && style.exp > 0 && style.shards > 0 && style.candy > 0, `${area.label}.${st}.${row.name} ${s}S must resolve sync sleep style`);
+          });
+        });
+      });
+    });
+  });
+
 
   test('Tier 1 - Feature Coverage', 'Desktop Unified Content Layout, Width Constraints, Horizontal Alignment & Elegant Border Radius Across Panels', () => {
     const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');

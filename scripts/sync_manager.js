@@ -23,6 +23,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const vm = require('vm');
 const { spawnSync } = require('child_process');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -31,6 +32,12 @@ const NEWS_FILE = path.join(DATA_DIR, 'news.json');
 const RECIPES_FILE = path.join(DATA_DIR, 'recipes.json');
 const DATA_FILE = path.join(DATA_DIR, 'data.json');
 const MANIFEST_FILE = path.join(DATA_DIR, 'manifest.json');
+const CAMPS_DATA_FILE = path.join(ROOT_DIR, 'js', 'modules', 'wiki', 'wiki_camps_data.js');
+const SLEEP_STYLES_JS_FILE = path.join(ROOT_DIR, 'js', 'modules', 'wiki', 'wiki_sleep_styles.js');
+
+const EVENT_ONLY_POKEMON_IDS = new Set([
+  '9001', '9002', '9004', '9005', '9006', '9007', '151', '491'
+]);
 
 // 1. Regular Expressions for Compliance (using ASCII unicode escapes only)
 const EMOJI_REGEX = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F000}-\u{1F02F}\u{1F0A0}-\u{1F0FF}]/u;
@@ -691,11 +698,157 @@ function recalculateManifest(dataDir = DATA_DIR) {
   return manifest;
 }
 
+// 14.5. Island Tab Data & Sleep Styles Parity Drift Guardrail
+function _normalizeIslandNameKey(name) {
+  return String(name || '')
+    .trim()
+    .replace(/\s*\(\s*/g, '（')
+    .replace(/\s*\)\s*/g, '）')
+    .replace('大鋼蛇', '大綱蛇')
+    .replace('奇魯莉安', '奇鲁莉安');
+}
+
+function checkIslandsDataDrift(dataset, campsDataPath = CAMPS_DATA_FILE, sleepStylesJsPath = SLEEP_STYLES_JS_FILE) {
+  const missingFromIslands = [];
+  const sleepTypeMismatches = [];
+  const typeMismatches = [];
+  const missingFromSleepStylesFallback = [];
+
+  if (!Array.isArray(dataset) || !fs.existsSync(campsDataPath)) {
+    return {
+      pass: true,
+      missingFromIslands,
+      sleepTypeMismatches,
+      typeMismatches,
+      missingFromSleepStylesFallback
+    };
+  }
+
+  const campsCode = fs.readFileSync(campsDataPath, 'utf8');
+  const campsCtx = {};
+  vm.createContext(campsCtx);
+  vm.runInContext(campsCode + '\nthis._ISLANDS_DATA = ISLANDS_DATA;', campsCtx);
+  const islands = campsCtx._ISLANDS_DATA || [];
+
+  let fallbackStyles = {};
+  if (fs.existsSync(sleepStylesJsPath)) {
+    const ssCode = fs.readFileSync(sleepStylesJsPath, 'utf8');
+    const ssMatch = ssCode.match(/const\s+SLEEP_STYLES_DATA\s*=\s*(\{[\s\S]*?\});/);
+    if (ssMatch) {
+      fallbackStyles = JSON.parse(ssMatch[1]);
+    }
+  }
+
+  const bucketToSleepType = {
+    dozing: '淺淺入夢',
+    snoozing: '安然入睡',
+    slumbering: '深深入眠'
+  };
+
+  const pkmByNormCn = new Map();
+  const pkmByEn = new Map();
+  for (const p of dataset) {
+    if (!p) continue;
+    if (p.name_cn) pkmByNormCn.set(_normalizeIslandNameKey(p.name_cn), p);
+    if (p.name_en) pkmByEn.set(String(p.name_en).toLowerCase(), p);
+  }
+  const p710 = dataset.find(p => String(p.id) === '710');
+  const p711 = dataset.find(p => String(p.id) === '711');
+  if (p710) pkmByNormCn.set('南瓜精', p710);
+  if (p711) pkmByNormCn.set('南瓜怪人', p711);
+
+  const seenIslandNames = new Set();
+  const seenMissingFallback = new Set();
+
+  function inspectSpawnsMap(label, spawns) {
+    if (!spawns) return;
+    for (const bucket of ['dozing', 'snoozing', 'slumbering']) {
+      const list = Array.isArray(spawns[bucket]) ? spawns[bucket] : [];
+      for (const row of list) {
+        if (!row || !row.name) continue;
+        const norm = _normalizeIslandNameKey(row.name);
+        seenIslandNames.add(norm);
+        if (row.name_en) seenIslandNames.add(String(row.name_en).toLowerCase());
+
+        const matchedPkm = pkmByNormCn.get(norm) || (row.name_en && pkmByEn.get(String(row.name_en).toLowerCase()));
+        if (matchedPkm && matchedPkm.sleep_type !== bucketToSleepType[bucket]) {
+          sleepTypeMismatches.push({
+            island: label,
+            name: row.name,
+            islandBucket: bucketToSleepType[bucket],
+            dataSleepType: matchedPkm.sleep_type
+          });
+        }
+        if (matchedPkm && matchedPkm.type && row.type !== matchedPkm.type) {
+          typeMismatches.push({
+            island: label,
+            name: row.name,
+            islandType: row.type,
+            dataType: matchedPkm.type
+          });
+        }
+
+        const half = String(row.name).replace(/（/g, ' (').replace(/）/g, ')').trim();
+        const full = String(row.name).replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）').trim();
+        const hasFallback = Boolean(
+          fallbackStyles[row.name] ||
+          fallbackStyles[half] ||
+          fallbackStyles[full] ||
+          fallbackStyles[norm]
+        );
+        if (!hasFallback && !seenMissingFallback.has(row.name)) {
+          seenMissingFallback.add(row.name);
+          missingFromSleepStylesFallback.push(row.name);
+        }
+      }
+    }
+  }
+
+  for (const isl of islands) {
+    inspectSpawnsMap(isl.id, isl.spawns);
+    if (isl.expertMode && isl.expertMode.spawns) {
+      inspectSpawnsMap(`${isl.id}_ex`, isl.expertMode.spawns);
+    }
+  }
+
+  const seenMissingIds = new Set();
+  for (const p of dataset) {
+    if (!p) continue;
+    const idStr = String(p.id || p.formatted_no || '');
+    if (EVENT_ONLY_POKEMON_IDS.has(idStr)) continue;
+    if (idStr === '710' || idStr === '711') {
+      const baseName = idStr === '710' ? '南瓜精' : '南瓜怪人';
+      if (!seenIslandNames.has(baseName) && !seenMissingIds.has(idStr)) {
+        seenMissingIds.add(idStr);
+        missingFromIslands.push({ id: idStr, name_cn: baseName });
+      }
+      continue;
+    }
+    const norm = _normalizeIslandNameKey(p.name_cn);
+    const enLower = p.name_en ? String(p.name_en).toLowerCase() : '';
+    if (!seenIslandNames.has(norm) && (!enLower || !seenIslandNames.has(enLower))) {
+      if (!seenMissingIds.has(idStr)) {
+        seenMissingIds.add(idStr);
+        missingFromIslands.push({ id: idStr, name_cn: p.name_cn });
+      }
+    }
+  }
+
+  return {
+    pass: missingFromIslands.length === 0 && sleepTypeMismatches.length === 0 && typeMismatches.length === 0 && missingFromSleepStylesFallback.length === 0,
+    missingFromIslands,
+    sleepTypeMismatches,
+    typeMismatches,
+    missingFromSleepStylesFallback
+  };
+}
+
 // 15. Unified CLI Coordinator
 function runSyncManager(options = {}) {
   const mode = options.mode || 'preview';
   const dryRun = Boolean(options.dryRun);
   const verbose = Boolean(options.verbose);
+  const strictIslands = Boolean(options.strictIslands);
 
   console.log(`[sync_manager] Initiating Dynamic Sync in mode: ${mode} (dryRun: ${dryRun})`);
 
@@ -729,6 +882,27 @@ function runSyncManager(options = {}) {
     if (!isDatasetHealthy(dataset)) {
       console.error('[sync_manager] Health predicate isDatasetHealthy rejected data.json');
       return { success: false, exitCode: 1 };
+    }
+
+    const islandsDrift = checkIslandsDataDrift(dataset);
+    if (!islandsDrift.pass) {
+      if (islandsDrift.missingFromIslands.length > 0) {
+        console.warn(`[sync_manager] Warning: ${islandsDrift.missingFromIslands.length} permanent Pokemon missing from ISLANDS_DATA: ${islandsDrift.missingFromIslands.map(x => '#' + x.id + ' ' + x.name_cn).join(', ')}`);
+      }
+      if (islandsDrift.sleepTypeMismatches.length > 0) {
+        console.warn(`[sync_manager] Warning: ${islandsDrift.sleepTypeMismatches.length} sleep_type mismatches between ISLANDS_DATA and data.json: ${islandsDrift.sleepTypeMismatches.map(x => x.island + ':' + x.name).join(', ')}`);
+      }
+      if (islandsDrift.typeMismatches && islandsDrift.typeMismatches.length > 0) {
+        console.warn(`[sync_manager] Warning: ${islandsDrift.typeMismatches.length} type mismatches between ISLANDS_DATA and data.json: ${islandsDrift.typeMismatches.map(x => x.island + ':' + x.name + '(' + x.islandType + '!=' + x.dataType + ')').join(', ')}`);
+      }
+      if (islandsDrift.missingFromSleepStylesFallback.length > 0) {
+        console.warn(`[sync_manager] Warning: ${islandsDrift.missingFromSleepStylesFallback.length} spawns missing from SLEEP_STYLES_DATA fallback: ${islandsDrift.missingFromSleepStylesFallback.join(', ')}`);
+      }
+      if (strictIslands) {
+        return { success: false, exitCode: 1, islandsDrift };
+      }
+    } else {
+      console.log('[sync_manager] Island Tab Parity Check: 0 drift warnings');
     }
   }
 
@@ -836,6 +1010,8 @@ if (require.main === module) {
       options.dryRun = true;
     } else if (arg === '--verbose' || arg === '-v') {
       options.verbose = true;
+    } else if (arg === '--strict-islands') {
+      options.strictIslands = true;
     }
   }
 
@@ -857,5 +1033,7 @@ module.exports = {
   isDatasetHealthy,
   writeTextAtomic,
   writeJsonAtomic,
-  recalculateManifest
+  recalculateManifest,
+  checkIslandsDataDrift,
+  EVENT_ONLY_POKEMON_IDS
 };

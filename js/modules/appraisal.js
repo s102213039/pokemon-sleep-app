@@ -3073,7 +3073,7 @@ const TARGET_TOP_RECIPES = [
     },
     {
       id: 'snowdrop',
-      name: '白林原野',
+      name: '白花雪原',
       name_en: 'Snowdrop Tundra',
       color: '#38bdf8',
       image: 'assets/islands/hd/snowdrop.jpg',
@@ -3083,23 +3083,23 @@ const TARGET_TOP_RECIPES = [
     },
     {
       id: 'lapis',
-      name: '拉碧絲湖畔',
+      name: '寶藍湖畔',
       name_en: 'Lapis Lakeside',
       color: '#a855f7',
       image: 'assets/islands/hd/lapis.jpg',
-      berries: ['榴石果', '芒念果', '櫻子果'],
-      types: ['草', '超能', '格鬥'],
-      desc: '喜愛樹果：草、超能、格鬥 (2x 能量)'
+      berries: ['榴石果', '櫻子果', '芒念果'],
+      types: ['草', '格鬥', '超能'],
+      desc: '喜愛樹果：草、格鬥、超能 (2x 能量)'
     },
     {
       id: 'powerplant',
-      name: '發電廠',
+      name: '黃金舊發電廠',
       name_en: 'Old Gold Power Plant',
       color: '#eab308',
       image: 'assets/islands/hd/oldgold.jpg',
-      berries: ['異奇果', '靛莓果', '檬果'],
-      types: ['電', '鋼', '幽靈'],
-      desc: '喜愛樹果：電、鋼、幽靈 (2x 能量)'
+      berries: ['異奇果', '檬果', '靛莓果'],
+      types: ['電', '幽靈', '鋼'],
+      desc: '喜愛樹果：電、幽靈、鋼 (2x 能量)'
     },
     {
       id: 'amber',
