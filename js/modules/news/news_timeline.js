@@ -20,11 +20,10 @@
   const newsTimelineContainer = typeof document !== 'undefined' ? document.getElementById('news-event-timeline') : null;
 
   const CATEGORY_MAP = [
-    { key: 'ALL', label: '全部消息' },
-    { key: 'event', label: '活動企劃' },
-    { key: 'update', label: '版本更新' },
-    { key: 'maintenance', label: '維護公告' },
-    { key: 'notice', label: '重要通知' }
+    { key: 'ALL', label: '全部' },
+    { key: 'event', label: '活動' },
+    { key: 'update', label: '更新' },
+    { key: 'maintenance', label: '維護' }
   ];
 
   /* ─── 載入新聞資料 ───────────────────────────────────── */

@@ -2158,9 +2158,16 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     assert(appJs.includes('getSpecialtyIconHtml(p.specialty, 20)'), 'Pokédex cards must use getSpecialtyIconHtml with size 20');
     assert(appJs.includes('getSpecialtyIconHtml(pkm.specialty, 20'), 'Pokédex detail modal must use getSpecialtyIconHtml with size 20');
 
-    // 4. Box integration
-    assert(boxJs.includes('getSpecialtyIconHtml(base ? base.specialty : p.specialty, 20)'), 'Box table must use getSpecialtyIconHtml with size 20');
+    // 4. Box integration (table removed specialty column; cards keep size-18 specialty icon)
+    const renderTableSlice = boxJs.substring(boxJs.indexOf('function renderBoxTable(list'), boxJs.indexOf('function openDeleteConfirmModal'));
+    assert(!renderTableSlice.includes('th-spec') && !renderTableSlice.includes('td-spec') && !renderTableSlice.includes("t('th.specialty'"), 'Box table must omit specialty column');
     assert(boxJs.includes('getSpecialtyIconHtml(base ? base.specialty : p.specialty, 18)'), 'Box cards must use getSpecialtyIconHtml with size 18');
+
+    // 4b. News sub-tabs R2 check (4 equal-width 2-char sub-tabs, notice removed from filter tabs)
+    const newsJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/news.js'), 'utf8');
+    assert(!newsJs.includes("{ key: 'notice'"), 'News CATEGORY_MAP must not include notice sub-tab');
+    assert(newsJs.includes("label: '全部'") && newsJs.includes("label: '活動'") && newsJs.includes("label: '更新'") && newsJs.includes("label: '維護'"), 'News CATEGORY_MAP must use simplified 2-char labels');
+    assert(stylesCss.includes('grid-template-columns: repeat(4, minmax(0, 1fr))'), 'styles.css must lay out 4 equal-width news sub-tabs');
 
     // 5. Appraisal integration
     assert(appraisalJs.includes('getSpecialtyIconHtml(pkmData.specialty, 22') || appraisalJs.includes('getSpecialtyIconHtml(specialty, 22'), 'Appraisal modal must use getSpecialtyIconHtml with size 22');

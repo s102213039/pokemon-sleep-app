@@ -2920,9 +2920,7 @@ body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-cont
 }
 
 .mobile-h5-app .pokemon-table .th-spec,
-.mobile-h5-app .pokemon-table .td-spec,
-.mobile-h5-app .box-table .th-spec,
-.mobile-h5-app .box-table .td-spec {
+.mobile-h5-app .pokemon-table .td-spec {
   min-width: 32px !important;
   width: 32px !important;
   max-width: 34px !important;
@@ -2968,14 +2966,6 @@ body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-cont
   font-size: 12px;
   padding: 4px 2px !important;
   white-space: nowrap !important;
-}
-
-.box-table .th-spec,
-.box-table .td-spec {
-  min-width: 38px;
-  width: 38px;
-  text-align: center;
-  padding: 4px 2px !important;
 }
 
 .th-carry, .td-carry {
@@ -5329,24 +5319,22 @@ input[type=range].rf-slider.pot-slider {
     padding: 12px 14px;
   }
 
-  .news-category-tags {
-    display: flex;
-    overflow-x: auto;
+  .news-top-bar .news-category-tags {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 6px;
-    padding-bottom: 4px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    flex: 1 1 100%;
     width: 100%;
+    min-width: 0;
   }
 
-  .news-category-tags::-webkit-scrollbar {
-    display: none;
-  }
-
-  .news-tag-btn {
-    flex-shrink: 0;
-    padding: 5px 10px;
+  .news-top-bar .news-tag-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 5px 4px;
     font-size: 12px;
+    min-width: 0;
+    white-space: nowrap;
   }
 
   .news-gantt-scroll-wrapper {
@@ -5435,23 +5423,30 @@ input[type=range].rf-slider.pot-slider {
 }
 
 .news-category-tags {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
-  align-items: center;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: stretch;
 }
 
 .news-tag-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 12px;
+  width: 100%;
+  min-width: 0;
+  padding: 6px 10px;
   background: var(--bg-card-inner);
   border: 1px solid var(--border-color);
   border-radius: 9999px;
   color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
+  box-sizing: border-box;
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
@@ -5485,8 +5480,8 @@ input[type=range].rf-slider.pot-slider {
 
 .news-search-box {
   position: relative;
-  min-width: 260px;
-  flex: 1;
+  min-width: 240px;
+  flex: 0 1 340px;
   max-width: 380px;
 }
 
@@ -6786,14 +6781,12 @@ body:not(.mobile-h5-app) .box-content-container .pokemon-table-container {
 }
 
 /* 列表表格：得意圖示大小與樹果圖示 (20px) 保持一致 */
-.pokemon-table .td-spec .specialty-icon,
-.box-table .td-spec .specialty-icon {
+.pokemon-table .td-spec .specialty-icon {
   width: 20px !important;
   height: 20px !important;
 }
 
-.mobile-h5-app .pokemon-table .td-spec .specialty-icon,
-.mobile-h5-app .box-table .td-spec .specialty-icon {
+.mobile-h5-app .pokemon-table .td-spec .specialty-icon {
   width: 20px !important;
   height: 20px !important;
 }
@@ -23769,27 +23762,25 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   height: 15px !important;
 }
 
-/*  2. 單行橫向滑動分類標籤 (Segmented Pill Chips - 1 Line) */
+/*  2. 等寬填滿四格分類標籤 (4 Equal-Width Pill Chips - Full Row) */
 .mobile-h5-app .news-category-tags {
-  display: flex !important;
-  flex-wrap: nowrap !important;
-  overflow-x: auto !important;
-  -webkit-overflow-scrolling: touch !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   gap: 6px !important;
   padding: 1px 0 2px 0 !important;
-  scrollbar-width: none !important;
   width: 100% !important;
-}
-.mobile-h5-app .news-category-tags::-webkit-scrollbar {
-  display: none !important;
+  overflow-x: visible !important;
 }
 
 .mobile-h5-app .news-tag-btn {
-  flex: 0 0 auto !important;
+  flex: 1 1 0 !important;
+  width: 100% !important;
+  min-width: 0 !important;
   display: inline-flex !important;
   align-items: center !important;
+  justify-content: center !important;
   gap: 4px !important;
-  padding: 5px 11px !important;
+  padding: 5px 4px !important;
   border-radius: 18px !important;
   font-size: 11.5px !important;
   font-weight: 600 !important;
@@ -23798,6 +23789,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   color: var(--text-muted) !important;
   transition: all 0.15s ease !important;
   white-space: nowrap !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .news-tag-btn.active {
@@ -28473,7 +28465,7 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 }
 
 /* =========================================================
-   Ingredient Ladder Top 7 High-Score Recipe Highlight Feature
+   Ingredient Ladder Top 10 High-Score Recipe Highlight Feature
    ========================================================= */
 
 /* Recipe Highlight FAB (Floating Action Button) */
@@ -28765,7 +28757,9 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 .ladder-recipe-modal-body {
   flex: 1 1 auto;
   max-height: 420px;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   padding: 10px 14px 14px;
   display: flex;
@@ -28810,7 +28804,7 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   font-size: 13px;
   font-weight: 800;
   color: var(--text-muted, #64748b);
-  min-width: 16px;
+  min-width: 20px;
   text-align: center;
 }
 

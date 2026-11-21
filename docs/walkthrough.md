@@ -5,6 +5,24 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-21 已完成（食材天梯前 10 動態料理高亮、「最新」子頁籤 2 字精簡等寬填滿、寶可夢倉庫表格移除「得意」欄位）
+
+- **調整內容**：
+  1. **R1 — 食材天梯「料理高亮」動態讀取前 10 名料理 (`js/modules/wiki/wiki_ladder_recipes.js`, `js/modules/wiki/wiki_ladder_builder.js`, `js/modules/wiki/wiki_ladder_modal.js`, `js/modules/wiki/wiki_main.js`, `css/mobile/wiki_camps.css`, `css/mobile/wiki_ladder.css`, `css/styles.css`)**：
+     - 將 `TOP_RECIPES_BY_CATEGORY` 精簡為單行資料結構並補齊各分類離線備援至完整前 10 名（總行數由 976 降至 734 行），納入一口堅果高分料理 `打草結沙拉捲` (26,350，沙拉 #1)、`美味尾巴蛋糕捲` (19,846，甜點 #4) 與各分類第 8 至第 10 名，保留 `FALLBACK_TOP_RECIPES_BY_CATEGORY` 唯讀備援與去重後之 `ALL_TOP_CATEGORY_RECIPES`。
+     - 新增 `recomputeTopRecipesByCategory(recipesOverride)`（於 `wiki_ladder_modal.js` 初始化與 `wiki_ladder_builder.js` 收到 `recipes-data-updated` 事件時自動執行，並於 `#ladder-recipe-modal` 開啟時即時重繪），依 `base_energy` 降冪（同分依 `pot_size` 降冪）由即時食譜庫（`window.allRecipes` / `window.__RECIPES_CACHE__` / `localStorage` 快取）動態取前 10 名並以 `.splice` 原地更新 `TOP_RECIPES_BY_CATEGORY`、`ALL_TOP_CATEGORY_RECIPES` 與 `TOP_7_RECIPES_HIGHLIGHT`（同步匯出 `TOP_10_RECIPES_HIGHLIGHT` 相容別名），確保 `getActiveHighlightRecipes`、`getLadderDishIcon` 與 `AppraisalLab.getSignatureRecipeRecommendations` 參照即時同步。
+     - 更新彈窗副標題為 `各前10高分料理，標記所需食材` / `Top 10 High Score Recipes, Mark Ingredients`，並為 `.ladder-recipe-modal-body` 加上 `min-height: 0; overscroll-behavior: contain;` 與 `.recipe-card-rank { min-width: 20px; }`。
+  2. **R2 — 「最新」分頁子頁籤精簡為 2 字、移除「重要通知」並等寬填滿整行 (`js/core/i18n/i18n_dict_zh_tw.js`, `i18n_dict_zh_cn.js`, `i18n_dict_en_us.js`, `js/modules/news/news_timeline.js`, `js/modules/news/news_render.js`, `css/views/wiki/wiki_speed.css`, `css/components/theme_preview.css`, `css/views/recipes_cards.css`, `css/styles.css`)**：
+     - 自 `CATEGORY_MAP` 與 `initCategoryTags()` 移除 `notice` 分類按鈕；剩餘 4 個子頁籤由 `I18N.t('news.cat_*')` 驅動並精簡為繁中 `全部 / 活動 / 更新 / 維護`、簡中 `全部 / 活动 / 更新 / 维护`、英文 `All / Events / Updates / Maint.`；同步保留個別新聞卡片 `categoryLabels` 原有標籤與「全部」清單內之 `notice` 公告。
+     - 將桌面版、窄螢幕（`<= 768px`）與手機版 H5 的 `.news-category-tags` 改為 `repeat(4, minmax(0, 1fr))` 等寬四欄網格搭配 `.news-tag-btn` 滿寬置中排版，確保 4 顆膠囊等寬填滿整行且不溢位或截斷。
+  3. **R3 — 寶可夢倉庫清單/表格視圖移除「得意」欄位 (`js/modules/box/box_render.js`, `css/views/pokedex.css`, `css/views/lab/lab_report.css`, `css/styles.css`)**：
+     - 自 `renderBoxTable()` 移除 `<th class="th-spec">` 與 `<td class="td-spec">`（同步清理桌面表格與 H5 清單），完整保留桌面卡片視圖 `renderBoxGrid()` 專長圖示與 `box_filter.js` 側邊篩選器，並清理僅用於 `.box-table` 之 `.th-spec` / `.td-spec` CSS（保留 `.pokemon-table` 圖鑑樣式）。
+  4. **R4 — 測試同步與自動化驗證 (`tests/tiers/tier4/tier4_part2.js`, `tests/tiers/tier1_coverage.js`, `tests/tiers/tier4/tier4_part3.js`)**：
+     - 更新受前 7 改前 10 及倉庫欄位異動影響之測試斷言，並補上 `recipes-data-updated` 動態重算與 4 等寬子頁籤回歸測試；執行 `npm run build` 產生最新壓縮資產與版號標記，確認全站所有模組化 JS/CSS 單檔皆 `<= 1000` 行。
+- **驗證結果**：
+  - `npm run test:fast`：**170 / 170 PASS**；`npm test`：**293 / 293 PASS**；`node tests/test_dynamic_ingredient_ladder.js`：**50 / 50 PASS**；`node tests/test_challenger_m1_cache_sync.js`：**18 / 18 PASS**；`node tests/test_e2e_r1_r7_acceptance.js`：**100 / 100 PASS**。
+  - 無頭 Chrome CDP 實機截圖與 DOM 邊界檢查通過（桌面 `1440x900` 與手機 H5 `390x844`）：R1 前 10 高分料理卡片與捲動正常（含 `打草結沙拉捲` 與 `美味尾巴蛋糕捲`）、R2 繁中/英文 4 子頁籤零誤差等寬填滿整行（`diff === 0`）、R3 桌面表格與 H5 清單皆為 8 欄無 `得意` 欄位。
+
 ## 交接：2026-11-21 已完成（英文翻譯疑慮清單 10 項定案精簡與「最高單餐消耗量」動態核心料理引擎）
 
 - **調整內容（由 Argon 完成頂層規劃、排程等待 3 小時額度重置後委派兩組 Gemini Flash 子代理平行實作）**：

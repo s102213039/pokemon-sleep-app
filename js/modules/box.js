@@ -1809,7 +1809,6 @@
               ${boxSortableTh('id', t('th.icon', '圖示'), 'th-icon')}
               ${boxSortableTh('level', t('th.level', '等級'))}
               <th style="text-align:center;">${isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'}</th>
-              <th class="th-spec" style="text-align:center;">${t('th.specialty', '得意')}</th>
               <th style="text-align:center;">${t('th.berry', '樹果')}</th>
               <th style="text-align:center;">${isEN ? 'Ing 1' : '食1'}</th>
               <th style="text-align:center;">${isEN ? 'Ing 2' : '食2'}</th>
@@ -1823,16 +1822,6 @@
               const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
               const prInfo = calculatePokemonPR(p, base);
               const pkmDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : p.name) : (p.name || (base ? base.name_cn : '未知'));
-              const specName = window.I18N ? window.I18N.getSpecialtyName((base && base.specialty) || p.specialty || '--') : ((base && base.specialty) || p.specialty || '--');
-              let specClass = 'spec-ingredient';
-              const rawSpec = (base && base.specialty) || p.specialty || '';
-              if (rawSpec.includes('樹果') || rawSpec === 'Berries') {
-                specClass = 'spec-berry';
-              } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
-                specClass = 'spec-skill';
-              } else if (rawSpec.includes('全能') || rawSpec.includes('全部') || rawSpec === 'All-Rounder' || rawSpec.toLowerCase() === 'all') {
-                specClass = 'spec-all';
-              }
               const berry = (window.getPokemonBerry && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : null);
               const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';
 
@@ -1855,9 +1844,6 @@
                       <span style="font-weight:600;">${escapeHtml(pkmDisplayName)}</span>
                     </div>
                     ${p.nickname ? `<div style="font-size:11px;color:var(--accent-color);text-align:center;">${escapeHtml(p.nickname)}</div>` : ''}
-                  </td>
-                  <td class="td-spec" style="text-align:center;">
-                    ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(base ? base.specialty : p.specialty, 20) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}
                   </td>
                   <td style="text-align:center;">
                     ${berry && berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}">` : `<span class="berry-name-text">${berryName || '--'}</span>`}

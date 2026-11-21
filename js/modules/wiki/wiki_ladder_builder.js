@@ -120,6 +120,18 @@
       if (Array.isArray(window.allRecipes) && window.allRecipes.length > 0) return window.allRecipes;
       if (Array.isArray(window.__RECIPES_CACHE__) && window.__RECIPES_CACHE__.length > 0) return window.__RECIPES_CACHE__;
     }
+    try {
+      const ls = (typeof window !== 'undefined' && window.localStorage)
+        ? window.localStorage
+        : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (ls && typeof ls.getItem === 'function') {
+        const raw = ls.getItem('pksleep_cache_recipes_json');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      }
+    } catch (e) {}
     return [];
   }
 
@@ -543,10 +555,21 @@
       }
     };
     window.addEventListener('pokemon-data-updated', _onLiveDataUpdated);
-    window.addEventListener('recipes-data-updated', function () {
+    window.addEventListener('recipes-data-updated', function (e) {
       invalidateDynamicLadderCache();
+      if (typeof recomputeTopRecipesByCategory === 'function') {
+        try { recomputeTopRecipesByCategory(e && e.detail); } catch (err) {}
+      }
       if (typeof refreshCoordinateLadder === 'function') {
-        try { refreshCoordinateLadder(); } catch (e) {}
+        try { refreshCoordinateLadder(); } catch (err) {}
+      }
+      if (typeof document !== 'undefined') {
+        const modal = (typeof getOverlayEl === 'function')
+          ? getOverlayEl('ladder-recipe-modal')
+          : (document.getElementById ? document.getElementById('ladder-recipe-modal') : null);
+        if (modal && modal.style && modal.style.display === 'flex' && typeof renderLadderRecipeModalContent === 'function') {
+          try { renderLadderRecipeModalContent(modal); } catch (err) {}
+        }
       }
     });
   }

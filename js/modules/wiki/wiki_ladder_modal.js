@@ -6,19 +6,120 @@
       const cacheFound = window.__RECIPES_CACHE__.find(r => r.name_cn === dishName || r.name_en === dishName);
       if (cacheFound && cacheFound.icon) return cacheFound.icon;
     }
+    if (typeof window !== 'undefined' && Array.isArray(window.allRecipes)) {
+      const liveFound = window.allRecipes.find(r => r.name_cn === dishName || r.name_en === dishName);
+      if (liveFound && liveFound.icon) return liveFound.icon;
+    }
     return '';
   }
 
-  // 全局前 7 高能量料理 (維持舊介面與單元測試相容性)
-  const TOP_7_RECIPES_HIGHLIGHT = [
-    TOP_RECIPES_BY_CATEGORY.curry[0],
-    TOP_RECIPES_BY_CATEGORY.dessert[0],
-    TOP_RECIPES_BY_CATEGORY.salad[0],
-    TOP_RECIPES_BY_CATEGORY.salad[1],
-    TOP_RECIPES_BY_CATEGORY.curry[1],
-    TOP_RECIPES_BY_CATEGORY.dessert[1],
-    TOP_RECIPES_BY_CATEGORY.dessert[2]
-  ];
+  // 全局前 10 高能量料理 (保留 TOP_7_RECIPES_HIGHLIGHT 命名以維持舊介面與單元測試相容性)
+  const TOP_7_RECIPES_HIGHLIGHT = [];
+
+  function _normalizeLadderRecipeCat(rawCat) {
+    const s = String(rawCat || '').trim().toLowerCase();
+    if (!s) return null;
+    if (s === 'curry' || s === '咖哩' || s === '咖喱' || s.includes('curry') || s.includes('stew') || s.includes('咖哩') || s.includes('咖喱') || s.includes('濃湯') || s.includes('浓汤')) {
+      return { key: 'curry', label: '咖哩' };
+    }
+    if (s === 'salad' || s === '沙拉' || s.includes('salad') || s.includes('沙拉')) {
+      return { key: 'salad', label: '沙拉' };
+    }
+    if (s === 'dessert' || s === '甜點' || s === '甜点' || s === '點心' || s === '点心' || s.includes('dessert') || s.includes('drink') || s.includes('甜點') || s.includes('甜点') || s.includes('點心') || s.includes('飲料')) {
+      return { key: 'dessert', label: '甜點' };
+    }
+    return null;
+  }
+
+  function _normalizeLadderRecipeEntry(r, catLabel) {
+    const nameCn = r.name_cn || r.name || r.name_en || '';
+    const nameEn = r.name_en || nameCn;
+    const slug = nameEn.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const icon = r.icon || r.icon_url || (slug ? ('https://www.serebii.net/pokemonsleep/meals/' + slug + '.png') : '');
+    const rawIngs = Array.isArray(r.ingredients) ? r.ingredients : [];
+    const ingredients = rawIngs.map(ing => {
+      if (!ing) return null;
+      const ingName = ing.name || ing.name_cn || ing.name_en || '';
+      const ingCount = Number(ing.count || ing.qty || 0);
+      let ingIcon = ing.icon || '';
+      if (!ingIcon && ingName && typeof CANONICAL_INGREDIENT_META !== 'undefined') {
+        const meta = CANONICAL_INGREDIENT_META.find(m => m.name === ingName || m.enName === ingName);
+        if (meta && meta.icon) ingIcon = meta.icon;
+      }
+      return { name: ingName, count: ingCount, icon: ingIcon };
+    }).filter(Boolean);
+    return {
+      name_cn: nameCn,
+      name_en: nameEn,
+      category: catLabel,
+      pot_size: Number(r.pot_size || 0),
+      base_energy: Number(r.base_energy !== undefined ? r.base_energy : (r.energy || 0)),
+      icon: icon,
+      ingredients: ingredients
+    };
+  }
+
+  function recomputeTopRecipesByCategory(recipesOverride) {
+    const source = (Array.isArray(recipesOverride) && recipesOverride.length > 0)
+      ? recipesOverride
+      : (typeof _getLiveRecipesSourceForLadder === 'function' ? _getLiveRecipesSourceForLadder() : []);
+    const fallbackMap = (typeof FALLBACK_TOP_RECIPES_BY_CATEGORY !== 'undefined' && FALLBACK_TOP_RECIPES_BY_CATEGORY)
+      ? FALLBACK_TOP_RECIPES_BY_CATEGORY
+      : TOP_RECIPES_BY_CATEGORY;
+    const buckets = { curry: [], salad: [], dessert: [] };
+    const seenPerCat = { curry: new Set(), salad: new Set(), dessert: new Set() };
+
+    if (Array.isArray(source) && source.length > 0) {
+      for (let i = 0; i < source.length; i++) {
+        const r = source[i];
+        if (!r) continue;
+        const catInfo = _normalizeLadderRecipeCat(r.category || r.type);
+        if (!catInfo) continue;
+        const norm = _normalizeLadderRecipeEntry(r, catInfo.label);
+        if (!norm.name_cn || seenPerCat[catInfo.key].has(norm.name_cn)) continue;
+        seenPerCat[catInfo.key].add(norm.name_cn);
+        buckets[catInfo.key].push(norm);
+      }
+    }
+
+    ['curry', 'salad', 'dessert'].forEach(catKey => {
+      const nextList = buckets[catKey].length > 0
+        ? buckets[catKey]
+            .slice()
+            .sort((a, b) => (b.base_energy - a.base_energy) || (b.pot_size - a.pot_size))
+            .slice(0, 10)
+        : (fallbackMap[catKey] || []).slice(0, 10);
+      TOP_RECIPES_BY_CATEGORY[catKey].splice(0, TOP_RECIPES_BY_CATEGORY[catKey].length, ...nextList);
+    });
+
+    const dedupedAll = [];
+    const seenAll = new Set();
+    const appendUnique = arr => {
+      if (!Array.isArray(arr)) return;
+      for (let i = 0; i < arr.length; i++) {
+        const item = arr[i];
+        if (!item || !item.name_cn || seenAll.has(item.name_cn)) continue;
+        seenAll.add(item.name_cn);
+        dedupedAll.push(item);
+      }
+    };
+    appendUnique(TOP_RECIPES_BY_CATEGORY.curry);
+    appendUnique(TOP_RECIPES_BY_CATEGORY.salad);
+    appendUnique(TOP_RECIPES_BY_CATEGORY.dessert);
+    if (typeof TAIL_FEATURED_RECIPES !== 'undefined') {
+      appendUnique(TAIL_FEATURED_RECIPES);
+    }
+    ALL_TOP_CATEGORY_RECIPES.splice(0, ALL_TOP_CATEGORY_RECIPES.length, ...dedupedAll);
+
+    const topHighlightPool = [
+      ...TOP_RECIPES_BY_CATEGORY.curry,
+      ...TOP_RECIPES_BY_CATEGORY.salad,
+      ...TOP_RECIPES_BY_CATEGORY.dessert
+    ].sort((a, b) => (b.base_energy - a.base_energy) || (b.pot_size - a.pot_size)).slice(0, 10);
+    TOP_7_RECIPES_HIGHLIGHT.splice(0, TOP_7_RECIPES_HIGHLIGHT.length, ...topHighlightPool);
+  }
+
+  recomputeTopRecipesByCategory();
 
   let ladderRecipeCategory = 'curry';
   let ladderHighlightRecipe = null;
@@ -123,7 +224,7 @@
       }).join('');
     }
 
-    // 2. 渲染當前分類下前 7 頂級料理卡片
+    // 2. 渲染當前分類下前 10 頂級料理卡片
     const bodyEl = modal.querySelector('.ladder-recipe-modal-body');
     if (bodyEl) {
       const list = TOP_RECIPES_BY_CATEGORY[ladderRecipeCategory] || [];

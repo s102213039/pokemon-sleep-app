@@ -228,9 +228,7 @@
 }
 
 .mobile-h5-app .pokemon-table .th-spec,
-.mobile-h5-app .pokemon-table .td-spec,
-.mobile-h5-app .box-table .th-spec,
-.mobile-h5-app .box-table .td-spec {
+.mobile-h5-app .pokemon-table .td-spec {
   min-width: 32px !important;
   width: 32px !important;
   max-width: 34px !important;
@@ -276,14 +274,6 @@
   font-size: 12px;
   padding: 4px 2px !important;
   white-space: nowrap !important;
-}
-
-.box-table .th-spec,
-.box-table .td-spec {
-  min-width: 38px;
-  width: 38px;
-  text-align: center;
-  padding: 4px 2px !important;
 }
 
 .th-carry, .td-carry {

@@ -424,7 +424,7 @@ Lv. 52 赫拉克羅斯
 });
 
 
-test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Bar Stability & Ingredient Ladder Top 7 Recipe Highlight', () => {
+test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Bar Stability & Ingredient Ladder Top 10 Recipe Highlight', () => {
   const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
   const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
   const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
@@ -453,9 +453,16 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Ba
   assert(!wikiJs.includes('ladder-track-ing-main">\n                  <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">\n                  ${isHighlighted ?'), 'wiki.js must not annotate requirement count in front of ladder track header');
 
   // 3. Evaluate Top Recipes Data
+  const winListeners = {};
   const ctx = {
     localStorage: { getItem: () => 'zh-TW', setItem: () => {} },
-    window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {} }, addEventListener: () => {} },
+    window: {
+      localStorage: { getItem: () => 'zh-TW', setItem: () => {} },
+      addEventListener: (ev, fn) => {
+        if (!winListeners[ev]) winListeners[ev] = [];
+        winListeners[ev].push(fn);
+      }
+    },
     document: {
       readyState: 'complete',
       addEventListener: () => {},
@@ -468,22 +475,27 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Ba
 
   const byCat = ctx.window.WikiDB.TOP_RECIPES_BY_CATEGORY;
   assert(byCat && byCat.curry && byCat.salad && byCat.dessert, 'Must define curry, salad, and dessert categories');
-  assertEquals(byCat.curry.length, 7, 'Curry must have exactly 7 top recipes');
-  assertEquals(byCat.salad.length, 7, 'Salad must have exactly 7 top recipes');
-  assertEquals(byCat.dessert.length, 7, 'Dessert must have exactly 7 top recipes');
+  assertEquals(byCat.curry.length, 10, 'Curry must have exactly 10 top recipes');
+  assertEquals(byCat.salad.length, 10, 'Salad must have exactly 10 top recipes');
+  assertEquals(byCat.dessert.length, 10, 'Dessert must have exactly 10 top recipes');
 
   // Verify top recipe energy ordering for each category
   assertEquals(byCat.curry[0].name_cn, '彈跳咖哩烏龍麵', 'Curry #1 must be 彈跳咖哩烏龍麵');
   assertEquals(byCat.curry[0].base_energy, 25539, 'Curry #1 energy must be 25539');
-  assertEquals(byCat.curry[6].name_cn, '萌綠咖哩麵包', 'Curry #7 must be 萌綠咖哩麵包');
+  assertEquals(byCat.curry[9].name_cn, '種子炸彈烤餅咖哩', 'Curry #10 must be 種子炸彈烤餅咖哩');
 
-  assertEquals(byCat.salad[0].name_cn, '大塊滿滿熱水沙拉', 'Salad #1 must be 大塊滿滿熱水沙拉');
-  assertEquals(byCat.salad[0].base_energy, 25356, 'Salad #1 energy must be 25356');
-  assertEquals(byCat.salad[6].name_cn, '萌綠沙拉', 'Salad #7 must be 萌綠沙拉');
+  assertEquals(byCat.salad[0].name_cn, '打草結沙拉捲', 'Salad #1 must be 打草結沙拉捲');
+  assertEquals(byCat.salad[0].base_energy, 26350, 'Salad #1 energy must be 26350');
+  assertEquals(byCat.salad[9].name_cn, '呆呆獸尾巴的胡椒沙拉', 'Salad #10 must be 呆呆獸尾巴的胡椒沙拉');
 
   assertEquals(byCat.dessert[0].name_cn, '採蜜巧克力格子鬆餅', 'Dessert #1 must be 採蜜巧克力格子鬆餅');
   assertEquals(byCat.dessert[0].base_energy, 25484, 'Dessert #1 energy must be 25484');
-  assertEquals(byCat.dessert[6].name_cn, '青草攪拌器冰沙', 'Dessert #7 must be 青草攪拌器冰沙');
+  assertEquals(byCat.dessert[3].name_cn, '美味尾巴蛋糕捲', 'Dessert #4 must be 美味尾巴蛋糕捲');
+  assertEquals(byCat.dessert[9].name_cn, '破格玉米香提拉米蘇', 'Dessert #10 must be 破格玉米香提拉米蘇');
+
+  // Verify TOP_7_RECIPES_HIGHLIGHT compatibility alias holds Top 10 overall with 打草結沙拉捲 #1
+  assertEquals(ctx.window.WikiDB.TOP_7_RECIPES_HIGHLIGHT.length, 10, 'TOP_7_RECIPES_HIGHLIGHT must hold Top 10 recipes across categories');
+  assertEquals(ctx.window.WikiDB.TOP_7_RECIPES_HIGHLIGHT[0].name_cn, '打草結沙拉捲', 'Global Top #1 highlight recipe must be 打草結沙拉捲');
 
   // Verify category switching
   assertEquals(ctx.window.WikiDB.getLadderRecipeCategory(), 'curry', 'Initial category should be curry');
@@ -493,8 +505,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Ba
   assertEquals(ctx.window.WikiDB.getLadderRecipeCategory(), 'dessert', 'Category should switch to dessert');
 
   // 4. Test Highlighting interaction
-  ctx.window.WikiDB.selectLadderHighlightRecipe('大塊滿滿熱水沙拉');
-  assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), '大塊滿滿熱水沙拉', 'Active highlight recipe must be 大塊滿滿熱水沙拉');
+  ctx.window.WikiDB.selectLadderHighlightRecipe('打草結沙拉捲');
+  assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), '打草結沙拉捲', 'Active highlight recipe must be 打草結沙拉捲');
 
   ctx.window.WikiDB.clearLadderHighlightRecipe();
   assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), null, 'Active highlight recipe must be cleared');
@@ -505,7 +517,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Ba
   assert(wikiJs.includes('class="recipe-card-ing-icon"'), 'Modal recipe chips must include ingredient icons');
   assert(!wikiJs.includes("'清除高亮'"), "Button text must be shortened to '清除' (no '清除高亮')");
 
-  // Verify all 21 recipes have correct icons from recipes.json
+  // Verify all 30 recipes have correct icons from recipes.json
   const recipesJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'recipes.json'), 'utf8'));
   const canonicalMap = new Map();
   recipesJson.forEach(r => canonicalMap.set(r.name_cn, r));
@@ -517,6 +529,28 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Ba
       assertEquals(r.name_en, canonical.name_en, `Recipe ${r.name_cn} name_en must match recipes.json canonical name_en`);
     });
   });
+
+  // 6. Dynamic recomputation on recipes-data-updated event
+  const syntheticRecipe = {
+    name_cn: '夢幻銀河特調咖哩',
+    name_en: 'Dream Galaxy Special Curry',
+    category: '咖哩',
+    pot_size: 130,
+    base_energy: 30000,
+    icon: 'https://www.serebii.net/pokemonsleep/meals/dreamgalaxyspecialcurry.png',
+    ingredients: [{ name: '一口堅果', count: 35, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }]
+  };
+  const livePayload = [syntheticRecipe, ...recipesJson];
+  ctx.window.allRecipes = livePayload;
+  (winListeners['recipes-data-updated'] || []).forEach(fn => fn({ detail: livePayload }));
+  assertEquals(ctx.window.WikiDB.TOP_RECIPES_BY_CATEGORY.curry[0].name_cn, '夢幻銀河特調咖哩', 'Live recipes-data-updated must recompute curry #1');
+  assertEquals(ctx.window.WikiDB.TOP_RECIPES_BY_CATEGORY.curry.length, 10, 'Recomputed curry must still contain 10 recipes');
+  assertEquals(ctx.window.WikiDB.TOP_7_RECIPES_HIGHLIGHT[0].name_cn, '夢幻銀河特調咖哩', 'Global Top 10 highlight must update in place');
+  assert(ctx.window.ALL_TOP_CATEGORY_RECIPES.some(r => r.name_cn === '夢幻銀河特調咖哩'), 'window.ALL_TOP_CATEGORY_RECIPES must update in place');
+  ctx.window.WikiDB.selectLadderHighlightRecipe('夢幻銀河特調咖哩');
+  assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), '夢幻銀河特調咖哩', 'Active highlight recipe must support newly synced dish');
+  assertEquals(ctx.window.WikiDB.getLadderDishIcon ? ctx.window.WikiDB.getLadderDishIcon('夢幻銀河特調咖哩') : syntheticRecipe.icon, syntheticRecipe.icon, 'Dish icon lookup must resolve newly synced dish');
+  ctx.window.WikiDB.clearLadderHighlightRecipe();
 
   // Verify mobile condensed single-row CSS
   assert(css.includes('.mobile-h5-app .ladder-recipe-banner'), 'styles.css must provide .mobile-h5-app single-row banner rules');

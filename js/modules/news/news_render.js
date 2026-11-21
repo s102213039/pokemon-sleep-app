@@ -2,16 +2,16 @@
     if (!newsCategoryContainer) return;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
+    const t = (k, def) => (window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t(k, def) : def;
     const labels = {
-      ALL: isEN ? 'All' : (isCN ? '全部消息' : '全部消息'),
-      event: isEN ? 'Events' : (isCN ? '活动企划' : '活動企劃'),
-      update: isEN ? 'Updates' : (isCN ? '版本更新' : '版本更新'),
-      maintenance: isEN ? 'Maintenance' : (isCN ? '维护公告' : '維護公告'),
-      notice: isEN ? 'Notices' : (isCN ? '重要通知' : '重要通知')
+      ALL: t('news.cat_all', isEN ? 'All' : '全部'),
+      event: t('news.cat_event', isEN ? 'Events' : (isCN ? '活动' : '活動')),
+      update: t('news.cat_update', isEN ? 'Updates' : '更新'),
+      maintenance: t('news.cat_maintenance', isEN ? 'Maint.' : (isCN ? '维护' : '維護'))
     };
 
     // 計算各分類數量 (單次遍歷 O(N))
-    const counts = { ALL: allNews.length, event: 0, update: 0, maintenance: 0, notice: 0 };
+    const counts = { ALL: allNews.length, event: 0, update: 0, maintenance: 0 };
     for (let i = 0; i < allNews.length; i++) {
       const bk = allNews[i].badge_key;
       if (bk && counts[bk] !== undefined) counts[bk]++;
@@ -204,7 +204,7 @@
       newsListContainer.innerHTML = `
         <div class="empty-state" style="padding: 50px 20px; text-align: center;">
           <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">${isEN ? 'No matching news or updates found' : (isCN ? '找不到符合的新闻或公告' : '找不到符合的新聞或公告')}</div>
-          <div style="font-size: 13px; color: var(--text-muted);">${isEN ? 'Try different keywords or switch to the "All" category.' : (isCN ? '请尝试更换搜索关键字，或切换至“全部消息”分类。' : '請嘗試更換搜尋關鍵字，或切換至「全部消息」分類。')}</div>
+          <div style="font-size: 13px; color: var(--text-muted);">${isEN ? 'Try different keywords or switch to the "All" category.' : (isCN ? '请尝试更换搜索关键字，或切换至“全部”分类。' : '請嘗試更換搜尋關鍵字，或切換至「全部」分類。')}</div>
         </div>
       `;
       return;

@@ -166,7 +166,9 @@
 .ladder-recipe-modal-body {
   flex: 1 1 auto;
   max-height: 420px;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   padding: 10px 14px 14px;
   display: flex;
@@ -211,7 +213,7 @@
   font-size: 13px;
   font-weight: 800;
   color: var(--text-muted, #64748b);
-  min-width: 16px;
+  min-width: 20px;
   text-align: center;
 }
 

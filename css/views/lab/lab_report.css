@@ -348,14 +348,12 @@ body:not(.mobile-h5-app) .box-content-container .pokemon-table-container {
 }
 
 /* 列表表格：得意圖示大小與樹果圖示 (20px) 保持一致 */
-.pokemon-table .td-spec .specialty-icon,
-.box-table .td-spec .specialty-icon {
+.pokemon-table .td-spec .specialty-icon {
   width: 20px !important;
   height: 20px !important;
 }
 
-.mobile-h5-app .pokemon-table .td-spec .specialty-icon,
-.mobile-h5-app .box-table .td-spec .specialty-icon {
+.mobile-h5-app .pokemon-table .td-spec .specialty-icon {
   width: 20px !important;
   height: 20px !important;
 }

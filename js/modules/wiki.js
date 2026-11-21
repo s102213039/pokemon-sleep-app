@@ -2074,298 +2074,50 @@
     tail: { name: '美味尾巴蛋糕捲', name_en: 'Slowpoke Tail Roll Cake', need: 10, type: '甜點', type_en: 'Dessert', energy: 19846, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailrollcake.png', secondary: '呆呆獸尾巴的胡椒沙拉 (10)', secondary_en: 'Slowpoke Tail Pepper Salad (10)' }
   };
 
-  // 食材天梯各分類前 7 高基礎能量之頂級大菜 (咖哩、沙拉、甜點三大類各 7 種)
+  // 食材天梯各分類前 10 高基礎能量之頂級大菜 (離線備援靜態資料，咖哩、沙拉、甜點三大類各 10 種)
   const TOP_RECIPES_BY_CATEGORY = {
     curry: [
-      {
-        name_cn: '彈跳咖哩烏龍麵',
-        name_en: 'Bounce Curry Udon',
-        category: '咖哩',
-        pot_size: 112,
-        base_energy: 25539,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png',
-        ingredients: [
-          { name: '暖暖薑', count: 39, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' },
-          { name: '品鮮蘑菇', count: 31, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' },
-          { name: '火辣香草', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' },
-          { name: '豆製肉', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }
-        ]
-      },
-      {
-        name_cn: '茂盛焗烤酪梨',
-        name_en: 'Overgrow Avocado Gratin',
-        category: '咖哩',
-        pot_size: 115,
-        base_energy: 24802,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/overgrowavocadogratin.png',
-        ingredients: [
-          { name: '哞哞鮮奶', count: 41, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' },
-          { name: '純粹油', count: 32, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' },
-          { name: '嫩亮酪梨', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' },
-          { name: '窩心洋芋', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }
-        ]
-      },
-      {
-        name_cn: '居合斬壽喜燒咖哩',
-        name_en: 'Cut Sukiyaki Curry',
-        category: '咖哩',
-        pot_size: 101,
-        base_energy: 20655,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/cutsukiyakicurry.png',
-        ingredients: [
-          { name: '粗枝大蔥', count: 27, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' },
-          { name: '豆製肉', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' },
-          { name: '甜甜蜜', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' },
-          { name: '特選蛋', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }
-        ]
-      },
-      {
-        name_cn: '覺醒力量濃湯',
-        name_en: 'Hidden Power Perk-Up Stew',
-        category: '咖哩',
-        pot_size: 92,
-        base_energy: 19061,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/hiddenpowerperk-upstew.png',
-        ingredients: [
-          { name: '萌綠大豆', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' },
-          { name: '好眠番茄', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' },
-          { name: '品鮮蘑菇', count: 23, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' },
-          { name: '醒腦咖啡豆', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }
-        ]
-      },
-      {
-        name_cn: '扮演南瓜精濃湯',
-        name_en: 'Role Play Pumpkaboo Stew',
-        category: '咖哩',
-        pot_size: 69,
-        base_energy: 15621,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/roleplaypumpkaboostew.png',
-        ingredients: [
-          { name: '品鮮蘑菇', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' },
-          { name: '窩心洋芋', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' },
-          { name: '豆製肉', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' },
-          { name: '沉甸甸南瓜', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }
-        ]
-      },
-      {
-        name_cn: '煉獄玉米乾咖哩',
-        name_en: 'Inferno Corn Keema Curry',
-        category: '咖哩',
-        pot_size: 77,
-        base_energy: 13690,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/infernocornkeemacurry.png',
-        ingredients: [
-          { name: '火辣香草', count: 27, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' },
-          { name: '豆製肉', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' },
-          { name: '萌綠玉米', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' },
-          { name: '暖暖薑', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }
-        ]
-      },
-      {
-        name_cn: '萌綠咖哩麵包',
-        name_en: 'Greengrass Curry Bun',
-        category: '咖哩',
-        pot_size: 63,
-        base_energy: 10945,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/greengrasscurrybun.png',
-        ingredients: [
-          { name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' },
-          { name: '火辣香草', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' },
-          { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' },
-          { name: '萌綠大豆', count: 8, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }
-        ]
-      }
+      { name_cn: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', category: '咖哩', pot_size: 112, base_energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', ingredients: [{ name: '暖暖薑', count: 39, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '品鮮蘑菇', count: 31, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }, { name: '火辣香草', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '豆製肉', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }] },
+      { name_cn: '茂盛焗烤酪梨', name_en: 'Overgrow Avocado Gratin', category: '咖哩', pot_size: 115, base_energy: 24802, icon: 'https://www.serebii.net/pokemonsleep/meals/overgrowavocadogratin.png', ingredients: [{ name: '嫩亮酪梨', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '窩心洋芋', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '哞哞鮮奶', count: 41, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }, { name: '純粹油', count: 32, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }] },
+      { name_cn: '居合斬壽喜燒咖哩', name_en: 'Cut Sukiyaki Curry', category: '咖哩', pot_size: 101, base_energy: 20655, icon: 'https://www.serebii.net/pokemonsleep/meals/cutsukiyakicurry.png', ingredients: [{ name: '粗枝大蔥', count: 27, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' }, { name: '豆製肉', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '甜甜蜜', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '特選蛋', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }] },
+      { name_cn: '覺醒力量濃湯', name_en: 'Hidden Power Perk-Up Stew', category: '咖哩', pot_size: 92, base_energy: 19061, icon: 'https://www.serebii.net/pokemonsleep/meals/hiddenpowerperk-upstew.png', ingredients: [{ name: '萌綠大豆', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '好眠番茄', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '品鮮蘑菇', count: 23, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }, { name: '醒腦咖啡豆', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }] },
+      { name_cn: '扮演南瓜精濃湯', name_en: 'Role Play Pumpkaboo Stew', category: '咖哩', pot_size: 69, base_energy: 15621, icon: 'https://www.serebii.net/pokemonsleep/meals/roleplaypumpkaboostew.png', ingredients: [{ name: '沉甸甸南瓜', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }, { name: '豆製肉', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '窩心洋芋', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '品鮮蘑菇', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }] },
+      { name_cn: '煉獄玉米乾咖哩', name_en: 'Inferno Corn Keema Curry', category: '咖哩', pot_size: 77, base_energy: 13690, icon: 'https://www.serebii.net/pokemonsleep/meals/infernocornkeemacurry.png', ingredients: [{ name: '火辣香草', count: 27, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '豆製肉', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '萌綠玉米', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '暖暖薑', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }] },
+      { name_cn: '萌綠咖哩麵包', name_en: 'Greengrass Curry Bun', category: '咖哩', pot_size: 63, base_energy: 10945, icon: 'https://www.serebii.net/pokemonsleep/meals/greengrasscurrybun.png', ingredients: [{ name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '火辣香草', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '萌綠大豆', count: 8, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }] },
+      { name_cn: '忍者咖哩', name_en: 'Ninja Curry', category: '咖哩', pot_size: 50, base_energy: 9445, icon: 'https://www.serebii.net/pokemonsleep/meals/ninjacurry.png', ingredients: [{ name: '萌綠大豆', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '豆製肉', count: 9, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '粗枝大蔥', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' }, { name: '品鮮蘑菇', count: 5, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }] },
+      { name_cn: '絕對睡眠奶油咖哩', name_en: 'Dream Eater Butter Curry', category: '咖哩', pot_size: 55, base_energy: 9010, icon: 'https://www.serebii.net/pokemonsleep/meals/dreameaterbuttercurry.png', ingredients: [{ name: '窩心洋芋', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '好眠番茄', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '放鬆可可', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' }, { name: '哞哞鮮奶', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
+      { name_cn: '種子炸彈烤餅咖哩', name_en: 'Seed Bomb Naan and Curry', category: '咖哩', pot_size: 39, base_energy: 7950, icon: 'https://www.serebii.net/pokemonsleep/meals/seedbombnaanandcurry.png', ingredients: [{ name: '一口堅果', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '沉甸甸南瓜', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }, { name: '萌綠玉米', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }] }
     ],
     salad: [
-      {
-        name_cn: '大塊滿滿熱水沙拉',
-        name_en: 'Scald Chunky Salad',
-        category: '沙拉',
-        pot_size: 95,
-        base_energy: 25356,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png',
-        ingredients: [
-          { name: '窩心洋芋', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' },
-          { name: '品鮮蘑菇', count: 27, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' },
-          { name: '沉甸甸南瓜', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' },
-          { name: '萌綠玉米', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }
-        ]
-      },
-      {
-        name_cn: '重踏酪梨醬脆片',
-        name_en: 'Bulldoze Guacamole and Chips',
-        category: '沙拉',
-        pot_size: 105,
-        base_energy: 25162,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png',
-        ingredients: [
-          { name: '火辣香草', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' },
-          { name: '嫩亮酪梨', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' },
-          { name: '萌綠玉米', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' },
-          { name: '萌綠大豆', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }
-        ]
-      },
-      {
-        name_cn: '不服輸咖啡沙拉',
-        name_en: 'Defiant Coffee-Dressed Salad',
-        category: '沙拉',
-        pot_size: 100,
-        base_energy: 20218,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/defiantcoffee-dressedsalad.png',
-        ingredients: [
-          { name: '醒腦咖啡豆', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' },
-          { name: '豆製肉', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' },
-          { name: '純粹油', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' },
-          { name: '窩心洋芋', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }
-        ]
-      },
-      {
-        name_cn: '蘋果酸優格沙拉',
-        name_en: 'Apple Acid Yogurt-Dressed Salad',
-        category: '沙拉',
-        pot_size: 104,
-        base_energy: 19293,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/appleacidyogurt-dressedsalad.png',
-        ingredients: [
-          { name: '特選蛋', count: 35, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' },
-          { name: '特選蘋果', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' },
-          { name: '好眠番茄', count: 23, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' },
-          { name: '哞哞鮮奶', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }
-        ]
-      },
-      {
-        name_cn: '落英繽紛含羞草蛋沙拉',
-        name_en: 'Petal Blizzard Layered Salad',
-        category: '沙拉',
-        pot_size: 69,
-        base_energy: 11811,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/petalblizzardlayeredsalad.png',
-        ingredients: [
-          { name: '特選蛋', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' },
-          { name: '純粹油', count: 17, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' },
-          { name: '窩心洋芋', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' },
-          { name: '豆製肉', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }
-        ]
-      },
-      {
-        name_cn: '忍者沙拉',
-        name_en: 'Ninja Salad',
-        category: '沙拉',
-        pot_size: 57,
-        base_energy: 11659,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/ninjasalad.png',
-        ingredients: [
-          { name: '萌綠大豆', count: 19, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' },
-          { name: '粗枝大蔥', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' },
-          { name: '品鮮蘑菇', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' },
-          { name: '暖暖薑', count: 11, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }
-        ]
-      },
-      {
-        name_cn: '萌綠沙拉',
-        name_en: 'Greengrass Salad',
-        category: '沙拉',
-        pot_size: 62,
-        base_energy: 11393,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/greengrasssalad.png',
-        ingredients: [
-          { name: '純粹油', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' },
-          { name: '萌綠玉米', count: 17, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' },
-          { name: '好眠番茄', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' },
-          { name: '窩心洋芋', count: 9, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }
-        ]
-      }
+      { name_cn: '打草結沙拉捲', name_en: 'Grass Knot Salad Wrap', category: '沙拉', pot_size: 121, base_energy: 26350, icon: 'https://www.serebii.net/pokemonsleep/meals/grassknotsaladwrap.png', ingredients: [{ name: '一口堅果', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '嫩亮酪梨', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '暖暖薑', count: 36, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '好眠番茄', count: 33, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }] },
+      { name_cn: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', category: '沙拉', pot_size: 95, base_energy: 25356, icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png', ingredients: [{ name: '沉甸甸南瓜', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }, { name: '窩心洋芋', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '萌綠玉米', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '品鮮蘑菇', count: 27, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }] },
+      { name_cn: '重踏酪梨醬脆片', name_en: 'Bulldoze Guacamole and Chips', category: '沙拉', pot_size: 105, base_energy: 25162, icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png', ingredients: [{ name: '嫩亮酪梨', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '萌綠玉米', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '火辣香草', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '萌綠大豆', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }] },
+      { name_cn: '不服輸咖啡沙拉', name_en: 'Defiant Coffee-Dressed Salad', category: '沙拉', pot_size: 100, base_energy: 20218, icon: 'https://www.serebii.net/pokemonsleep/meals/defiantcoffee-dressedsalad.png', ingredients: [{ name: '醒腦咖啡豆', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }, { name: '豆製肉', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '純粹油', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }, { name: '窩心洋芋', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }] },
+      { name_cn: '蘋果酸優格沙拉', name_en: 'Apple Acid Yogurt-Dressed Salad', category: '沙拉', pot_size: 104, base_energy: 19293, icon: 'https://www.serebii.net/pokemonsleep/meals/appleacidyogurt-dressedsalad.png', ingredients: [{ name: '特選蛋', count: 35, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '特選蘋果', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }, { name: '好眠番茄', count: 23, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '哞哞鮮奶', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
+      { name_cn: '落英繽紛含羞草蛋沙拉', name_en: 'Petal Blizzard Layered Salad', category: '沙拉', pot_size: 69, base_energy: 11811, icon: 'https://www.serebii.net/pokemonsleep/meals/petalblizzardlayeredsalad.png', ingredients: [{ name: '特選蛋', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '純粹油', count: 17, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }, { name: '窩心洋芋', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '豆製肉', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }] },
+      { name_cn: '忍者沙拉', name_en: 'Ninja Salad', category: '沙拉', pot_size: 57, base_energy: 11659, icon: 'https://www.serebii.net/pokemonsleep/meals/ninjasalad.png', ingredients: [{ name: '粗枝大蔥', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' }, { name: '萌綠大豆', count: 19, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '品鮮蘑菇', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }, { name: '暖暖薑', count: 11, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }] },
+      { name_cn: '萌綠沙拉', name_en: 'Greengrass Salad', category: '沙拉', pot_size: 62, base_energy: 11393, icon: 'https://www.serebii.net/pokemonsleep/meals/greengrasssalad.png', ingredients: [{ name: '純粹油', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }, { name: '萌綠玉米', count: 17, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '好眠番茄', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '窩心洋芋', count: 9, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }] },
+      { name_cn: '十字切碎丁沙拉', name_en: 'Cross Chop Salad', category: '沙拉', pot_size: 56, base_energy: 8755, icon: 'https://www.serebii.net/pokemonsleep/meals/crosschopsalad.png', ingredients: [{ name: '特選蛋', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '豆製肉', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '萌綠玉米', count: 11, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '好眠番茄', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }] },
+      { name_cn: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', category: '沙拉', pot_size: 35, base_energy: 8169, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png', ingredients: [{ name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }] }
     ],
     dessert: [
-      {
-        name_cn: '採蜜巧克力格子鬆餅',
-        name_en: 'Honey Gather Chocolate Waffles',
-        category: '甜點',
-        pot_size: 115,
-        base_energy: 25484,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png',
-        ingredients: [
-          { name: '甜甜蜜', count: 38, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' },
-          { name: '萌綠玉米', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' },
-          { name: '純粹油', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' },
-          { name: '放鬆可可', count: 21, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' }
-        ]
-      },
-      {
-        name_cn: '心跳加速鬼面鬆餅',
-        name_en: 'Scary Face Pancakes',
-        category: '甜點',
-        pot_size: 103,
-        base_energy: 24354,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/scaryfacepancakes.png',
-        ingredients: [
-          { name: '甜甜蜜', count: 32, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' },
-          { name: '好眠番茄', count: 29, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' },
-          { name: '特選蛋', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' },
-          { name: '沉甸甸南瓜', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }
-        ]
-      },
-      {
-        name_cn: '土王閃電泡芙',
-        name_en: 'Clodsire Eclair',
-        category: '甜點',
-        pot_size: 102,
-        base_energy: 20885,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/clodsireeclair.png',
-        ingredients: [
-          { name: '放鬆可可', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' },
-          { name: '哞哞鮮奶', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' },
-          { name: '醒腦咖啡豆', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' },
-          { name: '甜甜蜜', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }
-        ]
-      },
-      {
-        name_cn: '電光香料可樂',
-        name_en: 'Zing Zap Spiced Cola',
-        category: '甜點',
-        pot_size: 87,
-        base_energy: 17494,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/zingzapspicedcola.png',
-        ingredients: [
-          { name: '特選蘋果', count: 35, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' },
-          { name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' },
-          { name: '粗枝大蔥', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' },
-          { name: '醒腦咖啡豆', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }
-        ]
-      },
-      {
-        name_cn: '花之禮馬卡龍',
-        name_en: 'Flower Gift Macarons',
-        category: '甜點',
-        pot_size: 77,
-        base_energy: 13834,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/flowergiftmacarons.png',
-        ingredients: [
-          { name: '放鬆可可', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' },
-          { name: '特選蛋', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' },
-          { name: '甜甜蜜', count: 17, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' },
-          { name: '哞哞鮮奶', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }
-        ]
-      },
-      {
-        name_cn: '茶會玉米司康',
-        name_en: 'Teatime Corn Scones',
-        category: '甜點',
-        pot_size: 67,
-        base_energy: 10925,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/teatimecornscones.png',
-        ingredients: [{ name: '特選蘋果', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }, { name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '萌綠玉米', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '哞哞鮮奶', count: 9, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }]
-      },
-      {
-        name_cn: '青草攪拌器冰沙',
-        name_en: 'Leaf Tornado Smoothie',
-        category: '甜點',
-        pot_size: 48,
-        base_energy: 8165,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/leaftornadosmoothie.png',
-        ingredients: [{ name: '嫩亮酪梨', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '好眠番茄', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '哞哞鮮奶', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }]
-      }
+      { name_cn: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', category: '甜點', pot_size: 115, base_energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', ingredients: [{ name: '甜甜蜜', count: 38, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '萌綠玉米', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '純粹油', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }, { name: '放鬆可可', count: 21, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' }] },
+      { name_cn: '心跳加速鬼面鬆餅', name_en: 'Scary Face Pancakes', category: '甜點', pot_size: 103, base_energy: 24354, icon: 'https://www.serebii.net/pokemonsleep/meals/scaryfacepancakes.png', ingredients: [{ name: '沉甸甸南瓜', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }, { name: '特選蛋', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '甜甜蜜', count: 32, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '好眠番茄', count: 29, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }] },
+      { name_cn: '土王閃電泡芙', name_en: 'Clodsire Eclair', category: '甜點', pot_size: 102, base_energy: 20885, icon: 'https://www.serebii.net/pokemonsleep/meals/clodsireeclair.png', ingredients: [{ name: '放鬆可可', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' }, { name: '哞哞鮮奶', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }, { name: '醒腦咖啡豆', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }, { name: '甜甜蜜', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }] },
+      { name_cn: '美味尾巴蛋糕捲', name_en: 'Slowpoke Tail Roll Cake', category: '甜點', pot_size: 91, base_energy: 19846, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailrollcake.png', ingredients: [{ name: '一口堅果', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '萌綠大豆', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '特選蛋', count: 33, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }] },
+      { name_cn: '電光香料可樂', name_en: 'Zing Zap Spiced Cola', category: '甜點', pot_size: 87, base_energy: 17494, icon: 'https://www.serebii.net/pokemonsleep/meals/zingzapspicedcola.png', ingredients: [{ name: '特選蘋果', count: 35, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }, { name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '粗枝大蔥', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' }, { name: '醒腦咖啡豆', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }] },
+      { name_cn: '花之禮馬卡龍', name_en: 'Flower Gift Macarons', category: '甜點', pot_size: 77, base_energy: 13834, icon: 'https://www.serebii.net/pokemonsleep/meals/flowergiftmacarons.png', ingredients: [{ name: '放鬆可可', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' }, { name: '特選蛋', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '甜甜蜜', count: 17, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '哞哞鮮奶', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
+      { name_cn: '茶會玉米司康', name_en: 'Teatime Corn Scones', category: '甜點', pot_size: 67, base_energy: 10925, icon: 'https://www.serebii.net/pokemonsleep/meals/teatimecornscones.png', ingredients: [{ name: '特選蘋果', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }, { name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '萌綠玉米', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '哞哞鮮奶', count: 9, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
+      { name_cn: '青草攪拌器冰沙', name_en: 'Leaf Tornado Smoothie', category: '甜點', pot_size: 48, base_energy: 8165, icon: 'https://www.serebii.net/pokemonsleep/meals/leaftornadosmoothie.png', ingredients: [{ name: '嫩亮酪梨', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '好眠番茄', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '哞哞鮮奶', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
+      { name_cn: '胖丁百匯布丁', name_en: "Jigglypuff's Fruity Flan", category: '甜點', pot_size: 55, base_energy: 7594, icon: "https://www.serebii.net/pokemonsleep/meals/jigglypuff'sfruityflan.png", ingredients: [{ name: '甜甜蜜', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '特選蛋', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '哞哞鮮奶', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }, { name: '特選蘋果', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }] },
+      { name_cn: '破格玉米香提拉米蘇', name_en: 'Mold Breaker Corn Tiramisu', category: '甜點', pot_size: 40, base_energy: 7125, icon: 'https://www.serebii.net/pokemonsleep/meals/moldbreakercorntiramisu.png', ingredients: [{ name: '醒腦咖啡豆', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }, { name: '萌綠玉米', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '哞哞鮮奶', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] }
     ]
+  };
+
+  const FALLBACK_TOP_RECIPES_BY_CATEGORY = {
+    curry: TOP_RECIPES_BY_CATEGORY.curry.map(r => Object.freeze({ ...r, ingredients: (r.ingredients || []).map(i => Object.freeze({ ...i })) })),
+    salad: TOP_RECIPES_BY_CATEGORY.salad.map(r => Object.freeze({ ...r, ingredients: (r.ingredients || []).map(i => Object.freeze({ ...i })) })),
+    dessert: TOP_RECIPES_BY_CATEGORY.dessert.map(r => Object.freeze({ ...r, ingredients: (r.ingredients || []).map(i => Object.freeze({ ...i })) }))
   };
 
   const TAIL_FEATURED_RECIPES = [
@@ -2375,10 +2127,16 @@
     { name_cn: '美味尾巴蛋糕捲', name_en: 'Slowpoke Tail Roll Cake', category: '甜點', pot_size: 91, base_energy: 19846, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailrollcake.png', ingredients: [{ name: '一口堅果', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '萌綠大豆', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '特選蛋', count: 33, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }] }
   ];
 
-  const ALL_TOP_CATEGORY_RECIPES = [
-    ...TOP_RECIPES_BY_CATEGORY.curry, ...TOP_RECIPES_BY_CATEGORY.salad,
-    ...TOP_RECIPES_BY_CATEGORY.dessert, ...TAIL_FEATURED_RECIPES
-  ];
+  const ALL_TOP_CATEGORY_RECIPES = [];
+  (function _seedAllTopCategoryRecipes() {
+    const seen = new Set();
+    [...TOP_RECIPES_BY_CATEGORY.curry, ...TOP_RECIPES_BY_CATEGORY.salad, ...TOP_RECIPES_BY_CATEGORY.dessert, ...TAIL_FEATURED_RECIPES].forEach(r => {
+      if (r && r.name_cn && !seen.has(r.name_cn)) {
+        seen.add(r.name_cn);
+        ALL_TOP_CATEGORY_RECIPES.push(r);
+      }
+    });
+  })();
 
   if (typeof window !== 'undefined') {
     window.ALL_TOP_CATEGORY_RECIPES = ALL_TOP_CATEGORY_RECIPES;
@@ -2506,6 +2264,18 @@
       if (Array.isArray(window.allRecipes) && window.allRecipes.length > 0) return window.allRecipes;
       if (Array.isArray(window.__RECIPES_CACHE__) && window.__RECIPES_CACHE__.length > 0) return window.__RECIPES_CACHE__;
     }
+    try {
+      const ls = (typeof window !== 'undefined' && window.localStorage)
+        ? window.localStorage
+        : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (ls && typeof ls.getItem === 'function') {
+        const raw = ls.getItem('pksleep_cache_recipes_json');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      }
+    } catch (e) {}
     return [];
   }
 
@@ -2929,10 +2699,21 @@
       }
     };
     window.addEventListener('pokemon-data-updated', _onLiveDataUpdated);
-    window.addEventListener('recipes-data-updated', function () {
+    window.addEventListener('recipes-data-updated', function (e) {
       invalidateDynamicLadderCache();
+      if (typeof recomputeTopRecipesByCategory === 'function') {
+        try { recomputeTopRecipesByCategory(e && e.detail); } catch (err) {}
+      }
       if (typeof refreshCoordinateLadder === 'function') {
-        try { refreshCoordinateLadder(); } catch (e) {}
+        try { refreshCoordinateLadder(); } catch (err) {}
+      }
+      if (typeof document !== 'undefined') {
+        const modal = (typeof getOverlayEl === 'function')
+          ? getOverlayEl('ladder-recipe-modal')
+          : (document.getElementById ? document.getElementById('ladder-recipe-modal') : null);
+        if (modal && modal.style && modal.style.display === 'flex' && typeof renderLadderRecipeModalContent === 'function') {
+          try { renderLadderRecipeModalContent(modal); } catch (err) {}
+        }
       }
     });
   }
@@ -2945,19 +2726,120 @@
       const cacheFound = window.__RECIPES_CACHE__.find(r => r.name_cn === dishName || r.name_en === dishName);
       if (cacheFound && cacheFound.icon) return cacheFound.icon;
     }
+    if (typeof window !== 'undefined' && Array.isArray(window.allRecipes)) {
+      const liveFound = window.allRecipes.find(r => r.name_cn === dishName || r.name_en === dishName);
+      if (liveFound && liveFound.icon) return liveFound.icon;
+    }
     return '';
   }
 
-  // 全局前 7 高能量料理 (維持舊介面與單元測試相容性)
-  const TOP_7_RECIPES_HIGHLIGHT = [
-    TOP_RECIPES_BY_CATEGORY.curry[0],
-    TOP_RECIPES_BY_CATEGORY.dessert[0],
-    TOP_RECIPES_BY_CATEGORY.salad[0],
-    TOP_RECIPES_BY_CATEGORY.salad[1],
-    TOP_RECIPES_BY_CATEGORY.curry[1],
-    TOP_RECIPES_BY_CATEGORY.dessert[1],
-    TOP_RECIPES_BY_CATEGORY.dessert[2]
-  ];
+  // 全局前 10 高能量料理 (保留 TOP_7_RECIPES_HIGHLIGHT 命名以維持舊介面與單元測試相容性)
+  const TOP_7_RECIPES_HIGHLIGHT = [];
+
+  function _normalizeLadderRecipeCat(rawCat) {
+    const s = String(rawCat || '').trim().toLowerCase();
+    if (!s) return null;
+    if (s === 'curry' || s === '咖哩' || s === '咖喱' || s.includes('curry') || s.includes('stew') || s.includes('咖哩') || s.includes('咖喱') || s.includes('濃湯') || s.includes('浓汤')) {
+      return { key: 'curry', label: '咖哩' };
+    }
+    if (s === 'salad' || s === '沙拉' || s.includes('salad') || s.includes('沙拉')) {
+      return { key: 'salad', label: '沙拉' };
+    }
+    if (s === 'dessert' || s === '甜點' || s === '甜点' || s === '點心' || s === '点心' || s.includes('dessert') || s.includes('drink') || s.includes('甜點') || s.includes('甜点') || s.includes('點心') || s.includes('飲料')) {
+      return { key: 'dessert', label: '甜點' };
+    }
+    return null;
+  }
+
+  function _normalizeLadderRecipeEntry(r, catLabel) {
+    const nameCn = r.name_cn || r.name || r.name_en || '';
+    const nameEn = r.name_en || nameCn;
+    const slug = nameEn.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const icon = r.icon || r.icon_url || (slug ? ('https://www.serebii.net/pokemonsleep/meals/' + slug + '.png') : '');
+    const rawIngs = Array.isArray(r.ingredients) ? r.ingredients : [];
+    const ingredients = rawIngs.map(ing => {
+      if (!ing) return null;
+      const ingName = ing.name || ing.name_cn || ing.name_en || '';
+      const ingCount = Number(ing.count || ing.qty || 0);
+      let ingIcon = ing.icon || '';
+      if (!ingIcon && ingName && typeof CANONICAL_INGREDIENT_META !== 'undefined') {
+        const meta = CANONICAL_INGREDIENT_META.find(m => m.name === ingName || m.enName === ingName);
+        if (meta && meta.icon) ingIcon = meta.icon;
+      }
+      return { name: ingName, count: ingCount, icon: ingIcon };
+    }).filter(Boolean);
+    return {
+      name_cn: nameCn,
+      name_en: nameEn,
+      category: catLabel,
+      pot_size: Number(r.pot_size || 0),
+      base_energy: Number(r.base_energy !== undefined ? r.base_energy : (r.energy || 0)),
+      icon: icon,
+      ingredients: ingredients
+    };
+  }
+
+  function recomputeTopRecipesByCategory(recipesOverride) {
+    const source = (Array.isArray(recipesOverride) && recipesOverride.length > 0)
+      ? recipesOverride
+      : (typeof _getLiveRecipesSourceForLadder === 'function' ? _getLiveRecipesSourceForLadder() : []);
+    const fallbackMap = (typeof FALLBACK_TOP_RECIPES_BY_CATEGORY !== 'undefined' && FALLBACK_TOP_RECIPES_BY_CATEGORY)
+      ? FALLBACK_TOP_RECIPES_BY_CATEGORY
+      : TOP_RECIPES_BY_CATEGORY;
+    const buckets = { curry: [], salad: [], dessert: [] };
+    const seenPerCat = { curry: new Set(), salad: new Set(), dessert: new Set() };
+
+    if (Array.isArray(source) && source.length > 0) {
+      for (let i = 0; i < source.length; i++) {
+        const r = source[i];
+        if (!r) continue;
+        const catInfo = _normalizeLadderRecipeCat(r.category || r.type);
+        if (!catInfo) continue;
+        const norm = _normalizeLadderRecipeEntry(r, catInfo.label);
+        if (!norm.name_cn || seenPerCat[catInfo.key].has(norm.name_cn)) continue;
+        seenPerCat[catInfo.key].add(norm.name_cn);
+        buckets[catInfo.key].push(norm);
+      }
+    }
+
+    ['curry', 'salad', 'dessert'].forEach(catKey => {
+      const nextList = buckets[catKey].length > 0
+        ? buckets[catKey]
+            .slice()
+            .sort((a, b) => (b.base_energy - a.base_energy) || (b.pot_size - a.pot_size))
+            .slice(0, 10)
+        : (fallbackMap[catKey] || []).slice(0, 10);
+      TOP_RECIPES_BY_CATEGORY[catKey].splice(0, TOP_RECIPES_BY_CATEGORY[catKey].length, ...nextList);
+    });
+
+    const dedupedAll = [];
+    const seenAll = new Set();
+    const appendUnique = arr => {
+      if (!Array.isArray(arr)) return;
+      for (let i = 0; i < arr.length; i++) {
+        const item = arr[i];
+        if (!item || !item.name_cn || seenAll.has(item.name_cn)) continue;
+        seenAll.add(item.name_cn);
+        dedupedAll.push(item);
+      }
+    };
+    appendUnique(TOP_RECIPES_BY_CATEGORY.curry);
+    appendUnique(TOP_RECIPES_BY_CATEGORY.salad);
+    appendUnique(TOP_RECIPES_BY_CATEGORY.dessert);
+    if (typeof TAIL_FEATURED_RECIPES !== 'undefined') {
+      appendUnique(TAIL_FEATURED_RECIPES);
+    }
+    ALL_TOP_CATEGORY_RECIPES.splice(0, ALL_TOP_CATEGORY_RECIPES.length, ...dedupedAll);
+
+    const topHighlightPool = [
+      ...TOP_RECIPES_BY_CATEGORY.curry,
+      ...TOP_RECIPES_BY_CATEGORY.salad,
+      ...TOP_RECIPES_BY_CATEGORY.dessert
+    ].sort((a, b) => (b.base_energy - a.base_energy) || (b.pot_size - a.pot_size)).slice(0, 10);
+    TOP_7_RECIPES_HIGHLIGHT.splice(0, TOP_7_RECIPES_HIGHLIGHT.length, ...topHighlightPool);
+  }
+
+  recomputeTopRecipesByCategory();
 
   let ladderRecipeCategory = 'curry';
   let ladderHighlightRecipe = null;
@@ -3062,7 +2944,7 @@
       }).join('');
     }
 
-    // 2. 渲染當前分類下前 7 頂級料理卡片
+    // 2. 渲染當前分類下前 10 頂級料理卡片
     const bodyEl = modal.querySelector('.ladder-recipe-modal-body');
     if (bodyEl) {
       const list = TOP_RECIPES_BY_CATEGORY[ladderRecipeCategory] || [];
@@ -11312,7 +11194,7 @@
                   </div>
                 </label>
               </div>
-              <p class="ladder-recipe-modal-subtitle">${isEN ? 'Top 7 High Score Recipes, Mark Ingredients' : '各前7高分料理，標記所需食材'}</p>
+              <p class="ladder-recipe-modal-subtitle">${isEN ? 'Top 10 High Score Recipes, Mark Ingredients' : (isCN ? '各前10高分料理，标记所需食材' : '各前10高分料理，標記所需食材')}</p>
             </div>
             <div class="ladder-recipe-modal-actions">
               <button type="button" class="ladder-recipe-header-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${isEN ? 'Clear Selection' : '清除選取'}">${isEN ? 'Clear' : '清除'}</button>
@@ -12160,8 +12042,8 @@
     sortIslandSpawns: sortIslandSpawns,
     getIslandSpawnsSort: getIslandSpawnsSort,
     getSnorlaxRankScore: getSnorlaxRankScore,
-    TOP_7_RECIPES_HIGHLIGHT: TOP_7_RECIPES_HIGHLIGHT,
-    TOP_RECIPES_BY_CATEGORY: TOP_RECIPES_BY_CATEGORY,
+    TOP_7_RECIPES_HIGHLIGHT: TOP_7_RECIPES_HIGHLIGHT, TOP_10_RECIPES_HIGHLIGHT: TOP_7_RECIPES_HIGHLIGHT,
+    TOP_RECIPES_BY_CATEGORY: TOP_RECIPES_BY_CATEGORY, recomputeTopRecipesByCategory: recomputeTopRecipesByCategory, getLadderDishIcon: getLadderDishIcon, getActiveHighlightRecipes: getActiveHighlightRecipes,
     openLadderRecipeModal: openLadderRecipeModal,
     closeLadderRecipeModal: closeLadderRecipeModal,
     openSkillDrawHelpModal: openSkillDrawHelpModal,
@@ -12236,7 +12118,7 @@
     handleLadderGroupHoverOut, recalcTriggerChance, recalcSleepDays, initCalcCustomSelects,
     openLadderSidebar, closeLadderSidebar, openIngredientRankingModal, closeIngredientRankingModal,
     updateLadderActiveFilterBadge, HELPING_SPEED_MATRIX, selectIsland, toggleIslandExpertMode,
-    filterIslandSleepType, renderIslandsSubpanel, TOP_7_RECIPES_HIGHLIGHT, TOP_RECIPES_BY_CATEGORY,
+    filterIslandSleepType, renderIslandsSubpanel, TOP_7_RECIPES_HIGHLIGHT, TOP_10_RECIPES_HIGHLIGHT: TOP_7_RECIPES_HIGHLIGHT, TOP_RECIPES_BY_CATEGORY, recomputeTopRecipesByCategory,
     openLadderRecipeModal, closeLadderRecipeModal, openSkillDrawHelpModal, closeSkillDrawHelpModal,
     selectLadderHighlightRecipe, clearLadderHighlightRecipe, switchLadderRecipeCategory,
     getLadderRecipeCategory: () => ladderRecipeCategory, getLadderHighlightRecipe: () => ladderHighlightRecipe

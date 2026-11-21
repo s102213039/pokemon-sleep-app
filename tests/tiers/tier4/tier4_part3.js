@@ -780,16 +780,16 @@ function registerTier4Part3() {
     assert(!appIndexHtml.includes('class="box-toolbar-control-row"'), 'app/index.html must not contain old box-toolbar-control-row');
     assert(boxJs.includes("if (isMobileH5 || boxViewMode === 'table')"), 'box.js must force table view on mobile H5');
 
-    // 3. Box Table Columns Overhaul
-    // Header order: icon -> level -> name (centered) -> specialty -> berry -> 食1 -> 食2 -> 食3
+    // 3. Box Table Columns Overhaul (specialty column removed)
+    // Header order: icon -> level -> name (centered) -> berry -> 食1 -> 食2 -> 食3 -> actions
     const lvlThIdx = boxJs.indexOf("t('th.level', '等級')");
     const nameThIdx = boxJs.indexOf("isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'");
-    const specThIdx = boxJs.indexOf("t('th.specialty', '得意')");
     const berryThIdx = boxJs.indexOf("t('th.berry', '樹果')");
-    assert(lvlThIdx !== -1 && nameThIdx !== -1 && specThIdx !== -1 && berryThIdx !== -1, 'All required th keys must exist');
+    assert(lvlThIdx !== -1 && nameThIdx !== -1 && berryThIdx !== -1, 'All required th keys must exist');
     assert(lvlThIdx < nameThIdx, 'Level column must precede Name column');
-    assert(nameThIdx < specThIdx, 'Specialty column must follow Name column');
-    assert(specThIdx < berryThIdx, 'Berry column must follow Specialty column');
+    assert(nameThIdx < berryThIdx, 'Berry column must follow Name column');
+    const renderTableHeaderCheck = boxJs.substring(boxJs.indexOf('function renderBoxTable(list'), boxJs.indexOf('function bindCardActions'));
+    assert(!renderTableHeaderCheck.includes('th-spec') && !renderTableHeaderCheck.includes('td-spec') && !renderTableHeaderCheck.includes("t('th.specialty'"), 'Box table must not render specialty header or cell');
 
     // Ingredient headers simplified to 食1, 食2, 食3
     assert(boxJs.includes("isEN ? 'Ing 1' : '食1'") && boxJs.includes("isEN ? 'Ing 2' : '食2'") && boxJs.includes("isEN ? 'Ing 3' : '食3'"), 'Ingredient columns must be simplified to 食1, 食2, 食3');

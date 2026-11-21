@@ -48,7 +48,7 @@
                   </div>
                 </label>
               </div>
-              <p class="ladder-recipe-modal-subtitle">${isEN ? 'Top 7 High Score Recipes, Mark Ingredients' : '各前7高分料理，標記所需食材'}</p>
+              <p class="ladder-recipe-modal-subtitle">${isEN ? 'Top 10 High Score Recipes, Mark Ingredients' : (isCN ? '各前10高分料理，标记所需食材' : '各前10高分料理，標記所需食材')}</p>
             </div>
             <div class="ladder-recipe-modal-actions">
               <button type="button" class="ladder-recipe-header-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${isEN ? 'Clear Selection' : '清除選取'}">${isEN ? 'Clear' : '清除'}</button>
@@ -896,8 +896,8 @@
     sortIslandSpawns: sortIslandSpawns,
     getIslandSpawnsSort: getIslandSpawnsSort,
     getSnorlaxRankScore: getSnorlaxRankScore,
-    TOP_7_RECIPES_HIGHLIGHT: TOP_7_RECIPES_HIGHLIGHT,
-    TOP_RECIPES_BY_CATEGORY: TOP_RECIPES_BY_CATEGORY,
+    TOP_7_RECIPES_HIGHLIGHT: TOP_7_RECIPES_HIGHLIGHT, TOP_10_RECIPES_HIGHLIGHT: TOP_7_RECIPES_HIGHLIGHT,
+    TOP_RECIPES_BY_CATEGORY: TOP_RECIPES_BY_CATEGORY, recomputeTopRecipesByCategory: recomputeTopRecipesByCategory, getLadderDishIcon: getLadderDishIcon, getActiveHighlightRecipes: getActiveHighlightRecipes,
     openLadderRecipeModal: openLadderRecipeModal,
     closeLadderRecipeModal: closeLadderRecipeModal,
     openSkillDrawHelpModal: openSkillDrawHelpModal,
@@ -972,7 +972,7 @@
     handleLadderGroupHoverOut, recalcTriggerChance, recalcSleepDays, initCalcCustomSelects,
     openLadderSidebar, closeLadderSidebar, openIngredientRankingModal, closeIngredientRankingModal,
     updateLadderActiveFilterBadge, HELPING_SPEED_MATRIX, selectIsland, toggleIslandExpertMode,
-    filterIslandSleepType, renderIslandsSubpanel, TOP_7_RECIPES_HIGHLIGHT, TOP_RECIPES_BY_CATEGORY,
+    filterIslandSleepType, renderIslandsSubpanel, TOP_7_RECIPES_HIGHLIGHT, TOP_10_RECIPES_HIGHLIGHT: TOP_7_RECIPES_HIGHLIGHT, TOP_RECIPES_BY_CATEGORY, recomputeTopRecipesByCategory,
     openLadderRecipeModal, closeLadderRecipeModal, openSkillDrawHelpModal, closeSkillDrawHelpModal,
     selectLadderHighlightRecipe, clearLadderHighlightRecipe, switchLadderRecipeCategory,
     getLadderRecipeCategory: () => ladderRecipeCategory, getLadderHighlightRecipe: () => ladderHighlightRecipe
