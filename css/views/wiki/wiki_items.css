@@ -348,8 +348,8 @@
 }
 
 .app-backup-action-btn.export-btn {
-  background: var(--accent-gradient, linear-gradient(135deg, #6366f1, #38bdf8)) !important;
-  color: #ffffff !important;
+  background: var(--accent-btn-bg, var(--accent-gradient, linear-gradient(135deg, #0369a1, #4f46e5))) !important;
+  color: var(--accent-btn-text, #ffffff) !important;
 }
 
 .app-backup-action-btn.import-btn {

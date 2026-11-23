@@ -448,14 +448,77 @@ if (typeof document !== 'undefined') {
     const syncBtn = document.getElementById('sync-btn');
     const syncStatus = document.getElementById('sync-status');
 
-    let ghPat = localStorage.getItem(GH_PAT_KEY) || '';
+    function safeStorageGet(key, fallback) {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const val = window.localStorage.getItem(key);
+          return val !== null ? val : fallback;
+        }
+        if (typeof localStorage !== 'undefined') {
+          const val = localStorage.getItem(key);
+          return val !== null ? val : fallback;
+        }
+      } catch (e) {}
+      return fallback;
+    }
 
-    /* ─── 主題與外觀系統 (Theme System - 4 Themes × 2 Normal/Inverted = 8 Themes) ─── */
+    function safeStorageSet(key, val) {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          window.localStorage.setItem(key, val);
+        } else if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(key, val);
+        }
+      } catch (e) {}
+    }
+
+    let ghPat = safeStorageGet(GH_PAT_KEY, '') || '';
+
+    /* ─── 主題與外觀系統 (Theme System - 4 Themes x 2 Normal/Inverted = 8 Themes) ─── */
     const STORAGE_KEY_THEME = 'user_theme';
     const STORAGE_KEY_THEME_INVERT = 'user_theme_inverted';
-    let currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'midnight';
-    let isThemeInverted = localStorage.getItem(STORAGE_KEY_THEME_INVERT) === 'true';
-    
+    const THEME_META_PALETTE = {
+      'midnight:0': { header: '#0a0f1d', scheme: 'dark' },
+      'onyx:0':     { header: '#0a0a0a', scheme: 'dark' },
+      'dawn:0':     { header: '#f8fafc', scheme: 'light' },
+      'emerald:0':  { header: '#f1f5f9', scheme: 'light' },
+      'midnight:1': { header: '#f0f9ff', scheme: 'light' },
+      'onyx:1':     { header: '#fafafa', scheme: 'light' },
+      'dawn:1':     { header: '#1c1917', scheme: 'dark' },
+      'emerald:1':  { header: '#0f172a', scheme: 'dark' }
+    };
+    let currentTheme = safeStorageGet(STORAGE_KEY_THEME, 'midnight') || 'midnight';
+    let isThemeInverted = safeStorageGet(STORAGE_KEY_THEME_INVERT, 'false') === 'true';
+
+    function isStandaloneMode() {
+      try {
+        return Boolean((window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true);
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function syncStandaloneStatusBar(theme, inverted) {
+      const meta = THEME_META_PALETTE[theme + ':' + (inverted ? '1' : '0')] || THEME_META_PALETTE['midnight:0'];
+      const root = document && document.documentElement;
+      const rootClassList = root && root.classList;
+      if (isStandaloneMode()) {
+        if (rootClassList && typeof rootClassList.add === 'function') {
+          rootClassList.add('pwa-standalone');
+        }
+        if (typeof document.querySelector === 'function') {
+          const themeMeta = document.querySelector('meta[name="theme-color"]');
+          if (themeMeta) themeMeta.setAttribute('content', meta.header);
+          const appleMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+          if (appleMeta) appleMeta.setAttribute('content', meta.scheme === 'light' ? 'default' : 'black-translucent');
+        }
+      } else {
+        if (rootClassList && typeof rootClassList.remove === 'function') {
+          rootClassList.remove('pwa-standalone');
+        }
+      }
+    }
+
     function applyTheme(theme, inverted) {
       if (!['midnight', 'onyx', 'dawn', 'emerald'].includes(theme)) {
         theme = 'midnight';
@@ -464,16 +527,25 @@ if (typeof document !== 'undefined') {
       if (typeof inverted === 'boolean') {
         isThemeInverted = inverted;
       }
-      document.documentElement.setAttribute('data-theme', theme);
-      if (isThemeInverted) {
-        document.documentElement.setAttribute('data-theme-inverted', 'true');
-      } else {
-        document.documentElement.removeAttribute('data-theme-inverted');
+      const meta = THEME_META_PALETTE[theme + ':' + (isThemeInverted ? '1' : '0')] || THEME_META_PALETTE['midnight:0'];
+      if (document && document.documentElement) {
+        if (typeof document.documentElement.setAttribute === 'function') {
+          document.documentElement.setAttribute('data-theme', theme);
+          if (isThemeInverted) {
+            document.documentElement.setAttribute('data-theme-inverted', 'true');
+          } else if (typeof document.documentElement.removeAttribute === 'function') {
+            document.documentElement.removeAttribute('data-theme-inverted');
+          }
+        }
+        try {
+          if (document.documentElement.style) {
+            document.documentElement.style.colorScheme = meta.scheme;
+          }
+        } catch (e) {}
       }
-      try {
-        localStorage.setItem(STORAGE_KEY_THEME, theme);
-        localStorage.setItem(STORAGE_KEY_THEME_INVERT, isThemeInverted ? 'true' : 'false');
-      } catch (e) {}
+      syncStandaloneStatusBar(theme, isThemeInverted);
+      safeStorageSet(STORAGE_KEY_THEME, theme);
+      safeStorageSet(STORAGE_KEY_THEME_INVERT, isThemeInverted ? 'true' : 'false');
 
       // 更新彈窗內的選中卡片
       document.querySelectorAll('.theme-card-btn').forEach(btn => {
@@ -491,11 +563,25 @@ if (typeof document !== 'undefined') {
       if (appInvertSwitch) appInvertSwitch.checked = isThemeInverted;
     }
 
+    // 監聽 standalone 模式動態切換 (若瀏覽器支援)
+    try {
+      const standaloneMql = window.matchMedia && window.matchMedia('(display-mode: standalone)');
+      if (standaloneMql) {
+        const onDisplayModeChange = () => syncStandaloneStatusBar(currentTheme, isThemeInverted);
+        if (typeof standaloneMql.addEventListener === 'function') {
+          standaloneMql.addEventListener('change', onDisplayModeChange);
+        } else if (typeof standaloneMql.addListener === 'function') {
+          standaloneMql.addListener(onDisplayModeChange);
+        }
+      }
+    } catch (e) {}
+
     // 初始化主題
     applyTheme(currentTheme, isThemeInverted);
     PokemonApp.applyTheme = applyTheme;
     PokemonApp.getCurrentTheme = () => currentTheme;
     PokemonApp.isThemeInverted = () => isThemeInverted;
+    PokemonApp.isStandaloneMode = isStandaloneMode;
 
     // 綁定主題卡片點擊
     document.querySelectorAll('.theme-card-btn').forEach(btn => {
@@ -569,7 +655,7 @@ if (typeof document !== 'undefined') {
           const val = ghPatInput ? ghPatInput.value.trim() : '';
           if (val) {
             ghPat = val;
-            localStorage.setItem(GH_PAT_KEY, val);
+            safeStorageSet(GH_PAT_KEY, val);
             animateOverlayClose(settingsModal, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
             if (syncStatus) syncStatus.innerHTML = `<span style="color:#4ade80;">[✓] PAT Token 已儲存！現在可以點擊同步資料。</span>`;
           } else {

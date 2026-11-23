@@ -756,9 +756,17 @@
   white-space: nowrap;
   pointer-events: auto;
   background: var(--ladder-passing-badge-bg, rgba(26, 21, 12, 0.94));
-  border: 1px solid var(--ladder-passing-badge-border, rgba(245, 158, 11, 0.85));
-  color: var(--ladder-passing-badge-text, #fbbf24);
+  border: 1px solid var(--ladder-passing-color-dark, var(--ladder-passing-badge-border, rgba(245, 158, 11, 0.85)));
+  color: var(--ladder-passing-color-dark, var(--ladder-passing-badge-text, #fbbf24));
   box-shadow: var(--ladder-passing-badge-shadow, 0 2px 6px rgba(0, 0, 0, 0.5));
+}
+
+.ladder-passing-line-container.passing-edge-right .ladder-passing-badge {
+  transform: translateX(-50%);
+}
+
+.ladder-passing-line-container.passing-edge-left .ladder-passing-badge {
+  transform: translateX(50%);
 }
 
 .ladder-passing-label {

@@ -30,7 +30,7 @@
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-title,
 [data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-title {
-  color: #0284c7 !important;
+  color: #0369a1 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body,
@@ -38,11 +38,16 @@
   color: #475569 !important;
 }
 
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body .text-accent,
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body .text-accent {
+  color: #0369a1 !important;
+}
+
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-tag,
 [data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-tag {
-  background: rgba(2, 132, 199, 0.1) !important;
-  color: #0284c7 !important;
-  border: 1px solid rgba(2, 132, 199, 0.25) !important;
+  background: rgba(3, 105, 161, 0.1) !important;
+  color: #0369a1 !important;
+  border: 1px solid rgba(3, 105, 161, 0.28) !important;
 }
 
 /* 翡翠淺色主題 (Emerald) */
@@ -58,17 +63,21 @@
 }
 
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-title {
-  color: #059669 !important;
+  color: #047857 !important;
 }
 
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body {
   color: #374151 !important;
 }
 
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body .text-accent {
+  color: #047857 !important;
+}
+
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-tag {
-  background: rgba(5, 150, 105, 0.1) !important;
-  color: #059669 !important;
-  border: 1px solid rgba(5, 150, 105, 0.25) !important;
+  background: rgba(4, 120, 87, 0.1) !important;
+  color: #047857 !important;
+  border: 1px solid rgba(4, 120, 87, 0.28) !important;
 }
 
 /* 曜石黑主題 (Onyx) */
@@ -95,6 +104,36 @@
   background: rgba(203, 213, 225, 0.14) !important;
   color: #cbd5e1 !important;
   border: 1px solid rgba(203, 213, 225, 0.3) !important;
+}
+
+/* 曜石白金反色主題 (Onyx Inverted Light) */
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid #d4d4d8 !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  color: #09090b !important;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-header {
+  border-bottom: 1px solid rgba(24, 24, 27, 0.1) !important;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-title {
+  color: #18181b !important;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body {
+  color: #3f3f46 !important;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body .text-accent {
+  color: #18181b !important;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-tag {
+  background: rgba(24, 24, 27, 0.08) !important;
+  color: #18181b !important;
+  border: 1px solid rgba(24, 24, 27, 0.2) !important;
 }
 
 /* Ingredients layout */

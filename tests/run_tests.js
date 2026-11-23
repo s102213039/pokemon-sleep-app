@@ -94,7 +94,8 @@ const { registerTier4Tests } = require('./tiers/tier4_scenarios');
       { name: 'Standalone: R6 Canonical Energy Sort Suite', file: 'test_r6_canonical_energy_sort.js' },
       { name: 'Standalone: Security Audit & Hardening Regression Suite', file: 'test_security_audit.js' },
       { name: 'Standalone: Milestone 3 Recipes Reverse-Search & Pot Optimization Suite', file: 'test_milestone3_recipes.js' },
-      { name: 'Standalone: Milestone 4 Pokedex Evolution Tree & Island Sleep Style Tracker Suite', file: 'test_milestone4_pokedex_camps.js' }
+      { name: 'Standalone: Milestone 4 Pokedex Evolution Tree & Island Sleep Style Tracker Suite', file: 'test_milestone4_pokedex_camps.js' },
+      { name: 'Standalone: R1-R5 Theme Boot, Standalone PWA & CSS Sync Suite', file: 'test_r1_r5_theme_pwa_css.js' }
     ];
 
     for (const suite of standaloneSuites) {

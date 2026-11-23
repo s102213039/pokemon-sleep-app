@@ -3,11 +3,11 @@
 }
 
 .mobile-h5-app .ladder-tail-ruler-scale {
-  margin: 0 14px 0 4px !important;
+  margin: 0 12px 0 10px !important;
 }
 
 .mobile-h5-app .ladder-tail-canvas {
-  margin: 0 14px 0 4px !important;
+  margin: 0 12px 0 10px !important;
 }
 
 .mobile-h5-app .node-avatar-wrapper {
@@ -101,6 +101,17 @@
   padding: 2px 0 !important;
 }
 
+.mobile-h5-app .values-compact-grid.values-berry-grid,
+.mobile-h5-app .values-compact-grid.values-ing-grid {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  grid-auto-flow: row !important;
+  grid-auto-columns: initial !important;
+  gap: 5px 3px !important;
+  padding: 2px 0 !important;
+  overflow-x: visible !important;
+}
+
 .mobile-h5-app .value-compact-node {
   background: transparent !important;
   border: none !important;
@@ -147,18 +158,37 @@
   background: rgba(253, 224, 71, 0.12) !important;
 }
 
-[data-theme="dawn"] .mobile-h5-app .value-compact-energy.berry-val,
-[data-theme="emerald"] .mobile-h5-app .value-compact-energy.berry-val {
+.mobile-h5-app .value-compact-node.value-tail-highlight .value-compact-energy {
+  color: #f472b6 !important;
+  background: rgba(244, 114, 182, 0.14) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .value-compact-energy.berry-val,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .value-compact-energy.berry-val,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .value-compact-energy.berry-val,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .value-compact-energy.berry-val {
   color: #0369a1 !important;
   background: rgba(3, 105, 161, 0.08) !important;
 }
 
-[data-theme="dawn"] .mobile-h5-app .value-compact-energy.berry-val-fav,
-[data-theme="emerald"] .mobile-h5-app .value-compact-energy.berry-val-fav,
-[data-theme="dawn"] .mobile-h5-app .value-compact-energy.ing-val,
-[data-theme="emerald"] .mobile-h5-app .value-compact-energy.ing-val {
-  color: #b45309 !important;
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .value-compact-energy.berry-val-fav,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .value-compact-energy.berry-val-fav,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .value-compact-energy.ing-val,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .value-compact-energy.ing-val,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .value-compact-energy.berry-val-fav,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .value-compact-energy.berry-val-fav,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .value-compact-energy.ing-val,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .value-compact-energy.ing-val {
+  color: #92400e !important;
   background: rgba(180, 83, 9, 0.08) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .value-compact-node.value-tail-highlight .value-compact-energy,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .value-compact-node.value-tail-highlight .value-compact-energy,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .value-compact-node.value-tail-highlight .value-compact-energy,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .value-compact-node.value-tail-highlight .value-compact-energy {
+  color: #be185d !important;
+  background: rgba(190, 24, 93, 0.08) !important;
 }
 
 /* 全域保證：隱藏的 panel 絕不覆蓋顯示 */

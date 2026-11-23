@@ -624,19 +624,19 @@ body.box-lab-active .box-fab-container,
 }
 
 .ladder-help-icon-btn.active {
-  background: #a855f7 !important;
+  background: #7e22ce !important;
   color: #ffffff !important;
-  border-color: #a855f7 !important;
-  box-shadow: 0 0 8px rgba(168, 85, 247, 0.5) !important;
+  border-color: #7e22ce !important;
+  box-shadow: 0 0 8px rgba(126, 34, 206, 0.5) !important;
   transform: scale(1.08);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .ladder-help-icon-btn:hover {
-    background: #a855f7;
+    background: #7e22ce;
     color: #ffffff;
-    border-color: #a855f7;
-    box-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+    border-color: #7e22ce;
+    box-shadow: 0 0 8px rgba(126, 34, 206, 0.5);
     transform: scale(1.08);
   }
 }
@@ -645,13 +645,19 @@ body.box-lab-active .box-fab-container,
   transform: scale(0.95);
 }
 
-[data-theme="dawn"] .ladder-help-icon-btn {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-help-icon-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-help-icon-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-help-icon-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-help-icon-btn {
   border-color: rgba(147, 51, 234, 0.35);
   background: rgba(147, 51, 234, 0.08);
   color: #7e22ce;
 }
 
-[data-theme="dawn"] .ladder-help-icon-btn.active {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-help-icon-btn.active,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-help-icon-btn.active,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-help-icon-btn.active,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-help-icon-btn.active {
   background: #7e22ce !important;
   color: #ffffff !important;
   border-color: #7e22ce !important;
@@ -660,7 +666,10 @@ body.box-lab-active .box-fab-container,
 }
 
 @media (hover: hover) and (pointer: fine) {
-  [data-theme="dawn"] .ladder-help-icon-btn:hover {
+  [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-help-icon-btn:hover,
+  [data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-help-icon-btn:hover,
+  [data-theme="midnight"][data-theme-inverted="true"] .ladder-help-icon-btn:hover,
+  [data-theme="onyx"][data-theme-inverted="true"] .ladder-help-icon-btn:hover {
     background: #7e22ce;
     color: #ffffff;
     border-color: #7e22ce;
@@ -668,16 +677,17 @@ body.box-lab-active .box-fab-container,
   }
 }
 
-[data-theme="emerald"] .ladder-help-icon-btn {
-  border-color: rgba(168, 85, 247, 0.4);
-  background: rgba(168, 85, 247, 0.12);
+[data-theme="dawn"][data-theme-inverted="true"] .ladder-help-icon-btn,
+[data-theme="emerald"][data-theme-inverted="true"] .ladder-help-icon-btn {
+  border-color: rgba(192, 132, 252, 0.4);
+  background: rgba(168, 85, 247, 0.18);
   color: #d8b4fe;
 }
 
-[data-theme="onyx"] .ladder-help-icon-btn {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .ladder-help-icon-btn {
   border-color: rgba(192, 132, 252, 0.4);
   background: rgba(168, 85, 247, 0.18);
-  color: #c084fc;
+  color: #d8b4fe;
 }
 
 /* ───  原生 App 風格下拉刷新指示器 (Native Mobile Pull-to-Refresh) ─── */
@@ -830,8 +840,8 @@ body.box-lab-active .box-fab-container,
 }
 
 
-/* 食材基礎庫：固定單行展示，不換行 (食材數量變動時自動延展欄數；窄螢幕橫向捲動) */
-.values-compact-grid.values-ing-grid {
+/* 食材基礎庫：Web 桌面版維持單行展示，不換行 (食材數量變動時自動延展欄數；窄螢幕橫向捲動) */
+body:not(.mobile-h5-app) .values-compact-grid.values-ing-grid {
   grid-template-columns: none !important;
   grid-auto-flow: column !important;
   grid-auto-columns: minmax(0, 1fr) !important;
@@ -839,16 +849,29 @@ body.box-lab-active .box-fab-container,
   scrollbar-width: none;
 }
 
-.values-compact-grid.values-ing-grid::-webkit-scrollbar {
+body:not(.mobile-h5-app) .values-compact-grid.values-ing-grid::-webkit-scrollbar {
   display: none;
 }
 
 @media (max-width: 900px) {
-  .values-compact-grid.values-ing-grid,
-  .mobile-h5-app .values-compact-grid.values-ing-grid {
+  body:not(.mobile-h5-app) .values-compact-grid.values-ing-grid {
     grid-template-columns: none !important;
     grid-auto-flow: column !important;
     grid-auto-columns: minmax(44px, 1fr) !important;
     gap: 4px !important;
+  }
+}
+
+/* Desktop (>=1025px): offset Wiki main container when Ladder or Skill Ladder sidebar is open */
+@media (min-width: 1025px) {
+  body:not(.mobile-h5-app) #panel-wiki:has(> #ladder-filter-sidebar:not(.collapsed):not([style*="display: none"]):not([style*="display:none"])),
+  body:not(.mobile-h5-app) #panel-wiki:has(> #skill-ladder-filter-sidebar:not(.collapsed):not([style*="display: none"]):not([style*="display:none"])) {
+    padding-left: 240px;
+    box-sizing: border-box;
+  }
+
+  body:not(.mobile-h5-app) #panel-wiki:has(> #ladder-filter-sidebar:not(.collapsed):not([style*="display: none"]):not([style*="display:none"])) > .wiki-main-container,
+  body:not(.mobile-h5-app) #panel-wiki:has(> #skill-ladder-filter-sidebar:not(.collapsed):not([style*="display: none"]):not([style*="display:none"])) > .wiki-main-container {
+    width: min(1200px, calc(100% - 32px));
   }
 }

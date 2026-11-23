@@ -944,7 +944,7 @@ async function auditMobileH5EnOverflow(cdp) {
               clientWidth: el.clientWidth
             });
           }
-          if (rect.right > window.innerWidth + 1.5 && !el.closest('.wiki-subnav-tabs, .wiki-filter-pills, .lab-subnav-bar, .values-ing-grid')) {
+          if (rect.right > window.innerWidth + 1.5 && !el.closest('.wiki-subnav-tabs, .wiki-filter-pills, .lab-subnav-bar')) {
             issues.push({
               selector: sel,
               text: (el.textContent || '').trim().slice(0, 50),

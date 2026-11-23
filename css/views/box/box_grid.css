@@ -644,13 +644,27 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8) !important;
 }
 
-[data-theme="onyx"] .ladder-skill-tooltip-bubble {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .ladder-skill-tooltip-bubble {
   background: #09090b !important;
   border: 1px solid rgba(168, 85, 247, 0.4) !important;
 }
 
-[data-theme="dawn"] .ladder-skill-tooltip-bubble,
-[data-theme="emerald"] .ladder-skill-tooltip-bubble {
+[data-theme="dawn"][data-theme-inverted="true"] .ladder-skill-tooltip-bubble {
+  background: #1c1917 !important;
+  border: 1px solid rgba(168, 85, 247, 0.4) !important;
+  color: #f1f5f9 !important;
+}
+
+[data-theme="emerald"][data-theme-inverted="true"] .ladder-skill-tooltip-bubble {
+  background: #0f172a !important;
+  border: 1px solid rgba(168, 85, 247, 0.4) !important;
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-skill-tooltip-bubble,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-skill-tooltip-bubble,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-skill-tooltip-bubble,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-skill-tooltip-bubble {
   background: #ffffff !important;
   border: 1px solid #a855f7 !important;
   color: #1e293b !important;

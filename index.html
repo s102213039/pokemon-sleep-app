@@ -18,6 +18,56 @@
   <title>Pokémon Sleep 寶可夢機率與料理食譜資料庫</title>
   <meta name="description" content="Pokémon Sleep 寶可夢機率、食材與料理食譜線上資料庫，支援即時搜尋、屬性得意篩選、食材產量與進階食譜計算。">
 
+  <!-- 同步主題初始化與 Standalone 狀態欄融合引擎 -->
+  <script>
+    (function() {
+      var VALID_THEMES = { midnight: true, onyx: true, dawn: true, emerald: true };
+      var PALETTE = {
+        'midnight:0': { header: '#0a0f1d', scheme: 'dark' },
+        'onyx:0':     { header: '#0a0a0a', scheme: 'dark' },
+        'dawn:0':     { header: '#f8fafc', scheme: 'light' },
+        'emerald:0':  { header: '#f1f5f9', scheme: 'light' },
+        'midnight:1': { header: '#f0f9ff', scheme: 'light' },
+        'onyx:1':     { header: '#fafafa', scheme: 'light' },
+        'dawn:1':     { header: '#1c1917', scheme: 'dark' },
+        'emerald:1':  { header: '#0f172a', scheme: 'dark' }
+      };
+      var theme = 'midnight';
+      var inverted = false;
+      try {
+        var rawTheme = localStorage.getItem('user_theme');
+        if (rawTheme && VALID_THEMES[rawTheme]) theme = rawTheme;
+        inverted = localStorage.getItem('user_theme_inverted') === 'true';
+      } catch (e) {}
+
+      var root = document.documentElement;
+      root.setAttribute('data-theme', theme);
+      if (inverted) {
+        root.setAttribute('data-theme-inverted', 'true');
+      } else {
+        root.removeAttribute('data-theme-inverted');
+      }
+      var meta = PALETTE[theme + ':' + (inverted ? '1' : '0')] || PALETTE['midnight:0'];
+      try {
+        root.style.colorScheme = meta.scheme;
+      } catch (e) {}
+
+      var isStandalone = false;
+      try {
+        isStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+      } catch (e) {}
+      if (isStandalone) {
+        root.classList.add('pwa-standalone');
+        try {
+          var themeMeta = document.querySelector('meta[name="theme-color"]');
+          if (themeMeta) themeMeta.setAttribute('content', meta.header);
+          var appleMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+          if (appleMeta) appleMeta.setAttribute('content', meta.scheme === 'light' ? 'default' : 'black-translucent');
+        } catch (e) {}
+      }
+    })();
+  </script>
+
   <!--  智慧裝置引導與防死循環轉跳引擎 (Smart Redirection & Anti-Loop Engine) -->
   <script>
     (function() {
@@ -132,7 +182,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.min.css?v=20261121_1400">
+  <link rel="stylesheet" href="css/styles.min.css?v=20261122_0152">
   <!-- 全域錯誤診斷與日誌攔截器 (Global Error & Diagnostic Logger) -->
   <script>
     (function() {
@@ -532,7 +582,7 @@
           <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">
             <span data-i18n="settings.telemetry_desc">監控首屏載入耗時、Web Vitals 與本地快取健康狀態。若遇到功能異常，可一鍵複製診斷報告排查問題。</span>
           </div>
-          <button type="button" id="settings-copy-diag-btn" class="settings-backup-btn" style="width:100%;justify-content:center;" onclick="if(window.TelemetryManager){window.TelemetryManager.copyDiagnosticReport().then(function(ok){alert(ok?'診斷報告已複製至剪貼簿！':'複製失敗');});}">
+          <button type="button" id="settings-copy-diag-btn" class="settings-backup-btn settings-import-btn" style="width:100%;justify-content:center;" onclick="if(window.TelemetryManager){window.TelemetryManager.copyDiagnosticReport().then(function(ok){alert(ok?'診斷報告已複製至剪貼簿！':'複製失敗');});}">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -1546,21 +1596,21 @@
   </button>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
-  <script src="js/core/idbStorage.min.js?v=20261121_1400"></script>
-  <script src="js/core/gameConfig.min.js?v=20261121_1400"></script>
-  <script src="js/core/domUtils.min.js?v=20261121_1400"></script>
-  <script src="js/core/cloudSync.min.js?v=20261121_1400"></script>
-  <script src="js/core/i18n.min.js?v=20261121_1400"></script>
-  <script src="js/core/telemetry.min.js?v=20261121_1400"></script>
-  <script src="js/components/customSelect.min.js?v=20261121_1400"></script>
-  <script src="js/components/popoverCoordinator.min.js?v=20261121_1400"></script>
-  <script src="js/modules/app.min.js?v=20261121_1400"></script>
-  <script src="js/modules/recipes.min.js?v=20261121_1400"></script>
-  <script src="js/data/items.min.js?v=20261121_1400"></script>
-  <script src="js/data/ladder_data.min.js?v=20261121_1400"></script>
-  <script src="js/modules/wiki.min.js?v=20261121_1400"></script>
-  <script src="js/modules/box.min.js?v=20261121_1400"></script>
-  <script src="js/modules/news.min.js?v=20261121_1400"></script>
-  <script src="js/modules/appraisal.min.js?v=20261121_1400"></script>
+  <script src="js/core/idbStorage.min.js?v=20261122_0152"></script>
+  <script src="js/core/gameConfig.min.js?v=20261122_0152"></script>
+  <script src="js/core/domUtils.min.js?v=20261122_0152"></script>
+  <script src="js/core/cloudSync.min.js?v=20261122_0152"></script>
+  <script src="js/core/i18n.min.js?v=20261122_0152"></script>
+  <script src="js/core/telemetry.min.js?v=20261122_0152"></script>
+  <script src="js/components/customSelect.min.js?v=20261122_0152"></script>
+  <script src="js/components/popoverCoordinator.min.js?v=20261122_0152"></script>
+  <script src="js/modules/app.min.js?v=20261122_0152"></script>
+  <script src="js/modules/recipes.min.js?v=20261122_0152"></script>
+  <script src="js/data/items.min.js?v=20261122_0152"></script>
+  <script src="js/data/ladder_data.min.js?v=20261122_0152"></script>
+  <script src="js/modules/wiki.min.js?v=20261122_0152"></script>
+  <script src="js/modules/box.min.js?v=20261122_0152"></script>
+  <script src="js/modules/news.min.js?v=20261122_0152"></script>
+  <script src="js/modules/appraisal.min.js?v=20261122_0152"></script>
 </body>
 </html>

@@ -473,6 +473,38 @@
     return Math.round(bonus * getLadderSkillTriggerMultiplier());
   }
 
+  const ING_SELECT_SKILL_NAMES = new Set([
+    '食材精選S', '食材精選', '超幸運', '怪力鉗',
+    'Ingredient Selection S', 'Super Luck', 'Hyper Cutter'
+  ]);
+
+  const ING_SELECT_POKEMON_FALLBACK = new Set([
+    '穿山鼠', '穿山王', '黑暗鴉', '烏鴉頭頭', '大嘴娃',
+    '石居蟹', '岩殿居蟹', '摔角鷹人', '萌虻', '蝶結萌虻',
+    'Sandshrew', 'Sandslash', 'Murkrow', 'Honchkrow', 'Mawile',
+    'Dwebble', 'Crustle', 'Hawlucha', 'Cutiefly', 'Ribombee'
+  ]);
+
+  function hasPokemonIngSelectSkill(pkmName) {
+    if (!pkmName) return false;
+    const cleanName = String(pkmName).trim();
+    const baseName = cleanName.replace(/（.*）|\(.*\)/g, '').trim();
+    if (typeof window !== 'undefined') {
+      const liveArr = (Array.isArray(window.POKEMON_DATA) && window.POKEMON_DATA.length > 0 && window.POKEMON_DATA)
+        || (window.PokemonApp && Array.isArray(window.PokemonApp.allPokemons) && window.PokemonApp.allPokemons.length > 0 && window.PokemonApp.allPokemons)
+        || (Array.isArray(window.allPokemons) && window.allPokemons.length > 0 && window.allPokemons)
+        || null;
+      if (liveArr) {
+        const idx = _getWikiPkmIndex(liveArr);
+        const match = idx['cn:' + cleanName] || idx['cn:' + baseName] || idx['en:' + cleanName] || idx['en:' + cleanName.toLowerCase()];
+        if (match && match.main_skill) {
+          return ING_SELECT_SKILL_NAMES.has(String(match.main_skill).trim());
+        }
+      }
+    }
+    return ING_SELECT_POKEMON_FALLBACK.has(cleanName) || ING_SELECT_POKEMON_FALLBACK.has(baseName);
+  }
+
   // 3.0.0 食材天梯相同產量配方動態合併核心 (Dynamic Recipe Wildcard Merger)
   function mergeRecipeCodes(recipeList) {
     if (!recipeList || recipeList.length === 0) return 'AAA';

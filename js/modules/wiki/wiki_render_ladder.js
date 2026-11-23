@@ -374,7 +374,7 @@
             return `
             <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''} ${highlightClass}" data-ladder-ing="${ing.id}">
               <div class="ladder-track-header ${isDimmed ? 'ladder-track-disabled-header' : 'clickable-ing-header'}" 
-                   ${isDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('${ing.id}')" role="button" tabindex="0"`} 
+                   ${isDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('${ing.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.WikiDB.openIngredientRankingModal('${ing.id}');}" role="button" tabindex="0"`} 
                    title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isHighlighted ? (isEN ? 'Selected Dish: ' : '選定料理: ') + targetDishName + ` (${targetDishNeed}${isEN ? '/meal' : '顆/餐'})` : (isDimmed ? (isEN ? 'Not in current recipe' : '非此料理所需食材') : (isEN ? 'Key Dish: ' : '核心大菜: ') + dishName)} · ${isEN ? 'Click to view rankings' : '點擊查看產量排名'}">
                 <div class="ladder-track-ing-main">
                   <img src="${(typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon}" class="ladder-ing-icon" alt="${ingName}">
@@ -423,15 +423,26 @@
                       countGroups[node.scaledCount].push(node);
                     });
 
+                    // 計算該軌道產量前 3 名門檻 (Dense Top 3，獨立於 Top15 篩選與排序)
+                    const distinctYields = [...new Set(trackNodes.map(n => n.scaledCount))].sort((a, b) => b - a);
+                    const top3Threshold = distinctYields.length > 0 ? distinctYields[Math.min(2, distinctYields.length - 1)] : Infinity;
+
                     return trackNodes.map(node => {
                       const group = countGroups[node.scaledCount];
                       const groupSize = group.length;
                       const itemIdx = group.indexOf(node);
-                      
+                      const basePosPct = parseFloat(getPosPct(node.scaledCount));
+
                       let offsetPx = 0;
                       if (groupSize > 1) {
                         const staggerStep = groupSize >= 6 ? 14 : 18;
-                        offsetPx = Math.round((itemIdx - (groupSize - 1) / 2) * staggerStep);
+                        if (basePosPct <= 4) {
+                          offsetPx = Math.round(itemIdx * staggerStep);
+                        } else if (basePosPct >= 96) {
+                          offsetPx = Math.round((itemIdx - (groupSize - 1)) * staggerStep);
+                        } else {
+                          offsetPx = Math.round((itemIdx - (groupSize - 1) / 2) * staggerStep);
+                        }
                       }
 
                       // 料理供應能力試算 (若有選取料理則依選定料理單餐需求計算，否則依核心大菜計算)
@@ -449,14 +460,17 @@
                         dishBadgeClass = 'dish-badge-assist';
                       }
 
-                      const basePosPct = parseFloat(getPosPct(node.scaledCount));
                       const alignClass = basePosPct > 60 ? 'align-right' : (basePosPct < 40 ? 'align-left' : 'align-center');
-                      const leftStyle = offsetPx === 0 ? `${basePosPct}%` : `calc(${basePosPct}% + ${offsetPx}px)`;
+                      const rawPosExpr = offsetPx === 0 ? `${basePosPct}%` : `calc(${basePosPct}% + ${offsetPx}px)`;
+                      const leftStyle = `clamp(12px, ${rawPosExpr}, calc(100% - 12px))`;
+                      const isTop3 = node.scaledCount > 0 && node.scaledCount >= top3Threshold;
+                      const hasIngSelectSkill = (typeof hasPokemonIngSelectSkill === 'function') && hasPokemonIngSelectSkill(node.p.name);
                       const hasSkillDraw = node.skillBonus > 0;
+                      const showCountBadge = isTop3 || hasIngSelectSkill || hasSkillDraw;
                       const dishLabel = isHighlighted ? (isEN ? 'Selected Dish: ' : '選定料理: ') : (isEN ? 'Key Dish: ' : '核心大菜: ');
 
                       return `
-                        <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${hasSkillDraw ? 'node-has-skill-draw' : ''} ${alignClass} ${popupDirectionClass} recipe-${node.v.recipe.toLowerCase()} ${groupSize > 1 ? 'node-in-cluster' : ''}" 
+                        <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${hasIngSelectSkill ? 'node-has-ing-select' : ''} ${hasSkillDraw ? 'node-has-skill-draw' : ''} ${alignClass} ${popupDirectionClass} recipe-${node.v.recipe.toLowerCase()} ${groupSize > 1 ? 'node-in-cluster' : ''}" 
                              data-pkm-group="${node.p.name}"
                              data-pkm="${node.p.name}" 
                              data-recipe="${node.v.recipe}"
@@ -464,9 +478,11 @@
                           <div class="node-avatar-wrapper">
                             <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}" loading="lazy" decoding="async">
                           </div>
-                          <div class="node-count-badge ${hasSkillDraw ? 'badge-skill-draw' : ''}" ${hasSkillDraw ? `title="${isEN ? 'Base Drop: ' + node.dropCount + ' + Ingr. Selection Lv.7: ' + node.skillBonus : '常規食材掉落: ' + node.dropCount + ' + 食材精選S Lv.7: ' + node.skillBonus}"` : ''}>
-                            ${node.scaledCount}
-                          </div>
+                          ${showCountBadge ? `
+                            <div class="node-count-badge ${hasIngSelectSkill ? 'badge-ing-select' : ''} ${hasSkillDraw ? 'badge-skill-draw' : ''}" ${hasSkillDraw ? `title="${isEN ? 'Base Drop: ' + node.dropCount + ' + Ingr. Selection Lv.7: ' + node.skillBonus : '常規食材掉落: ' + node.dropCount + ' + 食材精選S Lv.7: ' + node.skillBonus}"` : (hasIngSelectSkill ? `title="${isEN ? 'Ingredient Selection Skill Pokemon' : '食材精選類技能寶可夢'}"` : '')}>
+                              ${node.scaledCount}
+                            </div>
+                          ` : ''}
                           
                           <div class="ladder-node-tooltip">
                             <div class="tooltip-title">${node.isTopNode ? (isEN ? 'Top 1 Yield ' : '產量 TOP 1 ') : ''}${node.pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${node.v.recipe.toLowerCase()}">${node.v.recipe}</span></div>
@@ -501,14 +517,19 @@
                 </div>
 
                 <!-- 三餐及格線 (3 Meals Passing Line) - 置於節點容器後，確保不被覆蓋 -->
-                ${passingTargets.map(m => `
-                  <div class="ladder-passing-line-container" style="left: ${getPosPct(m.target)}%; --ladder-passing-line-color: ${m.color}; --ladder-passing-line-glow: ${m.color};" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${m.target} ${isEN ? 'items' : '顆'}">
+                ${passingTargets.map(m => {
+                  const pctStr = getPosPct(m.target);
+                  const pctNum = parseFloat(pctStr);
+                  const edgeCls = pctNum >= 96 ? 'passing-edge-right' : (pctNum <= 4 ? 'passing-edge-left' : '');
+                  return `
+                  <div class="ladder-passing-line-container ${edgeCls}" style="left: ${pctStr}%; --ladder-passing-line-color: ${m.color}; --ladder-passing-line-glow: ${m.color}; --ladder-passing-color-dark: ${m.color}; --ladder-passing-color-light: ${m.fg};" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${m.target} ${isEN ? 'items' : '顆'}">
                     <div class="ladder-passing-line"></div>
-                    <div class="ladder-passing-badge" style="color:${m.color};border-color:${m.color}">
+                    <div class="ladder-passing-badge">
                       <span class="ladder-passing-num">${m.target}</span>
                     </div>
                   </div>
-                `).join('')}
+                `;
+                }).join('')}
               </div>
             </div>
           `;
@@ -594,7 +615,7 @@
 
                   <div class="ladder-tail-track-row ${isTailEmpty ? 'ladder-track-empty' : ''} ${isTailDimmed ? 'ladder-track-dimmed' : (isTailHighlighted ? 'ladder-track-highlighted' : '')}" data-ladder-ing="tail">
                     <div class="ladder-track-header ${isTailDimmed ? 'ladder-track-disabled-header' : 'clickable-ing-header'}" 
-                         ${isTailDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('tail')" role="button" tabindex="0"`} 
+                         ${isTailDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('tail')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.WikiDB.openIngredientRankingModal('tail');}" role="button" tabindex="0"`} 
                          title="${isEN ? 'Slowpoke Tail' : '美味尾巴'} · ${isTailDimmed ? (isEN ? 'Not required for this recipe' : '非此料理所需食材') : (isEN ? 'Click to view rankings' : '點擊查看產量排名')}">
                       <img src="${tailIng.icon}" class="ladder-ing-icon" alt="${isEN ? 'Slowpoke Tail' : '美味尾巴'}">
                     </div>
@@ -654,23 +675,36 @@
                             tailCountGroups[node.scaledCount].push(node);
                           });
 
+                          const distinctTailYields = [...new Set(tailTrackNodes.map(n => n.scaledCount))].sort((a, b) => b - a);
+                          const tailTop3Threshold = distinctTailYields.length > 0 ? distinctTailYields[Math.min(2, distinctTailYields.length - 1)] : Infinity;
+
                           return tailTrackNodes.map(node => {
                             const group = tailCountGroups[node.scaledCount];
                             const groupSize = group.length;
                             const itemIdx = group.indexOf(node);
-                            
+                            const baseTailPosPct = parseFloat(getTailPct(node.scaledCount));
+
                             let offsetPx = 0;
                             if (groupSize > 1) {
                               const staggerStep = groupSize >= 6 ? 14 : 18;
-                              offsetPx = Math.round((itemIdx - (groupSize - 1) / 2) * staggerStep);
+                              if (baseTailPosPct <= 4) {
+                                offsetPx = Math.round(itemIdx * staggerStep);
+                              } else if (baseTailPosPct >= 96) {
+                                offsetPx = Math.round((itemIdx - (groupSize - 1)) * staggerStep);
+                              } else {
+                                offsetPx = Math.round((itemIdx - (groupSize - 1) / 2) * staggerStep);
+                              }
                             }
 
-                            const baseTailPosPct = parseFloat(getTailPct(node.scaledCount));
                             const tailAlignClass = baseTailPosPct > 55 ? 'align-right' : (baseTailPosPct < 25 ? 'align-left' : 'align-center');
-                            const leftStyle = offsetPx === 0 ? `${baseTailPosPct}%` : `calc(${baseTailPosPct}% + ${offsetPx}px)`;
+                            const rawTailPosExpr = offsetPx === 0 ? `${baseTailPosPct}%` : `calc(${baseTailPosPct}% + ${offsetPx}px)`;
+                            const leftStyle = `clamp(12px, ${rawTailPosExpr}, calc(100% - 12px))`;
+                            const isTop3 = node.scaledCount > 0 && node.scaledCount >= tailTop3Threshold;
+                            const hasIngSelectSkill = (typeof hasPokemonIngSelectSkill === 'function') && hasPokemonIngSelectSkill(node.p.name);
+                            const showCountBadge = isTop3 || hasIngSelectSkill;
 
                             return `
-                              <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${tailAlignClass} recipe-${node.v.recipe.toLowerCase()} ${groupSize > 1 ? 'node-in-cluster' : ''}" 
+                              <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${hasIngSelectSkill ? 'node-has-ing-select' : ''} ${tailAlignClass} recipe-${node.v.recipe.toLowerCase()} ${groupSize > 1 ? 'node-in-cluster' : ''}" 
                                    data-pkm-group="${node.p.name}"
                                    data-pkm="${node.p.name}" 
                                    data-recipe="${node.v.recipe}"
@@ -678,7 +712,9 @@
                                 <div class="node-avatar-wrapper">
                                   <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}">
                                 </div>
-                                <div class="node-count-badge">${node.scaledCount}</div>
+                                ${showCountBadge ? `
+                                  <div class="node-count-badge ${hasIngSelectSkill ? 'badge-ing-select' : ''}" ${hasIngSelectSkill ? `title="${isEN ? 'Ingredient Selection Skill Pokemon' : '食材精選類技能寶可夢'}"` : ''}>${node.scaledCount}</div>
+                                ` : ''}
                                 <div class="ladder-node-tooltip">
                                   <div class="tooltip-title">${node.isTopNode ? (isEN ? 'Top 1 Yield ' : '產量 TOP 1 ') : ''}${node.pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${node.v.recipe.toLowerCase()}">${node.v.recipe}</span></div>
                                   <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${node.scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
@@ -691,14 +727,19 @@
                       </div>
 
                       <!-- 尾巴三餐及格線 - 置於節點容器後，確保不被覆蓋 -->
-                      ${tailPassingTargets.map(m => `
-                        <div class="ladder-passing-line-container" style="left: ${getTailPct(m.target)}%; --ladder-passing-line-color: ${m.color}; --ladder-passing-line-glow: ${m.color};" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${m.target} ${isEN ? 'items' : '顆'}">
+                      ${tailPassingTargets.map(m => {
+                        const pctStr = getTailPct(m.target);
+                        const pctNum = parseFloat(pctStr);
+                        const edgeCls = pctNum >= 96 ? 'passing-edge-right' : (pctNum <= 4 ? 'passing-edge-left' : '');
+                        return `
+                        <div class="ladder-passing-line-container ${edgeCls}" style="left: ${pctStr}%; --ladder-passing-line-color: ${m.color}; --ladder-passing-line-glow: ${m.color}; --ladder-passing-color-dark: ${m.color}; --ladder-passing-color-light: ${m.fg};" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${m.target} ${isEN ? 'items' : '顆'}">
                           <div class="ladder-passing-line"></div>
-                          <div class="ladder-passing-badge" style="color:${m.fg};border-color:${m.color}">
+                          <div class="ladder-passing-badge">
                             <span class="ladder-passing-num">${m.target}</span>
                           </div>
                         </div>
-                      `).join('')}
+                      `;
+                      }).join('')}
                     </div>
                   </div>
                 </div>

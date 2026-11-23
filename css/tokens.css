@@ -4,6 +4,7 @@
    ========================================================= */
 
 :root, [data-theme="midnight"] {
+  color-scheme: dark;
   --bg-dark: #0a0f1d;
   --bg-header: rgba(10, 15, 29, 0.92);
   --bg-card: rgba(30, 41, 59, 0.75);
@@ -38,6 +39,8 @@
   --accent-purple: #818cf8;
   --accent-color: #38bdf8;
   --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+  --accent-btn-bg: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+  --accent-btn-text: #0f172a;
   --color-accent-blue: #38bdf8;
   --color-accent-gold: #fbbf24;
   --color-accent-green: #34d399;
@@ -134,6 +137,7 @@
 }
 
 [data-theme="onyx"] {
+  color-scheme: dark;
   --bg-dark: #050505;
   --bg-header: rgba(10, 10, 10, 0.94);
   --bg-card: rgba(24, 24, 27, 0.85);
@@ -168,6 +172,8 @@
   --accent-purple: #94a3b8;
   --accent-color: #cbd5e1;
   --accent-gradient: linear-gradient(135deg, #475569 0%, #64748b 50%, #94a3b8 100%);
+  --accent-btn-bg: linear-gradient(135deg, #334155 0%, #475569 100%);
+  --accent-btn-text: #ffffff;
   --color-accent-blue: #cbd5e1;
   --color-accent-gold: #fbbf24;
   --color-accent-green: #34d399;
@@ -234,6 +240,7 @@
 }
 
 [data-theme="dawn"] {
+  color-scheme: light;
   --bg-dark: #f8fafc;
   --bg-header: rgba(248, 250, 252, 0.94);
   --bg-card: #ffffff;
@@ -268,6 +275,8 @@
   --accent-purple: #6366f1;
   --accent-color: #0284c7;
   --accent-gradient: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+  --accent-btn-bg: linear-gradient(135deg, #0369a1 0%, #4f46e5 100%);
+  --accent-btn-text: #ffffff;
   --color-accent-blue: #0284c7;
   --color-accent-gold: #b45309;
   --color-accent-green: #15803d;
@@ -333,6 +342,7 @@
 }
 
 [data-theme="emerald"] {
+  color-scheme: light;
   --bg-dark: #f1f5f9;
   --bg-header: rgba(241, 245, 249, 0.94);
   --bg-card: #ffffff;
@@ -367,6 +377,8 @@
   --accent-purple: #64748b;
   --accent-color: #475569;
   --accent-gradient: linear-gradient(135deg, #334155 0%, #475569 50%, #64748b 100%);
+  --accent-btn-bg: linear-gradient(135deg, #334155 0%, #475569 100%);
+  --accent-btn-text: #ffffff;
   --color-accent-blue: #475569;
   --color-accent-gold: #b45309;
   --color-accent-green: #15803d;
@@ -437,6 +449,7 @@
 
 /* 1.  深邃夜空 (Midnight) 反色版 ➔ 澄澈晴空 (Light Ice Sky & Royal Cyan) */
 [data-theme="midnight"][data-theme-inverted="true"] {
+  color-scheme: light;
   --bg-dark: #f0f9ff;
   --bg-header: rgba(240, 249, 255, 0.94);
   --bg-card: #ffffff;
@@ -471,6 +484,8 @@
   --accent-purple: #6366f1;
   --accent-color: #0284c7;
   --accent-gradient: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+  --accent-btn-bg: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  --accent-btn-text: #ffffff;
   --color-accent-blue: #0284c7;
   --badge-special-bg: #e0f2fe;
   --badge-special-border: #0284c7;
@@ -478,6 +493,12 @@
   --badge-pot-bg: #e0f2fe;
   --badge-pot-text: #0369a1;
   --badge-pot-border: #7dd3fc;
+  --ladder-passing-line-color: #d97706;
+  --ladder-passing-line-glow: rgba(217, 119, 6, 0.35);
+  --ladder-passing-badge-bg: #fffbeb;
+  --ladder-passing-badge-border: #d97706;
+  --ladder-passing-badge-text: #92400e;
+  --ladder-passing-badge-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 4px 20px -2px rgba(2, 132, 199, 0.08), 0 2px 6px -1px rgba(2, 132, 199, 0.04);
   --shadow-hover: 0 10px 25px -4px rgba(2, 132, 199, 0.12), 0 0 15px rgba(2, 132, 199, 0.15);
   --bg-radial-1: rgba(2, 132, 199, 0.06);
@@ -487,6 +508,7 @@
 
 /* 2.  曜石暗影 (Onyx) 反色版 ➔ 純粹白金 (Pure Clean White & Titanium Slate) */
 [data-theme="onyx"][data-theme-inverted="true"] {
+  color-scheme: light;
   --bg-dark: #fafafa;
   --bg-header: rgba(250, 250, 250, 0.94);
   --bg-card: #ffffff;

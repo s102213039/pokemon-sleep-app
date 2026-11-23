@@ -691,6 +691,22 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   color: #10b981 !important;
 }
 
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .header-auth-btn.is-logged-in,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .header-auth-btn.is-logged-in,
+[data-theme="midnight"][data-theme-inverted="true"] .header-auth-btn.is-logged-in,
+[data-theme="onyx"][data-theme-inverted="true"] .header-auth-btn.is-logged-in {
+  border-color: rgba(5, 150, 105, 0.45);
+  background: rgba(5, 150, 105, 0.12);
+  color: #065f46;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-header-btn.is-logged-in,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-header-btn.is-logged-in,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-header-btn.is-logged-in,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-header-btn.is-logged-in {
+  color: #065f46 !important;
+}
+
 .box-btn-cloud-sync {
   display: inline-flex;
   align-items: center;

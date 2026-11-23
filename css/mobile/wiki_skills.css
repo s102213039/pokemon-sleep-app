@@ -215,7 +215,7 @@
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-passing-line,
 [data-theme="midnight"][data-theme-inverted="true"] .ladder-passing-line,
 [data-theme="onyx"][data-theme-inverted="true"] .ladder-passing-line {
-  background: #d97706;
+  background: var(--ladder-passing-color-light, #d97706);
   box-shadow: 0 0 4px rgba(217, 119, 6, 0.35);
 }
 
@@ -223,20 +223,20 @@
 [data-theme="midnight"][data-theme-inverted="true"] .ladder-passing-badge,
 [data-theme="onyx"][data-theme-inverted="true"] .ladder-passing-badge {
   background: #fffbeb;
-  border-color: #d97706;
-  color: #92400e;
+  border-color: var(--ladder-passing-color-light, #d97706);
+  color: var(--ladder-passing-color-light, #92400e);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 }
 
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-passing-line {
-  background: #b45309;
+  background: var(--ladder-passing-color-light, #b45309);
   box-shadow: 0 0 4px rgba(180, 83, 9, 0.3);
 }
 
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-passing-badge {
   background: #fef3c7;
-  border-color: #b45309;
-  color: #78350f;
+  border-color: var(--ladder-passing-color-light, #b45309);
+  color: var(--ladder-passing-color-light, #78350f);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 }
 
@@ -422,6 +422,52 @@
     align-items: center !important;
     justify-content: center !important;
   }
+}
+
+/* 8-Theme Tooltip Yield/Note & Mobile Header Brand Contrast Overrides */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-node-tooltip .tooltip-detail .text-success,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-node-tooltip .tooltip-detail .text-success,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-detail .text-success,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-detail .text-success {
+  color: #047857 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-node-tooltip .tooltip-note,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-note {
+  color: #0369a1;
+}
+
+[data-theme="emerald"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-note {
+  color: #cbd5e1;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .mobile-app-header .mobile-brand-title,
+[data-theme="emerald"][data-theme-inverted="true"] .mobile-app-header .mobile-brand-title {
+  background: linear-gradient(135deg, #cbd5e1 0%, #f8fafc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #f8fafc;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-app-header .mobile-brand-title {
+  background: linear-gradient(135deg, #0369a1 0%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #0369a1;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-app-header .mobile-brand-title {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #1e293b;
+}
+
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-app-header .mobile-brand-title {
+  background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #0369a1;
 }
 
 /* ==========================================================================

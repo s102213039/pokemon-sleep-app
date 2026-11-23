@@ -322,6 +322,89 @@ console.log('\n[Suite 6] Zero Emoji & Zero Decorative Glyphs Compliance');
   assert(!emojiRe.test(pySrc) && !glyphRe.test(pySrc), 'build_ingredient_ladder.py complies with Zero Emoji & Zero Glyph rules');
 }
 
+// Suite 7: R2 Bounds/Click Safety & R3 Top-3 + Ingredient Selection Skill Badges
+console.log('\n[Suite 7] R2 Bounds & R3 Top-3 / Ingredient Selection Skill Badges');
+{
+  const { sandbox, WikiDB } = createWikiEnv(DATA_JSON, RECIPES_JSON);
+
+  assert(typeof WikiDB.hasPokemonIngSelectSkill === 'function', 'WikiDB exports hasPokemonIngSelectSkill');
+
+  const ingSelectNames = ['穿山鼠', '穿山王', '黑暗鴉', '烏鴉頭頭', '大嘴娃', '石居蟹', '岩殿居蟹', '摔角鷹人', '萌虻', '蝶結萌虻'];
+  ingSelectNames.forEach(name => {
+    assert(WikiDB.hasPokemonIngSelectSkill(name) === true, `hasPokemonIngSelectSkill("${name}") returns true`);
+  });
+  assert(WikiDB.hasPokemonIngSelectSkill('妙蛙花') === false, 'hasPokemonIngSelectSkill("妙蛙花") returns false');
+  assert(WikiDB.hasPokemonIngSelectSkill('敗露球菇') === false, 'hasPokemonIngSelectSkill("敗露球菇") returns false');
+
+  // Render with default settings (isLadderSkillDrawExpected = false, ladderTop15Only = true, ladderFinalOnly = true)
+  const htmlDefault = WikiDB.renderCoordinateLadder();
+
+  // R2: Every node left style must use clamp(12px, ..., calc(100% - 12px))
+  const leftMatches = [...htmlDefault.matchAll(/class="ladder-node[^"]*"[^>]*style="left:\s*([^;"]+);/g)].map(m => m[1]);
+  assert(leftMatches.length > 50, 'Rendered ladder has >50 nodes with left style');
+  const unclampedCount = leftMatches.filter(expr => !expr.startsWith('clamp(12px,') || !expr.endsWith('calc(100% - 12px))')).length;
+  assertEquals(unclampedCount, 0, 'Every main and tail node left style is clamped inside [12px, calc(100% - 12px)]');
+
+  // R2: Mushroom track Amoonguss AAX must not have negative offsetPx at left boundary
+  const mushroomTrackSection = htmlDefault.split('data-ladder-ing="mushroom"')[1].split('data-ladder-ing="')[0];
+  const amoongussNodeMatch = mushroomTrackSection.match(/<div class="ladder-node[^"]*"[^>]*data-pkm="敗露球菇"[^>]*data-recipe="AAX"[^>]*style="left:\s*([^;"]+);/);
+  assert(amoongussNodeMatch, 'Mushroom track contains 敗露球菇 AAX node');
+  assert(!amoongussNodeMatch[1].includes('+-') && !amoongussNodeMatch[1].includes('+ -'), `敗露球菇 AAX left style has no negative stagger offset: ${amoongussNodeMatch[1]}`);
+
+  // R2: Keyboard activation present on clickable headers
+  assert(htmlDefault.includes("onkeydown=\"if(event.key==='Enter'||event.key===' '){event.preventDefault();window.WikiDB.openIngredientRankingModal('mushroom');}\""), 'Clickable track headers support Enter/Space keyboard activation');
+
+  // R3: Verify Top-3 + Ing Select skill badge filtering across all tracks (with Top15 off to test all nodes)
+  WikiDB.toggleLadderTop15(false);
+  const htmlAll = WikiDB.renderCoordinateLadder();
+  const trackChunks = htmlAll.split(/data-ladder-ing="([^"]+)"/);
+  // trackChunks: [prefix, ingId1, chunk1, ingId2, chunk2, ...]
+  let totalCheckedTracks = 0;
+  let totalHiddenBadges = 0;
+  let totalIngSelectBadges = 0;
+  for (let i = 1; i < trackChunks.length; i += 2) {
+    const ingId = trackChunks[i];
+    const body = trackChunks[i + 1].split('<!-- 獨立美味尾巴')[0];
+    const nodeBlocks = body.split('<div class="ladder-node ').slice(1);
+    if (nodeBlocks.length === 0) continue;
+    totalCheckedTracks++;
+    const counts = nodeBlocks.map(b => {
+      const m = b.match(/class="text-success font-bold">(\d+)/);
+      return m ? parseInt(m[1], 10) : 0;
+    });
+    const distinct = [...new Set(counts)].sort((a, b) => b - a);
+    const threshold = distinct[Math.min(2, distinct.length - 1)];
+    nodeBlocks.forEach((b, idx) => {
+      const pkmM = b.match(/data-pkm="([^"]+)"/);
+      const pkmName = pkmM ? pkmM[1] : '';
+      const count = counts[idx];
+      const hasIngSkill = WikiDB.hasPokemonIngSelectSkill(pkmName);
+      const hasBadge = b.includes('class="node-count-badge');
+      const shouldShow = count >= threshold || hasIngSkill;
+      if (hasBadge !== shouldShow) {
+        assert(false, `Track ${ingId} node ${pkmName} (${count}, threshold=${threshold}, ingSkill=${hasIngSkill}): badge=${hasBadge} expected=${shouldShow}`);
+      }
+      if (!hasBadge) totalHiddenBadges++;
+      if (hasIngSkill) {
+        assert(b.includes('node-has-ing-select') && b.includes('badge-ing-select'), `Ing-select node ${pkmName} on ${ingId} has special classes`);
+        totalIngSelectBadges++;
+      }
+      // Full yield must still exist in tooltip
+      assert(b.includes(`class="text-success font-bold">${count}`), `Tooltip preserves full yield ${count} for ${pkmName}`);
+    });
+  }
+  assert(totalCheckedTracks === 20, `Checked all 20 tracks (19 main + tail), got ${totalCheckedTracks}`);
+  assert(totalHiddenBadges > 50, `Non-Top-3 non-skill nodes omit .node-count-badge (${totalHiddenBadges} hidden)`);
+  assert(totalIngSelectBadges >= 6, `Ingredient Selection skill Pokemon retain badges (${totalIngSelectBadges} shown)`);
+
+  // Also test pre-evolution 萌虻 (Cutiefly) rendered on live ladder when finalOnly = false
+  WikiDB.toggleLadderFinalOnly(false);
+  const htmlWithPreEvo = WikiDB.renderCoordinateLadder();
+  assert(htmlWithPreEvo.includes('data-pkm="萌虻"') && htmlWithPreEvo.includes('node-has-ing-select'), 'Pre-evolution 萌虻 gets node-has-ing-select when finalOnly=false');
+  WikiDB.toggleLadderFinalOnly(true);
+  WikiDB.toggleLadderTop15(true);
+}
+
 console.log('\n======================================================');
 console.log(`  Dynamic Ingredient Ladder Suite: ${passed} / ${passed + failed} Passed (${failed} Failed)`);
 console.log('======================================================');

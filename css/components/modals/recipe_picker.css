@@ -94,7 +94,7 @@
   background: transparent;
   border: none;
   font-size: 18px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 6px;
   border-radius: 8px;
@@ -145,6 +145,11 @@
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .settings-section-title,
+[data-theme="midnight"][data-theme-inverted="true"] .settings-section-title {
+  color: #0369a1;
 }
 
 .settings-section-desc {
@@ -212,6 +217,11 @@
   display: none;
 }
 
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .theme-card-badge,
+[data-theme="midnight"][data-theme-inverted="true"] .theme-card-badge {
+  color: #0369a1;
+}
+
 .theme-card-btn.active .theme-card-badge {
   display: inline-block;
 }
@@ -254,8 +264,8 @@
 }
 
 .lang-btn.active {
-  background: var(--accent-gradient);
-  color: #ffffff;
+  background: var(--accent-btn-bg, var(--accent-gradient));
+  color: var(--accent-btn-text, #ffffff);
   border-color: transparent;
   box-shadow: 0 4px 12px var(--accent-glow, rgba(56, 189, 248, 0.3));
 }
@@ -305,8 +315,8 @@
 }
 
 .settings-backup-btn.settings-export-btn {
-  background: var(--accent-gradient, linear-gradient(135deg, #38bdf8, #818cf8));
-  color: #ffffff;
+  background: var(--accent-btn-bg, var(--accent-gradient, linear-gradient(135deg, #0369a1, #4f46e5)));
+  color: var(--accent-btn-text, #ffffff);
   border: none;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(56, 189, 248, 0.25);
@@ -370,7 +380,7 @@
   border-radius: 50% !important;
   background: var(--bg-card, rgba(255, 255, 255, 0.08)) !important;
   border: 1px solid var(--border-color) !important;
-  color: var(--text-muted) !important;
+  color: var(--text-secondary) !important;
   cursor: pointer !important;
   padding: 0 !important;
 }
@@ -447,7 +457,7 @@
 
 .app-theme-chip .theme-chip-check {
   font-size: 11px !important;
-  color: var(--accent-blue, #38bdf8);
+  color: inherit;
   opacity: 0;
   transition: opacity 0.15s ease;
   font-weight: 800;
@@ -457,6 +467,16 @@
   background: rgba(56, 189, 248, 0.12) !important;
   border-color: var(--accent-blue, #38bdf8) !important;
   color: var(--accent-blue, #38bdf8) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .app-theme-chip.active,
+[data-theme="midnight"][data-theme-inverted="true"] .app-theme-chip.active {
+  border-color: #0369a1 !important;
+  color: #0369a1 !important;
+}
+
+[data-theme="emerald"][data-theme-inverted="true"] .app-theme-chip.active {
+  color: #cbd5e1 !important;
 }
 
 .app-theme-chip.active .theme-chip-check {
@@ -492,8 +512,8 @@
 }
 
 .app-segment-btn.active {
-  background: var(--accent-gradient, linear-gradient(135deg, #0284c7, #38bdf8)) !important;
-  color: #ffffff !important;
+  background: var(--accent-btn-bg, var(--accent-gradient, linear-gradient(135deg, #0369a1, #075985))) !important;
+  color: var(--accent-btn-text, #ffffff) !important;
   font-weight: 700 !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
 }
@@ -544,8 +564,8 @@
 
 .app-sync-action-btn {
   padding: 4px 10px !important;
-  background: var(--accent-gradient, linear-gradient(135deg, #0284c7, #38bdf8));
-  color: #ffffff !important;
+  background: var(--accent-btn-bg, var(--accent-gradient, linear-gradient(135deg, #0369a1, #075985)));
+  color: var(--accent-btn-text, #ffffff) !important;
   border: none;
   border-radius: 6px !important;
 }

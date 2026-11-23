@@ -537,10 +537,13 @@
           let cachedData = null;
           if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
             cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_DATA_JSON);
-          } else if (window.localStorage) {
-            const cachedText = window.localStorage.getItem(CACHE_KEY_DATA_JSON);
-            if (cachedText) {
-              cachedData = JSON.parse(cachedText);
+          } else {
+            const storage = getStorage();
+            if (storage) {
+              const cachedText = storage.getItem(CACHE_KEY_DATA_JSON);
+              if (cachedText) {
+                cachedData = JSON.parse(cachedText);
+              }
             }
           }
           if (Array.isArray(cachedData) && cachedData.length > 0) {
@@ -552,7 +555,8 @@
                 if (window.DataCacheManager && typeof window.DataCacheManager.invalidateCache === 'function') {
                   window.DataCacheManager.invalidateCache(CACHE_KEY_DATA_JSON, 'data.json');
                 } else {
-                  if (window.localStorage) window.localStorage.removeItem(CACHE_KEY_DATA_JSON);
+                  const storage = getStorage();
+                  if (storage) storage.removeItem(CACHE_KEY_DATA_JSON);
                   if (window.DataCacheManager && typeof window.DataCacheManager.setFileHash === 'function') {
                     window.DataCacheManager.setFileHash('data.json', '');
                   }
@@ -593,10 +597,11 @@
                 continue;
               }
               try {
-                if (typeof window !== 'undefined' && window.localStorage) {
+                const storage = getStorage();
+                if (storage) {
                   try {
-                    window.localStorage.setItem(CACHE_KEY_DATA_JSON, text);
-                    window.localStorage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
+                    storage.setItem(CACHE_KEY_DATA_JSON, text);
+                    storage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
                   } catch (e) {}
                 }
                 if (typeof window !== 'undefined' && window.DataCacheManager) {
@@ -625,13 +630,16 @@
               console.warn('[Data Engine] 網路請求暫時失敗，已自動自本機離線快取載入 data.json (' + cachedData.length + ' 筆資料)');
               return cachedData;
             }
-          } else if (window.localStorage) {
-            const cachedText = window.localStorage.getItem(CACHE_KEY_DATA_JSON);
-            if (cachedText) {
-              const cachedData = JSON.parse(cachedText);
-              if (Array.isArray(cachedData) && cachedData.length > 0 && isDatasetHealthy(cachedData)) {
-                console.warn('[Data Engine] 網路請求暫時失敗，已自動自本機離線快取載入 data.json (' + cachedData.length + ' 筆資料)');
-                return cachedData;
+          } else {
+            const storage = getStorage();
+            if (storage) {
+              const cachedText = storage.getItem(CACHE_KEY_DATA_JSON);
+              if (cachedText) {
+                const cachedData = JSON.parse(cachedText);
+                if (Array.isArray(cachedData) && cachedData.length > 0 && isDatasetHealthy(cachedData)) {
+                  console.warn('[Data Engine] 網路請求暫時失敗，已自動自本機離線快取載入 data.json (' + cachedData.length + ' 筆資料)');
+                  return cachedData;
+                }
               }
             }
           }
@@ -697,11 +705,14 @@
 
           if (window.DataCacheManager) {
             window.DataCacheManager.saveCachedJson(CACHE_KEY_DATA_JSON, 'data.json', rawText, remoteHash);
-          } else if (window.localStorage) {
-            try {
-              window.localStorage.setItem(CACHE_KEY_DATA_JSON, rawText);
-              window.localStorage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
-            } catch (e) {}
+          } else {
+            const storage = getStorage();
+            if (storage) {
+              try {
+                storage.setItem(CACHE_KEY_DATA_JSON, rawText);
+                storage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
+              } catch (e) {}
+            }
           }
 
           const currentLen = Array.isArray(allPokemons) ? allPokemons.length : 0;

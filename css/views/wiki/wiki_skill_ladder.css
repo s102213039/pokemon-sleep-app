@@ -247,13 +247,23 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
 
 /* Remove Outer Border and Background from Yield Breakdown (Single Frame Rule) */
 .wiki-skill-coordinate-ladder .tooltip-yield-breakdown,
-[data-theme] .wiki-skill-coordinate-ladder .tooltip-yield-breakdown {
+[data-theme] .wiki-skill-coordinate-ladder .tooltip-yield-breakdown,
+[data-theme] .wiki-skill-coordinate-ladder .ladder-node-tooltip .tooltip-yield-breakdown {
   margin: 0 !important;
   padding: 0 !important;
   background: transparent !important;
   border: none !important;
   border-left: none !important;
   box-shadow: none !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node-tooltip .breakdown-val.text-accent,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node-tooltip .breakdown-val.text-accent {
+  color: #0369a1 !important;
+}
+
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node-tooltip .breakdown-val.text-accent {
+  color: #cbd5e1 !important;
 }
 
 /* Refined Count Badge for 30px Avatar */

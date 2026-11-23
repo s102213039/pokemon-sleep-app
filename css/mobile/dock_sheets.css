@@ -199,34 +199,34 @@
 
 .dish-badge-full {
   background: rgba(16, 185, 129, 0.2);
-  color: #059669;
+  color: #065f46;
   border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
-[data-theme="midnight"] .dish-badge-full,
-[data-theme="onyx"] .dish-badge-full {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .dish-badge-full, [data-theme="onyx"]:not([data-theme-inverted="true"]) .dish-badge-full,
+[data-theme="dawn"][data-theme-inverted="true"] .dish-badge-full, [data-theme="emerald"][data-theme-inverted="true"] .dish-badge-full {
   color: #34d399;
 }
 
 .dish-badge-high {
   background: rgba(56, 189, 248, 0.2);
-  color: #0284c7;
+  color: #075985;
   border: 1px solid rgba(56, 189, 248, 0.4);
 }
 
-[data-theme="midnight"] .dish-badge-high,
-[data-theme="onyx"] .dish-badge-high {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .dish-badge-high, [data-theme="onyx"]:not([data-theme-inverted="true"]) .dish-badge-high,
+[data-theme="dawn"][data-theme-inverted="true"] .dish-badge-high, [data-theme="emerald"][data-theme-inverted="true"] .dish-badge-high {
   color: #38bdf8;
 }
 
 .dish-badge-assist {
   background: rgba(245, 158, 11, 0.15);
-  color: #d97706;
+  color: #92400e;
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
-[data-theme="midnight"] .dish-badge-assist,
-[data-theme="onyx"] .dish-badge-assist {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .dish-badge-assist, [data-theme="onyx"]:not([data-theme-inverted="true"]) .dish-badge-assist,
+[data-theme="dawn"][data-theme-inverted="true"] .dish-badge-assist, [data-theme="emerald"][data-theme-inverted="true"] .dish-badge-assist {
   color: #fbbf24;
 }
 
@@ -501,22 +501,26 @@
   border-color: rgba(234, 179, 8, 0.4);
 }
 
-/* 食材精選S 技能加成徽章樣式 (無額外頭像外框, 採用技能紫色系與冠軍金色徹底區隔) */
-.ladder-node.node-has-skill-draw {
-  /* 保持自然頭像無外框 */
+/* 食材精選類技能徽章與節點視覺樣式 (專屬等寬斜體字型 + 紫色光暈識別，與冠軍金色區隔) */
+.ladder-node.node-has-skill-draw .node-avatar-img,
+.ladder-node.node-has-ing-select .node-avatar-img {
+  border: 1.5px solid #a855f7; box-shadow: 0 0 7px rgba(168, 85, 247, 0.55);
 }
-
-.node-count-badge.badge-skill-draw {
-  color: #c084fc;
-  background: rgba(168, 85, 247, 0.14);
-  border: 1px solid rgba(168, 85, 247, 0.6);
-  font-weight: 800;
+.ladder-node.node-top1.node-has-skill-draw .node-avatar-img,
+.ladder-node.node-top1.node-has-ing-select .node-avatar-img {
+  border: 2px solid #eab308; box-shadow: 0 0 8px rgba(234, 179, 8, 0.65), 0 0 10px rgba(168, 85, 247, 0.55);
 }
-
-.ladder-node.node-top1 .node-count-badge.badge-skill-draw {
-  color: #c084fc;
-  background: rgba(168, 85, 247, 0.2);
-  border: 1.5px solid #a855f7;
+.node-count-badge.badge-skill-draw,
+.node-count-badge.badge-ing-select {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font-style: italic; font-weight: 800; letter-spacing: 0.2px;
+  color: #c084fc; background: rgba(168, 85, 247, 0.16);
+  border: 1px solid rgba(168, 85, 247, 0.65); box-shadow: 0 0 6px rgba(168, 85, 247, 0.45);
+}
+.ladder-node.node-top1 .node-count-badge.badge-skill-draw,
+.ladder-node.node-top1 .node-count-badge.badge-ing-select {
+  color: #c084fc; background: rgba(168, 85, 247, 0.22);
+  border: 1.5px solid #a855f7; box-shadow: 0 0 8px rgba(168, 85, 247, 0.55);
 }
 
 
@@ -688,22 +692,24 @@
 }
 
 .ladder-switch-text.nature-speed-text {
-  color: #a855f7;
+  color: #c084fc;
 }
 
-[data-theme="dawn"] .ladder-switch-text.nature-ing-text {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-switch-text.nature-ing-text,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-switch-text.nature-ing-text, [data-theme="onyx"][data-theme-inverted="true"] .ladder-switch-text.nature-ing-text {
   color: #047857;
 }
 
-[data-theme="dawn"] .ladder-switch-text.nature-speed-text {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-switch-text.nature-speed-text,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-switch-text.nature-speed-text, [data-theme="onyx"][data-theme-inverted="true"] .ladder-switch-text.nature-speed-text {
   color: #6d28d9;
 }
 
-[data-theme="emerald"] .ladder-switch-text.nature-ing-text {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-switch-text.nature-ing-text {
   color: #15803d;
 }
 
-[data-theme="emerald"] .ladder-switch-text.nature-speed-text {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-switch-text.nature-speed-text {
   color: #5b21b6;
 }
 

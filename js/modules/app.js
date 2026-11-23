@@ -2626,14 +2626,77 @@ if (typeof document !== 'undefined') {
     const syncBtn = document.getElementById('sync-btn');
     const syncStatus = document.getElementById('sync-status');
 
-    let ghPat = localStorage.getItem(GH_PAT_KEY) || '';
+    function safeStorageGet(key, fallback) {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const val = window.localStorage.getItem(key);
+          return val !== null ? val : fallback;
+        }
+        if (typeof localStorage !== 'undefined') {
+          const val = localStorage.getItem(key);
+          return val !== null ? val : fallback;
+        }
+      } catch (e) {}
+      return fallback;
+    }
 
-    /* ─── 主題與外觀系統 (Theme System - 4 Themes × 2 Normal/Inverted = 8 Themes) ─── */
+    function safeStorageSet(key, val) {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          window.localStorage.setItem(key, val);
+        } else if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(key, val);
+        }
+      } catch (e) {}
+    }
+
+    let ghPat = safeStorageGet(GH_PAT_KEY, '') || '';
+
+    /* ─── 主題與外觀系統 (Theme System - 4 Themes x 2 Normal/Inverted = 8 Themes) ─── */
     const STORAGE_KEY_THEME = 'user_theme';
     const STORAGE_KEY_THEME_INVERT = 'user_theme_inverted';
-    let currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'midnight';
-    let isThemeInverted = localStorage.getItem(STORAGE_KEY_THEME_INVERT) === 'true';
-    
+    const THEME_META_PALETTE = {
+      'midnight:0': { header: '#0a0f1d', scheme: 'dark' },
+      'onyx:0':     { header: '#0a0a0a', scheme: 'dark' },
+      'dawn:0':     { header: '#f8fafc', scheme: 'light' },
+      'emerald:0':  { header: '#f1f5f9', scheme: 'light' },
+      'midnight:1': { header: '#f0f9ff', scheme: 'light' },
+      'onyx:1':     { header: '#fafafa', scheme: 'light' },
+      'dawn:1':     { header: '#1c1917', scheme: 'dark' },
+      'emerald:1':  { header: '#0f172a', scheme: 'dark' }
+    };
+    let currentTheme = safeStorageGet(STORAGE_KEY_THEME, 'midnight') || 'midnight';
+    let isThemeInverted = safeStorageGet(STORAGE_KEY_THEME_INVERT, 'false') === 'true';
+
+    function isStandaloneMode() {
+      try {
+        return Boolean((window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true);
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function syncStandaloneStatusBar(theme, inverted) {
+      const meta = THEME_META_PALETTE[theme + ':' + (inverted ? '1' : '0')] || THEME_META_PALETTE['midnight:0'];
+      const root = document && document.documentElement;
+      const rootClassList = root && root.classList;
+      if (isStandaloneMode()) {
+        if (rootClassList && typeof rootClassList.add === 'function') {
+          rootClassList.add('pwa-standalone');
+        }
+        if (typeof document.querySelector === 'function') {
+          const themeMeta = document.querySelector('meta[name="theme-color"]');
+          if (themeMeta) themeMeta.setAttribute('content', meta.header);
+          const appleMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+          if (appleMeta) appleMeta.setAttribute('content', meta.scheme === 'light' ? 'default' : 'black-translucent');
+        }
+      } else {
+        if (rootClassList && typeof rootClassList.remove === 'function') {
+          rootClassList.remove('pwa-standalone');
+        }
+      }
+    }
+
     function applyTheme(theme, inverted) {
       if (!['midnight', 'onyx', 'dawn', 'emerald'].includes(theme)) {
         theme = 'midnight';
@@ -2642,16 +2705,25 @@ if (typeof document !== 'undefined') {
       if (typeof inverted === 'boolean') {
         isThemeInverted = inverted;
       }
-      document.documentElement.setAttribute('data-theme', theme);
-      if (isThemeInverted) {
-        document.documentElement.setAttribute('data-theme-inverted', 'true');
-      } else {
-        document.documentElement.removeAttribute('data-theme-inverted');
+      const meta = THEME_META_PALETTE[theme + ':' + (isThemeInverted ? '1' : '0')] || THEME_META_PALETTE['midnight:0'];
+      if (document && document.documentElement) {
+        if (typeof document.documentElement.setAttribute === 'function') {
+          document.documentElement.setAttribute('data-theme', theme);
+          if (isThemeInverted) {
+            document.documentElement.setAttribute('data-theme-inverted', 'true');
+          } else if (typeof document.documentElement.removeAttribute === 'function') {
+            document.documentElement.removeAttribute('data-theme-inverted');
+          }
+        }
+        try {
+          if (document.documentElement.style) {
+            document.documentElement.style.colorScheme = meta.scheme;
+          }
+        } catch (e) {}
       }
-      try {
-        localStorage.setItem(STORAGE_KEY_THEME, theme);
-        localStorage.setItem(STORAGE_KEY_THEME_INVERT, isThemeInverted ? 'true' : 'false');
-      } catch (e) {}
+      syncStandaloneStatusBar(theme, isThemeInverted);
+      safeStorageSet(STORAGE_KEY_THEME, theme);
+      safeStorageSet(STORAGE_KEY_THEME_INVERT, isThemeInverted ? 'true' : 'false');
 
       // 更新彈窗內的選中卡片
       document.querySelectorAll('.theme-card-btn').forEach(btn => {
@@ -2669,11 +2741,25 @@ if (typeof document !== 'undefined') {
       if (appInvertSwitch) appInvertSwitch.checked = isThemeInverted;
     }
 
+    // 監聽 standalone 模式動態切換 (若瀏覽器支援)
+    try {
+      const standaloneMql = window.matchMedia && window.matchMedia('(display-mode: standalone)');
+      if (standaloneMql) {
+        const onDisplayModeChange = () => syncStandaloneStatusBar(currentTheme, isThemeInverted);
+        if (typeof standaloneMql.addEventListener === 'function') {
+          standaloneMql.addEventListener('change', onDisplayModeChange);
+        } else if (typeof standaloneMql.addListener === 'function') {
+          standaloneMql.addListener(onDisplayModeChange);
+        }
+      }
+    } catch (e) {}
+
     // 初始化主題
     applyTheme(currentTheme, isThemeInverted);
     PokemonApp.applyTheme = applyTheme;
     PokemonApp.getCurrentTheme = () => currentTheme;
     PokemonApp.isThemeInverted = () => isThemeInverted;
+    PokemonApp.isStandaloneMode = isStandaloneMode;
 
     // 綁定主題卡片點擊
     document.querySelectorAll('.theme-card-btn').forEach(btn => {
@@ -2747,7 +2833,7 @@ if (typeof document !== 'undefined') {
           const val = ghPatInput ? ghPatInput.value.trim() : '';
           if (val) {
             ghPat = val;
-            localStorage.setItem(GH_PAT_KEY, val);
+            safeStorageSet(GH_PAT_KEY, val);
             animateOverlayClose(settingsModal, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
             if (syncStatus) syncStatus.innerHTML = `<span style="color:#4ade80;">[✓] PAT Token 已儲存！現在可以點擊同步資料。</span>`;
           } else {
@@ -3366,10 +3452,13 @@ if (typeof document !== 'undefined') {
           let cachedData = null;
           if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
             cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_DATA_JSON);
-          } else if (window.localStorage) {
-            const cachedText = window.localStorage.getItem(CACHE_KEY_DATA_JSON);
-            if (cachedText) {
-              cachedData = JSON.parse(cachedText);
+          } else {
+            const storage = getStorage();
+            if (storage) {
+              const cachedText = storage.getItem(CACHE_KEY_DATA_JSON);
+              if (cachedText) {
+                cachedData = JSON.parse(cachedText);
+              }
             }
           }
           if (Array.isArray(cachedData) && cachedData.length > 0) {
@@ -3381,7 +3470,8 @@ if (typeof document !== 'undefined') {
                 if (window.DataCacheManager && typeof window.DataCacheManager.invalidateCache === 'function') {
                   window.DataCacheManager.invalidateCache(CACHE_KEY_DATA_JSON, 'data.json');
                 } else {
-                  if (window.localStorage) window.localStorage.removeItem(CACHE_KEY_DATA_JSON);
+                  const storage = getStorage();
+                  if (storage) storage.removeItem(CACHE_KEY_DATA_JSON);
                   if (window.DataCacheManager && typeof window.DataCacheManager.setFileHash === 'function') {
                     window.DataCacheManager.setFileHash('data.json', '');
                   }
@@ -3422,10 +3512,11 @@ if (typeof document !== 'undefined') {
                 continue;
               }
               try {
-                if (typeof window !== 'undefined' && window.localStorage) {
+                const storage = getStorage();
+                if (storage) {
                   try {
-                    window.localStorage.setItem(CACHE_KEY_DATA_JSON, text);
-                    window.localStorage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
+                    storage.setItem(CACHE_KEY_DATA_JSON, text);
+                    storage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
                   } catch (e) {}
                 }
                 if (typeof window !== 'undefined' && window.DataCacheManager) {
@@ -3454,13 +3545,16 @@ if (typeof document !== 'undefined') {
               console.warn('[Data Engine] 網路請求暫時失敗，已自動自本機離線快取載入 data.json (' + cachedData.length + ' 筆資料)');
               return cachedData;
             }
-          } else if (window.localStorage) {
-            const cachedText = window.localStorage.getItem(CACHE_KEY_DATA_JSON);
-            if (cachedText) {
-              const cachedData = JSON.parse(cachedText);
-              if (Array.isArray(cachedData) && cachedData.length > 0 && isDatasetHealthy(cachedData)) {
-                console.warn('[Data Engine] 網路請求暫時失敗，已自動自本機離線快取載入 data.json (' + cachedData.length + ' 筆資料)');
-                return cachedData;
+          } else {
+            const storage = getStorage();
+            if (storage) {
+              const cachedText = storage.getItem(CACHE_KEY_DATA_JSON);
+              if (cachedText) {
+                const cachedData = JSON.parse(cachedText);
+                if (Array.isArray(cachedData) && cachedData.length > 0 && isDatasetHealthy(cachedData)) {
+                  console.warn('[Data Engine] 網路請求暫時失敗，已自動自本機離線快取載入 data.json (' + cachedData.length + ' 筆資料)');
+                  return cachedData;
+                }
               }
             }
           }
@@ -3526,11 +3620,14 @@ if (typeof document !== 'undefined') {
 
           if (window.DataCacheManager) {
             window.DataCacheManager.saveCachedJson(CACHE_KEY_DATA_JSON, 'data.json', rawText, remoteHash);
-          } else if (window.localStorage) {
-            try {
-              window.localStorage.setItem(CACHE_KEY_DATA_JSON, rawText);
-              window.localStorage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
-            } catch (e) {}
+          } else {
+            const storage = getStorage();
+            if (storage) {
+              try {
+                storage.setItem(CACHE_KEY_DATA_JSON, rawText);
+                storage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
+              } catch (e) {}
+            }
           }
 
           const currentLen = Array.isArray(allPokemons) ? allPokemons.length : 0;
@@ -4134,6 +4231,20 @@ if (typeof document !== 'undefined') {
         bindSidebarSwipeRightToClose(sidebar, () => toggleSidebar(false));
       }
 
+      function _safeReadStorage(key, fallback) {
+        try {
+          if (typeof window !== 'undefined' && window.localStorage) {
+            const v = window.localStorage.getItem(key);
+            return v !== null ? v : fallback;
+          }
+          if (typeof localStorage !== 'undefined') {
+            const v = localStorage.getItem(key);
+            return v !== null ? v : fallback;
+          }
+        } catch (e) {}
+        return fallback;
+      }
+
       function _getActiveWikiSubtabForDrawer() {
         if (typeof window !== 'undefined' && window.WikiDB && typeof window.WikiDB.getCurrentSubTab === 'function') {
           const live = window.WikiDB.getCurrentSubTab();
@@ -4144,12 +4255,7 @@ if (typeof document !== 'undefined') {
         if (slashIdx !== -1 && rawHash.slice(0, slashIdx) === 'wiki') {
           return rawHash.slice(slashIdx + 1);
         }
-        try {
-          if (typeof localStorage !== 'undefined') {
-            return localStorage.getItem('pksleep_active_wiki_subtab') || 'skills';
-          }
-        } catch (e) {}
-        return 'skills';
+        return _safeReadStorage('pksleep_active_wiki_subtab', 'skills') || 'skills';
       }
 
       function closeMobileDrawer() {
@@ -4175,7 +4281,7 @@ if (typeof document !== 'undefined') {
         const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) ? window.location.hash.replace(/^#/, '').split('?')[0] : '';
         const curMainTab = rawHash
           ? rawHash.split(/[/_]/)[0]
-          : (typeof localStorage !== 'undefined' ? localStorage.getItem('pksleep_active_main_tab') || 'pokemon' : 'pokemon');
+          : (_safeReadStorage('pksleep_active_main_tab', 'pokemon') || 'pokemon');
         const isPoke = curMainTab === 'pokemon' || curMainTab === '';
         const isRecipe = curMainTab === 'recipes';
         const isWiki = curMainTab === 'wiki';
@@ -4204,7 +4310,7 @@ if (typeof document !== 'undefined') {
         syncFab(f1, isPoke);
         syncFab(f2, isRecipe);
         syncFab(f3, isIngredientSubtab);
-        const isLabSubtab = rawHash.includes('/lab') || (typeof localStorage !== 'undefined' && localStorage.getItem('pksleep_active_box_subtab') === 'lab');
+        const isLabSubtab = rawHash.includes('/lab') || _safeReadStorage('pksleep_active_box_subtab', '') === 'lab';
         syncFab(f4, isBox && !isLabSubtab);
         syncFab(f5, isSkillLadderSubtab);
         if (typeof window.syncOverlayOpenState === 'function') {
@@ -4231,7 +4337,7 @@ if (typeof document !== 'undefined') {
         const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) ? window.location.hash.replace(/^#/, '').split('?')[0] : '';
         const curMainTab = rawHash
           ? rawHash.split(/[/_]/)[0]
-          : (typeof localStorage !== 'undefined' ? localStorage.getItem('pksleep_active_main_tab') || 'pokemon' : 'pokemon');
+          : (_safeReadStorage('pksleep_active_main_tab', 'pokemon') || 'pokemon');
         const isWiki = curMainTab === 'wiki';
         const wikiSubtab = _getActiveWikiSubtabForDrawer();
         const isIngredientSubtab = isWiki && wikiSubtab === 'ingredients';

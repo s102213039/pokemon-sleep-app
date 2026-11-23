@@ -750,11 +750,11 @@ body.mobile-h5-app.values-active,
 }
 
 .mobile-h5-app .ladder-ruler-scale {
-  margin: 0 14px 0 4px !important;
+  margin: 0 12px 0 10px !important;
 }
 
 .mobile-h5-app .ladder-track-canvas {
-  margin: 0 14px 0 4px !important;
+  margin: 0 12px 0 10px !important;
 }
 
 .mobile-h5-app .ladder-ruler-tick:first-child {

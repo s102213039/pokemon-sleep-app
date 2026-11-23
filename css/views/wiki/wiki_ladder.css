@@ -681,6 +681,15 @@ body.mobile-h5-app *::-webkit-scrollbar {
   box-sizing: border-box;
 }
 
+/* Standalone H5 App (PWA) Immersive Status Bar & Safe-Area Integration */
+html.pwa-standalone,
+html.pwa-standalone body.mobile-h5-app { background-color: var(--bg-dark); }
+html.pwa-standalone .mobile-app-header { background-color: var(--bg-dark); background: var(--bg-header); }
+html.pwa-standalone .mobile-app-header::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: env(safe-area-inset-top, 0px); background: var(--bg-dark); pointer-events: none;
+}
+
 .mobile-header-container {
   position: relative;
   display: flex;

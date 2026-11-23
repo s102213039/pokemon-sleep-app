@@ -1,7 +1,19 @@
+  function getBoxStorage() {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) return window.localStorage;
+      if (typeof localStorage !== 'undefined') return localStorage;
+    } catch (e) {}
+    return null;
+  }
+
   function loadUserBox() {
     try {
-      if (typeof localStorage === 'undefined') return;
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const storage = getBoxStorage();
+      if (!storage) {
+        userBox = [];
+        return;
+      }
+      const raw = storage.getItem(STORAGE_KEY);
       if (raw) {
         userBox = JSON.parse(raw);
         if (!Array.isArray(userBox)) userBox = [];
@@ -58,8 +70,10 @@
 
   function saveUserBox(skipCloudPush = false) {
     try {
-      if (typeof localStorage === 'undefined') return;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(userBox));
+      const storage = getBoxStorage();
+      if (storage) {
+        storage.setItem(STORAGE_KEY, JSON.stringify(userBox));
+      }
     } catch (e) {
       console.error('Failed to save user box:', e);
     }

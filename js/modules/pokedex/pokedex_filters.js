@@ -510,6 +510,20 @@
         bindSidebarSwipeRightToClose(sidebar, () => toggleSidebar(false));
       }
 
+      function _safeReadStorage(key, fallback) {
+        try {
+          if (typeof window !== 'undefined' && window.localStorage) {
+            const v = window.localStorage.getItem(key);
+            return v !== null ? v : fallback;
+          }
+          if (typeof localStorage !== 'undefined') {
+            const v = localStorage.getItem(key);
+            return v !== null ? v : fallback;
+          }
+        } catch (e) {}
+        return fallback;
+      }
+
       function _getActiveWikiSubtabForDrawer() {
         if (typeof window !== 'undefined' && window.WikiDB && typeof window.WikiDB.getCurrentSubTab === 'function') {
           const live = window.WikiDB.getCurrentSubTab();
@@ -520,12 +534,7 @@
         if (slashIdx !== -1 && rawHash.slice(0, slashIdx) === 'wiki') {
           return rawHash.slice(slashIdx + 1);
         }
-        try {
-          if (typeof localStorage !== 'undefined') {
-            return localStorage.getItem('pksleep_active_wiki_subtab') || 'skills';
-          }
-        } catch (e) {}
-        return 'skills';
+        return _safeReadStorage('pksleep_active_wiki_subtab', 'skills') || 'skills';
       }
 
       function closeMobileDrawer() {
@@ -551,7 +560,7 @@
         const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) ? window.location.hash.replace(/^#/, '').split('?')[0] : '';
         const curMainTab = rawHash
           ? rawHash.split(/[/_]/)[0]
-          : (typeof localStorage !== 'undefined' ? localStorage.getItem('pksleep_active_main_tab') || 'pokemon' : 'pokemon');
+          : (_safeReadStorage('pksleep_active_main_tab', 'pokemon') || 'pokemon');
         const isPoke = curMainTab === 'pokemon' || curMainTab === '';
         const isRecipe = curMainTab === 'recipes';
         const isWiki = curMainTab === 'wiki';
@@ -580,7 +589,7 @@
         syncFab(f1, isPoke);
         syncFab(f2, isRecipe);
         syncFab(f3, isIngredientSubtab);
-        const isLabSubtab = rawHash.includes('/lab') || (typeof localStorage !== 'undefined' && localStorage.getItem('pksleep_active_box_subtab') === 'lab');
+        const isLabSubtab = rawHash.includes('/lab') || _safeReadStorage('pksleep_active_box_subtab', '') === 'lab';
         syncFab(f4, isBox && !isLabSubtab);
         syncFab(f5, isSkillLadderSubtab);
         if (typeof window.syncOverlayOpenState === 'function') {
@@ -607,7 +616,7 @@
         const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) ? window.location.hash.replace(/^#/, '').split('?')[0] : '';
         const curMainTab = rawHash
           ? rawHash.split(/[/_]/)[0]
-          : (typeof localStorage !== 'undefined' ? localStorage.getItem('pksleep_active_main_tab') || 'pokemon' : 'pokemon');
+          : (_safeReadStorage('pksleep_active_main_tab', 'pokemon') || 'pokemon');
         const isWiki = curMainTab === 'wiki';
         const wikiSubtab = _getActiveWikiSubtabForDrawer();
         const isIngredientSubtab = isWiki && wikiSubtab === 'ingredients';

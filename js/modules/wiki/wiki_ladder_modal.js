@@ -127,14 +127,14 @@
   let ladderHighlightRecipes = [];
 
   const RECIPE_MARK_PALETTE = [
-    { fg: '#0284c7', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.2)' },  // 1. 晴空藍 (Sky Blue)
-    { fg: '#b45309', color: '#fbbf24', bg: 'rgba(251, 191, 36, 0.2)' },  // 2. 琥珀金黃 (Amber Gold)
-    { fg: '#c026d3', color: '#e879f9', bg: 'rgba(232, 121, 249, 0.2)' }, // 3. 桃紅洋紅 (Fuchsia Magenta)
-    { fg: '#059669', color: '#34d399', bg: 'rgba(52, 211, 153, 0.2)' },  // 4. 翡翠綠 (Emerald Green)
-    { fg: '#ea580c', color: '#fb923c', bg: 'rgba(251, 146, 60, 0.2)' },  // 5. 鮮亮橘 (Vivid Orange)
-    { fg: '#7c3aed', color: '#a78bfa', bg: 'rgba(167, 139, 250, 0.2)' }, // 6. 魅惑紫 (Electric Violet)
-    { fg: '#dc2626', color: '#f87171', bg: 'rgba(248, 113, 113, 0.2)' }, // 7. 珊瑚紅 (Coral Red)
-    { fg: '#0d9488', color: '#2dd4bf', bg: 'rgba(45, 212, 191, 0.2)' }   // 8. 湖水青綠 (Seafoam Teal)
+    { fg: '#0369a1', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.2)' },  // 1. 晴空藍 (Sky Blue)
+    { fg: '#92400e', color: '#fbbf24', bg: 'rgba(251, 191, 36, 0.2)' },  // 2. 琥珀金黃 (Amber Gold)
+    { fg: '#a21caf', color: '#e879f9', bg: 'rgba(232, 121, 249, 0.2)' }, // 3. 桃紅洋紅 (Fuchsia Magenta)
+    { fg: '#065f46', color: '#34d399', bg: 'rgba(52, 211, 153, 0.2)' },  // 4. 翡翠綠 (Emerald Green)
+    { fg: '#9a3412', color: '#fb923c', bg: 'rgba(251, 146, 60, 0.2)' },  // 5. 鮮亮橘 (Vivid Orange)
+    { fg: '#6d28d9', color: '#a78bfa', bg: 'rgba(167, 139, 250, 0.2)' }, // 6. 魅惑紫 (Electric Violet)
+    { fg: '#b91c1c', color: '#f87171', bg: 'rgba(248, 113, 113, 0.2)' }, // 7. 珊瑚紅 (Coral Red)
+    { fg: '#115e59', color: '#2dd4bf', bg: 'rgba(45, 212, 191, 0.2)' }   // 8. 湖水青綠 (Seafoam Teal)
   ];
 
   function getRecipeMarkStyle(index) {
