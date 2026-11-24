@@ -162,6 +162,8 @@ for idx, r in enumerate(rows_ref):
         main_skill = '魔法火焰'
     if no == 94 or name_cn == '耿鬼':
         ing_rate = '16.60%'
+    if str(no) in ('329', '330') or name_cn in ('超音波幼蟲', '沙漠蜻蜓'):
+        sleep_type = '深深入眠'
 
     icon_no = sync.format_no(no)
     release_date = r[50].strip() if len(r) > 50 else ""

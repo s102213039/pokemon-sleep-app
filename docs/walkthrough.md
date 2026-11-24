@@ -5,6 +5,37 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-23 已完成（Milestone M1：R1-R5 主題零閃現、食材天梯邊界與前3/精選顯示、H5 食材格狀對齊、Standalone 狀態欄沉浸融合、全 8 主題 WCAG AA 與桌面側欄避讓）
+
+- **調整內容**：
+  1. **R1 — 桌面版與手機版主題零閃現動態載入與 Storage 容錯 (`index.html`, `app/index.html`, `js/modules/pokedex/pokedex_overlay.js`, `pokedex_filters.js`, `pokedex_nav.js`, `js/modules/box/box_storage_crud.js`, `css/tokens.css`, `css/tokens_inverted.css`, `css/styles.css`)**：
+     - 於 `index.html` 與 `app/index.html` 的 `<head>` 載入 `styles.min.css` 之前插入同步開機腳本，以 `try/catch` 讀取 `localStorage`（`user_theme` 與 `user_theme_inverted`），於 First Paint 前即時寫入 `data-theme`、`data-theme-inverted` 與 `style.colorScheme`，徹底消除重新整理閃現預設 `#0a0f1d` 深色主題。
+     - 於 CSS 8 組主題選擇器補齊 `color-scheme: dark` / `light`，並將 `pokedex_overlay.js`、`pokedex_filters.js`、`pokedex_nav.js` 與 `box_storage_crud.js` 的 `localStorage` 存取全面納入 `SecurityError` 防護（失敗時無未捕獲錯誤或 `console.error` 橫幅，安全退回 `midnight`）。
+  2. **R2 & R3 — 食材天梯邊界防溢位、標題點擊、前 3 名與食材精選保留顯示、桌面側欄避讓 (`js/modules/wiki/wiki_ladder_recipes.js`, `wiki_main.js`, `wiki_render_ladder.js`, `wiki_ladder_modal.js`, `css/views/wiki/wiki_ladder.css`, `wiki_ladder_meals.css`, `css/mobile/dock_nav.css`, `dock_sheets.css`, `wiki_nav.css`, `wiki_camps.css`, `wiki_skills.css`, `css/styles.css`)**：
+     - 統一桌面與行動版軌道/尺標左右邊距、提高 `.ladder-track-header` 至 `z-index: 60` 並補上鍵盤 Enter/Space 操作，節點採用邊界感知群聚錯落與 `clamp(12px, ..., calc(100% - 12px))` 定位（含美味尾巴軌道），確保敗露球菇 AAX 等低產量節點不覆蓋前方食材圖示且點擊可直接彈出排行榜。
+     - 於 `wiki_ladder_meals.css` 與 `styles.css` 新增 `@media (min-width: 1025px)` `:has()` 桌面寬螢幕避讓規則（展開 `#ladder-filter-sidebar` 或 `#skill-ladder-filter-sidebar` 時對 `#panel-wiki` 套用 `padding-left: 240px` 並維持 `.wiki-main-container` 置中可用寬度與零水平溢位），且不影響收合狀態、非天梯子分頁、`#panel-pokemon` / `#panel-recipes` 或既有 `.wiki-main-container` 基線。
+     - 實作每條軌道（含美味尾巴）Dense Top-3 門檻判定與 `hasPokemonIngSelectSkill(pkmName)`（「食材精選S / 超幸運 / 怪力鉗」涵蓋 10 隻寶可夢與靜態備援）；僅 Top-3 或具食材精選/技能抽取節點渲染 `.node-count-badge`，並以等寬斜體紫光徽章區隔，其餘節點隱藏數字（完整產量保留於浮窗與標尺），不變更 `data/ladder_lv60.json` 結構。
+  3. **R4 — 能量速查食材基礎庫 H5 格狀對齊與桌面單行分離 (`css/views/wiki/wiki_ladder_meals.css`, `css/views/recipes_cards.css`, `css/styles.css`, `tests/test_e2e_r1_r7_acceptance.js`)**：
+     - 將 `.values-compact-grid.values-ing-grid` 的單行 `grid-auto-flow: column` 規則限縮於 `body:not(.mobile-h5-app)`，並為 `.mobile-h5-app .values-compact-grid.values-ing-grid` 明確對齊 `#values-berry-grid` 的 6 欄格狀排版（`repeat(6, minmax(0, 1fr))`、`30px x 30px` 圖示、`11.5px` 文字），移除行動版水平溢位豁免；Web 桌面版寬螢幕維持單行展示。
+  4. **R5 — Standalone H5 App 狀態欄沉浸式主題融合調查與實作 (`index.html`, `app/index.html`, `js/modules/pokedex/pokedex_overlay.js`, `css/views/wiki/wiki_ladder.css`, `css/styles.css`)**：
+     - **調查結論（可行性、平台限制與一般瀏覽器隔離）**：
+       - **可行性**：**確認可行**。原狀態欄固定為深黑係因 `manifest.webmanifest` 與 HTML 靜態寫死 `theme-color="#0a0f1d"` 及 `black-translucent`，且缺乏 Standalone 偵測與動態更新。
+       - **Android Chrome PWA (`display: standalone`)**：**100% 即時可行**，動態更新 `<meta name="theme-color">` 可立即改變頂部系統狀態欄背景色，並依色彩亮度自動切換深/淺系統圖示。
+       - **iOS Safari Standalone (`navigator.standalone === true`)**：**可行且具 WebKit 平台限制** — 透過 `<meta name="theme-color">`、`color-scheme` 與 `--bg-header`/`--bg-dark` 安全區域填色（`env(safe-area-inset-top, 0px)`）可融合頂部與安全區域背景；但受限於 WebKit，`<meta name="apple-mobile-web-app-status-bar-style">` 的狀態欄文字極性（`'default'` 深字 / `'black-translucent'` 白字）為 HTML 解析期與主畫面捷徑建立時快取讀取（無法在執行期中切換即時變色），且 HTML `<head>` 執行前的最初啟動閃屏仍由靜態 `manifest.webmanifest` 控制。
+       - **一般瀏覽器影響評估**：將 `html.pwa-standalone` 類別、安全區域表頭填色與 `meta` 更新嚴格閘門於 `(matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true`，一般桌面與手機瀏覽器完全不觸發任何改動，零回歸影響。
+  5. **全 8 主題 WCAG 2.1 AA 對比與自動化測試擴充 (`css/tokens.css`, `tokens_inverted.css`, `css/views/pokedex_filters.css`, `css/components/modals/recipe_picker.css`, `css/views/wiki/wiki_items.css`, `css/views/lab/lab_auth.css`, `lab_lightbox.css`, `css/views/box/box_calc.css`, `css/views/recipes_picker.css`, `css/views/box/box_grid.css`, `css/styles.css`, `tests/test_dynamic_ingredient_ladder.js`, `tests/test_r1_r5_theme_pwa_css.js`, `tests/test_e2e_r1_r5_pwa_ui.js`, `tests/run_tests.js`)**：
+     - 修正 4 款基礎主題搭配正常/反色共 8 組狀態下之天梯浮窗（`.ladder-node-tooltip`、`.dish-badge-*`、`.ladder-passing-badge` + `RECIPE_MARK_PALETTE`）、全站技能浮窗（`#global-skill-tooltip` 含補齊 `onyx` 反色淺底樣式）、設定彈窗（`#settings-modal` 新增 `--accent-btn-bg`/`--accent-btn-text`、`.settings-section-title`、`#settings-copy-diag-btn`）、雲端同步認證（`#cloud-auth-modal`、`.header-auth-btn.is-logged-in`、`.mobile-header-btn.is-logged-in`、`.box-auth-guest-link`）與排行彈窗對比，全部達 `>= 4.5:1` WCAG 2.1 AA。
+     - `npm run build` 產生最新壓縮資產與快取版號 `20261122_0152`（54 份模組化 CSS 皆 `<= 1,000` 行，最高 995 行，與 `css/styles.css` 100% 同步；全專案零 Emoji、零裝飾性特殊符號）。
+- **驗證結果**：
+  - `npm run build:css`：**54 / 54 模組驗證通過**（`css/styles.css` 38,458 行，單一模組最大 995 行 `<= 1,000` 行）。
+  - `npm run test:fast`：**172 / 172 PASS**（Tier 1: 74, Tier 2: 70, Tier 3: 28）。
+  - `npm test`：**296 / 296 PASS**（Tier 1: 74, Tier 2: 70, Tier 3: 28, Tier 4: 124）。
+  - `node tests/test_dynamic_ingredient_ladder.js`：**414 / 414 PASS**（含 Suite 7 R2/R3 邊界、Dense Top-3 與 10 隻食材精選寶可夢）。
+  - `node tests/test_wiki_skill_ladder.js`：**982 / 982 PASS**。
+  - `node tests/test_r1_r5_theme_pwa_css.js`：**8 / 8 PASS**（CSS 同步、54 模組行數、VM 同步開機與 `SecurityError`、8 主題 WCAG AA 數學驗證、Zero Emoji/Glyph）。
+  - `node tests/test_e2e_r1_r5_pwa_ui.js`：**9 / 9 PASS**（無頭 Chrome CDP 實機驗證 R1 16 次重整零閃現與 `SecurityError`、R2/R3 桌面 `1025-1920px` 展開側欄零遮擋點擊與邊界、R4 H5/Web 分離、R5 Standalone 隔離與 8 主題 `#settings-modal`/`#global-skill-tooltip`/CloudSync Auth WCAG AA）。
+  - `node tests/test_e2e_r1_r7_acceptance.js --grep="R5|R6|T4-05|T4-06"`：**39 / 39 PASS**。
+
 ## 交接：2026-11-21 已完成（島嶼 Tab 遺漏木棉球等 13 種常駐寶可夢根因修復、全 7 島 + 2 EX 完整核對與三語睡姿浮窗對齊）
 
 - **R1 問題根因**：
