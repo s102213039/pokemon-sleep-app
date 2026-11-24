@@ -171,19 +171,31 @@
     if (opts.type === 'recipe') {
       const allRecipesList = getAllTargetRecipes();
       const currentTargetName = labState.targetRecipeName || '彈跳咖哩烏龍麵';
-      let currentRecipeCategoryFilter = 'all';
+      const lockedCategory = ['curry', 'salad', 'dessert'].includes(labState.cookingType) ? labState.cookingType : null;
+      let currentRecipeCategoryFilter = lockedCategory || 'all';
       let currentRecipeIngFilter = 'all';
+
+      function matchesRecipeCategory(r, catKey) {
+        if (!catKey || catKey === 'all') return true;
+        const cat = (r.category || '').toLowerCase();
+        if (catKey === 'curry') return cat.includes('咖哩') || cat.includes('curry') || cat.includes('濃湯') || cat.includes('stew');
+        if (catKey === 'salad') return cat.includes('沙拉') || cat.includes('salad');
+        if (catKey === 'dessert') return cat.includes('甜') || cat.includes('點心') || cat.includes('dessert') || cat.includes('飲料') || cat.includes('drink');
+        return true;
+      }
+
+      const scopedRecipesList = lockedCategory
+        ? allRecipesList.filter(r => matchesRecipeCategory(r, lockedCategory))
+        : allRecipesList;
 
       function generateRecipeItemsHtml(query = '') {
         const q = (query || '').trim().toLowerCase();
-        const filtered = allRecipesList.filter(r => {
+        const filtered = scopedRecipesList.filter(r => {
           const nameCn = (r.name_cn || r.name || '').toLowerCase();
           const nameEn = (r.name_en || '').toLowerCase();
           const cat = (r.category || '').toLowerCase();
 
-          if (currentRecipeCategoryFilter === 'curry' && !cat.includes('咖哩') && !cat.includes('curry') && !cat.includes('濃湯') && !cat.includes('stew')) return false;
-          if (currentRecipeCategoryFilter === 'salad' && !cat.includes('沙拉') && !cat.includes('salad')) return false;
-          if (currentRecipeCategoryFilter === 'dessert' && !cat.includes('甜') && !cat.includes('點心') && !cat.includes('dessert') && !cat.includes('飲料') && !cat.includes('drink')) return false;
+          if (!matchesRecipeCategory(r, currentRecipeCategoryFilter)) return false;
 
           if (currentRecipeIngFilter !== 'all') {
             if (!Array.isArray(r.ingredients) || !r.ingredients.some(ing => ing.name === currentRecipeIngFilter)) {
@@ -200,11 +212,12 @@
         });
 
         if (filtered.length === 0) {
-          return `<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;grid-column:1/-1;">${isEN ? 'No matching recipes found' : '未找到符合條件的料理'}</div>`;
+          return `<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;">${isEN ? 'No matching recipes found' : '未找到符合條件的料理'}</div>`;
         }
 
         return filtered.map(r => {
           const rNameCn = r.name_cn || r.name || '';
+          const rNameDisplay = isEN ? (r.name_en || rNameCn) : rNameCn;
           const isSelected = (rNameCn === currentTargetName || r.name === currentTargetName);
           const ings = Array.isArray(r.ingredients) ? r.ingredients : [];
           const cat = (r.category || '').toLowerCase();
@@ -225,13 +238,18 @@
 
           return `
             <div class="lab-recipe-card ${catClass} ${isSelected ? 'selected' : ''}" onclick="window.AppraisalLab.onRecipePickerSelect('${escapeHtml(rNameCn)}')">
-              ${isSelected ? `<span class="lab-recipe-active-badge">${isEN ? 'Current' : '當前目標'}</span>` : ''}
-              <div class="lab-recipe-card-visual">
+              <div class="lab-recipe-card-left">
                 ${r.icon ? `<img src="${r.icon}" class="lab-recipe-card-icon" alt="" loading="lazy">` : ''}
-                ${r.pot_size ? `<span class="lab-recipe-card-pot">${r.pot_size}${isEN ? ' Pots' : '格'}</span>` : ''}
-              </div>
-              <div class="lab-recipe-card-ingredients">
-                ${ingsHtml}
+                <div class="lab-recipe-card-info">
+                  <div class="lab-recipe-card-title-row">
+                    <span class="lab-recipe-card-title">${escapeHtml(rNameDisplay)}</span>
+                    ${r.pot_size ? `<span class="lab-recipe-card-pot">${r.pot_size}${isEN ? ' Pots' : '格'}</span>` : ''}
+                    ${isSelected ? `<span class="lab-recipe-active-badge">${isEN ? 'Current' : '當前'}</span>` : ''}
+                  </div>
+                  <div class="lab-recipe-card-ingredients">
+                    ${ingsHtml}
+                  </div>
+                </div>
               </div>
             </div>
           `;
@@ -244,6 +262,20 @@
           listEl.innerHTML = generateRecipeItemsHtml(query);
         }
       }
+
+      const categoryLabelMap = {
+        curry: isEN ? 'Curry' : '咖哩/濃湯',
+        salad: isEN ? 'Salad' : '沙拉',
+        dessert: isEN ? 'Dessert' : '點心/飲料'
+      };
+      const categoryFilterHtml = lockedCategory
+        ? `<button type="button" class="box-btn box-btn-secondary active" data-filter="${lockedCategory}" style="padding:3px 10px;font-size:11px;cursor:default;">${categoryLabelMap[lockedCategory]} (${scopedRecipesList.length})</button>`
+        : `
+          <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 10px;font-size:11px;">${isEN ? 'All' : '全部'} (${allRecipesList.length})</button>
+          <button type="button" class="box-btn box-btn-secondary" data-filter="curry" style="padding:3px 10px;font-size:11px;">${categoryLabelMap.curry}</button>
+          <button type="button" class="box-btn box-btn-secondary" data-filter="salad" style="padding:3px 10px;font-size:11px;">${categoryLabelMap.salad}</button>
+          <button type="button" class="box-btn box-btn-secondary" data-filter="dessert" style="padding:3px 10px;font-size:11px;">${categoryLabelMap.dessert}</button>
+        `;
 
       const recipeIngChipsHtml = [
         `<button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === 'all' ? 'active' : ''}" data-recipe-ing="all" title="${isEN ? 'All Ingredients' : '全部食材'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
@@ -262,8 +294,8 @@
         <div class="lab-picker-container lab-recipe-picker-container">
           <div class="lab-picker-header">
             <div style="font-size:15px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:6px;">
-              <span>${isEN ? 'Select Target Recipe' : '挑選目標料理 (深度研究室)'}</span>
-              <span style="font-size:11px;color:var(--accent-color,#38bdf8);background:rgba(56,189,248,0.12);padding:1px 6px;border-radius:4px;">${allRecipesList.length} ${isEN ? 'Dishes' : '道料理'}</span>
+              <span>${isEN ? 'Select Target Recipe' : '挑選目標料理'}</span>
+              <span style="font-size:11px;color:var(--text-secondary);background:var(--bg-card-inner);border:1px solid var(--border-color);padding:1px 7px;border-radius:999px;">${scopedRecipesList.length} ${isEN ? 'Dishes' : '道料理'}</span>
             </div>
             <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closePicker()" aria-label="Close">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -275,16 +307,13 @@
 
           <div class="lab-picker-controls-section">
             <div class="lab-picker-search-bar">
-              <input type="text" id="lab-picker-recipe-search" class="box-form-input" placeholder="${isEN ? 'Search recipe name or ingredient...' : '搜尋料理名稱或所需食材...'}" style="flex:1;min-width:180px;height:34px;font-size:12px;">
+              <input type="text" id="lab-picker-recipe-search" class="box-form-input" placeholder="${isEN ? 'Search recipe name or ingredient...' : '搜尋料理名稱或所需食材...'}" style="flex:1;min-width:160px;height:34px;font-size:12px;">
               <div class="lab-picker-filter-chips" style="display:flex;gap:6px;flex-wrap:wrap;">
-                <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 10px;font-size:11px;">${isEN ? 'All' : '全部'} (${allRecipesList.length})</button>
-                <button type="button" class="box-btn box-btn-secondary" data-filter="curry" style="padding:3px 10px;font-size:11px;">${isEN ? 'Curry' : '咖哩/濃湯'}</button>
-                <button type="button" class="box-btn box-btn-secondary" data-filter="salad" style="padding:3px 10px;font-size:11px;">${isEN ? 'Salad' : '沙拉'}</button>
-                <button type="button" class="box-btn box-btn-secondary" data-filter="dessert" style="padding:3px 10px;font-size:11px;">${isEN ? 'Dessert' : '點心/飲料'}</button>
+                ${categoryFilterHtml}
               </div>
             </div>
 
-            <div class="lab-picker-secondary-filters" style="margin-top:6px;">
+            <div class="lab-picker-secondary-filters" style="margin-top:4px;">
               <div class="lab-picker-ing-filter-group" style="width:100%;">
                 <span class="lab-picker-filter-label">${isEN ? 'Ingr:' : '食材:'}</span>
                 <div class="lab-picker-ing-chips-scroll" id="lab-recipe-picker-ing-scroll">

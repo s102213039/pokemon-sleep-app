@@ -15,8 +15,8 @@
 
 /* 頂部選中個體橫幅 */
 .lab-growth-header-card {
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 14px 18px;
   margin-bottom: 16px;
@@ -88,20 +88,21 @@
 }
 
 .lab-growth-change-btn {
-  background: rgba(51, 65, 85, 0.7);
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  color: var(--text-primary, #f8fafc);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   padding: 6px 14px;
   border-radius: 8px;
   font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .lab-growth-change-btn:hover {
-  background: rgba(56, 189, 248, 0.25);
-  border-color: #38bdf8;
-  color: #38bdf8;
+  background: var(--bg-card-hover);
+  border-color: var(--accent-color, #38bdf8);
+  color: var(--accent-color, #38bdf8);
 }
 
 /* 主面板網格 (桌面 2 欄並列) */
@@ -120,8 +121,8 @@
 
 /* 培育卡片本體 */
 .lab-growth-card {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 18px;
   box-sizing: border-box;
@@ -130,18 +131,19 @@
 .lab-growth-card-title {
   font-size: 15px;
   font-weight: 700;
-  color: var(--text-primary, #f8fafc);
+  color: var(--text-primary);
   margin-bottom: 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 8px;
 }
 
 /* 等級滑桿與區間控制 */
 .lab-growth-level-control {
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
   border-radius: 10px;
   padding: 12px 14px;
   margin-bottom: 14px;
@@ -156,20 +158,21 @@
 
 .lab-growth-range-label {
   font-size: 13px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary);
 }
 
 .lab-growth-range-val {
   font-size: 15px;
   font-weight: 700;
-  color: #38bdf8;
+  color: var(--accent-color, #38bdf8);
 }
 
 .lab-growth-slider {
   width: 100%;
   height: 6px;
   border-radius: 3px;
-  background: rgba(51, 65, 85, 0.6);
+  background: var(--border-color);
+  accent-color: var(--accent-color, #38bdf8);
   outline: none;
   margin: 8px 0;
   cursor: pointer;
@@ -185,9 +188,9 @@
 }
 
 .lab-growth-milestone-chip {
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  color: var(--text-secondary, #94a3b8);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
   padding: 8px 0;
@@ -199,15 +202,15 @@
 }
 
 .lab-growth-milestone-chip:hover {
-  background: rgba(56, 189, 248, 0.2);
-  border-color: #38bdf8;
-  color: #38bdf8;
+  background: var(--bg-card-hover);
+  border-color: var(--accent-color, #38bdf8);
+  color: var(--text-primary);
 }
 
 .lab-growth-milestone-chip.active {
-  background: rgba(56, 189, 248, 0.25);
-  border-color: #38bdf8;
-  color: #38bdf8;
+  background: var(--accent-btn-bg, var(--accent-color, #38bdf8));
+  border-color: var(--accent-color, #38bdf8);
+  color: var(--accent-btn-text, #ffffff);
   font-weight: 700;
 }
 
@@ -230,22 +233,22 @@
 }
 
 .lab-growth-cost-cell {
-  background: rgba(15, 23, 42, 0.45);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
   border-radius: 8px;
   padding: 10px 12px;
 }
 
 .lab-growth-cost-label {
   font-size: 11px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary);
   margin-bottom: 4px;
 }
 
 .lab-growth-cost-val {
   font-size: 18px;
   font-weight: 700;
-  color: var(--text-primary, #f8fafc);
+  color: var(--text-primary);
 }
 
 .lab-growth-cost-candies {
@@ -262,8 +265,8 @@
 
 /* 萬能糖果換算列 */
 .lab-growth-handy-bar {
-  background: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
   border-radius: 8px;
   padding: 10px 12px;
   display: flex;
@@ -328,8 +331,8 @@
 }
 
 .lab-growth-subskill-row {
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
   border-radius: 8px;
   padding: 8px 12px;
   display: flex;
@@ -345,16 +348,16 @@
 }
 
 .lab-growth-subskill-from {
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary);
 }
 
 .lab-growth-arrow {
-  color: rgba(148, 163, 184, 0.4);
+  color: var(--text-muted);
   font-size: 10px;
 }
 
 .lab-growth-subskill-to {
-  color: #38bdf8;
+  color: var(--accent-color, #38bdf8);
   font-weight: 600;
 }
 
@@ -366,16 +369,17 @@
 .lab-growth-no-subskills {
   padding: 12px;
   text-align: center;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary);
   font-size: 12px;
-  background: rgba(15, 23, 42, 0.3);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
   border-radius: 8px;
 }
 
 /* 金種模擬與 ROI 評級 */
 .lab-growth-mainskill-box {
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
   border-radius: 8px;
   padding: 12px;
   display: flex;
@@ -437,4 +441,125 @@
 .lab-growth-mainskill-val {
   color: #fbbf24;
   font-weight: 700;
+}
+
+/* 4 款淺色主題培育精算專屬高對比配色 (WCAG 2.1 AA) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-header-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-header-card,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-header-card,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-header-card,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-card,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-card,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-card {
+  background: #ffffff;
+  border-color: var(--border-color);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-change-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-change-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-change-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-change-btn {
+  background: #ffffff;
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-range-val,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-range-val,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-range-val,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-range-val,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-subskill-to,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-subskill-to,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-subskill-to,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-subskill-to {
+  color: #0369a1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-cost-candies,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-cost-candies,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-cost-candies,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-cost-candies,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-handy-count,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-handy-count,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-handy-count,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-handy-count,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-mainskill-val,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-mainskill-val,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-mainskill-val,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-mainskill-val {
+  color: #b45309;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-cost-shards,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-cost-shards,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-cost-shards,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-cost-shards,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-pr-delta,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-pr-delta,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-pr-delta,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-pr-delta {
+  color: #047857;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-cost-exp,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-cost-exp,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-cost-exp,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-cost-exp {
+  color: #1d4ed8;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-seed-badge-silver,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-seed-badge-silver,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-seed-badge-silver,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-seed-badge-silver {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-seed-badge-gold,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-seed-badge-gold,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-seed-badge-gold,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-seed-badge-gold {
+  background: #fef3c7;
+  border-color: #d97706;
+  color: #92400e;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-roi-s,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-roi-s,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-roi-s,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-roi-s {
+  background: #fce7f3;
+  border-color: #db2777;
+  color: #be185d;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-roi-a,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-roi-a,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-roi-a,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-roi-a {
+  background: #e0f2fe;
+  border-color: #0284c7;
+  color: #0369a1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-roi-b,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-roi-b,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-roi-b,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-roi-b {
+  background: #dcfce7;
+  border-color: #16a34a;
+  color: #047857;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-roi-c,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-roi-c,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-roi-c,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-roi-c {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #475569;
 }

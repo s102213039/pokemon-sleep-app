@@ -5,6 +5,21 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-24 已完成（深度研究室目標料理挑選器鎖定所選料理分類與單行簡約重構、培育精算深淺全主題配色重整）
+
+- **調整內容**：
+  1. **深度研究室「挑選目標料理」分類鎖定與單行縱向簡約列表重構 (`js/modules/lab/lab_team_picker.js`, `css/components/modals/settings_h5.css`, `css/views/wiki/wiki_ladder.css`, `css/styles.css`)**：
+     - 開啟料理挑選器時自動讀取上方已選之 `labState.cookingType`（`curry` / `salad` / `dessert`），固定僅展示該料理分類清單與對應道數（例如已選沙拉時固定顯示「沙拉 (27)」），不再每次跳回全部 81 道混排。
+     - 將 `.lab-recipe-picker-list` 由雙欄橫向溢出網格改為單欄一格一行由上到下滾動列表（`flex-direction: column; overflow-x: hidden;`）；移除原本三色斜向暗底漸層（`.lab-recipe-cat-*`）與多餘彩色邊框，改為純淨扁平卡片（左側圖示 + 料理名稱 + 鍋格標籤 + 單行食材清單，選中以左側細色條與細框提示）。
+     - 同步修正挑選器頂部控制列（`.lab-picker-controls-section`）與啟用篩選鈕（`.lab-picker-filter-chips button.active`）使用主題 Token（`var(--bg-card-inner)`、`var(--accent-btn-bg)`、`var(--accent-btn-text)`），消除淺色主題暗灰底與黑字配深底問題。
+  2. **培育精算深色／淺色全 8 主題重新配色 (`css/views/lab/lab_growth.css`, `css/styles.css`)**：
+     - 全面移除寫死的深灰底色（`rgba(30, 41, 59, 0.7)`、`rgba(15, 23, 42, 0.5)`、`rgba(51, 65, 85, 0.7)`），改以 `var(--bg-card)`、`var(--bg-card-inner)`、`var(--border-color)` 統一驅動 4 款深色主題。
+     - 為 4 款淺色主題（`dawn`、`emerald`、`midnight` 反色、`onyx` 反色）建立獨立高對比配色：外層卡片為純白 `#ffffff`、內層數值格為柔灰 `var(--bg-card-inner)`，並將糖果（`#b45309`）、夢之碎片／PR 提升（`#047857`）、經驗值（`#1d4ed8`）、目標等級／副技能升級（`#0369a1`）與金銀種／ROI 徽章全部調整為 WCAG 2.1 AA 高對比色階。
+  3. 執行 `npm run build` 產生最新壓縮資產與快取版號 `20261124_1548`。
+- **驗證結果**：
+  - `npm run test:fast`：**172 / 172 PASS**；`node tests/test_r1_r5_theme_pwa_css.js`：**8 / 8 PASS**（54 模組皆 `<= 1,000` 行）。
+  - 無頭 Chrome CDP（H5 `390x844` `emerald` 淺色主題）：驗證 `setCookingType('salad')` 後開啟料理挑選器僅顯示 `沙拉 (27)` 且 `allSalad: true`、`singleColumnVertical: true`、`horizontalOverflow: false`、卡片為純白扁平樣式（`rgb(255, 255, 255)`、`backgroundImage: none`）。
+
 ## 交接：2026-11-24 已完成（移除最新 Tab 無功能原生按鈕、消除淺色主題天梯圖示眩光並修復盒子／深度研究室淺色主題樣式）
 
 - **問題根因與修正內容**：

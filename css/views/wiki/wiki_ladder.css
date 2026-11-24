@@ -260,7 +260,8 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.14);
+  background: var(--bg-card-inner);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .lab-picker-search-bar {
@@ -273,8 +274,8 @@
 }
 
 .lab-picker-filter-chips button.active {
-  background: var(--accent-color, #38bdf8) !important;
-  color: #0f172a !important;
+  background: var(--accent-btn-bg, var(--accent-color, #38bdf8)) !important;
+  color: var(--accent-btn-text, #ffffff) !important;
   border-color: transparent !important;
   font-weight: 700;
 }

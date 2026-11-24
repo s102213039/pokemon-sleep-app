@@ -16357,158 +16357,121 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
 }
 
 
-/* 目標料理挑選器彈窗 (Recipe Picker Modal) */
+/* 目標料理挑選器彈窗 (Recipe Picker Modal — 單行縱向簡約列表) */
 .lab-recipe-picker-container {
-  max-width: 820px;
+  max-width: 680px;
 }
 
 .lab-recipe-picker-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 10px;
-  padding: 14px 18px;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  padding: 12px 14px 18px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
 }
 
 .lab-recipe-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 8px 10px;
+  padding: 10px 12px;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
   position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 58px;
 }
 
 .lab-recipe-card:hover {
   border-color: var(--accent-color, #38bdf8);
-  background: var(--bg-card-hover, rgba(56, 189, 248, 0.06));
-  transform: translateY(-1px);
+  background: var(--bg-card-hover);
 }
 
 .lab-recipe-card.selected {
   border-color: var(--accent-color, #38bdf8);
-  box-shadow: 0 0 0 1.5px var(--accent-color, #38bdf8);
-  background: rgba(56, 189, 248, 0.08);
+  box-shadow: inset 3px 0 0 var(--accent-color, #38bdf8);
+  background: var(--bg-card-hover);
 }
 
-/* 料理三大分類主題色彩系統 (Curry, Salad, Dessert Color System) */
-.lab-recipe-card.lab-recipe-cat-curry {
-  border-color: rgba(245, 158, 11, 0.35);
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(30, 41, 59, 0.75) 100%);
-}
-.lab-recipe-card.lab-recipe-cat-curry:hover {
-  border-color: rgba(245, 158, 11, 0.75);
-}
-.lab-recipe-card.lab-recipe-cat-curry.selected {
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 1.5px #f59e0b;
-}
-
-.lab-recipe-card.lab-recipe-cat-salad {
-  border-color: rgba(34, 197, 94, 0.35);
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(30, 41, 59, 0.75) 100%);
-}
-.lab-recipe-card.lab-recipe-cat-salad:hover {
-  border-color: rgba(34, 197, 94, 0.75);
-}
-.lab-recipe-card.lab-recipe-cat-salad.selected {
-  border-color: #22c55e;
-  box-shadow: 0 0 0 1.5px #22c55e;
-}
-
-.lab-recipe-card.lab-recipe-cat-dessert {
-  border-color: rgba(236, 72, 153, 0.35);
-  background: linear-gradient(135deg, rgba(236, 72, 153, 0.08) 0%, rgba(30, 41, 59, 0.75) 100%);
-}
-.lab-recipe-card.lab-recipe-cat-dessert:hover {
-  border-color: rgba(236, 72, 153, 0.75);
-}
-.lab-recipe-card.lab-recipe-cat-dessert.selected {
-  border-color: #ec4899;
-  box-shadow: 0 0 0 1.5px #ec4899;
-}
-
-.lab-recipe-active-badge {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  background: var(--accent-color, #38bdf8);
-  color: #0f172a;
-  font-size: 9.5px;
-  font-weight: 800;
-  padding: 1px 5px;
-  border-radius: 4px;
-}
-
-.lab-recipe-card-header {
+.lab-recipe-card-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
 }
 
-.lab-recipe-card-icon {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-.lab-recipe-card-meta {
+.lab-recipe-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   flex: 1;
   min-width: 0;
 }
 
-.lab-recipe-card-sub {
+.lab-recipe-card-title-row {
   display: flex;
   align-items: center;
-  flex-direction: row;
-  gap: 5px;
-  flex-wrap: wrap;
+  gap: 6px;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 
-.lab-recipe-card-cat {
-  font-size: 9.5px;
+.lab-recipe-card-title {
+  font-size: 13px;
   font-weight: 700;
-  padding: 1px 5px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lab-recipe-active-badge {
+  background: var(--accent-btn-bg, var(--accent-color, #38bdf8));
+  color: var(--accent-btn-text, #ffffff);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.lab-recipe-card-icon {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.lab-recipe-card-pot {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  padding: 1px 6px;
   border-radius: 4px;
-}
-.lab-recipe-card-cat.lab-recipe-cat-curry {
-  background: rgba(245, 158, 11, 0.18);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  color: #fbbf24;
-}
-.lab-recipe-card-cat.lab-recipe-cat-salad {
-  background: rgba(34, 197, 94, 0.18);
-  border: 1px solid rgba(34, 197, 94, 0.35);
-  color: #4ade80;
-}
-.lab-recipe-card-cat.lab-recipe-cat-dessert {
-  background: rgba(236, 72, 153, 0.18);
-  border: 1px solid rgba(236, 72, 153, 0.35);
-  color: #f472b6;
+  line-height: 1.25;
+  flex-shrink: 0;
 }
 
-.lab-recipe-card-pot,
-.lab-recipe-card-energy {
-  font-size: 9.5px;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-/* 食材單行緊湊展示 (無外框、保證單行一列排滿) */
+/* 食材單行緊湊展示 (無外框) */
 .lab-recipe-card-ingredients {
   display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
+  flex-wrap: wrap !important;
+  gap: 6px 10px !important;
   align-items: center !important;
-  gap: 6px !important;
-  overflow-x: auto !important;
-  white-space: nowrap !important;
-  width: 100% !important;
-  padding: 2px 0 !important;
+  justify-content: flex-start !important;
+  flex: 1 !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  padding: 0 !important;
 }
 
 .lab-recipe-ing-chip {
@@ -16529,20 +16492,9 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
 }
 
 .lab-recipe-ing-count {
-  font-size: 11px !important;
+  font-size: 11.5px !important;
   font-weight: 700 !important;
-  color: var(--text-primary) !important;
-}
-
-.lab-recipe-ing-icon {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-}
-
-.lab-recipe-ing-count {
-  font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
 }
 
 @media (max-width: 768px) {
@@ -17619,7 +17571,8 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.14);
+  background: var(--bg-card-inner);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .lab-picker-search-bar {
@@ -17632,8 +17585,8 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
 }
 
 .lab-picker-filter-chips button.active {
-  background: var(--accent-color, #38bdf8) !important;
-  color: #0f172a !important;
+  background: var(--accent-btn-bg, var(--accent-color, #38bdf8)) !important;
+  color: var(--accent-btn-text, #ffffff) !important;
   border-color: transparent !important;
   font-weight: 700;
 }
@@ -37152,8 +37105,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 /* 頂部選中個體橫幅 */
 .lab-growth-header-card {
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 14px 18px;
   margin-bottom: 16px;
@@ -37225,20 +37178,21 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .lab-growth-change-btn {
-  background: rgba(51, 65, 85, 0.7);
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  color: var(--text-primary, #f8fafc);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   padding: 6px 14px;
   border-radius: 8px;
   font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .lab-growth-change-btn:hover {
-  background: rgba(56, 189, 248, 0.25);
-  border-color: #38bdf8;
-  color: #38bdf8;
+  background: var(--bg-card-hover);
+  border-color: var(--accent-color, #38bdf8);
+  color: var(--accent-color, #38bdf8);
 }
 
 /* 主面板網格 (桌面 2 欄並列) */
@@ -37257,8 +37211,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 /* 培育卡片本體 */
 .lab-growth-card {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 18px;
   box-sizing: border-box;
@@ -37267,18 +37221,19 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .lab-growth-card-title {
   font-size: 15px;
   font-weight: 700;
-  color: var(--text-primary, #f8fafc);
+  color: var(--text-primary);
   margin-bottom: 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 8px;
 }
 
 /* 等級滑桿與區間控制 */
 .lab-growth-level-control {
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
   border-radius: 10px;
   padding: 12px 14px;
   margin-bottom: 14px;
@@ -37293,20 +37248,21 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 .lab-growth-range-label {
   font-size: 13px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary);
 }
 
 .lab-growth-range-val {
   font-size: 15px;
   font-weight: 700;
-  color: #38bdf8;
+  color: var(--accent-color, #38bdf8);
 }
 
 .lab-growth-slider {
   width: 100%;
   height: 6px;
   border-radius: 3px;
-  background: rgba(51, 65, 85, 0.6);
+  background: var(--border-color);
+  accent-color: var(--accent-color, #38bdf8);
   outline: none;
   margin: 8px 0;
   cursor: pointer;
@@ -37322,9 +37278,9 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .lab-growth-milestone-chip {
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  color: var(--text-secondary, #94a3b8);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
   padding: 8px 0;
@@ -37336,15 +37292,15 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .lab-growth-milestone-chip:hover {
-  background: rgba(56, 189, 248, 0.2);
-  border-color: #38bdf8;
-  color: #38bdf8;
+  background: var(--bg-card-hover);
+  border-color: var(--accent-color, #38bdf8);
+  color: var(--text-primary);
 }
 
 .lab-growth-milestone-chip.active {
-  background: rgba(56, 189, 248, 0.25);
-  border-color: #38bdf8;
-  color: #38bdf8;
+  background: var(--accent-btn-bg, var(--accent-color, #38bdf8));
+  border-color: var(--accent-color, #38bdf8);
+  color: var(--accent-btn-text, #ffffff);
   font-weight: 700;
 }
 
@@ -37367,22 +37323,22 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .lab-growth-cost-cell {
-  background: rgba(15, 23, 42, 0.45);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
   border-radius: 8px;
   padding: 10px 12px;
 }
 
 .lab-growth-cost-label {
   font-size: 11px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary);
   margin-bottom: 4px;
 }
 
 .lab-growth-cost-val {
   font-size: 18px;
   font-weight: 700;
-  color: var(--text-primary, #f8fafc);
+  color: var(--text-primary);
 }
 
 .lab-growth-cost-candies {
@@ -37399,8 +37355,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 /* 萬能糖果換算列 */
 .lab-growth-handy-bar {
-  background: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
   border-radius: 8px;
   padding: 10px 12px;
   display: flex;
@@ -37465,8 +37421,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .lab-growth-subskill-row {
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
   border-radius: 8px;
   padding: 8px 12px;
   display: flex;
@@ -37482,16 +37438,16 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .lab-growth-subskill-from {
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary);
 }
 
 .lab-growth-arrow {
-  color: rgba(148, 163, 184, 0.4);
+  color: var(--text-muted);
   font-size: 10px;
 }
 
 .lab-growth-subskill-to {
-  color: #38bdf8;
+  color: var(--accent-color, #38bdf8);
   font-weight: 600;
 }
 
@@ -37503,16 +37459,17 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .lab-growth-no-subskills {
   padding: 12px;
   text-align: center;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary);
   font-size: 12px;
-  background: rgba(15, 23, 42, 0.3);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
   border-radius: 8px;
 }
 
 /* 金種模擬與 ROI 評級 */
 .lab-growth-mainskill-box {
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
   border-radius: 8px;
   padding: 12px;
   display: flex;
@@ -37574,6 +37531,127 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .lab-growth-mainskill-val {
   color: #fbbf24;
   font-weight: 700;
+}
+
+/* 4 款淺色主題培育精算專屬高對比配色 (WCAG 2.1 AA) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-header-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-header-card,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-header-card,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-header-card,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-card,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-card,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-card {
+  background: #ffffff;
+  border-color: var(--border-color);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-change-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-change-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-change-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-change-btn {
+  background: #ffffff;
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-range-val,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-range-val,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-range-val,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-range-val,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-subskill-to,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-subskill-to,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-subskill-to,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-subskill-to {
+  color: #0369a1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-cost-candies,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-cost-candies,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-cost-candies,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-cost-candies,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-handy-count,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-handy-count,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-handy-count,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-handy-count,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-mainskill-val,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-mainskill-val,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-mainskill-val,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-mainskill-val {
+  color: #b45309;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-cost-shards,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-cost-shards,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-cost-shards,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-cost-shards,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-pr-delta,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-pr-delta,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-pr-delta,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-pr-delta {
+  color: #047857;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-cost-exp,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-cost-exp,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-cost-exp,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-cost-exp {
+  color: #1d4ed8;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-seed-badge-silver,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-seed-badge-silver,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-seed-badge-silver,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-seed-badge-silver {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-seed-badge-gold,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-seed-badge-gold,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-seed-badge-gold,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-seed-badge-gold {
+  background: #fef3c7;
+  border-color: #d97706;
+  color: #92400e;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-roi-s,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-roi-s,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-roi-s,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-roi-s {
+  background: #fce7f3;
+  border-color: #db2777;
+  color: #be185d;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-roi-a,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-roi-a,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-roi-a,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-roi-a {
+  background: #e0f2fe;
+  border-color: #0284c7;
+  color: #0369a1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-roi-b,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-roi-b,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-roi-b,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-roi-b {
+  background: #dcfce7;
+  border-color: #16a34a;
+  color: #047857;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .lab-growth-roi-c,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .lab-growth-roi-c,
+[data-theme="midnight"][data-theme-inverted="true"] .lab-growth-roi-c,
+[data-theme="onyx"][data-theme-inverted="true"] .lab-growth-roi-c {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #475569;
 }
 
 /* 行動端盒子分頁與子容器防止過度滾動連鎖觸發下拉刷新 (Overscroll Containment) */
