@@ -464,20 +464,28 @@
 
     newsTimelineContainer.style.display = 'block';
 
-    // 智能多軌道分配 (0, 1, 2, 3, 4)，保證跨日活動在相同的水平軌道上連續貫穿
-    const trackEndTimes = [];
-    ganttData.forEach(ev => {
+    // 智能多軌道分配 (0, 1, 2, ...)，僅針對當月有重疊的活動並以日期區間防重疊分配軌道，
+    // 確保跨日活動在相同水平軌道連續貫穿，且較早發生的活動能正確複用低編號軌道
+    const monthStart = new Date(calCurrentYear, calCurrentMonth, 1, 0, 0, 0);
+    const monthEnd = new Date(calCurrentYear, calCurrentMonth + 1, 0, 23, 59, 59);
+    const monthGanttData = ganttData.filter(ev => ev.startDate <= monthEnd && ev.endDate >= monthStart);
+
+    const trackIntervals = [];
+    monthGanttData.forEach(ev => {
+      const evStartDay = new Date(ev.startDate.getFullYear(), ev.startDate.getMonth(), ev.startDate.getDate(), 0, 0, 0).getTime();
+      const evEndDay = new Date(ev.endDate.getFullYear(), ev.endDate.getMonth(), ev.endDate.getDate(), 23, 59, 59).getTime();
       let assignedTrack = -1;
-      for (let i = 0; i < trackEndTimes.length; i++) {
-        if (trackEndTimes[i] < ev.startDate.getTime()) {
+      for (let i = 0; i < trackIntervals.length; i++) {
+        const hasOverlap = trackIntervals[i].some(slot => !(evEndDay < slot.start || evStartDay > slot.end));
+        if (!hasOverlap) {
           assignedTrack = i;
-          trackEndTimes[i] = ev.endDate.getTime();
+          trackIntervals[i].push({ start: evStartDay, end: evEndDay });
           break;
         }
       }
       if (assignedTrack === -1) {
-        assignedTrack = trackEndTimes.length;
-        trackEndTimes.push(ev.endDate.getTime());
+        assignedTrack = trackIntervals.length;
+        trackIntervals.push([{ start: evStartDay, end: evEndDay }]);
       }
       ev.trackIndex = assignedTrack;
     });
@@ -502,61 +510,73 @@
       const dayOfWeek = dateObj.getDay(); // 0: Sun, 6: Sat
       const dayStart = new Date(calCurrentYear, calCurrentMonth, d, 0, 0, 0);
       const dayEnd = new Date(calCurrentYear, calCurrentMonth, d, 23, 59, 59);
-      const activeEvents = ganttData.filter(ev => ev.startDate <= dayEnd && ev.endDate >= dayStart)
-                                    .sort((a, b) => (a.trackIndex || 0) - (b.trackIndex || 0));
+      const activeEvents = monthGanttData.filter(ev => ev.startDate <= dayEnd && ev.endDate >= dayStart)
+                                         .sort((a, b) => (a.trackIndex || 0) - (b.trackIndex || 0));
       const isToday = (calCurrentYear === _today.getFullYear() && calCurrentMonth === _today.getMonth() && d === _today.getDate());
       const isSelected = (d === calSelectedDay);
 
       // 每個活動各自獨立的專屬色塊貫穿背景 (Head-Body-Foot 嚴格分段連續效果)
       let bgBandsHTML = '';
+      let hasVisibleBand = false;
       if (activeEvents.length > 0) {
         const trackMap = {};
         activeEvents.forEach(ev => {
           trackMap[ev.trackIndex] = ev;
         });
 
+        const visibleSlots = [];
+        for (let t = 0; t < 3; t++) {
+          if (trackMap[t]) visibleSlots.push(t);
+        }
+
         const bands = [];
-        const maxDayTrack = Math.max(...activeEvents.map(e => e.trackIndex || 0));
-        const limitTracks = Math.max(1, Math.min(3, maxDayTrack + 1));
-
-        for (let t = 0; t < limitTracks; t++) {
-          const ev = trackMap[t];
-          if (!ev) {
-            bands.push('<div class="news-cal-bg-band band-empty"></div>');
-            continue;
-          }
-
+        const renderBandForEvent = (ev) => {
           const prevDayEnd = new Date(calCurrentYear, calCurrentMonth, d - 1, 23, 59, 59);
           const nextDayStart = new Date(calCurrentYear, calCurrentMonth, d + 1, 0, 0, 0);
-
-          // 是否與同一週前一天連續 (同橫列左側連接)
           const hasLeft = (dayOfWeek > 0) && (d > 1) && (ev.startDate <= prevDayEnd);
-          // 是否與同一週後一天連續 (同橫列右側連接)
           const hasRight = (dayOfWeek < 6) && (d < daysInMonth) && (ev.endDate >= nextDayStart);
 
           let segType = 'body';
           if (!hasLeft && !hasRight) {
-            segType = 'single'; // 單日活動：四角圓角
+            segType = 'single';
           } else if (!hasLeft && hasRight) {
-            segType = 'head'; // 活動開頭 (或換行開頭)：左上左下圓角，右側直角 100% 填滿
+            segType = 'head';
           } else if (hasLeft && hasRight) {
-            segType = 'body'; // 活動中間：全部直角，左右 100% 填滿
+            segType = 'body';
           } else if (hasLeft && !hasRight) {
-            segType = 'foot'; // 活動結尾 (或換行結尾)：右上右下圓角，左側直角 100% 填滿
+            segType = 'foot';
           }
 
-          bands.push(`
+          hasVisibleBand = true;
+          return `
             <div class="news-cal-bg-band band-${segType}" 
                  style="background-color: ${ev.typeColor};"
                  title="${escapeHtml(ev.title)} (${ev.typeLabel})"></div>
-          `);
+          `;
+        };
+
+        if (visibleSlots.length > 0) {
+          const limitTracks = Math.max(...visibleSlots) + 1;
+          for (let t = 0; t < limitTracks; t++) {
+            const ev = trackMap[t];
+            if (!ev) {
+              bands.push('<div class="news-cal-bg-band band-empty"></div>');
+            } else {
+              bands.push(renderBandForEvent(ev));
+            }
+          }
+        } else {
+          // 若當日活動全落在第 4 軌以後，仍取最多 3 筆顯示色塊，避免白字落在空白底色上
+          activeEvents.slice(0, 3).forEach(ev => {
+            bands.push(renderBandForEvent(ev));
+          });
         }
 
         bgBandsHTML = `<div class="news-cal-bg-bands">${bands.join('')}</div>`;
       }
 
       dayCellsHTML.push(`
-        <div class="news-cal-day-cell ${isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${activeEvents.length > 0 ? 'has-events' : ''}" data-day="${d}">
+        <div class="news-cal-day-cell ${isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${hasVisibleBand ? 'has-events' : ''}" data-day="${d}">
           ${bgBandsHTML}
           <span class="news-cal-day-num">${d}</span>
         </div>

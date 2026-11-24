@@ -5,6 +5,21 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-24 已完成（H5 最新 Tab 搜尋框 340px 異常留白與活動日曆多軌道色塊防遺漏修復）
+
+- **問題根因**：
+  1. **搜尋框上下出現約 300px 巨大空白**：`.news-search-box` 在桌面版規則 (`css/views/wiki/wiki_speed.css`) 中設有 `flex: 0 1 340px; max-width: 380px;`；但在 H5 行動版 (`app/index.html`) 中，父容器 `.mobile-h5-app #panel-news .controls-container` 為 `flex-direction: column`，且 `.mobile-h5-app .news-search-box` 未重設 `flex` 屬性，導致 `flex-basis: 340px` 被解析為 **340px 高度**，使 40px 高的搜尋框懸浮於上下各 150px 的空白正中央。
+  2. **活動日曆跨日多軌道色塊漏顯與白字浮空**：`js/modules/news/news_timeline.js` 的 `renderEventTimeline()` 原先未先篩選當月活動，且僅以單一 `trackEndTimes[i]` 比對已按優先序（而非時間序）排序的活動，導致較晚開始但優先序較高的活動佔滿前 2 軌，將月初或月中較早活動擠到第 4 軌以後（超過顯示上限 3 軌），造成 1–3 日與 13–15 日出現 `.has-events` 白字卻無色塊底色的視覺破版。
+- **修正內容**：
+  1. [recipes_cards.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/recipes_cards.css) 與 [styles.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/styles.css)：於 `.mobile-h5-app .search-box, .mobile-h5-app .news-search-box` 補上 `min-width: 0 !important; max-width: none !important; flex: 0 0 auto !important; height: auto !important;`，讓搜尋框在直向 Flex 容器維持正常 40px 高度並填滿寬度（不影響桌面版橫向 `340px` 配置）。
+  2. [news_timeline.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/news/news_timeline.js)：`renderEventTimeline()` 改為先篩選與當月重疊的活動（`monthGanttData`），並改用實際日期區間防重疊演算法（`trackIntervals`）分配軌道，讓不重疊的早期活動正確複用低編號軌道；同時新增 `hasVisibleBand` 判定與第 4 軌以上退回顯示機制，確保所有標記 `.has-events` 的日期格皆具備可見色塊。
+  3. 執行 `npm run build` 重新編譯並壓縮 `css/styles.min.css`、`js/modules/news.js`、`js/modules/news.min.js` 與快取版號（`20261124_0957`）。
+- **驗證結果**：
+  - `npm run test:fast`：**172 / 172 PASS**；`node tests/test_r1_r5_theme_pwa_css.js`：**8 / 8 PASS**。
+  - 無頭 Chrome CDP 實機量測：
+    - H5 行動版（`390x844`）：`.news-search-box` 高度由 `340px` 修正為 **`40px`**，頂部至搜尋框間距 **`10px`**、搜尋框至分類標籤間距 **`14px`**，日曆 `27` 個活動日全數具備可見色塊（`ghostCells: []`）。
+    - 桌面版（`1440x900`）：`.news-search-box` 維持 `340px x 40px`，分類標籤與日曆零回歸（`ghostCells: []`）。
+
 ## 交接：2026-11-23 已完成（Milestone M1：R1-R5 主題零閃現、食材天梯邊界與前3/精選顯示、H5 食材格狀對齊、Standalone 狀態欄沉浸融合、全 8 主題 WCAG AA 與桌面側欄避讓）
 
 - **調整內容**：
