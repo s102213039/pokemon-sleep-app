@@ -184,9 +184,21 @@
         return true;
       }
 
-      const scopedRecipesList = lockedCategory
+      function getRecipeBaseEnergy(r) {
+        if (!r) return 0;
+        const raw = r.base_energy !== undefined ? r.base_energy : (r.energy !== undefined ? r.energy : 0);
+        const num = typeof raw === 'number' ? raw : parseInt(String(raw).replace(/,/g, ''), 10);
+        return Number.isFinite(num) ? num : 0;
+      }
+
+      const scopedRecipesList = (lockedCategory
         ? allRecipesList.filter(r => matchesRecipeCategory(r, lockedCategory))
-        : allRecipesList;
+        : allRecipesList.slice()
+      ).sort((a, b) => {
+        const energyDiff = getRecipeBaseEnergy(b) - getRecipeBaseEnergy(a);
+        if (energyDiff !== 0) return energyDiff;
+        return (b.pot_size || 0) - (a.pot_size || 0);
+      });
 
       function generateRecipeItemsHtml(query = '') {
         const q = (query || '').trim().toLowerCase();
@@ -236,6 +248,9 @@
             `;
           }).join('');
 
+          const baseEnergy = getRecipeBaseEnergy(r);
+          const energyText = baseEnergy > 0 ? baseEnergy.toLocaleString() : '';
+
           return `
             <div class="lab-recipe-card ${catClass} ${isSelected ? 'selected' : ''}" onclick="window.AppraisalLab.onRecipePickerSelect('${escapeHtml(rNameCn)}')">
               <div class="lab-recipe-card-left">
@@ -244,6 +259,7 @@
                   <div class="lab-recipe-card-title-row">
                     <span class="lab-recipe-card-title">${escapeHtml(rNameDisplay)}</span>
                     ${r.pot_size ? `<span class="lab-recipe-card-pot">${r.pot_size}${isEN ? ' Pots' : '格'}</span>` : ''}
+                    ${energyText ? `<span class="lab-recipe-card-pot">${energyText}</span>` : ''}
                     ${isSelected ? `<span class="lab-recipe-active-badge">${isEN ? 'Current' : '當前'}</span>` : ''}
                   </div>
                   <div class="lab-recipe-card-ingredients">

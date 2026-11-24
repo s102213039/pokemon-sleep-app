@@ -585,14 +585,6 @@
         const picked = pickBest(userBox, 'berry');
         if (!picked) break;
       }
-    } else if (strategy === 'ingredients') {
-      if (healers.length > 0) {
-        pickBest(healers, 'healer');
-      }
-      while (selected.length < 5) {
-        const picked = pickBest(userBox, 'ingredient');
-        if (!picked) break;
-      }
     } else if (strategy === 'skills') {
       if (healers.length > 0) {
         pickBest(healers, 'healer');
@@ -601,7 +593,7 @@
         const picked = pickBest(userBox, 'skill');
         if (!picked) break;
       }
-    } else if (strategy === 'recipe') {
+    } else if (strategy === 'ingredients' || strategy === 'recipe') {
       const targetRecipe = findTargetRecipe(labState.targetRecipeName);
       const reqIngredients = (targetRecipe && Array.isArray(targetRecipe.ingredients)) ? targetRecipe.ingredients : [];
       const remainingDeficits = {};
@@ -675,79 +667,86 @@
       const teamSpeciesMap = {};
 
       while (selected.length < 5) {
+        const hasRemainingDeficit = reqIngredients.some(ing => (remainingDeficits[ing.name] || 0) > 0);
         let bestCandidate = null;
         let bestScore = -1;
 
-        for (let i = 0; i < userBox.length; i++) {
-          const p = userBox[i];
-          if (!p || usedUids.has(p.uid)) continue;
-          const base = findBasePkm(p.pokemonId || p.name);
-          if (!base) continue;
+        if (hasRemainingDeficit) {
+          for (let i = 0; i < userBox.length; i++) {
+            const p = userBox[i];
+            if (!p || usedUids.has(p.uid)) continue;
+            const base = findBasePkm(p.pokemonId || p.name);
+            if (!base) continue;
 
-          const pLv = parseInt(p.level, 10) || 30;
-          const speciesKey = base.id || base.name_cn || base.name || p.name;
-          const alreadyInTeam = teamSpeciesMap[speciesKey] || 0;
+            const pLv = parseInt(p.level, 10) || 30;
+            const speciesKey = base.id || base.name_cn || base.name || p.name;
+            const alreadyInTeam = teamSpeciesMap[speciesKey] || 0;
 
-          // 同物種重複怪懲罰：若非極高等級 (Lv>=50)，大幅施加懲罰係數 0.42，杜絕選入 Lv.32 等重複弱怪
-          const duplicatePenalty = alreadyInTeam > 0 ? (pLv >= 50 ? 0.65 : 0.42) : 1.0;
+            // 同物種重複怪懲罰：若非極高等級 (Lv>=50)，大幅施加懲罰係數 0.42，杜絕選入 Lv.32 等重複弱怪
+            const duplicatePenalty = alreadyInTeam > 0 ? (pLv >= 50 ? 0.65 : 0.42) : 1.0;
 
-          // 寶可夢自身戰力與等級權重 (等級權重深化至 1.45 次方，滿等神寵全面領先)
-          const levelWeight = Math.pow(Math.max(1, pLv) / 30, 1.45);
-          const spec = base.specialty || '';
-          const isIngSpec = spec.includes('食材') || spec === 'Ingredients';
-          const specMultiplier = isIngSpec ? 1.80 : 1.0;
+            // 寶可夢自身戰力與等級權重 (等級權重深化至 1.45 次方，滿等神寵全面領先)
+            const levelWeight = Math.pow(Math.max(1, pLv) / 30, 1.45);
+            const spec = base.specialty || '';
+            const isIngSpec = spec.includes('食材') || spec === 'Ingredients';
+            const specMultiplier = isIngSpec ? 1.80 : 1.0;
 
-          const berry = (typeof window.getPokemonBerry === 'function') ? window.getPokemonBerry(base) : (base.berry || {});
-          const isFav = favBerries.includes(berry.name || '') || favTypes.includes(berry.type || base.type || '');
-          const favMultiplier = isFav ? 1.25 : 1.0;
+            const berry = (typeof window.getPokemonBerry === 'function') ? window.getPokemonBerry(base) : (base.berry || {});
+            const isFav = favBerries.includes(berry.name || '') || favTypes.includes(berry.type || base.type || '');
+            const favMultiplier = isFav ? 1.25 : 1.0;
 
-          const subs = Array.isArray(p.subskills) ? p.subskills : [];
-          let subMultiplier = 1.0;
-          if (subs.includes('食材機率提升M')) subMultiplier *= 1.36;
-          if (subs.includes('食材機率提升S')) subMultiplier *= 1.18;
-          if (subs.includes('幫手獎勵')) subMultiplier *= 1.25;
-          if (subs.includes('幫忙速度M')) subMultiplier *= 1.15;
-          if (subs.includes('幫忙速度S')) subMultiplier *= 1.08;
+            const subs = Array.isArray(p.subskills) ? p.subskills : [];
+            let subMultiplier = 1.0;
+            if (subs.includes('食材機率提升M')) subMultiplier *= 1.36;
+            if (subs.includes('食材機率提升S')) subMultiplier *= 1.18;
+            if (subs.includes('幫手獎勵')) subMultiplier *= 1.25;
+            if (subs.includes('幫忙速度M')) subMultiplier *= 1.15;
+            if (subs.includes('幫忙速度S')) subMultiplier *= 1.08;
 
-          const isMint = !!(p.cleanseMint || p.mint);
-          const nat = isMint ? null : NATURE_DATA.find(n => n.name === p.nature);
-          let natMultiplier = 1.0;
-          if (nat && nat.buff && nat.buff.includes('食材')) natMultiplier *= 1.20;
-          if (nat && nat.debuff && nat.debuff.includes('食材')) natMultiplier *= 0.80;
-          if (nat && nat.buff && nat.buff.includes('幫忙速度')) natMultiplier *= 1.10;
+            const isMint = !!(p.cleanseMint || p.mint);
+            const nat = isMint ? null : NATURE_DATA.find(n => n.name === p.nature);
+            let natMultiplier = 1.0;
+            if (nat && nat.buff && nat.buff.includes('食材')) natMultiplier *= 1.20;
+            if (nat && nat.debuff && nat.debuff.includes('食材')) natMultiplier *= 0.80;
+            if (nat && nat.buff && nat.buff.includes('幫忙速度')) natMultiplier *= 1.10;
 
-          // 統計該寶可夢在當前「仍有缺口」之目標食材中的實質日產能 (>=8 個視為具實質規模)
-          let effectiveMatchCount = 0;
-          let deficitCoveredScore = 0;
-          let totalYieldAmount = 0;
+            // 統計該寶可夢在當前「仍有缺口」之目標食材中的實質日產能與缺口覆蓋比例
+            let effectiveMatchCount = 0;
+            let deficitCoveredScore = 0;
+            let deficitRatioBonus = 0;
+            let totalYieldAmount = 0;
 
-          reqIngredients.forEach(ing => {
-            const def = remainingDeficits[ing.name] || 0;
-            const y = estimatePkmIngDailyYield(p, ing.name);
-            if (y > 0) {
-              if (def > 0 && y >= 8) {
-                effectiveMatchCount++;
+            reqIngredients.forEach(ing => {
+              const def = remainingDeficits[ing.name] || 0;
+              const y = estimatePkmIngDailyYield(p, ing.name);
+              if (y > 0) {
+                if (def > 0 && y >= 8) {
+                  effectiveMatchCount++;
+                }
+                const covered = Math.min(y, def);
+                const surplus = Math.max(0, y - def);
+                deficitCoveredScore += covered * 4.5;
+                if (def > 0) {
+                  deficitRatioBonus += (covered / def) * 60;
+                }
+                totalYieldAmount += surplus * 0.25;
               }
-              const covered = Math.min(y, def);
-              const surplus = Math.max(0, y - def);
-              deficitCoveredScore += covered * 4.5;
-              totalYieldAmount += surplus * 0.25;
-            }
-          });
+            });
 
-          // 雙食材或多食材重疊契合度加權：必須高等級 (Lv>=30) 且對不同缺口均有實質規模產出
-          let synergyMultiplier = 1.0;
-          if (pLv >= 30 && effectiveMatchCount >= 3) synergyMultiplier = 2.5;
-          else if (pLv >= 30 && effectiveMatchCount === 2) synergyMultiplier = 1.85;
-          else if (effectiveMatchCount === 1) synergyMultiplier = 1.0;
-          else synergyMultiplier = 0.35;
+            // 雙食材或多食材重疊契合度加權：必須高等級 (Lv>=30) 且對不同缺口均有實質規模產出
+            let synergyMultiplier = 1.0;
+            if (pLv >= 30 && effectiveMatchCount >= 3) synergyMultiplier = 2.5;
+            else if (pLv >= 30 && effectiveMatchCount === 2) synergyMultiplier = 1.85;
+            else if (effectiveMatchCount === 1) synergyMultiplier = 1.0;
+            else synergyMultiplier = 0.35;
 
-          const rawYieldScore = deficitCoveredScore + totalYieldAmount;
-          if (rawYieldScore > 0) {
-            const finalScore = rawYieldScore * synergyMultiplier * levelWeight * specMultiplier * subMultiplier * natMultiplier * favMultiplier * duplicatePenalty;
-            if (finalScore > bestScore) {
-              bestScore = finalScore;
-              bestCandidate = p;
+            const rawYieldScore = deficitCoveredScore + deficitRatioBonus + totalYieldAmount;
+            if (deficitCoveredScore > 0) {
+              const finalScore = rawYieldScore * synergyMultiplier * levelWeight * specMultiplier * subMultiplier * natMultiplier * favMultiplier * duplicatePenalty;
+              if (finalScore > bestScore) {
+                bestScore = finalScore;
+                bestCandidate = p;
+              }
             }
           }
         }
@@ -764,8 +763,11 @@
             remainingDeficits[ing.name] = Math.max(0, (remainingDeficits[ing.name] || 0) - y);
           });
         } else {
-          // 當所有缺口已滿足或無食材契合怪時，挑選全隊中最強的食材型或高戰力綜合怪
-          const fallback = pickBest(userBox, 'ingredient') || pickBest(userBox, 'general');
+          // 所有缺口已 100% 覆蓋（或倉庫無對應食材怪）時：食材隊優先補入最佳奶媽維持全隊活力，其次補最強食材／綜合怪
+          const hasTeamHealer = selected.some(uid => healers.some(h => h.uid === uid));
+          const fallback = (strategy === 'ingredients' && !hasTeamHealer && healers.length > 0 ? pickBest(healers, 'healer') : null)
+            || pickBest(userBox, 'ingredient')
+            || pickBest(userBox, 'general');
           if (!fallback) break;
           const fbBase = findBasePkm(fallback.pokemonId || fallback.name);
           const fbKey = (fbBase && (fbBase.id || fbBase.name_cn || fbBase.name)) || fallback.name;
@@ -803,12 +805,12 @@
     updateLabUI();
     if (showToastNotification && typeof window.showToast === 'function') {
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-      if (strategy === 'recipe') {
+      if (strategy === 'recipe' || strategy === 'ingredients') {
         const targetRecipe = findTargetRecipe(labState.targetRecipeName);
         const rName = isEN ? (targetRecipe.name_en || targetRecipe.name_cn) : (targetRecipe.name_cn || targetRecipe.name);
         window.showToast(isEN
-          ? `Team optimized for target recipe: ${rName} on ${island.name_en || island.name} (Ingredient Maximization)!`
-          : `已自動為【${island.name}】推薦【${rName}】食材最大化最佳陣容！`
+          ? `Team optimized for target recipe: ${rName} on ${island.name_en || island.name} (Daily Coverage)!`
+          : `已自動為【${island.name}】依目標料理【${rName}】配置單日覆蓋最佳食材陣容！`
         );
       } else {
         const stratNames = { balanced: isEN ? 'Balanced' : '綜合隊', berries: isEN ? 'Berry-Focused' : '樹果隊', ingredients: isEN ? 'Ingredient-Focused' : '食材隊', skills: isEN ? 'Skill-Focused' : '技能隊' };
@@ -843,7 +845,11 @@
         localStorage.setItem('pksleep_lab_target_recipe', recipeName);
       }
     } catch (e) {}
-    autoOptimizeTeam(false);
+    if (labState.teamStrategy === 'ingredients' || labState.teamStrategy === 'recipe') {
+      autoOptimizeTeam(true);
+    } else {
+      updateLabUI();
+    }
   }
 
   function _getLabAllBerryNames() {
@@ -886,6 +892,33 @@
           localStorage.setItem('pksleep_lab_cooking_type', cookingType);
         }
       } catch (e) {}
+      // 若目前目標料理不屬於新選取的料理種類，自動對齊該分類最高基礎能量料理
+      const matchesCat = (r) => {
+        const cat = ((r && r.category) || '').toLowerCase();
+        if (cookingType === 'curry') return cat.includes('咖哩') || cat.includes('curry') || cat.includes('濃湯') || cat.includes('stew');
+        if (cookingType === 'salad') return cat.includes('沙拉') || cat.includes('salad');
+        if (cookingType === 'dessert') return cat.includes('甜') || cat.includes('點心') || cat.includes('dessert') || cat.includes('飲料') || cat.includes('drink');
+        return false;
+      };
+      const curRecipe = findTargetRecipe(labState.targetRecipeName);
+      if (!curRecipe || !matchesCat(curRecipe)) {
+        const candidates = getAllTargetRecipes().filter(matchesCat).sort((a, b) => {
+          const ea = parseInt(String(a.base_energy || a.energy || 0).replace(/,/g, ''), 10) || 0;
+          const eb = parseInt(String(b.base_energy || b.energy || 0).replace(/,/g, ''), 10) || 0;
+          return (eb - ea) || ((b.pot_size || 0) - (a.pot_size || 0));
+        });
+        if (candidates.length > 0) {
+          const nextName = candidates[0].name_cn || candidates[0].name;
+          if (nextName) {
+            labState.targetRecipeName = nextName;
+            try {
+              if (typeof localStorage !== 'undefined') {
+                localStorage.setItem('pksleep_lab_target_recipe', nextName);
+              }
+            } catch (e) {}
+          }
+        }
+      }
       autoOptimizeTeam(false);
     }
   }
