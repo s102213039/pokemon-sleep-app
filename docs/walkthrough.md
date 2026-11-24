@@ -5,6 +5,22 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-24 已完成（移除最新 Tab 無功能原生按鈕、消除淺色主題天梯圖示眩光並修復盒子／深度研究室淺色主題樣式）
+
+- **問題根因與修正內容**：
+  1. **最新 Tab 移除「展開查看官方詳細公告」原生按鈕 (`js/modules/news/news_render.js`, `tests/tiers/tier4/tier4_part4.js`)**：
+     - 移除 `renderOfficialFullDrawerHTML()` 與 `.news-full-toggle-btn` 按鈕及事件監聽（原先因缺乏對應樣式呈現為無功能原生按鈕與未折疊原文），保留卡片右上角「官方原文」直連按鈕；同步更新 `tier4_part4.js` 斷言鎖定不再渲染該按鈕。
+  2. **4 款淺色主題移除深色專用霓虹眩光 (`css/views/wiki/wiki_skill_ladder.css`, `css/styles.css`)**：
+     - 針對全 4 組淺色主題（`dawn`、`emerald`、`midnight` 反色、`onyx` 反色），移除食材天梯與技能天梯中 `.node-top1 .node-avatar-img`（黃色霓虹光暈）、`.node-has-ing-select .node-avatar-img`（紫色霓虹光暈）、`.node-count-badge.badge-ing-select` 與雙軌群組高亮之模糊眩光，改以清晰細邊框（`#d97706` / `#7e22ce` / `#0284c7`）與極淡投影呈現，避免淺色背景產生髒霧眩光感。
+  3. **盒子／深度研究室 4 款淺色主題樣式與對比修正 (`css/views/lab/lab_team_pot.css`, `css/styles.css`)**：
+     - 修正 `.lab-subtab-btn.active` 與 `.lab-team-pill.active` 原先寫死 `color: #0f172a` 導致在淺色主題深色強調底上變成黑字配深底的問題，統一改用 `var(--accent-btn-bg)` 與 `var(--accent-btn-text, #ffffff)`。
+     - 將 `.lab-team-pills`（隊伍類型／料理種類膠囊軌）、`.lab-greengrass-berry-item`（萌綠之島樹果外框）、`.lab-slot-lv-badge`（等級徽章）、`.lab-pot-stepper-wrap`、`.lab-pot-toggle-btn`、`.lab-supply-row` 與培育精算 `.lab-growth-*` 面板中原先寫死的深色半透明底色（`rgba(0,0,0,0.2)` / `rgba(15,23,42,0.5)` / `#0f172a`）於 4 款淺色主題全面改為乾淨淺色表面（`var(--bg-card)` / `var(--bg-card-inner)` + `var(--border-color)`），並柔化 `.lab-island-circle-btn` 與 `.box-btn-primary` 在淺色主題的投影與邊框。
+  4. 執行 `npm run build` 產生最新壓縮資產與快取版號 `20261124_1210`（54 份 CSS 模組全數 `<= 1,000` 行）。
+- **驗證結果**：
+  - `npm test`：**296 / 296 PASS**（Tier 1: 74, Tier 2: 70, Tier 3: 28, Tier 4: 124）。
+  - `node tests/test_r1_r5_theme_pwa_css.js`：**8 / 8 PASS**（CSS 同步、54 模組 `<= 1,000` 行、WCAG AA、Zero Emoji/Glyph）。
+  - 無頭 Chrome CDP（H5 `390x844` `emerald` 淺色主題）：確認 `.news-full-toggle-btn` 與 `.news-official-full-drawer` 數量皆為 `0`，且食材天梯與技能天梯 Top-1 與食材精選頭像已移除霓虹眩光。
+
 ## 交接：2026-11-24 已完成（H5 最新 Tab 搜尋框 340px 異常留白與活動日曆多軌道色塊防遺漏修復）
 
 - **問題根因**：

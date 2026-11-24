@@ -170,24 +170,6 @@
     return htmlChunks.join('');
   }
 
-  function renderOfficialFullDrawerHTML(item, isEN, isCN) {
-    const rawContent = isEN && item.full_content_en ? item.full_content_en : (item.full_content || item.content_preview || '');
-    if (!rawContent || !rawContent.trim()) return '';
-
-    const btnLabel = isEN ? 'View Official Full Details' : (isCN ? '展开查看官方详细公告' : '展開查看官方詳細公告');
-    return `
-      <div class="news-official-full-drawer">
-        <button type="button" class="news-full-toggle-btn" data-news-id="${item.id}" aria-expanded="false" title="${btnLabel}">
-          <span class="news-toggle-text">${btnLabel}</span>
-          <span class="news-toggle-arrow">▾</span>
-        </button>
-        <div class="news-full-content-body hidden" id="news-full-${item.id}">
-          ${renderFormattedFullContent(item, isEN, isCN)}
-        </div>
-      </div>
-    `;
-  }
-
   /* ─── 渲染新聞列表 (折疊式 Accordion 卡片) ─────────────── */
   function renderNews() {
     if (!newsListContainer) return;
@@ -348,39 +330,10 @@
 
           <div class="news-accordion-body">
             ${aiSectionsHTML}
-            ${renderOfficialFullDrawerHTML(item, isEN, isCN)}
           </div>
         </article>
       `;
     }).join('');
-
-    // 點選詳細公告展開按鈕（獨立開合，不觸發外層卡片折疊）
-    newsListContainer.querySelectorAll('.news-full-toggle-btn').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        const id = btn.getAttribute('data-news-id');
-        const bodyEl = document.getElementById(`news-full-${id}`);
-        if (!bodyEl) return;
-        const isCollapsed = bodyEl.classList.contains('hidden');
-        if (isCollapsed) {
-          bodyEl.classList.remove('hidden');
-          btn.classList.add('active');
-          btn.setAttribute('aria-expanded', 'true');
-          const textEl = btn.querySelector('.news-toggle-text');
-          const arrowEl = btn.querySelector('.news-toggle-arrow');
-          if (textEl) textEl.textContent = isEN ? 'Collapse Official Details' : (isCN ? '收起官方详细公告' : '收起官方詳細公告');
-          if (arrowEl) arrowEl.textContent = '▴';
-        } else {
-          bodyEl.classList.add('hidden');
-          btn.classList.remove('active');
-          btn.setAttribute('aria-expanded', 'false');
-          const textEl = btn.querySelector('.news-toggle-text');
-          const arrowEl = btn.querySelector('.news-toggle-arrow');
-          if (textEl) textEl.textContent = isEN ? 'View Official Full Details' : (isCN ? '展开查看官方详细公告' : '展開查看官方詳細公告');
-          if (arrowEl) arrowEl.textContent = '▾';
-        }
-      });
-    });
 
     // 點選整個卡片直接展開與隱藏
     newsListContainer.querySelectorAll('.news-accordion-card').forEach(card => {

@@ -2535,10 +2535,8 @@ function registerTier4Part4() {
     const latestNewsWithFull = newsJson.find(n => n.full_content && n.full_content.length > 50);
     assert(latestNewsWithFull, 'news.json must have full_content populated for articles');
 
-    assert(newsRenderJs.includes('renderOfficialFullDrawerHTML'), 'news_render.js must define renderOfficialFullDrawerHTML');
-    assert(newsRenderJs.includes('renderFormattedFullContent'), 'news_render.js must define renderFormattedFullContent');
-    assert(newsRenderJs.includes('news-official-full-drawer'), 'news_render.js must render news-official-full-drawer');
-    assert(newsRenderJs.includes('news-full-toggle-btn'), 'news_render.js must render news-full-toggle-btn');
+    assert(!newsRenderJs.includes('news-full-toggle-btn'), 'news_render.js must not render removed news-full-toggle-btn');
+    assert(!newsRenderJs.includes('news-official-full-drawer'), 'news_render.js must not render removed news-official-full-drawer');
 
     // 3. Verify Anti-Stale Cache Invalidation
     assert(domUtilsJs.includes('60 * 1000') || domUtilsJs.includes('60000'),
