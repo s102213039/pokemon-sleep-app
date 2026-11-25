@@ -150,6 +150,7 @@ console.log('\n[Suite 2] Zero Missing Final Evolutions Across All Tracks');
   let missingCount = 0;
   DATA_JSON.forEach(p => {
     if (p.is_final !== '〇') return;
+    if (!p.interval || !p.ingredient_rate) return; // Skip unreleased Pokemon without stats yet
     const expectedName = eeveelutions.has(p.name_cn)
       ? '伊布家族（8種進化）'
       : (p.name_cn.startsWith('南瓜怪人') ? '南瓜怪人' : p.name_cn);

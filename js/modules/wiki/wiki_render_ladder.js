@@ -52,9 +52,11 @@
     const processedMainTracks = mainTracks.map(ing => {
       const dishInfo = (typeof getDynamicTopRecipeForIngredient === 'function')
         ? getDynamicTopRecipeForIngredient(ing.id, ing.name)
-        : (TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: isEN ? 'High Tier Dish' : '高階料理', name_en: 'High Tier Dish', need: 20, type: isEN ? 'Dish' : '料理', secondary: '' });
-      const dishName = isEN ? (dishInfo.name_en || dishInfo.name) : dishInfo.name;
-      const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
+        : (TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: _tWiki('高階料理', 'High Tier Dish'), name_en: 'High Tier Dish', need: 20, type: _tWiki('料理', 'Dish'), secondary: '' });
+      const dishName = _tWiki(dishInfo.name, dishInfo.name_en || dishInfo.name);
+      const ingName = (window.I18N && typeof window.I18N.getIngredientName === 'function')
+        ? (window.I18N.getIngredientName(ing.name) || _tWiki(ing.name, ing.name))
+        : _tWiki(ing.name, ing.name);
       const trackRawMax = ing.pokemon && ing.pokemon[0] ? Math.round(ing.pokemon[0].count * mult) : 0;
       const minDefaultThreshold = (isUnfilteredDefault && trackRawMax >= 30)
         ? 30
@@ -67,8 +69,10 @@
       const targetDishNeed = (isHighlighted && reqCount) ? reqCount : dishInfo.need;
       const targetDishName = isHighlighted
         ? (activeHighlightRecipes.length > 1
-          ? (isEN ? `${activeHighlightRecipes.length} recipes` : `${activeHighlightRecipes.length} 道料理`)
-          : (isEN ? (activeHighlightRecipe.name_en || activeHighlightRecipe.name_cn) : activeHighlightRecipe.name_cn))
+          ? _tWiki(`${activeHighlightRecipes.length} 道料理`, `${activeHighlightRecipes.length} recipes`)
+          : ((window.I18N && typeof window.I18N.getRecipeName === 'function')
+              ? window.I18N.getRecipeName(activeHighlightRecipe)
+              : _tWiki(activeHighlightRecipe.name_cn, activeHighlightRecipe.name_en || activeHighlightRecipe.name_cn)))
         : dishName;
       const targetDishIcon = isHighlighted
         ? (activeHighlightRecipes.length > 1
@@ -279,7 +283,9 @@
               <div class="ladder-recipe-banner-recipes">
                 ${activeHighlightRecipes.map((rec, idx) => {
                   const style = getRecipeMarkStyle(idx);
-                  const recName = isEN ? rec.name_en : rec.name_cn;
+                  const recName = (window.I18N && typeof window.I18N.getRecipeName === 'function')
+                    ? window.I18N.getRecipeName(rec)
+                    : _tWiki(rec.name_cn, rec.name_en || rec.name_cn);
                   const recIconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(rec.icon) : rec.icon) || rec.icon;
                   return `
                     <div class="ladder-recipe-banner-recipe-chip" title="${recName}">
@@ -289,7 +295,7 @@
                   `;
                 }).join('')}
               </div>
-              <button type="button" class="ladder-recipe-banner-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${isEN ? 'Clear recipe highlight' : '清除料理高亮'}" aria-label="${isEN ? 'Clear' : '清除'}">
+              <button type="button" class="ladder-recipe-banner-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${_tWiki('清除料理高亮', 'Clear recipe highlight')}" aria-label="${_tWiki('清除', 'Clear')}">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -339,7 +345,9 @@
 
             let trackNodes = [];
             filteredPokemonList.forEach((p, pIdx) => {
-              const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
+              const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+                ? (window.I18N.getPokemonName(p.name) || _tWiki(p.name, p.name_en || p.name))
+                : _tWiki(p.name, p.name_en || p.name);
               const skillBonus = getPokemonSkillDrawBonus(p.name, ing.id, ing.name);
               p.variants.forEach((v, vIdx) => {
                 const dropCount = Math.round(v.count * mult);
@@ -375,7 +383,7 @@
             <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''} ${highlightClass}" data-ladder-ing="${ing.id}">
               <div class="ladder-track-header ${isDimmed ? 'ladder-track-disabled-header' : 'clickable-ing-header'}" 
                    ${isDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('${ing.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.WikiDB.openIngredientRankingModal('${ing.id}');}" role="button" tabindex="0"`} 
-                   title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isHighlighted ? (isEN ? 'Selected Dish: ' : '選定料理: ') + targetDishName + ` (${targetDishNeed}${isEN ? '/meal' : '顆/餐'})` : (isDimmed ? (isEN ? 'Not in current recipe' : '非此料理所需食材') : (isEN ? 'Key Dish: ' : '核心大菜: ') + dishName)} · ${isEN ? 'Click to view rankings' : '點擊查看產量排名'}">
+                   title="${ingName} (${_tWiki('基礎能量', 'Base Energy')} ${ing.energy}) · ${isHighlighted ? _tWiki('選定料理: ', 'Selected Dish: ') + targetDishName + ` (${targetDishNeed}${_tWiki('顆/餐', '/meal')})` : (isDimmed ? _tWiki('非此料理所需食材', 'Not in current recipe') : _tWiki('核心大菜: ', 'Key Dish: ') + dishName)} · ${_tWiki('點擊查看產量排名', 'Click to view rankings')}">
                 <div class="ladder-track-ing-main">
                   <img src="${(typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon}" class="ladder-ing-icon" alt="${ingName}">
                 </div>
@@ -396,7 +404,9 @@
                     if (ladderTop15Only && !visiblePkmGroupNames.has(p.name)) return '';
                     const pkmNodes = trackNodes.filter(n => n.p.name === p.name);
                     if (pkmNodes.length < 2) return '';
-                    const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
+                    const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+                      ? (window.I18N.getPokemonName(p.name) || _tWiki(p.name, p.name_en || p.name))
+                      : _tWiki(p.name, p.name_en || p.name);
                     const scaledCounts = pkmNodes.map(n => n.scaledCount);
                     const minCount = Math.min(...scaledCounts);
                     const maxCount = Math.max(...scaledCounts);
@@ -407,7 +417,7 @@
                       <div class="ladder-span-bar" 
                            data-pkm-group="${p.name}" 
                            style="left: ${minPct}%; width: ${widthPct}%;"
-                           title="${pkmDisplayName} ${isEN ? 'Range: ' : '配方跨度: '}${minCount} ~ ${maxCount} ${isEN ? '/day' : '顆/天'}">
+                           title="${pkmDisplayName} ${_tWiki('配方跨度: ', 'Range: ')}${minCount} ~ ${maxCount} ${_tWiki('顆/天', '/day')}">
                       </div>
                     `;
                   }).join('')}
@@ -450,13 +460,13 @@
                       let dishTag = '';
                       let dishBadgeClass = '';
                       if (mealsPerDay >= 3.0) {
-                        dishTag = isEN ? `Full 3 Meals (${mealsPerDay} meals/day)` : `滿載 3 餐大菜 (${mealsPerDay} 餐/天)`;
+                        dishTag = _tWiki(`滿載 3 餐大菜 (${mealsPerDay} 餐/天)`, `Full 3 Meals (${mealsPerDay} meals/day)`);
                         dishBadgeClass = 'dish-badge-full';
                       } else if (mealsPerDay >= 1.8) {
-                        dishTag = isEN ? `Solid 2 Meals (${mealsPerDay} meals/day)` : `充足供應 2 餐大菜 (${mealsPerDay} 餐/天)`;
+                        dishTag = _tWiki(`充足供應 2 餐大菜 (${mealsPerDay} 餐/天)`, `Solid 2 Meals (${mealsPerDay} meals/day)`);
                         dishBadgeClass = 'dish-badge-high';
                       } else {
-                        dishTag = isEN ? `Auxiliary Support (${mealsPerDay} meals/day)` : `輔助支援 (${mealsPerDay} 餐/天)`;
+                        dishTag = _tWiki(`輔助支援 (${mealsPerDay} 餐/天)`, `Auxiliary Support (${mealsPerDay} meals/day)`);
                         dishBadgeClass = 'dish-badge-assist';
                       }
 
@@ -467,7 +477,7 @@
                       const hasIngSelectSkill = (typeof hasPokemonIngSelectSkill === 'function') && hasPokemonIngSelectSkill(node.p.name);
                       const hasSkillDraw = node.skillBonus > 0;
                       const showCountBadge = isTop3 || hasIngSelectSkill || hasSkillDraw;
-                      const dishLabel = isHighlighted ? (isEN ? 'Selected Dish: ' : '選定料理: ') : (isEN ? 'Key Dish: ' : '核心大菜: ');
+                      const dishLabel = isHighlighted ? _tWiki('選定料理: ', 'Selected Dish: ') : _tWiki('核心大菜: ', 'Key Dish: ');
 
                       return `
                         <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${hasIngSelectSkill ? 'node-has-ing-select' : ''} ${hasSkillDraw ? 'node-has-skill-draw' : ''} ${alignClass} ${popupDirectionClass} recipe-${node.v.recipe.toLowerCase()} ${groupSize > 1 ? 'node-in-cluster' : ''}" 
@@ -479,32 +489,32 @@
                             <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}" loading="lazy" decoding="async">
                           </div>
                           ${showCountBadge ? `
-                            <div class="node-count-badge ${hasIngSelectSkill ? 'badge-ing-select' : ''} ${hasSkillDraw ? 'badge-skill-draw' : ''}" ${hasSkillDraw ? `title="${isEN ? 'Base Drop: ' + node.dropCount + ' + Ingr. Selection Lv.7: ' + node.skillBonus : '常規食材掉落: ' + node.dropCount + ' + 食材精選S Lv.7: ' + node.skillBonus}"` : (hasIngSelectSkill ? `title="${isEN ? 'Ingredient Selection Skill Pokemon' : '食材精選類技能寶可夢'}"` : '')}>
+                            <div class="node-count-badge ${hasIngSelectSkill ? 'badge-ing-select' : ''} ${hasSkillDraw ? 'badge-skill-draw' : ''}" ${hasSkillDraw ? `title="${_tWiki('常規食材掉落: ' + node.dropCount + ' + 食材精選S Lv.7: ' + node.skillBonus, 'Base Drop: ' + node.dropCount + ' + Ingr. Selection Lv.7: ' + node.skillBonus)}"` : (hasIngSelectSkill ? `title="${_tWiki('食材精選類技能寶可夢', 'Ingredient Selection Skill Pokemon')}"` : '')}>
                               ${node.scaledCount}
                             </div>
                           ` : ''}
                           
                           <div class="ladder-node-tooltip">
-                            <div class="tooltip-title">${node.isTopNode ? (isEN ? 'Top 1 Yield ' : '產量 TOP 1 ') : ''}${node.pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${node.v.recipe.toLowerCase()}">${node.v.recipe}</span></div>
-                            <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估總日產：'}<span class="text-success font-bold">${node.scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
+                            <div class="tooltip-title">${node.isTopNode ? _tWiki('產量 TOP 1 ', 'Top 1 Yield ') : ''}${node.pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${node.v.recipe.toLowerCase()}">${node.v.recipe}</span></div>
+                            <div class="tooltip-detail">${_tWiki('預估總日產：', 'Est. Daily Output: ')}<span class="text-success font-bold">${node.scaledCount} ${_tWiki('顆/天', '/day')}</span></div>
                             
                             ${hasSkillDraw ? `
                               <!-- 食材掉落與技能獲取雙區塊拆解 -->
                               <div class="tooltip-yield-breakdown">
                                 <div class="breakdown-row">
-                                  <span class="breakdown-label">${isEN ? 'Ingredient Drop:' : '常規食材掉落：'}</span>
-                                  <span class="breakdown-val">${node.dropCount} ${isEN ? 'items' : '顆'}</span>
+                                  <span class="breakdown-label">${_tWiki('常規食材掉落：', 'Ingredient Drop:')}</span>
+                                  <span class="breakdown-val">${node.dropCount} ${_tWiki('顆', 'items')}</span>
                                 </div>
                                 <div class="breakdown-row breakdown-skill">
-                                  <span class="breakdown-label">${isEN ? 'Ingr. Selection S (Lv.7):' : '食材精選S 獲取 (Lv.7)：'}</span>
-                                  <span class="breakdown-val">+${node.skillBonus} ${isEN ? 'items' : '顆'}</span>
+                                  <span class="breakdown-label">${_tWiki('食材精選S 獲取 (Lv.7)：', 'Ingr. Selection S (Lv.7):')}</span>
+                                  <span class="breakdown-val">+${node.skillBonus} ${_tWiki('顆', 'items')}</span>
                                 </div>
                               </div>
                             ` : ''}
 
                             <!-- 料理供貨能力指標 (動態對應選定料理，以料理圖示代替名稱) -->
                             <div class="tooltip-dish-box">
-                              <div class="tooltip-dish-title">${dishLabel}${targetDishIcon ? `<img src="${targetDishIcon}" class="tooltip-dish-icon" alt="${escapeHtml(targetDishName)}" title="${escapeHtml(targetDishName)}" loading="lazy">` : `<span class="text-white font-bold">${targetDishName}</span>`} (${targetDishNeed}${isEN ? '/meal' : '顆/餐'})</div>
+                              <div class="tooltip-dish-title">${dishLabel}${targetDishIcon ? `<img src="${targetDishIcon}" class="tooltip-dish-icon" alt="${escapeHtml(targetDishName)}" title="${escapeHtml(targetDishName)}" loading="lazy">` : `<span class="text-white font-bold">${targetDishName}</span>`} (${targetDishNeed}${_tWiki('顆/餐', '/meal')})</div>
                               <div class="tooltip-dish-badge ${dishBadgeClass}">${dishTag}</div>
                             </div>
 
@@ -522,7 +532,7 @@
                   const pctNum = parseFloat(pctStr);
                   const edgeCls = pctNum >= 96 ? 'passing-edge-right' : (pctNum <= 4 ? 'passing-edge-left' : '');
                   return `
-                  <div class="ladder-passing-line-container ${edgeCls}" style="left: ${pctStr}%; --ladder-passing-line-color: ${m.color}; --ladder-passing-line-glow: ${m.color}; --ladder-passing-color-dark: ${m.color}; --ladder-passing-color-light: ${m.fg};" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${m.target} ${isEN ? 'items' : '顆'}">
+                  <div class="ladder-passing-line-container ${edgeCls}" style="left: ${pctStr}%; --ladder-passing-line-color: ${m.color}; --ladder-passing-line-glow: ${m.color}; --ladder-passing-color-dark: ${m.color}; --ladder-passing-color-light: ${m.fg};" title="${_tWiki('三餐及格線: ', '3 Meals Target: ')}${m.target} ${_tWiki('顆', 'items')}">
                     <div class="ladder-passing-line"></div>
                     <div class="ladder-passing-badge">
                       <span class="ladder-passing-num">${m.target}</span>
@@ -616,8 +626,8 @@
                   <div class="ladder-tail-track-row ${isTailEmpty ? 'ladder-track-empty' : ''} ${isTailDimmed ? 'ladder-track-dimmed' : (isTailHighlighted ? 'ladder-track-highlighted' : '')}" data-ladder-ing="tail">
                     <div class="ladder-track-header ${isTailDimmed ? 'ladder-track-disabled-header' : 'clickable-ing-header'}" 
                          ${isTailDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('tail')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.WikiDB.openIngredientRankingModal('tail');}" role="button" tabindex="0"`} 
-                         title="${isEN ? 'Slowpoke Tail' : '美味尾巴'} · ${isTailDimmed ? (isEN ? 'Not required for this recipe' : '非此料理所需食材') : (isEN ? 'Click to view rankings' : '點擊查看產量排名')}">
-                      <img src="${tailIng.icon}" class="ladder-ing-icon" alt="${isEN ? 'Slowpoke Tail' : '美味尾巴'}">
+                         title="${_tWiki('美味尾巴', 'Slowpoke Tail')} · ${isTailDimmed ? _tWiki('非此料理所需食材', 'Not required for this recipe') : _tWiki('點擊查看產量排名', 'Click to view rankings')}">
+                      <img src="${tailIng.icon}" class="ladder-ing-icon" alt="${_tWiki('美味尾巴', 'Slowpoke Tail')}">
                     </div>
 
                     <div class="ladder-tail-canvas">
@@ -651,7 +661,9 @@
 
                           const tailTrackNodes = [];
                           filteredTailPkm.forEach((p, pIdx) => {
-                            const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
+                            const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+                              ? (window.I18N.getPokemonName(p.name) || _tWiki(p.name, p.name_en || p.name))
+                              : _tWiki(p.name, p.name_en || p.name);
                             p.variants.forEach((v, vIdx) => {
                               const scaledCount = Math.round(v.count * mult);
                               const isTopNode = (scaledCount === tailMaxYield && scaledCount > 0) || v.isTop || (p.isTop && v.recipe === p.recipe);
@@ -713,11 +725,11 @@
                                   <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}">
                                 </div>
                                 ${showCountBadge ? `
-                                  <div class="node-count-badge ${hasIngSelectSkill ? 'badge-ing-select' : ''}" ${hasIngSelectSkill ? `title="${isEN ? 'Ingredient Selection Skill Pokemon' : '食材精選類技能寶可夢'}"` : ''}>${node.scaledCount}</div>
+                                  <div class="node-count-badge ${hasIngSelectSkill ? 'badge-ing-select' : ''}" ${hasIngSelectSkill ? `title="${_tWiki('食材精選類技能寶可夢', 'Ingredient Selection Skill Pokemon')}"` : ''}>${node.scaledCount}</div>
                                 ` : ''}
                                 <div class="ladder-node-tooltip">
-                                  <div class="tooltip-title">${node.isTopNode ? (isEN ? 'Top 1 Yield ' : '產量 TOP 1 ') : ''}${node.pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${node.v.recipe.toLowerCase()}">${node.v.recipe}</span></div>
-                                  <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${node.scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
+                                  <div class="tooltip-title">${node.isTopNode ? _tWiki('產量 TOP 1 ', 'Top 1 Yield ') : ''}${node.pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${node.v.recipe.toLowerCase()}">${node.v.recipe}</span></div>
+                                  <div class="tooltip-detail">${_tWiki('預估日產：', 'Est. Daily Output: ')}<span class="text-success font-bold">${node.scaledCount} ${_tWiki('顆/天', '/day')}</span></div>
                                   <div class="tooltip-note">${formatLadderNote(node.v.note || '', isEN)}</div>
                                 </div>
                               </div>
@@ -732,7 +744,7 @@
                         const pctNum = parseFloat(pctStr);
                         const edgeCls = pctNum >= 96 ? 'passing-edge-right' : (pctNum <= 4 ? 'passing-edge-left' : '');
                         return `
-                        <div class="ladder-passing-line-container ${edgeCls}" style="left: ${pctStr}%; --ladder-passing-line-color: ${m.color}; --ladder-passing-line-glow: ${m.color}; --ladder-passing-color-dark: ${m.color}; --ladder-passing-color-light: ${m.fg};" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${m.target} ${isEN ? 'items' : '顆'}">
+                        <div class="ladder-passing-line-container ${edgeCls}" style="left: ${pctStr}%; --ladder-passing-line-color: ${m.color}; --ladder-passing-line-glow: ${m.color}; --ladder-passing-color-dark: ${m.color}; --ladder-passing-color-light: ${m.fg};" title="${_tWiki('三餐及格線: ', '3 Meals Target: ')}${m.target} ${_tWiki('顆', 'items')}">
                           <div class="ladder-passing-line"></div>
                           <div class="ladder-passing-badge">
                             <span class="ladder-passing-num">${m.target}</span>

@@ -212,9 +212,9 @@
     return _resolveDynamicCaps(res);
   }
 
-  function getTypeName(type) {
+  function getTypeName(type, lang = currentLang) {
     if (!type) return '';
-    return lookupBilingualDict(TYPE_NAMES, type) || type;
+    return lookupBilingualDict(TYPE_NAMES, type, lang) || type;
   }
 
   const TYPE_SVG_PATHS = {
@@ -270,24 +270,9 @@
   }
 
   const TYPE_COLOR_HEX = {
-    grass: '#4ad071',
-    fire: '#fb6c6c',
-    water: '#76befe',
-    electric: '#ffd833',
-    bug: '#92dc3d',
-    normal: '#a8a878',
-    poison: '#aa45a0',
-    fighting: '#c03028',
-    ground: '#e0c068',
-    rock: '#b8a038',
-    psychic: '#f85888',
-    ice: '#7cd8c1',
-    dragon: '#7038f8',
-    ghost: '#70559b',
-    dark: '#705848',
-    steel: '#b8b8d0',
-    fairy: '#f49ba8',
-    flying: '#a890f0'
+    grass: '#4ad071', fire: '#fb6c6c', water: '#76befe', electric: '#ffd833', bug: '#92dc3d', normal: '#a8a878',
+    poison: '#aa45a0', fighting: '#c03028', ground: '#e0c068', rock: '#b8a038', psychic: '#f85888', ice: '#7cd8c1',
+    dragon: '#7038f8', ghost: '#70559b', dark: '#705848', steel: '#b8b8d0', fairy: '#f49ba8', flying: '#a890f0'
   };
 
   function getTypeIconSvg(type, size = 16) {
@@ -300,9 +285,9 @@
     return `<svg class="pkm-type-icon type-${key}" viewBox="0 0 512 512" width="${size}" height="${size}" aria-label="${safeEscape(typeDisplayName)}" title="${safeEscape(typeDisplayName)}" style="fill: var(--type-${rawType}, ${colorHex}); color: var(--type-${rawType}, ${colorHex});">${pathContent}</svg>`;
   }
 
-  function getSpecialtyName(spec) {
+  function getSpecialtyName(spec, lang = currentLang) {
     if (!spec) return '';
-    return lookupBilingualDict(SPECIALTY_NAMES, spec) || spec;
+    return lookupBilingualDict(SPECIALTY_NAMES, spec, lang) || spec;
   }
 
   function getSpecialtyKey(spec) {
@@ -325,68 +310,26 @@
   }
 
   const INGREDIENT_ICONS = {
-    '特選蘋果': 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png',
-    'Fancy Apple': 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png',
-    'apple': 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png',
-    '哞哞鮮奶': 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png',
-    '窩心牛奶': 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png',
-    'Moomoo Milk': 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png',
-    'milk': 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png',
-    '萌綠大豆': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png',
-    'Greengrass Soybeans': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png',
-    'soybeans': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png',
-    '甜甜蜜': 'https://www.serebii.net/pokemonsleep/ingredients/honey.png',
-    'Honey': 'https://www.serebii.net/pokemonsleep/ingredients/honey.png',
-    'honey': 'https://www.serebii.net/pokemonsleep/ingredients/honey.png',
-    '豆製肉': 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png',
-    'Bean Sausage': 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png',
-    'sausage': 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png',
-    '暖暖薑': 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png',
-    'Warming Ginger': 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png',
-    'ginger': 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png',
-    '好眠番茄': 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png',
-    '熟透番茄': 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png',
-    'Snoozy Tomato': 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png',
-    'tomato': 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png',
-    '特選蛋': 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png',
-    'Fancy Egg': 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png',
-    'egg': 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png',
-    '純粹油': 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png',
-    'Pure Oil': 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png',
-    'oil': 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png',
-    '窩心洋芋': 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png',
-    'Soft Potato': 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png',
-    'potato': 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png',
-    '火辣香草': 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png',
-    'Fiery Herb': 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png',
-    'herb': 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png',
-    '萌綠玉米': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png',
-    'Greengrass Corn': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png',
-    'corn': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png',
-    '放鬆可可': 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png',
-    'Soothing Cacao': 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png',
-    'cacao': 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png',
-    '醒腦咖啡豆': 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png',
-    'Rousing Coffee': 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png',
-    'coffee': 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png',
-    '嫩亮酪梨': 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png',
-    'Glossy Avocado': 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png',
-    'glossyavocado': 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png',
-    '品鮮蘑菇': 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png',
-    'Tasty Mushroom': 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png',
-    'mushroom': 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png',
-    '粗枝大蔥': 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png',
-    'Large Leek': 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png',
-    'leek': 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png',
-    '沉甸甸南瓜': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png',
-    'Plump Pumpkin': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png',
-    'pumpkin': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png',
-    '美味尾巴': 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png',
-    'Slowpoke Tail': 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png',
-    'tail': 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png',
-    '一口堅果': 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png',
-    'Snackable Nuts': 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png',
-    'snackablenuts': 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png'
+    '特選蘋果': 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png', 'Fancy Apple': 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png', 'apple': 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png',
+    '哞哞鮮奶': 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png', '窩心牛奶': 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png', 'Moomoo Milk': 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png', 'milk': 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png',
+    '萌綠大豆': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png', 'Greengrass Soybeans': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png', 'soybeans': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png',
+    '甜甜蜜': 'https://www.serebii.net/pokemonsleep/ingredients/honey.png', 'Honey': 'https://www.serebii.net/pokemonsleep/ingredients/honey.png', 'honey': 'https://www.serebii.net/pokemonsleep/ingredients/honey.png',
+    '豆製肉': 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png', 'Bean Sausage': 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png', 'sausage': 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png',
+    '暖暖薑': 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png', 'Warming Ginger': 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png', 'ginger': 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png',
+    '好眠番茄': 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png', '熟透番茄': 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png', 'Snoozy Tomato': 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png', 'tomato': 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png',
+    '特選蛋': 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png', 'Fancy Egg': 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png', 'egg': 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png',
+    '純粹油': 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png', 'Pure Oil': 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png', 'oil': 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png',
+    '窩心洋芋': 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png', 'Soft Potato': 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png', 'potato': 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png',
+    '火辣香草': 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png', 'Fiery Herb': 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png', 'herb': 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png',
+    '萌綠玉米': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png', 'Greengrass Corn': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png', 'corn': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png',
+    '放鬆可可': 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png', 'Soothing Cacao': 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png', 'cacao': 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png',
+    '醒腦咖啡豆': 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png', 'Rousing Coffee': 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png', 'coffee': 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png',
+    '嫩亮酪梨': 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png', 'Glossy Avocado': 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png', 'glossyavocado': 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png',
+    '品鮮蘑菇': 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png', 'Tasty Mushroom': 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png', 'mushroom': 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png',
+    '粗枝大蔥': 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png', 'Large Leek': 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png', 'leek': 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png',
+    '沉甸甸南瓜': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png', 'Plump Pumpkin': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png', 'pumpkin': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png',
+    '美味尾巴': 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png', 'Slowpoke Tail': 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png', 'tail': 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png',
+    '一口堅果': 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png', 'Snackable Nuts': 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png', 'snackablenuts': 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png'
   };
 
   function getIngredientIcon(ing) {
@@ -401,11 +344,11 @@
     return icon;
   }
 
-  function getIngredientName(ing) {
+  function getIngredientName(ing, lang = currentLang) {
     if (!ing) return '';
     const raw = typeof ing === 'string' ? ing : (ing.name || ing.name_cn || ing.name_tw || ing.name_en || '');
     if (!raw) return '';
-    return lookupBilingualDict(INGREDIENT_NAMES, raw) || raw;
+    return lookupBilingualDict(INGREDIENT_NAMES, raw, lang) || raw;
   }
 
   function getRecipeName(rec, lang) {
@@ -442,40 +385,40 @@
     return name_cn || name_en;
   }
 
-  function getBerryName(berry) {
+  function getBerryName(berry, lang = currentLang) {
     if (!berry) return '';
-    return lookupBilingualDict(BERRY_NAMES, berry) || berry;
+    return lookupBilingualDict(BERRY_NAMES, berry, lang) || berry;
   }
 
-  function getNatureName(nat) {
+  function getNatureName(nat, lang = currentLang) {
     if (!nat) return '';
-    return lookupBilingualDict(NATURE_NAMES, nat) || nat;
+    return lookupBilingualDict(NATURE_NAMES, nat, lang) || nat;
   }
 
-  function getMainSkillName(skill) {
+  function getMainSkillName(skill, lang = currentLang) {
     if (!skill) return '';
-    const res = lookupBilingualDict(MAIN_SKILL_NAMES, skill);
+    const res = lookupBilingualDict(MAIN_SKILL_NAMES, skill, lang);
     if (res) return res;
 
     // 支援複合型括號變體 (例如：能量填充S (隨機))
     const trimmed = String(skill).trim();
     const parenMatch = trimmed.match(/^(.+?)\s*([(\[（【].+[)\]）】])$/);
     if (parenMatch) {
-      const baseSkill = getMainSkillName(parenMatch[1]);
-      const suffix = translateDynamicText(parenMatch[2]);
+      const baseSkill = getMainSkillName(parenMatch[1], lang);
+      const suffix = lang === 'zh-CN' ? toSimplifiedChinese(parenMatch[2]) : (lang === 'en-US' ? translateDynamicText(parenMatch[2]) : parenMatch[2]);
       return `${baseSkill} ${suffix}`;
     }
-    return trimmed;
+    return lang === 'zh-CN' ? toSimplifiedChinese(trimmed) : trimmed;
   }
 
-  const POKEMON_NAMES = {"妙蛙種子":"Bulbasaur","妙蛙草":"Ivysaur","妙蛙花":"Venusaur","小火龍":"Charmander","火恐龍":"Charmeleon","噴火龍":"Charizard","傑尼龜":"Squirtle","卡咪龜":"Wartortle","水箭龜":"Blastoise","綠毛蟲":"Caterpie","鐵甲蛹":"Metapod","巴大蝶":"Butterfree","小拉達":"Rattata","拉達":"Raticate","阿柏蛇":"Ekans","阿柏怪":"Arbok","皮丘":"Pichu","皮卡丘":"Pikachu","皮卡丘（萬聖節）":"Pikachu (Halloween)","皮卡丘（佳節）":"Pikachu (Holiday)","皮卡丘（船長）":"Pikachu (Captain)","雷丘":"Raichu","穿山鼠":"Sandshrew","穿山王":"Sandslash","皮寶寶":"Cleffa","皮皮":"Clefairy","皮可西":"Clefable","六尾":"Vulpix","六尾（阿羅拉的樣子）":"Vulpix (Alolan Form)","九尾":"Ninetales","九尾（阿羅拉的樣子）":"Ninetales (Alolan Form)","寶寶丁":"Igglybuff","胖丁":"Jigglypuff","胖可丁":"Wigglytuff","地鼠":"Diglett","三地鼠":"Dugtrio","喵喵":"Meowth","貓老大":"Persian","可達鴨":"Psyduck","哥達鴨":"Golduck","猴怪":"Mankey","火爆猴":"Primeape","卡蒂狗":"Growlithe","風速狗":"Arcanine","喇叭芽":"Bellsprout","口呆花":"Weepinbell","大食花":"Victreebel","小拳石":"Geodude","隆隆石":"Graveler","隆隆岩":"Golem","呆呆獸":"Slowpoke","呆殼獸":"Slowbro","呆呆王":"Slowking","小磁怪":"Magnemite","三合一磁怪":"Magneton","自爆磁怪":"Magnezone","大蔥鴨":"Farfetch'd","嘟嘟":"Doduo","嘟嘟利":"Dodrio","鬼斯":"Gastly","鬼斯通":"Haunter","耿鬼":"Gengar","大岩蛇":"Onix","大鋼蛇":"Steelix","大綱蛇":"Steelix","卡拉卡拉":"Cubone","嘎啦嘎啦":"Marowak","小福蛋":"Happiny","吉利蛋":"Chansey","幸福蛋":"Blissey","袋獸":"Kangaskhan","魔尼尼":"Mime Jr.","魔牆人偶":"Mr. Mime","凱羅斯":"Pinsir","百變怪":"Ditto","伊布":"Eevee","伊布（佳節）":"Eevee (Holiday)","伊布（萬聖節）":"Eevee (Halloween)","伊布家族（8種進化）":"Eevee Evolutions (8 Forms)","伊布家族":"Eevee Evolutions","水伊布":"Vaporeon","雷伊布":"Jolteon","火伊布":"Flareon","太陽伊布":"Espeon","月亮伊布":"Umbreon","葉伊布":"Leafeon","冰伊布":"Glaceon","仙子伊布":"Sylveon","迷你龍":"Dratini","哈克龍":"Dragonair","快龍":"Dragonite","超夢":"Mewtwo","夢幻":"Mew","菊草葉":"Chikorita","月桂葉":"Bayleef","大竺葵":"Meganium","火球鼠":"Cyndaquil","火岩鼠":"Quilava","火爆獸":"Typhlosion","小鋸鱷":"Totodile","藍鱷":"Croconaw","大力鱷":"Feraligatr","波克比":"Togepi","波克基古":"Togetic","波克基斯":"Togekiss","天然雀":"Natu","天然鳥":"Xatu","咩利羊":"Mareep","茸茸羊":"Flaaffy","電龍":"Ampharos","盆才怪":"Bonsly","樹才怪":"Sudowoodo","烏波":"Wooper","烏波（阿羅拉的樣子）":"Wooper (Paldea Form)","烏波（帕底亞的樣子）":"Wooper (Paldea Form)","沼王":"Quagsire","土王":"Clodsire","黑暗鴉":"Murkrow","烏鴉頭頭":"Honchkrow","夢妖":"Misdreavus","夢妖魔":"Mismagius","小果然":"Wynaut","果然翁":"Wobbuffet","壺壺":"Shuckle","赫拉克羅斯":"Heracross","狃拉":"Sneasel","瑪狃拉":"Weavile","信使鳥":"Delibird","戴魯比":"Houndour","黑魯加":"Houndoom","雷公":"Raikou","炎帝":"Entei","水君":"Suicune","幼基拉斯":"Larvitar","沙基拉斯":"Pupitar","班基拉斯":"Tyranitar","木守宮":"Treecko","森林蜥蜴":"Grovyle","蜥蜴王":"Sceptile","火稚雞":"Torchic","力壯雞":"Combusken","火焰雞":"Blaziken","水躍魚":"Mudkip","沼躍魚":"Marshtomp","巨沼怪":"Swampert","拉魯拉絲":"Ralts","奇鲁莉安":"Kirlia","沙奈朵":"Gardevoir","艾路雷朵":"Gallade","懶人獺":"Slakoth","過動猿":"Vigoroth","請假王":"Slaking","勾魂眼":"Sableye","大嘴娃":"Mawile","可可多拉":"Aron","可多拉":"Lairon","波士可多拉":"Aggron","正電拍拍":"Plusle","負電拍拍":"Minun","溶食獸":"Gulpin","吞食獸":"Swalot","大顎蟻":"Trapinch","超音波幼蟲":"Vibrava","沙漠蜻蜓":"Flygon","青綿鳥":"Swablu","七夕青鳥":"Altaria","怨影娃娃":"Shuppet","詛咒娃娃":"Banette","阿勃梭魯":"Absol","海豹球":"Spheal","海豹球（佳節）":"Spheal (Holiday)","海魔獅":"Sealeo","帝牙海獅":"Walrein","寶貝龍":"Bagon","甲殼龍":"Shelgon","暴飛龍":"Salamence","拉帝亞斯":"Latias","拉帝歐斯":"Latios","草苗龜":"Turtwig","樹林龜":"Grotle","土台龜":"Torterra","小火焰猴":"Chimchar","猛火猴":"Monferno","烈焰猴":"Infernape","波加曼":"Piplup","波皇子":"Prinplup","帝王拿波":"Empoleon","小貓怪":"Shinx","勒克貓":"Luxio","倫琴貓":"Luxray","飄飄球":"Drifloon","隨風球":"Drifblim","花岩怪":"Spiritomb","利歐路":"Riolu","路卡利歐":"Lucario","不良蛙":"Croagunk","毒骷蛙":"Toxicroak","雪笠怪":"Snover","暴雪王":"Abomasnow","克雷色利亞":"Cresselia","達克萊伊":"Darkrai","食夢夢":"Munna","夢夢蝕":"Musharna","石居蟹":"Dwebble","岩殿居蟹":"Crustle","毛頭小鷹":"Rufflet","勇士雄鷹":"Braviary","寶寶暴龍":"Tyrunt","怪顎龍":"Tyrantrum","摔角鷹人":"Hawlucha","咚咚鼠":"Dedenne","南瓜精":"Pumpkaboo","南瓜怪人":"Gourgeist","南瓜精 (小顆種)":"Pumpkaboo (Small Variety)","南瓜精 (中顆種)":"Pumpkaboo (Medium Variety)","南瓜精 (大顆種)":"Pumpkaboo (Large Variety)","南瓜精 (巨顆種)":"Pumpkaboo (Jumbo Variety)","南瓜怪人 (小顆種)":"Gourgeist (Small Variety)","南瓜怪人 (中顆種)":"Gourgeist (Medium Variety)","南瓜怪人 (大顆種)":"Gourgeist (Large Variety)","南瓜怪人 (巨顆種)":"Gourgeist (Jumbo Variety)","嗡蝠":"Noibat","音波龍":"Noivern","強顎雞母蟲":"Grubbin","蟲電寶":"Charjabug","鍬農炮蟲":"Vikavolt","萌虻":"Cutiefly","蝶結萌虻":"Ribombee","童偶熊":"Stufful","穿著熊":"Bewear","花療環環":"Comfey","托戈德瑪爾":"Togedemaru","謎擬Q":"Mimikyu","老翁龍":"Drampa","古月鳥":"Cramorant","毒電嬰":"Toxel","顫弦蠑螈（高調的樣子）":"Toxtricity (Amped Form)","顫弦蠑螈（低調的樣子）":"Toxtricity (Low Key Form)","新葉喵":"Sprigatito","蒂蕾喵":"Floragato","魔幻假面喵":"Meowscarada","呆火鱷":"Fuecoco","炙燙鱷":"Crocalor","骨紋巨聲鱷":"Skeledirge","潤水鴨":"Quaxly","湧躍鴨":"Quaxwell","狂歡浪舞鴨":"Quaquaval","布撥":"Pawmi","布土撥":"Pawmo","巴布土撥":"Pawmot","小鍛匠":"Tinkatink","巧鍛匠":"Tinkatuff","巨鍛匠":"Tinkaton","哎呀球菇":"Foongus","敗露球菇":"Amoonguss","走鯨":"Cetoddle","浩大鯨":"Cetitan","木棉球":"Cottonee","風妖精":"Whimsicott"};
+  const POKEMON_NAMES = {"妙蛙種子":"Bulbasaur","妙蛙草":"Ivysaur","妙蛙花":"Venusaur","小火龍":"Charmander","火恐龍":"Charmeleon","噴火龍":"Charizard","傑尼龜":"Squirtle","卡咪龜":"Wartortle","水箭龜":"Blastoise","綠毛蟲":"Caterpie","鐵甲蛹":"Metapod","巴大蝶":"Butterfree","小拉達":"Rattata","拉達":"Raticate","阿柏蛇":"Ekans","阿柏怪":"Arbok","皮丘":"Pichu","皮卡丘":"Pikachu","皮卡丘（萬聖節）":"Pikachu (Halloween)","皮卡丘（佳節）":"Pikachu (Holiday)","皮卡丘（船長）":"Pikachu (Captain)","雷丘":"Raichu","穿山鼠":"Sandshrew","穿山王":"Sandslash","皮寶寶":"Cleffa","皮皮":"Clefairy","皮可西":"Clefable","六尾":"Vulpix","六尾（阿羅拉的樣子）":"Vulpix (Alolan Form)","九尾":"Ninetales","九尾（阿羅拉的樣子）":"Ninetales (Alolan Form)","寶寶丁":"Igglybuff","胖丁":"Jigglypuff","胖可丁":"Wigglytuff","地鼠":"Diglett","三地鼠":"Dugtrio","喵喵":"Meowth","貓老大":"Persian","可達鴨":"Psyduck","哥達鴨":"Golduck","猴怪":"Mankey","火爆猴":"Primeape","卡蒂狗":"Growlithe","卡蒂狗（洗翠的樣子）":"Growlithe (Hisuian Form)","風速狗":"Arcanine","風速狗（洗翠的樣子）":"Arcanine (Hisuian Form)","喇叭芽":"Bellsprout","口呆花":"Weepinbell","大食花":"Victreebel","小拳石":"Geodude","隆隆石":"Graveler","隆隆岩":"Golem","呆呆獸":"Slowpoke","呆殼獸":"Slowbro","呆呆王":"Slowking","小磁怪":"Magnemite","三合一磁怪":"Magneton","自爆磁怪":"Magnezone","大蔥鴨":"Farfetch'd","嘟嘟":"Doduo","嘟嘟利":"Dodrio","鬼斯":"Gastly","鬼斯通":"Haunter","耿鬼":"Gengar","大岩蛇":"Onix","大鋼蛇":"Steelix","大綱蛇":"Steelix","卡拉卡拉":"Cubone","嘎啦嘎啦":"Marowak","小福蛋":"Happiny","吉利蛋":"Chansey","幸福蛋":"Blissey","袋獸":"Kangaskhan","魔尼尼":"Mime Jr.","魔牆人偶":"Mr. Mime","凱羅斯":"Pinsir","百變怪":"Ditto","伊布":"Eevee","伊布（佳節）":"Eevee (Holiday)","伊布（萬聖節）":"Eevee (Halloween)","伊布家族（8種進化）":"Eevee Evolutions (8 Forms)","伊布家族":"Eevee Evolutions","水伊布":"Vaporeon","雷伊布":"Jolteon","火伊布":"Flareon","太陽伊布":"Espeon","月亮伊布":"Umbreon","葉伊布":"Leafeon","冰伊布":"Glaceon","仙子伊布":"Sylveon","迷你龍":"Dratini","哈克龍":"Dragonair","快龍":"Dragonite","超夢":"Mewtwo","夢幻":"Mew","菊草葉":"Chikorita","月桂葉":"Bayleef","大竺葵":"Meganium","火球鼠":"Cyndaquil","火岩鼠":"Quilava","火爆獸":"Typhlosion","小鋸鱷":"Totodile","藍鱷":"Croconaw","大力鱷":"Feraligatr","波克比":"Togepi","波克基古":"Togetic","波克基斯":"Togekiss","天然雀":"Natu","天然鳥":"Xatu","咩利羊":"Mareep","茸茸羊":"Flaaffy","電龍":"Ampharos","盆才怪":"Bonsly","樹才怪":"Sudowoodo","烏波":"Wooper","烏波（阿羅拉的樣子）":"Wooper (Paldea Form)","烏波（帕底亞的樣子）":"Wooper (Paldea Form)","沼王":"Quagsire","土王":"Clodsire","黑暗鴉":"Murkrow","烏鴉頭頭":"Honchkrow","夢妖":"Misdreavus","夢妖魔":"Mismagius","小果然":"Wynaut","果然翁":"Wobbuffet","壺壺":"Shuckle","赫拉克羅斯":"Heracross","狃拉":"Sneasel","瑪狃拉":"Weavile","信使鳥":"Delibird","戴魯比":"Houndour","黑魯加":"Houndoom","雷公":"Raikou","炎帝":"Entei","水君":"Suicune","幼基拉斯":"Larvitar","沙基拉斯":"Pupitar","班基拉斯":"Tyranitar","木守宮":"Treecko","森林蜥蜴":"Grovyle","蜥蜴王":"Sceptile","火稚雞":"Torchic","力壯雞":"Combusken","火焰雞":"Blaziken","水躍魚":"Mudkip","沼躍魚":"Marshtomp","巨沼怪":"Swampert","拉魯拉絲":"Ralts","奇鲁莉安":"Kirlia","沙奈朵":"Gardevoir","艾路雷朵":"Gallade","懶人獺":"Slakoth","過動猿":"Vigoroth","請假王":"Slaking","勾魂眼":"Sableye","大嘴娃":"Mawile","可可多拉":"Aron","可多拉":"Lairon","波士可多拉":"Aggron","正電拍拍":"Plusle","負電拍拍":"Minun","溶食獸":"Gulpin","吞食獸":"Swalot","大顎蟻":"Trapinch","超音波幼蟲":"Vibrava","沙漠蜻蜓":"Flygon","青綿鳥":"Swablu","七夕青鳥":"Altaria","怨影娃娃":"Shuppet","詛咒娃娃":"Banette","阿勃梭魯":"Absol","海豹球":"Spheal","海豹球（佳節）":"Spheal (Holiday)","海魔獅":"Sealeo","帝牙海獅":"Walrein","寶貝龍":"Bagon","甲殼龍":"Shelgon","暴飛龍":"Salamence","拉帝亞斯":"Latias","拉帝歐斯":"Latios","草苗龜":"Turtwig","樹林龜":"Grotle","土台龜":"Torterra","小火焰猴":"Chimchar","猛火猴":"Monferno","烈焰猴":"Infernape","波加曼":"Piplup","波皇子":"Prinplup","帝王拿波":"Empoleon","小貓怪":"Shinx","勒克貓":"Luxio","倫琴貓":"Luxray","飄飄球":"Drifloon","隨風球":"Drifblim","花岩怪":"Spiritomb","利歐路":"Riolu","路卡利歐":"Lucario","不良蛙":"Croagunk","毒骷蛙":"Toxicroak","雪笠怪":"Snover","暴雪王":"Abomasnow","克雷色利亞":"Cresselia","達克萊伊":"Darkrai","食夢夢":"Munna","夢夢蝕":"Musharna","石居蟹":"Dwebble","岩殿居蟹":"Crustle","毛頭小鷹":"Rufflet","勇士雄鷹":"Braviary","寶寶暴龍":"Tyrunt","怪顎龍":"Tyrantrum","摔角鷹人":"Hawlucha","咚咚鼠":"Dedenne","南瓜精":"Pumpkaboo","南瓜怪人":"Gourgeist","南瓜精 (小顆種)":"Pumpkaboo (Small Variety)","南瓜精 (中顆種)":"Pumpkaboo (Medium Variety)","南瓜精 (大顆種)":"Pumpkaboo (Large Variety)","南瓜精 (巨顆種)":"Pumpkaboo (Jumbo Variety)","南瓜怪人 (小顆種)":"Gourgeist (Small Variety)","南瓜怪人 (中顆種)":"Gourgeist (Medium Variety)","南瓜怪人 (大顆種)":"Gourgeist (Large Variety)","南瓜怪人 (巨顆種)":"Gourgeist (Jumbo Variety)","嗡蝠":"Noibat","音波龍":"Noivern","強顎雞母蟲":"Grubbin","蟲電寶":"Charjabug","鍬農炮蟲":"Vikavolt","萌虻":"Cutiefly","蝶結萌虻":"Ribombee","童偶熊":"Stufful","穿著熊":"Bewear","花療環環":"Comfey","托戈德瑪爾":"Togedemaru","謎擬Q":"Mimikyu","老翁龍":"Drampa","古月鳥":"Cramorant","毒電嬰":"Toxel","顫弦蠑螈（高調的樣子）":"Toxtricity (Amped Form)","顫弦蠑螈（低調的樣子）":"Toxtricity (Low Key Form)","新葉喵":"Sprigatito","蒂蕾喵":"Floragato","魔幻假面喵":"Meowscarada","呆火鱷":"Fuecoco","炙燙鱷":"Crocalor","骨紋巨聲鱷":"Skeledirge","潤水鴨":"Quaxly","湧躍鴨":"Quaxwell","狂歡浪舞鴨":"Quaquaval","布撥":"Pawmi","布土撥":"Pawmo","巴布土撥":"Pawmot","小鍛匠":"Tinkatink","巧鍛匠":"Tinkatuff","巨鍛匠":"Tinkaton","哎呀球菇":"Foongus","敗露球菇":"Amoonguss","走鯨":"Cetoddle","浩大鯨":"Cetitan","木棉球":"Cottonee","風妖精":"Whimsicott"};
 
   // 預排序與預建立英文對照快取，避免於每次呼叫時重複排序與建構陣列
   const SORTED_POKEMON_NAMES_KEYS = Object.keys(POKEMON_NAMES).sort((a, b) => b.length - a.length);
-  const ITEM_NAMES_EN_ENTRIES = Object.entries(ITEM_NAMES).filter(([, item]) => item && item['en-US']);
-  const INGREDIENT_NAMES_EN_ENTRIES = Object.entries(INGREDIENT_NAMES).filter(([, item]) => item && item['en-US']);
-  const ISLAND_NAMES_EN_ENTRIES = Object.entries(ISLAND_NAMES).filter(([, item]) => item && item['en-US']);
-  const TYPE_NAMES_EN_ENTRIES = Object.entries(TYPE_NAMES).filter(([, item]) => item && item['en-US']);
+  const ITEM_NAMES_EN_ENTRIES = Object.entries(ITEM_NAMES).filter(([, item]) => item && item['en-US']).sort((a, b) => b[0].length - a[0].length);
+  const INGREDIENT_NAMES_EN_ENTRIES = Object.entries(INGREDIENT_NAMES).filter(([, item]) => item && item['en-US']).sort((a, b) => b[0].length - a[0].length);
+  const ISLAND_NAMES_EN_ENTRIES = Object.entries(ISLAND_NAMES).filter(([, item]) => item && item['en-US']).sort((a, b) => b[0].length - a[0].length);
+  const TYPE_NAMES_EN_ENTRIES = Object.entries(TYPE_NAMES).filter(([, item]) => item && item['en-US']).sort((a, b) => b[0].length - a[0].length);
   let _allPkmEnMapRef = null;
   let _allPkmEnMapLen = 0;
   let _allPkmEnMap = null;
@@ -528,9 +471,9 @@
     return str;
   }
 
-  function getSubSkillName(subskill) {
+  function getSubSkillName(subskill, lang = currentLang) {
     if (!subskill) return '';
-    const res = lookupBilingualDict(SUBSKILL_NAMES, subskill);
+    const res = lookupBilingualDict(SUBSKILL_NAMES, subskill, lang);
     return res || String(subskill).trim();
   }
 
@@ -578,7 +521,7 @@
       .replace(/本商品裡裝有\s*專門迎接\s*(.+?)\s*成為夥伴並且培育牠的道具\s*，?\s*歡迎選購\s*。?/g, 'Contains items tailored for befriending and raising $1.')
       .replace(/商品裡裝有\s*「?\s*(.+?)\s*」?\s*等\s*能夠培育\s*(.+?)\s*的道具\s*。?/g, 'Contains $1 and other items to raise $2.')
       .replace(/(?:本?商品裡裝有|內含)\s*(.+?)\s*等?\s*(?:能夠|專門)?(?:迎接|培育|強化)?.*?(?:成為夥伴並且培育牠的道具|的道具)?\s*[,，。]?\s*歡迎選購。?/g, 'Contains $1 and other helpful items to raise your Pokémon.')
-      .replace(/在\s*⭐?\s*(.+?)\s*會出現的營地使用薰香\s*，?\s*與牠相遇吧！?/g, 'Use incenses at areas where $1 appears to encounter them!')
+      .replace(/在\s*\u{2B50}?\s*(.+?)\s*會出現的營地使用薰香\s*，?\s*與牠相遇吧！?/gu, 'Use incenses at areas where $1 appears to encounter them!')
       .replace(/發放期間登入遊戲的玩家\s*。?/g, 'Applicable to all players who log in during the event period.')
       .replace(/(?:此外[,，]\s*在EX模式下[,，]\s*)?遇見寶可夢睡姿所需的(?:睡意之力|Drowsy Power)會大幅增加.+?(?:糖果|Candy)[」"]?\s*。?/g, 'In EX mode, required Drowsy Power increases significantly, but grants more Research EXP, Dream Shards, and Pokémon Candies.')
       .replace(/消耗[「"]?(?:夢之碎片|Dream Shards)[」"]?並放入\s*(\d+)個\s*持有的寶可夢的?(?:Candy|糖果)[,，]\s*就能隨機獲得\s*(\d+)種?[「"]?(?:屬性糖果|屬性Candy)M×1[」"]?\s*。?/g, 'Consume Dream Shards and $1 Pokémon Candies to randomly obtain $2x Type Candy M.')
@@ -631,14 +574,24 @@
       .replace(/在好眠日的[「"]?[^」"]+[」"]?生效的[「"]?(?:Drowsy Power Multiplier|Drowsy Power的倍率|睡意之力的倍率)[」"]?[,，]?\s*將會根據\s*[^是]+是週幾而有所變化\s*。?/g, 'The Drowsy Power multiplier on Full Moon Day varies depending on the day of the week.')
       .replace(/■[「"]?[^」"]+[」"]?的[「"]?(?:Drowsy Power|睡意之力)[」"]?倍率/g, '■ Full Moon Day Drowsy Power Multiplier')
       .replace(/※不論.+?皆為\s*1\.5倍\s*。?/g, '※Regardless of the day of the week, the Drowsy Power multiplier on other event days is 1.5x.')
+      .replace(/【\s*自第\s*(\d+)\s*(?:time\(s\)|次)\s*(?:好眠日|Good Sleep Day)\s*起\s*】/gi, '[From Good Sleep Day #$1]')
+      .replace(/【\s*自第\s*(\d+)\s*(?:time\(s\)|次)\s*(?:新月日|New Moon Day)\s*起\s*】/gi, '[From New Moon Day #$1]')
       .replace(/滿月之日/g, 'Full Moon Day')
       .replace(/滿月/g, 'Full Moon')
+      .replace(/好眠日/g, 'Good Sleep Day')
       .replace(/新月日/g, 'New Moon Day')
       .replace(/夏日嘉年華/g, 'Summer Festival')
       .replace(/（\s*漂亮成功時為\s*(\d+(\.\d+)?)倍[,，]\s*在週日漂亮成功時為\s*(\d+(\.\d+)?)倍\s*）/g, '($1x on Extra Tasty, $3x on Sunday Extra Tasty)')
       .replace(/漂亮成功時為\s*(\d+(\.\d+)?)倍/gi, '$1x on Extra Tasty')
       .replace(/在週日漂亮成功時為\s*(\d+(\.\d+)?)倍/gi, '$1x on Sunday Extra Tasty')
       .replace(/料理的最終能量[為會變成]*\s*(\d+(\.\d+)?)倍/gi, 'Final Cooking Energy: $1x')
+      .replace(/透過料理可獲得的\s*能量會變成\s*(\d+(?:\.\d+)?)\s*倍\s*[。.]?/g, 'Dish energy gained will be multiplied by $1x.')
+      .replace(/透過主技能獲得的食材數量變成\s*(\d+(?:\.\d+)?)\s*倍\s*[。.]?/g, 'Ingredients obtained via Main Skills will be multiplied by $1x.')
+      .replace(/製作食譜裡含有\s*[「"]?(.+?)[」"]?\s*的料理時[,，]\s*從食譜指定的食材份量獲得的能量會變成\s*(\d+(?:\.\d+)?)\s*倍\s*[。.]?/g, 'Dishes using "$1" gain $2x energy from recipe-specified ingredient amounts.')
+      .replace(/透過含有\s*[「"]?(.+?)[」"]?\s*的料理可獲得的能量倍率會根據\s*製作的料理和\s*[「"]?(.+?)[」"]?\s*的使用數量\s*而不同\s*[。.]?/g, 'The energy multiplier for dishes with "$1" varies by dish and quantity used.')
+      .replace(/超過料理所需數量而額外加入的\s*[「"]?(.+?)[」"]?\s*能量變成\s*(\d+(?:\.\d+)?)\s*倍\s*[。.]?/g, 'Extra "$1" added beyond recipe requirements gain $2x energy.')
+      .replace(/顯示於食譜一覽的料理能量變成\s*(\d+(?:\.\d+)?)\s*倍\s*[。.]?/g, 'Dish energy shown in the Recipe List becomes $1x.')
+      .replace(/顯示於食譜一覽的料理能量倍率不變\s*[。.]?/g, 'Dish energy multipliers shown in the Recipe List remain unchanged.')
       .replace(/(?:不僅如此[,，]?\s*)?在當天第1次的點心時間[,，]?\s*必定有\s*(\d+)\s*隻寶可夢會處於貪吃狀態\s*。?/g, 'At least $1 Pokémon is guaranteed to be Hungry during the first snack time each day.')
       .replace(/必定有\s*(\d+)\s*隻寶可夢會處於貪吃狀態/g, '$1 Pokémon is guaranteed to be Hungry')
       .replace(/處於貪吃狀態/g, 'Hungry')
@@ -656,12 +609,19 @@
       .replace(/「合作紀念包」/gi, '"Collaboration Commemorative Bundle\" ')
       .replace(/「夏日嘉年華2026同樂包\s*([SML])」/gi, '"Summer Festival 2026 Celebration Bundle $1" ')
       .replace(/「夏日嘉年華2026同樂包」/gi, '"Summer Festival 2026 Celebration Bundle" ')
+      .replace(/夢之碎片增量週同樂包\s*([SML])\s*vol\.?(\d+)/gi, 'Dream Shard Bonus Week Bundle $1 Vol.$2')
+      .replace(/大餐週滿足包\s*([SML])\s*vol\.?(\d+)/gi, 'Feast Week Value Bundle $1 Vol.$2')
+      .replace(/備料週滿足包\s*([SML])\s*vol\.?(\d+)/gi, 'Prep Week Value Bundle $1 Vol.$2')
+      .replace(/萬聖節2026歡慶包\s*([SML])/gi, 'Halloween 2026 Celebration Bundle $1')
+      .replace(/萬聖節(\d{4})歡慶包/gi, 'Halloween $1 Celebration Bundle')
+      .replace(/萬聖節(\d{4})/gi, 'Halloween $1')
+      .replace(/萬聖節/g, 'Halloween')
       .replace(/「(.+?)限定包\s*([SML])」/gi, '"$1 Limited Bundle $2" ')
-      .replace(/「(.+?)限定包」/g, '"$1 Limited Bundle" ')
+      .replace(/「(.+?)限定包」/gi, '"$1 Limited Bundle" ')
       .replace(/「(.+?)同樂包\s*([SML])」/gi, '"$1 Celebration Bundle $2" ')
-      .replace(/「(.+?)同樂包」/g, '"$1 Celebration Bundle" ')
+      .replace(/「(.+?)同樂包」/gi, '"$1 Celebration Bundle" ')
       .replace(/「(.+?)紀念包\s*([SML])」/gi, '"$1 Commemorative Bundle $2" ')
-      .replace(/[（\(](\d[\d,，\s]*)\s*(?:鑽石|Diamonds)[）\)]/gi, (match, p1) => ` (${p1.replace(/[，\s]/g, ',')} Diamonds)`)
+      .replace(/[（\(]\s*(\d[\d,，]*)\s*(?:鑽石|Diamonds)\s*[）\)]/gi, (match, p1) => ` (${p1.replace(/，/g, ',')} Diamonds)`)
       .replace(/（限購\s*(\d+)\s*次）/g, '(Limit: $1)')
       .replace(/介紹\s*[:：]\s*《Pokémon Sleep》將配合「好眠日」推出/g, 'Details: Special bundle available in Pokémon Sleep for Good Sleep Day')
       .replace(/介紹\s*[:：]/g, 'Details: ')
@@ -669,6 +629,11 @@
 
     // 7. 官方公告、更新與異常通知
     res = res
+      .replace(/《Pokémon Sleep》將配合\s*[「"]?(.+?)[」"]?\s*推出\s*[「"]?(.+?)[」"]?\s*[（\(]\s*S,\s*M,\s*L\s*[）\)]\s*[！:]?/g, 'Pokémon Sleep will release "$2" (S, M, L) for "$1"!')
+      .replace(/【預告】新食材[,，]\s*新食譜[,，]\s*睡姿圖鑑目標和新企畫確定登場\s*[！:]?/g, '[Preview] New Ingredient, New Recipes, Sleep Style Dex Goal & New Event Confirmed!')
+      .replace(/新的睡姿圖鑑目標\s*[（\(]\s*(\d+)\s*種\s*[）\)]/g, 'New Sleep Style Dex Goal ($1 styles)')
+      .replace(/會用到\s*(.+?)\s*的\s*(\d+)\s*種食譜/g, '$2 new recipes using $1')
+      .replace(/食材\s*[「"]\s*(.+?)\s*[」"]/g, 'Ingredient "$1"')
       .replace(/關於\s*Ver\.?\s*([\d\.]+)\s*的更新內容/gi, 'Ver.$1 Update Details')
       .replace(/詳情請參閱官方公告內容與說明/g, 'Please check the official announcement for full details.')
       .replace(/異常問題修復通知/g, 'Bug Fix Notice')
@@ -677,8 +642,18 @@
       .replace(/[\u{2728}\s]*新增功能/gu, 'New Features')
       .replace(/[\u{2696}\u{FE0F}\s]*平衡調整與技能變更/gu, 'Balance Adjustments & Skill Changes')
       .replace(/[\u{1F41B}\s]*異常問題修復/gu, 'Bug Fixes')
+      .replace(/調整與幻之寶可夢的相遇方式[；;]?\s*關於至今為止在(?:新月日|New Moon Day)出現的幻之寶可夢[,，]?\s*今後玩家將能在不同活動分別遇見特定的幻之寶可夢\s*[。.]?/g, 'Adjusted Mythical Pokémon encounters: Mythical Pokémon that previously appeared on New Moon Day will now appear in dedicated events.')
+      .replace(/準備新活動[,，\s]*新企畫/g, 'Preparing new events and campaigns').replace(/食材和食譜/g, 'Ingredients & Recipes')
+      .replace(/來什麼都吃光光[！:]?\s*大餐週\s*vol\.?(\d+)/gi, 'Eat Everything! Feast Week Vol.$1')
+      .replace(/備料週\s*vol\.?(\d+)/gi, 'Prep Week Vol.$1')
+      .replace(/(?:不僅如此[,，]\s*還)?可以使用期間限定的\s*[「"]?\s*迷你糖果增強\s*[」"]?\s*[。.]?/g, 'Limited-time "Mini Candy Boost" will be available.')
+      .replace(/迷你糖果增強/g, 'Mini Candy Boost')
+      .replace(/糖果倍增研究/g, 'Candy Boost Research')
+      .replace(/有著特別裝扮的寶可夢/g, 'Special costume Pokémon')
+      .replace(/寶藍Lapis Lakeside/g, 'Lapis Lakeside')
       .replace(/波導彈/g, 'Aura Sphere')
-      .replace(/夢之碎片獲取/g, 'Dream Shard Magnet ');
+      .replace(/夢之碎片獲取\s*([SM])/g, 'Dream Shard Magnet $1')
+      .replace(/夢之碎片獲取/g, 'Dream Shard Magnet');
 
     // 8. 替換道具名稱 (糖果, 薰香, 夢之塊, 沙布蕾)
     for (let i = 0; i < ITEM_NAMES_EN_ENTRIES.length; i++) {
@@ -720,31 +695,44 @@
       const [cn, item] = TYPE_NAMES_EN_ENTRIES[i];
       if (res.includes(cn)) {
         res = res.replaceAll(cn + ' Type', item['en-US'] + ' Type');
+        res = res.replaceAll(cn + '屬性的Candy', item['en-US'] + '-Type Candy ');
+        res = res.replaceAll(cn + '屬性糖果', item['en-US'] + '-Type Candy ');
         res = res.replaceAll(cn + '屬性', item['en-US'] + ' Type');
         res = res.replaceAll(cn + '屬性的幫手寶可夢', item['en-US'] + '-type Helper Pokémon');
         res = res.replaceAll(cn + '屬性的寶可夢', item['en-US'] + '-type Pokémon');
       }
     }
-    res = res.replace(/([A-Za-z]+)\s*Type\s*的\s*(?:幫手寶可夢|Helper Pokémon)/gi, '$1-type Helper Pokémon');
-    res = res.replace(/([A-Za-z]+)\s*Type\s*的\s*Pokémon/gi, '$1-type Pokémon');
+    res = res
+      .replace(/([A-Za-z]+)\s*Type\s*的\s*(?:幫手寶可夢|Helper Pokémon)/gi, '$1-type Helper Pokémon')
+      .replace(/([A-Za-z]+)\s*Type\s*的\s*Pokémon/gi, '$1-type Pokémon')
+      .replace(/([A-Za-z]+)-Type Candy\s*([SML])\b/g, '$1-Type Candy $2');
 
     // 12. 天梯點評與剩餘常用片語
     res = res
       .replace(/([\u{1F451}]?\s*)TOP 1 AAA\s*(.+?)\s*產量之王/gu, '$1TOP 1 AAA $2 Production King')
       .replace(/([\u{1F451}]?\s*)TOP 1\s*(.+?)\s*產量之王/gu, '$1TOP 1 $2 Production King')
       .replace(/AAA\s*(.+?)\s*專精產出/g, 'AAA $1 Specialized Output')
+      .replace(/AAA\s*(.+?)\s*純種產出/g, 'AAA $1 Pure Output')
       .replace(/ABB\s*(.+?)\s*主力產出/g, 'ABB $1 Main Output')
       .replace(/AAA\s*(.+?)\s*兼顧/g, 'AAA $1 Flex Output')
       .replace(/AAC\s*雙(.+?)\s*二階解鎖/g, 'AAC Dual $1 Lv.30 Unlock')
       .replace(/AAC\s*(.+?)\s*解鎖/g, 'AAC $1 Lv.30 Unlock')
+      .replace(/ABA\s*雙(.+?)\s*產出/g, 'ABA Dual $1 Output')
+      .replace(/AAX\s*雙(.+?)\s*產出/g, 'AAX Dual $1 Output')
+      .replace(/ABX\s*單(.+?)\s*混產/g, 'ABX Single $1 Mixed Output')
       .replace(/ABB\s*單(.+?)\s*混產/g, 'ABB Single $1 Mixed Output')
+      .replace(/AAB\s*(.+?)\s*後期主力/g, 'AAB $1 Late-Game Main')
+      .replace(/XXC\s*單(.+?)\s*補足/g, 'XXC Single $1 Supplement')
       .replace(/產量之王/g, 'Production King')
       .replace(/專精產出/g, 'Specialized Output')
+      .replace(/純種產出/g, 'Pure Output')
       .replace(/主力產出/g, 'Main Output')
+      .replace(/後期主力/g, 'Late-Game Main')
       .replace(/兼顧/g, 'Flex Output')
       .replace(/二階解鎖/g, 'Lv.30 Unlock')
       .replace(/解鎖/g, 'Unlock')
       .replace(/混產/g, 'Mixed Output')
+      .replace(/補足/g, 'Supplement')
       .replace(/[（\(]體型日產\s*(\d+)~(\d+)\s*顆[）\)]/g, '(Sizes: $1~$2/day)')
       .replace(/[（\(]體型日產\s*(\d+)\s*顆[）\)]/g, '(Sizes: $1/day)')
       .replace(/[（\(]8種進化產量皆相同[）\)]/g, '(All 8 Evolutions Equal)')
@@ -755,6 +743,11 @@
       .replace(/咖哩[,，\s]*濃湯/g, 'Curries/Stews')
       .replace(/沙拉/g, 'Salads')
       .replace(/甜點[,，\s]*飲料/g, 'Desserts/Drinks')
+      .replace(/^(?:通知)$/g, 'Notice')
+      .replace(/^(?:活動)$/g, 'Event')
+      .replace(/^(?:企劃)$/g, 'Campaign')
+      .replace(/^(?:更新通知)$/g, 'Update')
+      .replace(/^(?:異常問題)$/g, 'Issue')
       .replace(/以及/g, 'and')
       .replace(/等\s*能夠培育/g, 'and other items to raise')
       .replace(/的道具\s*。?/g, 'items.')
@@ -811,6 +804,13 @@
       }
     });
 
+    document.querySelectorAll('.search-filtering-badge').forEach(badge => {
+      const labelSpan = badge.querySelector('span:last-child');
+      if (labelSpan) {
+        labelSpan.textContent = currentLang === 'en-US' ? 'Filtered' : (currentLang === 'zh-CN' ? '条件筛选中' : '條件篩選中');
+      }
+    });
+
     if (typeof Event !== 'undefined') {
       document.querySelectorAll('select').forEach(sel => {
         try { sel.dispatchEvent(new Event('sync-ui')); } catch (e) {}
@@ -839,11 +839,15 @@
   let _itemsDataRef = null;
   let _itemsDataIndex = null;
 
-  function getItemName(item) {
+  function getItemName(item, lang = currentLang) {
     if (!item) return '';
+    const targetLang = lang || currentLang;
     if (typeof item === 'object') {
       if (item.name) {
-        return item.name[currentLang] || item.name['zh-TW'] || item.name['en-US'] || '';
+        if (targetLang === 'zh-CN') {
+          return item.name['zh-CN'] || toSimplifiedChinese(item.name['zh-TW'] || item.name['en-US'] || '');
+        }
+        return item.name[targetLang] || item.name['zh-TW'] || item.name['en-US'] || '';
       }
     }
     if (typeof window !== 'undefined' && Array.isArray(window.ITEMS_DATA)) {
@@ -863,19 +867,23 @@
       }
       const match = _itemsDataIndex[item];
       if (match && match.name) {
-        return match.name[currentLang] || match.name['zh-TW'] || match.name['en-US'] || '';
+        if (targetLang === 'zh-CN') {
+          return match.name['zh-CN'] || toSimplifiedChinese(match.name['zh-TW'] || match.name['en-US'] || '');
+        }
+        return match.name[targetLang] || match.name['zh-TW'] || match.name['en-US'] || '';
       }
     }
-    const res = lookupBilingualDict(ITEM_NAMES, item);
+    const res = lookupBilingualDict(ITEM_NAMES, item, targetLang);
     if (res) return res;
-    return currentLang === 'zh-CN' ? toSimplifiedChinese(item) : item;
+    return targetLang === 'zh-CN' ? toSimplifiedChinese(item) : item;
   }
 
-  function getIslandName(island) {
+  function getIslandName(island, lang = currentLang) {
     if (!island) return '';
-    const res = lookupBilingualDict(ISLAND_NAMES, island);
+    const targetLang = lang || currentLang;
+    const res = lookupBilingualDict(ISLAND_NAMES, island, targetLang);
     if (res) return res;
-    return currentLang === 'zh-CN' ? toSimplifiedChinese(island) : island;
+    return targetLang === 'zh-CN' ? toSimplifiedChinese(island) : island;
   }
 
   /**
@@ -895,7 +903,9 @@
       container.classList.toggle('has-value', hasVal);
       let badge = container.querySelector('.search-filtering-badge');
       if (hasVal) {
-        const isEN = getLanguage() === 'en-US';
+        const lang = getLanguage();
+        const isEN = lang === 'en-US';
+        const isCN = lang === 'zh-CN';
         if (!badge) {
           badge = document.createElement('span');
           badge.className = 'search-filtering-badge';
@@ -905,7 +915,7 @@
             container.appendChild(badge);
           }
         }
-        badge.innerHTML = `<span class="search-pulse-dot"></span><span>${isEN ? 'Filtered' : '條件篩選中'}</span>`;
+        badge.innerHTML = `<span class="search-pulse-dot"></span><span>${isEN ? 'Filtered' : (isCN ? '条件筛选中' : '條件篩選中')}</span>`;
       } else if (badge) {
         badge.remove();
       }
@@ -930,44 +940,14 @@
   }
 
   const I18NExport = {
-    t,
-    getLanguage,
-    setLanguage,
-    toSimplified: toSimplifiedChinese,
-    updateSearchInputHighlight,
-    getTypeName,
-    getTypeIconSvg,
-    TYPE_SVG_PATHS,
-    TYPE_CANONICAL_MAP,
-    getSpecialtyName,
-    getSpecialtyKey,
-    getSpecialtyIconHtml,
-    getIngredientName,
-    getIngredientIcon,
-    getRecipeName,
-    getBerryName,
-    getNatureName,
-    getPokemonName,
-    getMainSkillName,
-    getShortMainSkillName,
-    shortenSkillName,
-    getSubSkillName,
-    translateDynamicText,
-    getItemName,
-    getIslandName,
-    updatePageTranslations,
-    DICTIONARY,
-    POKEMON_NAMES,
-    TYPE_NAMES,
-    SPECIALTY_NAMES,
-    INGREDIENT_NAMES,
-    INGREDIENT_ICONS,
-    BERRY_NAMES,
-    NATURE_NAMES,
-    MAIN_SKILL_NAMES,
-    SUBSKILL_NAMES,
-    ITEM_NAMES,
-    ISLAND_NAMES
+    t, getLanguage, setLanguage, toSimplified: toSimplifiedChinese, updateSearchInputHighlight,
+    getTypeName, getTypeIconSvg, TYPE_SVG_PATHS, TYPE_CANONICAL_MAP,
+    getSpecialtyName, getSpecialtyKey, getSpecialtyIconHtml,
+    getIngredientName, getIngredientIcon, getRecipeName, getBerryName, getNatureName,
+    getPokemonName, getMainSkillName, getShortMainSkillName, shortenSkillName, getSubSkillName,
+    translateDynamicText, getItemName, getIslandName, updatePageTranslations,
+    DICTIONARY, POKEMON_NAMES, TYPE_NAMES, SPECIALTY_NAMES, INGREDIENT_NAMES,
+    INGREDIENT_ICONS, BERRY_NAMES, NATURE_NAMES, MAIN_SKILL_NAMES, SUBSKILL_NAMES, ITEM_NAMES, ISLAND_NAMES
   };
 
   if (typeof window !== 'undefined') {

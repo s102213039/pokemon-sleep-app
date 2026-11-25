@@ -5,6 +5,25 @@
 (function () {
   'use strict';
 
+  function _tRecipes(tw, en) {
+    if (typeof window !== 'undefined' && window.I18N) {
+      const lang = typeof window.I18N.getLanguage === 'function' ? window.I18N.getLanguage() : 'zh-TW';
+      if (lang === 'en-US') return en !== undefined ? en : tw;
+      if (lang === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
+        return window.I18N.toSimplified(tw);
+      }
+    }
+    return tw;
+  }
+
+  function _getRecipeCategoryLabel(cat) {
+    if (cat === 'ALL') return _tRecipes('全部', 'All');
+    if (cat === '咖哩') return _tRecipes('咖哩', 'Curry');
+    if (cat === '沙拉') return _tRecipes('沙拉', 'Salad');
+    if (cat === '甜點') return _tRecipes('甜點', 'Dessert');
+    return _tRecipes(cat, cat);
+  }
+
   function isRecipesHealthy(data) {
     try {
       if (!Array.isArray(data) || data.length < 78) return false;
@@ -441,9 +460,7 @@
   function syncPotExpansionUI() {
     if (!potExpansionSlider || !potExpansionBadge) return;
     potExpansionSlider.value = potExpansion;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
-    potExpansionBadge.textContent = potExpansion === 0 ? (isEN ? '+0 (None)' : (isCN ? '+0 (无追加)' : '+0 (無追加)')) : `+${potExpansion} (+${(potExpansion * 100).toLocaleString()})`;
+    potExpansionBadge.textContent = potExpansion === 0 ? _tRecipes('+0 (無追加)', '+0 (None)') : `+${potExpansion} (+${(potExpansion * 100).toLocaleString()})`;
     updateSliderFill(potExpansionSlider, 0, 700);
   }
 
@@ -767,19 +784,22 @@
     .catch(err => {
       console.error('Error loading recipes.json:', err);
       if (typeof window.__renderInPlaceError === 'function') {
-        window.__renderInPlaceError('recipe-content-area', '料理食譜資料庫載入失敗 (recipes.json)', err);
+        window.__renderInPlaceError('recipe-content-area', _tRecipes('料理食譜資料庫載入失敗 (recipes.json)', 'Failed to load recipe database (recipes.json)'), err);
       } else if (contentArea) {
         const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
           ? window.DOMUtils.escapeHtml(err.message)
           : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">載入 recipes.json 失敗：${safeMsg}</div>`;
+        contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">${_tRecipes('載入 recipes.json 失敗：', 'Failed to load recipes.json: ')}${safeMsg}</div>`;
       }
     });
 
   function getRecipeName(r) {
     if (!r) return '';
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
+    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getRecipeName === 'function') {
+      return window.I18N.getRecipeName(r);
+    }
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN';
     if (isEN) return r.name_en || r.name_cn;
     if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') return window.I18N.toSimplified(r.name_cn);
     return r.name_cn;

@@ -253,8 +253,7 @@
       labState.isCustomized = false;
       updateLabUI();
       if (typeof window.showToast === 'function') {
-        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-        window.showToast(isEN ? 'Pokémon updated successfully!' : '寶可夢數值已成功更新！');
+        window.showToast(_tLab('寶可夢數值已成功更新！', 'Pokémon updated successfully!'));
       }
     }
   }
@@ -336,7 +335,6 @@
   }
 
   function initLabPokemonCombobox(pokemons, currentPkm) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const searchInput = document.getElementById('lab-poke-search');
     const dropdown = document.getElementById('lab-pkm-dropdown');
     const toggleBtn = document.getElementById('lab-pkm-dropdown-toggle');
@@ -360,13 +358,13 @@
       }
 
       if (matched.length === 0) {
-        dropdown.innerHTML = `<div class="text-muted" style="padding: 12px; text-align: center; font-size: 12px;">${isEN ? 'No matching Pokémon' : '找不到符合之寶可夢'}</div>`;
+        dropdown.innerHTML = `<div class="text-muted" style="padding: 12px; text-align: center; font-size: 12px;">${_tLab('找不到符合之寶可夢', 'No matching Pokémon')}</div>`;
         dropdown.style.display = 'block';
         return;
       }
 
       dropdown.innerHTML = matched.map(p => {
-        const pkmDisplayName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
+        const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : _tLab(p.name_cn, p.name_en || p.name_cn);
         const isSelected = p.id === currentPkm.id;
         const avatarUrl = p.icon_url || p.icon || (p.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png` : '') || 'assets/placeholder.svg';
         return `
@@ -486,9 +484,9 @@
     const legendSvg = `
       <g transform="translate(14, 18)">
         <rect x="0" y="0" width="10" height="10" rx="2" fill="#38bdf8" />
-        <text x="14" y="9" fill="#38bdf8" font-size="11" font-weight="700">${escapeHtml(nameA || (isEN ? 'Pokémon A' : '選手 A'))}</text>
+        <text x="14" y="9" fill="#38bdf8" font-size="11" font-weight="700">${escapeHtml(nameA || _tLab('選手 A', 'Pokémon A'))}</text>
         <rect x="150" y="0" width="10" height="10" rx="2" fill="#c084fc" />
-        <text x="164" y="9" fill="#c084fc" font-size="11" font-weight="700">${escapeHtml(nameB || (isEN ? 'Pokémon B' : '選手 B'))}</text>
+        <text x="164" y="9" fill="#c084fc" font-size="11" font-weight="700">${escapeHtml(nameB || _tLab('選手 B', 'Pokémon B'))}</text>
       </g>
     `;
 

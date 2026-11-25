@@ -659,6 +659,7 @@
     '冰之石': { 'zh-TW': '冰之石', 'zh-CN': '冰之石', 'en-US': 'Ice Stone' },
     '光之石': { 'zh-TW': '光之石', 'zh-CN': '光之石', 'en-US': 'Shiny Stone' },
     '暗之石': { 'zh-TW': '暗之石', 'zh-CN': '暗之石', 'en-US': 'Dusk Stone' },
+    '日之石': { 'zh-TW': '日之石', 'zh-CN': '日之石', 'en-US': 'Sun Stone' },
     '聯繫繩': { 'zh-TW': '聯繫繩', 'zh-CN': '联系绳', 'en-US': 'Linking Cord' },
     '联系绳': { 'zh-TW': '聯繫繩', 'zh-CN': '联系绳', 'en-US': 'Linking Cord' },
     '金屬膜': { 'zh-TW': '金屬膜', 'zh-CN': '金属膜', 'en-US': 'Metal Coat' },

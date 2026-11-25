@@ -397,10 +397,8 @@
 
     // 7. 食材組合
     const formatIngCombo = (item) => {
-      const p1 = item.ing1 || '-';
-      const p2 = item.ing2 || '-';
-      const p3 = item.ing3 || '-';
-      return `${p1} / ${p2} / ${p3}`;
+      const getIng = (v) => v ? ((window.I18N && typeof window.I18N.getIngredientName === 'function') ? window.I18N.getIngredientName(v) : _tBox(v)) : '-';
+      return `${getIng(item.ing1)} / ${getIng(item.ing2)} / ${getIng(item.ing3)}`;
     };
     const oldIngs = formatIngCombo(existing);
     const newIngs = formatIngCombo(parsed);
@@ -419,9 +417,9 @@
     const formatSks = (sks) => {
       if (!sks || sks.length === 0) return _tBox('無', 'None');
       return sks.map(s => {
-        const sName = (window.I18N && typeof window.I18N.getSubskillName === 'function') ? window.I18N.getSubskillName(s) : s;
+        const sName = (window.I18N && typeof window.I18N.getSubSkillName === 'function') ? window.I18N.getSubSkillName(s) : _tBox(s);
         return escapeHtml(sName);
-      }).join('、');
+      }).join(_tBox('、', ', '));
     };
     comparisons.push({
       field: 'subskills',
@@ -440,7 +438,9 @@
     if (!modal) return;
 
     const base = findPokemonBase(existingCandidate.pokemonId || existingCandidate.name);
-    const pkmDisplayName = _tBox(existingCandidate.name || (base ? base.name_cn : ''), ((base && base.name_en) || existingCandidate.name));
+    const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+      ? (base ? window.I18N.getPokemonName(base) : window.I18N.getPokemonName(existingCandidate.name || ''))
+      : _tBox(existingCandidate.name || (base ? base.name_cn : ''), ((base && base.name_en) || existingCandidate.name));
     const candidateDisplayName = existingCandidate.nickname ? `${pkmDisplayName} (${existingCandidate.nickname})` : pkmDisplayName;
     const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
 
@@ -574,7 +574,13 @@
     renderBox();
     closePokemonConflictModal();
 
-    const pkmName = _tBox(existingCandidate.name || '寶可夢', (existingCandidate.name_en || existingCandidate.name) || 'Pokémon');
+    const base = findPokemonBase(existingCandidate.pokemonId || existingCandidate.name);
+    const rawPkmName = (base && (base.name_cn || base.name_en)) || existingCandidate.name || '';
+    const pkmName = rawPkmName
+      ? ((window.I18N && typeof window.I18N.getPokemonName === 'function')
+          ? (base ? window.I18N.getPokemonName(base) : window.I18N.getPokemonName(rawPkmName))
+          : _tBox(rawPkmName, existingCandidate.name_en || (base && base.name_en) || rawPkmName))
+      : _tBox('寶可夢', 'Pokémon');
     const displayName = userBox[idx].nickname ? `${pkmName} (${userBox[idx].nickname})` : pkmName;
     showBoxToast(
       _tBox('寶可夢覆蓋更新成功！', 'Pokémon Overwritten & Updated'),

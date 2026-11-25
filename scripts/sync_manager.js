@@ -816,6 +816,7 @@ function checkIslandsDataDrift(dataset, campsDataPath = CAMPS_DATA_FILE, sleepSt
     if (!p) continue;
     const idStr = String(p.id || p.formatted_no || '');
     if (EVENT_ONLY_POKEMON_IDS.has(idStr)) continue;
+    if (!p.interval && !p.ingredient_rate) continue; // Skip unreleased upcoming debut Pokemon without in-game stats yet
     if (idStr === '710' || idStr === '711') {
       const baseName = idStr === '710' ? '南瓜精' : '南瓜怪人';
       if (!seenIslandNames.has(baseName) && !seenMissingIds.has(idStr)) {

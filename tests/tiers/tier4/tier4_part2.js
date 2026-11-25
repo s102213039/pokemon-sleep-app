@@ -2612,6 +2612,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
             id,
             style: {},
             setAttribute: () => {},
+            getAttribute: () => null,
+            remove: () => {},
+            querySelector: () => null,
+            querySelectorAll: () => [],
             classList: { add: () => {}, remove: () => {}, toggle: () => {} },
             addEventListener: () => {}
           };
@@ -2623,6 +2627,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
         tagName: tag,
         style: {},
         setAttribute: () => {},
+        getAttribute: () => null,
+        remove: () => {},
+        querySelector: () => null,
+        querySelectorAll: () => [],
+        addEventListener: () => {},
         classList: { add: () => {}, remove: () => {} }
       }),
       body: { appendChild: () => {} }

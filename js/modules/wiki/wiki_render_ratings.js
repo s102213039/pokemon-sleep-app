@@ -35,7 +35,7 @@
     } catch (e) {
       console.error('Error rendering Wiki layout:', e);
       if (typeof window.__renderInPlaceError === 'function') {
-        window.__renderInPlaceError('panel-wiki', '數據百科佈局渲染異常', e);
+        window.__renderInPlaceError('panel-wiki', _tWiki('數據百科佈局渲染異常', 'Wiki layout rendering error'), e);
       }
     }
 
@@ -71,10 +71,11 @@
   // 渲染副技能標籤
   function renderSkillBadge(skill) {
     if (!skill || !skill.name || skill.name === '-') return '<span class="text-muted">-</span>';
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const displayName = isEN ? (window.I18N.getSubSkillName(skill.name) || skill.name) : skill.name;
+    const displayName = (window.I18N && typeof window.I18N.getSubSkillName === 'function')
+      ? (window.I18N.getSubSkillName(skill.name) || _tWiki(skill.name, skill.name))
+      : _tWiki(skill.name, skill.name);
     const cls = skill.color ? `skill-badge-${skill.color}` : '';
-    const statusNote = skill.status === 'unreleased' ? (isEN ? ' <span class="badge-unreleased">(Unreleased)</span>' : ' <span class="badge-unreleased">(未開放)</span>') : '';
+    const statusNote = skill.status === 'unreleased' ? _tWiki(' <span class="badge-unreleased">(未開放)</span>', ' <span class="badge-unreleased">(Unreleased)</span>') : '';
     return `<span class="wiki-skill-badge ${cls}">${displayName}${statusNote}</span>`;
   }
 
@@ -82,16 +83,16 @@
   function getSubSkillBadgeColor(rawName) {
     if (!rawName) return 'white';
     const name = rawName.replace(/\s+/g, '');
-    if (name.includes('樹果數量') || name.includes('幫手獎勵') || name.includes('技能等級提升M') || 
-        name.includes('睡眠EXP') || name.includes('睡眠EXP獎勵') || name.includes('活力恢復') || 
-        name.includes('研究EXP') || name.includes('夢之碎片') ||
+    if (name.includes('樹果數量') || name.includes('树果数量') || name.includes('幫手獎勵') || name.includes('帮手奖励') || name.includes('技能等級提升M') || name.includes('技能等级提升M') ||
+        name.includes('睡眠EXP') || name.includes('睡眠EXP獎勵') || name.includes('睡眠EXP奖励') || name.includes('活力恢復') || name.includes('活力恢复') ||
+        name.includes('研究EXP') || name.includes('夢之碎片') || name.includes('梦之碎片') ||
         name.toLowerCase().includes('berryfinding') || name.toLowerCase().includes('helpingbonus') ||
         name.toLowerCase().includes('skilllevelupm') || name.toLowerCase().includes('sleepexp') ||
         name.toLowerCase().includes('energyrecovery') || name.toLowerCase().includes('researchexp') ||
         name.toLowerCase().includes('dreamshard')) {
       return 'gold';
     }
-    if (name.endsWith('M') || name.endsWith('L') || name.includes('M/L') || name.includes('技能等級提升S') ||
+    if (name.endsWith('M') || name.endsWith('L') || name.includes('M/L') || name.includes('技能等級提升S') || name.includes('技能等级提升S') ||
         name.toLowerCase().includes('finderm') || name.toLowerCase().includes('speedm') || 
         name.toLowerCase().includes('triggerm') || name.toLowerCase().includes('inventoryupm') ||
         name.toLowerCase().includes('inventoryupl') || name.toLowerCase().includes('inventoryupm/l') ||
@@ -104,7 +105,9 @@
   // 渲染副技能徽章 (支援複合格式 如 "樹果數量S + 持有上限")
   function renderRatingSubskillBadge(rawName, rawNameEn, isEN) {
     if (!rawName) return '';
-    const text = isEN ? (rawNameEn || (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName)) : rawName;
+    const text = isEN
+      ? (rawNameEn || (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName))
+      : _tWiki(rawName, rawNameEn || rawName);
     if (text.includes('+')) {
       const parts = text.split('+').map(p => p.trim());
       return parts.map(part => {
@@ -134,7 +137,7 @@
     // 時間縮短/減項 (如 -14%, -7%, -5%)
     res = res.replace(/(-\d+(?:\.\d+)?%)/g, '<span class="text-accent font-bold">$1</span>');
     // 關鍵專有名詞加亮
-    res = res.replace(/(翻倍|畢業核心|靈魂性格|金種子|銀種子)/g, '<span class="text-warning font-bold">$1</span>');
+    res = res.replace(/(翻倍|畢業核心|毕业核心|靈魂性格|灵魂性格|金種子|金种子|銀種子|银种子)/g, '<span class="text-warning font-bold">$1</span>');
     res = res.replace(/(doubles|graduation core|essential graduation core|Prime nature|Sub Skill Seed|Main Skill Seed)/g, '<span class="text-warning font-bold">$1</span>');
     // 箭頭高亮
     res = res.replace(/▲/g, '<span class="matrix-rate-up font-bold">▲</span>');
@@ -145,9 +148,9 @@
   // 渲染專長評級卡片
   function renderRatingCard(data) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const badgeText = isEN ? (data.badge_en || data.badge || data.title_en || data.title) : (data.badge || data.title);
-    const specText = isEN ? (data.spec_en || data.spec || '') : (data.spec || '');
-    const desc = isEN ? (data.desc_en || data.desc) : data.desc;
+    const badgeText = _tWiki(data.badge || data.title, data.badge_en || data.badge || data.title_en || data.title);
+    const specText = _tWiki(data.spec || '', data.spec_en || data.spec || '');
+    const desc = _tWiki(data.desc || '', data.desc_en || data.desc || '');
     const type = data.type || 'berry';
     const themeColor = type === 'berry' ? '#f59e0b' : (type === 'ingredient' ? '#06b6d4' : '#a855f7');
 
@@ -163,10 +166,10 @@
         
         <div class="rating-subsections">
           <div class="rating-col">
-            <h4 class="rating-col-title" style="color: ${themeColor};">${isEN ? 'Sub-Skill Priority' : '副技能推薦梯度'}</h4>
+            <h4 class="rating-col-title" style="color: ${themeColor};">${_tWiki('副技能推薦梯度', 'Sub-Skill Priority')}</h4>
             <div class="rating-list">
               ${data.subskills.map(s => {
-                const sDetail = isEN ? (s.detail_en || s.detail) : s.detail;
+                const sDetail = _tWiki(s.detail || '', s.detail_en || s.detail || '');
                 return `
                 <div class="rating-item">
                   <span class="rating-item-badge">${renderRatingSubskillBadge(s.name, s.name_en, isEN)}</span><span class="rating-item-colon">:</span><span class="rating-item-detail text-secondary">${formatRatingDetail(sDetail)}</span>
@@ -176,11 +179,11 @@
           </div>
 
           <div class="rating-col">
-            <h4 class="rating-col-title" style="color: ${themeColor};">${isEN ? 'Nature Priority' : '性格推薦梯度'}</h4>
+            <h4 class="rating-col-title" style="color: ${themeColor};">${_tWiki('性格推薦梯度', 'Nature Priority')}</h4>
             <div class="rating-list">
               ${data.natures.map(n => {
-                const nName = isEN ? (n.name_en || (window.I18N ? window.I18N.getNatureName(n.name) : n.name)) : n.name;
-                const nDetail = isEN ? (n.detail_en || n.detail) : n.detail;
+                const nName = _tWiki(n.name || '', n.name_en || (window.I18N ? window.I18N.getNatureName(n.name) : n.name));
+                const nDetail = _tWiki(n.detail || '', n.detail_en || n.detail || '');
                 return `
                 <div class="rating-item">
                   <span class="rating-item-badge">${renderRatingNatureBadge(nName)}</span><span class="rating-item-colon">:</span><span class="rating-item-detail text-secondary">${formatRatingDetail(nDetail)}</span>
@@ -196,7 +199,7 @@
   const LADDER_NOTE_ING_LIST = [
     '特選蘋果', 'Fancy Apple', '哞哞鮮奶', 'Moomoo Milk', '萌綠大豆', 'Greengrass Soybeans',
     '甜甜蜜', 'Honey', '豆製肉', 'Bean Sausage', '暖暖薑', 'Warming Ginger',
-    '好眠番茄', '熟透番茄', 'Snoozy Tomato', '特選蛋', 'Fancy Egg', '純粹油', 'Pure Oil',
+    '好眠番茄', '熟透番茄', 'Snoozy Tomato', '一口堅果', 'Snackable Nuts', '特選蛋', 'Fancy Egg', '純粹油', 'Pure Oil',
     '窩心洋芋', 'Soft Potato', '火辣香草', 'Fiery Herb', '萌綠玉米', 'Greengrass Corn',
     '放鬆可可', 'Soothing Cacao', '醒腦咖啡豆', 'Rousing Coffee', '嫩亮酪梨', 'Glossy Avocado',
     '品鮮蘑菇', 'Tasty Mushroom', '粗枝大蔥', 'Large Leek', '沉甸甸南瓜', 'Plump Pumpkin',
@@ -216,14 +219,17 @@
       : note;
 
     if (window.I18N && typeof window.I18N.getIngredientIcon === 'function') {
+      const toSimp = typeof window.I18N.toSimplified === 'function' ? window.I18N.toSimplified : null;
       for (let i = 0; i < LADDER_NOTE_ING_LIST.length; i++) {
         const ingName = LADDER_NOTE_ING_LIST[i];
-        if (translated.includes(ingName)) {
+        const simpName = (langKey === 'zh-CN' && toSimp) ? toSimp(ingName) : ingName;
+        const matchToken = translated.includes(simpName) ? simpName : (translated.includes(ingName) ? ingName : '');
+        if (matchToken) {
           const icon = window.I18N.getIngredientIcon(ingName);
           if (icon) {
             const displayName = window.I18N.getIngredientName(ingName);
             const tag = `<img src="${icon}" class="ladder-note-ing-icon" alt="${displayName}" title="${displayName}">`;
-            translated = translated.split(ingName).join(tag);
+            translated = translated.split(matchToken).join(tag);
           }
         }
       }

@@ -3,7 +3,7 @@
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       typeFilterContainer.innerHTML = types.map(t => {
         const isActive = t === 'ALL' ? selectedTypes.size === 0 : selectedTypes.has(t);
-        const label = t === 'ALL' ? (isEN ? 'All Types' : '全部屬性') : (isEN && window.I18N ? window.I18N.getTypeName(t) : t);
+        const label = t === 'ALL' ? _tDex('全部屬性', 'All Types') : (window.I18N ? window.I18N.getTypeName(t) : t);
         return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-type="${t}">${label}</button>`;
       }).join('');
     }
@@ -25,7 +25,7 @@
       berryFilterContainer.innerHTML = sortedBerries.map(b => {
         const isActive = selectedBerries.has(b.name);
         const berryName = window.I18N ? window.I18N.getBerryName(b.name) : b.name;
-        const typeName = isEN && window.I18N ? window.I18N.getTypeName(b.type) : b.type;
+        const typeName = window.I18N ? window.I18N.getTypeName(b.type) : b.type;
         return `
           <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${berryName} (${typeName})" aria-label="${berryName}">
             ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" alt="${berryName}" loading="lazy" onerror="this.style.display='none';">` : ''}
@@ -61,8 +61,10 @@
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       skillFilterContainer.innerHTML = BASE_SKILLS.map(skillItem => {
         const isActive = selectedSkills.has(skillItem.key);
-        const label = isEN ? (skillItem.label_en || (window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label)) : (window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label);
-        const fullTitle = isEN ? (window.I18N ? window.I18N.getMainSkillName(skillItem.key) : skillItem.label) : skillItem.label;
+        const rawLabel = window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label;
+        const label = isEN ? (skillItem.label_en || rawLabel) : _tDex(rawLabel, rawLabel);
+        const rawFull = window.I18N ? window.I18N.getMainSkillName(skillItem.key) : skillItem.label;
+        const fullTitle = isEN ? rawFull : _tDex(rawFull, rawFull);
         return `
           <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${fullTitle}">
             <span class="subfilter-skill-name">${label}</span>
@@ -347,7 +349,7 @@
           if (bookmarkHandle) {
             bookmarkHandle.classList.remove('drawer-open');
             bookmarkHandle.setAttribute('aria-expanded', 'false');
-            bookmarkHandle.title = '展開篩選側邊欄';
+            bookmarkHandle.title = _tDex('展開篩選側邊欄', 'Expand Filter Sidebar');
             bookmarkHandle.style.opacity = '1';
             bookmarkHandle.style.pointerEvents = 'auto';
             bookmarkHandle.style.display = 'flex';
@@ -363,7 +365,7 @@
           if (bookmarkHandle) {
             bookmarkHandle.classList.add('drawer-open');
             bookmarkHandle.setAttribute('aria-expanded', 'true');
-            bookmarkHandle.title = '收合篩選側邊欄';
+            bookmarkHandle.title = _tDex('收合篩選側邊欄', 'Collapse Filter Sidebar');
             bookmarkHandle.style.opacity = '0';
             bookmarkHandle.style.pointerEvents = 'none';
             bookmarkHandle.style.display = 'none';

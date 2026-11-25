@@ -86,7 +86,7 @@
 
         const pkmDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
           ? window.I18N.getPokemonName(p.name_cn || p.name)
-          : (isEN ? (p.name_en || p.name_cn || p.name) : (p.name_cn || p.name));
+          : _tSkillLadder(p.name_cn || p.name, p.name_en || p.name_cn || p.name);
         const skillName = p.main_skill || '';
         const skillDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function')
           ? window.I18N.getMainSkillName(skillName)
@@ -97,9 +97,9 @@
         let skillFullDisplay = subInfo.fullLabel || skillDisplayName;
         if (skillFullDisplay) {
           skillFullDisplay = skillFullDisplay
-            .replace(/(?:[（\(]\s*隨機\s*[）\)])(?:\s*[（\(]\s*隨機\s*[）\)])+/g, '（隨機）')
+            .replace(/(?:[（\(]\s*(?:隨機|随机)\s*[）\)])(?:\s*[（\(]\s*(?:隨機|随机)\s*[）\)])+/g, _tSkillLadder('（隨機）', '(Random)'))
             .replace(/(?:[（\(]\s*Random\s*[）\)])(?:\s*[（\(]\s*Random\s*[）\)])+/gi, isEN ? '(Random)' : '（Random）')
-            .replace(/(?:[（\(]\s*固定\s*[）\)])(?:\s*[（\(]\s*固定\s*[）\)])+/g, '（固定）')
+            .replace(/(?:[（\(]\s*固定\s*[）\)])(?:\s*[（\(]\s*固定\s*[）\)])+/g, _tSkillLadder('（固定）', '(Fixed)'))
             .replace(/(?:[（\(]\s*Fixed\s*[）\)])(?:\s*[（\(]\s*Fixed\s*[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
             .replace(/[（\(]\s*([^）\(\)\s]+(?:\s+[^）\(\)\s]+)*)\s*[）\)](?:\s*[（\(]\s*\1\s*[）\)])+/gi, (m, p1) => isEN ? `(${p1})` : `（${p1}）`);
         }

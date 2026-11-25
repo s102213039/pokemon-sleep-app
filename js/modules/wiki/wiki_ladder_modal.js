@@ -219,7 +219,7 @@
       ];
       catBarEl.innerHTML = categories.map(cat => {
         const isActive = (ladderRecipeCategory === cat.id);
-        const label = isEN ? cat.name_en : cat.name;
+        const label = _tWiki(cat.name, cat.name_en);
         return `<button type="button" class="ladder-recipe-cat-btn ${isActive ? 'active' : ''}" onclick="window.WikiDB.switchLadderRecipeCategory('${cat.id}')">${label}</button>`;
       }).join('');
     }
@@ -230,7 +230,14 @@
       const list = TOP_RECIPES_BY_CATEGORY[ladderRecipeCategory] || [];
       bodyEl.innerHTML = list.map((r, rIdx) => {
         const isCurrent = isHighlightRecipeSelected(r.name_cn);
-        const displayName = isEN ? r.name_en : r.name_cn;
+        const displayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getRecipeName === 'function')
+          ? window.I18N.getRecipeName(r)
+          : _tWiki(r.name_cn, r.name_en);
+        const catLabel = r.category === '咖哩'
+          ? _tWiki('咖哩', 'Curry')
+          : (r.category === '沙拉'
+            ? _tWiki('沙拉', 'Salad')
+            : (r.category === '甜點' ? _tWiki('甜點', 'Dessert') : _tWiki(r.category, r.category)));
         const recipeIconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(r.icon) : r.icon) || r.icon;
         return `
           <div class="ladder-recipe-card ${isCurrent ? 'selected' : ''}" onclick="window.WikiDB.selectLadderHighlightRecipe('${r.name_cn}')" role="button" tabindex="0">
@@ -240,18 +247,20 @@
               <div class="recipe-card-meta">
                 <div class="recipe-card-name-row">
                   <span class="recipe-card-name">${displayName}</span>
-                  <span class="recipe-card-cat-badge cat-${r.category}">${r.category}</span>
-                  ${isCurrent ? `<span class="recipe-card-active-pill">${isEN ? 'Active' : '目前選取'}</span>` : ''}
+                  <span class="recipe-card-cat-badge cat-${r.category}">${catLabel}</span>
+                  ${isCurrent ? `<span class="recipe-card-active-pill">${_tWiki('目前選取', 'Active')}</span>` : ''}
                 </div>
                 <div class="recipe-card-energy-row">
                   <span class="recipe-card-energy-num">${r.base_energy.toLocaleString()}</span>
-                  <span class="recipe-card-pot">${isEN ? `Pot ${r.pot_size}` : `鍋容量 ${r.pot_size}`}</span>
+                  <span class="recipe-card-pot">${_tWiki(`鍋容量 ${r.pot_size}`, `Pot ${r.pot_size}`)}</span>
                 </div>
               </div>
             </div>
             <div class="recipe-card-ings-row">
               ${r.ingredients.map(ing => {
-                const ingDisplayName = isEN ? ((window.I18N && window.I18N.getIngredientName(ing.name)) || ing.name) : ing.name;
+                const ingDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getIngredientName === 'function')
+                  ? (window.I18N.getIngredientName(ing.name) || _tWiki(ing.name, ing.name))
+                  : _tWiki(ing.name, ing.name);
                 const ingIconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon;
                 return `
                   <span class="recipe-card-ing-chip" title="${ingDisplayName}">

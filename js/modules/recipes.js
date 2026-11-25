@@ -5,6 +5,25 @@
 (function () {
   'use strict';
 
+  function _tRecipes(tw, en) {
+    if (typeof window !== 'undefined' && window.I18N) {
+      const lang = typeof window.I18N.getLanguage === 'function' ? window.I18N.getLanguage() : 'zh-TW';
+      if (lang === 'en-US') return en !== undefined ? en : tw;
+      if (lang === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
+        return window.I18N.toSimplified(tw);
+      }
+    }
+    return tw;
+  }
+
+  function _getRecipeCategoryLabel(cat) {
+    if (cat === 'ALL') return _tRecipes('全部', 'All');
+    if (cat === '咖哩') return _tRecipes('咖哩', 'Curry');
+    if (cat === '沙拉') return _tRecipes('沙拉', 'Salad');
+    if (cat === '甜點') return _tRecipes('甜點', 'Dessert');
+    return _tRecipes(cat, cat);
+  }
+
   function isRecipesHealthy(data) {
     try {
       if (!Array.isArray(data) || data.length < 78) return false;
@@ -441,9 +460,7 @@
   function syncPotExpansionUI() {
     if (!potExpansionSlider || !potExpansionBadge) return;
     potExpansionSlider.value = potExpansion;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
-    potExpansionBadge.textContent = potExpansion === 0 ? (isEN ? '+0 (None)' : (isCN ? '+0 (无追加)' : '+0 (無追加)')) : `+${potExpansion} (+${(potExpansion * 100).toLocaleString()})`;
+    potExpansionBadge.textContent = potExpansion === 0 ? _tRecipes('+0 (無追加)', '+0 (None)') : `+${potExpansion} (+${(potExpansion * 100).toLocaleString()})`;
     updateSliderFill(potExpansionSlider, 0, 700);
   }
 
@@ -767,19 +784,22 @@
     .catch(err => {
       console.error('Error loading recipes.json:', err);
       if (typeof window.__renderInPlaceError === 'function') {
-        window.__renderInPlaceError('recipe-content-area', '料理食譜資料庫載入失敗 (recipes.json)', err);
+        window.__renderInPlaceError('recipe-content-area', _tRecipes('料理食譜資料庫載入失敗 (recipes.json)', 'Failed to load recipe database (recipes.json)'), err);
       } else if (contentArea) {
         const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
           ? window.DOMUtils.escapeHtml(err.message)
           : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">載入 recipes.json 失敗：${safeMsg}</div>`;
+        contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">${_tRecipes('載入 recipes.json 失敗：', 'Failed to load recipes.json: ')}${safeMsg}</div>`;
       }
     });
 
   function getRecipeName(r) {
     if (!r) return '';
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
+    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getRecipeName === 'function') {
+      return window.I18N.getRecipeName(r);
+    }
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN';
     if (isEN) return r.name_en || r.name_cn;
     if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') return window.I18N.toSimplified(r.name_cn);
     return r.name_cn;
@@ -799,26 +819,23 @@
       else sidebarScrollable.prepend(pantrySection);
     }
 
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
-
     pantrySection.innerHTML = `
       <div class="sidebar-section-header pantry-section-header">
         <div class="pantry-header-title-row">
-          <span class="sidebar-section-title" data-i18n="recipe.pantry_title">${isEN ? 'Pantry Inventory' : (isCN ? '食材库存' : '食材庫存')}</span>
+          <span class="sidebar-section-title" data-i18n="recipe.pantry_title">${_tRecipes('食材庫存', 'Pantry Inventory')}</span>
           <span class="pantry-count-badge" id="pantry-total-count-badge">0</span>
         </div>
         <div class="pantry-header-actions">
-          <button type="button" id="pantry-clear-all-btn" class="sidebar-section-clear-btn">${isEN ? 'Clear' : '清空'}</button>
-          <button type="button" id="pantry-collapse-toggle-btn" class="pantry-toggle-btn" aria-expanded="true" title="收合/展開">
+          <button type="button" id="pantry-clear-all-btn" class="sidebar-section-clear-btn">${_tRecipes('清空', 'Clear')}</button>
+          <button type="button" id="pantry-collapse-toggle-btn" class="pantry-toggle-btn" aria-expanded="true" title="${_tRecipes('收合/展開', 'Collapse / Expand')}">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
         </div>
       </div>
       <div id="pantry-content-body" class="pantry-body">
         <div class="pantry-quick-toolbar">
-          <button type="button" class="pantry-quick-btn" id="pantry-fill-demo-btn">${isEN ? '+10 All' : '+10 全食材'}</button>
-          <button type="button" class="pantry-quick-btn" id="pantry-reset-zero-btn">${isEN ? 'Zero All' : '全設為 0'}</button>
+          <button type="button" class="pantry-quick-btn" id="pantry-fill-demo-btn">${_tRecipes('+10 全食材', '+10 All')}</button>
+          <button type="button" class="pantry-quick-btn" id="pantry-reset-zero-btn">${_tRecipes('全設為 0', 'Zero All')}</button>
         </div>
         <div class="pantry-items-grid" id="pantry-items-grid"></div>
       </div>
@@ -932,9 +949,7 @@
     cookableBtn.type = 'button';
     cookableBtn.id = 'recipe-cookable-filter-btn';
     cookableBtn.className = `recipe-filter-pill-btn ${filterCookableOnly ? 'active' : ''}`;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
-    cookableBtn.textContent = isEN ? 'Cookable (100%)' : (isCN ? '可立即烹饪 (100%)' : '可立即烹飪 (100%)');
+    cookableBtn.textContent = _tRecipes('可立即烹飪 (100%)', 'Cookable (100%)');
     cookableBtn.setAttribute('data-i18n', 'recipe.filter_cookable');
 
     cookableBtn.addEventListener('click', () => {
@@ -967,9 +982,8 @@
   }
 
   function renderPotFillerModalContent(modal, recipe) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const primaryName = getRecipeName(recipe);
+    const catLabel = _getRecipeCategoryLabel(recipe.category);
     const reqPot = Number(recipe.pot_size) || 0;
     const effPot = getEffectivePotCapacity(potCapacity, campTicketActive, sundayExpansionActive);
     const fillerSlots = Math.max(0, effPot - reqPot);
@@ -981,17 +995,17 @@
       <div class="recipe-pot-filler-dialog" role="dialog" aria-modal="true" aria-labelledby="filler-dialog-title">
         <div class="filler-dialog-header">
           <div class="filler-header-title-group">
-            <h3 id="filler-dialog-title" class="filler-dialog-title">${isEN ? 'Pot Capacity & Filler Optimizer' : (isCN ? '锅子容量与填锅最佳化' : '鍋子容量與填鍋最佳化')}</h3>
-            <span class="filler-dialog-recipe-sub">${primaryName} (${recipe.category} · ${reqPot}料)</span>
+            <h3 id="filler-dialog-title" class="filler-dialog-title">${_tRecipes('鍋子容量與填鍋最佳化', 'Pot Capacity & Filler Optimizer')}</h3>
+            <span class="filler-dialog-recipe-sub">${primaryName} (${catLabel} · ${_tRecipes(`${reqPot}料`, `${reqPot} slots`)})</span>
           </div>
-          <button type="button" class="filler-dialog-close-btn" id="filler-dialog-close-btn" aria-label="關閉">&times;</button>
+          <button type="button" class="filler-dialog-close-btn" id="filler-dialog-close-btn" aria-label="${_tRecipes('關閉', 'Close')}">&times;</button>
         </div>
         <div class="filler-dialog-body">
           <div class="filler-section-card">
-            <div class="filler-section-title">${isEN ? '1. Pot Capacity Configuration' : '1. 鍋子容量配置'}</div>
+            <div class="filler-section-title">${_tRecipes('1. 鍋子容量配置', '1. Pot Capacity Configuration')}</div>
             <div class="filler-controls-grid">
               <div class="filler-control-item">
-                <label class="filler-control-label">${isEN ? 'Base Pot Size' : '基礎鍋子容量'}: <strong id="filler-pot-cap-val">${potCapacity}</strong></label>
+                <label class="filler-control-label">${_tRecipes('基礎鍋子容量', 'Base Pot Size')}: <strong id="filler-pot-cap-val">${potCapacity}</strong></label>
                 <div class="filler-pot-stepper">
                   <input type="range" id="filler-pot-slider" class="rf-slider pot-slider" min="15" max="200" step="1" value="${potCapacity}">
                 </div>
@@ -1006,50 +1020,50 @@
               <div class="filler-switches-item">
                 <label class="filler-toggle-label">
                   <input type="checkbox" id="filler-camp-ticket-check" ${campTicketActive ? 'checked' : ''}>
-                  <span>${isEN ? 'Good Camp Ticket (+50%)' : '好露營券 (+50%)'}</span>
+                  <span>${_tRecipes('好露營券 (+50%)', 'Good Camp Ticket (+50%)')}</span>
                 </label>
                 <label class="filler-toggle-label">
                   <input type="checkbox" id="filler-sunday-check" ${sundayExpansionActive ? 'checked' : ''}>
-                  <span>${isEN ? 'Sunday Cooking (2x)' : '週末料理加倍 (×2)'}</span>
+                  <span>${_tRecipes('週末料理加倍 (×2)', 'Sunday Cooking (2x)')}</span>
                 </label>
               </div>
             </div>
             <div class="filler-effective-banner">
-              <span>${isEN ? 'Effective Pot' : '有效總容量'}: <strong>${effPot}</strong></span>
+              <span>${_tRecipes('有效總容量', 'Effective Pot')}: <strong>${effPot}</strong></span>
               <span class="filler-effective-divider">·</span>
-              <span>${isEN ? 'Base Required' : '料理基礎需求'}: <strong>${reqPot}</strong></span>
+              <span>${_tRecipes('料理基礎需求', 'Base Required')}: <strong>${reqPot}</strong></span>
               <span class="filler-effective-divider">·</span>
-              <span>${isEN ? 'Filler Slots' : '剩餘填鍋格數'}: <strong class="filler-highlight-slots">${fillerSlots}</strong></span>
+              <span>${_tRecipes('剩餘填鍋格數', 'Filler Slots')}: <strong class="filler-highlight-slots">${fillerSlots}</strong></span>
             </div>
           </div>
 
           <div class="filler-section-card">
             <div class="filler-section-header-row">
-              <div class="filler-section-title">${isEN ? '2. Optimal Filler Ingredients' : '2. 填鍋加料最佳推薦'}</div>
+              <div class="filler-section-title">${_tRecipes('2. 填鍋加料最佳推薦', '2. Optimal Filler Ingredients')}</div>
               <div class="filler-mode-selector">
-                <button type="button" class="filler-mode-btn ${potFillerMode === 'pantry' ? 'active' : ''}" id="filler-mode-pantry-btn">${isEN ? 'From Pantry' : '依庫存食材'}</button>
-                <button type="button" class="filler-mode-btn ${potFillerMode === 'all' ? 'active' : ''}" id="filler-mode-all-btn">${isEN ? 'Theoretical Best' : '理論最高能量'}</button>
+                <button type="button" class="filler-mode-btn ${potFillerMode === 'pantry' ? 'active' : ''}" id="filler-mode-pantry-btn">${_tRecipes('依庫存食材', 'From Pantry')}</button>
+                <button type="button" class="filler-mode-btn ${potFillerMode === 'all' ? 'active' : ''}" id="filler-mode-all-btn">${_tRecipes('理論最高能量', 'Theoretical Best')}</button>
               </div>
             </div>
             <div class="filler-table-wrapper">
               ${fillerSlots === 0 ? `
-                <div class="filler-empty-hint">${isEN ? 'Pot capacity matches recipe requirement (0 filler slots).' : '有效鍋容量等於料理基礎需求，無需追加多餘食材。'}</div>
+                <div class="filler-empty-hint">${_tRecipes('有效鍋容量等於料理基礎需求，無需追加多餘食材。', 'Pot capacity matches recipe requirement (0 filler slots).')}</div>
               ` : (fillerRes.recommendations.length === 0 ? `
-                <div class="filler-empty-hint">${isEN ? 'No available pantry ingredients for filling. Switch to Theoretical Best.' : '目前食材庫存已無剩餘多餘食材可供加料。可切換為「理論最高能量」。'}</div>
+                <div class="filler-empty-hint">${_tRecipes('目前食材庫存已無剩餘多餘食材可供加料。可切換為「理論最高能量」。', 'No available pantry ingredients for filling. Switch to Theoretical Best.')}</div>
               ` : `
                 <table class="pokemon-table filler-recommend-table">
                   <thead>
                     <tr>
-                      <th style="width:140px;">${isEN ? 'Ingredient' : '推薦食材'}</th>
-                      <th style="width:70px;text-align:right;">${isEN ? 'Base' : '單個能量'}</th>
-                      <th style="width:80px;text-align:right;">${isEN ? 'Count' : '填入數量'}</th>
-                      <th style="width:110px;text-align:right;">${isEN ? 'Added Base' : '追加基礎分'}</th>
+                      <th style="width:140px;">${_tRecipes('推薦食材', 'Ingredient')}</th>
+                      <th style="width:70px;text-align:right;">${_tRecipes('單個能量', 'Base')}</th>
+                      <th style="width:80px;text-align:right;">${_tRecipes('填入數量', 'Count')}</th>
+                      <th style="width:110px;text-align:right;">${_tRecipes('追加基礎分', 'Added Base')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     ${fillerRes.recommendations.map(r => `
                       <tr>
-                        <td><strong>${isEN ? r.enName : r.name}</strong></td>
+                        <td><strong>${window.I18N && typeof window.I18N.getIngredientName === 'function' ? window.I18N.getIngredientName(r.name) : _tRecipes(r.name, r.enName)}</strong></td>
                         <td style="text-align:right;">+${r.unitEnergy}</td>
                         <td style="text-align:right;color:var(--text-accent);font-weight:700;">×${r.count}</td>
                         <td style="text-align:right;font-weight:700;">+${r.totalEnergy.toLocaleString()}</td>
@@ -1057,7 +1071,7 @@
                     `).join('')}
                     ${fillerRes.remainingSlots > 0 ? `
                       <tr class="filler-unfilled-row">
-                        <td colspan="2" style="color:var(--text-muted);">${isEN ? 'Unfilled Slots (Exhausted)' : '庫存已耗盡之未填格數'}</td>
+                        <td colspan="2" style="color:var(--text-muted);">${_tRecipes('庫存已耗盡之未填格數', 'Unfilled Slots (Exhausted)')}</td>
                         <td style="text-align:right;color:#ef4444;font-weight:700;">×${fillerRes.remainingSlots}</td>
                         <td style="text-align:right;color:var(--text-muted);">+0</td>
                       </tr>
@@ -1070,7 +1084,7 @@
 
           <div class="filler-summary-banner">
             <div class="filler-summary-col">
-              <span class="filler-summary-label">${isEN ? 'Total Projected Meal Energy' : '最終試算預估總能量'}</span>
+              <span class="filler-summary-label">${_tRecipes('最終試算預估總能量', 'Total Projected Meal Energy')}</span>
               <div class="filler-summary-val-row">
                 <span class="filler-summary-value">${potentialEnergy.toLocaleString()}</span>
                 <span class="filler-summary-sub">Lv.${recipeLevel} · ×${(1 + islandBonus / 100).toFixed(2)} · ×${Number(eventBonus).toFixed(2)}</span>
@@ -1078,7 +1092,7 @@
             </div>
             <div class="filler-summary-actions">
               <button type="button" class="filler-action-btn filler-apply-btn" id="filler-apply-to-expansion-btn">
-                ${isEN ? 'Apply to Pot Expansion Slider' : '一鍵同步至主介面擴鍋滑桿'}
+                ${_tRecipes('一鍵同步至主介面擴鍋滑桿', 'Apply to Pot Expansion Slider')}
               </button>
             </div>
           </div>
@@ -1289,15 +1303,13 @@
   }
 
   function renderPantryBadge(recipe) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const missing = recipe._missingCount || 0;
     if (missing === 0) {
-      return `<span class="recipe-pantry-badge pantry-ready">${isEN ? 'Ready' : (isCN ? '可烹饪' : '可烹飪')}</span>`;
+      return `<span class="recipe-pantry-badge pantry-ready">${_tRecipes('可烹飪', 'Ready')}</span>`;
     }
     const details = recipe._missingDetails || [];
-    const tooltip = details.map(d => `${d.name}: ${d.onHand}/${d.required} (-${d.missing})`).join('\n');
-    return `<span class="recipe-pantry-badge pantry-missing" title="${tooltip}">${isEN ? 'Missing ' : (isCN ? '缺 ' : '缺 ')}${missing}</span>`;
+    const tooltip = details.map(d => `${(window.I18N && typeof window.I18N.getIngredientName === 'function') ? window.I18N.getIngredientName(d.name) : _tRecipes(d.name)}: ${d.onHand}/${d.required} (-${d.missing})`).join('\n');
+    return `<span class="recipe-pantry-badge pantry-missing" title="${tooltip}">${_tRecipes('缺 ', 'Missing ')}${missing}</span>`;
   }
 
   function renderEnergyStack(finalE) {
@@ -1367,7 +1379,7 @@
         if (bookmarkHandle) {
           bookmarkHandle.classList.remove('drawer-open');
           bookmarkHandle.setAttribute('aria-expanded', 'false');
-          bookmarkHandle.title = '展開食譜篩選側邊欄';
+          bookmarkHandle.title = _tRecipes('展開食譜篩選側邊欄', 'Expand Recipe Filter Sidebar');
           Object.assign(bookmarkHandle.style, { opacity: '1', pointerEvents: 'auto', display: 'flex', visibility: 'visible' });
         }
         if (typeof window.setSidebarSavedState === 'function') window.setSidebarSavedState('pksleep_recipe_sidebar_open', false);
@@ -1378,7 +1390,7 @@
         if (bookmarkHandle) {
           bookmarkHandle.classList.add('drawer-open');
           bookmarkHandle.setAttribute('aria-expanded', 'true');
-          bookmarkHandle.title = '收合食譜篩選側邊欄';
+          bookmarkHandle.title = _tRecipes('收合食譜篩選側邊欄', 'Collapse Recipe Filter Sidebar');
           bookmarkHandle.style.opacity = '0';
           bookmarkHandle.style.pointerEvents = 'none';
           bookmarkHandle.style.display = 'none';
@@ -1463,10 +1475,7 @@
   /* ─── 選擇器與互動初始化 ─────────────────────────────── */
   function initCategoryFilters() {
     if (!categoryContainer) return;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const categories = ['ALL', '咖哩', '沙拉', '甜點'];
-    const catLabels  = { ALL: isEN ? 'All' : '全部', '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
     const catCounts  = { '咖哩': 0, '沙拉': 0, '甜點': 0 };
     for (let i = 0; i < allRecipes.length; i++) {
       const c = allRecipes[i] && allRecipes[i].category;
@@ -1476,7 +1485,7 @@
     categoryContainer.innerHTML = categories.map(cat => {
       const count = cat === 'ALL' ? allRecipes.length : (catCounts[cat] || 0);
       const active = cat === selectedCategory ? 'active' : '';
-      return `<button class="tag-btn ${active}" data-cat="${cat}">${catLabels[cat] || cat} (${count})</button>`;
+      return `<button class="tag-btn ${active}" data-cat="${cat}">${_getRecipeCategoryLabel(cat)} (${count})</button>`;
     }).join('');
 
     if (!categoryContainer._hasListener) {
@@ -1606,9 +1615,7 @@
     if (!sortSelect.querySelector('option[value="missing-asc"]')) {
       const opt = document.createElement('option');
       opt.value = 'missing-asc';
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-      const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
-      opt.textContent = isEN ? 'Fewest Missing' : (isCN ? '缺件最少（优先可煮）' : '缺件最少（優先可煮）');
+      opt.textContent = _tRecipes('缺件最少（優先可煮）', 'Fewest Missing');
       opt.setAttribute('data-i18n', 'recipe.sort_missing_asc');
       sortSelect.appendChild(opt);
     }
@@ -1656,14 +1663,10 @@
     initCategoryFilters();
     updateRecipeActiveFilterBadge();
     const filtered = getFilteredRecipes();
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
-    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
 
-    const catLabels = { '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
     const catCounts = {};
     filtered.forEach(r => { catCounts[r.category] = (catCounts[r.category] || 0) + 1; });
-    const breakdownHTML = Object.entries(catCounts).map(([cat, c]) => `${catLabels[cat] || cat} <strong>${c}</strong>`).join(' · ');
+    const breakdownHTML = Object.entries(catCounts).map(([cat, c]) => `${_getRecipeCategoryLabel(cat)} <strong>${c}</strong>`).join(' · ');
 
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const lvBonus = getLevelBonus(recipeLevel);
@@ -1673,24 +1676,21 @@
     let formulaParts = [`Lv.${recipeLevel}${lvBonus > 0 ? ` (+${lvBonus}%)` : ''}`];
     if (islandBonus > 0) formulaParts.push(`+${islandBonus}% (×${islandMult})`);
     if (eventBonus > 1.0) formulaParts.push(`×${eventMult}`);
-    if (potExpansion > 0) formulaParts.push(`+${potExpansion}料 (+${(potExpansion * 100).toLocaleString()})`);
+    if (potExpansion > 0) formulaParts.push(`${_tRecipes(`+${potExpansion}料`, `+${potExpansion} extra`)} (+${(potExpansion * 100).toLocaleString()})`);
     const formulaText = formulaParts.join(' · ');
 
     if (isMobileH5) {
       countBadge.style.display = 'flex';
-      countBadge.innerHTML = isEN ? `
-        <span class="rc-badge-count">Dishes <strong>${filtered.length}</strong></span>
-        <span class="rc-badge-formula">${formulaText}</span>
-      ` : `
-        <span class="rc-badge-count">食譜 <strong>${filtered.length}</strong> 道</span>
+      countBadge.innerHTML = `
+        <span class="rc-badge-count">${_tRecipes(`食譜 <strong>${filtered.length}</strong> 道`, `Dishes <strong>${filtered.length}</strong>`)}</span>
         <span class="rc-badge-formula">${formulaText}</span>
       `;
     } else {
-      countBadge.innerHTML = isEN ? `Dishes <strong>${filtered.length}</strong> (${breakdownHTML})` : `食譜 <strong>${filtered.length}</strong> 道（${breakdownHTML}）`;
+      countBadge.innerHTML = _tRecipes(`食譜 <strong>${filtered.length}</strong> 道（${breakdownHTML}）`, `Dishes <strong>${filtered.length}</strong> (${breakdownHTML})`);
     }
 
     if (filtered.length === 0) {
-      contentArea.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-muted);">${isEN ? 'No matching recipes found' : '未找到符合條件的料理食譜'}</div>`;
+      contentArea.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-muted);">${_tRecipes('未找到符合條件的料理食譜', 'No matching recipes found')}</div>`;
       return;
     }
 
@@ -1700,12 +1700,10 @@
 
   function renderTable(recipes) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
-    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-    const catLabels = { '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
+    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : _tRecipes(def);
     const islandMult = (1 + islandBonus / 100).toFixed(2);
     const eventSub = eventBonus > 1.0 ? ` · ×${eventBonus.toFixed(2)}` : '';
-    const potSub = potExpansion > 0 ? ` · +${potExpansion}料` : '';
+    const potSub = potExpansion > 0 ? ` · ${_tRecipes(`+${potExpansion}料`, `+${potExpansion} extra`)}` : '';
 
     contentArea.innerHTML = `
       <div class="table-container">
@@ -1743,12 +1741,12 @@
                     ${secondaryName ? `<span class="recipe-name-sub" style="color:var(--text-muted);font-size:11px;font-weight:400;margin-top:2px;line-height:1.2;text-align:left;">${secondaryName}</span>` : ''}
                   </div>
                 </td>
-                <td style="vertical-align:middle;"><span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span></td>
+                <td style="vertical-align:middle;"><span class="recipe-cat-badge cat-${r.category}">${_getRecipeCategoryLabel(r.category)}</span></td>
                 <td style="vertical-align:middle;">
                   <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
                     <span class="pot-badge">${r.pot_size}</span>
-                    <button type="button" class="pot-filler-open-btn" data-recipe-id="${r.name_cn}" title="${isEN ? 'Optimize Pot Fillers' : '填鍋與容量最佳化'}">
-                      ${isEN ? 'Optimizer' : '最佳加料'}
+                    <button type="button" class="pot-filler-open-btn" data-recipe-id="${r.name_cn}" title="${_tRecipes('填鍋與容量最佳化', 'Optimize Pot Fillers')}">
+                      ${_tRecipes('最佳加料', 'Optimizer')}
                     </button>
                   </div>
                 </td>
@@ -1767,11 +1765,8 @@
   }
 
   function renderGrid(recipes) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
-    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-    const catLabels = { '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
+    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : _tRecipes(def);
     const islandMult = (1 + islandBonus / 100).toFixed(2);
     const eventSub = eventBonus > 1.0 ? ` · ×${eventBonus.toFixed(2)}` : '';
 
@@ -1790,10 +1785,10 @@
                   <div class="h5-recipe-title-meta">
                     <span class="h5-recipe-name">${primaryName}</span>
                     <div class="h5-recipe-tags-row">
-                      <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
+                      <span class="recipe-cat-badge cat-${r.category}">${_getRecipeCategoryLabel(r.category)}</span>
                       <span class="h5-recipe-pot">${r.pot_size}</span>
                       ${pantryBadgeHTML}
-                      <button type="button" class="pot-filler-open-btn compact-filler-btn" data-recipe-id="${r.name_cn}">${isEN ? 'Opt' : '加料'}</button>
+                      <button type="button" class="pot-filler-open-btn compact-filler-btn" data-recipe-id="${r.name_cn}">${_tRecipes('加料', 'Opt')}</button>
                     </div>
                   </div>
                 </div>
@@ -1827,7 +1822,7 @@
               <div class="card-title-group" style="flex:1;min-width:0;">
                 <h3 class="pokemon-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px;margin-bottom:3px;">${primaryName}</h3>
                 <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-                  <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
+                  <span class="recipe-cat-badge cat-${r.category}">${_getRecipeCategoryLabel(r.category)}</span>
                   ${pantryBadgeHTML}
                 </div>
               </div>
@@ -1838,8 +1833,8 @@
                 <span class="stat-label">${t('recipe.th_pot', '鍋子容量')}</span>
                 <div style="display:flex;align-items:center;gap:6px;">
                   <span class="stat-value pot-value">${r.pot_size}</span>
-                  <button type="button" class="pot-filler-open-btn" data-recipe-id="${r.name_cn}" title="${isEN ? 'Optimize Pot Fillers' : '填鍋與容量最佳化'}">
-                    ${isEN ? 'Optimizer' : '最佳加料'}
+                  <button type="button" class="pot-filler-open-btn" data-recipe-id="${r.name_cn}" title="${_tRecipes('填鍋與容量最佳化', 'Optimize Pot Fillers')}">
+                    ${_tRecipes('最佳加料', 'Optimizer')}
                   </button>
                 </div>
               </div>

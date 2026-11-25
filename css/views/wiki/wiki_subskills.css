@@ -310,7 +310,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .wiki-item-modal-subtitle {
   margin: 0;
   font-size: 12px;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-secondary);
 }
 
 .wiki-item-modal-close-btn {
@@ -319,7 +319,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   border-radius: 8px;
   border: none;
   background: transparent;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -413,12 +413,12 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .wiki-item-price-pill.is-empty {
-  opacity: 0.65;
+  opacity: 1;
 }
 
 .wiki-item-price-pill .price-label {
   font-size: 11px;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-secondary);
 }
 
 .wiki-item-price-pill .price-value {
@@ -437,13 +437,13 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 .wiki-item-price-pill .price-value.text-muted {
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 .wiki-item-price-pill .price-limit {
   font-size: 10.5px;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-secondary);
 }
 
 /* Acquisition List */
@@ -613,7 +613,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 .wiki-item-pkm-arrow {
   font-size: 14px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   margin-left: auto;
   flex-shrink: 0;
 }
@@ -624,7 +624,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   border-radius: 8px;
   border: none;
   background: rgba(148, 163, 184, 0.06);
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 12.5px;
 }
 
@@ -670,104 +670,170 @@ body.mobile-h5-app *::-webkit-scrollbar {
   display: none !important;
 }
 
-/* 4-Theme Adaptations */
-[data-theme="dawn"] .pokedex-evo-item-btn,
-[data-theme="emerald"] .pokedex-evo-item-btn {
+/* 8-Theme Adaptations (4 Light + 4 Dark) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-evo-item-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-evo-item-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-evo-item-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-evo-item-btn {
   background: transparent !important;
   border: none !important;
 }
 
-[data-theme="dawn"] .pokedex-evo-item-btn:hover,
-[data-theme="emerald"] .pokedex-evo-item-btn:hover {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-evo-item-btn:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-evo-item-btn:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-evo-item-btn:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-evo-item-btn:hover {
   background: transparent !important;
 }
 
-[data-theme="onyx"] .pokedex-evo-item-btn {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-evo-item-btn {
   background: transparent !important;
   border: none !important;
 }
 
-[data-theme="dawn"] .wiki-item-modal-dialog,
-[data-theme="emerald"] .wiki-item-modal-dialog {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-modal-dialog,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-modal-dialog,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-modal-dialog,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-modal-dialog {
   background: #ffffff !important;
   border-color: #e2e8f0 !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
 }
 
-[data-theme="dawn"] .wiki-item-modal-header,
-[data-theme="emerald"] .wiki-item-modal-header {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-modal-header,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-modal-header,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-modal-header,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-modal-header {
   background: #ffffff !important;
   border-color: #e2e8f0 !important;
 }
 
-[data-theme="dawn"] .wiki-item-modal-close-btn,
-[data-theme="emerald"] .wiki-item-modal-close-btn {
-  color: #64748b;
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-modal-close-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-modal-close-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-modal-close-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-modal-close-btn {
+  color: var(--text-secondary);
   background: transparent;
   border: none !important;
 }
 
-[data-theme="dawn"] .wiki-item-modal-close-btn:hover,
-[data-theme="emerald"] .wiki-item-modal-close-btn:hover {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-modal-close-btn:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-modal-close-btn:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-modal-close-btn:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-modal-close-btn:hover {
   background: #f1f5f9;
   color: #0f172a;
 }
 
-[data-theme="dawn"] .wiki-item-price-pill,
-[data-theme="emerald"] .wiki-item-price-pill,
-[data-theme="dawn"] .wiki-item-pkm-card,
-[data-theme="emerald"] .wiki-item-pkm-card,
-[data-theme="dawn"] .wiki-item-modal-stat-hero,
-[data-theme="emerald"] .wiki-item-modal-stat-hero {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-price-pill,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-price-pill,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-price-pill,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-price-pill,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-pkm-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-pkm-card,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-pkm-card,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-pkm-card,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-modal-stat-hero,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-modal-stat-hero,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-modal-stat-hero,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-modal-stat-hero {
   background: #f1f5f9 !important;
   border: none !important;
 }
 
-[data-theme="dawn"] .wiki-item-acq-item,
-[data-theme="emerald"] .wiki-item-acq-item {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-acq-item,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-acq-item,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-acq-item,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-acq-item {
   background: transparent !important;
   border: none !important;
 }
 
-[data-theme="dawn"] .wiki-item-modal-section + .wiki-item-modal-section,
-[data-theme="emerald"] .wiki-item-modal-section + .wiki-item-modal-section {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-modal-section + .wiki-item-modal-section,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-modal-section + .wiki-item-modal-section,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-modal-section + .wiki-item-modal-section,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-modal-section + .wiki-item-modal-section {
   border-top-color: #e2e8f0 !important;
 }
 
-[data-theme="onyx"] .wiki-item-modal-dialog {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-price-pill .price-value.text-highlight,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-price-pill .price-value.text-highlight,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-price-pill .price-value.text-highlight,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-price-pill .price-value.text-highlight { color: #b45309; }
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-price-pill .price-value.text-diamonds,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-price-pill .price-value.text-diamonds,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-price-pill .price-value.text-diamonds,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-price-pill .price-value.text-diamonds { color: #0369a1; }
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-section-title,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-pkm-no,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-price-pill .price-value:not(.text-highlight):not(.text-diamonds):not(.text-muted),
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-section-title,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-pkm-no,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-price-pill .price-value:not(.text-highlight):not(.text-diamonds):not(.text-muted) { color: #0369a1; }
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-modal-dialog,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-modal-dialog,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-modal-dialog {
+  background: var(--bg-card-solid, #131d31) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-modal-header,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-modal-header,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-modal-header {
+  background: var(--bg-card-solid, #131d31) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-price-pill,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-price-pill,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-price-pill,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-pkm-card,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-pkm-card,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-pkm-card,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-modal-stat-hero,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-modal-stat-hero,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-modal-stat-hero {
+  background: var(--bg-card-inner) !important;
+  border: none !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-modal-dialog {
   background: #0a0a0c !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-[data-theme="onyx"] .wiki-item-modal-header {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-modal-header {
   background: #0a0a0c !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-[data-theme="onyx"] .wiki-item-modal-close-btn {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-modal-close-btn {
   color: #94a3b8;
   background: transparent;
   border: none !important;
 }
 
-[data-theme="onyx"] .wiki-item-modal-close-btn:hover {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-modal-close-btn:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
 }
 
-[data-theme="onyx"] .wiki-item-price-pill,
-[data-theme="onyx"] .wiki-item-pkm-card,
-[data-theme="onyx"] .wiki-item-modal-stat-hero {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-price-pill,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-pkm-card,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-modal-stat-hero {
   background: rgba(255, 255, 255, 0.05) !important;
   border: none !important;
 }
 
-[data-theme="onyx"] .wiki-item-acq-item {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-acq-item {
   background: transparent !important;
   border: none !important;
 }
 
-[data-theme="onyx"] .wiki-item-modal-section + .wiki-item-modal-section {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-modal-section + .wiki-item-modal-section {
   border-top-color: rgba(255, 255, 255, 0.08) !important;
 }
 
@@ -779,6 +845,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   right: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
+  background: var(--bg-card-solid, #131d31) !important;
   border-top-left-radius: 20px !important;
   border-top-right-radius: 20px !important;
   border-bottom-left-radius: 0 !important;

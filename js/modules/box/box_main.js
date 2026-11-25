@@ -94,7 +94,12 @@
   async function removeFromUserBox(boxId) {
     const item = userBox.find(p => (p && (p.uid === boxId || p.id === boxId)));
     if (!item) return false;
-    const pName = item.name || _tBox('寶可夢', 'Pokémon');
+    const base = typeof findPokemonBase === 'function' ? findPokemonBase(item.pokemonId || item.name) : null;
+    const rawName = (base && (base.name_cn || base.name_en)) || item.name || '';
+    const pName = rawName
+      ? ((window.I18N && typeof window.I18N.getPokemonName === 'function')
+          ? window.I18N.getPokemonName(base || rawName) : _tBox(rawName, (base && base.name_en) || rawName))
+      : _tBox('寶可夢', 'Pokémon');
     const confirmMsg = _tBox(`確定要從倉庫刪除「${pName}」嗎？`, `Are you sure you want to delete "${pName}" from your Box?`);
     const confirmed = await showBoxConfirmModal(confirmMsg, {
       title: _tBox('確認刪除', 'Confirm Deletion'),
@@ -982,13 +987,8 @@
       getSortBy: () => sortBy,
       setSortBy: (s) => { sortBy = s; if (typeof renderBox === 'function') renderBox(); },
       toggleColumnSort: (col) => { sortBy = nextBoxSort(sortBy, col); if (typeof renderBox === 'function') renderBox(); return sortBy; },
-      parseBoxSort,
-      nextBoxSort,
-      BOX_SORT_DEFAULT_DIR
+      parseBoxSort, nextBoxSort, BOX_SORT_DEFAULT_DIR
     };
-    module.exports = {
-      PokemonBoxApp: sharedExports,
-      ...sharedExports
-    };
+    module.exports = { PokemonBoxApp: sharedExports, ...sharedExports };
   }
 })();

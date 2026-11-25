@@ -599,7 +599,13 @@ function getSkillDescription(skillName, isEN) {
               BASE_SKILL_DETAILS[s.replace(/\(/g, '（').replace(/\)/g, '）')] ||
               BASE_SKILL_DETAILS[s.replace(/（/g, '(').replace(/）/g, ')')];
   if (!raw) return '';
-  return typeof raw === 'object' ? (raw[isEN ? 'en-US' : 'zh-TW'] || raw['zh-TW']) : raw;
+  if (typeof raw === 'object') {
+    if (isEN) return raw['en-US'] || raw['zh-TW'];
+    const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN';
+    const tw = raw['zh-TW'] || '';
+    return (isCN && typeof window.I18N.toSimplified === 'function') ? window.I18N.toSimplified(tw) : tw;
+  }
+  return raw;
 }
 
 function escapeHtml(str) {
@@ -629,14 +635,19 @@ function formatSkillNameHtml(displayName, isEN) {
   let cleaned = stripSpecialSkillParens(displayName)
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
     .replace(/活力全體療癒S/g, '全體療癒S')
+    .replace(/活力全体疗愈S/g, '全体疗愈S')
     .replace(/夢之碎片/g, '夢碎')
+    .replace(/梦之碎片/g, '梦碎')
     .replace(/\(Energy for Everyone S\)/gi, '(Energy All S)')
     .replace(/（/g, '(')
     .replace(/）/g, ')')
     .trim();
 
   if (!isEN) {
-    return `<span class="skill-single-line">${escapeHtml(cleaned)}</span>`;
+    const out = (typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN' && typeof window.I18N.toSimplified === 'function')
+      ? window.I18N.toSimplified(cleaned)
+      : cleaned;
+    return `<span class="skill-single-line">${escapeHtml(out)}</span>`;
   }
 
   // 縮短英文主技能名稱（例如 Ingredient -> Ingr., Strength -> Str., Everyone -> All 等）
@@ -678,7 +689,8 @@ function renderSkillWithTooltip(skillName, pkm) {
                     SPECIAL_SKILL_DETAILS[strippedKey] ||
                     SPECIAL_SKILL_DETAILS[skillName.replace(/\(/g, '（').replace(/\)/g, '）')] ||
                     SPECIAL_SKILL_DETAILS[skillName.replace(/（/g, '(').replace(/）/g, ')')];
-  let detail = rawDetail ? (typeof rawDetail === 'object' ? (rawDetail[isEN ? 'en-US' : 'zh-TW'] || rawDetail['zh-TW']) : rawDetail) : '';
+  const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN';
+  let detail = rawDetail ? (typeof rawDetail === 'object' ? (isEN ? (rawDetail['en-US'] || rawDetail['zh-TW']) : (isCN && typeof window.I18N.toSimplified === 'function' ? window.I18N.toSimplified(rawDetail['zh-TW']) : rawDetail['zh-TW'])) : rawDetail) : '';
 
   let plainTitle = detail;
   // 針對特定寶可夢的「食材精選S」系列（含超幸運、怪力鉗），精簡直接顯示該寶可夢專屬食材池（單行純圖標，無冗長換行）
@@ -711,26 +723,30 @@ function renderSkillWithTooltip(skillName, pkm) {
 
       const ingNamesPlain = targetIngs.map(ig => (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name).join(isEN ? ', ' : '、');
 
-      const prefix = isEN ? 'Draws: ' : '可精選食材: ';
+      const prefix = _tDex('可精選食材: ', 'Draws: ');
       if (isSuperLuck) {
-        const critText = isEN 
-          ? 'Crit effect: Rarely crits for massive Dream Shards instead of ingredients (up to 20,000 shards)!' 
-          : '暴擊效果: 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片)!';
+        const critText = _tDex(
+          '暴擊效果: 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片)!',
+          'Crit effect: Rarely crits for massive Dream Shards instead of ingredients (up to 20,000 shards)!'
+        );
         detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span></span><div style="font-size:11.5px;color:var(--accent-color,#f59e0b);margin-top:3px;line-height:1.35;font-weight:500;">${critText}</div>`;
-        plainTitle = isEN 
-          ? `Draws: ${ingNamesPlain}. ${critText}` 
-          : `可精選食材: ${ingNamesPlain}. ${critText}`;
+        plainTitle = _tDex(
+          `可精選食材: ${ingNamesPlain}. ${critText}`,
+          `Draws: ${ingNamesPlain}. ${critText}`
+        );
       } else if (isHyperCutter) {
-        const critText = isEN 
-          ? 'Crit effect: Extra Tasty crits to grant 2x ingredients (up to 36 items)!' 
-          : '暴擊效果: 漂亮成功 (大成功/暴擊) 時食材產出翻倍 (2 倍, 最高達 36 個)!';
+        const critText = _tDex(
+          '暴擊效果: 漂亮成功 (大成功/暴擊) 時食材產出翻倍 (2 倍, 最高達 36 個)!',
+          'Crit effect: Extra Tasty crits to grant 2x ingredients (up to 36 items)!'
+        );
         detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span></span><div style="font-size:11.5px;color:var(--accent-color,#f59e0b);margin-top:3px;line-height:1.35;font-weight:500;">${critText}</div>`;
-        plainTitle = isEN 
-          ? `Draws: ${ingNamesPlain}. ${critText}` 
-          : `可精選食材: ${ingNamesPlain}. ${critText}`;
+        plainTitle = _tDex(
+          `可精選食材: ${ingNamesPlain}. ${critText}`,
+          `Draws: ${ingNamesPlain}. ${critText}`
+        );
       } else {
         detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span></span>`;
-        plainTitle = isEN ? `Draws: ${ingNamesPlain}` : `可精選食材: ${ingNamesPlain}`;
+        plainTitle = _tDex(`可精選食材: ${ingNamesPlain}`, `Draws: ${ingNamesPlain}`);
       }
     }
   }
@@ -739,7 +755,9 @@ function renderSkillWithTooltip(skillName, pkm) {
   const cleanSkillKey = stripSpecialSkillParens(skillName || '')
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
     .replace(/活力全體療癒S/g, '全體療癒S')
+    .replace(/活力全体疗愈S/g, '全体疗愈S')
     .replace(/夢之碎片/g, '夢碎')
+    .replace(/梦之碎片/g, '梦碎')
     .replace(/（/g, '(')
     .replace(/）/g, ')')
     .trim();
@@ -754,11 +772,16 @@ function renderSkillWithTooltip(skillName, pkm) {
   let cleaned = stripSpecialSkillParens(displayName)
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
     .replace(/活力全體療癒S/g, '全體療癒S')
+    .replace(/活力全体疗愈S/g, '全体疗愈S')
     .replace(/夢之碎片/g, '夢碎')
+    .replace(/梦之碎片/g, '梦碎')
     .replace(/（/g, '(')
     .replace(/）/g, ')')
     .trim();
-  return escapeHtml(cleaned);
+  const out = (typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN' && typeof window.I18N.toSimplified === 'function')
+    ? window.I18N.toSimplified(cleaned)
+    : cleaned;
+  return escapeHtml(out);
 }
 
 function matchesSkill(pokemonSkill, targetBaseSkill) {

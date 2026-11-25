@@ -11,7 +11,7 @@
     const userBox = (window.UserBox && typeof window.UserBox.getUserBox === 'function') ? window.UserBox.getUserBox() : [];
     
     if (pokemons.length === 0) {
-      targetElement.innerHTML = `<div style="padding:20px;text-align:center;color:#94a3b8;">${isEN ? 'Loading Pokédex data...' : '載入圖鑑資料中...'}</div>`;
+      targetElement.innerHTML = `<div style="padding:20px;text-align:center;color:#94a3b8;">${_tLab('載入圖鑑資料中...', 'Loading Pokédex data...', isEN)}</div>`;
       return;
     }
 
@@ -20,13 +20,13 @@
         <div class="lab-box-empty-container" style="padding:48px 20px;text-align:center;color:var(--text-muted);">
           <div style="font-size:32px;margin-bottom:12px;opacity:0.8;">[!]</div>
           <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">
-            ${isEN ? 'No Pokémon in Box' : '倉庫中尚無寶可夢'}
+            ${_tLab('倉庫中尚無寶可夢', 'No Pokémon in Box', isEN)}
           </div>
           <div style="font-size:13px;color:var(--text-secondary);max-width:320px;margin:0 auto 18px;line-height:1.5;">
-            ${isEN ? 'Please register Pokémon in the Box tab first, then evaluate them here!' : '請先在【寶可夢倉庫】新增登錄寶可夢後，再來進行深度評測！'}
+            ${_tLab('請先在【寶可夢倉庫】新增登錄寶可夢後，再來進行深度評測！', 'Please register Pokémon in the Box tab first, then evaluate them here!', isEN)}
           </div>
           <button type="button" class="btn-primary" onclick="if(window.switchMainTab)window.switchMainTab('box');" style="padding:8px 20px;border-radius:8px;font-size:13px;cursor:pointer;">
-            ${isEN ? 'Go to Box' : '前往寶可夢倉庫'}
+            ${_tLab('前往寶可夢倉庫', 'Go to Box', isEN)}
           </button>
         </div>
       `;
@@ -57,13 +57,13 @@
         <!-- 深度研究室 頂部子分頁導航 (Subnav Bar) -->
         <div class="lab-subnav-bar">
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'team' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('team')">
-            <span class="lab-subtab-title">${isEN ? 'Team' : '幫手組隊'}</span>
+            <span class="lab-subtab-title">${_tLab('幫手組隊', 'Team', isEN)}</span>
           </button>
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'compare' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('compare')">
-            <span class="lab-subtab-title">${isEN ? 'Compare' : '寶可夢對比'}</span>
+            <span class="lab-subtab-title">${_tLab('寶可夢對比', 'Compare', isEN)}</span>
           </button>
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'growth' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('growth')">
-            <span class="lab-subtab-title">${isEN ? 'Growth' : '培育精算'}</span>
+            <span class="lab-subtab-title">${_tLab('培育精算', 'Growth', isEN)}</span>
           </button>
         </div>
         ` : ''}

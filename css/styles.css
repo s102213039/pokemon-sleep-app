@@ -21708,8 +21708,10 @@ body.box-lab-active .box-fab-container,
   flex-shrink: 0;
 }
 
-[data-theme="dawn"] .sheet-drag-handle,
-[data-theme="emerald"] .sheet-drag-handle {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .sheet-drag-handle,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .sheet-drag-handle,
+[data-theme="midnight"][data-theme-inverted="true"] .sheet-drag-handle,
+[data-theme="onyx"][data-theme-inverted="true"] .sheet-drag-handle {
   background: rgba(0, 0, 0, 0.2);
 }
 
@@ -26775,8 +26777,10 @@ body.box-lab-active #box-subpanel-lab {
   flex-shrink: 0 !important;
 }
 
-[data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
-[data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle {
   background: rgba(0, 0, 0, 0.2) !important;
 }
 
@@ -27065,7 +27069,7 @@ body.box-lab-active #box-subpanel-lab {
   border-radius: 50% !important;
   background: var(--table-row-odd-solid, #0d1527) !important;
   border: 1px solid var(--border-color) !important;
-  color: var(--text-muted) !important;
+  color: var(--text-secondary) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -27503,9 +27507,11 @@ body.box-lab-active #box-subpanel-lab {
   box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4) !important;
 }
 
-/*  亮色主題自適應 (Dawn & Emerald) */
+/*  亮色主題自適應 (Dawn, Emerald, Midnight Inverted, Onyx Inverted) */
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet {
   background: #ffffff !important;
 }
 
@@ -27518,21 +27524,35 @@ body.box-lab-active #box-subpanel-lab {
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-form-select,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-subskill-slot-btn,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-ing-opt-btn,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-close {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-close,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-form-input,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-form-select,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-subskill-slot-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-ing-opt-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-modal-close,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-form-input,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-form-select,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-subskill-slot-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-ing-opt-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-modal-close {
   background: #f8fafc !important;
   border-color: #e2e8f0 !important;
   color: #0f172a !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-btn-secondary,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-btn-secondary {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-btn-secondary,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-btn-secondary,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-btn-secondary {
   background: #f1f5f9 !important;
   border: none !important;
   color: #475569 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-footer,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-footer {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-footer,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-modal-footer,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-modal-footer {
   background: transparent !important;
   border: none !important;
 }
@@ -35767,9 +35787,9 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .wiki-items-filter-pills .wiki-pill-btn.active {
-  background: var(--accent-gradient, #0284c7);
+  background: var(--accent-btn-bg, var(--accent-gradient, #0284c7));
   border-color: transparent;
-  color: #ffffff;
+  color: var(--accent-btn-text, #ffffff);
   font-weight: 700;
   box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
 }
@@ -35953,7 +35973,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 .stat-type-biscuit-max {
   background: rgba(244, 114, 182, 0.18);
-  color: #f472b6;
+  color: #f9a8d4;
   border: none !important;
   box-shadow: none !important;
 }
@@ -35989,6 +36009,69 @@ body.mobile-h5-app *::-webkit-scrollbar {
   color: #fb923c;
   border: none !important;
   box-shadow: none !important;
+}
+
+/* Stat Badge 4-Light-Theme Contrast Overrides (WCAG AA >= 4.5:1) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-biscuit,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-biscuit,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-biscuit,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-biscuit {
+  color: #92400e;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-biscuit-max,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-biscuit-max,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-biscuit-max,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-biscuit-max {
+  color: #9d174d;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-seed,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-seed,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-seed,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-seed,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-mint,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-mint,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-mint,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-mint {
+  color: #065f46;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-candy,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-candy,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-candy,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-candy,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-shard,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-shard,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-shard,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-shard {
+  color: #0369a1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-energy,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-energy,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-energy,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-energy,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-whistle,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-whistle,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-whistle,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-whistle,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-camp,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-camp,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-camp,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-camp,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-ticket,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-ticket,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-ticket,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-ticket {
+  color: #6b21a8;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-evolution,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-evolution,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-evolution,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-evolution {
+  color: #9a3412;
 }
 
 /* Card Description Preview (Hidden on Cards) */
@@ -36065,7 +36148,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   grid-column: 1 / -1;
   text-align: center;
   padding: 48px 16px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
   background: var(--bg-card-inner);
@@ -36078,44 +36161,56 @@ body.mobile-h5-app *::-webkit-scrollbar {
    Multi-Theme Category Badges Styling
    ========================================================================== */
 
-/* 1. Midnight Theme (Default Dark Slate) */
-:root .wiki-item-cat-evolution,
-[data-theme="midnight"] .wiki-item-cat-evolution {
+/* 1. Midnight (Default), Dawn Inverted, Emerald Inverted (Dark Themes) */
+:root:not([data-theme-inverted="true"]) .wiki-item-cat-evolution,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-cat-evolution,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-cat-evolution,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-evolution {
   background: rgba(245, 158, 11, 0.2);
   color: #fbbf24;
   border: none !important;
   box-shadow: none !important;
 }
-:root .wiki-item-cat-pokemon_incense,
-[data-theme="midnight"] .wiki-item-cat-pokemon_incense {
+:root:not([data-theme-inverted="true"]) .wiki-item-cat-pokemon_incense,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-cat-pokemon_incense,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-cat-pokemon_incense,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-pokemon_incense {
   background: rgba(168, 85, 247, 0.2);
-  color: #c084fc;
+  color: #d8b4fe;
   border: none !important;
   box-shadow: none !important;
 }
-:root .wiki-item-cat-functional_incense,
-[data-theme="midnight"] .wiki-item-cat-functional_incense {
+:root:not([data-theme-inverted="true"]) .wiki-item-cat-functional_incense,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-cat-functional_incense,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-cat-functional_incense,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-functional_incense {
   background: rgba(56, 189, 248, 0.2);
   color: #38bdf8;
   border: none !important;
   box-shadow: none !important;
 }
-:root .wiki-item-cat-training,
-[data-theme="midnight"] .wiki-item-cat-training {
+:root:not([data-theme-inverted="true"]) .wiki-item-cat-training,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-cat-training,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-cat-training,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-training {
   background: rgba(16, 185, 129, 0.2);
   color: #34d399;
   border: none !important;
   box-shadow: none !important;
 }
-:root .wiki-item-cat-biscuit,
-[data-theme="midnight"] .wiki-item-cat-biscuit {
+:root:not([data-theme-inverted="true"]) .wiki-item-cat-biscuit,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-cat-biscuit,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-cat-biscuit,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-biscuit {
   background: rgba(244, 114, 182, 0.2);
-  color: #f472b6;
+  color: #f9a8d4;
   border: none !important;
   box-shadow: none !important;
 }
-:root .wiki-item-cat-supply,
-[data-theme="midnight"] .wiki-item-cat-supply {
+:root:not([data-theme-inverted="true"]) .wiki-item-cat-supply,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-cat-supply,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-cat-supply,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-supply {
   background: rgba(20, 184, 166, 0.2);
   color: #2dd4bf;
   border: none !important;
@@ -36123,75 +36218,87 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 /* 2. Onyx Theme (Pure Black OLED) */
-[data-theme="onyx"] .wiki-item-cat-evolution {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-evolution {
   background: rgba(245, 158, 11, 0.22);
   color: #fbbf24;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="onyx"] .wiki-item-cat-pokemon_incense {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-pokemon_incense {
   background: rgba(168, 85, 247, 0.22);
-  color: #c084fc;
+  color: #d8b4fe;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="onyx"] .wiki-item-cat-functional_incense {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-functional_incense {
   background: rgba(203, 213, 225, 0.15);
   color: #e2e8f0;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="onyx"] .wiki-item-cat-training {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-training {
   background: rgba(16, 185, 129, 0.22);
   color: #34d399;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="onyx"] .wiki-item-cat-biscuit {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-biscuit {
   background: rgba(244, 114, 182, 0.22);
-  color: #f472b6;
+  color: #f9a8d4;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="onyx"] .wiki-item-cat-supply {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-supply {
   background: rgba(20, 184, 166, 0.22);
   color: #2dd4bf;
   border: none !important;
   box-shadow: none !important;
 }
 
-/* 3. Dawn Theme (Bright Warm Light) */
-[data-theme="dawn"] .wiki-item-cat-evolution {
+/* 3. Dawn, Midnight Inverted, Onyx Inverted (Light Themes) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-evolution,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-evolution,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-evolution {
   background: #fef3c7;
   color: #92400e;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="dawn"] .wiki-item-cat-pokemon_incense {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-pokemon_incense,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-pokemon_incense,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-pokemon_incense {
   background: #f3e8ff;
   color: #6b21a8;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="dawn"] .wiki-item-cat-functional_incense {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-functional_incense,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-functional_incense,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-functional_incense {
   background: #e0f2fe;
   color: #0369a1;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="dawn"] .wiki-item-cat-training {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-training,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-training,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-training {
   background: #dcfce7;
   color: #166534;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="dawn"] .wiki-item-cat-biscuit {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-biscuit,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-biscuit,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-biscuit {
   background: #fce7f3;
   color: #9d174d;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="dawn"] .wiki-item-cat-supply {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-supply,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-supply,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-supply {
   background: #ccfbf1;
   color: #0f766e;
   border: none !important;
@@ -36199,37 +36306,37 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 /* 4. Emerald Theme (Subtle Grey Stone Light) */
-[data-theme="emerald"] .wiki-item-cat-evolution {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-evolution {
   background: #fef9c3;
   color: #854d0e;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="emerald"] .wiki-item-cat-pokemon_incense {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-pokemon_incense {
   background: #ede9fe;
   color: #5b21b6;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="emerald"] .wiki-item-cat-functional_incense {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-functional_incense {
   background: #e0f2fe;
   color: #075985;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="emerald"] .wiki-item-cat-training {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-training {
   background: #dcfce7;
   color: #15803d;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="emerald"] .wiki-item-cat-biscuit {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-biscuit {
   background: #fce7f3;
   color: #9d174d;
   border: none !important;
   box-shadow: none !important;
 }
-[data-theme="emerald"] .wiki-item-cat-supply {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-supply {
   background: #ccfbf1;
   color: #115e59;
   border: none !important;
@@ -36336,6 +36443,12 @@ body.mobile-h5-app *::-webkit-scrollbar {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+}
+
+.mobile-h5-app .wiki-items-filter-pills .wiki-pill-btn.active {
+  background: var(--accent-btn-bg, var(--accent-gradient, #0284c7)) !important;
+  color: var(--accent-btn-text, #ffffff) !important;
+  border-color: transparent !important;
 }
 
 /* Mobile H5 2-Column Responsive Card Grid */
@@ -36649,7 +36762,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .wiki-item-modal-subtitle {
   margin: 0;
   font-size: 12px;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-secondary);
 }
 
 .wiki-item-modal-close-btn {
@@ -36658,7 +36771,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   border-radius: 8px;
   border: 1px solid var(--border-color);
   background: transparent;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -36748,12 +36861,12 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .wiki-item-price-pill.is-empty {
-  opacity: 0.65;
+  opacity: 1;
 }
 
 .wiki-item-price-pill .price-label {
   font-size: 11px;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-secondary);
 }
 
 .wiki-item-price-pill .price-value {
@@ -36772,13 +36885,13 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 .wiki-item-price-pill .price-value.text-muted {
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 .wiki-item-price-pill .price-limit {
   font-size: 10.5px;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-secondary);
 }
 
 /* Acquisition List */
@@ -36937,7 +37050,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 .wiki-item-pkm-arrow {
   font-size: 14px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   margin-left: auto;
   flex-shrink: 0;
 }
@@ -36947,7 +37060,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   text-align: center;
   border-radius: 8px;
   border: 1px dashed var(--border-color);
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 12.5px;
 }
 
@@ -36993,44 +37106,144 @@ body.mobile-h5-app *::-webkit-scrollbar {
   display: none !important;
 }
 
-/* 4-Theme Adaptations */
-[data-theme="dawn"] .pokedex-evo-item-btn,
-[data-theme="emerald"] .pokedex-evo-item-btn {
+/* 8-Theme Adaptations (4 Light + 4 Dark) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-evo-item-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-evo-item-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-evo-item-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-evo-item-btn {
   background: transparent !important;
   border: none !important;
 }
 
-[data-theme="dawn"] .pokedex-evo-item-btn:hover,
-[data-theme="emerald"] .pokedex-evo-item-btn:hover {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-evo-item-btn:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-evo-item-btn:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-evo-item-btn:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-evo-item-btn:hover {
   background: transparent !important;
 }
 
-[data-theme="onyx"] .pokedex-evo-item-btn {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-evo-item-btn {
   background: transparent !important;
   border: none !important;
 }
 
-[data-theme="dawn"] .wiki-item-modal-dialog,
-[data-theme="emerald"] .wiki-item-modal-dialog {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-modal-dialog,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-modal-dialog,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-modal-dialog,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-modal-dialog {
   background: #ffffff !important;
   border-color: #e2e8f0 !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
 }
 
-[data-theme="dawn"] .wiki-item-modal-header,
-[data-theme="emerald"] .wiki-item-modal-header {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-modal-header,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-modal-header,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-modal-header,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-modal-header {
   background: #ffffff !important;
   border-color: #e2e8f0 !important;
 }
 
-[data-theme="dawn"] .wiki-item-price-pill,
-[data-theme="emerald"] .wiki-item-price-pill,
-[data-theme="dawn"] .wiki-item-acq-item,
-[data-theme="emerald"] .wiki-item-acq-item,
-[data-theme="dawn"] .wiki-item-pkm-card,
-[data-theme="emerald"] .wiki-item-pkm-card {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-modal-close-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-modal-close-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-modal-close-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-modal-close-btn {
+  color: var(--text-secondary);
+  background: transparent;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-modal-close-btn:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-modal-close-btn:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-modal-close-btn:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-modal-close-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-price-pill,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-price-pill,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-price-pill,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-price-pill,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-acq-item,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-acq-item,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-acq-item,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-acq-item,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-pkm-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-pkm-card,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-pkm-card,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-pkm-card,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-modal-stat-hero,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-modal-stat-hero,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-modal-stat-hero,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-modal-stat-hero {
   background: #f8fafc !important;
   border-color: #e2e8f0 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-modal-section + .wiki-item-modal-section,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-modal-section + .wiki-item-modal-section,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-modal-section + .wiki-item-modal-section,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-modal-section + .wiki-item-modal-section {
+  border-top-color: #e2e8f0 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-price-pill .price-value.text-highlight,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-price-pill .price-value.text-highlight,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-price-pill .price-value.text-highlight,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-price-pill .price-value.text-highlight {
+  color: #b45309;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-price-pill .price-value.text-diamonds,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-price-pill .price-value.text-diamonds,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-price-pill .price-value.text-diamonds,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-price-pill .price-value.text-diamonds {
+  color: #0369a1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-section-title,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-pkm-no,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-price-pill .price-value:not(.text-highlight):not(.text-diamonds):not(.text-muted),
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-section-title,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-pkm-no,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-price-pill .price-value:not(.text-highlight):not(.text-diamonds):not(.text-muted) {
+  color: #0369a1;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-modal-dialog,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-modal-dialog,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-modal-dialog,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-modal-dialog {
+  background: var(--bg-card-solid, #131d31) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-modal-header,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-modal-header,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-modal-header,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-modal-header {
+  background: var(--bg-card-solid, #131d31) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-price-pill,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-price-pill,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-price-pill,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-price-pill,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-acq-item,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-acq-item,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-acq-item,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-acq-item,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-pkm-card,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-pkm-card,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-pkm-card,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-pkm-card,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-modal-stat-hero,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-modal-stat-hero,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-modal-stat-hero,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-modal-stat-hero {
+  background: var(--bg-card-inner) !important;
+  border-color: var(--border-color) !important;
 }
 
 /* Mobile H5 Bottom Sheet Adaptations */
@@ -37041,6 +37254,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   right: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
+  background: var(--bg-card-solid, #131d31) !important;
   border-top-left-radius: 20px !important;
   border-top-right-radius: 20px !important;
   border-bottom-left-radius: 0 !important;

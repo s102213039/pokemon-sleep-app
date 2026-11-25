@@ -199,7 +199,7 @@
         if (isIngActive) {
           bookmarkHandle.classList.remove('drawer-open');
           bookmarkHandle.setAttribute('aria-expanded', 'false');
-          bookmarkHandle.title = isEN ? 'Expand Filter' : '展開天梯篩選側邊欄';
+          bookmarkHandle.title = _tWiki('展開天梯篩選側邊欄', 'Expand Filter');
           if (bookmarkHandle.style && typeof bookmarkHandle.style.removeProperty === 'function') bookmarkHandle.style.removeProperty('display');
           bookmarkHandle.style.opacity = '1';
           bookmarkHandle.style.pointerEvents = 'auto';
@@ -231,7 +231,7 @@
       if (bookmarkHandle) {
         bookmarkHandle.classList.add('drawer-open');
         bookmarkHandle.setAttribute('aria-expanded', 'true');
-        bookmarkHandle.title = isEN ? 'Collapse Filter' : '收合天梯篩選側邊欄';
+        bookmarkHandle.title = _tWiki('收合天梯篩選側邊欄', 'Collapse Filter');
         bookmarkHandle.style.opacity = '0';
         bookmarkHandle.style.pointerEvents = 'none';
         bookmarkHandle.style.display = 'none';

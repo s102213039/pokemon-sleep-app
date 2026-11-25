@@ -132,15 +132,13 @@
   }
 
   function renderPantryBadge(recipe) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const missing = recipe._missingCount || 0;
     if (missing === 0) {
-      return `<span class="recipe-pantry-badge pantry-ready">${isEN ? 'Ready' : (isCN ? '可烹饪' : '可烹飪')}</span>`;
+      return `<span class="recipe-pantry-badge pantry-ready">${_tRecipes('可烹飪', 'Ready')}</span>`;
     }
     const details = recipe._missingDetails || [];
-    const tooltip = details.map(d => `${d.name}: ${d.onHand}/${d.required} (-${d.missing})`).join('\n');
-    return `<span class="recipe-pantry-badge pantry-missing" title="${tooltip}">${isEN ? 'Missing ' : (isCN ? '缺 ' : '缺 ')}${missing}</span>`;
+    const tooltip = details.map(d => `${(window.I18N && typeof window.I18N.getIngredientName === 'function') ? window.I18N.getIngredientName(d.name) : _tRecipes(d.name)}: ${d.onHand}/${d.required} (-${d.missing})`).join('\n');
+    return `<span class="recipe-pantry-badge pantry-missing" title="${tooltip}">${_tRecipes('缺 ', 'Missing ')}${missing}</span>`;
   }
 
   function renderEnergyStack(finalE) {
@@ -210,7 +208,7 @@
         if (bookmarkHandle) {
           bookmarkHandle.classList.remove('drawer-open');
           bookmarkHandle.setAttribute('aria-expanded', 'false');
-          bookmarkHandle.title = '展開食譜篩選側邊欄';
+          bookmarkHandle.title = _tRecipes('展開食譜篩選側邊欄', 'Expand Recipe Filter Sidebar');
           Object.assign(bookmarkHandle.style, { opacity: '1', pointerEvents: 'auto', display: 'flex', visibility: 'visible' });
         }
         if (typeof window.setSidebarSavedState === 'function') window.setSidebarSavedState('pksleep_recipe_sidebar_open', false);
@@ -221,7 +219,7 @@
         if (bookmarkHandle) {
           bookmarkHandle.classList.add('drawer-open');
           bookmarkHandle.setAttribute('aria-expanded', 'true');
-          bookmarkHandle.title = '收合食譜篩選側邊欄';
+          bookmarkHandle.title = _tRecipes('收合食譜篩選側邊欄', 'Collapse Recipe Filter Sidebar');
           bookmarkHandle.style.opacity = '0';
           bookmarkHandle.style.pointerEvents = 'none';
           bookmarkHandle.style.display = 'none';
@@ -306,10 +304,7 @@
   /* ─── 選擇器與互動初始化 ─────────────────────────────── */
   function initCategoryFilters() {
     if (!categoryContainer) return;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const categories = ['ALL', '咖哩', '沙拉', '甜點'];
-    const catLabels  = { ALL: isEN ? 'All' : '全部', '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
     const catCounts  = { '咖哩': 0, '沙拉': 0, '甜點': 0 };
     for (let i = 0; i < allRecipes.length; i++) {
       const c = allRecipes[i] && allRecipes[i].category;
@@ -319,7 +314,7 @@
     categoryContainer.innerHTML = categories.map(cat => {
       const count = cat === 'ALL' ? allRecipes.length : (catCounts[cat] || 0);
       const active = cat === selectedCategory ? 'active' : '';
-      return `<button class="tag-btn ${active}" data-cat="${cat}">${catLabels[cat] || cat} (${count})</button>`;
+      return `<button class="tag-btn ${active}" data-cat="${cat}">${_getRecipeCategoryLabel(cat)} (${count})</button>`;
     }).join('');
 
     if (!categoryContainer._hasListener) {
@@ -449,9 +444,7 @@
     if (!sortSelect.querySelector('option[value="missing-asc"]')) {
       const opt = document.createElement('option');
       opt.value = 'missing-asc';
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-      const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
-      opt.textContent = isEN ? 'Fewest Missing' : (isCN ? '缺件最少（优先可煮）' : '缺件最少（優先可煮）');
+      opt.textContent = _tRecipes('缺件最少（優先可煮）', 'Fewest Missing');
       opt.setAttribute('data-i18n', 'recipe.sort_missing_asc');
       sortSelect.appendChild(opt);
     }
@@ -499,14 +492,10 @@
     initCategoryFilters();
     updateRecipeActiveFilterBadge();
     const filtered = getFilteredRecipes();
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
-    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
 
-    const catLabels = { '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
     const catCounts = {};
     filtered.forEach(r => { catCounts[r.category] = (catCounts[r.category] || 0) + 1; });
-    const breakdownHTML = Object.entries(catCounts).map(([cat, c]) => `${catLabels[cat] || cat} <strong>${c}</strong>`).join(' · ');
+    const breakdownHTML = Object.entries(catCounts).map(([cat, c]) => `${_getRecipeCategoryLabel(cat)} <strong>${c}</strong>`).join(' · ');
 
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const lvBonus = getLevelBonus(recipeLevel);
@@ -516,24 +505,21 @@
     let formulaParts = [`Lv.${recipeLevel}${lvBonus > 0 ? ` (+${lvBonus}%)` : ''}`];
     if (islandBonus > 0) formulaParts.push(`+${islandBonus}% (×${islandMult})`);
     if (eventBonus > 1.0) formulaParts.push(`×${eventMult}`);
-    if (potExpansion > 0) formulaParts.push(`+${potExpansion}料 (+${(potExpansion * 100).toLocaleString()})`);
+    if (potExpansion > 0) formulaParts.push(`${_tRecipes(`+${potExpansion}料`, `+${potExpansion} extra`)} (+${(potExpansion * 100).toLocaleString()})`);
     const formulaText = formulaParts.join(' · ');
 
     if (isMobileH5) {
       countBadge.style.display = 'flex';
-      countBadge.innerHTML = isEN ? `
-        <span class="rc-badge-count">Dishes <strong>${filtered.length}</strong></span>
-        <span class="rc-badge-formula">${formulaText}</span>
-      ` : `
-        <span class="rc-badge-count">食譜 <strong>${filtered.length}</strong> 道</span>
+      countBadge.innerHTML = `
+        <span class="rc-badge-count">${_tRecipes(`食譜 <strong>${filtered.length}</strong> 道`, `Dishes <strong>${filtered.length}</strong>`)}</span>
         <span class="rc-badge-formula">${formulaText}</span>
       `;
     } else {
-      countBadge.innerHTML = isEN ? `Dishes <strong>${filtered.length}</strong> (${breakdownHTML})` : `食譜 <strong>${filtered.length}</strong> 道（${breakdownHTML}）`;
+      countBadge.innerHTML = _tRecipes(`食譜 <strong>${filtered.length}</strong> 道（${breakdownHTML}）`, `Dishes <strong>${filtered.length}</strong> (${breakdownHTML})`);
     }
 
     if (filtered.length === 0) {
-      contentArea.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-muted);">${isEN ? 'No matching recipes found' : '未找到符合條件的料理食譜'}</div>`;
+      contentArea.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-muted);">${_tRecipes('未找到符合條件的料理食譜', 'No matching recipes found')}</div>`;
       return;
     }
 
@@ -543,12 +529,10 @@
 
   function renderTable(recipes) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
-    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-    const catLabels = { '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
+    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : _tRecipes(def);
     const islandMult = (1 + islandBonus / 100).toFixed(2);
     const eventSub = eventBonus > 1.0 ? ` · ×${eventBonus.toFixed(2)}` : '';
-    const potSub = potExpansion > 0 ? ` · +${potExpansion}料` : '';
+    const potSub = potExpansion > 0 ? ` · ${_tRecipes(`+${potExpansion}料`, `+${potExpansion} extra`)}` : '';
 
     contentArea.innerHTML = `
       <div class="table-container">
@@ -586,12 +570,12 @@
                     ${secondaryName ? `<span class="recipe-name-sub" style="color:var(--text-muted);font-size:11px;font-weight:400;margin-top:2px;line-height:1.2;text-align:left;">${secondaryName}</span>` : ''}
                   </div>
                 </td>
-                <td style="vertical-align:middle;"><span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span></td>
+                <td style="vertical-align:middle;"><span class="recipe-cat-badge cat-${r.category}">${_getRecipeCategoryLabel(r.category)}</span></td>
                 <td style="vertical-align:middle;">
                   <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
                     <span class="pot-badge">${r.pot_size}</span>
-                    <button type="button" class="pot-filler-open-btn" data-recipe-id="${r.name_cn}" title="${isEN ? 'Optimize Pot Fillers' : '填鍋與容量最佳化'}">
-                      ${isEN ? 'Optimizer' : '最佳加料'}
+                    <button type="button" class="pot-filler-open-btn" data-recipe-id="${r.name_cn}" title="${_tRecipes('填鍋與容量最佳化', 'Optimize Pot Fillers')}">
+                      ${_tRecipes('最佳加料', 'Optimizer')}
                     </button>
                   </div>
                 </td>
@@ -610,11 +594,8 @@
   }
 
   function renderGrid(recipes) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
-    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-    const catLabels = { '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
+    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : _tRecipes(def);
     const islandMult = (1 + islandBonus / 100).toFixed(2);
     const eventSub = eventBonus > 1.0 ? ` · ×${eventBonus.toFixed(2)}` : '';
 
@@ -633,10 +614,10 @@
                   <div class="h5-recipe-title-meta">
                     <span class="h5-recipe-name">${primaryName}</span>
                     <div class="h5-recipe-tags-row">
-                      <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
+                      <span class="recipe-cat-badge cat-${r.category}">${_getRecipeCategoryLabel(r.category)}</span>
                       <span class="h5-recipe-pot">${r.pot_size}</span>
                       ${pantryBadgeHTML}
-                      <button type="button" class="pot-filler-open-btn compact-filler-btn" data-recipe-id="${r.name_cn}">${isEN ? 'Opt' : '加料'}</button>
+                      <button type="button" class="pot-filler-open-btn compact-filler-btn" data-recipe-id="${r.name_cn}">${_tRecipes('加料', 'Opt')}</button>
                     </div>
                   </div>
                 </div>
@@ -670,7 +651,7 @@
               <div class="card-title-group" style="flex:1;min-width:0;">
                 <h3 class="pokemon-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px;margin-bottom:3px;">${primaryName}</h3>
                 <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-                  <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
+                  <span class="recipe-cat-badge cat-${r.category}">${_getRecipeCategoryLabel(r.category)}</span>
                   ${pantryBadgeHTML}
                 </div>
               </div>
@@ -681,8 +662,8 @@
                 <span class="stat-label">${t('recipe.th_pot', '鍋子容量')}</span>
                 <div style="display:flex;align-items:center;gap:6px;">
                   <span class="stat-value pot-value">${r.pot_size}</span>
-                  <button type="button" class="pot-filler-open-btn" data-recipe-id="${r.name_cn}" title="${isEN ? 'Optimize Pot Fillers' : '填鍋與容量最佳化'}">
-                    ${isEN ? 'Optimizer' : '最佳加料'}
+                  <button type="button" class="pot-filler-open-btn" data-recipe-id="${r.name_cn}" title="${_tRecipes('填鍋與容量最佳化', 'Optimize Pot Fillers')}">
+                    ${_tRecipes('最佳加料', 'Optimizer')}
                   </button>
                 </div>
               </div>

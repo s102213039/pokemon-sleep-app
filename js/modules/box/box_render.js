@@ -7,21 +7,20 @@
 
     try {
       const filtered = getFilteredBox();
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
       if (filtered.length === 0) {
         if (userBox.length === 0) {
           container.innerHTML = `
             <div class="box-simple-empty-state">
-              <p class="box-simple-empty-title">${isEN ? 'No Pokémon recorded yet' : '目前尚未登錄任何寶可夢'}</p>
-              <p class="box-simple-empty-hint">${isEN ? 'Tap the "Scan OCR" or "Add Pokémon" button at the bottom right to start building your team!' : '請點擊右下角的「截圖辨識」或「手動新增」按鈕開始建立你的幫手隊伍！'}</p>
+              <p class="box-simple-empty-title">${_tBox('目前尚未登錄任何寶可夢', 'No Pokémon recorded yet')}</p>
+              <p class="box-simple-empty-hint">${_tBox('請點擊右下角的「截圖辨識」或「手動新增」按鈕開始建立你的幫手隊伍！', 'Tap the "Scan OCR" or "Add Pokémon" button at the bottom right to start building your team!')}</p>
             </div>
           `;
         } else {
           container.innerHTML = `
             <div class="box-simple-empty-state">
-              <p class="box-simple-empty-title">${isEN ? 'No Pokémon matched the filter' : '查無符合條件的寶可夢'}</p>
-              <p class="box-simple-empty-hint">${isEN ? 'Try searching different keywords or clearing filters.' : '請嘗試更換搜尋關鍵字或清空篩選條件。'}</p>
+              <p class="box-simple-empty-title">${_tBox('查無符合條件的寶可夢', 'No Pokémon matched the filter')}</p>
+              <p class="box-simple-empty-hint">${_tBox('請嘗試更換搜尋關鍵字或清空篩選條件。', 'Try searching different keywords or clearing filters.')}</p>
             </div>
           `;
         }
@@ -37,7 +36,7 @@
     } catch (err) {
       console.error('Error rendering Box:', err);
       if (typeof window.__renderInPlaceError === 'function') {
-        window.__renderInPlaceError('box-content-area', '寶可夢倉庫渲染異常', err);
+        window.__renderInPlaceError('box-content-area', _tBox('寶可夢倉庫渲染異常', 'Failed to render Pokémon Box'), err);
       }
     }
   }
@@ -84,7 +83,6 @@
     const unlockLv = slotIdx === 0 ? 1 : (slotIdx === 1 ? 30 : 60);
     const isUnlocked = currentLv === undefined || currentLv >= unlockLv;
     const lockClass = !isUnlocked ? ' ing-locked' : '';
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
     if (!ingName || ingName === '--') {
       return `
@@ -93,12 +91,12 @@
         </div>
       `;
     }
-    const displayName = window.I18N ? window.I18N.getIngredientName(ingName) : ingName;
+    const displayName = window.I18N ? window.I18N.getIngredientName(ingName) : _tBox(ingName);
     const iconUrl = (window.I18N && typeof window.I18N.getIngredientIcon === 'function') 
       ? window.I18N.getIngredientIcon(ingName) 
       : '';
     const count = getIngCountFromBase(basePkm, slotIdx, ingName);
-    const lockTitleSuffix = !isUnlocked ? (isEN ? ' (Locked)' : ' (未開放)') : '';
+    const lockTitleSuffix = !isUnlocked ? _tBox(' (未開放)', ' (Locked)') : '';
 
     return `
       <div class="box-ing-chip${lockClass}" title="${escapeHtml(displayName)}${lockTitleSuffix}">
@@ -111,17 +109,16 @@
     const unlockLv = slotIdx === 0 ? 1 : (slotIdx === 1 ? 30 : 60);
     const isUnlocked = currentLv === undefined || currentLv >= unlockLv;
     const lockClass = !isUnlocked ? ' ing-locked' : '';
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
     if (!ingName || ingName === '--') {
       return `<td><span class="text-muted${lockClass}" style="font-size:11px;">--</span></td>`;
     }
-    const displayName = window.I18N ? window.I18N.getIngredientName(ingName) : ingName;
+    const displayName = window.I18N ? window.I18N.getIngredientName(ingName) : _tBox(ingName);
     const iconUrl = (window.I18N && typeof window.I18N.getIngredientIcon === 'function') 
       ? window.I18N.getIngredientIcon(ingName) 
       : '';
     const count = getIngCountFromBase(basePkm, slotIdx, ingName);
-    const lockTitleSuffix = !isUnlocked ? (isEN ? ' (Locked)' : ' (未開放)') : '';
+    const lockTitleSuffix = !isUnlocked ? _tBox(' (未開放)', ' (Locked)') : '';
 
     return `
       <td class="td-ing" title="${escapeHtml(displayName)}${lockTitleSuffix}">
@@ -138,7 +135,6 @@
   }
 
   function renderBoxGrid(list, container) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     container.innerHTML = `
       <div class="box-grid">
         ${list.map(p => {
@@ -146,7 +142,9 @@
           const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
           const natureObj = NATURE_DATA.find(n => n.name === p.nature);
           const prInfo = calculatePokemonPR(p, base);
-          const pkmDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : p.name) : (p.name || (base ? base.name_cn : '未知'));
+          const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+            ? (base ? window.I18N.getPokemonName(base) : (p.name ? window.I18N.getPokemonName(p.name) : _tBox('未知', 'Unknown')))
+            : _tBox(p.name || (base ? base.name_cn : '未知'), base ? (base.name_en || base.name_cn) : (p.name || 'Unknown'));
           const specName = window.I18N ? window.I18N.getSpecialtyName((base && base.specialty) || p.specialty || '--') : ((base && base.specialty) || p.specialty || '--');
           let specClass = 'spec-ingredient';
           const rawSpec = (base && base.specialty) || p.specialty || '';
@@ -172,22 +170,22 @@
                     ${boxShowNo ? `<span class="box-card-dex-no" style="font-size:11px;color:var(--text-muted);font-weight:600;margin-right:2px;">No.${base ? (base.formatted_no || base.id) : (p.pokemonId || '')}</span>` : ''}
                     <span class="box-card-name">${escapeHtml(pkmDisplayName)}</span>
                     <span class="box-card-level">Lv.${p.level || 1}</span>
-                    <span class="box-pr-badge ${prInfo.tierBadgeClass || 'pr-tier-b'}" title="${isEN ? 'PR Potential Score: ' + (prInfo.pr || prInfo.score) + '%' : 'PR 潛力評分: ' + (prInfo.pr || prInfo.score) + '%'}">PR ${prInfo.pr || prInfo.score}</span>
+                    <span class="box-pr-badge ${prInfo.tierBadgeClass || 'pr-tier-b'}" title="${_tBox('PR 潛力評分: ' + (prInfo.pr || prInfo.score) + '%', 'PR Potential Score: ' + (prInfo.pr || prInfo.score) + '%')}">PR ${prInfo.pr || prInfo.score}</span>
                     <div class="box-card-actions">
-                      <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '深度診斷報告書與六維雷達圖'}">
+                      <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${_tBox('深度診斷報告書與六維雷達圖', 'Appraisal Report')}">
                         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <circle cx="12" cy="12" r="10"></circle>
                           <line x1="12" y1="16" x2="12" y2="12"></line>
                           <line x1="12" y1="8" x2="12.01" y2="8"></line>
                         </svg>
                       </button>
-                      <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${isEN ? 'Edit' : '編輯寶可夢'}">
+                      <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${_tBox('編輯寶可夢', 'Edit')}">
                         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                         </svg>
                       </button>
-                      <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="${isEN ? 'Delete' : '刪除寶可夢'}">
+                      <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="${_tBox('刪除寶可夢', 'Delete')}">
                         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <polyline points="3 6 5 6 21 6"></polyline>
                           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -198,7 +196,7 @@
                   ${p.nickname ? `<div class="box-card-nickname">${escapeHtml(p.nickname)}</div>` : ''}
                   <div class="box-card-tags">
                     ${(p.shiny || p.isShiny || p.is_shiny) ? `
-                      <span class="box-shiny-tag" title="${isEN ? 'Shiny Pokémon' : '異色寶可夢'}">${isEN ? 'Shiny' : '異色'}</span>
+                      <span class="box-shiny-tag" title="${_tBox('異色寶可夢', 'Shiny Pokémon')}">${_tBox('異色', 'Shiny')}</span>
                     ` : ''}
                     ${berry && berry.icon ? `
                     <span class="pkm-berry-icon-wrapper" title="${berryName}">
@@ -206,7 +204,7 @@
                     </span>` : ''}
                     ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(base ? base.specialty : p.specialty, 18) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}
                     ${p.ribbon ? `
-                      <span class="box-ribbon-tag" title="${isEN ? `Good-Night Ribbon Tier ${p.ribbon}` : `睡飽飽獎章`}">
+                      <span class="box-ribbon-tag" title="${_tBox('睡飽飽獎章', `Good-Night Ribbon Tier ${p.ribbon}`)}">
                         <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" alt="Ribbon" />
                       </span>
                     ` : ''}
@@ -217,7 +215,7 @@
               <!-- 食材插槽組合 (精簡單行3個食材並行展示，未解鎖插槽半透明) -->
               <div class="box-card-section box-card-section-ing">
                 <div class="box-ing-parallel-row">
-                  <span class="box-ing-row-label">${isEN ? 'Ingredients:' : '食材：'}</span>
+                  <span class="box-ing-row-label">${_tBox('食材：', 'Ingredients:')}</span>
                   <div class="box-ing-chips-grid">
                     ${renderBoxCardIngSlot(p.ing1, base, 0, p.level || 1)}
                     ${renderBoxCardIngSlot(p.ing2, base, 1, p.level || 1)}
@@ -228,18 +226,21 @@
 
               <!-- 副技能清單 (2+2+1 遊戲同款排列，無前置等級標籤，按解鎖狀態呈現) -->
               <div class="box-card-section">
-                <div class="box-section-title">${isEN ? 'Sub-Skills' : '副技能組合'}</div>
+                <div class="box-section-title">${_tBox('副技能組合', 'Sub-Skills')}</div>
                 <div class="box-subskills-grid">
                   ${[10, 25, 50, 70, 80].map((lv, i) => {
                     const skName = (p.subskills || [])[i];
                     const sk = SUBSKILLS_DATA.find(s => s.name === skName);
                     const tier = sk ? sk.tier : 'empty';
-                    const displaySkName = skName ? (window.I18N ? window.I18N.getSubSkillName(skName) : skName) : '--';
+                    const displaySkName = skName ? (window.I18N ? window.I18N.getSubSkillName(skName) : _tBox(skName)) : '--';
                     const isUnlocked = (p.level || 1) >= lv;
                     const lockClass = !isUnlocked ? 'subskill-locked' : '';
+                    const skTitleName = sk ? (window.I18N ? window.I18N.getSubSkillName(sk.name) : _tBox(sk.name, sk.name_en)) : '';
+                    const skTitleDesc = sk ? _tBox(sk.desc, sk.desc_en) : '';
+                    const lockSuffix = !isUnlocked ? _tBox('未解鎖', ' - Locked') : '';
                     const titleText = sk 
-                      ? (isEN ? `${sk.name_en || sk.name} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''}): ${sk.desc_en || sk.desc}` : `${sk.name} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''}): ${sk.desc}`)
-                      : (isEN ? `Slot ${i + 1} (Lv.${lv})` : `第 ${i + 1} 欄位 (Lv.${lv})`);
+                      ? `${skTitleName} (Lv.${lv}${lockSuffix}): ${skTitleDesc}`
+                      : _tBox(`第 ${i + 1} 欄位 (Lv.${lv})`, `Slot ${i + 1} (Lv.${lv})`);
                     return `
                       <div class="box-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
                         <span class="subskill-name">${escapeHtml(displaySkName)}</span>
@@ -252,18 +253,18 @@
               <!-- 性格與修正 (同一行展示，無外框) -->
               <div class="box-card-footer">
                 <div class="box-nature-single-row">
-                  <span class="box-nature-label">${isEN ? 'Nature:' : '性格：'}</span>
-                  <span class="box-nature-name font-bold">${escapeHtml(natureDisplayName || (isEN ? 'Hardy' : '坦率'))}</span>
+                  <span class="box-nature-label">${_tBox('性格：', 'Nature:')}</span>
+                  <span class="box-nature-name font-bold">${escapeHtml(natureDisplayName || _tBox('坦率', 'Hardy'))}</span>
                   ${(p.cleanseMint || p.mint) ? `
                     <span class="box-nature-effects">
-                      <span class="nature-mint-tag" title="${isEN ? 'Cleanse Mint used: eliminated nature traits' : '使用淨白薄荷消除個性效果'}">${isEN ? 'Cleanse Mint (Neutralized)' : '使用淨白薄荷消除個性效果'}</span>
+                      <span class="nature-mint-tag" title="${_tBox('使用淨白薄荷消除個性效果', 'Cleanse Mint used: eliminated nature traits')}">${_tBox('使用淨白薄荷消除個性效果', 'Cleanse Mint (Neutralized)')}</span>
                     </span>
                   ` : (natureObj && natureObj.buff ? `
                     <span class="box-nature-effects">
                       ${natureObj.buff !== '無增減' ? `
-                        <span class="nature-buff">▲▲ ${isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff}</span>
-                        <span class="nature-debuff">▼▼ ${isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff}</span>
-                      ` : `<span class="nature-neutral">${isEN ? 'Neutral' : '無修正'}</span>`}
+                        <span class="nature-buff">▲▲ ${_tBox(natureObj.buff, natureObj.buff_en || natureObj.buff)}</span>
+                        <span class="nature-debuff">▼▼ ${_tBox(natureObj.debuff, natureObj.debuff_en || natureObj.debuff)}</span>
+                      ` : `<span class="nature-neutral">${_tBox('無修正', 'Neutral')}</span>`}
                     </span>
                   ` : '')}
                 </div>
@@ -272,7 +273,7 @@
               <!-- 智能簡評摘要 (直通頂尖料理精選) -->
               ${prInfo.summaryNote ? `
                 <div class="box-card-summary" title="${escapeHtml(stripHtml(prInfo.summaryNote))}">
-                  <span class="box-card-summary-label">${isEN ? 'Appraisal Note:' : '智能簡評：'}</span>
+                  <span class="box-card-summary-label">${_tBox('智能簡評：', 'Appraisal Note:')}</span>
                   <span class="box-card-summary-text">${prInfo.summaryNote}</span>
                 </div>
               ` : ''}
@@ -285,8 +286,7 @@
   }
 
   function renderBoxTable(list, container) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : _tBox(def);
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList && typeof document.body.classList.contains === 'function' && document.body.classList.contains('mobile-h5-app');
 
     container.innerHTML = `
@@ -296,11 +296,11 @@
             <tr>
               ${boxSortableTh('id', t('th.icon', '圖示'), 'th-icon')}
               ${boxSortableTh('level', t('th.level', '等級'))}
-              <th style="text-align:center;">${isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'}</th>
+              <th style="text-align:center;">${_tBox('寶可夢 / 暱稱', 'Name / Nickname')}</th>
               <th style="text-align:center;">${t('th.berry', '樹果')}</th>
-              <th style="text-align:center;">${isEN ? 'Ing 1' : '食1'}</th>
-              <th style="text-align:center;">${isEN ? 'Ing 2' : '食2'}</th>
-              <th style="text-align:center;">${isEN ? 'Ing 3' : '食3'}</th>
+              <th style="text-align:center;">${_tBox('食1', 'Ing 1')}</th>
+              <th style="text-align:center;">${_tBox('食2', 'Ing 2')}</th>
+              <th style="text-align:center;">${_tBox('食3', 'Ing 3')}</th>
               <th style="text-align:center;">${t('th.actions', '操作')}</th>
             </tr>
           </thead>
@@ -309,7 +309,9 @@
               const base = findPokemonBase(p.pokemonId || p.name);
               const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
               const prInfo = calculatePokemonPR(p, base);
-              const pkmDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : p.name) : (p.name || (base ? base.name_cn : '未知'));
+              const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+                ? (base ? window.I18N.getPokemonName(base) : (p.name ? window.I18N.getPokemonName(p.name) : _tBox('未知', 'Unknown')))
+                : _tBox(p.name || (base ? base.name_cn : '未知'), base ? (base.name_en || base.name_cn) : (p.name || 'Unknown'));
               const berry = (window.getPokemonBerry && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : null);
               const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';
 
@@ -342,21 +344,21 @@
                   <td style="text-align:center;">
                     <div style="display:flex;gap:6px;justify-content:center;align-items:center;">
                       ${!isMobileH5 ? `
-                        <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '深度診斷報告'}">
+                        <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${_tBox('深度診斷報告', 'Appraisal Report')}">
                           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="10"></circle>
                             <line x1="12" y1="16" x2="12" y2="12"></line>
                             <line x1="12" y1="8" x2="12.01" y2="8"></line>
                           </svg>
                         </button>
-                        <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${isEN ? 'Edit' : '編輯'}">
+                        <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${_tBox('編輯', 'Edit')}">
                           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                           </svg>
                         </button>
                       ` : ''}
-                      <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="${isEN ? 'Delete' : '刪除'}">
+                      <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="${_tBox('刪除', 'Delete')}">
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <polyline points="3 6 5 6 21 6"></polyline>
                           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -379,9 +381,10 @@
   /* ─── 二次確認刪除彈窗 (Delete Confirmation Modal) ─── */
   function openDeleteConfirmModal(item) {
     if (!item) return;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const base = findPokemonBase(item.pokemonId || item.name);
-    const pkmName = isEN ? (base ? (base.name_en || base.name_cn) : item.name) : (item.name || (base ? base.name_cn : '未知'));
+    const pkmName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+      ? (base ? window.I18N.getPokemonName(base) : (item.name ? window.I18N.getPokemonName(item.name) : _tBox('未知', 'Unknown')))
+      : _tBox(item.name || (base ? base.name_cn : '未知'), base ? (base.name_en || base.name_cn) : (item.name || 'Unknown'));
     const displayName = item.nickname ? `${pkmName} (${item.nickname})` : pkmName;
     const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
 
@@ -405,7 +408,7 @@
           </svg>
         </div>
         <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">
-          ${isEN ? 'Delete Pokémon?' : '確認刪除寶可夢？'}
+          ${_tBox('確認刪除寶可夢？', 'Delete Pokémon?')}
         </div>
         <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0 12px;padding:2px 0;background:transparent;border:none;">
           ${iconUrl ? `<img src="${iconUrl}" width="40" height="40" style="object-fit:contain;" alt="">` : ''}
@@ -415,16 +418,14 @@
           </div>
         </div>
         <p style="font-size:12.5px;color:var(--text-secondary);line-height:1.5;margin:0 0 20px;">
-          ${isEN 
-            ? 'Are you sure you want to delete this Pokémon from your Box? This action cannot be undone.' 
-            : '確定要將此隻寶可夢從倉庫中永久刪除嗎？刪除後將無法還原。'}
+          ${_tBox('確定要將此隻寶可夢從倉庫中永久刪除嗎？刪除後將無法還原。', 'Are you sure you want to delete this Pokémon from your Box? This action cannot be undone.')}
         </p>
         <div style="display:flex;gap:10px;justify-content:center;">
           <button type="button" id="box-delete-cancel-btn" style="flex:1;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-secondary);cursor:pointer;">
-            ${isEN ? 'Cancel' : '取消'}
+            ${_tBox('取消', 'Cancel')}
           </button>
           <button type="button" id="box-delete-confirm-btn" style="flex:1;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#ef4444;border:none;color:#ffffff;cursor:pointer;">
-            ${isEN ? 'Confirm Delete' : '確認刪除'}
+            ${_tBox('確認刪除', 'Confirm Delete')}
           </button>
         </div>
       </div>
@@ -466,7 +467,7 @@
         renderBox();
         closeModal();
         if (typeof showToast === 'function') {
-          showToast(isEN ? `Deleted ${displayName}` : `已刪除「${displayName}」`);
+          showToast(_tBox(`已刪除「${displayName}」`, `Deleted ${displayName}`));
         }
       };
     }

@@ -14,11 +14,13 @@
       if (!isRecipeIng) return;
     }
 
-    const ingName = isEN ? ((window.I18N && window.I18N.getIngredientName(ingData.name)) || ingData.name) : ingData.name;
+    const ingName = (window.I18N && typeof window.I18N.getIngredientName === 'function')
+      ? (window.I18N.getIngredientName(ingData.name) || _tWiki(ingData.name, ingData.name))
+      : _tWiki(ingData.name, ingData.name);
     const dishInfo = (typeof getDynamicTopRecipeForIngredient === 'function')
       ? getDynamicTopRecipeForIngredient(ingId, ingData.name)
-      : (TOP_RECIPES_FOR_INGREDIENTS[ingId] || { name: isEN ? 'Key Dish' : '核心大菜', name_en: 'Key Dish', need: 20 });
-    const dishName = isEN ? (dishInfo.name_en || dishInfo.name) : dishInfo.name;
+      : (TOP_RECIPES_FOR_INGREDIENTS[ingId] || { name: _tWiki('核心大菜', 'Key Dish'), name_en: 'Key Dish', need: 20 });
+    const dishName = _tWiki(dishInfo.name, dishInfo.name_en || dishInfo.name);
     const dishIcon = dishInfo.icon || getLadderDishIcon(dishInfo.name);
 
     // 依當前篩選條件收集並計算所有寶可夢產量排名
@@ -103,17 +105,19 @@
 
     const itemsHTML = rankedList.length === 0 ? `
       <div class="ing-rank-empty">
-        <p>${isEN ? 'No Pokémon matched current ladder filter conditions.' : '當前篩選條件下查無符合之寶可夢。'}</p>
+        <p>${_tWiki('當前篩選條件下查無符合之寶可夢。', 'No Pokémon matched current ladder filter conditions.')}</p>
       </div>
     ` : `
       <div class="ing-rank-list">
         ${rankedList.map((item) => {
           const rank = item.rank;
           const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : 'rank-other'));
-          const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(item.name)) || item.name) : item.name;
+          const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+            ? (window.I18N.getPokemonName(item.name) || _tWiki(item.name, item.name_en || item.name))
+            : _tWiki(item.name, item.name_en || item.name);
 
           return `
-            <div class="ing-rank-card ${rankClass}" title="${pkmDisplayName} (${item.recipe}) · ${item.count} ${isEN ? '/day' : '顆/天'}">
+            <div class="ing-rank-card ${rankClass}" title="${pkmDisplayName} (${item.recipe}) · ${item.count} ${_tWiki('顆/天', '/day')}">
               <div class="ing-rank-left">
                 <div class="ing-rank-num ${rankClass}">
                   #${rank}
@@ -124,9 +128,9 @@
                 <span class="node-recipe-tag-inline recipe-tag-${item.recipe.toLowerCase()}">${item.recipe}</span>
               </div>
               <div class="ing-rank-right">
-                <span class="ing-rank-yield-line"><span class="ing-rank-yield-num">${item.count}</span><span class="ing-rank-yield-unit">${isEN ? ' /day' : ' 顆/天'}</span></span>
+                <span class="ing-rank-yield-line"><span class="ing-rank-yield-num">${item.count}</span><span class="ing-rank-yield-unit">${_tWiki(' 顆/天', ' /day')}</span></span>
                 ${item.skillBonus > 0 ? `
-                  <span class="ing-rank-split-line" title="${isEN ? 'Drop: ' + item.dropCount + ' + Skill: ' + item.skillBonus : '食材掉落: ' + item.dropCount + ' + 技能獲取: ' + item.skillBonus}">
+                  <span class="ing-rank-split-line" title="${_tWiki('食材掉落: ' + item.dropCount + ' + 技能獲取: ' + item.skillBonus, 'Drop: ' + item.dropCount + ' + Skill: ' + item.skillBonus)}">
                     <span class="split-drop">${item.dropCount}</span>+<span class="split-skill">${item.skillBonus}</span>
                   </span>
                 ` : ''}
@@ -143,11 +147,11 @@
           <div class="ing-rank-title-group">
             <img src="${ingData.icon}" class="ing-rank-header-icon" alt="${ingName}">
             <div class="ing-rank-header-text">
-              <div class="ing-rank-header-title">${ingName} <span class="ing-rank-header-energy">[${isEN ? 'Energy' : '能量'} ${ingData.energy || ''}]</span></div>
-              <div class="ing-rank-header-sub">${dishIcon ? `<img src="${dishIcon}" class="tooltip-dish-icon" alt="" loading="lazy">` : ''}<span>${isEN ? 'Key Dish:' : '核心大菜：'} ${dishName} (${dishInfo.need}${isEN ? '/meal' : '顆/餐'}) · ${isEN ? 'Ideal Energy (0.45x)' : '滿活力 (0.45x)'} · ${rankingList.length} ${isEN ? 'Pokémon' : '隻寶可夢'}</span></div>
+              <div class="ing-rank-header-title">${ingName} <span class="ing-rank-header-energy">[${_tWiki('能量', 'Energy')} ${ingData.energy || ''}]</span></div>
+              <div class="ing-rank-header-sub">${dishIcon ? `<img src="${dishIcon}" class="tooltip-dish-icon" alt="" loading="lazy">` : ''}<span>${_tWiki('核心大菜：', 'Key Dish:')} ${dishName} (${dishInfo.need}${_tWiki('顆/餐', '/meal')}) · ${_tWiki('滿活力 (0.45x)', 'Ideal Energy (0.45x)')} · ${rankingList.length} ${_tWiki('隻寶可夢', 'Pokémon')}</span></div>
             </div>
           </div>
-          <button type="button" class="ing-rank-close-btn" onclick="window.WikiDB.closeIngredientRankingModal()" title="${isEN ? 'Close' : '關閉'}" aria-label="Close">
+          <button type="button" class="ing-rank-close-btn" onclick="window.WikiDB.closeIngredientRankingModal()" title="${_tWiki('關閉', 'Close')}" aria-label="Close">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -200,8 +204,7 @@
     const chargeSkill = MAIN_SKILLS_DATA.find(s => s.id === 'charge_stock_s');
     if (chargeSkill && chargeSkill.matrix && chargeSkill.matrix[stackNum]) {
       const vals = chargeSkill.matrix[stackNum].vals;
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-      const unit = isEN ? 'Strength' : '能量';
+      const unit = _tWiki('能量', 'Strength');
 
       // 更新 Hero 雙核心看板
       const heroBase = document.getElementById('hero-base-charge_stock_s');
@@ -230,7 +233,7 @@
         dynamicContainer.innerHTML = vals.map((v, i) => `
           <div class="skill-level-chip ${stackNum === 10 ? 'highlight-gold' : 'highlight-blue'}">
             <span class="level-tag">Lv.${i + 1}</span>
-            <span class="level-val">${v.toLocaleString()} ${isEN ? 'Strength' : '能量'}</span>
+            <span class="level-val">${v.toLocaleString()} ${unit}</span>
           </div>
         `).join('');
       }
@@ -252,8 +255,7 @@
     const boostSkill = MAIN_SKILLS_DATA.find(s => s.id === 'helper_boost_type');
     if (boostSkill && boostSkill.matrix && boostSkill.matrix[kindNum]) {
       const vals = boostSkill.matrix[kindNum].vals;
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-      const unit = isEN ? 'Helps' : '次幫忙';
+      const unit = _tWiki('次幫忙', 'Helps');
 
       // 更新 Hero 雙核心看板
       const heroBase = document.getElementById('hero-base-helper_boost_type');
@@ -282,7 +284,7 @@
         dynamicContainer.innerHTML = vals.map((v, i) => `
           <div class="skill-level-chip highlight-blue">
             <span class="level-tag">Lv.${i + 1}</span>
-            <span class="level-val">${v} ${isEN ? 'Helps' : '次幫忙'}</span>
+            <span class="level-val">${v} ${unit}</span>
           </div>
         `).join('');
       }
@@ -419,7 +421,6 @@
   function refreshBerryNodes() {
     const grid = document.getElementById('values-berry-grid');
     if (!grid) return;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const gc = _getWikiGameConfig();
     const sortedBerries = (gc && typeof gc.sortBerriesByEnergyAsc === 'function')
       ? gc.sortBerriesByEnergyAsc(BERRY_VALUES_DATA, b => b.id || b.name)
@@ -427,14 +428,18 @@
     grid.innerHTML = sortedBerries.map(b => {
       const energy1x = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, false);
       const energy2x = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, true);
-      const bName = isEN ? (window.I18N.getBerryName(b.name) || b.name) : b.name;
-      const bType = isEN ? (window.I18N.getTypeName(b.type) || b.type) : b.type;
-      const bonusStr = currentIslandBonus > 0 ? (isEN ? ` +${currentIslandBonus}% Island` : ` +${currentIslandBonus}%島嶼`) : '';
+      const bName = (window.I18N && typeof window.I18N.getBerryName === 'function')
+        ? (window.I18N.getBerryName(b.name) || _tWiki(b.name, b.name))
+        : _tWiki(b.name, b.name);
+      const bType = (window.I18N && typeof window.I18N.getTypeName === 'function')
+        ? (window.I18N.getTypeName(b.type) || _tWiki(b.type, b.type))
+        : _tWiki(b.type, b.type);
+      const bonusStr = currentIslandBonus > 0 ? _tWiki(` +${currentIslandBonus}%島嶼`, ` +${currentIslandBonus}% Island`) : '';
       return `
-        <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr} | ${isEN ? 'Base' : '基礎'}: ${energy1x} / ${isEN ? 'Fav 2x' : '順果 2x'}: ${energy2x}">
+        <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr} | ${_tWiki('基礎', 'Base')}: ${energy1x} / ${_tWiki('順果 2x', 'Fav 2x')}: ${energy2x}">
           <img src="${b.icon}" class="value-compact-icon" alt="${bName}">
-          <span class="value-compact-energy berry-val" title="${isEN ? 'Base Energy (1x)' : '基礎能量 (1x)'}"><span class="energy-multiplier-prefix">1x</span> ${energy1x}</span>
-          <span class="value-compact-energy berry-val-fav" title="${isEN ? 'Favorite Berry (2x)' : '順果 2x 能量'}"><span class="energy-multiplier-prefix">2x</span> ${energy2x}</span>
+          <span class="value-compact-energy berry-val" title="${_tWiki('基礎能量 (1x)', 'Base Energy (1x)')}"><span class="energy-multiplier-prefix">1x</span> ${energy1x}</span>
+          <span class="value-compact-energy berry-val-fav" title="${_tWiki('順果 2x 能量', 'Favorite Berry (2x)')}"><span class="energy-multiplier-prefix">2x</span> ${energy2x}</span>
         </div>
       `;
     }).join('');
@@ -462,35 +467,34 @@
     const natureMult    = parseFloat(natureSelect.value) || 1.0;
     const totalMult     = (1 + subskillBonus) * natureMult;
 
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    resultVal.textContent = totalMult.toFixed(3) + (isEN ? 'x' : ' 倍');
+    resultVal.textContent = totalMult.toFixed(3) + _tWiki(' 倍', 'x');
 
-    let grade = isEN ? 'A (Good)' : 'A (良好)';
+    let grade = _tWiki('A (良好)', 'A (Good)');
     let gradeCls = 'grade-a';
 
     if (totalMult >= 1.8) {
-      grade = isEN ? 'SSS (God Tier Max)' : 'SSS (頂級發動極限)';
+      grade = _tWiki('SSS (頂級發動極限)', 'SSS (God Tier Max)');
       gradeCls = 'grade-sss';
     } else if (totalMult >= 1.6) {
-      grade = isEN ? 'SS (Excellent Max)' : 'SS (優秀極限)';
+      grade = _tWiki('SS (優秀極限)', 'SS (Excellent Max)');
       gradeCls = 'grade-ss';
     } else if (totalMult >= 1.5) {
-      grade = isEN ? 'S (Dual Sub-Skills Very High)' : 'S (雙副技極高)';
+      grade = _tWiki('S (雙副技極高)', 'S (Dual Sub-Skills Very High)');
       gradeCls = 'grade-s';
     } else if (totalMult >= 1.35) {
-      grade = isEN ? 'A (Single STM Neutral Nature)' : 'A (單STM無性格)';
+      grade = _tWiki('A (單STM無性格)', 'A (Single STM Neutral Nature)');
       gradeCls = 'grade-a';
     } else if (totalMult >= 1.15) {
-      grade = isEN ? 'B (Moderate Boost)' : 'B (微幅加成)';
+      grade = _tWiki('B (微幅加成)', 'B (Moderate Boost)');
       gradeCls = 'grade-b';
     } else if (totalMult >= 1.0) {
-      grade = isEN ? 'C (Baseline)' : 'C (基準線附近)';
+      grade = _tWiki('C (基準線附近)', 'C (Baseline)');
       gradeCls = 'grade-c';
     } else if (totalMult >= 0.9) {
-      grade = isEN ? 'D (Impacted by Nature Down)' : 'D (受性格下修影響)';
+      grade = _tWiki('D (受性格下修影響)', 'D (Impacted by Nature Down)');
       gradeCls = 'grade-d';
     } else {
-      grade = isEN ? 'E (Severely Hindered)' : 'E (嚴重受阻)';
+      grade = _tWiki('E (嚴重受阻)', 'E (Severely Hindered)');
       gradeCls = 'grade-e';
     }
 
@@ -555,7 +559,6 @@
     dailyExp *= natureFactor;
 
     const daysNeeded = baseExpNeeded > 0 ? Math.ceil(baseExpNeeded / dailyExp) : 0;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
     // 糖果換算 (Candy calculation):
     // 基礎 1 顆 25 EXP; 性格修正: +18% -> 30 EXP (25*1.18=29.5->30), -18% -> 21 EXP (25*0.82=20.5->21)
@@ -563,20 +566,22 @@
     const candiesNeeded = baseExpNeeded > 0 ? Math.ceil(baseExpNeeded / expPerCandy) : 0;
 
     if (baseExpNeeded === 0) {
-      daysResult.textContent = isEN ? '0 Days' : '0 天';
-      expResult.textContent = isEN ? 'Target Level Already Reached' : '已達目標等級, 無需額外 EXP';
+      daysResult.textContent = _tWiki('0 天', '0 Days');
+      expResult.textContent = _tWiki('已達目標等級, 無需額外 EXP', 'Target Level Already Reached');
       if (candiesResult) {
-        candiesResult.textContent = isEN ? '0 Candies Needed' : '無需額外糖果';
+        candiesResult.textContent = _tWiki('無需額外糖果', '0 Candies Needed');
       }
     } else {
-      daysResult.textContent = daysNeeded.toLocaleString() + (isEN ? ' Days' : ' 天');
-      expResult.textContent = isEN 
-        ? `Approx. ${baseExpNeeded.toLocaleString()} EXP` 
-        : `約需 ${baseExpNeeded.toLocaleString()} EXP`;
+      daysResult.textContent = daysNeeded.toLocaleString() + _tWiki(' 天', ' Days');
+      expResult.textContent = _tWiki(
+        `約需 ${baseExpNeeded.toLocaleString()} EXP`,
+        `Approx. ${baseExpNeeded.toLocaleString()} EXP`
+      );
       if (candiesResult) {
-        candiesResult.textContent = isEN
-          ? `Approx. ${candiesNeeded.toLocaleString()} Candies (${expPerCandy} EXP/ea)`
-          : `約需 ${candiesNeeded.toLocaleString()} 顆糖果 (每顆 ${expPerCandy} EXP)`;
+        candiesResult.textContent = _tWiki(
+          `約需 ${candiesNeeded.toLocaleString()} 顆糖果 (每顆 ${expPerCandy} EXP)`,
+          `Approx. ${candiesNeeded.toLocaleString()} Candies (${expPerCandy} EXP/ea)`
+        );
       }
     }
   }

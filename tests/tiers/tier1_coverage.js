@@ -900,7 +900,7 @@ test('Tier 1 - Feature Coverage', 'Mobile App Entry: app/index.html document str
 
   assert(/<!DOCTYPE\s+html>/i.test(html), 'app/index.html missing <!DOCTYPE html>');
   assert(/<html[^>]*>/i.test(html), 'app/index.html missing <html> tag');
-  assert(/<title>[\s\S]*?<\/title>/i.test(html), 'app/index.html missing <title> tag');
+  assert(/<title(?:\s+[^>]*)?>[\s\S]*?<\/title>/i.test(html), 'app/index.html missing <title> tag');
 
   // Header with Desktop version switch link or button
   assert(html.includes('id="btn-switch-desktop"') || html.includes('view=desktop') || html.includes('桌面'),

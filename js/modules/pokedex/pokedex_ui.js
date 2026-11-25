@@ -61,17 +61,17 @@
       let titleTip = '';
       if (on) {
         if (parsed.dir === 'newest') {
-          arrow = isEN ? ' (New)' : ' (新)';
+          arrow = _tDex(' (新)', ' (New)');
           aria = 'other';
-          titleTip = isEN ? 'Sorted: Newest to Oldest' : '排序：新增寶可夢（新到舊）';
+          titleTip = _tDex('排序：新增寶可夢（新到舊）', 'Sorted: Newest to Oldest');
         } else if (parsed.dir === 'desc') {
           arrow = '▼';
           aria = 'descending';
-          titleTip = isEN ? 'Sorted: Descending' : '排序：大到小';
+          titleTip = _tDex('排序：大到小', 'Sorted: Descending');
         } else {
           arrow = '▲';
           aria = 'ascending';
-          titleTip = isEN ? 'Sorted: Ascending' : '排序：小到大';
+          titleTip = _tDex('排序：小到大', 'Sorted: Ascending');
         }
       }
       return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}" ${titleTip ? `title="${titleTip}"` : ''}>${label}${arrow ? `<span class="sort-arrow" aria-hidden="true">${arrow}</span>` : ''}</th>`;
@@ -84,7 +84,7 @@
         const filtered = sortPokemonList(filterData(), currentSort);
         const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
         const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-        if (countBadge) countBadge.textContent = isEN ? `${filtered.length} ${t('pokedex.count_label', 'Pokémon')}` : `共 ${filtered.length} 隻寶可夢`;
+        if (countBadge) countBadge.textContent = isEN ? `${filtered.length} ${t('pokedex.count_label', 'Pokémon')}` : _tDex(`共 ${filtered.length} 隻寶可夢`, `${filtered.length} Pokémon`);
 
         if (filtered.length === 0) {
           contentArea.innerHTML = `<div style="text-align:center; padding: 60px; color: var(--text-muted); font-size: 16px;">${t('pokedex.no_results', '查無符合條件的寶可夢')}</div>`;
@@ -101,7 +101,7 @@
       } catch (err) {
         console.error('Error in renderUI:', err);
         if (typeof window.__renderInPlaceError === 'function') {
-          window.__renderInPlaceError('content-area', '圖鑑畫面渲染異常', err);
+          window.__renderInPlaceError('content-area', _tDex('圖鑑畫面渲染異常', 'Pokédex render error'), err);
         }
       }
     }
@@ -114,7 +114,7 @@
         <div class="pokemon-grid">
           ${data.map(p => {
             const iconUrl = getIconUrl(p);
-            const pkmName = isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en);
+            const pkmName = (window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : (isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en));
             const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
             let specClass = 'spec-ingredient';
             const rawSpec = p.specialty || '';
@@ -221,7 +221,7 @@
             <tbody>
               ${data.map(p => {
                 const iconUrl = getIconUrl(p);
-                const pkmName = isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en);
+                const pkmName = (window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : (isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en));
                 const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
                 let specClass = 'spec-ingredient';
                 const rawSpec = p.specialty || '';

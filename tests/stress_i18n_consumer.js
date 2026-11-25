@@ -225,9 +225,10 @@ testCase('Cache Resilience', 'Functions smoothly when window.__RECIPES_CACHE__ i
 // ─── Group 6: Consumer Safety in recipes_render.js ──────────────────
 const renderFile = fs.readFileSync(path.resolve(__dirname, '../js/modules/recipes/recipes_render.js'), 'utf8');
 
-// Isolate renderIngRow
+// Isolate _resolveRecipeAssetUrl + renderIngRow
+const matchResolveUrl = renderFile.match(/function _resolveRecipeAssetUrl\([\s\S]*?\n  \}/);
 const matchIngRow = renderFile.match(/function renderIngRow\([\s\S]*?\n  \}/);
-const renderIngRow = new Function('window', 'ingredients', 'return (' + matchIngRow[0] + ')(ingredients);');
+const renderIngRow = new Function('window', 'ingredients', (matchResolveUrl ? matchResolveUrl[0] + '\n' : '') + 'return (' + matchIngRow[0] + ')(ingredients);');
 
 testCase('Consumer Safety', 'renderIngRow handles non-array and poisoned arrays safely', () => {
   const poisonedInputs = [
@@ -346,4 +347,5 @@ if (results.failed === 0) {
   console.log('\nOVERALL EMPIRICAL VERDICT: APPROVE');
 } else {
   console.log('\nOVERALL EMPIRICAL VERDICT: REQUEST_CHANGES');
+  process.exit(1);
 }

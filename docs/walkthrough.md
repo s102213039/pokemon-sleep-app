@@ -5,6 +5,23 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-25 已完成（全站三語深度清查：消除簡體繁體字殘留與英文漏譯、道具 Tab 與詳情浮窗全 8 主題深色修復）
+
+- **調整內容（Teamwork 多代理並行實作與全量實機驗證）**：
+  1. **M1 — 簡體中文（`zh-CN`）繁體字殘留與英文（`en-US`）漏譯全面清除**：
+     - **i18n 核心與字典 (`js/core/i18n/i18n_core.js`, `i18n_t2s.js`, `i18n_entities.js`, `i18n_dict_zh_tw.js`, `i18n_dict_zh_cn.js`, `i18n_dict_en_us.js`)**：補齊 `i18n_t2s.js` 缺漏之繁轉簡字元與專詞對照、補齊 `DICTIONARY` 缺失鍵值並確保簡體／英文全域實體名稱（寶可夢、樹果、食材、料理、主副技能、性格、道具、島嶼）100% 轉換無遺漏。
+     - **全模組雙語改三語與動態文案補譯 (`index.html`, `app/index.html`, `js/core/cloudSync/*`, `js/modules/pokedex/*`, `js/modules/recipes/*`, `js/modules/box/*`, `js/modules/lab/*`, `js/modules/wiki/*`, `js/modules/news/*`)**：全面將原本僅區分 `isEN ? en : zhTW` 的二元判斷改寫為支援 `zh-TW / zh-CN / en-US` 的三語輔助（`_tDex`, `_tRecipes`, `_tNews`, `_tWiki`, `_tLab` / `_tLabStr` 等），並補齊雙端 HTML、雲端同步、圖鑑、料理、倉庫、深度研究室、百科（含 7 子分頁與道具詳情彈窗）與公告頁之未翻譯英文字串。
+     - **資料層對齊 (`data/news.json`, `data/recipes.json`, `data/ladder_lv60.json`, `data/manifest.json`)**：補齊公告英文欄位與天梯註解在地化並更新 `manifest.json` 雜湊。
+  2. **M2 — 道具 Tab 與詳情浮窗全 4 組深色主題修正 (`css/components/modals/item_modal.css`, `css/views/wiki/wiki_items.css`, `css/mobile/items.css`, `css/components/modals/pokedex_modal_hero.css`, `css/components/modals/recipe_picker.css`, `css/components/theme_preview.css`, `css/mobile/wiki_calcs.css`, `css/mobile/wiki_skills.css`, `css/views/wiki/wiki_subskills.css`, `css/styles.css`)**：
+     - 修正 `#wiki-item-detail-modal` 在 `dawn` 反色與 `emerald` 反色深色主題下誤套用淺色底色、以及 `.wiki-item-pkm-card` 在全 4 組深色主題（`midnight`、`onyx`、`dawn` 反色、`emerald` 反色）下誤呈現淺灰底的問題，全面對齊深淺 8 組主題亮度與 WCAG 2.1 AA（`>= 4.5:1`）對比標準。
+  3. **建置與自動化測試擴充 (`tests/test_r1_r5_theme_pwa_css.js`, `tests/test_e2e_r1_r5_pwa_ui.js`, `tests/stress_i18n_consumer.js`, `tests/tiers/*`)**：
+     - 新增 `E2E-M1-I18N-01`（全站 5 大分頁 + 百科 7 子分頁 + 道具彈窗 3 語系實機 DOM 零殘留檢核）與 `E2E-M2-ITEMS-01`（雙端全 8 主題道具頁與詳情浮窗亮度與 WCAG AA 對比檢核），執行 `npm run build` 產生最新壓縮資產。
+- **驗證結果**：
+  - `npm test`：**296 / 296 PASS**（Tier 1–4 全數通過）。
+  - `node tests/stress_i18n_consumer.js`：**19 / 19 PASS**（Verdict: APPROVE）。
+  - `node tests/test_r1_r5_theme_pwa_css.js`：**9 / 9 PASS**（含 M2 8 主題 CSS 同步、54 模組 `<= 1,000` 行、Zero Emoji/Glyph）。
+  - `node tests/test_e2e_r1_r5_pwa_ui.js`（無頭 Chrome CDP 實機驗證）：**11 / 11 PASS**（`E2E-M1-I18N-01` 簡體 0 繁體殘留、英文 0 未翻譯中文字；`E2E-M2-ITEMS-01` 雙端全 8 主題亮度與 `>= 4.5:1` 對比通過）。
+
 ## 交接：2026-11-25 已完成（深度研究室料理挑選器依基礎能量高到低排序、食材隊選取料理後自動依單日 3 餐產量覆蓋配置隊伍）
 
 - **調整內容**：

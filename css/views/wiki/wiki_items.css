@@ -469,8 +469,10 @@
   flex-shrink: 0 !important;
 }
 
-[data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
-[data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle {
   background: rgba(0, 0, 0, 0.2) !important;
 }
 

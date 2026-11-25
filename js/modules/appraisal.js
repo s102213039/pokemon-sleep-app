@@ -12,15 +12,35 @@
 (function () {
   'use strict';
 
+  function _tLab(tw, en, isENFlag) {
+    if (isENFlag === true) return en;
+    if (typeof window !== 'undefined' && window.I18N) {
+      const lang = typeof window.I18N.getLanguage === 'function' ? window.I18N.getLanguage() : '';
+      if (lang === 'en-US' && isENFlag !== false) return en;
+      if (lang === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
+        return window.I18N.toSimplified(tw);
+      }
+    }
+    return tw;
+  }
+
+  function _tLabStr(tw) {
+    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function' &&
+        window.I18N.getLanguage() === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
+      return window.I18N.toSimplified(tw);
+    }
+    return tw;
+  }
+
   /* ─── 六維度元資料定義 ─────────────────────────────────────── */
   function getSixDimMeta(isEN) {
     return [
-      { key: 'berry', label: isEN ? 'Berry Output' : '樹果產能', icon: '', angle: -Math.PI / 2, desc: isEN ? 'Total daily berry energy potential (BFS, specialty & speed)' : '單日樹果總能量潛力 (含樹果S、專長與幫速)' },
-      { key: 'ingredient', label: isEN ? 'Ingredient Output' : '食材產能', icon: '', angle: -Math.PI / 6, desc: isEN ? 'Ingredient drop rate and recipe combo synergies' : '食材獲取期望與解鎖組合協同效應' },
-      { key: 'skill', label: isEN ? 'Skill Power' : '技能強度', icon: '', angle: Math.PI / 6, desc: isEN ? 'Main skill trigger rate and value scaling' : '主技能觸發頻率、等級加成與爆發收益' },
-      { key: 'speed', label: isEN ? 'Helping Speed' : '幫忙速度', icon: '', angle: Math.PI / 2, desc: isEN ? 'Overall helping frequency (base interval, sub-skills & nature)' : '整體幫忙頻率 (基礎間隔、幫速SM、幫獎與性格)' },
-      { key: 'growth', label: isEN ? 'Late Growth' : '後期成長', icon: '', angle: 5 * Math.PI / 6, desc: isEN ? 'Lv.50/70/80 late skill and ingredient scaling potential' : 'Lv.50/70/80 後期技能與第三食材爆發潛能' },
-      { key: 'roi', label: isEN ? 'Resource ROI' : '資源效益', icon: '', angle: -5 * Math.PI / 6, desc: isEN ? 'Early/mid power unlock and candy investment efficiency' : '成型週期、前中期戰力解鎖速度與糖果回報率' }
+      { key: 'berry', label: _tLab('樹果產能', 'Berry Output', isEN), icon: '', angle: -Math.PI / 2, desc: _tLab('單日樹果總能量潛力 (含樹果S、專長與幫速)', 'Total daily berry energy potential (BFS, specialty & speed)', isEN) },
+      { key: 'ingredient', label: _tLab('食材產能', 'Ingredient Output', isEN), icon: '', angle: -Math.PI / 6, desc: _tLab('食材獲取期望與解鎖組合協同效應', 'Ingredient drop rate and recipe combo synergies', isEN) },
+      { key: 'skill', label: _tLab('技能強度', 'Skill Power', isEN), icon: '', angle: Math.PI / 6, desc: _tLab('主技能觸發頻率、等級加成與爆發收益', 'Main skill trigger rate and value scaling', isEN) },
+      { key: 'speed', label: _tLab('幫忙速度', 'Helping Speed', isEN), icon: '', angle: Math.PI / 2, desc: _tLab('整體幫忙頻率 (基礎間隔、幫速SM、幫獎與性格)', 'Overall helping frequency (base interval, sub-skills & nature)', isEN) },
+      { key: 'growth', label: _tLab('後期成長', 'Late Growth', isEN), icon: '', angle: 5 * Math.PI / 6, desc: _tLab('Lv.50/70/80 後期技能與第三食材爆發潛能', 'Lv.50/70/80 late skill and ingredient scaling potential', isEN) },
+      { key: 'roi', label: _tLab('資源效益', 'Resource ROI', isEN), icon: '', angle: -5 * Math.PI / 6, desc: _tLab('成型週期、前中期戰力解鎖速度與糖果回報率', 'Early/mid power unlock and candy investment efficiency', isEN) }
     ];
   }
 
@@ -431,7 +451,6 @@
   /* ─── 核心評估演算法 (單一維度/等級計算核心) ──────────── */
   function evaluateSingle(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, isPotential, cleanseMint) {
     if (!pkmData) return null;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     natureName = natureName || '坦率';
     subskills = subskills || [];
     const ingArr = (Array.isArray(ingredients) ? ingredients : []).map(normalizeIngName).filter(Boolean);
@@ -936,35 +955,35 @@
 
     // 評級判定 (7 級制: SSS, SS, S, A, B, C, D)
     let grade = 'B';
-    let gradeTitle = isEN ? 'Solid Choice' : '實用良品 (Solid Choice)';
+    let gradeTitle = _tLab('實用良品 (Solid Choice)', 'Solid Choice');
     let gradeColor = '#10b981';
     if (compositeScore >= 98) {
       grade = 'SSS';
-      gradeTitle = isEN ? 'Apex God' : '神級天花板 (Apex God)';
+      gradeTitle = _tLab('神級天花板 (Apex God)', 'Apex God');
       gradeColor = '#f43f5e';
     } else if (compositeScore >= 95) {
       grade = 'SS';
-      gradeTitle = isEN ? 'Mythic Tier' : '極品畢業 (Mythic Tier)';
+      gradeTitle = _tLab('極品畢業 (Mythic Tier)', 'Mythic Tier');
       gradeColor = '#8b5cf6';
     } else if (compositeScore >= 90) {
       grade = 'S';
-      gradeTitle = isEN ? 'Top Tier' : '頂級戰力 (Top Tier)';
+      gradeTitle = _tLab('頂級戰力 (Top Tier)', 'Top Tier');
       gradeColor = '#f59e0b';
     } else if (compositeScore >= 80) {
       grade = 'A';
-      gradeTitle = isEN ? 'Strong Pick' : '強力主力 (Strong Pick)';
+      gradeTitle = _tLab('強力主力 (Strong Pick)', 'Strong Pick');
       gradeColor = '#3b82f6';
     } else if (compositeScore >= 70) {
       grade = 'B';
-      gradeTitle = isEN ? '[✓] Solid Choice' : '[✓] 實用良品 (Solid Choice)';
+      gradeTitle = _tLab('[✓] 實用良品 (Solid Choice)', '[✓] Solid Choice');
       gradeColor = '#10b981';
     } else if (compositeScore >= 60) {
       grade = 'C';
-      gradeTitle = isEN ? '[~] Usable' : '[~] 過渡可用 (Usable)';
+      gradeTitle = _tLab('[~] 過渡可用 (Usable)', '[~] Usable');
       gradeColor = '#64748b';
     } else {
       grade = 'D';
-      gradeTitle = isEN ? '[-] Recycle' : '[-] 換糖回收 (Recycle)';
+      gradeTitle = _tLab('[-] 換糖回收 (Recycle)', '[-] Recycle');
       gradeColor = '#ef4444';
     }
 
@@ -976,173 +995,203 @@
 
     if (hasBFSInTotal) {
       if (isBerryBurst) {
-        pros.push(isEN
-          ? 'Perfectly synergizes with "Berry Burst"! "Berry Finding S" increases base helps by +1 berry while main skill unleashes massive team berry bursts, forming an elite island pusher (maximize yields via regular collection).'
-          : '完美契合「樹果遽增」機制！具備「樹果數量S」能在常態幫忙中額外產出樹果，同時透過主技能引爆全隊樹果能量，為島嶼衝分第一梯隊打手！（勤勞清包收益最大化）');
+        pros.push(_tLab(
+          '完美契合「樹果遽增」機制！具備「樹果數量S」能在常態幫忙中額外產出樹果，同時透過主技能引爆全隊樹果能量，為島嶼衝分第一梯隊打手！（勤勞清包收益最大化）',
+          'Perfectly synergizes with "Berry Burst"! "Berry Finding S" increases base helps by +1 berry while main skill unleashes massive team berry bursts, forming an elite island pusher (maximize yields via regular collection).'
+        ));
       } else if (isHelper) {
-        cons.push(isEN
-          ? '[!] Helper Boost base proc rate is extremely low (~2%); "Berry Finding S" causes rapid bag overflow and blocks main skill checks, crowding out trigger subskills.'
-          : '[!] 傳說神獸「幫手加速」基礎機率極低（約2%），持有「樹果數量S」會迅速塞滿背包並阻斷主技能判定，嚴重排擠關鍵技能機率與持有上限。');
+        cons.push(_tLab(
+          '[!] 傳說神獸「幫手加速」基礎機率極低（約2%），持有「樹果數量S」會迅速塞滿背包並阻斷主技能判定，嚴重排擠關鍵技能機率與持有上限。',
+          '[!] Helper Boost base proc rate is extremely low (~2%); "Berry Finding S" causes rapid bag overflow and blocks main skill checks, crowding out trigger subskills.'
+        ));
       } else if (isHealer) {
-        cons.push(isEN
-          ? '[!] Healer relies on all-day skill procs; "Berry Finding S" causes rapid bag overflow and blocks healing procs (especially overnight).'
-          : '[!] 活力療癒補師首重全隊活力維持，「樹果數量S」會大幅加速滿包並阻斷主技能判定（尤其睡眠過夜期間），需高頻清包。');
+        cons.push(_tLab(
+          '[!] 活力療癒補師首重全隊活力維持，「樹果數量S」會大幅加速滿包並阻斷主技能判定（尤其睡眠過夜期間），需高頻清包。',
+          '[!] Healer relies on all-day skill procs; "Berry Finding S" causes rapid bag overflow and blocks healing procs (especially overnight).'
+        ));
       } else if (isCharge || isSlaking) {
-        pros.push(isEN
-          ? 'Equipped with "Berry Finding S" for high-strength hybrid berry output (ensure frequent collection to avoid bag overflow blocking skill procs).'
-          : '具備「樹果數量S」解鎖高額樹果副輸出，兼顧單兵直傷與產果（需留意及時清包避免阻斷主技能判定）。');
+        pros.push(_tLab(
+          '具備「樹果數量S」解鎖高額樹果副輸出，兼顧單兵直傷與產果（需留意及時清包避免阻斷主技能判定）。',
+          'Equipped with "Berry Finding S" for high-strength hybrid berry output (ensure frequent collection to avoid bag overflow blocking skill procs).'
+        ));
       } else if (isExtraTasty || isPotExpander || isDreamShard || pkmName.includes('咚咚鼠') || pkmName.includes('Dedenne') || pkmName.includes('磁怪') || pkmName.includes('Magne') || pkmName.includes('喵喵') || pkmName.includes('Meowth')) {
-        cons.push(isEN
-          ? '[!] Tactical skill specialist; "Berry Finding S" causes early bag overflow and blocks main skill checks.'
-          : '[!] 純戰術型技能寶可夢持有上限較低，擁有「樹果數量S」容易過早滿包限制主技能判定。');
+        cons.push(_tLab(
+          '[!] 純戰術型技能寶可夢持有上限較低，擁有「樹果數量S」容易過早滿包限制主技能判定。',
+          '[!] Tactical skill specialist; "Berry Finding S" causes early bag overflow and blocks main skill checks.'
+        ));
       } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
         const hasCarryBuff = activeSubskills.some(s => s.includes('持有上限') || s.includes('Inventory Up'));
         if (hasCarryBuff) {
-          pros.push(isEN
-            ? 'Features "Berry Finding S" backed by Inventory Up, providing bonus berry value without hurting ingredient capacity.'
-            : '具備「樹果數量S」並搭配「持有上限提升」，兼顧穩定副產能且不易過早滿包。');
+          pros.push(_tLab(
+            '具備「樹果數量S」並搭配「持有上限提升」，兼顧穩定副產能且不易過早滿包。',
+            'Features "Berry Finding S" backed by Inventory Up, providing bonus berry value without hurting ingredient capacity.'
+          ));
         } else {
-          cons.push(isEN
-            ? '[-] "Berry Finding S" on ingredient specialist without Inventory Up causes rapid overflow, blocking ingredient drops during sleep.'
-            : '[-] 食材型持有「樹果數量S」但缺乏「持有上限提升」，易在離線期間快速滿包並提前進入偷吃樹果狀態阻斷產料。');
+          cons.push(_tLab(
+            '[-] 食材型持有「樹果數量S」但缺乏「持有上限提升」，易在離線期間快速滿包並提前進入偷吃樹果狀態阻斷產料。',
+            '[-] "Berry Finding S" on ingredient specialist without Inventory Up causes rapid overflow, blocking ingredient drops during sleep.'
+          ));
         }
       } else {
-        pros.push(isEN
-          ? 'Equipped with active God-tier sub-skill "Berry Finding S", +1 berry per help.'
-          : '擁有已解鎖神技「樹果數量S」，樹果產能躍升 +1 個。');
+        pros.push(_tLab(
+          '擁有已解鎖神技「樹果數量S」，樹果產能躍升 +1 個。',
+          'Equipped with active God-tier sub-skill "Berry Finding S", +1 berry per help.'
+        ));
       }
     } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
       const hasHB = activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1;
       const hasSpeedM = activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1;
       if (hasHB && hasSpeedM && nature.buffType === 'speed') {
-        pros.push(isEN
-          ? 'Features extreme speed kit (Helping Bonus + Helping Speed M + Speed Up Nature), qualifying as a viable core support.'
-          : '具備「幫手獎勵 + 幫忙速度M + 加幫速性格」之極限幫速配置，成功特例躋身主力行列！');
+        pros.push(_tLab(
+          '具備「幫手獎勵 + 幫忙速度M + 加幫速性格」之極限幫速配置，成功特例躋身主力行列！',
+          'Features extreme speed kit (Helping Bonus + Helping Speed M + Speed Up Nature), qualifying as a viable core support.'
+        ));
       } else {
-        cons.push(isEN
-          ? '[-] Berry specialist without active "Berry Finding S", production ceiling is capped below top tier.'
-          : '[-] 樹果型專長未激活「樹果數量S」，核心產能與頂標差距明顯，上限封頂於過渡可用（最高B級）。');
+        cons.push(_tLab(
+          '[-] 樹果型專長未激活「樹果數量S」，核心產能與頂標差距明顯，上限封頂於過渡可用（最高B級）。',
+          '[-] Berry specialist without active "Berry Finding S", production ceiling is capped below top tier.'
+        ));
       }
     }
 
     if (isSlowpoke) {
       const hasTailLv30 = ingredients.length >= 2 && (ingredients[1] === '美味尾巴' || (ingredients[1] && ingredients[1].includes('尾巴')) || (ingredients[1] && ingredients[1].includes('Tail')));
       if (hasTailLv30) {
-        pros.push(isEN
-          ? 'Lv.30 unlocks the most valuable ingredient "Slowpoke Tail", fulfilling primary strategic unlock mission!'
-          : 'Lv.30 解鎖遊戲最頂級食材「美味尾巴」，達成呆呆獸家族首要戰略解鎖使命！');
+        pros.push(_tLab(
+          'Lv.30 解鎖遊戲最頂級食材「美味尾巴」，達成呆呆獸家族首要戰略解鎖使命！',
+          'Lv.30 unlocks the most valuable ingredient "Slowpoke Tail", fulfilling primary strategic unlock mission!'
+        ));
       } else {
-        cons.push(isEN
-          ? '[-] Lv.30 does NOT yield "Slowpoke Tail", failing its core strategic unlock role.'
-          : '[-] 致命失職：Lv.30 未出「美味尾巴」，喪失呆呆獸家族核心戰略解鎖價值。');
+        cons.push(_tLab(
+          '[-] 致命失職：Lv.30 未出「美味尾巴」，喪失呆呆獸家族核心戰略解鎖價值。',
+          '[-] Lv.30 does NOT yield "Slowpoke Tail", failing its core strategic unlock role.'
+        ));
       }
     }
 
     if (isHealer) {
       if (nature.debuffType === 'skill') {
-        cons.push(isEN
-          ? '[-] Critical flaw: Healer has Main Skill Trigger Down nature, failing to sustain team energy.'
-          : '[-] 致命缺陷：補師性格為減主技能發動率（-20%），全天期望回能嚴重不足，無法勝任隊伍基石。');
+        cons.push(_tLab(
+          '[-] 致命缺陷：補師性格為減主技能發動率（-20%），全天期望回能嚴重不足，無法勝任隊伍基石。',
+          '[-] Critical flaw: Healer has Main Skill Trigger Down nature, failing to sustain team energy.'
+        ));
       } else if (!hasSkillM && !hasSkillS && nature.buffType !== 'skill') {
-        cons.push(isEN
-          ? '[!] Lacks any active Skill Trigger subskills or nature boost; healing frequency is too low for reliable team recovery.'
-          : '[!] 缺乏任何主技能發動率副技能或性格加成，發動期望偏低，無法穩定維持全隊活力。');
+        cons.push(_tLab(
+          '[!] 缺乏任何主技能發動率副技能或性格加成，發動期望偏低，無法穩定維持全隊活力。',
+          '[!] Lacks any active Skill Trigger subskills or nature boost; healing frequency is too low for reliable team recovery.'
+        ));
       }
     }
 
     const hasIngMInTotal = activeSubskills.indexOf('食材機率提升M') !== -1 || activeSubskills.indexOf('Ingredient Finder M') !== -1;
     if (hasIngMInTotal && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
-      pros.push(isEN
-        ? 'Features active "Ingredient Finder M", greatly stabilizing ingredient supply.'
-        : '具備已解鎖「食材機率提升M」，大幅提升料理食材供貨穩定度。');
+      pros.push(_tLab(
+        '具備已解鎖「食材機率提升M」，大幅提升料理食材供貨穩定度。',
+        'Features active "Ingredient Finder M", greatly stabilizing ingredient supply.'
+      ));
     }
 
     const hasSkillMInTotal = activeSubskills.indexOf('技能機率提升M') !== -1 || activeSubskills.indexOf('Skill Trigger M') !== -1;
     if (hasSkillMInTotal) {
       if (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') {
-        pros.push(isEN
-          ? 'Features active "Skill Trigger M", significantly raising main skill activation frequency.'
-          : '擁有已解鎖「技能機率提升M」，主技能發動頻率顯著提高。');
+        pros.push(_tLab(
+          '擁有已解鎖「技能機率提升M」，主技能發動頻率顯著提高。',
+          'Features active "Skill Trigger M", significantly raising main skill activation frequency.'
+        ));
       } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
         if (pkmData.main_skill && (pkmData.main_skill.includes('食材') || pkmData.main_skill.includes('Ingredient') || pkmData.main_skill.includes('怪力鉗') || pkmData.main_skill.includes('超幸運') || pkmData.main_skill.includes('禮物') || pkmData.main_skill.includes('正電') || pkmData.main_skill.includes('健美'))) {
-          pros.push(isEN
-            ? 'Unlocked "Skill Trigger M" synergizes with ingredient-fetching main skill for bonus food supplies.'
-            : '具備已解鎖「技能機率提升M」，輔助觸發食材獲取主技能，提供額外料理補給。');
+          pros.push(_tLab(
+            '具備已解鎖「技能機率提升M」，輔助觸發食材獲取主技能，提供額外料理補給。',
+            'Unlocked "Skill Trigger M" synergizes with ingredient-fetching main skill for bonus food supplies.'
+          ));
         }
       }
     }
 
     if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) {
-      pros.push(isEN
-        ? 'Features active top-tier team aura "Helping Bonus", reducing team helping time by 5%.'
-        : '具備已解鎖全隊頂級光環「幫手獎勵」，全員幫忙時間縮短 5%（相當於全隊淨產能大幅提升）。');
+      pros.push(_tLab(
+        '具備已解鎖全隊頂級光環「幫手獎勵」，全員幫忙時間縮短 5%（相當於全隊淨產能大幅提升）。',
+        'Features active top-tier team aura "Helping Bonus", reducing team helping time by 5%.'
+      ));
     }
 
     if (activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1) {
-      pros.push(isEN
-        ? 'Features active "Helping Speed M", shortening self helping interval by 14%.'
-        : '擁有已解鎖「幫忙速度M」，自身幫忙間隔縮短 14%。');
+      pros.push(_tLab(
+        '擁有已解鎖「幫忙速度M」，自身幫忙間隔縮短 14%。',
+        'Features active "Helping Speed M", shortening self helping interval by 14%.'
+      ));
     }
 
     if (skillLevel >= 6 && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
-      pros.push(isEN
-        ? `High Main Skill Level (Lv.${skillLevel}), maximizing main skill trigger output.`
-        : `主技能等級達到 Lv.${skillLevel}，技能單次發動效益已達極限。`);
+      pros.push(_tLab(
+        `主技能等級達到 Lv.${skillLevel}，技能單次發動效益已達極限。`,
+        `High Main Skill Level (Lv.${skillLevel}), maximizing main skill trigger output.`
+      ));
     }
 
     if (nature.buffType === 'speed') {
       if ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') && natureName === '固執') {
-        pros.push(isEN
-          ? 'Nature "Adamant" is the #1 God nature for Berry specialists (Speed of Help ▲ +10%, Ingredient Finding ▼ converts help cycles directly into berry output).'
-          : '性格「固執」為樹果型第一神性格（幫忙速度▲ +10%，食材發現率▼ 進一步轉化樹果產量）。');
+        pros.push(_tLab(
+          '性格「固執」為樹果型第一神性格（幫忙速度▲ +10%，食材發現率▼ 進一步轉化樹果產量）。',
+          'Nature "Adamant" is the #1 God nature for Berry specialists (Speed of Help ▲ +10%, Ingredient Finding ▼ converts help cycles directly into berry output).'
+        ));
       } else {
-        pros.push(isEN
-          ? `Nature "${natDisplayName}" provides Speed of Help ▲ (+10%), boosting all production.`
-          : '性格「' + natureName + '」帶來幫忙速度▲ (+10%)，強化所有產出判定。');
+        pros.push(_tLab(
+          `性格「${natDisplayName}」帶來幫忙速度▲ (+10%)，強化所有產出判定。`,
+          `Nature "${natDisplayName}" provides Speed of Help ▲ (+10%), boosting all production.`
+        ));
       }
     } else if (nature.debuffType === 'speed') {
-      cons.push(isEN
-        ? `[-] Nature "${natDisplayName}" reduces Speed of Help ▼ (-7.5%), severely impacting output.`
-        : '[-] 性格「' + natureName + '」幫忙速度▼ (-7.5%)，對全方位產出有顯著負面影響。');
+      cons.push(_tLab(
+        `[-] 性格「${natDisplayName}」幫忙速度▼ (-7.5%)，對全方位產出有顯著負面影響。`,
+        `[-] Nature "${natDisplayName}" reduces Speed of Help ▼ (-7.5%), severely impacting output.`
+      ));
     }
 
     if (nature.buffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
-      pros.push(isEN
-        ? `Nature "${natDisplayName}" perfectly synergizes with Ingredient specialty (Ingredient Finder ▲ +20%).`
-        : '性格「' + natureName + '」完美契合食材型專長 (食材發現率▲ +20%)。');
+      pros.push(_tLab(
+        `性格「${natDisplayName}」完美契合食材型專長 (食材發現率▲ +20%)。`,
+        `Nature "${natDisplayName}" perfectly synergizes with Ingredient specialty (Ingredient Finder ▲ +20%).`
+      ));
     } else if (nature.debuffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
-      cons.push(isEN
-        ? `[-] Nature "${natDisplayName}" reduces Ingredient Finding ▼ (-20%), severely weakening specialty advantage (disqualification flaw).`
-        : '[-] 致命缺陷：性格「' + natureName + '」導致食材發現率▼ (-20%)，產料嚴重不足，建議換糖回收。');
+      cons.push(_tLab(
+        `[-] 致命缺陷：性格「${natDisplayName}」導致食材發現率▼ (-20%)，產料嚴重不足，建議換糖回收。`,
+        `[-] Nature "${natDisplayName}" reduces Ingredient Finding ▼ (-20%), severely weakening specialty advantage (disqualification flaw).`
+      ));
     }
 
     if (nature.buffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
-      pros.push(isEN
-        ? `Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).`
-        : '性格「' + natureName + '」完美契合技能型專長 (主技能發動率▲ +20%)。');
+      pros.push(_tLab(
+        `性格「${natDisplayName}」完美契合技能型專長 (主技能發動率▲ +20%)。`,
+        `Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).`
+      ));
     } else if (nature.debuffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
-      cons.push(isEN
-        ? `[-] Nature "${natDisplayName}" reduces Main Skill Trigger ▼ (-20%), severely crippling skill output.`
-        : '[-] 致命缺陷：性格「' + natureName + '」導致主技能發動率▼ (-20%)，嚴重閹割核心發動頻率。');
+      cons.push(_tLab(
+        `[-] 致命缺陷：性格「${natDisplayName}」導致主技能發動率▼ (-20%)，嚴重閹割核心發動頻率。`,
+        `[-] Nature "${natDisplayName}" reduces Main Skill Trigger ▼ (-20%), severely crippling skill output.`
+      ));
     }
 
     if (isMint) {
-      pros.push(isEN
-        ? `Cleanse Mint used: original nature "${natDisplayName}" neutralized to standard baseline.`
-        : `已使用淨白薄荷：原性格「${natDisplayName}」個性效果已被中和消除。`);
+      pros.push(_tLab(
+        `已使用淨白薄荷：原性格「${natDisplayName}」個性效果已被中和消除。`,
+        `Cleanse Mint used: original nature "${natDisplayName}" neutralized to standard baseline.`
+      ));
     }
 
     if (ribbonBonus.level > 0) {
       const carryText = `+${ribbonBonus.carry}`;
       if (ribbonBonus.speedDiscount > 0) {
         const pctText = `${Math.round(ribbonBonus.speedDiscount * 100)}%`;
-        pros.push(isEN
-          ? `[Ribbon Lv.${ribbonBonus.level}] Helping interval shortened by ${pctText}, carry capacity increased by ${carryText}.`
-          : `[睡飽飽獎章 Lv.${ribbonBonus.level}] 幫忙間隔縮短 ${pctText}，持有上限增加 ${carryText}。`);
+        pros.push(_tLab(
+          `[睡飽飽獎章 Lv.${ribbonBonus.level}] 幫忙間隔縮短 ${pctText}，持有上限增加 ${carryText}。`,
+          `[Ribbon Lv.${ribbonBonus.level}] Helping interval shortened by ${pctText}, carry capacity increased by ${carryText}.`
+        ));
       } else {
-        pros.push(isEN
-          ? `[Ribbon Lv.${ribbonBonus.level}] Carry capacity increased by ${carryText}${remainingEvos === 0 ? ' (fully evolved/single-stage, no speed reduction)' : ''}.`
-          : `[睡飽飽獎章 Lv.${ribbonBonus.level}] 持有上限增加 ${carryText}${remainingEvos === 0 ? '（最終形態/無進化型態無速度縮短）' : ''}。`);
+        pros.push(_tLab(
+          `[睡飽飽獎章 Lv.${ribbonBonus.level}] 持有上限增加 ${carryText}${remainingEvos === 0 ? '（最終形態/無進化型態無速度縮短）' : ''}。`,
+          `[Ribbon Lv.${ribbonBonus.level}] Carry capacity increased by ${carryText}${remainingEvos === 0 ? ' (fully evolved/single-stage, no speed reduction)' : ''}.`
+        ));
       }
     }
 
@@ -1152,17 +1201,20 @@
         const i0 = ingredients[0], i1 = ingredients[1], i2 = ingredients[2];
         if (i0 && i1 && i2) {
           if (i0 === i1 && i1 === i2) {
-            pros.push(isEN
-              ? 'Pure mono-ingredient (AAA) configuration, maximizing targeted ingredient yield for top recipes.'
-              : '具備極品純色 AAA 食材配置，特定食材產量高度集中，為頂級食材專精配置。');
+            pros.push(_tLab(
+              '具備極品純色 AAA 食材配置，特定食材產量高度集中，為頂級食材專精配置。',
+              'Pure mono-ingredient (AAA) configuration, maximizing targeted ingredient yield for top recipes.'
+            ));
           } else if (i0 !== i1 && i1 === i2) {
-            pros.push(isEN
-              ? 'Dual-ingredient (ABB) configuration, excellent mid-to-late game specialized output.'
-              : '具備強勢 ABB 雙色食材配置，二階與三階食材量產能力卓越。');
+            pros.push(_tLab(
+              '具備強勢 ABB 雙色食材配置，二階與三階食材量產能力卓越。',
+              'Dual-ingredient (ABB) configuration, excellent mid-to-late game specialized output.'
+            ));
           } else if (i0 !== i1 && i1 !== i2 && i0 !== i2) {
-            cons.push(isEN
-              ? '[-] Split-ingredient (ABC) configuration, recipe ingredient dilution caps overall potential.'
-              : '[-] 三格食材分散 (ABC 雜菜配置)，產出種類嚴重稀釋難以穩定供應主力食譜，評級上限受限於A級。');
+            cons.push(_tLab(
+              '[-] 三格食材分散 (ABC 雜菜配置)，產出種類嚴重稀釋難以穩定供應主力食譜，評級上限受限於A級。',
+              '[-] Split-ingredient (ABC) configuration, recipe ingredient dilution caps overall potential.'
+            ));
           }
         }
       }
@@ -1170,71 +1222,81 @@
 
     // 持有上限防溢滿診斷
     if (activeSubskills.indexOf('持有上限提升L') !== -1 || activeSubskills.indexOf('持有上限提升M') !== -1) {
-      pros.push(isEN
-        ? 'Active Inventory Up subskill prevents overnight inventory capping, sustaining ingredient and skill production.'
-        : '具備已解鎖「持有上限提升」，大幅延長離線/睡眠產出時間，避免背包溢滿阻斷食材與技能。');
+      pros.push(_tLab(
+        '具備已解鎖「持有上限提升」，大幅延長離線/睡眠產出時間，避免背包溢滿阻斷食材與技能。',
+        'Active Inventory Up subskill prevents overnight inventory capping, sustaining ingredient and skill production.'
+      ));
     }
 
     // 樹果遽增型特殊診斷 (未帶 BFS 時)
     if (isBerryBurst && !hasBFSInTotal) {
-      pros.push(isEN
-        ? 'Berry Burst Specialist: Main skill detonates instant berry energy for Snorlax (and copies teammate berries); 1.4x boosted during Buncha Berries events.'
-        : '樹果遽增戰略型：主技能發動直接為卡比獸爆發樹果能量（並隨機獲取隊友樹果）；果實纍纍樹果週享有 1.4 倍加成！');
+      pros.push(_tLab(
+        '樹果遽增戰略型：主技能發動直接為卡比獸爆發樹果能量（並隨機獲取隊友樹果）；果實纍纍樹果週享有 1.4 倍加成！',
+        'Berry Burst Specialist: Main skill detonates instant berry energy for Snorlax (and copies teammate berries); 1.4x boosted during Buncha Berries events.'
+      ));
     }
 
     // 充能直傷型特殊診斷 (未帶 BFS 時)
     if (isCharge && !hasBFSInTotal) {
-      pros.push(isEN
-        ? 'High-Frequency Direct Charge: Pure skill build consistently fires Charge Strength throughout the day without inventory overflow risks.'
-        : '高頻單兵充能直傷：正統純技能流派，全天穩定發動能量填充，無背包過早滿包阻斷技能之顧慮。');
+      pros.push(_tLab(
+        '高頻單兵充能直傷：正統純技能流派，全天穩定發動能量填充，無背包過早滿包阻斷技能之顧慮。',
+        'High-Frequency Direct Charge: Pure skill build consistently fires Charge Strength throughout the day without inventory overflow risks.'
+      ));
     }
 
     // 傳說神獸特殊診斷
     if (isLegendary) {
-      pros.push(isEN
-        ? 'Legendary / Mythical Pokemon with signature mechanics, high base helping output and indispensable mono-type or domain tactical value.'
-        : '傳說/幻之寶可夢專屬機制：素質基礎高，在特定同屬性純色隊或領域戰術中具備無可替代的戰略地位。');
+      pros.push(_tLab(
+        '傳說/幻之寶可夢專屬機制：素質基礎高，在特定同屬性純色隊或領域戰術中具備無可替代的戰略地位。',
+        'Legendary / Mythical Pokemon with signature mechanics, high base helping output and indispensable mono-type or domain tactical value.'
+      ));
     }
 
     // 料理大成功 (咚咚鼠)
     if (isExtraTasty) {
-      pros.push(isEN
-        ? 'Extra Tasty Specialist: Stacks dish critical success chance, tailor-made for exploding weekend master recipes.'
-        : '料理大成功戰術手：疊加料理美味機率，專為週末大餐爆擊（數十萬能量突破）而生的高階戰略組件。');
+      pros.push(_tLab(
+        '料理大成功戰術手：疊加料理美味機率，專為週末大餐爆擊（數十萬能量突破）而生的高階戰術組件。',
+        'Extra Tasty Specialist: Stacks dish critical success chance, tailor-made for exploding weekend master recipes.'
+      ));
     }
 
     // 料理擴鍋 (自爆磁怪)
     if (isPotExpander) {
-      pros.push(isEN
-        ? 'Cooking Power Up Specialist: Expands pot capacity to cook limit-breaking high-tier recipes.'
-        : '料理擴鍋戰術手：突破鍋子容量上限，烹調極限大菜（如彈跳咖哩烏龍麵、採蜜巧克力格子鬆餅等大型食譜）不可或缺的擴容手。');
+      pros.push(_tLab(
+        '料理擴鍋戰術手：突破鍋子容量上限，烹調極限大菜（如彈跳咖哩烏龍麵、採蜜巧克力格子鬆餅等大型食譜）不可或缺的擴容手。',
+        'Cooking Power Up Specialist: Expands pot capacity to cook limit-breaking high-tier recipes.'
+      ));
     }
 
     // 夢之碎片 (路卡利歐)
     if (isDreamShard) {
-      pros.push(isEN
-        ? 'Dream Shard Farmer: High shard acquisition yield, essential for Candy Boost weeks and late-game leveling.'
-        : '夢之碎片收割手：高效獲取夢之碎片，為糖果強化週與後期高昂養成成本提供源源不絕的資金。');
+      pros.push(_tLab(
+        '夢之碎片收割手：高效獲取夢之碎片，為糖果強化週與後期高昂養成成本提供源源不絕的資金。',
+        'Dream Shard Farmer: High shard acquisition yield, essential for Candy Boost weeks and late-game leveling.'
+      ));
     }
 
     // 食材獲取 (水伊布)
     if (isIngSkill) {
-      pros.push(isEN
-        ? 'Ingredient Stockpile Specialist: Rapidly restocks ingredient inventory to resolve cooking shortages.'
-        : '應急食材庫存手：能高頻補充隨機食材庫存，化解大菜料理缺料危機。');
+      pros.push(_tLab(
+        '應急食材庫存手：能高頻補充隨機食材庫存，化解大菜料理缺料危機。',
+        'Ingredient Stockpile Specialist: Rapidly restocks ingredient inventory to resolve cooking shortages.'
+      ));
     }
 
     // 揮指隨機戰術 (波克基斯)
     if (isMetronome) {
-      pros.push(isEN
-        ? 'Metronome Specialist: Triggers unpredictable random skills with unmatched fun and high lucky ceilings.'
-        : '隨機揮指戰術手：能隨機發動全遊戲主技能，具備極高趣味性與驚喜爆發上限。');
+      pros.push(_tLab(
+        '隨機揮指戰術手：能隨機發動全遊戲主技能，具備極高趣味性與驚喜爆發上限。',
+        'Metronome Specialist: Triggers unpredictable random skills with unmatched fun and high lucky ceilings.'
+      ));
     }
 
     if (pros.length === 0) {
-      pros.push(isEN
-        ? 'Basic stats, suitable as a temporary placeholder.'
-        : '數值平庸，適合作為過渡期日常隊伍替補成員。');
+      pros.push(_tLab(
+        '數值平庸，適合作為過渡期日常隊伍替補成員。',
+        'Basic stats, suitable as a temporary placeholder.'
+      ));
     }
 
     // 升級消耗計算
@@ -1286,7 +1348,6 @@
   /* ─── 升級里程碑質變預測 (Specialty-Aware Milestone Leap Projections) ─── */
   function calculateMilestoneProjections(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, currentEval) {
     if (!pkmData || !currentEval) return [];
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const ingArr = (Array.isArray(ingredients) ? ingredients : []).map(normalizeIngName).filter(Boolean);
     ingredients = ingArr;
     const subskillArr = Array.isArray(subskills) ? subskills.map(function(s) { return typeof s === 'string' ? s : (s ? s.name : ''); }) : [];
@@ -1310,7 +1371,7 @@
         if (isSlowpoke) {
           const hasTailLv30 = ingArr.length >= 2 && (ingArr[1] === '美味尾巴' || ingArr[1].includes('尾巴') || ingArr[1].toLowerCase().includes('tail'));
           if (hasTailLv30) {
-            targetSkillName = isEN ? 'Slowpoke Tail' : '美味尾巴';
+            targetSkillName = (window.I18N && typeof window.I18N.getIngredientName === 'function') ? window.I18N.getIngredientName('美味尾巴') : _tLab('美味尾巴', 'Slowpoke Tail');
             milestoneType = 'ingredient';
             isKeyMilestone = true;
           }
@@ -1351,16 +1412,18 @@
       const isScoreLeap = scoreDiff >= 3;
 
       if (isGradeLeap || isScoreLeap || (isKeyMilestone && scoreDiff > 0)) {
-        const skillDisplay = targetSkillName || (isEN ? `Lv.${targetLv} Unlock` : `Lv.${targetLv} 解鎖`);
+        const skillDisplay = targetSkillName || _tLab(`Lv.${targetLv} 解鎖`, `Lv.${targetLv} Unlock`);
         let milestoneText = '';
         if (isGradeLeap) {
-          milestoneText = isEN
-            ? `Recommended to prioritize Lv.${targetLv} to unlock '${skillDisplay}': rating leaps from ${currentEval.grade} (${currentEval.compositeScore} pts) to ${projEval.grade} (${projEval.compositeScore} pts)!`
-            : `建議優先升至 Lv.${targetLv} 解鎖「${skillDisplay}」，評級將由 ${currentEval.grade} 級（${currentEval.compositeScore}分）跨階躍升至 ${projEval.grade} 級（${projEval.compositeScore}分）！`;
+          milestoneText = _tLab(
+            `建議優先升至 Lv.${targetLv} 解鎖「${skillDisplay}」，評級將由 ${currentEval.grade} 級（${currentEval.compositeScore}分）跨階躍升至 ${projEval.grade} 級（${projEval.compositeScore}分）！`,
+            `Recommended to prioritize Lv.${targetLv} to unlock '${skillDisplay}': rating leaps from ${currentEval.grade} (${currentEval.compositeScore} pts) to ${projEval.grade} (${projEval.compositeScore} pts)!`
+          );
         } else {
-          milestoneText = isEN
-            ? `Recommended to train to Lv.${targetLv} to unlock core '${skillDisplay}': overall score increases from ${currentEval.compositeScore} pts to ${projEval.compositeScore} pts.`
-            : `建議培育至 Lv.${targetLv} 解鎖核心「${skillDisplay}」，綜合能力將由 ${currentEval.compositeScore} 分實質提升至 ${projEval.compositeScore} 分。`;
+          milestoneText = _tLab(
+            `建議培育至 Lv.${targetLv} 解鎖核心「${skillDisplay}」，綜合能力將由 ${currentEval.compositeScore} 分實質提升至 ${projEval.compositeScore} 分。`,
+            `Recommended to train to Lv.${targetLv} to unlock core '${skillDisplay}': overall score increases from ${currentEval.compositeScore} pts to ${projEval.compositeScore} pts.`
+          );
         }
 
         milestones.push({
@@ -1524,9 +1587,11 @@ const TARGET_TOP_RECIPES = [
 
   function formatSummaryRecipeChip(rec, isEnMode) {
     if (!rec) return '';
-    const name = isEnMode ? (rec.name_en || rec.name_cn) : (rec.name_cn || rec.name_en);
+    const name = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getRecipeName === 'function')
+      ? window.I18N.getRecipeName(rec, isEnMode === true ? 'en-US' : undefined)
+      : _tLab(rec.name_cn || rec.name_en, rec.name_en || rec.name_cn, isEnMode);
     const icon = rec.icon || rec.icon_url || '';
-    if (!icon) return isEnMode ? `"${name}"` : `『${name}』`;
+    if (!icon) return _tLab(`『${name}』`, `"${name}"`, isEnMode);
     return `<span class="appraisal-summary-recipe-chip" title="${name}"><img src="${icon}" class="appraisal-summary-recipe-icon" alt="${name}" loading="lazy" onerror="this.style.display='none'; if (this.nextElementSibling) { this.nextElementSibling.style.position='static'; this.nextElementSibling.style.clip='auto'; this.nextElementSibling.style.width='auto'; this.nextElementSibling.style.height='auto'; }"><span class="sr-only">${name}</span></span>`;
   }
 
@@ -1575,7 +1640,10 @@ const TARGET_TOP_RECIPES = [
       pool = TARGET_TOP_RECIPES;
     }
 
-    const cacheKey = (isEN ? '1:' : '0:') + (liveCachePool ? liveCachePool.length : 0) + ':' + pool.length + ':' + normIngs.join('|');
+    const curLang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function')
+      ? window.I18N.getLanguage()
+      : (isEN ? 'en-US' : 'zh-TW');
+    const cacheKey = (isEN === true ? 'en-US' : curLang) + ':' + (liveCachePool ? liveCachePool.length : 0) + ':' + pool.length + ':' + normIngs.join('|');
     const cachedRec = _sigRecipeRecCache[cacheKey];
     if (cachedRec !== undefined) return cachedRec;
 
@@ -1622,13 +1690,17 @@ const TARGET_TOP_RECIPES = [
 
     let res = '';
     if (top2 && top2.name_cn !== top1.name_cn) {
-      res = isEN
-        ? `Target recipes: prime pipeline for ${chip1} & ${chip2}.`
-        : `直通頂尖料理 ${chip1} 與 ${chip2} 關鍵供料。`;
+      res = _tLab(
+        `直通頂尖料理 ${chip1} 與 ${chip2} 關鍵供料。`,
+        `Target recipes: prime pipeline for ${chip1} & ${chip2}.`,
+        isEN
+      );
     } else {
-      res = isEN
-        ? `Target recipe: prime pipeline for ${chip1}.`
-        : `直通頂尖料理 ${chip1} 關鍵供料。`;
+      res = _tLab(
+        `直通頂尖料理 ${chip1} 關鍵供料。`,
+        `Target recipe: prime pipeline for ${chip1}.`,
+        isEN
+      );
     }
     _sigRecipeRecCache[cacheKey] = res;
     return res;
@@ -1724,13 +1796,15 @@ const TARGET_TOP_RECIPES = [
         const grilledTailCurry = findTargetRecipe('炙燒尾肉咖哩');
         const chip1 = formatSummaryRecipeChip(slowpokeTailSalad, isEN);
         const chip2 = formatSummaryRecipeChip(grilledTailCurry, isEN);
-        return isEN
-          ? `Strategic Unlock Specialist: Lv.30 unlocks "Slowpoke Tail", fulfilling the primary strategic mission of unlocking the highest-energy ingredient in Pokémon Sleep! Direct pipeline for ${chip1} & ${chip2}.`
-          : `戰略解鎖專門手：Lv.30 精準解鎖「美味尾巴」，圓滿達成全遊戲最高能量食材之戰略開圖使命！直通頂尖料理 ${chip1} 與 ${chip2} 關鍵供料，解鎖後可常駐作為後備庫存手。`;
+        return _tLab(
+          `戰略解鎖專門手：Lv.30 精準解鎖「美味尾巴」，圓滿達成全遊戲最高能量食材之戰略開圖使命！直通頂尖料理 ${chip1} 與 ${chip2} 關鍵供料，解鎖後可常駐作為後備庫存手。`,
+          `Strategic Unlock Specialist: Lv.30 unlocks "Slowpoke Tail", fulfilling the primary strategic mission of unlocking the highest-energy ingredient in Pokémon Sleep! Direct pipeline for ${chip1} & ${chip2}.`
+        );
       } else {
-        return isEN
-          ? 'Fatal Strategic Flaw: Lv.30 fails to roll "Slowpoke Tail", missing the essential strategic unlock value of the Slowpoke family.'
-          : '戰略定位失職：Lv.30 未能開出「美味尾巴」，喪失了呆呆獸家族核心戰略開圖價值，建議作為過渡替補或換糖。';
+        return _tLab(
+          '戰略定位失職：Lv.30 未能開出「美味尾巴」，喪失了呆呆獸家族核心戰略開圖價值，建議作為過渡替補或換糖。',
+          'Fatal Strategic Flaw: Lv.30 fails to roll "Slowpoke Tail", missing the essential strategic unlock value of the Slowpoke family.'
+        );
       }
     }
 
@@ -1738,31 +1812,37 @@ const TARGET_TOP_RECIPES = [
     if (isBerry) {
       if (hasBFS_active) {
         if (hasHB_active || hasSpeedM_active || buff === 'speed' || debuff === 'ingredient') {
-          return isEN
-            ? 'Top-Tier Berry Cannon! "Berry Finding S" combined with excellent Speed boosts produces 3 berries per help cycle, serving as the ultimate Snorlax energy engine.'
-            : '天花板級樹果砲台！解鎖第一神技「樹果數量S（樹果S）」配合極致幫忙速度加成，單次幫忙穩定產出 3 顆樹果，卡比獸能量滾雪球的最強主力。';
+          return _tLab(
+            '天花板級樹果砲台！解鎖第一神技「樹果數量S（樹果S）」配合極致幫忙速度加成，單次幫忙穩定產出 3 顆樹果，卡比獸能量滾雪球的最強主力。',
+            'Top-Tier Berry Cannon! "Berry Finding S" combined with excellent Speed boosts produces 3 berries per help cycle, serving as the ultimate Snorlax energy engine.'
+          );
         } else {
-          return isEN
-            ? 'Core Berry Anchor: Unlocked God-tier "Berry Finding S", providing +1 berry per cycle and delivering strong, reliable island pushing power.'
-            : '畢業級樹果主力：已解鎖第一核心神技「樹果數量S（樹果S）」，單次產果直接 +1，具備極強的島嶼推分實力。';
+          return _tLab(
+            '畢業級樹果主力：已解鎖第一核心神技「樹果數量S（樹果S）」，單次產果直接 +1，具備極強的島嶼推分實力。',
+            'Core Berry Anchor: Unlocked God-tier "Berry Finding S", providing +1 berry per cycle and delivering strong, reliable island pushing power.'
+          );
         }
       } else if (hasBFS_future) {
-        return isEN
-          ? `High Potential Seed: "Berry Finding S" unlocks at Lv.${hasBFS_future.level}. Recommended to prioritize training to unlock this game-changing leap in berry output!`
-          : `未來潛力股：核心神技「樹果數量S（樹果S）」將於 Lv.${hasBFS_future.level} 解鎖，建議作為重點種子培育，解鎖後產能將迎來決定性質變！`;
+        return _tLab(
+          `未來潛力股：核心神技「樹果數量S（樹果S）」將於 Lv.${hasBFS_future.level} 解鎖，建議作為重點種子培育，解鎖後產能將迎來決定性質變！`,
+          `High Potential Seed: "Berry Finding S" unlocks at Lv.${hasBFS_future.level}. Recommended to prioritize training to unlock this game-changing leap in berry output!`
+        );
       } else {
         if (hasHB_active && (hasSpeedM_active || buff === 'speed')) {
-          return isEN
-            ? 'High-Speed Auxiliary: Lacks "Berry Finding S", but extreme speed kit (Helping Bonus + Speed buffs) makes it a valuable team accelerator and transitional anchor.'
-            : '極限速攻流：雖缺乏「樹果數量S」，但憑藉「幫手獎勵 + 幫忙速度加成」大幅縮短全員幫忙間隔，適合作為優質團隊加速掛件與過渡主力。';
+          return _tLab(
+            '極限速攻流：雖缺乏「樹果數量S」，但憑藉「幫手獎勵 + 幫忙速度加成」大幅縮短全員幫忙間隔，適合作為優質團隊加速掛件與過渡主力。',
+            'High-Speed Auxiliary: Lacks "Berry Finding S", but extreme speed kit (Helping Bonus + Speed buffs) makes it a valuable team accelerator and transitional anchor.'
+          );
         } else if (debuff === 'speed') {
-          return isEN
-            ? 'Severely Handicapped: Speed Down nature directly cripples help cycles. Combined with no BFS, output is too low for competitive island production.'
-            : '致命減速：性格減幫忙速度（-7.5%）拖慢節奏，且未持有「樹果數量S」，產能難以支撐島嶼進度。';
+          return _tLab(
+            '致命減速：性格減幫忙速度（-7.5%）拖慢節奏，且未持有「樹果數量S」，產能難以支撐島嶼進度。',
+            'Severely Handicapped: Speed Down nature directly cripples help cycles. Combined with no BFS, output is too low for competitive island production.'
+          );
         } else {
-          return isEN
-            ? 'Transitional Berry Specialist: Lacks core "Berry Finding S", capping output at 2 berries per help. Suitable as an early island transitional placeholder.'
-            : '過渡型樹果手：缺乏核心神技「樹果數量S」，單次僅能產出 2 顆樹果，產能上限受限，適合作為島嶼前期拓荒過渡。';
+          return _tLab(
+            '過渡型樹果手：缺乏核心神技「樹果數量S」，單次僅能產出 2 顆樹果，產能上限受限，適合作為島嶼前期拓荒過渡。',
+            'Transitional Berry Specialist: Lacks core "Berry Finding S", capping output at 2 berries per help. Suitable as an early island transitional placeholder.'
+          );
         }
       }
     }
@@ -1773,191 +1853,224 @@ const TARGET_TOP_RECIPES = [
       if (isBerryBurst) {
         if (hasBFS_active) {
           if (hasSkillM_active || buff === 'skill') {
-            return isEN
-              ? 'Top-Tier Berry Burst Cannon! "Berry Burst" combined with "Berry Finding S" yields double help berries and triggers explosive team berry surges (Mimikyu doubles on Great Success!). An apex island pusher for active collectors; 1.4x boosted during Buncha Berries events.'
-              : '天花板級樹果爆發砲台！「樹果遽增」主技能與「樹果數量S」完美結合，單次幫忙穩定產出加倍樹果，技能觸發更能引爆全隊巨額樹果能量（謎擬Q大成功翻倍爆發更強）！在喜愛樹果島嶼或樹果週（1.4倍加成）為頂尖衝分主力，勤勞收包可享極限產能。';
+            return _tLab(
+              '天花板級樹果爆發砲台！「樹果遽增」主技能與「樹果數量S」完美結合，單次幫忙穩定產出加倍樹果，技能觸發更能引爆全隊巨額樹果能量（謎擬Q大成功翻倍爆發更強）！在喜愛樹果島嶼或樹果週（1.4倍加成）為頂尖衝分主力，勤勞收包可享極限產能。',
+              'Top-Tier Berry Burst Cannon! "Berry Burst" combined with "Berry Finding S" yields double help berries and triggers explosive team berry surges (Mimikyu doubles on Great Success!). An apex island pusher for active collectors; 1.4x boosted during Buncha Berries events.'
+            );
           }
-          return isEN
-            ? 'Berry Burst Pusher: Equipped with "Berry Finding S" for high baseline berry generation, synergizing with Berry Burst procs for strong island push power. Regular collection recommended.'
-            : '樹果遽增推進主力：具備「樹果數量S」大幅提升常態樹果產量，配合主技能隨機爆發隊友樹果，具備極佳的推分爆發力。建議勤勞收包並搭配主技能種子或技能機率副技能。';
+          return _tLab(
+            '樹果遽增推進主力：具備「樹果數量S」大幅提升常態樹果產量，配合主技能隨機爆發隊友樹果，具備極佳的推分爆發力。建議勤勞收包並搭配主技能種子或技能機率副技能。',
+            'Berry Burst Pusher: Equipped with "Berry Finding S" for high baseline berry generation, synergizing with Berry Burst procs for strong island push power. Regular collection recommended.'
+          );
         }
         if (hasSkillM_active || buff === 'skill') {
-          return isEN
-            ? 'High-Frequency Berry Burst Core: Excellent main skill trigger rate triggers frequent berry surges directly into Snorlax. Unlocking BFS or leveling main skill offers enormous burst potential (1.4x during Berry Weeks).'
-            : '高頻樹果遽增核心：主技能發動率卓越，能頻繁為卡比獸爆發樹果能量；若未來能解鎖樹果數量S或配合樹果週活動（1.4倍加成），將具備天花板級爆發上限！';
+          return _tLab(
+            '高頻樹果遽增核心：主技能發動率卓越，能頻繁為卡比獸爆發樹果能量；若未來能解鎖樹果數量S或配合樹果週活動（1.4倍加成），將具備天花板級爆發上限！',
+            'High-Frequency Berry Burst Core: Excellent main skill trigger rate triggers frequent berry surges directly into Snorlax. Unlocking BFS or leveling main skill offers enormous burst potential (1.4x during Berry Weeks).'
+          );
         }
-        return isEN
-          ? 'Berry Burst Specialist: Main skill "Berry Burst" provides instant team berry surges. Prioritize skill seeds and skill trigger subskills for maximum efficiency.'
-          : '樹果遽增技能型：主技能為「樹果遽增」，能瞬間爆發樹果能量，建議搭配主技能種子或技能機率副技能以提升發動次數。';
+        return _tLab(
+          '樹果遽增技能型：主技能為「樹果遽增」，能瞬間爆發樹果能量，建議搭配主技能種子或技能機率副技能以提升發動次數。',
+          'Berry Burst Specialist: Main skill "Berry Burst" provides instant team berry surges. Prioritize skill seeds and skill trigger subskills for maximum efficiency.'
+        );
       }
 
       // 3.2 活力全體療癒補師 (Healers: 沙奈朵, 仙子伊布, 胖可丁, 巴布土撥, 克雷色利亞, 壺壺)
       if (isHealer) {
         if (debuff === 'skill') {
-          return isEN
-            ? 'Fatal Healer Flaw: Main Skill Trigger Down nature (-20%) cripples daily activation rate, failing to maintain team energy above the 80% speed threshold.'
-            : '致命硬傷：補師性格為減少主技能機率（-20%），全天期望回能次數嚴重不足，難以維持全隊 80% 以上極限活力運轉。';
+          return _tLab(
+            '致命硬傷：補師性格為減少主技能機率（-20%），全天期望回能次數嚴重不足，難以維持全隊 80% 以上極限活力運轉。',
+            'Fatal Healer Flaw: Main Skill Trigger Down nature (-20%) cripples daily activation rate, failing to maintain team energy above the 80% speed threshold.'
+          );
         }
         if (hasSkillM_active && (buff === 'skill' || hasSpeedM_active || hasHB_active)) {
-          const extraNote = hasBFS_active ? (isEN ? ' (Note: BFS accelerates bag overflow; clear inventory before sleep to prevent blocked procs).' : '（注意：持有樹果S易過早滿包，睡前務必清空背包避免阻斷技能判定）。') : '';
-          return isEN
-            ? `Top-tier Team Healer Engine! High trigger rate guarantees 4-6 procs daily, locking the team at high energy for 2.2x maximum helping speed.${extraNote}`
-            : `頂尖隊伍回能引擎！雙重技能發動機率加成，全天期望觸發 4~6 次以上，能牢牢鎖定全隊高活力上限，享受 2.2 倍極限幫忙速！${extraNote}`;
+          const extraNote = hasBFS_active ? _tLab('（注意：持有樹果S易過早滿包，睡前務必清空背包避免阻斷技能判定）。', ' (Note: BFS accelerates bag overflow; clear inventory before sleep to prevent blocked procs).') : '';
+          return _tLab(
+            `頂尖隊伍回能引擎！雙重技能發動機率加成，全天期望觸發 4~6 次以上，能牢牢鎖定全隊高活力上限，享受 2.2 倍極限幫忙速！${extraNote}`,
+            `Top-tier Team Healer Engine! High trigger rate guarantees 4-6 procs daily, locking the team at high energy for 2.2x maximum helping speed.${extraNote}`
+          );
         }
         if (!hasSkillM_active && !hasSkillS_active && buff !== 'skill') {
           if (hasSkillM_future) {
-            return isEN
-              ? `Promising Healer: Core "Skill Trigger M" unlocks at Lv.${hasSkillM_future.level}. Prioritize leveling to establish reliable team energy coverage.`
-              : `潛力補師：關鍵「技能機率提升M」將於 Lv.${hasSkillM_future.level} 解鎖，建議優先培育升級以構築全隊回能防線。`;
+            return _tLab(
+              `潛力補師：關鍵「技能機率提升M」將於 Lv.${hasSkillM_future.level} 解鎖，建議優先培育升級以構築全隊回能防線。`,
+              `Promising Healer: Core "Skill Trigger M" unlocks at Lv.${hasSkillM_future.level}. Prioritize leveling to establish reliable team energy coverage.`
+            );
           }
-          return isEN
-            ? 'Insufficient Trigger Rate: Lacks active Skill Trigger subskills or nature boost; healing frequency is too low to sustain all-day team vitality.'
-            : '發動期望不足：缺乏主技能機率提升副技能或性格加成，發動頻率偏低，無法勝任穩定維持全隊活力的隊伍核心基石。';
+          return _tLab(
+            '發動期望不足：缺乏主技能機率提升副技能或性格加成，發動頻率偏低，無法勝任穩定維持全隊活力的隊伍核心基石。',
+            'Insufficient Trigger Rate: Lacks active Skill Trigger subskills or nature boost; healing frequency is too low to sustain all-day team vitality.'
+          );
         }
-        return isEN
-          ? 'Qualified Team Healer: Decent trigger rate for stable energy support, helping the team maintain high daytime work efficiency.'
-          : '及格團隊補師：具備穩健的發動頻率，能提供基礎活力續航，協助隊伍維持日間高水準工作效率。';
+        return _tLab(
+          '及格團隊補師：具備穩健的發動頻率，能提供基礎活力續航，協助隊伍維持日間高水準工作效率。',
+          'Qualified Team Healer: Decent trigger rate for stable energy support, helping the team maintain high daytime work efficiency.'
+        );
       }
 
       // 3.3 傳說神獸幫手加速型 (Helper Boost: 雷公, 炎帝, 水君, 風速狗, 雷伊布, 艾路雷朵)
       if (isHelperBoost) {
         if (hasSkillM_active || buff === 'skill') {
-          return isEN
-            ? 'Mono-Type Team Amplifier: "Helper Boost" triggers instant team-wide production cycles, scaling higher with more unique same-type team members! Prioritizes Skill Triggers and Helping Bonus to avoid self-bag overflow, while teammates carry BFS to massively amplify output.'
-            : '同屬性純色隊終極放大器！主技能「幫手加速」單次發動可引爆全隊即時產出，隊伍中同屬性不同種類寶可夢越多倍率越高。神獸本體首重技能機率與持有上限防溢滿，而將樹果數量S交由「隊友」攜帶以最大化技能爆發收益！';
+          return _tLab(
+            '同屬性純色隊終極放大器！主技能「幫手加速」單次發動可引爆全隊即時產出，隊伍中同屬性不同種類寶可夢越多倍率越高。神獸本體首重技能機率與持有上限防溢滿，而將樹果數量S交由「隊友」攜帶以最大化技能爆發收益！',
+            'Mono-Type Team Amplifier: "Helper Boost" triggers instant team-wide production cycles, scaling higher with more unique same-type team members! Prioritizes Skill Triggers and Helping Bonus to avoid self-bag overflow, while teammates carry BFS to massively amplify output.'
+          );
         }
-        return isEN
-          ? 'Mono-Type Helper Specialist: "Helper Boost" triggers instant multi-helps for all same-type members. Skill trigger subskills and Main Skill Seeds are primary priorities.'
-          : '同屬性純色隊發動機：主技能「幫手加速」能帶動同屬性隊員進行多次額外幫忙。基礎發動率偏低（約2%），極度依賴技能機率副技能與主技能種子投入。';
+        return _tLab(
+          '同屬性純色隊發動機：主技能「幫手加速」能帶動同屬性隊員進行多次額外幫忙。基礎發動率偏低（約2%），極度依賴技能機率副技能與主技能種子投入。',
+          'Mono-Type Helper Specialist: "Helper Boost" triggers instant multi-helps for all same-type members. Skill trigger subskills and Main Skill Seeds are primary priorities.'
+        );
       }
 
       // 3.4 單體充能直傷型 (Charge Strength S/M: 電龍, 太陽伊布, 哥達鴨, 樹才怪, 隨風球, 音波龍, 達克萊伊)
       if (isChargeStrength) {
         if (hasBFS_active) {
           if (hasSkillM_active || buff === 'skill') {
-            return isEN
-              ? 'Top-Tier Hybrid Charge Cannon! Unlocks the "Charge Strength + Berry Finding S" dual-track form. On favorite berry islands (e.g. Ampharos at Power Plant, Espeon at Lakeside, Golduck at Beach), active collectors achieve the ultimate theoretical energy ceiling (thousands in direct skill strength + double island berries)! Collect regularly to prevent bag overflow.'
-              : '頂級雙修能量砲台！解鎖「能量填充 + 樹果數量S」雙修形態。在對應喜好樹果島嶼上（如電龍在發電廠、太陽伊布在湖畔、哥達鴨在海灘），為勤勞收包玩家提供極限級總能量期望（單次直傷數千 + 每次雙倍島嶼樹果）！放置時需注意及時清包以防滿包阻斷技能判定。';
+            return _tLab(
+              '頂級雙修能量砲台！解鎖「能量填充 + 樹果數量S」雙修形態。在對應喜好樹果島嶼上（如電龍在發電廠、太陽伊布在湖畔、哥達鴨在海灘），為勤勞收包玩家提供極限級總能量期望（單次直傷數千 + 每次雙倍島嶼樹果）！放置時需注意及時清包以防滿包阻斷技能判定。',
+              'Top-Tier Hybrid Charge Cannon! Unlocks the "Charge Strength + Berry Finding S" dual-track form. On favorite berry islands (e.g. Ampharos at Power Plant, Espeon at Lakeside, Golduck at Beach), active collectors achieve the ultimate theoretical energy ceiling (thousands in direct skill strength + double island berries)! Collect regularly to prevent bag overflow.'
+            );
           }
-          return isEN
-            ? 'Hybrid Charge Producer: "Berry Finding S" provides high-value island berry yield alongside steady Charge Strength direct energy. High-frequency collection is recommended to prevent Sneaky Snacking from halting skill checks.'
-            : '雙修型單兵直傷手：持有「樹果數量S」提供可觀樹果副產能，配合主技能能量填充提供穩定分數進帳，建議高頻收包以防滿包偷吃阻斷技能。';
+          return _tLab(
+            '雙修型單兵直傷手：持有「樹果數量S」提供可觀樹果副產能，配合主技能能量填充提供穩定分數進帳，建議高頻收包以防滿包偷吃阻斷技能。',
+            'Hybrid Charge Producer: "Berry Finding S" provides high-value island berry yield alongside steady Charge Strength direct energy. High-frequency collection is recommended to prevent Sneaky Snacking from halting skill checks.'
+          );
         }
         if (hasSkillM_active || buff === 'skill') {
-          return isEN
-            ? 'High-Yield Energy Cannon: Leverages frequent "Charge Strength" activations for heavy single-target Snorlax point generation.'
-            : '強力單兵能量砲台：倚賴「能量填充」提供高額直傷分數，發動機率加成顯著，具備極佳的單兵獨立產分戰鬥力。';
+          return _tLab(
+            '強力單兵能量砲台：倚賴「能量填充」提供高額直傷分數，發動機率加成顯著，具備極佳的單兵獨立產分戰鬥力。',
+            'High-Yield Energy Cannon: Leverages frequent "Charge Strength" activations for heavy single-target Snorlax point generation.'
+          );
         }
-        return isEN
-          ? 'Charge Strength Specialist: Provides steady direct Snorlax energy, depending primarily on skill trigger rate and main skill level.'
-          : '單兵能量手：主技能為直接提升卡比獸能量，依賴主技能等級與發動頻率支撐產能。';
+        return _tLab(
+          '單兵能量手：主技能為直接提升卡比獸能量，依賴主技能等級與發動頻率支撐產能。',
+          'Charge Strength Specialist: Provides steady direct Snorlax energy, depending primarily on skill trigger rate and main skill level.'
+        );
       }
 
       // 3.5 傳說/幻之寶可夢專屬機制 (超夢, 夢幻, 達克萊伊, 克雷色利亞)
       if (isLegendary) {
         if (mainSkill.includes('精神擊破') || mainSkill.includes('樹果領域')) {
-          return isEN
-            ? 'Legendary Berry Field Engine! Signature move "Psystrike" deploys a Berry Field, massively multiplying specific berry yields for team-wide strategic breakthroughs.'
-            : '傳說樹果領域核心！專屬主技能「精神擊破」能展開樹果領域，全面提升特定屬性樹果能量，為全隊帶來跨維度的戰略爆發！';
+          return _tLab(
+            '傳說樹果領域核心！專屬主技能「精神擊破」能展開樹果領域，全面提升特定屬性樹果能量，為全隊帶來跨維度的戰略爆發！',
+            'Legendary Berry Field Engine! Signature move "Psystrike" deploys a Berry Field, massively multiplying specific berry yields for team-wide strategic breakthroughs.'
+          );
         }
         if (mainSkill.includes('十項全能') || mainSkill.includes('揮指')) {
-          return isEN
-            ? 'Mythical All-Rounder! Signature move "Decathlon" draws from an unpredictable repertoire of master skills, serving as an adaptable wildcard.'
-            : '幻之十項全能戰術手！專屬主技能「十項全能」技能池深不可測，為全隊提供極具彈性的戰術補強與意外上限。';
+          return _tLab(
+            '幻之十項全能戰術手！專屬主技能「十項全能」技能池深不可測，為全隊提供極具彈性的戰術補強與意外上限。',
+            'Mythical All-Rounder! Signature move "Decathlon" draws from an unpredictable repertoire of master skills, serving as an adaptable wildcard.'
+          );
         }
         if (mainSkill.includes('夢魘')) {
-          return isEN
-            ? 'Mythical Dark Charge Burst! Signature move "Bad Dreams" unleashes massive direct energy points with outstanding base speed.'
-            : '幻之惡系直傷爆發手！專屬主技能「夢魘」單次提供巨額卡比獸直傷能量，基礎速度快，為頂級獨立產分戰力。';
+          return _tLab(
+            '幻之惡系直傷爆發手！專屬主技能「夢魘」單次提供巨額卡比獸直傷能量，基礎速度快，為頂級獨立產分戰力。',
+            'Mythical Dark Charge Burst! Signature move "Bad Dreams" unleashes massive direct energy points with outstanding base speed.'
+          );
         }
       }
 
       // 3.6 料理美味度/大成功型 (Extra Tasty: 咚咚鼠, 海豹球佳節)
       if (isExtraTasty) {
         if (hasSkillM_active || buff === 'skill') {
-          return isEN
-            ? 'Premier Extra Tasty Specialist: High trigger rate stacks dish crit probability rapidly, tailor-made for exploding weekend master dishes with multi-hundred-thousand point bursts! Strictly avoid BFS to protect skill procs.'
-            : '料理大成功爆擊手：主技能「料理成功S」能不斷疊加下次料理的大成功機率，專為每週衝擊大師高階時引爆週末大餐（數十萬能量爆擊）的終極戰術組件！首重技能機率與持有上限，嚴禁樹果S阻斷判定。';
+          return _tLab(
+            '料理大成功爆擊手：主技能「料理成功S」能不斷疊加下次料理的大成功機率，專為每週衝擊大師高階時引爆週末大餐（數十萬能量爆擊）的終極戰術組件！首重技能機率與持有上限，嚴禁樹果S阻斷判定。',
+            'Premier Extra Tasty Specialist: High trigger rate stacks dish crit probability rapidly, tailor-made for exploding weekend master dishes with multi-hundred-thousand point bursts! Strictly avoid BFS to protect skill procs.'
+          );
         }
-        return isEN
-          ? 'Tactical Extra Tasty Specialist: Stacks dish critical success chance to prepare for explosive cooking scores during event weeks.'
-          : '料理大成功戰術手：疊加料理美味機率，專為週末大餐爆擊儲備機率，建議提高技能機率與持有上限。';
+        return _tLab(
+          '料理大成功戰術手：疊加料理美味機率，專為週末大餐爆擊儲備機率，建議提高技能機率與持有上限。',
+          'Tactical Extra Tasty Specialist: Stacks dish critical success chance to prepare for explosive cooking scores during event weeks.'
+        );
       }
 
       // 3.7 料理擴鍋型 (Pot Expanders: 自爆磁怪, 火伊布, 冰伊布, 負電拍拍, 顫弦蠑螈)
       if (isPotExpander) {
         if (hasSkillM_active || buff === 'skill') {
-          return isEN
-            ? 'Premier Pot Expander: High main skill trigger rate expands pot size rapidly, tailor-made for breaking cooking limits on weekends!'
-            : '極品戰術擴鍋手：具備優秀的主技能發動加成，能高頻擴充鍋子容量，專為週末衝擊頂級極限大菜（突破鍋子上限）而生！';
+          return _tLab(
+            '極品戰術擴鍋手：具備優秀的主技能發動加成，能高頻擴充鍋子容量，專為週末衝擊頂級極限大菜（突破鍋子上限）而生！',
+            'Premier Pot Expander: High main skill trigger rate expands pot size rapidly, tailor-made for breaking cooking limits on weekends!'
+          );
         }
-        return isEN
-          ? 'Tactical Pot Specialist: Main skill "Cooking Power Up S" expands pot capacity for preparing high-tier recipes during event weeks.'
-          : '戰術擴鍋專門：主技能「料理強化S」能擴充鍋容量，適合週末囤積鍋空間以衝擊極限大型食譜。';
+        return _tLab(
+          '戰術擴鍋專門：主技能「料理強化S」能擴充鍋容量，適合週末囤積鍋空間以衝擊極限大型食譜。',
+          'Tactical Pot Specialist: Main skill "Cooking Power Up S" expands pot capacity for preparing high-tier recipes during event weeks.'
+        );
       }
 
       // 3.8 夢之碎片型 (Dream Shards: 路卡利歐, 喵喵, 貓老大, 勾魂眼, 吞食獸)
       if (isDreamShard) {
         if (hasSkillM_active || buff === 'skill') {
-          return isEN
-            ? 'Premier Dream Shard Harvester: High trigger rate paired with Dream Shard subskills yields massive currency during Good Sleep Days and Candy Boost weeks!'
-            : '夢之碎片頂級收割手：高頻發動夢之碎片主技能，在好眠日活動與糖果強化週是不可或缺的頂尖資金農夫！';
+          return _tLab(
+            '夢之碎片頂級收割手：高頻發動夢之碎片主技能，在好眠日活動與糖果強化週是不可或缺的頂尖資金農夫！',
+            'Premier Dream Shard Harvester: High trigger rate paired with Dream Shard subskills yields massive currency during Good Sleep Days and Candy Boost weeks!'
+          );
         }
-        return isEN
-          ? 'Dream Shard Specialist: Main skill provides direct Dream Shards, crucial for sustaining high late-game candy power-up costs.'
-          : '夢之碎片專門手：主技能為直接獲取夢之碎片，為後期高昂的寶可夢升級糖果消耗提供資金支持。';
+        return _tLab(
+          '夢之碎片專門手：主技能為直接獲取夢之碎片，為後期高昂的寶可夢升級糖果消耗提供資金支持。',
+          'Dream Shard Specialist: Main skill provides direct Dream Shards, crucial for sustaining high late-game candy power-up costs.'
+        );
       }
 
       // 3.9 食材獲取/精選型技能寵 (Ingredient Draw: 水伊布, 伊布, 毒電嬰, 正電拍拍, 穿山王, 摔角鷹人, 赫拉克羅斯)
       if (isIngSkill) {
         if (hasSkillM_active || buff === 'skill') {
-          return isEN
-            ? 'Rapid Stockpile Emergency Support: High trigger rate pours abundant random ingredients into inventory, instantly curing recipe ingredient shortages!'
-            : '應急食材爆發中樞：高額技能發動率能瞬間填補龐大食材庫存，化解高階料理缺料危機，是食材告急時的最佳急救隊員！';
+          return _tLab(
+            '應急食材爆發中樞：高額技能發動率能瞬間填補龐大食材庫存，化解高階料理缺料危機，是食材告急時的最佳急救隊員！',
+            'Rapid Stockpile Emergency Support: High trigger rate pours abundant random ingredients into inventory, instantly curing recipe ingredient shortages!'
+          );
         }
-        return isEN
-          ? 'Ingredient Draw Specialist: Main skill fetches bonus random ingredients to support daily kitchen consumption.'
-          : '應急食材補給手：主技能為獲取額外隨機食材，能輔助日常烹飪食材供給。';
+        return _tLab(
+          '應急食材補給手：主技能為獲取額外隨機食材，能輔助日常烹飪食材供給。',
+          'Ingredient Draw Specialist: Main skill fetches bonus random ingredients to support daily kitchen consumption.'
+        );
       }
 
       // 3.10 隨機揮指型 (Metronome: 波克基斯, 波克比, 夢幻)
       if (isMetronome) {
-        return isEN
-          ? 'Wildcard Metronome Specialist: Triggers unpredictable random skills across the game, delivering high excitement and unexpected score leaps.'
-          : '隨機揮指戰術手：能隨機發動全遊戲主技能，具備極高趣味性與意外上限，在日常探索中常有驚喜表現。';
+        return _tLab(
+          '隨機揮指戰術手：能隨機發動全遊戲主技能，具備極高趣味性與意外上限，在日常探索中常有驚喜表現。',
+          'Wildcard Metronome Specialist: Triggers unpredictable random skills across the game, delivering high excitement and unexpected score leaps.'
+        );
       }
 
       if (debuff === 'skill') {
-        return isEN
-          ? 'Fatal Specialty Flaw: Nature reduces Main Skill Trigger (-20%), severely crippling core activation frequency.'
-          : '致命缺陷：性格減少主技能發動機率（-20%），嚴重閹割核心發動頻率，不符技能型定位。';
+        return _tLab(
+          '致命缺陷：性格減少主技能發動機率（-20%），嚴重閹割核心發動頻率，不符技能型定位。',
+          'Fatal Specialty Flaw: Nature reduces Main Skill Trigger (-20%), severely crippling core activation frequency.'
+        );
       }
       if (hasSkillM_active || buff === 'skill') {
         if (hasSkillM_future) {
-          return isEN
-            ? `Specialized Skill Anchor: Strong active skill trigger frequency, with further performance leaps upon reaching Lv.${hasSkillM_future.level}.`
-            : `專精技能主力：當前技能發動表現活躍，且後續 Lv.${hasSkillM_future.level} 仍有技能提升空間，戰術運轉流暢。`;
+          return _tLab(
+            `專精技能主力：當前技能發動表現活躍，且後續 Lv.${hasSkillM_future.level} 仍有技能提升空間，戰術運轉流暢。`,
+            `Specialized Skill Anchor: Strong active skill trigger frequency, with further performance leaps upon reaching Lv.${hasSkillM_future.level}.`
+          );
         }
-        return isEN
-          ? 'Specialized Skill Anchor: Excellent skill trigger bonuses ensure high activation frequency for stable specialty performance.'
-          : '專精技能主力：優質的技能機率加成確保了穩定的觸發頻率，能充分發揮技能專長優勢。';
+        return _tLab(
+          '專精技能主力：優質的技能機率加成確保了穩定的觸發頻率，能充分發揮技能專長優勢。',
+          'Specialized Skill Anchor: Excellent skill trigger bonuses ensure high activation frequency for stable specialty performance.'
+        );
       }
       if (hasSkillM_future) {
-        return isEN
-          ? `Future Skill Prospect: Core "Skill Trigger M" unlocks at Lv.${hasSkillM_future.level}. Prioritize leveling to unleash true skill potential.`
-          : `潛力技能手：關鍵「技能機率提升M」將於 Lv.${hasSkillM_future.level} 解鎖，建議優先培育升級以釋放核心潛力。`;
+        return _tLab(
+          `潛力技能手：關鍵「技能機率提升M」將於 Lv.${hasSkillM_future.level} 解鎖，建議優先培育升級以釋放核心潛力。`,
+          `Future Skill Prospect: Core "Skill Trigger M" unlocks at Lv.${hasSkillM_future.level}. Prioritize leveling to unleash true skill potential.`
+        );
       }
-      return isEN
-        ? 'Standard Skill Specialist: Baseline skill trigger rate; suitable as a situational support or transitional pick.'
-        : '常規技能手：技能觸發率處於基準線，適合作為特定情境替補或過渡成員。';
+      return _tLab(
+        '常規技能手：技能觸發率處於基準線，適合作為特定情境替補或過渡成員。',
+        'Standard Skill Specialist: Baseline skill trigger rate; suitable as a situational support or transitional pick.'
+      );
     }
 
     // 4. 食材型專精分析 (嚴禁混入技能型要求)
     if (isIng) {
       if (debuff === 'ingredient') {
-        return isEN
-          ? 'Fatal Specialty Flaw: Nature reduces Ingredient Finding (-20%), causing frequent berry dilution and unstable cooking supply. Not recommended for major investment.'
-          : '致命短板：性格減少食材發現率（-20%），產出頻繁被樹果稀釋，極難穩定供應主力食譜所需食材，不建議投入過多資源。';
+        return _tLab(
+          '致命短板：性格減少食材發現率（-20%），產出頻繁被樹果稀釋，極難穩定供應主力食譜所需食材，不建議投入過多資源。',
+          'Fatal Specialty Flaw: Nature reduces Ingredient Finding (-20%), causing frequent berry dilution and unstable cooking supply. Not recommended for major investment.'
+        );
       }
 
       const recipeSynergy = getSignatureRecipeRecommendations(ingArr, isEN);
@@ -1965,55 +2078,63 @@ const TARGET_TOP_RECIPES = [
 
       let ingSpreadDesc = '';
       if (isAAA) {
-        ingSpreadDesc = isEN ? ' Features pure mono-ingredient (AAA) spread for maximum focused output.' : '搭配極品純色 AAA 食材配置，特定食材產量高度集中。';
+        ingSpreadDesc = _tLab('搭配極品純色 AAA 食材配置，特定食材產量高度集中。', ' Features pure mono-ingredient (AAA) spread for maximum focused output.');
       } else if (isABB) {
-        ingSpreadDesc = isEN ? ' Features strong ABB dual spread, excelling in mid-to-late advanced ingredient yield.' : '搭配強勢 ABB 雙色配置，二階與三階食材量產能力卓越。';
+        ingSpreadDesc = _tLab('搭配強勢 ABB 雙色配置，二階與三階食材量產能力卓越。', ' Features strong ABB dual spread, excelling in mid-to-late advanced ingredient yield.');
       } else if (isABC) {
-        ingSpreadDesc = isEN ? ' Split ABC spread dilutes single ingredient yield.' : '三色 ABC 雜色配置略微稀釋單項食材產量。';
+        ingSpreadDesc = _tLab('三色 ABC 雜色配置略微稀釋單項食材產量。', ' Split ABC spread dilutes single ingredient yield.');
       }
 
       if (hasIngM_active || buff === 'ingredient') {
         if (hasBFS_active) {
           if (hasInv_active) {
-            return isEN
-              ? `Top Hybrid Specialist: Active "Ingredient Finder M" backed by BFS and Inventory Up provides exceptional food yields with massive bonus berries.${recipePhrase}`
-              : `極品雙修食材手！食材機率大幅提升搭配「樹果數量S」與「持有上限提升」，食材爆發力極強且兼顧頂級樹果副產能！${recipePhrase}`;
+            return _tLab(
+              `極品雙修食材手！食材機率大幅提升搭配「樹果數量S」與「持有上限提升」，食材爆發力極強且兼顧頂級樹果副產能！${recipePhrase}`,
+              `Top Hybrid Specialist: Active "Ingredient Finder M" backed by BFS and Inventory Up provides exceptional food yields with massive bonus berries.${recipePhrase}`
+            );
           } else {
-            return isEN
-              ? `High-Burst Hybrid: Excellent ingredient rate and BFS provide huge dual yield, but inventory caps fast overnight—collect regularly.${recipePhrase}`
-              : `高爆發雙修型：食材機率優異並持有「樹果數量S」，但缺乏持有上限容易在睡眠期間提早滿包阻斷產料，建議勤勞收成。${recipePhrase}`;
+            return _tLab(
+              `高爆發雙修型：食材機率優異並持有「樹果數量S」，但缺乏持有上限容易在睡眠期間提早滿包阻斷產料，建議勤勞收成。${recipePhrase}`,
+              `High-Burst Hybrid: Excellent ingredient rate and BFS provide huge dual yield, but inventory caps fast overnight—collect regularly.${recipePhrase}`
+            );
           }
         }
 
-        return isEN
-          ? `Premier Kitchen Anchor! High ingredient finding rate ensures abundant cooking supply for top recipes.${recipePhrase}${ingSpreadDesc}`
-          : `頂級食材供應中樞！高額食材發現率確保了穩定龐大的料理供應，做大菜的最佳後勤基石。${recipePhrase}${ingSpreadDesc}`;
+        return _tLab(
+          `頂級食材供應中樞！高額食材發現率確保了穩定龐大的料理供應，做大菜的最佳後勤基石。${recipePhrase}${ingSpreadDesc}`,
+          `Premier Kitchen Anchor! High ingredient finding rate ensures abundant cooking supply for top recipes.${recipePhrase}${ingSpreadDesc}`
+        );
       }
 
       if (!hasIngM_active && !hasIngS_active && buff !== 'ingredient') {
         if (hasIngM_future) {
-          return isEN
-            ? `Future Ingredient Prospect: Core "Ingredient Finder M" unlocks at Lv.${hasIngM_future.level}. Prioritize leveling to establish reliable kitchen supply.${recipePhrase}`
-            : `潛力食材手：關鍵「食材機率提升M」將於 Lv.${hasIngM_future.level} 解鎖，建議優先培育升級以構築主力供貨能力。${recipePhrase}`;
+          return _tLab(
+            `潛力食材手：關鍵「食材機率提升M」將於 Lv.${hasIngM_future.level} 解鎖，建議優先培育升級以構築主力供貨能力。${recipePhrase}`,
+            `Future Ingredient Prospect: Core "Ingredient Finder M" unlocks at Lv.${hasIngM_future.level}. Prioritize leveling to establish reliable kitchen supply.${recipePhrase}`
+          );
         }
         if (hasSpeedM_active || buff === 'speed' || hasHB_active) {
-          return isEN
-            ? `Speed-Driven Producer: Lacks direct ingredient finder boost, but high helping speed compensates to provide acceptable general output.${recipePhrase}`
-            : `幫速彌補型：雖缺乏直接食材機率提升，但憑藉優良的幫忙速度維持了合格的基礎供貨，適合作為實用過渡。${recipePhrase}`;
+          return _tLab(
+            `幫速彌補型：雖缺乏直接食材機率提升，但憑藉優良的幫忙速度維持了合格的基礎供貨，適合作為實用過渡。${recipePhrase}`,
+            `Speed-Driven Producer: Lacks direct ingredient finder boost, but high helping speed compensates to provide acceptable general output.${recipePhrase}`
+          );
         }
-        return isEN
-          ? `Lacks Ingredient Output: Missing ingredient finder and speed boosts; yields are insufficient to sustain demanding high-tier dishes.${recipePhrase}`
-          : `缺乏食材爆發力：前中期未持有食材機率加成或顯著幫速，產量難以滿足高階大型料理（如彈跳咖哩烏龍麵、大塊滿滿熱水沙拉等頂級大菜）的消耗需求。${recipePhrase}`;
+        return _tLab(
+          `缺乏食材爆發力：前中期未持有食材機率加成或顯著幫速，產量難以滿足高階大型料理（如彈跳咖哩烏龍麵、大塊滿滿熱水沙拉等頂級大菜）的消耗需求。${recipePhrase}`,
+          `Lacks Ingredient Output: Missing ingredient finder and speed boosts; yields are insufficient to sustain demanding high-tier dishes.${recipePhrase}`
+        );
       }
 
-      return isEN
-        ? `Solid Ingredient Provider: Steady supply for regular meals, serving reliably in daily cooking rotations.${recipePhrase}${ingSpreadDesc}`
-        : `穩健食材供應手：供貨節奏穩定，足以勝任日常食譜輪替與食材儲備。${recipePhrase}${ingSpreadDesc}`;
+      return _tLab(
+        `穩健食材供應手：供貨節奏穩定，足以勝任日常食譜輪替與食材儲備。${recipePhrase}${ingSpreadDesc}`,
+        `Solid Ingredient Provider: Steady supply for regular meals, serving reliably in daily cooking rotations.${recipePhrase}${ingSpreadDesc}`
+      );
     }
 
-    return isEN
-      ? `${currentGrade} Grade (${currentScore} pts) - Reliable team member with balanced baseline performance.`
-      : `${currentGrade} 級（${currentScore}分）- 基礎素質均衡，適合作為隊伍實用成員。`;
+    return _tLab(
+      `${currentGrade} 級（${currentScore}分）- 基礎素質均衡，適合作為隊伍實用成員。`,
+      `${currentGrade} Grade (${currentScore} pts) - Reliable team member with balanced baseline performance.`
+    );
   }
 
   /* ─── 對外入口：雙軌評級與里程碑評定 (Dual-Track Appraisal API) ─────── */
@@ -2200,7 +2321,7 @@ const TARGET_TOP_RECIPES = [
       return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + dotR + '" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5" />' +
              '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="' + textAnchor + '" class="radar-label">' +
              '<tspan x="' + lx.toFixed(1) + '" dy="' + (i === 0 ? '-2' : '0') + '" fill="var(--text-primary)" font-size="' + labelFontSize + '" font-weight="700">' + p.meta.label + '</tspan>' +
-             '<tspan x="' + lx.toFixed(1) + '" dy="' + scoreDy + '" fill="#38bdf8" font-size="' + scoreFontSize + '" font-weight="800">' + p.score + (isEN ? ' pts' : ' 分') + '</tspan>' +
+             '<tspan x="' + lx.toFixed(1) + '" dy="' + scoreDy + '" fill="#38bdf8" font-size="' + scoreFontSize + '" font-weight="800">' + p.score + _tLab(' 分', ' pts') + '</tspan>' +
              '</text>';
     }).join('');
 
@@ -2313,8 +2434,10 @@ const TARGET_TOP_RECIPES = [
 
     const radarSVG = renderRadarChartSVG(evaluation.scores, 360, 270);
     const SIX_DIM_META = getSixDimMeta(isEN);
-    const displayName = isEN ? (pkmData.name_en || pkmData.name_cn) : (pkmData.name_cn || pkmData.name_en);
-    const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : natureName;
+    const displayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
+      ? window.I18N.getPokemonName(pkmData)
+      : _tLab(pkmData.name_cn || pkmData.name_en, pkmData.name_en || pkmData.name_cn);
+    const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : _tLabStr(natureName);
 
     // 遊戲同款性格展示排版 (In-Game Style Nature Display)
     const natureObj = NATURE_DATA.find(function(n) { return n.name === natureName || n.name_en === natureName; });
@@ -2323,15 +2446,19 @@ const TARGET_TOP_RECIPES = [
       natureEffectHtml = `
         <div class="nature-effects-group">
           <div class="nature-effect-neutral nature-effect-mint">
-            ${isEN ? 'Has no distinctive personality traits (Cleanse Mint used)' : '沒有性格帶來的特色（使用淨白薄荷消除個性效果）'}
+            ${_tLab('沒有性格帶來的特色（使用淨白薄荷消除個性效果）', 'Has no distinctive personality traits (Cleanse Mint used)')}
           </div>
         </div>
       `;
     } else if (natureObj && natureObj.buff && natureObj.buff !== '無增減') {
-      const rawBuff = isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff;
-      const rawDebuff = isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff;
-      const buffLabel = rawBuff.replace(/[▲▼]/g, '').trim();
-      const debuffLabel = rawDebuff.replace(/[▲▼]/g, '').trim();
+      const buffLabel = _tLab(
+        (natureObj.buff || '').replace(/[▲▼]/g, '').trim(),
+        (natureObj.buff_en || natureObj.buff || '').replace(/[▲▼]/g, '').trim()
+      );
+      const debuffLabel = _tLab(
+        (natureObj.debuff || '').replace(/[▲▼]/g, '').trim(),
+        (natureObj.debuff_en || natureObj.debuff || '').replace(/[▲▼]/g, '').trim()
+      );
       natureEffectHtml = `
         <div class="nature-effects-group">
           <div class="nature-effect-row nature-buff-row">
@@ -2348,7 +2475,7 @@ const TARGET_TOP_RECIPES = [
       natureEffectHtml = `
         <div class="nature-effects-group">
           <div class="nature-effect-neutral">
-            ${isEN ? 'Has no distinctive personality traits' : '沒有性格帶來的特色（無影響）'}
+            ${_tLab('沒有性格帶來的特色（無影響）', 'Has no distinctive personality traits')}
           </div>
         </div>
       `;
@@ -2357,20 +2484,20 @@ const TARGET_TOP_RECIPES = [
     const berry = (typeof window.getPokemonBerry === 'function') 
       ? window.getPokemonBerry(pkmData) 
       : (pkmData.berry || { name: '', icon: '' });
-    const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
+    const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : _tLabStr(berry.name || '--');
 
     // 專長型態 (不展示「專長」二字，僅展示 食材型 / 技能型 / 樹果型，無外框)
-    let specTypeLabel = isEN ? 'Ingredient' : '食材型';
+    let specTypeLabel = _tLab('食材型', 'Ingredient');
     let specClass = 'spec-ingredient';
     if (pkmData.specialty && (pkmData.specialty.includes('樹果') || pkmData.specialty === 'Berries')) {
       specClass = 'spec-berry';
-      specTypeLabel = isEN ? 'Berries' : '樹果型';
+      specTypeLabel = _tLab('樹果型', 'Berries');
     } else if (pkmData.specialty && (pkmData.specialty.includes('技能') || pkmData.specialty === 'Skills')) {
       specClass = 'spec-skill';
-      specTypeLabel = isEN ? 'Skills' : '技能型';
+      specTypeLabel = _tLab('技能型', 'Skills');
     } else if (pkmData.specialty && (pkmData.specialty.includes('全能') || pkmData.specialty.includes('全部') || pkmData.specialty === 'All-Rounder' || pkmData.specialty.toLowerCase() === 'all')) {
       specClass = 'spec-all';
-      specTypeLabel = isEN ? 'All-Rounder' : '全能型';
+      specTypeLabel = _tLab('全能型', 'All-Rounder');
     }
 
     let summaryNote = pkmOrBoxItem.summaryNote || '';
@@ -2380,7 +2507,7 @@ const TARGET_TOP_RECIPES = [
 
     // 主技能資訊 (Main Skill & Level)
     const rawMainSkill = (pkmData && pkmData.main_skill) || (pkmData && pkmData.skill && pkmData.skill.name) || pkmOrBoxItem.main_skill || '';
-    const mainSkillName = rawMainSkill ? (window.I18N ? window.I18N.getMainSkillName(rawMainSkill) : rawMainSkill) : (isEN ? 'Main Skill' : '主技能');
+    const mainSkillName = rawMainSkill ? (window.I18N ? window.I18N.getMainSkillName(rawMainSkill) : _tLabStr(rawMainSkill)) : _tLab('主技能', 'Main Skill');
     const skillLvl = skillLevel || 1;
 
     // 食材組合資訊 (Ingredients & Quantity, 3 Slots with Level Unlock)
@@ -2395,7 +2522,7 @@ const TARGET_TOP_RECIPES = [
       const isUnlocked = currentLv >= unlockLv;
       const lockClass = !isUnlocked ? ' ing-locked' : '';
       const ingName = ingSlotNames[idx];
-      const lockTitleSuffix = !isUnlocked ? (isEN ? ' (Locked)' : ' (未開放)') : '';
+      const lockTitleSuffix = !isUnlocked ? _tLab(' (未開放)', ' (Locked)') : '';
 
       if (!ingName || ingName === '--') {
         return `
@@ -2441,22 +2568,22 @@ const TARGET_TOP_RECIPES = [
         <div class="box-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet" role="dialog" aria-modal="true">
           <div class="sheet-drag-handle"></div>
           <div class="box-modal-header">
-            <button type="button" class="box-modal-header-cancel" onclick="window.AppraisalLab.closeModal()">${isEN ? 'Close' : '關閉'}</button>
+            <button type="button" class="box-modal-header-cancel" onclick="window.AppraisalLab.closeModal()">${_tLab('關閉', 'Close')}</button>
             <!-- 雙軌綜合評級徽章 (居中置於標題原位) -->
             <div class="appraisal-dual-verdict-column">
               <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};">
-                <span class="pokedex-verdict-track-lbl" style="font-size:9.5px;color:#94a3b8;line-height:1;">${isEN ? 'Current' : '當前'}</span>
+                <span class="pokedex-verdict-track-lbl" style="font-size:9.5px;color:#94a3b8;line-height:1;">${_tLab('當前', 'Current')}</span>
                 <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:13px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
                 <span class="pokedex-header-score-text" style="font-size:10px;"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
               </div>
               <div class="pokedex-header-verdict-badge potential-track">
-                <span class="pokedex-verdict-track-lbl" style="font-size:8.5px;color:#64748b;line-height:1;">${isEN ? 'Max Lv' : '滿級'}</span>
+                <span class="pokedex-verdict-track-lbl" style="font-size:8.5px;color:#64748b;line-height:1;">${_tLab('滿級', 'Max Lv')}</span>
                 <span class="verdict-potential-grade pokedex-header-grade-text" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
                 <span class="pokedex-header-score-text" style="font-size:9.5px;color:#94a3b8;"><span class="verdict-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
               </div>
             </div>
             ${pkmOrBoxItem && (pkmOrBoxItem.rawItem || pkmOrBoxItem.uid) ? `
-              <button type="button" class="box-modal-header-confirm" onclick="window.AppraisalLab.openCurrentEditModal()">${isEN ? 'Edit' : '編輯'}</button>
+              <button type="button" class="box-modal-header-confirm" onclick="window.AppraisalLab.openCurrentEditModal()">${_tLab('編輯', 'Edit')}</button>
             ` : `<span style="width:36px;"></span>`}
           </div>
 
@@ -2480,7 +2607,7 @@ const TARGET_TOP_RECIPES = [
                     ${ribbonLevel > 0 ? `
                       <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border-radius:6px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:10.5px;font-weight:700;">
                         <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:14px;height:14px;object-fit:contain;" alt="Ribbon" />
-                        <span>+${evaluation.ribbonBonus.carry} ${isEN ? 'Carry' : '持有'}${evaluation.ribbonBonus.speedDiscount > 0 ? ` · ${isEN ? '-' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '% Spd' : '幫速 -' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '%'}` : ''}</span>
+                        <span>+${evaluation.ribbonBonus.carry} ${_tLab('持有', 'Carry')}${evaluation.ribbonBonus.speedDiscount > 0 ? ` · ${_tLab('幫速 -' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '%', '-' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '% Spd')}` : ''}</span>
                       </div>
                     ` : ''}
                   </div>
@@ -2503,7 +2630,7 @@ const TARGET_TOP_RECIPES = [
               <div class="appraisal-config-section" style="margin-top:2px;display:flex;justify-content:center;width:100%;">
                 <div class="appraisal-nature-game-card">
                   <div class="nature-pill-capsule">
-                    <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
+                    <span class="nature-capsule-tag">${_tLab('性格', 'Nature')}</span>
                     <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
                   </div>
                   ${natureEffectHtml}
@@ -2515,21 +2642,21 @@ const TARGET_TOP_RECIPES = [
                 <div class="pokedex-header-stats-row pokedex-header-stats-dual appraisal-header-stats-dual">
                   <div class="pokedex-header-stat-col">
                     <div class="pokedex-header-stat-item">
-                      <span class="header-stat-k">${isEN ? 'Frequency' : '幫忙間隔'}</span>
+                      <span class="header-stat-k">${_tLab('幫忙間隔', 'Frequency')}</span>
                       <span class="header-stat-v font-bold" id="appraisal-stat-interval-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIntervalValue === 'function') ? window.PokemonApp.renderPokedexIntervalValue(formulaData, pkmData) : '--'}</span>
                     </div>
                     <div class="pokedex-header-stat-item">
-                      <span class="header-stat-k">${isEN ? 'Carry' : '持有'}</span>
+                      <span class="header-stat-k">${_tLab('持有', 'Carry')}</span>
                       <span class="header-stat-v font-bold" id="appraisal-stat-carry-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexCarryValue === 'function') ? window.PokemonApp.renderPokedexCarryValue(formulaData, pkmData) : '--'}</span>
                     </div>
                   </div>
                   <div class="pokedex-header-stat-col">
                     <div class="pokedex-header-stat-item">
-                      <span class="header-stat-k">${isEN ? 'Ing Rate' : '食材率'}</span>
+                      <span class="header-stat-k">${_tLab('食材率', 'Ing Rate')}</span>
                       <span class="header-stat-v font-bold" id="appraisal-stat-ingredient-rate-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIngRateValue === 'function') ? window.PokemonApp.renderPokedexIngRateValue(formulaData, pkmData) : '--'}</span>
                     </div>
                     <div class="pokedex-header-stat-item">
-                      <span class="header-stat-k">${isEN ? 'Skill Rate' : '技能率'}</span>
+                      <span class="header-stat-k">${_tLab('技能率', 'Skill Rate')}</span>
                       <span class="header-stat-v font-bold" id="appraisal-stat-skill-rate-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexSkillRateValue === 'function') ? window.PokemonApp.renderPokedexSkillRateValue(formulaData, pkmData) : '--'}</span>
                     </div>
                   </div>
@@ -2541,13 +2668,13 @@ const TARGET_TOP_RECIPES = [
                 <div class="appraisal-subskills-grid">
                   ${[10, 25, 50, 70, 80].map(function(lv, idx) {
                     const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
-                    const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName) : '--';
+                    const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : _tLabStr(rawName)) : '--';
                     const tier = getSkillTier(rawName);
                     const isUnlocked = currentLv >= lv;
                     const lockClass = !isUnlocked ? 'subskill-locked' : '';
                     const titleText = rawName 
-                      ? (isEN ? `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})` : `${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`)
-                      : (isEN ? `Lv.${lv} Slot` : `Lv.${lv} 欄位`);
+                      ? _tLab(`${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`, `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})`)
+                      : _tLab(`Lv.${lv} 欄位`, `Lv.${lv} Slot`);
                     return `
                       <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
                         <span class="subskill-name">${escapeHtml(sName)}</span>
@@ -2576,7 +2703,7 @@ const TARGET_TOP_RECIPES = [
 
             <!-- 專長深度點評與優缺點 -->
             <div class="appraisal-analysis-card" style="margin-top:6px;">
-              <h4 class="appraisal-section-heading">${isEN ? 'Specialty, Nature & Sub-Skill Synergy Analysis' : '專長與性格副技能協同點評'}</h4>
+              <h4 class="appraisal-section-heading">${_tLab('專長與性格副技能協同點評', 'Specialty, Nature & Sub-Skill Synergy Analysis')}</h4>
               <div class="appraisal-pros-list">
                 ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
               </div>
@@ -2589,7 +2716,7 @@ const TARGET_TOP_RECIPES = [
 
             <!-- 智能簡評欄 (嵌入式膠囊標籤) -->
             <div class="appraisal-summary-bar">
-              <span class="appraisal-summary-label">${isEN ? 'Appraisal Note' : '智能簡評'}</span>
+              <span class="appraisal-summary-label">${_tLab('智能簡評', 'Appraisal Note')}</span>
               <span class="appraisal-summary-text">${summaryNote}</span>
             </div>
           </div>
@@ -2602,7 +2729,7 @@ const TARGET_TOP_RECIPES = [
           <!-- 頂部標題列 (高度加寬，垂直置中，整合雙軌評級與極簡關閉鈕) -->
           <div class="appraisal-modal-header">
             <div class="appraisal-header-title-group">
-              <span class="appraisal-modal-badge">${isEN ? 'Diagnostic Report' : '深度能力診斷報告'}</span>
+              <span class="appraisal-modal-badge">${_tLab('深度能力診斷報告', 'Diagnostic Report')}</span>
               <h2 class="appraisal-pokemon-title">
                 ${nickname ? `<span class="appraisal-pokemon-nickname">${escapeHtml(nickname)}</span> <span class="appraisal-pokemon-base-name" style="font-size:0.85em;color:var(--text-secondary);font-weight:normal;">(${displayName})</span>` : displayName}
               </h2>
@@ -2612,14 +2739,14 @@ const TARGET_TOP_RECIPES = [
               <!-- 雙軌綜合評級徽章 (對齊圖鑑彈窗風格，垂直置中，當前亮眼 + 滿級低調) -->
               <div class="appraisal-dual-verdict-column">
                 <!-- 當前實力 (Current Level Rating) -->
-                <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${isEN ? `Current Level Rating (Lv.${currentLv})` : `當前實力評級 (Lv.${currentLv})`}">
-                  <span class="pokedex-verdict-track-lbl" style="font-size:10px;color:#94a3b8;line-height:1;">${isEN ? 'Current' : '當前'}</span>
+                <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${_tLab(`當前實力評級 (Lv.${currentLv})`, `Current Level Rating (Lv.${currentLv})`)}">
+                  <span class="pokedex-verdict-track-lbl" style="font-size:10px;color:#94a3b8;line-height:1;">${_tLab('當前', 'Current')}</span>
                   <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:14px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
                   <span class="pokedex-header-score-text" style="font-size:11px;"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
                 </div>
                 <!-- 滿級潛力 (Max Potential Rating) -->
-                <div class="pokedex-header-verdict-badge potential-track" title="${isEN ? 'Max Potential Rating (Lv.100)' : '畢業潛力評級 (Lv.100)'}">
-                  <span class="pokedex-verdict-track-lbl" style="font-size:9px;color:#64748b;line-height:1;">${isEN ? 'Max Lv' : '滿級'}</span>
+                <div class="pokedex-header-verdict-badge potential-track" title="${_tLab('畢業潛力評級 (Lv.100)', 'Max Potential Rating (Lv.100)')}">
+                  <span class="pokedex-verdict-track-lbl" style="font-size:9px;color:#64748b;line-height:1;">${_tLab('滿級', 'Max Lv')}</span>
                   <span class="verdict-potential-grade pokedex-header-grade-text" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
                   <span class="pokedex-header-score-text" style="font-size:10px;color:#94a3b8;"><span class="verdict-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
                 </div>
@@ -2627,14 +2754,14 @@ const TARGET_TOP_RECIPES = [
 
               <!-- 編輯按鈕 (若來自倉庫) -->
               ${pkmOrBoxItem && (pkmOrBoxItem.rawItem || pkmOrBoxItem.uid) ? `
-                <button type="button" class="appraisal-edit-btn" onclick="window.AppraisalLab.openCurrentEditModal()" title="${isEN ? 'Edit Pokémon Stats' : '編輯寶可夢數值'}">
+                <button type="button" class="appraisal-edit-btn" onclick="window.AppraisalLab.openCurrentEditModal()" title="${_tLab('編輯寶可夢數值', 'Edit Pokémon Stats')}">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                  <span>${isEN ? 'Edit' : '編輯數值'}</span>
+                  <span>${_tLab('編輯數值', 'Edit')}</span>
                 </button>
               ` : ''}
 
               <!-- 極簡關閉按鈕 -->
-              <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closeModal()" title="${isEN ? 'Close' : '關閉'}" aria-label="${isEN ? 'Close' : '關閉'}">
+              <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closeModal()" title="${_tLab('關閉', 'Close')}" aria-label="${_tLab('關閉', 'Close')}">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -2662,21 +2789,21 @@ const TARGET_TOP_RECIPES = [
                   ${ribbonLevel > 0 ? `
                     <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:11.5px;font-weight:700;">
                       <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:16px;height:16px;object-fit:contain;" alt="Ribbon" />
-                      <span>+${evaluation.ribbonBonus.carry} ${isEN ? 'Carry' : '持有'}${evaluation.ribbonBonus.speedDiscount > 0 ? ` · ${isEN ? '-' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '% Spd' : '幫速 -' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '%'}` : ''}</span>
+                      <span>+${evaluation.ribbonBonus.carry} ${_tLab('持有', 'Carry')}${evaluation.ribbonBonus.speedDiscount > 0 ? ` · ${_tLab('幫速 -' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '%', '-' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '% Spd')}` : ''}</span>
                     </div>
                   ` : ''}
                 </div>
 
                 <!-- 主技能名稱與等級 (Appraisal Main Skill) -->
                 <div class="appraisal-mainskill-row">
-                  <span class="appraisal-mainskill-label">${isEN ? 'Main Skill:' : '主技能：'}</span>
+                  <span class="appraisal-mainskill-label">${_tLab('主技能：', 'Main Skill:')}</span>
                   <span class="appraisal-mainskill-name">${escapeHtml(mainSkillName)}</span>
                   <span class="appraisal-mainskill-level">Lv.${skillLvl}</span>
                 </div>
 
                 <!-- 食材三階插槽組合 (Appraisal Ingredients, 尚未開放插槽半透明) -->
                 <div class="appraisal-ing-parallel-row">
-                  <span class="appraisal-ing-row-label">${isEN ? 'Ingredients:' : '食材：'}</span>
+                  <span class="appraisal-ing-row-label">${_tLab('食材：', 'Ingredients:')}</span>
                   <div class="appraisal-ing-chips-grid">
                     ${ingChipsHtml}
                   </div>
@@ -2686,7 +2813,7 @@ const TARGET_TOP_RECIPES = [
                 <div class="appraisal-config-section" style="margin-top:12px;display:flex;justify-content:center;">
                   <div class="appraisal-nature-game-card">
                     <div class="nature-pill-capsule">
-                      <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
+                      <span class="nature-capsule-tag">${_tLab('性格', 'Nature')}</span>
                       <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
                     </div>
                     ${natureEffectHtml}
@@ -2698,13 +2825,13 @@ const TARGET_TOP_RECIPES = [
                   <div class="appraisal-subskills-grid">
                     ${[10, 25, 50, 70, 80].map(function(lv, idx) {
                       const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
-                      const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName) : '--';
+                      const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : _tLabStr(rawName)) : '--';
                       const tier = getSkillTier(rawName);
                       const isUnlocked = currentLv >= lv;
                       const lockClass = !isUnlocked ? 'subskill-locked' : '';
                       const titleText = rawName 
-                        ? (isEN ? `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})` : `${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`)
-                        : (isEN ? `Lv.${lv} Slot` : `Lv.${lv} 欄位`);
+                        ? _tLab(`${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`, `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})`)
+                        : _tLab(`Lv.${lv} 欄位`, `Lv.${lv} Slot`);
                       return `
                         <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
                           <span class="subskill-name">${escapeHtml(sName)}</span>
@@ -2719,21 +2846,21 @@ const TARGET_TOP_RECIPES = [
                   <div class="pokedex-header-stats-row pokedex-header-stats-dual appraisal-header-stats-dual">
                     <div class="pokedex-header-stat-col">
                       <div class="pokedex-header-stat-item">
-                        <span class="header-stat-k">${isEN ? 'Frequency' : '幫忙間隔'}</span>
+                        <span class="header-stat-k">${_tLab('幫忙間隔', 'Frequency')}</span>
                         <span class="header-stat-v font-bold" id="appraisal-stat-interval">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIntervalValue === 'function') ? window.PokemonApp.renderPokedexIntervalValue(formulaData, pkmData) : '--'}</span>
                       </div>
                       <div class="pokedex-header-stat-item">
-                        <span class="header-stat-k">${isEN ? 'Carry' : '持有'}</span>
+                        <span class="header-stat-k">${_tLab('持有', 'Carry')}</span>
                         <span class="header-stat-v font-bold" id="appraisal-stat-carry">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexCarryValue === 'function') ? window.PokemonApp.renderPokedexCarryValue(formulaData, pkmData) : '--'}</span>
                       </div>
                     </div>
                     <div class="pokedex-header-stat-col">
                       <div class="pokedex-header-stat-item">
-                        <span class="header-stat-k">${isEN ? 'Ing Rate' : '食材率'}</span>
+                        <span class="header-stat-k">${_tLab('食材率', 'Ing Rate')}</span>
                         <span class="header-stat-v font-bold" id="appraisal-stat-ingredient-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIngRateValue === 'function') ? window.PokemonApp.renderPokedexIngRateValue(formulaData, pkmData) : '--'}</span>
                       </div>
                       <div class="pokedex-header-stat-item">
-                        <span class="header-stat-k">${isEN ? 'Skill Rate' : '技能率'}</span>
+                        <span class="header-stat-k">${_tLab('技能率', 'Skill Rate')}</span>
                         <span class="header-stat-v font-bold" id="appraisal-stat-skill-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexSkillRateValue === 'function') ? window.PokemonApp.renderPokedexSkillRateValue(formulaData, pkmData) : '--'}</span>
                       </div>
                     </div>
@@ -2763,13 +2890,13 @@ const TARGET_TOP_RECIPES = [
 
               <!-- 中部：PR 智能簡評欄 (嵌入式膠囊標籤，不佔用內容展示空間) -->
               <div class="appraisal-summary-bar">
-                <span class="appraisal-summary-label">${isEN ? 'Appraisal Note' : '智能簡評'}</span>
+                <span class="appraisal-summary-label">${_tLab('智能簡評', 'Appraisal Note')}</span>
                 <span class="appraisal-summary-text">${summaryNote}</span>
               </div>
 
               <!-- 下方：專長深度點評與優缺點 (在智能簡評下方，同樣長度) -->
               <div class="appraisal-analysis-card">
-                <h4 class="appraisal-section-heading">${isEN ? 'Specialty & Synergy Analysis' : '專長與性格副技能協同點評'}</h4>
+                <h4 class="appraisal-section-heading">${_tLab('專長與性格副技能協同點評', 'Specialty & Synergy Analysis')}</h4>
                 <div class="appraisal-pros-list">
                   ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
                 </div>
@@ -3419,8 +3546,7 @@ const TARGET_TOP_RECIPES = [
       labState.isCustomized = false;
       updateLabUI();
       if (typeof window.showToast === 'function') {
-        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-        window.showToast(isEN ? 'Pokémon updated successfully!' : '寶可夢數值已成功更新！');
+        window.showToast(_tLab('寶可夢數值已成功更新！', 'Pokémon updated successfully!'));
       }
     }
   }
@@ -3502,7 +3628,6 @@ const TARGET_TOP_RECIPES = [
   }
 
   function initLabPokemonCombobox(pokemons, currentPkm) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const searchInput = document.getElementById('lab-poke-search');
     const dropdown = document.getElementById('lab-pkm-dropdown');
     const toggleBtn = document.getElementById('lab-pkm-dropdown-toggle');
@@ -3526,13 +3651,13 @@ const TARGET_TOP_RECIPES = [
       }
 
       if (matched.length === 0) {
-        dropdown.innerHTML = `<div class="text-muted" style="padding: 12px; text-align: center; font-size: 12px;">${isEN ? 'No matching Pokémon' : '找不到符合之寶可夢'}</div>`;
+        dropdown.innerHTML = `<div class="text-muted" style="padding: 12px; text-align: center; font-size: 12px;">${_tLab('找不到符合之寶可夢', 'No matching Pokémon')}</div>`;
         dropdown.style.display = 'block';
         return;
       }
 
       dropdown.innerHTML = matched.map(p => {
-        const pkmDisplayName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
+        const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : _tLab(p.name_cn, p.name_en || p.name_cn);
         const isSelected = p.id === currentPkm.id;
         const avatarUrl = p.icon_url || p.icon || (p.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png` : '') || 'assets/placeholder.svg';
         return `
@@ -3652,9 +3777,9 @@ const TARGET_TOP_RECIPES = [
     const legendSvg = `
       <g transform="translate(14, 18)">
         <rect x="0" y="0" width="10" height="10" rx="2" fill="#38bdf8" />
-        <text x="14" y="9" fill="#38bdf8" font-size="11" font-weight="700">${escapeHtml(nameA || (isEN ? 'Pokémon A' : '選手 A'))}</text>
+        <text x="14" y="9" fill="#38bdf8" font-size="11" font-weight="700">${escapeHtml(nameA || _tLab('選手 A', 'Pokémon A'))}</text>
         <rect x="150" y="0" width="10" height="10" rx="2" fill="#c084fc" />
-        <text x="164" y="9" fill="#c084fc" font-size="11" font-weight="700">${escapeHtml(nameB || (isEN ? 'Pokémon B' : '選手 B'))}</text>
+        <text x="164" y="9" fill="#c084fc" font-size="11" font-weight="700">${escapeHtml(nameB || _tLab('選手 B', 'Pokémon B'))}</text>
       </g>
     `;
 
@@ -3767,9 +3892,8 @@ const TARGET_TOP_RECIPES = [
   };
 
   function calculateProjectedSnorlaxRank(weeklyEnergy, islandId) {
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
     if (typeof weeklyEnergy !== 'number' || isNaN(weeklyEnergy) || !isFinite(weeklyEnergy) || weeklyEnergy <= 0) {
-      return isEN ? 'Basic 1' : '普通 1';
+      return _tLab('普通 1', 'Basic 1');
     }
     const key = (islandId || 'greengrass').toLowerCase();
     const tiers = ISLAND_SNORLAX_THRESHOLDS[key] || ISLAND_SNORLAX_THRESHOLDS.greengrass;
@@ -3780,49 +3904,48 @@ const TARGET_TOP_RECIPES = [
     const m20 = tiers.find(t => t.rank === 'Master 20') || { energy: 3245795 };
 
     if (weeklyEnergy >= m20.energy) {
-      return isEN ? 'Master 20' : '大師 20';
+      return _tLab('大師 20', 'Master 20');
     }
     if (weeklyEnergy >= m15.energy) {
       const step = (m20.energy - m15.energy) / 5;
       const rankNum = Math.max(15, Math.min(20, 15 + Math.floor((weeklyEnergy - m15.energy) / Math.max(1, step))));
-      return isEN ? `Master ${rankNum}` : `大師 ${rankNum}`;
+      return _tLab(`大師 ${rankNum}`, `Master ${rankNum}`);
     }
     if (weeklyEnergy >= m10.energy) {
       const step = (m15.energy - m10.energy) / 5;
       const rankNum = Math.max(10, Math.min(15, 10 + Math.floor((weeklyEnergy - m10.energy) / Math.max(1, step))));
-      return isEN ? `Master ${rankNum}` : `大師 ${rankNum}`;
+      return _tLab(`大師 ${rankNum}`, `Master ${rankNum}`);
     }
     if (weeklyEnergy >= m5.energy) {
       const step = (m10.energy - m5.energy) / 5;
       const rankNum = Math.max(5, Math.min(10, 5 + Math.floor((weeklyEnergy - m5.energy) / Math.max(1, step))));
-      return isEN ? `Master ${rankNum}` : `大師 ${rankNum}`;
+      return _tLab(`大師 ${rankNum}`, `Master ${rankNum}`);
     }
     if (weeklyEnergy >= m1.energy) {
       const step = (m5.energy - m1.energy) / 4;
       const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - m1.energy) / Math.max(1, step))));
-      return isEN ? `Master ${rankNum}` : `大師 ${rankNum}`;
+      return _tLab(`大師 ${rankNum}`, `Master ${rankNum}`);
     }
     const u1 = tiers.find(t => t.rank === 'Ultra 1') || { energy: 79197 };
     if (weeklyEnergy >= u1.energy) {
       const step = (m1.energy - u1.energy) / 5;
       const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - u1.energy) / Math.max(1, step))));
-      return isEN ? `Ultra ${rankNum}` : `超級 ${rankNum}`;
+      return _tLab(`超級 ${rankNum}`, `Ultra ${rankNum}`);
     }
     const g1 = tiers.find(t => t.rank === 'Great 1') || { energy: 23385 };
     if (weeklyEnergy >= g1.energy) {
       const step = (u1.energy - g1.energy) / 5;
       const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - g1.energy) / Math.max(1, step))));
-      return isEN ? `Great ${rankNum}` : `進階 ${rankNum}`;
+      return _tLab(`進階 ${rankNum}`, `Great ${rankNum}`);
     }
     const b1 = tiers.find(t => t.rank === 'Basic 1') || { energy: 0 };
     const step = (g1.energy - b1.energy) / 5;
     const rankNum = Math.max(1, Math.min(5, 1 + Math.floor(weeklyEnergy / Math.max(1, step))));
-    return isEN ? `Basic ${rankNum}` : `普通 ${rankNum}`;
+    return _tLab(`普通 ${rankNum}`, `Basic ${rankNum}`);
   }
 
   /* ─── 幫手隊伍效益模擬器 (Team Synergy & Output Simulator) ─────────────── */
   function simulateTeamPerformance(teamPokemonItems, islandId, targetRecipeArg, potSize, options) {
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
     const island = LAB_ISLANDS.find(i => i.id === islandId) || LAB_ISLANDS[0];
     const validItems = Array.isArray(teamPokemonItems) ? teamPokemonItems.filter(Boolean) : [];
 
@@ -3834,7 +3957,7 @@ const TARGET_TOP_RECIPES = [
         dailyCookingEnergy: 0,
         dailySkillEnergy: 0,
         totalDailyEnergy: 0,
-        projectedSundayRank: isEN ? 'Basic 1' : '普通 1',
+        projectedSundayRank: _tLab('普通 1', 'Basic 1'),
         weeklyProjectedEnergy: 0,
         totalDailyIngredientsCount: 0,
         ingredientsMap: {},
@@ -4478,23 +4601,34 @@ const TARGET_TOP_RECIPES = [
 
     updateLabUI();
     if (showToastNotification && typeof window.showToast === 'function') {
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+      const islandName = _tLab(island.name, island.name_en || island.name);
       if (strategy === 'recipe' || strategy === 'ingredients') {
         const targetRecipe = findTargetRecipe(labState.targetRecipeName);
-        const rName = isEN ? (targetRecipe.name_en || targetRecipe.name_cn) : (targetRecipe.name_cn || targetRecipe.name);
-        window.showToast(isEN
-          ? `Team optimized for target recipe: ${rName} on ${island.name_en || island.name} (Daily Coverage)!`
-          : `已自動為【${island.name}】依目標料理【${rName}】配置單日覆蓋最佳食材陣容！`
-        );
+        const rName = (window.I18N && typeof window.I18N.getRecipeName === 'function')
+          ? window.I18N.getRecipeName(targetRecipe)
+          : _tLab(targetRecipe.name_cn || targetRecipe.name, targetRecipe.name_en || targetRecipe.name_cn);
+        window.showToast(_tLab(
+          `已自動為【${islandName}】依目標料理【${rName}】配置單日覆蓋最佳食材陣容！`,
+          `Team optimized for target recipe: ${rName} on ${islandName} (Daily Coverage)!`
+        ));
       } else {
-        const stratNames = { balanced: isEN ? 'Balanced' : '綜合隊', berries: isEN ? 'Berry-Focused' : '樹果隊', ingredients: isEN ? 'Ingredient-Focused' : '食材隊', skills: isEN ? 'Skill-Focused' : '技能隊' };
-        const cookNames = { curry: isEN ? 'Curry' : '咖哩/濃湯', salad: isEN ? 'Salad' : '沙拉', dessert: isEN ? 'Dessert' : '點心/飲料' };
+        const stratNames = {
+          balanced: _tLab('綜合隊', 'Balanced'),
+          berries: _tLab('樹果隊', 'Berry-Focused'),
+          ingredients: _tLab('食材隊', 'Ingredient-Focused'),
+          skills: _tLab('技能隊', 'Skill-Focused')
+        };
+        const cookNames = {
+          curry: _tLab('咖哩/濃湯', 'Curry'),
+          salad: _tLab('沙拉', 'Salad'),
+          dessert: _tLab('點心/飲料', 'Dessert')
+        };
         const sName = stratNames[strategy] || strategy;
         const cName = cookNames[cookingType] || cookingType;
-        window.showToast(isEN
-          ? `Team optimized: ${sName} on ${island.name_en || island.name} (${cName})!`
-          : `已自動為【${island.name}】推薦【${sName}】（料理目標：${cName}）！`
-        );
+        window.showToast(_tLab(
+          `已自動為【${islandName}】推薦【${sName}】（料理目標：${cName}）！`,
+          `Team optimized: ${sName} on ${islandName} (${cName})!`
+        ));
       }
     }
   }
@@ -4552,9 +4686,8 @@ const TARGET_TOP_RECIPES = [
 
     autoOptimizeTeam(autoBuild);
     if (!autoBuild && typeof window !== 'undefined' && typeof window.showToast === 'function') {
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-      const berryDisplay = rolled.map(b => (isEN && window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b) : b)).join(', ');
-      window.showToast(isEN ? `Greengrass favored berries rerolled: ${berryDisplay}` : `萌綠之島喜愛樹果已隨機刷新：${rolled.join('、')}！`);
+      const berryDisplay = rolled.map(b => (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b) : _tLabStr(b))).join(_tLab('、', ', '));
+      window.showToast(_tLab(`萌綠之島喜愛樹果已隨機刷新：${berryDisplay}！`, `Greengrass favored berries rerolled: ${berryDisplay}`));
     }
   }
 
@@ -4680,8 +4813,7 @@ const TARGET_TOP_RECIPES = [
       const otherIdx = labState.compareSlots.findIndex((u, i) => u === uid && i !== idx);
       if (otherIdx !== -1) {
         if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
-          const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-          window.showToast(isEN ? 'This Pokémon is already selected in comparison!' : '該寶可夢已在對比選手名單中，無法重複選擇！');
+          window.showToast(_tLab('該寶可夢已在對比選手名單中，無法重複選擇！', 'This Pokémon is already selected in comparison!'));
         }
         return;
       }
@@ -4840,12 +4972,14 @@ const TARGET_TOP_RECIPES = [
         });
 
         if (filtered.length === 0) {
-          return `<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;">${isEN ? 'No matching recipes found' : '未找到符合條件的料理'}</div>`;
+          return `<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;">${_tLab('未找到符合條件的料理', 'No matching recipes found', isEN)}</div>`;
         }
 
         return filtered.map(r => {
           const rNameCn = r.name_cn || r.name || '';
-          const rNameDisplay = isEN ? (r.name_en || rNameCn) : rNameCn;
+          const rNameDisplay = (window.I18N && typeof window.I18N.getRecipeName === 'function')
+            ? window.I18N.getRecipeName(r)
+            : _tLab(rNameCn, r.name_en || rNameCn, isEN);
           const isSelected = (rNameCn === currentTargetName || r.name === currentTargetName);
           const ings = Array.isArray(r.ingredients) ? r.ingredients : [];
           const cat = (r.category || '').toLowerCase();
@@ -4854,7 +4988,7 @@ const TARGET_TOP_RECIPES = [
           else if (cat.includes('甜') || cat.includes('點心') || cat.includes('dessert') || cat.includes('飲料') || cat.includes('drink')) catClass = 'lab-recipe-cat-dessert';
 
           const ingsHtml = ings.map(ing => {
-            const iDisp = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
+            const iDisp = window.I18N ? window.I18N.getIngredientName(ing.name) : _tLabStr(ing.name);
             const iconUrl = ing.icon || (window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(ing.name) : '');
             return `
               <span class="lab-recipe-ing-chip" title="${escapeHtml(iDisp)} x${ing.count}">
@@ -4874,9 +5008,9 @@ const TARGET_TOP_RECIPES = [
                 <div class="lab-recipe-card-info">
                   <div class="lab-recipe-card-title-row">
                     <span class="lab-recipe-card-title">${escapeHtml(rNameDisplay)}</span>
-                    ${r.pot_size ? `<span class="lab-recipe-card-pot">${r.pot_size}${isEN ? ' Pots' : '格'}</span>` : ''}
+                    ${r.pot_size ? `<span class="lab-recipe-card-pot">${r.pot_size}${_tLab('格', ' Pots', isEN)}</span>` : ''}
                     ${energyText ? `<span class="lab-recipe-card-pot">${energyText}</span>` : ''}
-                    ${isSelected ? `<span class="lab-recipe-active-badge">${isEN ? 'Current' : '當前'}</span>` : ''}
+                    ${isSelected ? `<span class="lab-recipe-active-badge">${_tLab('當前', 'Current', isEN)}</span>` : ''}
                   </div>
                   <div class="lab-recipe-card-ingredients">
                     ${ingsHtml}
@@ -4896,23 +5030,23 @@ const TARGET_TOP_RECIPES = [
       }
 
       const categoryLabelMap = {
-        curry: isEN ? 'Curry' : '咖哩/濃湯',
-        salad: isEN ? 'Salad' : '沙拉',
-        dessert: isEN ? 'Dessert' : '點心/飲料'
+        curry: _tLab('咖哩/濃湯', 'Curry', isEN),
+        salad: _tLab('沙拉', 'Salad', isEN),
+        dessert: _tLab('點心/飲料', 'Dessert', isEN)
       };
       const categoryFilterHtml = lockedCategory
         ? `<button type="button" class="box-btn box-btn-secondary active" data-filter="${lockedCategory}" style="padding:3px 10px;font-size:11px;cursor:default;">${categoryLabelMap[lockedCategory]} (${scopedRecipesList.length})</button>`
         : `
-          <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 10px;font-size:11px;">${isEN ? 'All' : '全部'} (${allRecipesList.length})</button>
+          <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 10px;font-size:11px;">${_tLab('全部', 'All', isEN)} (${allRecipesList.length})</button>
           <button type="button" class="box-btn box-btn-secondary" data-filter="curry" style="padding:3px 10px;font-size:11px;">${categoryLabelMap.curry}</button>
           <button type="button" class="box-btn box-btn-secondary" data-filter="salad" style="padding:3px 10px;font-size:11px;">${categoryLabelMap.salad}</button>
           <button type="button" class="box-btn box-btn-secondary" data-filter="dessert" style="padding:3px 10px;font-size:11px;">${categoryLabelMap.dessert}</button>
         `;
 
       const recipeIngChipsHtml = [
-        `<button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === 'all' ? 'active' : ''}" data-recipe-ing="all" title="${isEN ? 'All Ingredients' : '全部食材'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
+        `<button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === 'all' ? 'active' : ''}" data-recipe-ing="all" title="${_tLab('全部食材', 'All Ingredients', isEN)}"><span>${_tLab('全部', 'All', isEN)}</span></button>`,
         ..._getLabCanonicalIngredients().map(iName => {
-          const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
+          const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : _tLabStr(iName);
           const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
           return `
             <button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === iName ? 'active' : ''}" data-recipe-ing="${escapeHtml(iName)}" title="${escapeHtml(iDisp)}">
@@ -4926,10 +5060,10 @@ const TARGET_TOP_RECIPES = [
         <div class="lab-picker-container lab-recipe-picker-container">
           <div class="lab-picker-header">
             <div style="font-size:15px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:6px;">
-              <span>${isEN ? 'Select Target Recipe' : '挑選目標料理'}</span>
-              <span style="font-size:11px;color:var(--text-secondary);background:var(--bg-card-inner);border:1px solid var(--border-color);padding:1px 7px;border-radius:999px;">${scopedRecipesList.length} ${isEN ? 'Dishes' : '道料理'}</span>
+              <span>${_tLab('挑選目標料理', 'Select Target Recipe', isEN)}</span>
+              <span style="font-size:11px;color:var(--text-secondary);background:var(--bg-card-inner);border:1px solid var(--border-color);padding:1px 7px;border-radius:999px;">${scopedRecipesList.length} ${_tLab('道料理', 'Dishes', isEN)}</span>
             </div>
-            <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closePicker()" aria-label="Close">
+            <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closePicker()" aria-label="${_tLab('關閉', 'Close', isEN)}">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -4939,7 +5073,7 @@ const TARGET_TOP_RECIPES = [
 
           <div class="lab-picker-controls-section">
             <div class="lab-picker-search-bar">
-              <input type="text" id="lab-picker-recipe-search" class="box-form-input" placeholder="${isEN ? 'Search recipe name or ingredient...' : '搜尋料理名稱或所需食材...'}" style="flex:1;min-width:160px;height:34px;font-size:12px;">
+              <input type="text" id="lab-picker-recipe-search" class="box-form-input" placeholder="${_tLab('搜尋料理名稱或所需食材...', 'Search recipe name or ingredient...', isEN)}" style="flex:1;min-width:160px;height:34px;font-size:12px;">
               <div class="lab-picker-filter-chips" style="display:flex;gap:6px;flex-wrap:wrap;">
                 ${categoryFilterHtml}
               </div>
@@ -4947,7 +5081,7 @@ const TARGET_TOP_RECIPES = [
 
             <div class="lab-picker-secondary-filters" style="margin-top:4px;">
               <div class="lab-picker-ing-filter-group" style="width:100%;">
-                <span class="lab-picker-filter-label">${isEN ? 'Ingr:' : '食材:'}</span>
+                <span class="lab-picker-filter-label">${_tLab('食材:', 'Ingr:', isEN)}</span>
                 <div class="lab-picker-ing-chips-scroll" id="lab-recipe-picker-ing-scroll">
                   ${recipeIngChipsHtml}
                 </div>
@@ -5020,10 +5154,10 @@ const TARGET_TOP_RECIPES = [
     const compareLetter = ['A', 'B', 'C'][compareTargetIdx] || 'A';
 
     const title = opts.type === 'team'
-      ? (isEN ? `Select Member for Slot ${opts.slotIndex + 1}` : `挑選隊員 (隊員槽位 ${opts.slotIndex + 1})`)
+      ? _tLab(`挑選隊員 (隊員槽位 ${opts.slotIndex + 1})`, `Select Member for Slot ${opts.slotIndex + 1}`, isEN)
       : (opts.type === 'growth'
-        ? (isEN ? 'Select Pokémon for Growth & Seeds Calculation' : '挑選培育精算對象')
-        : (isEN ? `Select Pokémon for Player ${compareLetter}` : `挑選選手 ${compareLetter}`));
+        ? _tLab('挑選培育精算對象', 'Select Pokémon for Growth & Seeds Calculation', isEN)
+        : _tLab(`挑選選手 ${compareLetter}`, `Select Pokémon for Player ${compareLetter}`, isEN));
 
     const berriesList = _getLabBerryValuesData();
 
@@ -5079,7 +5213,7 @@ const TARGET_TOP_RECIPES = [
       });
 
       if (filtered.length === 0) {
-        return `<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;grid-column:1/-1;">${isEN ? 'No matching Pokémon found in Box' : '倉庫中未找到符合條件之寶可夢'}</div>`;
+        return `<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;grid-column:1/-1;">${_tLab('倉庫中未找到符合條件的寶可夢', 'No matching Pokémon found in Box', isEN)}</div>`;
       }
 
       // Check occupied in comparison
@@ -5098,9 +5232,12 @@ const TARGET_TOP_RECIPES = [
 
       return filtered.map(item => {
         const base = findBasePkm(item.pokemonId || item.name);
-        const pDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : item.name) : (item.name || (base ? base.name_cn : ''));
+        const pDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+          ? window.I18N.getPokemonName(base || item.name)
+          : _tLab(item.name || (base ? base.name_cn : ''), base ? (base.name_en || base.name_cn) : item.name, isEN);
         const avatarUrl = (base && (base.icon_url || base.icon)) || (base && base.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${base.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
         const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : {});
+        const berryDisp = (window.I18N && typeof window.I18N.getBerryName === 'function') ? window.I18N.getBerryName(berry.name || '') : _tLabStr(berry.name || '');
         const isFav = favBerries.includes(berry.name || '') || favTypes.includes(berry.type || (base ? base.type : '') || '');
         const specHtml = (window.I18N && window.I18N.getSpecialtyIconHtml && base) ? window.I18N.getSpecialtyIconHtml(base.specialty, 15) : '';
 
@@ -5109,7 +5246,7 @@ const TARGET_TOP_RECIPES = [
 
         let clickAttr;
         if (isOccupied) {
-          const toastMsg = isEN ? 'This Pokémon is already selected in comparison!' : '該寶可夢已在對比選手名單中，無法重複選擇！';
+          const toastMsg = _tLab('該寶可夢已在對比選手名單中，無法重複選擇！', 'This Pokémon is already selected in comparison!', isEN);
           clickAttr = `onclick="if(typeof window.showToast==='function')window.showToast('${toastMsg}');"`;
         } else {
           clickAttr = `onclick="window.AppraisalLab.onPickerSelect('${item.uid}')"`;
@@ -5128,18 +5265,18 @@ const TARGET_TOP_RECIPES = [
 
         const pIngsHtml = pIngSlots.map(s => {
           const iName = s.name || '';
-          const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
+          const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : _tLabStr(iName);
           const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
           return `
-            <span class="lab-picker-ing-chip ${!s.unlocked ? 'is-locked' : ''}" title="Lv.${s.req}: ${escapeHtml(iDisp)}${!s.unlocked ? (isEN ? ' (Locked)' : ' (未解鎖)') : ''}">
+            <span class="lab-picker-ing-chip ${!s.unlocked ? 'is-locked' : ''}" title="Lv.${s.req}: ${escapeHtml(iDisp)}${!s.unlocked ? _tLab(' (未解鎖)', ' (Locked)', isEN) : ''}">
               ${icon ? `<img src="${icon}" class="lab-picker-ing-icon" alt="${escapeHtml(iDisp)}">` : `<span style="font-size:9px;color:var(--text-muted);">-</span>`}
             </span>
           `;
         }).join('');
 
         return `
-          <div class="lab-picker-card ${isSel ? 'selected' : ''} ${isOccupied ? 'occupied disabled' : ''} ${isFav ? 'fav' : ''}" data-uid="${item.uid}" ${clickAttr} title="${isOccupied ? (isEN ? 'Already in comparison' : '已在對比選手中') : escapeHtml(pDisplayName)}">
-            ${isOccupied ? `<span class="lab-picker-occupied-badge">${isEN ? 'In Comparison' : '已在對比中'}</span>` : ''}
+          <div class="lab-picker-card ${isSel ? 'selected' : ''} ${isOccupied ? 'occupied disabled' : ''} ${isFav ? 'fav' : ''}" data-uid="${item.uid}" ${clickAttr} title="${isOccupied ? _tLab('已在對比選手中', 'Already in comparison', isEN) : escapeHtml(pDisplayName)}">
+            ${isOccupied ? `<span class="lab-picker-occupied-badge">${_tLab('已在對比中', 'In Comparison', isEN)}</span>` : ''}
             <div class="lab-picker-main">
               <div class="lab-picker-avatar">
                 <img src="${avatarUrl}" alt="${escapeHtml(pDisplayName)}" loading="lazy">
@@ -5147,7 +5284,7 @@ const TARGET_TOP_RECIPES = [
               </div>
               <div class="lab-picker-meta">
                 <div class="lab-picker-sub">
-                  ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berry.name || '')}">` : ''}
+                  ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berryDisp)}">` : ''}
                   ${specHtml}
                 </div>
                 <div class="lab-picker-ings">
@@ -5169,10 +5306,10 @@ const TARGET_TOP_RECIPES = [
     }
 
     const berryChipsHtml = [
-      `<button type="button" class="lab-picker-berry-chip-btn ${currentBerryFilter === 'all' ? 'active' : ''}" data-berry="all" title="${isEN ? 'All Berries' : '全部樹果'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
+      `<button type="button" class="lab-picker-berry-chip-btn ${currentBerryFilter === 'all' ? 'active' : ''}" data-berry="all" title="${_tLab('全部樹果', 'All Berries', isEN)}"><span>${_tLab('全部', 'All', isEN)}</span></button>`,
       ...berriesList.map(b => {
-        const bDisp = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b.name) : b.name) : b.name;
-        const tDisp = window.I18N ? window.I18N.getTypeName(b.type) : b.type;
+        const bDisp = (window.I18N && window.I18N.getBerryName) ? window.I18N.getBerryName(b.name) : _tLabStr(b.name);
+        const tDisp = window.I18N ? window.I18N.getTypeName(b.type) : _tLabStr(b.type);
         const bIcon = b.icon || '';
         return `
           <button type="button" class="lab-picker-berry-chip-btn ${currentBerryFilter === b.name ? 'active' : ''}" data-berry="${escapeHtml(b.name)}" title="${escapeHtml(bDisp)} (${escapeHtml(tDisp)})">
@@ -5183,9 +5320,9 @@ const TARGET_TOP_RECIPES = [
     ].join('');
 
     const ingChipsHtml = [
-      `<button type="button" class="lab-picker-ing-chip-btn ${currentIngFilter === 'all' ? 'active' : ''}" data-ing="all" title="${isEN ? 'All Ingredients' : '全部食材'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
+      `<button type="button" class="lab-picker-ing-chip-btn ${currentIngFilter === 'all' ? 'active' : ''}" data-ing="all" title="${_tLab('全部食材', 'All Ingredients', isEN)}"><span>${_tLab('全部', 'All', isEN)}</span></button>`,
       ..._getLabCanonicalIngredients().map(iName => {
-        const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
+        const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : _tLabStr(iName);
         const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
         return `
           <button type="button" class="lab-picker-ing-chip-btn ${currentIngFilter === iName ? 'active' : ''}" data-ing="${escapeHtml(iName)}" title="${escapeHtml(iDisp)}">
@@ -5199,7 +5336,7 @@ const TARGET_TOP_RECIPES = [
       <div class="lab-picker-container">
         <div class="lab-picker-header">
           <div style="font-size:15px;font-weight:700;color:var(--text-primary);">${title}</div>
-          <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closePicker()" aria-label="Close">
+          <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closePicker()" aria-label="${_tLab('關閉', 'Close', isEN)}">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -5209,25 +5346,25 @@ const TARGET_TOP_RECIPES = [
 
         <div class="lab-picker-controls-section">
           <div class="lab-picker-search-bar">
-            <input type="text" id="lab-picker-search-input" class="box-form-input" placeholder="${isEN ? 'Search nickname or Dex No...' : '搜尋寶可夢暱稱或編號...'}" style="flex:1;min-width:180px;height:34px;font-size:12px;">
+            <input type="text" id="lab-picker-search-input" class="box-form-input" placeholder="${_tLab('搜尋寶可夢暱稱或編號...', 'Search nickname or Dex No...', isEN)}" style="flex:1;min-width:180px;height:34px;font-size:12px;">
             <div class="lab-picker-filter-chips" style="display:flex;gap:5px;flex-wrap:wrap;">
-              <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 8px;font-size:11px;">${isEN ? 'All' : '全部'} (${userBox.length})</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="fav" style="padding:3px 8px;font-size:11px;">${isEN ? 'Favored' : '喜愛樹果'}</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="berry" style="padding:3px 8px;font-size:11px;">${isEN ? 'Berries' : '樹果型'}</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="ingredient" style="padding:3px 8px;font-size:11px;">${isEN ? 'Ingredients' : '食材型'}</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="skill" style="padding:3px 8px;font-size:11px;">${isEN ? 'Skills' : '技能型'}</button>
+              <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 8px;font-size:11px;">${_tLab('全部', 'All', isEN)} (${userBox.length})</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="fav" style="padding:3px 8px;font-size:11px;">${_tLab('喜愛樹果', 'Favored', isEN)}</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="berry" style="padding:3px 8px;font-size:11px;">${_tLab('樹果型', 'Berries', isEN)}</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="ingredient" style="padding:3px 8px;font-size:11px;">${_tLab('食材型', 'Ingredients', isEN)}</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="skill" style="padding:3px 8px;font-size:11px;">${_tLab('技能型', 'Skills', isEN)}</button>
             </div>
           </div>
 
           <div class="lab-picker-secondary-filters">
             <div class="lab-picker-berry-filter-group" style="width:100%;">
-              <span class="lab-picker-filter-label">${isEN ? 'Berry:' : '樹果:'}</span>
+              <span class="lab-picker-filter-label">${_tLab('樹果:', 'Berry:', isEN)}</span>
               <div class="lab-picker-berry-chips-scroll" id="lab-picker-berry-scroll">
                 ${berryChipsHtml}
               </div>
             </div>
             <div class="lab-picker-ing-filter-group" style="width:100%;">
-              <span class="lab-picker-filter-label">${isEN ? 'Ingr:' : '食材:'}</span>
+              <span class="lab-picker-filter-label">${_tLab('食材:', 'Ingr:', isEN)}</span>
               <div class="lab-picker-ing-chips-scroll" id="lab-picker-ing-scroll">
                 ${ingChipsHtml}
               </div>
@@ -5405,8 +5542,8 @@ const TARGET_TOP_RECIPES = [
     const berriesList = _getLabBerryValuesData();
     const currentCid = _resolveLabBerryCanonicalId(currentBerryName);
     const optionsHtml = berriesList.map(b => {
-      const bDisp = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b.name) : b.name) : b.name;
-      const tDisp = window.I18N ? window.I18N.getTypeName(b.type) : b.type;
+      const bDisp = (window.I18N && window.I18N.getBerryName) ? window.I18N.getBerryName(b.name) : _tLabStr(b.name);
+      const tDisp = window.I18N ? window.I18N.getTypeName(b.type) : _tLabStr(b.type);
       const isSel = (currentCid && b.id === currentCid) || b.name === currentBerryName ? 'selected' : '';
       return `<option value="${escapeHtml(b.name)}" ${isSel}>${escapeHtml(bDisp)} (${tDisp})</option>`;
     }).join('');
@@ -5440,7 +5577,7 @@ const TARGET_TOP_RECIPES = [
     const islandPillsHtml = LAB_ISLANDS.map(isl => {
       const isActive = labState.teamIslandId === isl.id;
       const islImgUrl = isl.image ? (basePath + isl.image) : '';
-      const islName = isEN ? (isl.name_en || isl.name) : isl.name;
+      const islName = _tLab(isl.name, isl.name_en || isl.name, isEN);
       return `
         <button type="button" class="lab-island-circle-btn ${isActive ? 'active' : ''}" style="${islImgUrl ? `background-image:url('${islImgUrl}');` : `background-color:${isl.color};`}${isActive ? `border-color:${isl.color};box-shadow:0 0 10px ${isl.color}99;` : ''}" onclick="window.AppraisalLab.setTeamIsland('${isl.id}')" title="${escapeHtml(islName)}">
           <span class="sr-only">${escapeHtml(islName)}</span>
@@ -5451,7 +5588,7 @@ const TARGET_TOP_RECIPES = [
     const favoredBerriesHtml = favBerries.map(bName => {
       const bObj = _findLabBerryData(bName) || {};
       const canonicalName = bObj.name || bName;
-      const bDisplayName = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(canonicalName) : canonicalName) : canonicalName;
+      const bDisplayName = (window.I18N && window.I18N.getBerryName) ? window.I18N.getBerryName(canonicalName) : _tLabStr(canonicalName);
       return `
         <span class="lab-favored-berry-icon-wrap" title="${escapeHtml(bDisplayName)}">
           ${bObj.icon ? `<img src="${bObj.icon}" class="lab-favored-berry-img" alt="${escapeHtml(bDisplayName)}">` : ''}
@@ -5463,17 +5600,17 @@ const TARGET_TOP_RECIPES = [
       <div class="lab-greengrass-berries-config">
         <div class="lab-greengrass-berries-head">
           <div style="display:flex;flex-direction:column;gap:1px;">
-            <span style="font-size:11.5px;font-weight:700;color:#22c55e;">${isEN ? 'Greengrass Favored Berries (Customizable):' : '萌綠之島本週喜愛樹果 (可自由自選):'}</span>
-            <span style="font-size:10.5px;color:var(--text-muted);">${isEN ? 'Select 3 favored berries for this week (2x energy boost)' : '自選本週 3 種喜愛樹果，產能與推薦即時享有 2x 能量加成'}</span>
+            <span style="font-size:11.5px;font-weight:700;color:#22c55e;">${_tLab('萌綠之島本週喜愛樹果 (可自由自選):', 'Greengrass Favored Berries (Customizable):', isEN)}</span>
+            <span style="font-size:10.5px;color:var(--text-muted);">${_tLab('自選本週 3 種喜愛樹果，產能與推薦即時享有 2x 能量加成', 'Select 3 favored berries for this week (2x energy boost)', isEN)}</span>
           </div>
           <div class="lab-greengrass-actions" style="display:flex;gap:5px;align-items:center;">
-            <button type="button" class="box-btn box-btn-secondary" onclick="window.AppraisalLab.rerollGreengrassBerries(false)" style="font-size:10.5px;padding:3px 7px;display:inline-flex;align-items:center;gap:3px;" title="${isEN ? 'Reroll 3 random berries from 18' : '從 18 種樹果隨機刷新 3 種'}">
+            <button type="button" class="box-btn box-btn-secondary" onclick="window.AppraisalLab.rerollGreengrassBerries(false)" style="font-size:10.5px;padding:3px 7px;display:inline-flex;align-items:center;gap:3px;" title="${_tLab('從 18 種樹果隨機刷新 3 種', 'Reroll 3 random berries from 18', isEN)}">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-              <span>${isEN ? 'Random Reroll' : '隨機擲骰'}</span>
+              <span>${_tLab('隨機擲骰', 'Random Reroll', isEN)}</span>
             </button>
-            <button type="button" class="box-btn box-btn-primary" onclick="window.AppraisalLab.rerollGreengrassBerries(true)" style="font-size:10.5px;padding:3px 7px;display:inline-flex;align-items:center;gap:3px;" title="${isEN ? 'Reroll 3 random berries and immediately auto-optimize team' : '隨機抽出 3 種樹果並立即自動推薦最佳陣容'}">
+            <button type="button" class="box-btn box-btn-primary" onclick="window.AppraisalLab.rerollGreengrassBerries(true)" style="font-size:10.5px;padding:3px 7px;display:inline-flex;align-items:center;gap:3px;" title="${_tLab('隨機抽出 3 種樹果並立即自動推薦最佳陣容', 'Reroll 3 random berries and immediately auto-optimize team', isEN)}">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-              <span>${isEN ? 'Roll & Build' : '擲骰並自動配隊'}</span>
+              <span>${_tLab('擲骰並自動配隊', 'Roll & Build', isEN)}</span>
             </button>
           </div>
         </div>
@@ -5484,10 +5621,17 @@ const TARGET_TOP_RECIPES = [
     ` : '';
 
     const targetRecipe = findTargetRecipe(labState.targetRecipeName);
-    const targetRecipeDisplayName = isEN ? (targetRecipe.name_en || targetRecipe.name_cn) : (targetRecipe.name_cn || targetRecipe.name);
-    const targetRecipeCategory = isEN
-      ? (targetRecipe.category || 'Curry')
-      : (targetRecipe.category || '咖哩');
+    const targetRecipeDisplayName = (window.I18N && typeof window.I18N.getRecipeName === 'function')
+      ? window.I18N.getRecipeName(targetRecipe)
+      : _tLab(targetRecipe.name_cn || targetRecipe.name, targetRecipe.name_en || targetRecipe.name_cn, isEN);
+    const rawCat = targetRecipe.category || '咖哩';
+    const catLower = rawCat.toLowerCase();
+    const catEn = (catLower.includes('沙拉') || catLower.includes('salad'))
+      ? 'Salad'
+      : ((catLower.includes('甜') || catLower.includes('點心') || catLower.includes('dessert') || catLower.includes('飲料') || catLower.includes('drink'))
+          ? 'Dessert'
+          : 'Curry');
+    const targetRecipeCategory = _tLab(rawCat, catEn, isEN);
     const isTargetRecipeStrategy = labState.teamStrategy === 'recipe';
 
     // ─── 料理鍋容量與加成 (Pot Size Controls & Modifiers) ─────────
@@ -5505,28 +5649,28 @@ const TARGET_TOP_RECIPES = [
     const isPotFeasible = targetPotReq > 0 ? (effectivePotSize >= targetPotReq) : true;
     const potFeasibilityBadge = targetPotReq > 0
       ? (isPotFeasible
-          ? `<span class="lab-pot-feasibility feasible">[OK] ${isEN ? 'Capacity OK' : '容量充裕'} (${targetPotReq}/${effectivePotSize})</span>`
-          : `<span class="lab-pot-feasibility deficit">[!] ${isEN ? 'Pot Short' : '鍋容量不足'} (${targetPotReq}/${effectivePotSize})</span>`)
+          ? `<span class="lab-pot-feasibility feasible">[OK] ${_tLab('容量充裕', 'Capacity OK', isEN)} (${targetPotReq}/${effectivePotSize})</span>`
+          : `<span class="lab-pot-feasibility deficit">[!] ${_tLab('鍋容量不足', 'Pot Short', isEN)} (${targetPotReq}/${effectivePotSize})</span>`)
       : '';
 
     const potControlHtml = `
       <div class="lab-team-config-group lab-pot-config-group">
-        <span class="lab-team-config-label">${isEN ? 'Pot Size:' : '鍋子容量:'}</span>
+        <span class="lab-team-config-label">${_tLab('鍋子容量:', 'Pot Size:', isEN)}</span>
         <div class="lab-pot-stepper-wrap">
-          <button type="button" class="lab-pot-step-btn" onclick="window.AppraisalLab.stepPotSize(-3)" title="${isEN ? 'Decrease Pot Size by 3' : '鍋容量 -3'}">-</button>
-          <span class="lab-pot-size-display" title="${isEN ? 'Base Pot Size: ' + basePotSize : '基礎鍋容量: ' + basePotSize}">${basePotSize}</span>
-          <button type="button" class="lab-pot-step-btn" onclick="window.AppraisalLab.stepPotSize(3)" title="${isEN ? 'Increase Pot Size by 3' : '鍋容量 +3'}">+</button>
+          <button type="button" class="lab-pot-step-btn" onclick="window.AppraisalLab.stepPotSize(-3)" title="${_tLab('鍋容量 -3', 'Decrease Pot Size by 3', isEN)}">-</button>
+          <span class="lab-pot-size-display" title="${_tLab('基礎鍋容量: ' + basePotSize, 'Base Pot Size: ' + basePotSize, isEN)}">${basePotSize}</span>
+          <button type="button" class="lab-pot-step-btn" onclick="window.AppraisalLab.stepPotSize(3)" title="${_tLab('鍋容量 +3', 'Increase Pot Size by 3', isEN)}">+</button>
         </div>
         <div class="lab-pot-modifiers">
-          <button type="button" class="lab-pot-toggle-btn ${labState.sundayPotExpansion ? 'active' : ''}" onclick="window.AppraisalLab.toggleSundayPotExpansion()" title="${isEN ? 'Sunday Pot Expansion: 2x Pot Capacity' : '週日特別擴鍋：料理鍋容量 2 倍'}">
-            ${isEN ? 'Sunday 2x' : '週日2倍'}
+          <button type="button" class="lab-pot-toggle-btn ${labState.sundayPotExpansion ? 'active' : ''}" onclick="window.AppraisalLab.toggleSundayPotExpansion()" title="${_tLab('週日特別擴鍋：料理鍋容量 2 倍', 'Sunday Pot Expansion: 2x Pot Capacity', isEN)}">
+            ${_tLab('週日2倍', 'Sunday 2x', isEN)}
           </button>
-          <button type="button" class="lab-pot-toggle-btn ${labState.goodCampTicket ? 'active' : ''}" onclick="window.AppraisalLab.toggleGoodCampTicket()" title="${isEN ? 'Good Camp Ticket: +50% Pot Capacity' : '好露營券：料理鍋容量 +50%'}">
-            ${isEN ? 'Camp +50%' : '好露營券(+50%)'}
+          <button type="button" class="lab-pot-toggle-btn ${labState.goodCampTicket ? 'active' : ''}" onclick="window.AppraisalLab.toggleGoodCampTicket()" title="${_tLab('好露營券：料理鍋容量 +50%', 'Good Camp Ticket: +50% Pot Capacity', isEN)}">
+            ${_tLab('好露營券(+50%)', 'Camp +50%', isEN)}
           </button>
         </div>
         <div class="lab-effective-pot-wrap">
-          <span class="lab-effective-pot-label">${isEN ? 'Effective:' : '實際容納:'} <strong class="lab-effective-pot-num">${effectivePotSize}</strong></span>
+          <span class="lab-effective-pot-label">${_tLab('實際容納:', 'Effective:', isEN)} <strong class="lab-effective-pot-num">${effectivePotSize}</strong></span>
           ${potFeasibilityBadge}
         </div>
       </div>
@@ -5535,32 +5679,32 @@ const TARGET_TOP_RECIPES = [
     const teamVariablesBarHtml = `
       <div class="lab-team-config-col lab-team-config-panel">
         <div class="lab-team-config-group">
-          <span class="lab-team-config-label">${isEN ? 'Team Focus:' : '隊伍類型:'}</span>
+          <span class="lab-team-config-label">${_tLab('隊伍類型:', 'Team Focus:', isEN)}</span>
           <div class="lab-team-pills">
-            <button type="button" class="lab-team-pill ${labState.teamStrategy === 'balanced' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('balanced')">${isEN ? 'Balanced' : '綜合隊'}</button>
-            <button type="button" class="lab-team-pill ${labState.teamStrategy === 'berries' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('berries')">${isEN ? 'Berries' : '樹果隊'}</button>
-            <button type="button" class="lab-team-pill ${labState.teamStrategy === 'ingredients' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('ingredients')">${isEN ? 'Ingredients' : '食材隊'}</button>
-            <button type="button" class="lab-team-pill ${labState.teamStrategy === 'skills' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('skills')">${isEN ? 'Skills' : '技能隊'}</button>
-            <button type="button" class="lab-team-pill ${labState.teamStrategy === 'recipe' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('recipe')">${isEN ? 'Target Recipe' : '目標料理'}</button>
+            <button type="button" class="lab-team-pill ${labState.teamStrategy === 'balanced' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('balanced')">${_tLab('綜合隊', 'Balanced', isEN)}</button>
+            <button type="button" class="lab-team-pill ${labState.teamStrategy === 'berries' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('berries')">${_tLab('樹果隊', 'Berries', isEN)}</button>
+            <button type="button" class="lab-team-pill ${labState.teamStrategy === 'ingredients' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('ingredients')">${_tLab('食材隊', 'Ingredients', isEN)}</button>
+            <button type="button" class="lab-team-pill ${labState.teamStrategy === 'skills' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('skills')">${_tLab('技能隊', 'Skills', isEN)}</button>
+            <button type="button" class="lab-team-pill ${labState.teamStrategy === 'recipe' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('recipe')">${_tLab('目標料理', 'Target Recipe', isEN)}</button>
           </div>
         </div>
 
         ${isTargetRecipeStrategy ? `
           <div class="lab-team-config-group lab-target-recipe-config-group">
-            <span class="lab-team-config-label">${isEN ? 'Target Dish:' : '目標料理:'}</span>
-            <div class="lab-target-recipe-chip" onclick="window.AppraisalLab.openPicker({ type: 'recipe' })" title="${escapeHtml(targetRecipeDisplayName)} (${isEN ? 'Click to change' : '點擊更換'})">
+            <span class="lab-team-config-label">${_tLab('目標料理:', 'Target Dish:', isEN)}</span>
+            <div class="lab-target-recipe-chip" onclick="window.AppraisalLab.openPicker({ type: 'recipe' })" title="${escapeHtml(targetRecipeDisplayName)} (${_tLab('點擊更換', 'Click to change', isEN)})">
               ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-target-recipe-chip-icon" alt="${escapeHtml(targetRecipeDisplayName)}">` : ''}
               <span class="lab-target-recipe-chip-badge">${escapeHtml(targetRecipeCategory)}</span>
-              <span class="lab-target-recipe-chip-btn">${isEN ? 'Change' : '更換'}</span>
+              <span class="lab-target-recipe-chip-btn">${_tLab('更換', 'Change', isEN)}</span>
             </div>
           </div>
         ` : `
           <div class="lab-team-config-group">
-            <span class="lab-team-config-label">${isEN ? 'Cooking Goal:' : '料理種類:'}</span>
+            <span class="lab-team-config-label">${_tLab('料理種類:', 'Cooking Goal:', isEN)}</span>
             <div class="lab-team-pills">
-              <button type="button" class="lab-team-pill ${labState.cookingType === 'curry' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('curry')">${isEN ? 'Curry' : '咖哩/濃湯'}</button>
-              <button type="button" class="lab-team-pill ${labState.cookingType === 'salad' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('salad')">${isEN ? 'Salad' : '沙拉'}</button>
-              <button type="button" class="lab-team-pill ${labState.cookingType === 'dessert' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('dessert')">${isEN ? 'Dessert' : '點心/飲料'}</button>
+              <button type="button" class="lab-team-pill ${labState.cookingType === 'curry' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('curry')">${_tLab('咖哩/濃湯', 'Curry', isEN)}</button>
+              <button type="button" class="lab-team-pill ${labState.cookingType === 'salad' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('salad')">${_tLab('沙拉', 'Salad', isEN)}</button>
+              <button type="button" class="lab-team-pill ${labState.cookingType === 'dessert' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('dessert')">${_tLab('點心/飲料', 'Dessert', isEN)}</button>
             </div>
           </div>
         `}
@@ -5573,36 +5717,36 @@ const TARGET_TOP_RECIPES = [
     const activeAuraChips = [];
     if (simulation.helpingBonusCount > 0) {
       activeAuraChips.push(`
-        <span class="lab-team-aura-chip chip-helping" title="${isEN ? 'Team Helping Speed +' + (simulation.helpingBonusCount * 5) + '%' : '全體幫手速度 +' + (simulation.helpingBonusCount * 5) + '%'}">
-          <strong>${isEN ? 'Helping Bonus' : '幫手獎勵'}</strong> x${simulation.helpingBonusCount} (+${simulation.helpingBonusCount * 5}%)
+        <span class="lab-team-aura-chip chip-helping" title="${_tLab('全體幫手速度 +' + (simulation.helpingBonusCount * 5) + '%', 'Team Helping Speed +' + (simulation.helpingBonusCount * 5) + '%', isEN)}">
+          <strong>${_tLab('幫手獎勵', 'Helping Bonus', isEN)}</strong> x${simulation.helpingBonusCount} (+${simulation.helpingBonusCount * 5}%)
         </span>
       `);
     }
     if (simulation.energyRecoveryBonusCount > 0) {
       activeAuraChips.push(`
-        <span class="lab-team-aura-chip chip-energy" title="${isEN ? 'Team Energy Recovery +' + (simulation.energyRecoveryBonusCount * 14) + '%' : '全體睡眠活力回復 +' + (simulation.energyRecoveryBonusCount * 14) + '%'}">
-          <strong>${isEN ? 'Energy Recovery' : '活力回復獎勵'}</strong> x${simulation.energyRecoveryBonusCount} (+${simulation.energyRecoveryBonusCount * 14}%)
+        <span class="lab-team-aura-chip chip-energy" title="${_tLab('全體睡眠活力回復 +' + (simulation.energyRecoveryBonusCount * 14) + '%', 'Team Energy Recovery +' + (simulation.energyRecoveryBonusCount * 14) + '%', isEN)}">
+          <strong>${_tLab('活力回復獎勵', 'Energy Recovery', isEN)}</strong> x${simulation.energyRecoveryBonusCount} (+${simulation.energyRecoveryBonusCount * 14}%)
         </span>
       `);
     }
     if (simulation.sleepExpBonusCount > 0) {
       activeAuraChips.push(`
-        <span class="lab-team-aura-chip chip-sleepexp" title="${isEN ? 'Team Sleep EXP +' + (simulation.sleepExpBonusCount * 14) + '%' : '全體睡眠EXP +' + (simulation.sleepExpBonusCount * 14) + '%'}">
-          <strong>${isEN ? 'Sleep EXP' : '睡眠EXP獎勵'}</strong> x${simulation.sleepExpBonusCount} (+${simulation.sleepExpBonusCount * 14}%)
+        <span class="lab-team-aura-chip chip-sleepexp" title="${_tLab('全體睡眠EXP +' + (simulation.sleepExpBonusCount * 14) + '%', 'Team Sleep EXP +' + (simulation.sleepExpBonusCount * 14) + '%', isEN)}">
+          <strong>${_tLab('睡眠EXP獎勵', 'Sleep EXP', isEN)}</strong> x${simulation.sleepExpBonusCount} (+${simulation.sleepExpBonusCount * 14}%)
         </span>
       `);
     }
     if (simulation.researchExpBonusCount > 0) {
       activeAuraChips.push(`
-        <span class="lab-team-aura-chip chip-researchexp" title="${isEN ? 'Research EXP +' + (simulation.researchExpBonusCount * 6) + '%' : '研究EXP +' + (simulation.researchExpBonusCount * 6) + '%'}">
-          <strong>${isEN ? 'Research EXP' : '研究EXP獎勵'}</strong> x${simulation.researchExpBonusCount} (+${simulation.researchExpBonusCount * 6}%)
+        <span class="lab-team-aura-chip chip-researchexp" title="${_tLab('研究EXP +' + (simulation.researchExpBonusCount * 6) + '%', 'Research EXP +' + (simulation.researchExpBonusCount * 6) + '%', isEN)}">
+          <strong>${_tLab('研究EXP獎勵', 'Research EXP', isEN)}</strong> x${simulation.researchExpBonusCount} (+${simulation.researchExpBonusCount * 6}%)
         </span>
       `);
     }
     if (simulation.dreamShardBonusCount > 0) {
       activeAuraChips.push(`
-        <span class="lab-team-aura-chip chip-dreamshard" title="${isEN ? 'Dream Shards +' + (simulation.dreamShardBonusCount * 6) + '%' : '夢之碎片 +' + (simulation.dreamShardBonusCount * 6) + '%'}">
-          <strong>${isEN ? 'Dream Shard' : '夢之碎片獎勵'}</strong> x${simulation.dreamShardBonusCount} (+${simulation.dreamShardBonusCount * 6}%)
+        <span class="lab-team-aura-chip chip-dreamshard" title="${_tLab('夢之碎片 +' + (simulation.dreamShardBonusCount * 6) + '%', 'Dream Shards +' + (simulation.dreamShardBonusCount * 6) + '%', isEN)}">
+          <strong>${_tLab('夢之碎片獎勵', 'Dream Shard', isEN)}</strong> x${simulation.dreamShardBonusCount} (+${simulation.dreamShardBonusCount * 6}%)
         </span>
       `);
     }
@@ -5610,10 +5754,10 @@ const TARGET_TOP_RECIPES = [
     const teamAurasBarHtml = `
       <div class="lab-team-auras-col lab-team-auras-bar">
         <div class="lab-team-auras-label">
-          <span>${isEN ? 'Team Shared Bonuses:' : '隊伍全體光環彙總:'}</span>
+          <span>${_tLab('隊伍全體光環彙總:', 'Team Shared Bonuses:', isEN)}</span>
         </div>
         <div class="lab-team-auras-chips">
-          ${activeAuraChips.length > 0 ? activeAuraChips.join('') : `<span class="lab-team-aura-chip empty">${isEN ? 'No team bonuses active (personal builds)' : '目前隊內無全體加成光環 (個人特化陣容)'}</span>`}
+          ${activeAuraChips.length > 0 ? activeAuraChips.join('') : `<span class="lab-team-aura-chip empty">${_tLab('目前隊內無全體加成光環 (個人特化陣容)', 'No team bonuses active (personal builds)', isEN)}</span>`}
         </div>
       </div>
     `;
@@ -5623,25 +5767,28 @@ const TARGET_TOP_RECIPES = [
       const item = teamItems[idx];
       if (!item) {
         return `
-          <div class="lab-team-slot-card lab-team-slot-empty" onclick="window.AppraisalLab.openPicker({ type: 'team', slotIndex: ${idx} })" title="${isEN ? 'Click to select team member' : '點擊挑選隊員'}">
+          <div class="lab-team-slot-card lab-team-slot-empty" onclick="window.AppraisalLab.openPicker({ type: 'team', slotIndex: ${idx} })" title="${_tLab('點擊挑選隊員', 'Click to select team member', isEN)}">
             <div class="lab-slot-empty-row">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              <span class="lab-slot-empty-text">${isEN ? 'Select Team Member' : '點擊挑選隊員'}</span>
+              <span class="lab-slot-empty-text">${_tLab('點擊挑選隊員', 'Select Team Member', isEN)}</span>
             </div>
           </div>
         `;
       }
 
       const base = findBasePkm(item.pokemonId || item.name);
-      const displayName = isEN ? (base ? (base.name_en || base.name_cn) : item.name) : (item.name || (base ? base.name_cn : ''));
+      const displayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+        ? window.I18N.getPokemonName(base || item.name)
+        : _tLab(item.name || (base ? base.name_cn : ''), base ? (base.name_en || base.name_cn) : item.name, isEN);
       const avatarUrl = (base && (base.icon_url || base.icon)) || (base && base.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${base.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
       const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : {});
+      const berryDisp = (window.I18N && typeof window.I18N.getBerryName === 'function') ? window.I18N.getBerryName(berry.name || '') : _tLabStr(berry.name || '');
       const isFav = favBerries.includes(berry.name || '') || favTypes.includes(berry.type || (base ? base.type : '') || '');
       const specialtyIconHtml = (window.I18N && window.I18N.getSpecialtyIconHtml && base) ? window.I18N.getSpecialtyIconHtml(base.specialty, 15) : '';
       const rawSkill = (base && (base.main_skill || (base.skill && base.skill.name))) || item.main_skill || '';
-      const skillName = rawSkill ? (window.I18N ? window.I18N.getMainSkillName(rawSkill) : rawSkill) : (isEN ? 'Skill' : '技能');
+      const skillName = rawSkill ? (window.I18N ? window.I18N.getMainSkillName(rawSkill) : _tLabStr(rawSkill)) : _tLab('技能', 'Skill', isEN);
       const skillLv = item.skillLevel || item.mainSkillLevel || 1;
-      const natureDisplayName = window.I18N ? window.I18N.getNatureName(item.nature) : item.nature;
+      const natureDisplayName = window.I18N ? window.I18N.getNatureName(item.nature) : _tLabStr(item.nature);
       const simSlot = simulation.slotResults[idx];
       const itemLv = item.level || 1;
 
@@ -5659,10 +5806,10 @@ const TARGET_TOP_RECIPES = [
         <div class="lab-slot-ing-strip">
           ${ingSlots.map(s => {
             const iName = s.name || '--';
-            const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
+            const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : _tLabStr(iName);
             const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
             return `
-              <div class="lab-slot-ing-chip ${!s.unlocked ? 'is-locked' : ''}" title="Lv.${s.req}: ${escapeHtml(iDisp)}${!s.unlocked ? (isEN ? ' (Locked)' : ' (未解鎖)') : ''}">
+              <div class="lab-slot-ing-chip ${!s.unlocked ? 'is-locked' : ''}" title="Lv.${s.req}: ${escapeHtml(iDisp)}${!s.unlocked ? _tLab(' (未解鎖)', ' (Locked)', isEN) : ''}">
                 ${icon ? `<img src="${icon}" class="lab-slot-ing-icon" alt="${escapeHtml(iDisp)}">` : `<span style="font-size:9px;color:var(--text-muted);">-</span>`}
               </div>
             `;
@@ -5701,18 +5848,18 @@ const TARGET_TOP_RECIPES = [
       let aurasHtml = '';
       if (activeAuras.length > 0) {
         aurasHtml = activeAuras.map(a => {
-          const sDisp = window.I18N ? window.I18N.getSubSkillName(a.name) : a.name;
+          const sDisp = window.I18N ? window.I18N.getSubSkillName(a.name) : _tLabStr(a.name);
           return `
-            <div class="lab-slot-aura-badge aura-active" title="Lv.${a.req} ${escapeHtml(sDisp)} · ${isEN ? 'Team Shared Bonus' : '全體隊伍加成'}">
+            <div class="lab-slot-aura-badge aura-active" title="Lv.${a.req} ${escapeHtml(sDisp)} · ${_tLab('全體隊伍加成', 'Team Shared Bonus', isEN)}">
               <span class="aura-name">${escapeHtml(sDisp)}</span>
             </div>
           `;
         }).join('');
       } else if (lockedAuras.length > 0) {
         aurasHtml = lockedAuras.map(a => {
-          const sDisp = window.I18N ? window.I18N.getSubSkillName(a.name) : a.name;
+          const sDisp = window.I18N ? window.I18N.getSubSkillName(a.name) : _tLabStr(a.name);
           return `
-            <div class="lab-slot-aura-badge aura-locked" title="Lv.${a.req} ${escapeHtml(sDisp)} (${isEN ? 'Locked until Lv.' + a.req : '未解鎖 · Lv.' + a.req})">
+            <div class="lab-slot-aura-badge aura-locked" title="Lv.${a.req} ${escapeHtml(sDisp)} (${_tLab('未解鎖 · Lv.' + a.req, 'Locked until Lv.' + a.req, isEN)})">
               <span class="aura-name">${escapeHtml(sDisp)}</span>
               <span class="aura-tag">Lv.${a.req}</span>
             </div>
@@ -5720,8 +5867,8 @@ const TARGET_TOP_RECIPES = [
         }).join('');
       } else {
         aurasHtml = `
-          <div class="lab-slot-aura-badge aura-none" title="${isEN ? 'Individual Specialist: Subskills focus on personal performance rather than whole team' : '個人特化專精：副技能均為個人加成，無全隊光環'}">
-            <span class="aura-name">${isEN ? 'Solo Specialist' : '個人專精'}</span>
+          <div class="lab-slot-aura-badge aura-none" title="${_tLab('個人特化專精：副技能均為個人加成，無全隊光環', 'Individual Specialist: Subskills focus on personal performance rather than whole team', isEN)}">
+            <span class="aura-name">${_tLab('個人專精', 'Solo Specialist', isEN)}</span>
           </div>
         `;
       }
@@ -5741,16 +5888,16 @@ const TARGET_TOP_RECIPES = [
                 </div>
                 <div class="lab-slot-spec-left">
                   ${specialtyIconHtml}
-                  <div class="lab-slot-berry-wrap ${isFav ? 'favored' : ''}" title="${escapeHtml(berry.name || '')}${isFav ? ' (2x)' : ''}">
+                  <div class="lab-slot-berry-wrap ${isFav ? 'favored' : ''}" title="${escapeHtml(berryDisp)}${isFav ? ' (2x)' : ''}">
                     ${berry.icon ? `<img src="${berry.icon}" class="lab-slot-berry-icon" alt="Berry">` : ''}
                     ${isFav ? `<span class="lab-slot-fav-badge">2x</span>` : ''}
                   </div>
-                  <span class="lab-slot-nature-name">${escapeHtml(natureDisplayName)}${(item.cleanseMint || item.mint) ? ' (' + (isEN ? 'Mint' : '薄荷') + ')' : ''}</span>
+                  <span class="lab-slot-nature-name">${escapeHtml(natureDisplayName)}${(item.cleanseMint || item.mint) ? ' (' + _tLab('薄荷', 'Mint', isEN) + ')' : ''}</span>
                 </div>
               </div>
             </div>
             <button type="button" class="box-btn box-btn-secondary lab-slot-replace-top-btn" onclick="window.AppraisalLab.openPicker({ type: 'team', slotIndex: ${idx} })">
-              ${isEN ? 'Replace' : '更換'}
+              ${_tLab('更換', 'Replace', isEN)}
             </button>
           </div>
 
@@ -5766,7 +5913,7 @@ const TARGET_TOP_RECIPES = [
               ${aurasHtml}
             </div>
             <div class="lab-slot-bottom-right">
-              ${simSlot ? `<span class="lab-slot-berry-pts" title="${isEN ? 'Daily berry energy' : '每日樹果能量'}">${simSlot.dailyBerryEnergy.toLocaleString()} <span style="font-size:9px;color:var(--text-muted);">${isEN ? 'pts' : '能量'}</span></span>` : ''}
+              ${simSlot ? `<span class="lab-slot-berry-pts" title="${_tLab('每日樹果能量', 'Daily berry energy', isEN)}">${simSlot.dailyBerryEnergy.toLocaleString()} <span style="font-size:9px;color:var(--text-muted);">${_tLab('能量', 'pts', isEN)}</span></span>` : ''}
             </div>
           </div>
         </div>
@@ -5778,7 +5925,7 @@ const TARGET_TOP_RECIPES = [
     const keyIngs = COOKING_CATEGORY_KEY_INGREDIENTS[labState.cookingType] || [];
     const targetAnalysis = simulation.targetRecipeAnalysis;
     const topIngsHtml = ingEntries.slice(0, 8).map(([iName, count]) => {
-      const iDisplayName = window.I18N ? window.I18N.getIngredientName(iName) : iName;
+      const iDisplayName = window.I18N ? window.I18N.getIngredientName(iName) : _tLabStr(iName);
       const iconUrl = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
       
       const targetItem = targetAnalysis && Array.isArray(targetAnalysis.items)
@@ -5801,7 +5948,7 @@ const TARGET_TOP_RECIPES = [
         : (isCookMatch ? '#38bdf8' : '#e2e8f0');
 
       return `
-        <div style="display:inline-flex;align-items:center;gap:3px;background:${chipBg};border:${chipBorder};border-radius:4px;padding:${chipPadding};font-size:10.5px;" title="${escapeHtml(iDisplayName)}${isSurplusDaily ? (isEN ? ' (Daily Self-Sufficient)' : ' (三餐自給充裕)') : (isCookMatch ? (isEN ? ' (Recipe Synergy)' : ' (料理契合)') : '')}">
+        <div style="display:inline-flex;align-items:center;gap:3px;background:${chipBg};border:${chipBorder};border-radius:4px;padding:${chipPadding};font-size:10.5px;" title="${escapeHtml(iDisplayName)}${isSurplusDaily ? _tLab(' (三餐自給充裕)', ' (Daily Self-Sufficient)', isEN) : (isCookMatch ? _tLab(' (料理契合)', ' (Recipe Synergy)', isEN) : '')}">
           ${iconUrl ? `<img src="${iconUrl}" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(iDisplayName)}">` : ''}
           <span style="color:${numColor};font-weight:700;">x${count}</span>
         </div>
@@ -5812,10 +5959,10 @@ const TARGET_TOP_RECIPES = [
     let supplyDemandBoardHtml = '';
     if (targetAnalysis && Array.isArray(targetAnalysis.items)) {
       const itemsHtml = targetAnalysis.items.map(item => {
-        const iDisplayName = window.I18N ? window.I18N.getIngredientName(item.name) : item.name;
+        const iDisplayName = window.I18N ? window.I18N.getIngredientName(item.name) : _tLabStr(item.name);
         const iconUrl = item.icon || (window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(item.name) : '');
         const isSurplus = item.diff >= 0;
-        const diffText = isSurplus ? `+${item.diff} ${isEN ? 'Surplus' : '充裕'}` : `${item.diff} ${isEN ? 'Deficit' : '缺口'}`;
+        const diffText = isSurplus ? `+${item.diff} ${_tLab('充裕', 'Surplus', isEN)}` : `${item.diff} ${_tLab('缺口', 'Deficit', isEN)}`;
         const diffClass = isSurplus ? 'lab-supply-surplus' : 'lab-supply-deficit';
         const barPct = Math.min(100, Math.max(0, item.fulfillmentPct));
         const barColor = item.fulfillmentPct >= 100 ? '#22c55e' : (item.fulfillmentPct >= 60 ? 'var(--accent-color, #38bdf8)' : '#f59e0b');
@@ -5832,11 +5979,11 @@ const TARGET_TOP_RECIPES = [
               </div>
             </div>
             <div class="lab-supply-row-mid">
-              <span title="${isEN ? 'Single meal requirement' : '單餐需求'}">${isEN ? 'Meal:' : '每餐:'} <strong>x${item.perMeal}</strong></span>
+              <span title="${_tLab('單餐需求', 'Single meal requirement', isEN)}">${_tLab('每餐:', 'Meal:', isEN)} <strong>x${item.perMeal}</strong></span>
               <span class="lab-supply-mid-sep">·</span>
-              <span title="${isEN ? 'Daily 3-meal total demand' : '每日 3 餐總需求'}">${isEN ? 'Daily:' : '日需:'} <strong>x${item.dailyDemand}</strong></span>
+              <span title="${_tLab('每日 3 餐總需求', 'Daily 3-meal total demand', isEN)}">${_tLab('日需:', 'Daily:', isEN)} <strong>x${item.dailyDemand}</strong></span>
               <span class="lab-supply-mid-sep">·</span>
-              <span title="${isEN ? 'Team estimated daily harvest' : '隊伍每日預估產出'}">${isEN ? 'Yield:' : '日產:'} <strong style="color:#22c55e;">x${item.teamYield}</strong></span>
+              <span title="${_tLab('隊伍每日預估產出', 'Team estimated daily harvest', isEN)}">${_tLab('日產:', 'Yield:', isEN)} <strong style="color:#22c55e;">x${item.teamYield}</strong></span>
             </div>
             <div class="lab-supply-col-progress">
               <div class="lab-supply-progress-bar-bg">
@@ -5849,8 +5996,8 @@ const TARGET_TOP_RECIPES = [
       }).join('');
 
       const overallStatusBadge = targetAnalysis.isFullySatisfied
-        ? `<span class="lab-supply-overall-badge satisfied">[OK] ${isEN ? '100% Self-Sufficient' : '100% 達成 · 可完全自給自足'}</span>`
-        : `<span class="lab-supply-overall-badge pending">${isEN ? `Overall: ${targetAnalysis.overallFulfillmentPct}%` : `全體達成率: ${targetAnalysis.overallFulfillmentPct}%`}</span>`;
+        ? `<span class="lab-supply-overall-badge satisfied">[OK] ${_tLab('100% 達成 · 可完全自給自足', '100% Self-Sufficient', isEN)}</span>`
+        : `<span class="lab-supply-overall-badge pending">${_tLab(`全體達成率: ${targetAnalysis.overallFulfillmentPct}%`, `Overall: ${targetAnalysis.overallFulfillmentPct}%`, isEN)}</span>`;
 
       supplyDemandBoardHtml = `
         <div class="lab-recipe-supply-board" id="lab-team-recipe-supply-demand">
@@ -5861,11 +6008,11 @@ const TARGET_TOP_RECIPES = [
                 <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
                   <span class="sr-only">${escapeHtml(targetRecipeDisplayName)}</span>
                   <span class="lab-supply-dish-badge">${escapeHtml(targetRecipeCategory)}</span>
-                  ${targetRecipe.pot_size ? `<span class="lab-supply-dish-meta">${targetRecipe.pot_size} ${isEN ? 'Pots' : '格鍋容量'}</span>` : ''}
-                  ${targetRecipe.base_energy ? `<span class="lab-supply-dish-meta">${targetRecipe.base_energy.toLocaleString()} ${isEN ? 'Base Energy' : '基礎能量'}</span>` : ''}
+                  ${targetRecipe.pot_size ? `<span class="lab-supply-dish-meta">${targetRecipe.pot_size} ${_tLab('格鍋容量', 'Pots', isEN)}</span>` : ''}
+                  ${targetRecipe.base_energy ? `<span class="lab-supply-dish-meta">${targetRecipe.base_energy.toLocaleString()} ${_tLab('基礎能量', 'Base Energy', isEN)}</span>` : ''}
                 </div>
                 <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">
-                  ${isEN ? 'Target Recipe Ingredient Supply vs Daily Demand Dashboard (3 Meals/Day)' : '目標料理食材供需看板 · 精算每日 3 餐食材缺口與隊伍自給自足率'}
+                  ${_tLab('目標料理食材供需看板 · 精算每日 3 餐食材缺口與隊伍自給自足率', 'Target Recipe Ingredient Supply vs Daily Demand Dashboard (3 Meals/Day)', isEN)}
                 </div>
               </div>
             </div>
@@ -5873,7 +6020,7 @@ const TARGET_TOP_RECIPES = [
               ${overallStatusBadge}
               <button type="button" class="box-btn box-btn-secondary" onclick="window.AppraisalLab.openPicker({ type: 'recipe' })" style="font-size:10.5px;padding:3px 8px;display:inline-flex;align-items:center;gap:3px;">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                <span>${isEN ? 'Change Recipe' : '更換目標料理'}</span>
+                <span>${_tLab('更換目標料理', 'Change Recipe', isEN)}</span>
               </button>
             </div>
           </div>
@@ -5901,7 +6048,7 @@ const TARGET_TOP_RECIPES = [
 
         <div class="lab-favored-auras-row">
           <div class="lab-favored-berries-col">
-            <span class="lab-favored-label">${isEN ? 'Favored Berries (2x Power):' : '喜愛樹果 (2x 能量):'}</span>
+            <span class="lab-favored-label">${_tLab('喜愛樹果 (2x 能量):', 'Favored Berries (2x Power):', isEN)}</span>
             <div class="lab-favored-berries-list">
               ${favoredBerriesHtml}
             </div>
@@ -5918,27 +6065,27 @@ const TARGET_TOP_RECIPES = [
         <div class="lab-team-metrics-grid">
           <div class="lab-metric-card lab-metric-headline-card">
             <div class="lab-metric-headline-top" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px;">
-              <span class="lab-metric-title" style="font-size:11.5px;font-weight:700;color:var(--text-muted);">${isEN ? 'Estimated Daily Total Energy' : '預估每日能量總產出'}</span>
-              <span class="lab-projected-rank-badge" title="${isEN ? 'Estimated Sunday Snorlax Rank at 7x Daily Energy' : '依據每日產能 x7 預估週日卡比獸可達階級'}">
-                ${isEN ? 'Projected Sunday Snorlax Rank: ' : '預估週日卡比獸階級: '}<strong>${simulation.projectedSundayRank}</strong>
+              <span class="lab-metric-title" style="font-size:11.5px;font-weight:700;color:var(--text-muted);">${_tLab('預估每日能量總產出', 'Estimated Daily Total Energy', isEN)}</span>
+              <span class="lab-projected-rank-badge" title="${_tLab('依據每日產能 x7 預估週日卡比獸可達階級', 'Estimated Sunday Snorlax Rank at 7x Daily Energy', isEN)}">
+                ${_tLab('預估週日卡比獸階級: ', 'Projected Sunday Snorlax Rank: ', isEN)}<strong>${simulation.projectedSundayRank}</strong>
               </span>
             </div>
-            <div class="lab-metric-value">${simulation.totalDailyEnergy.toLocaleString()} <span style="font-size:12px;font-weight:600;color:var(--text-muted);">${isEN ? 'pts/day' : '能量/日'}</span></div>
+            <div class="lab-metric-value">${simulation.totalDailyEnergy.toLocaleString()} <span style="font-size:12px;font-weight:600;color:var(--text-muted);">${_tLab('能量/日', 'pts/day', isEN)}</span></div>
             <div class="lab-metric-breakdown-chips">
-              <span class="breakdown-chip chip-berry">${isEN ? 'Berry: ' : '樹果: '}${simulation.totalDailyBerryEnergy.toLocaleString()}</span>
-              <span class="breakdown-chip chip-cooking">${isEN ? 'Cooking (3 meals): ' : '料理 (3餐): '}${simulation.dailyCookingEnergy.toLocaleString()}</span>
-              <span class="breakdown-chip chip-skill">${isEN ? 'Skill: ' : '技能: '}${simulation.dailySkillEnergy.toLocaleString()}</span>
+              <span class="breakdown-chip chip-berry">${_tLab('樹果: ', 'Berry: ', isEN)}${simulation.totalDailyBerryEnergy.toLocaleString()}</span>
+              <span class="breakdown-chip chip-cooking">${_tLab('料理 (3餐): ', 'Cooking (3 meals): ', isEN)}${simulation.dailyCookingEnergy.toLocaleString()}</span>
+              <span class="breakdown-chip chip-skill">${_tLab('技能: ', 'Skill: ', isEN)}${simulation.dailySkillEnergy.toLocaleString()}</span>
             </div>
             <div class="lab-metric-sub">
-              ${isEN ? `Comprehensive simulation based on ${island.name_en || island.name} 2x berry power, 3-meal cooking synergy, and direct skill triggers.` : `依據【${island.name}】喜愛樹果加成、每日 3 餐料理產能與主技能發動綜合精算。`}
+              ${_tLab(`依據【${island.name}】喜愛樹果加成、每日 3 餐料理產能與主技能發動綜合精算。`, `Comprehensive simulation based on ${island.name_en || island.name} 2x berry power, 3-meal cooking synergy, and direct skill triggers.`, isEN)}
             </div>
           </div>
 
           <div class="lab-metric-card">
-            <div style="font-size:11.5px;font-weight:700;color:var(--text-muted);">${isEN ? 'Daily Ingredients Harvest' : '預估每日食材總產量'}</div>
-            <div class="lab-metric-value" style="color:#22c55e;">${simulation.totalDailyIngredientsCount} <span style="font-size:12px;font-weight:600;color:var(--text-muted);">${isEN ? 'items/day' : '個/日'}</span></div>
+            <div style="font-size:11.5px;font-weight:700;color:var(--text-muted);">${_tLab('預估每日食材總產量', 'Daily Ingredients Harvest', isEN)}</div>
+            <div class="lab-metric-value" style="color:#22c55e;">${simulation.totalDailyIngredientsCount} <span style="font-size:12px;font-weight:600;color:var(--text-muted);">${_tLab('個/日', 'items/day', isEN)}</span></div>
             <div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:2px;">
-              ${topIngsHtml || `<span style="font-size:10.5px;color:var(--text-muted);">${isEN ? 'No ingredients yet' : '尚無食材產出'}</span>`}
+              ${topIngsHtml || `<span style="font-size:10.5px;color:var(--text-muted);">${_tLab('尚無食材產出', 'No ingredients yet', isEN)}</span>`}
             </div>
           </div>
         </div>
@@ -6143,8 +6290,7 @@ const TARGET_TOP_RECIPES = [
     if (!seconds) return '--';
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
-    if (isEN) return `${m}m ${s ? `${s}s` : ''}`.trim();
-    return `${m}分${s ? `${s}秒` : ''}`;
+    return _tLab(`${m}分${s ? `${s}秒` : ''}`, `${m}m ${s ? `${s}s` : ''}`.trim(), isEN);
   }
 
   /* ─── 寶可夢對比 HTML 產生器 (最多 3 位選手並排比較) ──────── */
@@ -6154,7 +6300,7 @@ const TARGET_TOP_RECIPES = [
 
   function renderComparisonView(userBox, pokemons, isEN, isMobileH5) {
     if (userBox.length === 0) {
-      return `<div style="padding:40px;text-align:center;color:var(--text-muted);">${isEN ? 'Please register Pokémon in Box first' : '請先在寶可夢倉庫新增寶可夢後再來對比！'}</div>`;
+      return `<div style="padding:40px;text-align:center;color:var(--text-muted);">${_tLab('請先在寶可夢倉庫新增寶可夢後再來對比！', 'Please register Pokémon in Box first', isEN)}</div>`;
     }
 
     if (!Array.isArray(labState.compareSlots)) {
@@ -6195,8 +6341,8 @@ const TARGET_TOP_RECIPES = [
 
     const N = activePlayers.length;
     const fmt = n => Number(n).toLocaleString();
-    const pLabel = p => `${isEN ? 'Player' : '選手'} ${p.letter}`;
-    const unitIng = isEN ? 'items/day' : '顆/日';
+    const pLabel = p => `${_tLab('選手', 'Player', isEN)} ${p.letter}`;
+    const unitIng = _tLab('顆/日', 'items/day', isEN);
     const fallbackAvatar = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
 
     // ── 頂部：3 個選手槽位 (單行並排展示 + 簡化卡片) ──
@@ -6214,9 +6360,9 @@ const TARGET_TOP_RECIPES = [
             </div>
             <div class="lab-compare-empty-content">
               <span class="lab-compare-empty-plus">+</span>
-              <span class="lab-compare-empty-text">${isEN ? `Pick Player ${letter}` : `挑選選手 ${letter}`}</span>
+              <span class="lab-compare-empty-text">${_tLab(`挑選選手 ${letter}`, `Pick Player ${letter}`, isEN)}</span>
             </div>
-            <div class="lab-compare-tap-hint">${isEN ? 'Tap to pick' : '點選挑選'}</div>
+            <div class="lab-compare-tap-hint">${_tLab('點選挑選', 'Tap to pick', isEN)}</div>
           </button>
         `;
       }
@@ -6226,29 +6372,30 @@ const TARGET_TOP_RECIPES = [
         ? window.getItemIcon(base)
         : ((base && (base.icon_url || base.icon)) || (base && base.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${base.formatted_no}.png` : '') || fallbackAvatar);
       const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : {});
+      const berryDisp = (window.I18N && typeof window.I18N.getBerryName === 'function') ? window.I18N.getBerryName(berry.name || '') : _tLabStr(berry.name || '');
       const specHtml = (window.I18N && window.I18N.getSpecialtyIconHtml && base) ? window.I18N.getSpecialtyIconHtml(base.specialty, 13) : '';
-      const natDisplayName = window.I18N ? window.I18N.getNatureName(item.nature) : item.nature;
-      const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(item.pokemonId || (base && base.id), item.nickname || item.name) : (item.nickname || item.name);
+      const natDisplayName = window.I18N ? window.I18N.getNatureName(item.nature) : _tLabStr(item.nature);
+      const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function') ? (item.nickname || window.I18N.getPokemonName(base || item.name)) : (item.nickname || _tLabStr(item.name));
       const effLevel = (currentBenchmark && currentBenchmark !== 'box') ? parseInt(currentBenchmark, 10) : (parseInt(item.level, 10) || 1);
 
       return `
         <div class="lab-compare-vs-player slot-${letter.toLowerCase()}" style="border-top-color:${color}; cursor:pointer;" onclick="window.AppraisalLab.openPicker({ type: 'compare', compareSlot: ${i} })">
           <div class="lab-compare-vs-header-top">
             <span class="lab-compare-slot-letter" style="background:${color};">${letter}</span>
-            <button type="button" class="lab-compare-remove-btn" aria-label="${isEN ? 'Remove' : '移除'}" title="${isEN ? 'Remove' : '移除'}" onclick="event.stopPropagation(); window.AppraisalLab.clearCompareSlot(${i});">
+            <button type="button" class="lab-compare-remove-btn" aria-label="${_tLab('移除', 'Remove', isEN)}" title="${_tLab('移除', 'Remove', isEN)}" onclick="event.stopPropagation(); window.AppraisalLab.clearCompareSlot(${i});">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
           </div>
           <div class="lab-compare-vs-avatar-wrap">
-            <img src="${avatarUrl}" class="lab-compare-vs-avatar" alt="${isEN ? 'Player' : '選手'} ${letter}" loading="lazy">
+            <img src="${avatarUrl}" class="lab-compare-vs-avatar" alt="${_tLab('選手', 'Player', isEN)} ${letter}" loading="lazy">
             <span class="lab-compare-vs-lvl">Lv.${effLevel}</span>
           </div>
           <div class="lab-compare-micro-meta">
             ${specHtml}
-            ${berry && berry.icon ? `<img src="${berry.icon}" class="lab-compare-mini-berry" alt="Berry" title="${escapeHtml(berry.name || '')}">` : ''}
+            ${berry && berry.icon ? `<img src="${berry.icon}" class="lab-compare-mini-berry" alt="Berry" title="${escapeHtml(berryDisp)}">` : ''}
             <span class="lab-compare-vs-tag nat-tag">${escapeHtml(natDisplayName)}</span>
           </div>
-          <div class="lab-compare-tap-hint">${isEN ? 'Tap to change' : '點選更換'}</div>
+          <div class="lab-compare-tap-hint">${_tLab('點選更換', 'Tap to change', isEN)}</div>
         </div>
       `;
     };
@@ -6266,8 +6413,8 @@ const TARGET_TOP_RECIPES = [
         ${slotCardHtml(2)}
       </div>
       <div class="lab-compare-pick-hint" style="margin-bottom:8px;font-size:11.5px;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
-        <span>${isEN ? `Selected ${N}/${COMPARE_MAX}. Tap a slot to change Pokémon (max 3, no duplicates).` : `已選 ${N}/${COMPARE_MAX} 位選手，點選卡片可更換寶可夢（最多3位，不可重複選擇同一隻）`}</span>
-        ${N > 0 ? `<button type="button" class="box-btn box-btn-secondary" style="font-size:11px;padding:2px 8px;" onclick="[0,1,2].forEach(i=>window.AppraisalLab.clearCompareSlot(i));">${isEN ? 'Clear All' : '清空對比'}</button>` : ''}
+        <span>${_tLab(`已選 ${N}/${COMPARE_MAX} 位選手，點選卡片可更換寶可夢（最多3位，不可重複選擇同一隻）`, `Selected ${N}/${COMPARE_MAX}. Tap a slot to change Pokémon (max 3, no duplicates).`, isEN)}</span>
+        ${N > 0 ? `<button type="button" class="box-btn box-btn-secondary" style="font-size:11px;padding:2px 8px;" onclick="[0,1,2].forEach(i=>window.AppraisalLab.clearCompareSlot(i));">${_tLab('清空對比', 'Clear All', isEN)}</button>` : ''}
       </div>
     `;
 
@@ -6277,34 +6424,34 @@ const TARGET_TOP_RECIPES = [
     const maxLv = caps.THEORETICAL_MAX_LEVEL || 100;
     const milestoneLevels = Array.from(new Set([30, 50, 60, capLv, 80, maxLv])).sort((a, b) => a - b);
     const benchmarkLevels = [
-      { id: 'box', label: isEN ? 'Box Lv' : '各自等級', title: isEN ? 'Use each Pokemon\'s box level' : '使用每隻寶可夢各自倉儲等級' }
+      { id: 'box', label: _tLab('各自等級', 'Box Lv', isEN), title: _tLab('使用每隻寶可夢各自倉儲等級', 'Use each Pokemon\'s box level', isEN) }
     ];
     milestoneLevels.forEach(lv => {
       let desc = '';
       if (lv === capLv && lv !== 60) {
-        desc = isEN ? 'Current in-game maximum level cap' : '目前遊戲等級上限';
+        desc = _tLab('目前遊戲等級上限', 'Current in-game maximum level cap', isEN);
       } else if (lv === 30) {
-        desc = isEN ? 'Unlocks 2nd ingredient' : '解鎖第2食材';
+        desc = _tLab('解鎖第2食材', 'Unlocks 2nd ingredient', isEN);
       } else if (lv === 50) {
-        desc = isEN ? 'Unlocks 3rd sub-skill' : '解鎖第3副技能';
+        desc = _tLab('解鎖第3副技能', 'Unlocks 3rd sub-skill', isEN);
       } else if (lv === 60) {
-        desc = isEN ? (capLv === 60 ? 'Unlocks 3rd ingredient & Current in-game maximum level cap' : 'Unlocks 3rd ingredient') : (capLv === 60 ? '解鎖第3食材 / 目前遊戲等級上限' : '解鎖第3食材');
+        desc = capLv === 60 ? _tLab('解鎖第3食材 / 目前遊戲等級上限', 'Unlocks 3rd ingredient & Current in-game maximum level cap', isEN) : _tLab('解鎖第3食材', 'Unlocks 3rd ingredient', isEN);
       } else if (lv === 80) {
-        desc = isEN ? 'Unlocks 4th sub-skill (Sim)' : '解鎖第4副技能 (模擬)';
+        desc = _tLab('解鎖第4副技能 (模擬)', 'Unlocks 4th sub-skill (Sim)', isEN);
       } else if (lv === maxLv) {
-        desc = isEN ? 'Max level graduation with all 5 sub-skills' : '五階滿等畢業 (全開模擬)';
+        desc = _tLab('五階滿等畢業 (全開模擬)', 'Max level graduation with all 5 sub-skills', isEN);
       } else {
-        desc = lv > capLv ? (isEN ? 'Simulation Level' : '模擬等級') : (isEN ? 'Milestone' : '里程碑等級');
+        desc = lv > capLv ? _tLab('模擬等級', 'Simulation Level', isEN) : _tLab('里程碑等級', 'Milestone', isEN);
       }
       benchmarkLevels.push({
         id: String(lv),
         label: `Lv.${lv}`,
-        title: isEN ? `Lv.${lv}: ${desc}` : `Lv.${lv}：${desc}`
+        title: _tLab(`Lv.${lv}：${desc}`, `Lv.${lv}: ${desc}`, isEN)
       });
     });
     const benchmarkBarHtml = `
       <div class="lab-compare-benchmark-row">
-        <span class="lab-compare-benchmark-title">${isEN ? 'Benchmark Level:' : '基準等級:'}</span>
+        <span class="lab-compare-benchmark-title">${_tLab('基準等級:', 'Benchmark Level:', isEN)}</span>
         <div class="lab-compare-benchmark-chips">
           ${benchmarkLevels.map(b => `
             <button type="button" class="benchmark-chip${String(currentBenchmark) === String(b.id) ? ' active' : ''}" onclick="window.AppraisalLab.setCompareBenchmarkLevel('${b.id}')" title="${b.title || b.label}">
@@ -6324,33 +6471,33 @@ const TARGET_TOP_RECIPES = [
           <div class="lab-compare-kpi-card" id="lab-compare-energy">
             <div class="lab-compare-kpi-head">
               <div class="lab-compare-kpi-title">
-                <span>${isEN ? 'Daily Total Energy Output' : '每日預估總能量比較'}</span>
+                <span>${_tLab('每日預估總能量比較', 'Daily Total Energy Output', isEN)}</span>
               </div>
             </div>
             <div class="lab-compare-empty-section-hint">
-              ${isEN ? 'Select at least 2 Pokémon above to compare estimated daily energy output.' : '請在上方挑選至少 2 位選手進行每日預估總能量比較'}
+              ${_tLab('請在上方挑選至少 2 位選手進行每日預估總能量比較', 'Select at least 2 Pokémon above to compare estimated daily energy output.', isEN)}
             </div>
           </div>
 
           <div class="lab-compare-kpi-card" id="lab-compare-ingredients">
             <div class="lab-compare-kpi-head">
               <div class="lab-compare-kpi-title">
-                <span>${isEN ? 'Daily Ingredient Yield Comparison' : '每日食材產量比較'}</span>
+                <span>${_tLab('每日食材產量比較', 'Daily Ingredient Yield Comparison', isEN)}</span>
               </div>
             </div>
             <div class="lab-compare-empty-section-hint">
-              ${isEN ? 'Select at least 2 Pokémon above to compare ingredient yields.' : '請在上方挑選至少 2 位選手進行每日食材產量比較'}
+              ${_tLab('請在上方挑選至少 2 位選手進行每日食材產量比較', 'Select at least 2 Pokémon above to compare ingredient yields.', isEN)}
             </div>
           </div>
 
           <div class="lab-compare-kpi-card" id="lab-compare-skills">
             <div class="lab-compare-kpi-head">
               <div class="lab-compare-kpi-title">
-                <span>${isEN ? 'Skill Procs, Speed & Specs' : '技能發動與幫手效能對照'}</span>
+                <span>${_tLab('技能發動與幫手效能對照', 'Skill Procs, Speed & Specs', isEN)}</span>
               </div>
             </div>
             <div class="lab-compare-empty-section-hint">
-              ${isEN ? 'Select at least 2 Pokémon above to compare skill procs and helper speed.' : '請在上方挑選至少 2 位選手進行技能發動與幫手效能對照'}
+              ${_tLab('請在上方挑選至少 2 位選手進行技能發動與幫手效能對照', 'Select at least 2 Pokémon above to compare skill procs and helper speed.', isEN)}
             </div>
           </div>
         </div>
@@ -6383,10 +6530,10 @@ const TARGET_TOP_RECIPES = [
     const leadBadge = (vals, formatDiff) => {
       const sorted = vals.map((v, i) => ({ v, i })).sort((a, b) => b.v - a.v);
       const diff = sorted[0].v - sorted[1].v;
-      if (diff <= 0) return `<span class="lab-compare-kpi-badge tie">${isEN ? 'Tie' : '持平'}</span>`;
+      if (diff <= 0) return `<span class="lab-compare-kpi-badge tie">${_tLab('持平', 'Tie', isEN)}</span>`;
       const lead = activePlayers[sorted[0].i];
       const pct = sorted[1].v > 0 ? ((diff / sorted[1].v) * 100).toFixed(1) : null;
-      return `<span class="lab-compare-kpi-badge" style="background:${lead.color}2e;color:${lead.color};border:1px solid ${lead.color}59;">${lead.letter} ${isEN ? 'Leads' : '領先'} +${formatDiff(diff)}${pct ? ` (${pct}%)` : ''}</span>`;
+      return `<span class="lab-compare-kpi-badge" style="background:${lead.color}2e;color:${lead.color};border:1px solid ${lead.color}59;">${lead.letter} ${_tLab('領先', 'Leads', isEN)} +${formatDiff(diff)}${pct ? ` (${pct}%)` : ''}</span>`;
     };
 
     const tableHtml = rows => `
@@ -6405,13 +6552,13 @@ const TARGET_TOP_RECIPES = [
 
     // ── 1. 六維綜合戰力評定對照 (6-Dimension Evaluation Matrix) ──
     const sixDimRows = [
-      num(isEN ? 'Est. Total Energy' : '每日總能量產出', x => x.totalDailyEnergy, true),
-      num(isEN ? 'Berry Power' : '樹果強度能量', x => x.dailyBerryEnergy, true),
-      num(isEN ? 'Ingredient Power' : '食材產出能量', x => x.totalDailyIngredientEnergy, true),
-      num(isEN ? 'Skill Procs / Day' : '主技能期望次數', x => x.dailySkillProcs, true, v => `${v} ${isEN ? '/day' : '次/日'}`),
-      num(isEN ? 'Help Interval' : '幫手週期間隔', x => x.effectiveInterval, false, v => formatSecsToMinSec(v, isEN)),
+      num(_tLab('每日總能量產出', 'Est. Total Energy', isEN), x => x.totalDailyEnergy, true),
+      num(_tLab('樹果強度能量', 'Berry Power', isEN), x => x.dailyBerryEnergy, true),
+      num(_tLab('食材產出能量', 'Ingredient Power', isEN), x => x.totalDailyIngredientEnergy, true),
+      num(_tLab('主技能期望次數', 'Skill Procs / Day', isEN), x => x.dailySkillProcs, true, v => `${v} ${_tLab('次/日', '/day', isEN)}`),
+      num(_tLab('幫手週期間隔', 'Help Interval', isEN), x => x.effectiveInterval, false, v => formatSecsToMinSec(v, isEN)),
       {
-        label: isEN ? 'Composite Tier' : '綜合戰力評價',
+        label: _tLab('綜合戰力評價', 'Composite Tier', isEN),
         vals: activePlayers.map(p => (p.evaluation ? p.evaluation.compositeScore : 0)),
         higher: true,
         texts: activePlayers.map(p => {
@@ -6419,7 +6566,7 @@ const TARGET_TOP_RECIPES = [
           if (!ev) return '--';
           const grade = ev.grade || 'B';
           const score = ev.compositeScore || 70;
-          return `<div style="display:flex;align-items:center;justify-content:center;gap:4px;"><span class="lab-grade-badge" style="background:${ev.gradeColor || '#38bdf8'}26;color:${ev.gradeColor || '#38bdf8'};border:1px solid ${ev.gradeColor || '#38bdf8'}59;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:800;">${grade}</span><span style="font-size:11px;color:var(--text-secondary);font-weight:700;">${score}${isEN ? ' pts' : '分'}</span></div>`;
+          return `<div style="display:flex;align-items:center;justify-content:center;gap:4px;"><span class="lab-grade-badge" style="background:${ev.gradeColor || '#38bdf8'}26;color:${ev.gradeColor || '#38bdf8'};border:1px solid ${ev.gradeColor || '#38bdf8'}59;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:800;">${grade}</span><span style="font-size:11px;color:var(--text-secondary);font-weight:700;">${score}${_tLab('分', ' pts', isEN)}</span></div>`;
         })
       }
     ];
@@ -6428,7 +6575,7 @@ const TARGET_TOP_RECIPES = [
       <div class="lab-compare-kpi-card" id="lab-compare-sixdim">
         <div class="lab-compare-kpi-head">
           <div class="lab-compare-kpi-title">
-            <span>${isEN ? '6-Dimension Evaluation Matrix' : '六維綜合戰力評定對照'}</span>
+            <span>${_tLab('六維綜合戰力評定對照', '6-Dimension Evaluation Matrix', isEN)}</span>
           </div>
         </div>
         ${tableHtml(sixDimRows)}
@@ -6440,14 +6587,14 @@ const TARGET_TOP_RECIPES = [
     const energyHtml = `
       <div class="lab-compare-kpi-card" id="lab-compare-energy">
         <div class="lab-compare-kpi-head">
-          <div class="lab-compare-kpi-title"><span>${isEN ? 'Daily Total Energy Output' : '每日預估總能量比較'}</span></div>
+          <div class="lab-compare-kpi-title"><span>${_tLab('每日預估總能量比較', 'Daily Total Energy Output', isEN)}</span></div>
           ${leadBadge(energyVals, d => fmt(d))}
         </div>
         ${barRowsHtml(energyVals, energyVals.map(v => `${fmt(v)}`))}
         ${tableHtml([
-          num(isEN ? 'Berry Energy' : '樹果能量', x => x.dailyBerryEnergy, true),
-          num(isEN ? 'Ingredient Energy' : '食材能量', x => x.totalDailyIngredientEnergy, true),
-          num(isEN ? 'Skill Energy (Est)' : '主技能能量', x => x.dailySkillEnergy, true)
+          num(_tLab('樹果能量', 'Berry Energy', isEN), x => x.dailyBerryEnergy, true),
+          num(_tLab('食材能量', 'Ingredient Energy', isEN), x => x.totalDailyIngredientEnergy, true),
+          num(_tLab('主技能能量', 'Skill Energy (Est)', isEN), x => x.dailySkillEnergy, true)
         ])}
       </div>`;
 
@@ -6463,7 +6610,7 @@ const TARGET_TOP_RECIPES = [
           const effLv = p.perf.level;
           const isUnlocked = effLv >= tierLv;
           const sName = (p.item.subskills && p.item.subskills[slotIdx]) || '--';
-          const locName = (sName !== '--' && window.I18N) ? window.I18N.getSubSkillName(sName) : sName;
+          const locName = (sName !== '--' && window.I18N) ? window.I18N.getSubSkillName(sName) : _tLabStr(sName);
           const tierColor = (sName !== '--' && typeof getSkillTier === 'function') ? getSkillTier(sName) : null;
           let badgeStyle = '';
           if (tierColor === 'gold' || tierColor === 'gold-tier') {
@@ -6480,24 +6627,26 @@ const TARGET_TOP_RECIPES = [
             badgeStyle += 'opacity:0.42;filter:grayscale(60%);';
           }
 
-          return `<span class="lab-subskill-pill${isUnlocked ? '' : ' locked'}" style="${badgeStyle}" title="${isUnlocked ? '' : (isEN ? 'Locked at this level' : '當前等級未解鎖')}">${escapeHtml(locName)}${!isUnlocked && sName !== '--' ? ' [鎖]' : ''}</span>`;
+          return `<span class="lab-subskill-pill${isUnlocked ? '' : ' locked'}" style="${badgeStyle}" title="${isUnlocked ? '' : _tLab('當前等級未解鎖', 'Locked at this level', isEN)}">${escapeHtml(locName)}${!isUnlocked && sName !== '--' ? _tLab(' [鎖]', ' [Locked]', isEN) : ''}</span>`;
         })
       };
     });
 
     const natureRow = {
-      label: isEN ? 'Nature' : '性格配置',
+      label: _tLab('性格配置', 'Nature', isEN),
       higher: null,
       vals: activePlayers.map(() => 0),
       texts: activePlayers.map(p => {
         const isMint = !!(p.item.cleanseMint || p.item.mint);
-        const nName = window.I18N ? window.I18N.getNatureName(p.item.nature) : p.item.nature;
+        const nName = window.I18N ? window.I18N.getNatureName(p.item.nature) : _tLabStr(p.item.nature);
         const nat = isMint ? null : NATURE_DATA.find(n => n.name === p.item.nature || n.name_en === p.item.nature);
         let extra = '';
         if (isMint) {
-          extra = `<span style="font-size:10px;color:var(--accent-color,#38bdf8);">${isEN ? '(Minted)' : '(薄荷中和)'}</span>`;
+          extra = `<span style="font-size:10px;color:var(--accent-color,#38bdf8);">${_tLab('(薄荷中和)', '(Minted)', isEN)}</span>`;
         } else if (nat && nat.buff && nat.buff !== '無增減') {
-          extra = `<span style="font-size:9.5px;color:#10b981;">${nat.buff}</span> <span style="font-size:9.5px;color:#f43f5e;">${nat.debuff}</span>`;
+          const buffText = _tLab(nat.buff, nat.buff_en || nat.buff, isEN);
+          const debuffText = _tLab(nat.debuff, nat.debuff_en || nat.debuff, isEN);
+          extra = `<span style="font-size:9.5px;color:#10b981;">${escapeHtml(buffText)}</span> <span style="font-size:9.5px;color:#f43f5e;">${escapeHtml(debuffText)}</span>`;
         }
         return `<div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-weight:700;">${escapeHtml(nName)}</span>${extra}</div>`;
       })
@@ -6507,7 +6656,7 @@ const TARGET_TOP_RECIPES = [
       <div class="lab-compare-kpi-card" id="lab-compare-builds">
         <div class="lab-compare-kpi-head">
           <div class="lab-compare-kpi-title">
-            <span>${isEN ? 'Subskills & Nature Build Matchup' : '副技能與性格配置橫向對照'}</span>
+            <span>${_tLab('副技能與性格配置橫向對照', 'Subskills & Nature Build Matchup', isEN)}</span>
           </div>
         </div>
         ${tableHtml([ ...subskillSlotRows, natureRow ])}
@@ -6528,11 +6677,11 @@ const TARGET_TOP_RECIPES = [
 
     let distinctIngRowsHtml;
     if (names.length === 0) {
-      distinctIngRowsHtml = `<div style="text-align:center;color:var(--text-muted);padding:14px;font-size:12px;">${isEN ? 'No ingredients unlocked yet' : '目前均無解鎖之食材'}</div>`;
+      distinctIngRowsHtml = `<div style="text-align:center;color:var(--text-muted);padding:14px;font-size:12px;">${_tLab('目前均無解鎖之食材', 'No ingredients unlocked yet', isEN)}</div>`;
     } else {
       distinctIngRowsHtml = names.map(n => {
         const vals = aggs.map(a => Math.round((a[n] || 0) * 10) / 10);
-        const nameText = window.I18N ? window.I18N.getIngredientName(n) : n;
+        const nameText = window.I18N ? window.I18N.getIngredientName(n) : _tLabStr(n);
         const icon = (window.I18N && typeof window.I18N.getIngredientIcon === 'function') ? window.I18N.getIngredientIcon(n) : '';
         const holders = vals.filter(v => v > 0).length;
         let badge = '';
@@ -6540,12 +6689,12 @@ const TARGET_TOP_RECIPES = [
         const topIdx = vals.map((v, i) => (v === top ? i : -1)).filter(i => i >= 0);
         if (holders === 1) {
           const p = activePlayers[vals.findIndex(v => v > 0)];
-          badge = `<span class="lab-compare-kpi-badge" style="background:${p.color}2e;color:${p.color};border:1px solid ${p.color}59;">${p.letter} ${isEN ? 'Exclusive' : '獨佔'}</span>`;
+          badge = `<span class="lab-compare-kpi-badge" style="background:${p.color}2e;color:${p.color};border:1px solid ${p.color}59;">${p.letter} ${_tLab('獨佔', 'Exclusive', isEN)}</span>`;
         } else if (topIdx.length === 1) {
           const p = activePlayers[topIdx[0]];
-          badge = `<span class="lab-compare-kpi-badge" style="background:${p.color}2e;color:${p.color};border:1px solid ${p.color}59;">${p.letter} ${isEN ? 'Leads' : '領先'}</span>`;
+          badge = `<span class="lab-compare-kpi-badge" style="background:${p.color}2e;color:${p.color};border:1px solid ${p.color}59;">${p.letter} ${_tLab('領先', 'Leads', isEN)}</span>`;
         } else {
-          badge = `<span class="lab-compare-kpi-badge tie">${isEN ? 'Tie' : '持平'}</span>`;
+          badge = `<span class="lab-compare-kpi-badge tie">${_tLab('持平', 'Tie', isEN)}</span>`;
         }
         return `
           <div class="lab-compare-distinct-row">
@@ -6565,12 +6714,12 @@ const TARGET_TOP_RECIPES = [
     const ingredientsHtml = `
       <div class="lab-compare-kpi-card" id="lab-compare-ingredients">
         <div class="lab-compare-kpi-head">
-          <div class="lab-compare-kpi-title"><span>${isEN ? 'Daily Ingredient Yield Comparison' : '每日食材產量比較'}</span></div>
+          <div class="lab-compare-kpi-title"><span>${_tLab('每日食材產量比較', 'Daily Ingredient Yield Comparison', isEN)}</span></div>
           ${leadBadge(ingVals, d => `${Math.round(d * 10) / 10} ${unitIng}`)}
         </div>
         ${barRowsHtml(ingVals, ingVals.map(v => `${v} ${unitIng}`))}
         <div class="lab-compare-distinct-list" style="margin-top:6px;">
-          <div class="lab-compare-distinct-caption" style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">${isEN ? 'Per-ingredient total yield (each ingredient compared separately):' : '各食材總和產量對照（不同食材獨立比較）：'}</div>
+          <div class="lab-compare-distinct-caption" style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">${_tLab('各食材總和產量對照（不同食材獨立比較）：', 'Per-ingredient total yield (each ingredient compared separately):', isEN)}</div>
           ${distinctIngRowsHtml}
         </div>
       </div>`;
@@ -6578,30 +6727,30 @@ const TARGET_TOP_RECIPES = [
     // ── 5. 技能發動與幫手效能全面對照 ──
     const skillLabel = p => {
       const nm = (p.base && (p.base.main_skill || (p.base.skill && p.base.skill.name))) || p.item.main_skill || '--';
-      const locNm = window.I18N ? window.I18N.getMainSkillName(nm) : nm;
+      const locNm = window.I18N ? window.I18N.getMainSkillName(nm) : _tLabStr(nm);
       return `${locNm} Lv.${p.item.skillLevel || 1}`;
     };
     const specRows = [
-      { label: isEN ? 'Level' : '等級', vals: activePlayers.map(p => p.perf.level), higher: null, texts: activePlayers.map(p => `Lv.${p.perf.level}`) },
-      num(isEN ? 'Help Interval' : '幫手週期', x => x.effectiveInterval, false, v => formatSecsToMinSec(v, isEN)),
-      num(isEN ? 'Daily Helps' : '每日幫手次數', x => x.dailyHelps, true, v => `${v} ${isEN ? '/day' : '次'}`),
-      num(isEN ? 'Ingredient Rate' : '食材掉落率', x => Math.round(x.effectiveIngRate * 1000) / 10, true, v => `${v}%`),
-      num(isEN ? 'Berries / Day' : '每日樹果數量', x => x.dailyBerryCount, true),
-      num(isEN ? 'Energy / Berry' : '單顆樹果能量', x => x.singleBerryPower, true),
-      { label: isEN ? 'Main Skill' : '主技能', vals: activePlayers.map(() => 0), higher: null, texts: activePlayers.map(p => skillLabel(p)) },
-      num(isEN ? 'Skill Proc Rate' : '技能發動率', x => Math.round(x.effectiveSkillRate * 1000) / 10, true, v => `${v}%`),
-      num(isEN ? 'Skill Procs / Day' : '技能每日發動次數', x => x.dailySkillProcs, true, v => `~${v} ${isEN ? '/day' : '次'}`),
-      num(isEN ? 'Avg Proc Interval' : '技能平均發動間隔', x => (x.dailySkillProcs > 0 ? Math.round((24 / x.dailySkillProcs) * 10) / 10 : 9999), false, v => (v >= 9999 ? '--' : `${v} ${isEN ? 'h' : '小時'}`)),
-      num(isEN ? 'Skill Energy / Day' : '主技能每日能量', x => x.dailySkillEnergy, true),
-      { label: isEN ? 'Nature' : '性格', vals: activePlayers.map(() => 0), higher: null, texts: activePlayers.map(p => {
-        const nName = window.I18N ? window.I18N.getNatureName(p.item.nature) : p.item.nature;
-        return (p.item.cleanseMint || p.item.mint) ? `${nName}${isEN ? ' (Mint)' : ' (薄荷)'}` : nName;
+      { label: _tLab('等級', 'Level', isEN), vals: activePlayers.map(p => p.perf.level), higher: null, texts: activePlayers.map(p => `Lv.${p.perf.level}`) },
+      num(_tLab('幫手週期', 'Help Interval', isEN), x => x.effectiveInterval, false, v => formatSecsToMinSec(v, isEN)),
+      num(_tLab('每日幫手次數', 'Daily Helps', isEN), x => x.dailyHelps, true, v => `${v} ${_tLab('次', '/day', isEN)}`),
+      num(_tLab('食材掉落率', 'Ingredient Rate', isEN), x => Math.round(x.effectiveIngRate * 1000) / 10, true, v => `${v}%`),
+      num(_tLab('每日樹果數量', 'Berries / Day', isEN), x => x.dailyBerryCount, true),
+      num(_tLab('單顆樹果能量', 'Energy / Berry', isEN), x => x.singleBerryPower, true),
+      { label: _tLab('主技能', 'Main Skill', isEN), vals: activePlayers.map(() => 0), higher: null, texts: activePlayers.map(p => skillLabel(p)) },
+      num(_tLab('技能發動率', 'Skill Proc Rate', isEN), x => Math.round(x.effectiveSkillRate * 1000) / 10, true, v => `${v}%`),
+      num(_tLab('技能每日發動次數', 'Skill Procs / Day', isEN), x => x.dailySkillProcs, true, v => `~${v} ${_tLab('次', '/day', isEN)}`),
+      num(_tLab('技能平均發動間隔', 'Avg Proc Interval', isEN), x => (x.dailySkillProcs > 0 ? Math.round((24 / x.dailySkillProcs) * 10) / 10 : 9999), false, v => (v >= 9999 ? '--' : `${v} ${_tLab('小時', 'h', isEN)}`)),
+      num(_tLab('主技能每日能量', 'Skill Energy / Day', isEN), x => x.dailySkillEnergy, true),
+      { label: _tLab('性格', 'Nature', isEN), vals: activePlayers.map(() => 0), higher: null, texts: activePlayers.map(p => {
+        const nName = window.I18N ? window.I18N.getNatureName(p.item.nature) : _tLabStr(p.item.nature);
+        return (p.item.cleanseMint || p.item.mint) ? `${nName}${_tLab(' (薄荷)', ' (Mint)', isEN)}` : nName;
       }) }
     ];
     const specHtml = `
       <div class="lab-compare-kpi-card lab-compare-matchup-table" id="lab-compare-skills">
         <div class="lab-compare-kpi-head">
-          <div class="lab-compare-kpi-title"><span>${isEN ? 'Skill Procs, Speed & Specs' : '技能發動與幫手效能對照'}</span></div>
+          <div class="lab-compare-kpi-title"><span>${_tLab('技能發動與幫手效能對照', 'Skill Procs, Speed & Specs', isEN)}</span></div>
         </div>
         ${tableHtml(specRows)}
       </div>`;
@@ -6613,17 +6762,17 @@ const TARGET_TOP_RECIPES = [
     const parts = [];
     if (!allEqual(energyVals)) {
       const p = activePlayers[topOf(energyVals)];
-      parts.push(isEN ? `${pLabel(p)} has the highest daily energy (${fmt(p.perf.totalDailyEnergy)}).` : `【${pLabel(p)}】每日總能量最高 (${fmt(p.perf.totalDailyEnergy)})，適合衝島嶼分數。`);
+      parts.push(_tLab(`【${pLabel(p)}】每日總能量最高 (${fmt(p.perf.totalDailyEnergy)})，適合衝島嶼分數。`, `${pLabel(p)} has the highest daily energy (${fmt(p.perf.totalDailyEnergy)}).`, isEN));
     }
     if (!allEqual(ingVals)) {
       const p = activePlayers[topOf(ingVals)];
-      parts.push(isEN ? `${pLabel(p)} yields the most ingredients (${p.perf.totalDailyIngredientsCount} ${unitIng}).` : `【${pLabel(p)}】食材產量最高 (${p.perf.totalDailyIngredientsCount} ${unitIng})，適合支撐大鍋料理。`);
+      parts.push(_tLab(`【${pLabel(p)}】食材產量最高 (${p.perf.totalDailyIngredientsCount} ${unitIng})，適合支撐大鍋料理。`, `${pLabel(p)} yields the most ingredients (${p.perf.totalDailyIngredientsCount} ${unitIng}).`, isEN));
     }
     if (!allEqual(skillProcVals)) {
       const p = activePlayers[topOf(skillProcVals)];
-      parts.push(isEN ? `${pLabel(p)} procs its main skill most often (~${p.perf.dailySkillProcs}/day).` : `【${pLabel(p)}】主技能發動最頻繁 (約 ${p.perf.dailySkillProcs} 次/日)。`);
+      parts.push(_tLab(`【${pLabel(p)}】主技能發動最頻繁 (約 ${p.perf.dailySkillProcs} 次/日)。`, `${pLabel(p)} procs its main skill most often (~${p.perf.dailySkillProcs}/day).`, isEN));
     }
-    const verdictSummary = parts.length ? parts.join(isEN ? ' ' : '') : (isEN ? 'All selected Pokémon are evenly matched.' : '所選寶可夢各項表現旗鼓相當，可依營地喜愛樹果與預備料理自行調配。');
+    const verdictSummary = parts.length ? parts.join(_tLab('', ' ', isEN)) : _tLab('所選寶可夢各項表現旗鼓相當，可依營地喜愛樹果與預備料理自行調配。', 'All selected Pokémon are evenly matched.', isEN);
 
     return `
       <div class="lab-compare-view-container">
@@ -6636,7 +6785,7 @@ const TARGET_TOP_RECIPES = [
         ${specHtml}
         <div class="lab-compare-verdict-card" style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.25);border-radius:10px;padding:14px;">
           <div style="font-size:12.5px;font-weight:800;color:var(--accent-color,#38bdf8);margin-bottom:6px;">
-            ${isEN ? 'Research Lab Comparative Verdict & Advice' : '深度研究室對比結論與培育建議'}
+            ${_tLab('深度研究室對比結論與培育建議', 'Research Lab Comparative Verdict & Advice', isEN)}
           </div>
           <div style="font-size:12px;color:#e2e8f0;line-height:1.6;">${verdictSummary}</div>
         </div>
@@ -6819,8 +6968,8 @@ const TARGET_TOP_RECIPES = [
       const newPR = newEval ? newEval.compositeScore : basePR;
       const deltaPR = Math.max(0, newPR - basePR);
 
-      const fromDisp = isEN && window.I18N ? window.I18N.getSubSkillName(skName) : skName;
-      const toDisp = isEN && window.I18N ? window.I18N.getSubSkillName(upgradedName) : upgradedName;
+      const fromDisp = window.I18N ? window.I18N.getSubSkillName(skName) : _tLabStr(skName);
+      const toDisp = window.I18N ? window.I18N.getSubSkillName(upgradedName) : _tLabStr(upgradedName);
 
       upgradeResults.push({
         slotIndex: idx,
@@ -6840,13 +6989,13 @@ const TARGET_TOP_RECIPES = [
   function evaluateMainSkillSeedROI(targetPkm, basePkm, isEN) {
     if (!targetPkm || !basePkm) {
       return {
-        skillName: isEN ? 'None' : '無',
-        skillDisplay: isEN ? 'None' : '無',
+        skillName: _tLab('無', 'None', isEN),
+        skillDisplay: _tLab('無', 'None', isEN),
         currentLevel: 1,
         maxLevel: 6,
         seedsNeeded: 0,
         roiGrade: 'C',
-        recommendation: isEN ? 'No main skill data.' : '暫無主技能資訊。',
+        recommendation: _tLab('暫無主技能資訊。', 'No main skill data.', isEN),
         gainSummary: ''
       };
     }
@@ -6855,8 +7004,8 @@ const TARGET_TOP_RECIPES = [
     if (rawSkill && typeof rawSkill === 'object') {
       rawSkill = rawSkill.name || rawSkill.name_cn || rawSkill.name_en || '';
     }
-    const skillName = String(rawSkill || (isEN ? 'Main Skill' : '主技能'));
-    const skillDisp = isEN && window.I18N ? window.I18N.getMainSkillName(skillName) : skillName;
+    const skillName = String(rawSkill || _tLab('主技能', 'Main Skill', isEN));
+    const skillDisp = window.I18N ? window.I18N.getMainSkillName(skillName) : _tLabStr(skillName);
     const curSkillLv = parseInt(targetPkm.skillLevel || 1, 10) || 1;
 
     // 主技能上限判定：優先採用主技能等級上限查詢函式，支援 Lv.7 及 Lv.8
@@ -6882,48 +7031,64 @@ const TARGET_TOP_RECIPES = [
 
     if (hasSkillDebuff) {
       roiGrade = 'C';
-      recommendation = isEN
-        ? 'Skill Trigger Down nature severely cripples activation frequency. Gold seed investment is not recommended.'
-        : '性格減主技能發動機率，嚴重壓低發動期望值，強烈不建議投資金種子。';
+      recommendation = _tLab(
+        '性格減主技能發動機率，嚴重壓低發動期望值，強烈不建議投資金種子。',
+        'Skill Trigger Down nature severely cripples activation frequency. Gold seed investment is not recommended.',
+        isEN
+      );
     } else if (isHealer) {
       if (hasTriggerM || hasSkillBuff) {
         roiGrade = 'S';
-        recommendation = isEN
-          ? 'Elite team healer with high proc frequency! Maxing main skill sustains full team energy throughout the day.'
-          : '極品高頻補師！滿級主技能單次回復全隊18點活力，全天維持極速產能，值得最高優先級投資金種子。';
+        recommendation = _tLab(
+          '極品高頻補師！滿級主技能單次回復全隊18點活力，全天維持極速產能，值得最高優先級投資金種子。',
+          'Elite team healer with high proc frequency! Maxing main skill sustains full team energy throughout the day.',
+          isEN
+        );
       } else {
         roiGrade = 'A';
-        recommendation = isEN
-          ? 'Core team healer. High investment value to maintain team energy stability.'
-          : '隊伍核心補師，升滿主技能能大幅提升全隊續航力，投資性價比極高。';
+        recommendation = _tLab(
+          '隊伍核心補師，升滿主技能能大幅提升全隊續航力，投資性價比極高。',
+          'Core team healer. High investment value to maintain team energy stability.',
+          isEN
+        );
       }
     } else if (isSkillSpec) {
       if (hasTriggerM && (hasSkillBuff || hasTriggerS)) {
         roiGrade = 'S';
-        recommendation = isEN
-          ? 'Top-tier skill specialist with extreme trigger rates! Gold seeds unleash maximum potential.'
-          : '極限發動率頂級技能手！副技能與性格高度契合，滿等主技能產能爆發極高，強烈推薦投資。';
+        recommendation = _tLab(
+          '極限發動率頂級技能手！副技能與性格高度契合，滿等主技能產能爆發極高，強烈推薦投資。',
+          'Top-tier skill specialist with extreme trigger rates! Gold seeds unleash maximum potential.',
+          isEN
+        );
       } else if (hasTriggerM || hasSkillBuff) {
         roiGrade = 'A';
-        recommendation = isEN
-          ? 'Solid skill specialist. Recommended investment if this Pokemon is a key roster member.'
-          : '具備良好技能加成，作為主力隊員時投資金種子效益顯著。';
+        recommendation = _tLab(
+          '具備良好技能加成，作為主力隊員時投資金種子效益顯著。',
+          'Solid skill specialist. Recommended investment if this Pokemon is a key roster member.',
+          isEN
+        );
       } else {
         roiGrade = 'B';
-        recommendation = isEN
-          ? 'Moderate trigger rate. Consider investing only after core healers are maxed.'
-          : '發動頻率普通，建議優先將金種子保留給核心補師或頂級神獸。';
+        recommendation = _tLab(
+          '發動頻率普通，建議優先將金種子保留給核心補師或頂級神獸。',
+          'Moderate trigger rate. Consider investing only after core healers are maxed.',
+          isEN
+        );
       }
     } else if (isHighImpact) {
       roiGrade = 'B';
-      recommendation = isEN
-        ? 'Support utility skill. Can be upgraded if resources permit, but lower priority than skill specialists.'
-        : '實用戰術型技能，在主力隊伍成型後可酌量升級，優先級次於技能專長型。';
+      recommendation = _tLab(
+        '實用戰術型技能，在主力隊伍成型後可酌量升級，優先級次於技能專長型。',
+        'Support utility skill. Can be upgraded if resources permit, but lower priority than skill specialists.',
+        isEN
+      );
     } else {
       roiGrade = 'C';
-      recommendation = isEN
-        ? 'Berry/Ingredient specialist. Skill leveling grants marginal returns; save seeds for dedicated specialists.'
-        : '非技能專長個體，主技能升級收益有限，建議保留金種子給專長寶可夢。';
+      recommendation = _tLab(
+        '非技能專長個體，主技能升級收益有限，建議保留金種子給專長寶可夢。',
+        'Berry/Ingredient specialist. Skill leveling grants marginal returns; save seeds for dedicated specialists.',
+        isEN
+      );
     }
 
     return {
@@ -6968,9 +7133,11 @@ const TARGET_TOP_RECIPES = [
     const basePkm = targetObj.base;
 
     const baseName = basePkm.name_cn || basePkm.name || targetPkm.name || '';
-    const pDisplayName = isEN ? (basePkm.name_en || baseName) : baseName;
+    const pDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
+      ? window.I18N.getPokemonName(basePkm)
+      : _tLab(baseName, basePkm.name_en || baseName, isEN);
     const avatarUrl = (basePkm && (basePkm.icon_url || basePkm.icon)) || (basePkm && basePkm.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${basePkm.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
-    const specDisp = (window.I18N && window.I18N.getSpecialtyName) ? window.I18N.getSpecialtyName(basePkm.specialty) : (basePkm.specialty || '樹果');
+    const specDisp = (window.I18N && window.I18N.getSpecialtyName) ? window.I18N.getSpecialtyName(basePkm.specialty) : _tLabStr(basePkm.specialty || '樹果');
 
     const growthCaps = _getGrowthCaps();
     const capLv = growthCaps.POKEMON_LEVEL_CAP || 70;
@@ -7021,19 +7188,24 @@ const TARGET_TOP_RECIPES = [
 
     // 曲線標籤字串
     const curveLabel = curveMult === 1.5
-      ? (isEN ? 'Pseudo-Legendary (1.5x)' : '準神 (1.5倍)')
+      ? _tLab('準神 (1.5倍)', 'Pseudo-Legendary (1.5x)', isEN)
       : curveMult === 1.8
-      ? (isEN ? 'Legendary (1.8x)' : '神獸 (1.8倍)')
+      ? _tLab('神獸 (1.8倍)', 'Legendary (1.8x)', isEN)
       : curveMult === 3.0
-      ? (isEN ? 'Mythical/Special (3.0x)' : '特殊神獸 (3.0倍)')
-      : (isEN ? 'Standard (1.0x)' : '一般 (1.0倍)');
+      ? _tLab('特殊神獸 (3.0倍)', 'Mythical/Special (3.0x)', isEN)
+      : _tLab('一般 (1.0倍)', 'Standard (1.0x)', isEN);
 
     // 性格 EXP 標籤字串
     const natureExpLabel = expMod === 'up'
-      ? (isEN ? 'EXP Up (+18%)' : '經驗提升 (+18%)')
+      ? _tLab('經驗提升 (+18%)', 'EXP Up (+18%)', isEN)
       : expMod === 'down'
-      ? (isEN ? 'EXP Down (-18%)' : '經驗下降 (-18%)')
-      : (isEN ? 'Neutral' : '無修正');
+      ? _tLab('經驗下降 (-18%)', 'EXP Down (-18%)', isEN)
+      : _tLab('無修正', 'Neutral', isEN);
+
+    const growthNatName = targetPkm.nature || '坦率';
+    const growthNatDisp = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getNatureName === 'function')
+      ? window.I18N.getNatureName(growthNatName)
+      : _tLabStr(growthNatName);
 
     return `
       <div class="lab-growth-container">
@@ -7053,12 +7225,12 @@ const TARGET_TOP_RECIPES = [
                 <span>·</span>
                 <span>${specDisp}</span>
                 <span>·</span>
-                <span>${targetPkm.nature || '坦率'} (${natureExpLabel})</span>
+                <span>${escapeHtml(growthNatDisp)} (${natureExpLabel})</span>
               </div>
             </div>
           </div>
           <button type="button" class="lab-growth-change-btn" onclick="window.AppraisalLab.openGrowthPicker()">
-            ${isEN ? 'Change Pokémon' : '更換寶可夢'}
+            ${_tLab('更換寶可夢', 'Change Pokémon', isEN)}
           </button>
         </div>
 
@@ -7067,20 +7239,20 @@ const TARGET_TOP_RECIPES = [
           <!-- 左欄：培育等級與資源消耗精算 -->
           <div class="lab-growth-card">
             <div class="lab-growth-card-title">
-              <span>${isEN ? 'Level & Resource Calculator' : '培育升級消耗精算'}</span>
+              <span>${_tLab('培育升級消耗精算', 'Level & Resource Calculator', isEN)}</span>
               <span style="font-size:12px;color:var(--text-secondary);font-weight:normal;">${curveLabel}</span>
             </div>
 
             <!-- 等級滑桿與區間控制 (min="2" max="100") -->
             <div class="lab-growth-level-control">
               <div class="lab-growth-range-display">
-                <span class="lab-growth-range-label">${isEN ? 'Current Level' : '起始等級'}</span>
+                <span class="lab-growth-range-label">${_tLab('起始等級', 'Current Level', isEN)}</span>
                 <span class="lab-growth-range-val">Lv.${growthState.fromLevel}</span>
               </div>
               <input type="range" class="lab-growth-slider" min="1" max="${maxLv - 1}" value="${growthState.fromLevel}" oninput="window.AppraisalLab.setGrowthFromLevel(this.value)">
 
               <div class="lab-growth-range-display" style="margin-top:10px;">
-                <span class="lab-growth-range-label">${isEN ? 'Target Level' : '目標等級'}</span>
+                <span class="lab-growth-range-label">${_tLab('目標等級', 'Target Level', isEN)}</span>
                 <span class="lab-growth-range-val">Lv.${growthState.targetLevel}</span>
               </div>
               <input type="range" class="lab-growth-slider" min="2" max="${maxLv}" value="${growthState.targetLevel}" oninput="window.AppraisalLab.setGrowthTargetLevel(this.value)">
@@ -7096,15 +7268,15 @@ const TARGET_TOP_RECIPES = [
             <!-- 消耗總結看板 -->
             <div class="lab-growth-cost-board">
               <div class="lab-growth-cost-cell">
-                <div class="lab-growth-cost-label">${isEN ? 'Required Candies' : '所需寶可夢糖果'}</div>
-                <div class="lab-growth-cost-val lab-growth-cost-candies">${cost.candiesNeeded.toLocaleString()} <span style="font-size:12px;color:var(--text-secondary);font-weight:normal;">(${cost.expPerCandy} EXP/${isEN ? 'ea' : '顆'})</span></div>
+                <div class="lab-growth-cost-label">${_tLab('所需寶可夢糖果', 'Required Candies', isEN)}</div>
+                <div class="lab-growth-cost-val lab-growth-cost-candies">${cost.candiesNeeded.toLocaleString()} <span style="font-size:12px;color:var(--text-secondary);font-weight:normal;">(${cost.expPerCandy} EXP/${_tLab('顆', 'ea', isEN)})</span></div>
               </div>
               <div class="lab-growth-cost-cell">
-                <div class="lab-growth-cost-label">${isEN ? 'Required Dream Shards' : '所需夢之碎片'}</div>
+                <div class="lab-growth-cost-label">${_tLab('所需夢之碎片', 'Required Dream Shards', isEN)}</div>
                 <div class="lab-growth-cost-val lab-growth-cost-shards">${cost.shardsNeeded.toLocaleString()}</div>
               </div>
               <div class="lab-growth-cost-cell" style="grid-column: 1 / -1;">
-                <div class="lab-growth-cost-label">${isEN ? 'Cumulative Experience' : '所需經驗值累計 (EXP)'}</div>
+                <div class="lab-growth-cost-label">${_tLab('所需經驗值累計 (EXP)', 'Cumulative Experience', isEN)}</div>
                 <div class="lab-growth-cost-val lab-growth-cost-exp">${cost.expNeeded.toLocaleString()} EXP</div>
               </div>
             </div>
@@ -7112,16 +7284,16 @@ const TARGET_TOP_RECIPES = [
             <!-- 萬能糖果換算列 -->
             <div class="lab-growth-handy-bar">
               <div class="lab-growth-handy-item">
-                <span class="lab-growth-handy-name">${isEN ? 'Handy Candy S (+3)' : '萬能糖果 S (+3)'}</span>
-                <span class="lab-growth-handy-count">${cost.handyCandyS.toLocaleString()} ${isEN ? 'pcs' : '顆'}</span>
+                <span class="lab-growth-handy-name">${_tLab('萬能糖果 S (+3)', 'Handy Candy S (+3)', isEN)}</span>
+                <span class="lab-growth-handy-count">${cost.handyCandyS.toLocaleString()} ${_tLab('顆', 'pcs', isEN)}</span>
               </div>
               <div class="lab-growth-handy-item">
-                <span class="lab-growth-handy-name">${isEN ? 'Handy Candy M (+20)' : '萬能糖果 M (+20)'}</span>
-                <span class="lab-growth-handy-count">${cost.handyCandyM.toLocaleString()} ${isEN ? 'pcs' : '顆'}</span>
+                <span class="lab-growth-handy-name">${_tLab('萬能糖果 M (+20)', 'Handy Candy M (+20)', isEN)}</span>
+                <span class="lab-growth-handy-count">${cost.handyCandyM.toLocaleString()} ${_tLab('顆', 'pcs', isEN)}</span>
               </div>
               <div class="lab-growth-handy-item">
-                <span class="lab-growth-handy-name">${isEN ? 'Handy Candy L (+100)' : '萬能糖果 L (+100)'}</span>
-                <span class="lab-growth-handy-count">${cost.handyCandyL.toLocaleString()} ${isEN ? 'pcs' : '顆'}</span>
+                <span class="lab-growth-handy-name">${_tLab('萬能糖果 L (+100)', 'Handy Candy L (+100)', isEN)}</span>
+                <span class="lab-growth-handy-count">${cost.handyCandyL.toLocaleString()} ${_tLab('顆', 'pcs', isEN)}</span>
               </div>
             </div>
           </div>
@@ -7129,18 +7301,18 @@ const TARGET_TOP_RECIPES = [
           <!-- 右欄：技能種子效益精算 -->
           <div class="lab-growth-card">
             <div class="lab-growth-card-title">
-              <span>${isEN ? 'Skill Seeds ROI & Upgrade Analysis' : '技能種子投資效益精算'}</span>
+              <span>${_tLab('技能種子投資效益精算', 'Skill Seeds ROI & Upgrade Analysis', isEN)}</span>
             </div>
 
             <!-- 1. 銀色技能種子區塊 -->
             <div class="lab-growth-seed-section">
               <div class="lab-growth-seed-title-row">
-                <span style="font-size:13px;font-weight:600;color:var(--text-primary);">${isEN ? 'Sub Skill Seed' : '銀色技能種子'}</span>
-                <span class="lab-growth-seed-badge lab-growth-seed-badge-silver">${isEN ? 'Sub-Skills' : '副技能升階'}</span>
+                <span style="font-size:13px;font-weight:600;color:var(--text-primary);">${_tLab('銀色技能種子', 'Sub Skill Seed', isEN)}</span>
+                <span class="lab-growth-seed-badge lab-growth-seed-badge-silver">${_tLab('副技能升階', 'Sub-Skills', isEN)}</span>
               </div>
               ${subskillUpgrades.length === 0 ? `
                 <div class="lab-growth-no-subskills">
-                  ${isEN ? 'No eligible sub-skills for Sub Skill Seed (already max tier or no ladder skills).' : '無可使用銀色技能種子之副技能（已達上限或無階梯技能）'}
+                  ${_tLab('無可使用銀色技能種子之副技能（已達上限或無階梯技能）', 'No eligible sub-skills for Sub Skill Seed (already max tier or no ladder skills).', isEN)}
                 </div>
               ` : `
                 <div class="lab-growth-subskill-list">
@@ -7163,21 +7335,21 @@ const TARGET_TOP_RECIPES = [
             <!-- 2. 金色技能種子區塊 -->
             <div class="lab-growth-seed-section" style="margin-bottom:0;">
               <div class="lab-growth-seed-title-row">
-                <span style="font-size:13px;font-weight:600;color:var(--text-primary);">${isEN ? 'Main Skill Seed' : '金色技能種子'}</span>
-                <span class="lab-growth-seed-badge lab-growth-seed-badge-gold">${isEN ? 'Main Skill' : '主技能突破'}</span>
+                <span style="font-size:13px;font-weight:600;color:var(--text-primary);">${_tLab('金色技能種子', 'Main Skill Seed', isEN)}</span>
+                <span class="lab-growth-seed-badge lab-growth-seed-badge-gold">${_tLab('主技能突破', 'Main Skill', isEN)}</span>
               </div>
               <div class="lab-growth-mainskill-box">
                 <div class="lab-growth-mainskill-header">
                   <span class="lab-growth-mainskill-name">${escapeHtml(mainskillROI.skillDisplay)}</span>
-                  <span class="lab-growth-roi-pill lab-growth-roi-${mainskillROI.roiGrade.toLowerCase()}">${isEN ? 'ROI Rating: ' : '性價比評級：'}${mainskillROI.roiGrade}</span>
+                  <span class="lab-growth-roi-pill lab-growth-roi-${mainskillROI.roiGrade.toLowerCase()}">${_tLab('性價比評級：', 'ROI Rating: ', isEN)}${mainskillROI.roiGrade}</span>
                 </div>
                 <div class="lab-growth-mainskill-detail">
-                  <span>${isEN ? 'Current Level -> Max' : '當前等級 -> 上限'}</span>
+                  <span>${_tLab('當前等級 -> 上限', 'Current Level -> Max', isEN)}</span>
                   <span class="lab-growth-mainskill-val">Lv.${mainskillROI.currentLevel} -> Lv.${mainskillROI.maxLevel}</span>
                 </div>
                 <div class="lab-growth-mainskill-detail">
-                  <span>${isEN ? 'Seeds Needed to Max' : '升滿所需金種子'}</span>
-                  <span class="lab-growth-mainskill-val">${mainskillROI.seedsNeeded} ${isEN ? 'Seeds' : '顆'}</span>
+                  <span>${_tLab('升滿所需金種子', 'Seeds Needed to Max', isEN)}</span>
+                  <span class="lab-growth-mainskill-val">${mainskillROI.seedsNeeded} ${_tLab('顆', 'Seeds', isEN)}</span>
                 </div>
                 <div style="font-size:12px;color:var(--text-secondary);line-height:1.5;background:rgba(15,23,42,0.3);padding:8px 10px;border-radius:6px;">
                   ${escapeHtml(mainskillROI.recommendation)}
@@ -7266,7 +7438,7 @@ const TARGET_TOP_RECIPES = [
     const userBox = (window.UserBox && typeof window.UserBox.getUserBox === 'function') ? window.UserBox.getUserBox() : [];
     
     if (pokemons.length === 0) {
-      targetElement.innerHTML = `<div style="padding:20px;text-align:center;color:#94a3b8;">${isEN ? 'Loading Pokédex data...' : '載入圖鑑資料中...'}</div>`;
+      targetElement.innerHTML = `<div style="padding:20px;text-align:center;color:#94a3b8;">${_tLab('載入圖鑑資料中...', 'Loading Pokédex data...', isEN)}</div>`;
       return;
     }
 
@@ -7275,13 +7447,13 @@ const TARGET_TOP_RECIPES = [
         <div class="lab-box-empty-container" style="padding:48px 20px;text-align:center;color:var(--text-muted);">
           <div style="font-size:32px;margin-bottom:12px;opacity:0.8;">[!]</div>
           <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">
-            ${isEN ? 'No Pokémon in Box' : '倉庫中尚無寶可夢'}
+            ${_tLab('倉庫中尚無寶可夢', 'No Pokémon in Box', isEN)}
           </div>
           <div style="font-size:13px;color:var(--text-secondary);max-width:320px;margin:0 auto 18px;line-height:1.5;">
-            ${isEN ? 'Please register Pokémon in the Box tab first, then evaluate them here!' : '請先在【寶可夢倉庫】新增登錄寶可夢後，再來進行深度評測！'}
+            ${_tLab('請先在【寶可夢倉庫】新增登錄寶可夢後，再來進行深度評測！', 'Please register Pokémon in the Box tab first, then evaluate them here!', isEN)}
           </div>
           <button type="button" class="btn-primary" onclick="if(window.switchMainTab)window.switchMainTab('box');" style="padding:8px 20px;border-radius:8px;font-size:13px;cursor:pointer;">
-            ${isEN ? 'Go to Box' : '前往寶可夢倉庫'}
+            ${_tLab('前往寶可夢倉庫', 'Go to Box', isEN)}
           </button>
         </div>
       `;
@@ -7312,13 +7484,13 @@ const TARGET_TOP_RECIPES = [
         <!-- 深度研究室 頂部子分頁導航 (Subnav Bar) -->
         <div class="lab-subnav-bar">
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'team' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('team')">
-            <span class="lab-subtab-title">${isEN ? 'Team' : '幫手組隊'}</span>
+            <span class="lab-subtab-title">${_tLab('幫手組隊', 'Team', isEN)}</span>
           </button>
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'compare' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('compare')">
-            <span class="lab-subtab-title">${isEN ? 'Compare' : '寶可夢對比'}</span>
+            <span class="lab-subtab-title">${_tLab('寶可夢對比', 'Compare', isEN)}</span>
           </button>
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'growth' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('growth')">
-            <span class="lab-subtab-title">${isEN ? 'Growth' : '培育精算'}</span>
+            <span class="lab-subtab-title">${_tLab('培育精算', 'Growth', isEN)}</span>
           </button>
         </div>
         ` : ''}

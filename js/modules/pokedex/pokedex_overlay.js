@@ -357,7 +357,7 @@ function toggleSidebar(forceState) {
     if (bookmarkHandle) {
       bookmarkHandle.classList.remove('drawer-open');
       bookmarkHandle.setAttribute('aria-expanded', 'false');
-      bookmarkHandle.title = '展開篩選側邊欄';
+      bookmarkHandle.title = _tDex('展開篩選側邊欄', 'Expand Filter Sidebar');
       bookmarkHandle.style.removeProperty('display');
       bookmarkHandle.style.removeProperty('opacity');
       bookmarkHandle.style.removeProperty('visibility');
@@ -375,7 +375,7 @@ function toggleSidebar(forceState) {
     if (bookmarkHandle) {
       bookmarkHandle.classList.add('drawer-open');
       bookmarkHandle.setAttribute('aria-expanded', 'true');
-      bookmarkHandle.title = '收合篩選側邊欄';
+      bookmarkHandle.title = _tDex('收合篩選側邊欄', 'Collapse Filter Sidebar');
       bookmarkHandle.style.removeProperty('display');
       bookmarkHandle.style.removeProperty('opacity');
       bookmarkHandle.style.removeProperty('visibility');
@@ -657,7 +657,7 @@ if (typeof document !== 'undefined') {
             ghPat = val;
             safeStorageSet(GH_PAT_KEY, val);
             animateOverlayClose(settingsModal, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
-            if (syncStatus) syncStatus.innerHTML = `<span style="color:#4ade80;">[✓] PAT Token 已儲存！現在可以點擊同步資料。</span>`;
+            if (syncStatus) syncStatus.innerHTML = `<span style="color:#4ade80;">${_tDex('[✓] PAT Token 已儲存！現在可以點擊同步資料。', '[✓] PAT Token saved! You can now click Sync Data.')}</span>`;
           } else {
             animateOverlayClose(settingsModal, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
           }
@@ -674,15 +674,15 @@ if (typeof document !== 'undefined') {
         if (!ghPat) {
           if (syncStatus) {
             syncStatus.innerHTML = `
-              <span style="color:#fbbf24;">[!] 尚未設定 GitHub PAT Token。</span><br>
-              請先點擊 <strong>設定</strong> 並填入你的 GitHub PAT。
+              <span style="color:#fbbf24;">${_tDex('[!] 尚未設定 GitHub PAT Token。', '[!] GitHub PAT Token is not configured.')}</span><br>
+              ${_tDex('請先點擊 <strong>設定</strong> 並填入你的 GitHub PAT。', 'Please click <strong>Settings</strong> and enter your GitHub PAT first.')}
             `;
           }
           return;
         }
 
         syncBtn.disabled = true;
-        syncBtn.textContent = '觸發同步中...';
+        syncBtn.textContent = _tDex('觸發同步中...', 'Triggering sync...');
         if (syncStatus) syncStatus.textContent = '';
 
         try {
@@ -703,31 +703,31 @@ if (typeof document !== 'undefined') {
           if (res.status === 204) {
             if (syncStatus) {
               syncStatus.innerHTML = `
-                <span style="color:#4ade80;">[v] GitHub Actions 同步已觸發！</span><br>
-                <span style="font-size:12px;color:#94a3b8;">約 60-120 秒後資料更新至 GitHub Pages。
+                <span style="color:#4ade80;">${_tDex('[v] GitHub Actions 同步已觸發！', '[v] GitHub Actions sync triggered!')}</span><br>
+                <span style="font-size:12px;color:#94a3b8;">${_tDex('約 60-120 秒後資料更新至 GitHub Pages。', 'Data will update on GitHub Pages in ~60-120s.')}
                   <a href="https://github.com/${GH_OWNER}/${GH_REPO}/actions" target="_blank" rel="noopener noreferrer"
-                    style="color:#38bdf8;">查看進度 -></a>
+                    style="color:#38bdf8;">${_tDex('查看進度 ->', 'View Progress ->')}</a>
                 </span>
               `;
             }
             setTimeout(() => location.reload(), 90000);
           } else if (res.status === 401 || res.status === 403) {
-            if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">[X] PAT Token 無效或權限不足，請重新設定。</span>`;
+            if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">${_tDex('[X] PAT Token 無效或權限不足，請重新設定。', '[X] Invalid PAT Token or insufficient permissions. Please reconfigure.')}</span>`;
           } else {
             const body = await res.text();
             const safeBody = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
               ? window.DOMUtils.escapeHtml(body.slice(0, 120))
               : String(body.slice(0, 120)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            if (syncStatus) syncStatus.innerHTML = `<span style="color:#fbbf24;">[!] 回應 ${res.status}：${safeBody}</span>`;
+            if (syncStatus) syncStatus.innerHTML = `<span style="color:#fbbf24;">${_tDex(`[!] 回應 ${res.status}：${safeBody}`, `[!] Response ${res.status}: ${safeBody}`)}</span>`;
           }
         } catch (e) {
           const safeErr = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
             ? window.DOMUtils.escapeHtml(e.message)
             : String(e.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-          if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">[X] 網路錯誤：${safeErr}</span>`;
+          if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">${_tDex(`[X] 網路錯誤：${safeErr}`, `[X] Network error: ${safeErr}`)}</span>`;
         } finally {
           syncBtn.disabled = false;
-          syncBtn.textContent = '同步資料';
+          syncBtn.textContent = _tDex('同步資料', 'Sync Data');
         }
       });
     }

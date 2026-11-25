@@ -64,8 +64,7 @@
       const otherIdx = labState.compareSlots.findIndex((u, i) => u === uid && i !== idx);
       if (otherIdx !== -1) {
         if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
-          const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-          window.showToast(isEN ? 'This Pokémon is already selected in comparison!' : '該寶可夢已在對比選手名單中，無法重複選擇！');
+          window.showToast(_tLab('該寶可夢已在對比選手名單中，無法重複選擇！', 'This Pokémon is already selected in comparison!'));
         }
         return;
       }
@@ -224,12 +223,14 @@
         });
 
         if (filtered.length === 0) {
-          return `<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;">${isEN ? 'No matching recipes found' : '未找到符合條件的料理'}</div>`;
+          return `<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;">${_tLab('未找到符合條件的料理', 'No matching recipes found', isEN)}</div>`;
         }
 
         return filtered.map(r => {
           const rNameCn = r.name_cn || r.name || '';
-          const rNameDisplay = isEN ? (r.name_en || rNameCn) : rNameCn;
+          const rNameDisplay = (window.I18N && typeof window.I18N.getRecipeName === 'function')
+            ? window.I18N.getRecipeName(r)
+            : _tLab(rNameCn, r.name_en || rNameCn, isEN);
           const isSelected = (rNameCn === currentTargetName || r.name === currentTargetName);
           const ings = Array.isArray(r.ingredients) ? r.ingredients : [];
           const cat = (r.category || '').toLowerCase();
@@ -238,7 +239,7 @@
           else if (cat.includes('甜') || cat.includes('點心') || cat.includes('dessert') || cat.includes('飲料') || cat.includes('drink')) catClass = 'lab-recipe-cat-dessert';
 
           const ingsHtml = ings.map(ing => {
-            const iDisp = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
+            const iDisp = window.I18N ? window.I18N.getIngredientName(ing.name) : _tLabStr(ing.name);
             const iconUrl = ing.icon || (window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(ing.name) : '');
             return `
               <span class="lab-recipe-ing-chip" title="${escapeHtml(iDisp)} x${ing.count}">
@@ -258,9 +259,9 @@
                 <div class="lab-recipe-card-info">
                   <div class="lab-recipe-card-title-row">
                     <span class="lab-recipe-card-title">${escapeHtml(rNameDisplay)}</span>
-                    ${r.pot_size ? `<span class="lab-recipe-card-pot">${r.pot_size}${isEN ? ' Pots' : '格'}</span>` : ''}
+                    ${r.pot_size ? `<span class="lab-recipe-card-pot">${r.pot_size}${_tLab('格', ' Pots', isEN)}</span>` : ''}
                     ${energyText ? `<span class="lab-recipe-card-pot">${energyText}</span>` : ''}
-                    ${isSelected ? `<span class="lab-recipe-active-badge">${isEN ? 'Current' : '當前'}</span>` : ''}
+                    ${isSelected ? `<span class="lab-recipe-active-badge">${_tLab('當前', 'Current', isEN)}</span>` : ''}
                   </div>
                   <div class="lab-recipe-card-ingredients">
                     ${ingsHtml}
@@ -280,23 +281,23 @@
       }
 
       const categoryLabelMap = {
-        curry: isEN ? 'Curry' : '咖哩/濃湯',
-        salad: isEN ? 'Salad' : '沙拉',
-        dessert: isEN ? 'Dessert' : '點心/飲料'
+        curry: _tLab('咖哩/濃湯', 'Curry', isEN),
+        salad: _tLab('沙拉', 'Salad', isEN),
+        dessert: _tLab('點心/飲料', 'Dessert', isEN)
       };
       const categoryFilterHtml = lockedCategory
         ? `<button type="button" class="box-btn box-btn-secondary active" data-filter="${lockedCategory}" style="padding:3px 10px;font-size:11px;cursor:default;">${categoryLabelMap[lockedCategory]} (${scopedRecipesList.length})</button>`
         : `
-          <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 10px;font-size:11px;">${isEN ? 'All' : '全部'} (${allRecipesList.length})</button>
+          <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 10px;font-size:11px;">${_tLab('全部', 'All', isEN)} (${allRecipesList.length})</button>
           <button type="button" class="box-btn box-btn-secondary" data-filter="curry" style="padding:3px 10px;font-size:11px;">${categoryLabelMap.curry}</button>
           <button type="button" class="box-btn box-btn-secondary" data-filter="salad" style="padding:3px 10px;font-size:11px;">${categoryLabelMap.salad}</button>
           <button type="button" class="box-btn box-btn-secondary" data-filter="dessert" style="padding:3px 10px;font-size:11px;">${categoryLabelMap.dessert}</button>
         `;
 
       const recipeIngChipsHtml = [
-        `<button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === 'all' ? 'active' : ''}" data-recipe-ing="all" title="${isEN ? 'All Ingredients' : '全部食材'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
+        `<button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === 'all' ? 'active' : ''}" data-recipe-ing="all" title="${_tLab('全部食材', 'All Ingredients', isEN)}"><span>${_tLab('全部', 'All', isEN)}</span></button>`,
         ..._getLabCanonicalIngredients().map(iName => {
-          const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
+          const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : _tLabStr(iName);
           const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
           return `
             <button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === iName ? 'active' : ''}" data-recipe-ing="${escapeHtml(iName)}" title="${escapeHtml(iDisp)}">
@@ -310,10 +311,10 @@
         <div class="lab-picker-container lab-recipe-picker-container">
           <div class="lab-picker-header">
             <div style="font-size:15px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:6px;">
-              <span>${isEN ? 'Select Target Recipe' : '挑選目標料理'}</span>
-              <span style="font-size:11px;color:var(--text-secondary);background:var(--bg-card-inner);border:1px solid var(--border-color);padding:1px 7px;border-radius:999px;">${scopedRecipesList.length} ${isEN ? 'Dishes' : '道料理'}</span>
+              <span>${_tLab('挑選目標料理', 'Select Target Recipe', isEN)}</span>
+              <span style="font-size:11px;color:var(--text-secondary);background:var(--bg-card-inner);border:1px solid var(--border-color);padding:1px 7px;border-radius:999px;">${scopedRecipesList.length} ${_tLab('道料理', 'Dishes', isEN)}</span>
             </div>
-            <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closePicker()" aria-label="Close">
+            <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closePicker()" aria-label="${_tLab('關閉', 'Close', isEN)}">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -323,7 +324,7 @@
 
           <div class="lab-picker-controls-section">
             <div class="lab-picker-search-bar">
-              <input type="text" id="lab-picker-recipe-search" class="box-form-input" placeholder="${isEN ? 'Search recipe name or ingredient...' : '搜尋料理名稱或所需食材...'}" style="flex:1;min-width:160px;height:34px;font-size:12px;">
+              <input type="text" id="lab-picker-recipe-search" class="box-form-input" placeholder="${_tLab('搜尋料理名稱或所需食材...', 'Search recipe name or ingredient...', isEN)}" style="flex:1;min-width:160px;height:34px;font-size:12px;">
               <div class="lab-picker-filter-chips" style="display:flex;gap:6px;flex-wrap:wrap;">
                 ${categoryFilterHtml}
               </div>
@@ -331,7 +332,7 @@
 
             <div class="lab-picker-secondary-filters" style="margin-top:4px;">
               <div class="lab-picker-ing-filter-group" style="width:100%;">
-                <span class="lab-picker-filter-label">${isEN ? 'Ingr:' : '食材:'}</span>
+                <span class="lab-picker-filter-label">${_tLab('食材:', 'Ingr:', isEN)}</span>
                 <div class="lab-picker-ing-chips-scroll" id="lab-recipe-picker-ing-scroll">
                   ${recipeIngChipsHtml}
                 </div>
@@ -404,10 +405,10 @@
     const compareLetter = ['A', 'B', 'C'][compareTargetIdx] || 'A';
 
     const title = opts.type === 'team'
-      ? (isEN ? `Select Member for Slot ${opts.slotIndex + 1}` : `挑選隊員 (隊員槽位 ${opts.slotIndex + 1})`)
+      ? _tLab(`挑選隊員 (隊員槽位 ${opts.slotIndex + 1})`, `Select Member for Slot ${opts.slotIndex + 1}`, isEN)
       : (opts.type === 'growth'
-        ? (isEN ? 'Select Pokémon for Growth & Seeds Calculation' : '挑選培育精算對象')
-        : (isEN ? `Select Pokémon for Player ${compareLetter}` : `挑選選手 ${compareLetter}`));
+        ? _tLab('挑選培育精算對象', 'Select Pokémon for Growth & Seeds Calculation', isEN)
+        : _tLab(`挑選選手 ${compareLetter}`, `Select Pokémon for Player ${compareLetter}`, isEN));
 
     const berriesList = _getLabBerryValuesData();
 
@@ -463,7 +464,7 @@
       });
 
       if (filtered.length === 0) {
-        return `<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;grid-column:1/-1;">${isEN ? 'No matching Pokémon found in Box' : '倉庫中未找到符合條件之寶可夢'}</div>`;
+        return `<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;grid-column:1/-1;">${_tLab('倉庫中未找到符合條件的寶可夢', 'No matching Pokémon found in Box', isEN)}</div>`;
       }
 
       // Check occupied in comparison
@@ -482,9 +483,12 @@
 
       return filtered.map(item => {
         const base = findBasePkm(item.pokemonId || item.name);
-        const pDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : item.name) : (item.name || (base ? base.name_cn : ''));
+        const pDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+          ? window.I18N.getPokemonName(base || item.name)
+          : _tLab(item.name || (base ? base.name_cn : ''), base ? (base.name_en || base.name_cn) : item.name, isEN);
         const avatarUrl = (base && (base.icon_url || base.icon)) || (base && base.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${base.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
         const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : {});
+        const berryDisp = (window.I18N && typeof window.I18N.getBerryName === 'function') ? window.I18N.getBerryName(berry.name || '') : _tLabStr(berry.name || '');
         const isFav = favBerries.includes(berry.name || '') || favTypes.includes(berry.type || (base ? base.type : '') || '');
         const specHtml = (window.I18N && window.I18N.getSpecialtyIconHtml && base) ? window.I18N.getSpecialtyIconHtml(base.specialty, 15) : '';
 
@@ -493,7 +497,7 @@
 
         let clickAttr;
         if (isOccupied) {
-          const toastMsg = isEN ? 'This Pokémon is already selected in comparison!' : '該寶可夢已在對比選手名單中，無法重複選擇！';
+          const toastMsg = _tLab('該寶可夢已在對比選手名單中，無法重複選擇！', 'This Pokémon is already selected in comparison!', isEN);
           clickAttr = `onclick="if(typeof window.showToast==='function')window.showToast('${toastMsg}');"`;
         } else {
           clickAttr = `onclick="window.AppraisalLab.onPickerSelect('${item.uid}')"`;
@@ -512,18 +516,18 @@
 
         const pIngsHtml = pIngSlots.map(s => {
           const iName = s.name || '';
-          const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
+          const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : _tLabStr(iName);
           const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
           return `
-            <span class="lab-picker-ing-chip ${!s.unlocked ? 'is-locked' : ''}" title="Lv.${s.req}: ${escapeHtml(iDisp)}${!s.unlocked ? (isEN ? ' (Locked)' : ' (未解鎖)') : ''}">
+            <span class="lab-picker-ing-chip ${!s.unlocked ? 'is-locked' : ''}" title="Lv.${s.req}: ${escapeHtml(iDisp)}${!s.unlocked ? _tLab(' (未解鎖)', ' (Locked)', isEN) : ''}">
               ${icon ? `<img src="${icon}" class="lab-picker-ing-icon" alt="${escapeHtml(iDisp)}">` : `<span style="font-size:9px;color:var(--text-muted);">-</span>`}
             </span>
           `;
         }).join('');
 
         return `
-          <div class="lab-picker-card ${isSel ? 'selected' : ''} ${isOccupied ? 'occupied disabled' : ''} ${isFav ? 'fav' : ''}" data-uid="${item.uid}" ${clickAttr} title="${isOccupied ? (isEN ? 'Already in comparison' : '已在對比選手中') : escapeHtml(pDisplayName)}">
-            ${isOccupied ? `<span class="lab-picker-occupied-badge">${isEN ? 'In Comparison' : '已在對比中'}</span>` : ''}
+          <div class="lab-picker-card ${isSel ? 'selected' : ''} ${isOccupied ? 'occupied disabled' : ''} ${isFav ? 'fav' : ''}" data-uid="${item.uid}" ${clickAttr} title="${isOccupied ? _tLab('已在對比選手中', 'Already in comparison', isEN) : escapeHtml(pDisplayName)}">
+            ${isOccupied ? `<span class="lab-picker-occupied-badge">${_tLab('已在對比中', 'In Comparison', isEN)}</span>` : ''}
             <div class="lab-picker-main">
               <div class="lab-picker-avatar">
                 <img src="${avatarUrl}" alt="${escapeHtml(pDisplayName)}" loading="lazy">
@@ -531,7 +535,7 @@
               </div>
               <div class="lab-picker-meta">
                 <div class="lab-picker-sub">
-                  ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berry.name || '')}">` : ''}
+                  ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berryDisp)}">` : ''}
                   ${specHtml}
                 </div>
                 <div class="lab-picker-ings">
@@ -553,10 +557,10 @@
     }
 
     const berryChipsHtml = [
-      `<button type="button" class="lab-picker-berry-chip-btn ${currentBerryFilter === 'all' ? 'active' : ''}" data-berry="all" title="${isEN ? 'All Berries' : '全部樹果'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
+      `<button type="button" class="lab-picker-berry-chip-btn ${currentBerryFilter === 'all' ? 'active' : ''}" data-berry="all" title="${_tLab('全部樹果', 'All Berries', isEN)}"><span>${_tLab('全部', 'All', isEN)}</span></button>`,
       ...berriesList.map(b => {
-        const bDisp = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b.name) : b.name) : b.name;
-        const tDisp = window.I18N ? window.I18N.getTypeName(b.type) : b.type;
+        const bDisp = (window.I18N && window.I18N.getBerryName) ? window.I18N.getBerryName(b.name) : _tLabStr(b.name);
+        const tDisp = window.I18N ? window.I18N.getTypeName(b.type) : _tLabStr(b.type);
         const bIcon = b.icon || '';
         return `
           <button type="button" class="lab-picker-berry-chip-btn ${currentBerryFilter === b.name ? 'active' : ''}" data-berry="${escapeHtml(b.name)}" title="${escapeHtml(bDisp)} (${escapeHtml(tDisp)})">
@@ -567,9 +571,9 @@
     ].join('');
 
     const ingChipsHtml = [
-      `<button type="button" class="lab-picker-ing-chip-btn ${currentIngFilter === 'all' ? 'active' : ''}" data-ing="all" title="${isEN ? 'All Ingredients' : '全部食材'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
+      `<button type="button" class="lab-picker-ing-chip-btn ${currentIngFilter === 'all' ? 'active' : ''}" data-ing="all" title="${_tLab('全部食材', 'All Ingredients', isEN)}"><span>${_tLab('全部', 'All', isEN)}</span></button>`,
       ..._getLabCanonicalIngredients().map(iName => {
-        const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
+        const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : _tLabStr(iName);
         const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
         return `
           <button type="button" class="lab-picker-ing-chip-btn ${currentIngFilter === iName ? 'active' : ''}" data-ing="${escapeHtml(iName)}" title="${escapeHtml(iDisp)}">
@@ -583,7 +587,7 @@
       <div class="lab-picker-container">
         <div class="lab-picker-header">
           <div style="font-size:15px;font-weight:700;color:var(--text-primary);">${title}</div>
-          <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closePicker()" aria-label="Close">
+          <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closePicker()" aria-label="${_tLab('關閉', 'Close', isEN)}">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -593,25 +597,25 @@
 
         <div class="lab-picker-controls-section">
           <div class="lab-picker-search-bar">
-            <input type="text" id="lab-picker-search-input" class="box-form-input" placeholder="${isEN ? 'Search nickname or Dex No...' : '搜尋寶可夢暱稱或編號...'}" style="flex:1;min-width:180px;height:34px;font-size:12px;">
+            <input type="text" id="lab-picker-search-input" class="box-form-input" placeholder="${_tLab('搜尋寶可夢暱稱或編號...', 'Search nickname or Dex No...', isEN)}" style="flex:1;min-width:180px;height:34px;font-size:12px;">
             <div class="lab-picker-filter-chips" style="display:flex;gap:5px;flex-wrap:wrap;">
-              <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 8px;font-size:11px;">${isEN ? 'All' : '全部'} (${userBox.length})</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="fav" style="padding:3px 8px;font-size:11px;">${isEN ? 'Favored' : '喜愛樹果'}</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="berry" style="padding:3px 8px;font-size:11px;">${isEN ? 'Berries' : '樹果型'}</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="ingredient" style="padding:3px 8px;font-size:11px;">${isEN ? 'Ingredients' : '食材型'}</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="skill" style="padding:3px 8px;font-size:11px;">${isEN ? 'Skills' : '技能型'}</button>
+              <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 8px;font-size:11px;">${_tLab('全部', 'All', isEN)} (${userBox.length})</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="fav" style="padding:3px 8px;font-size:11px;">${_tLab('喜愛樹果', 'Favored', isEN)}</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="berry" style="padding:3px 8px;font-size:11px;">${_tLab('樹果型', 'Berries', isEN)}</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="ingredient" style="padding:3px 8px;font-size:11px;">${_tLab('食材型', 'Ingredients', isEN)}</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="skill" style="padding:3px 8px;font-size:11px;">${_tLab('技能型', 'Skills', isEN)}</button>
             </div>
           </div>
 
           <div class="lab-picker-secondary-filters">
             <div class="lab-picker-berry-filter-group" style="width:100%;">
-              <span class="lab-picker-filter-label">${isEN ? 'Berry:' : '樹果:'}</span>
+              <span class="lab-picker-filter-label">${_tLab('樹果:', 'Berry:', isEN)}</span>
               <div class="lab-picker-berry-chips-scroll" id="lab-picker-berry-scroll">
                 ${berryChipsHtml}
               </div>
             </div>
             <div class="lab-picker-ing-filter-group" style="width:100%;">
-              <span class="lab-picker-filter-label">${isEN ? 'Ingr:' : '食材:'}</span>
+              <span class="lab-picker-filter-label">${_tLab('食材:', 'Ingr:', isEN)}</span>
               <div class="lab-picker-ing-chips-scroll" id="lab-picker-ing-scroll">
                 ${ingChipsHtml}
               </div>

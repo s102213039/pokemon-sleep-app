@@ -16,7 +16,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; worker-src 'self' blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cdn.jsdelivr.net https://raw.githubusercontent.com https://api.github.com https://tessdata.projectnaptha.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; base-uri 'self';">
-  <title>Pokémon Sleep 專屬手機版 App</title>
+  <title data-i18n="page.title">Pokémon Sleep 專屬手機版 App</title>
   <meta name="description" content="Pokémon Sleep 專屬手機版 App — 寶可夢機率、料理食譜、數據百科與倉庫 OCR 全功能。">
 
   <!-- 同步主題初始化與 Standalone 狀態欄融合引擎 -->
@@ -71,7 +71,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.min.css?v=20261124_1601">
+  <link rel="stylesheet" href="../css/styles.min.css?v=20261125_0705">
 
   <!-- 全域路徑基準與錯誤診斷攔截器 -->
   <script>
@@ -205,6 +205,29 @@
         };
       };
 
+      function _diagText(tw, cn, en) {
+        var lang = '';
+        try {
+          if (window.I18N && typeof window.I18N.getLanguage === 'function') {
+            lang = window.I18N.getLanguage();
+          }
+        } catch (e) {}
+        if (!lang && document.documentElement) {
+          var dl = document.documentElement.getAttribute('data-lang');
+          if (dl === 'en' || dl === 'en-US') lang = 'en-US';
+          else if (dl === 'zh-CN' || dl === 'zh-TW') lang = dl;
+        }
+        if (!lang) {
+          try {
+            var saved = localStorage.getItem('user_lang');
+            if (saved === 'en-US' || saved === 'zh-CN' || saved === 'zh-TW') lang = saved;
+          } catch (e) {}
+        }
+        if (lang === 'en-US') return en;
+        if (lang === 'zh-CN') return cn;
+        return tw;
+      }
+
       window.__copyAppErrorLog = function(btnEl) {
         var diag = window.__getAppDiagnostics();
         var text = '=== POKEMON SLEEP MOBILE APP DIAGNOSTIC LOG ===\n' +
@@ -225,7 +248,7 @@
           navigator.clipboard.writeText(text).then(function() {
             if (btnEl) {
               var oldText = btnEl.innerHTML;
-              btnEl.innerHTML = '[✓] 已複製 (Copied!)';
+              btnEl.innerHTML = _diagText('[✓] 已複製', '[✓] 已复制', '[✓] Copied!');
               setTimeout(function() { btnEl.innerHTML = oldText; }, 3000);
             }
           }).catch(function() { fallbackCopy(text, btnEl); });
@@ -247,10 +270,10 @@
           document.execCommand('copy');
           if (btnEl) {
             var oldHtml = btnEl.innerHTML;
-            btnEl.innerHTML = '[已複製] (Copied!)';
+            btnEl.innerHTML = _diagText('[已複製]', '[已复制]', '[Copied!]');
             setTimeout(function() { btnEl.innerHTML = oldHtml; }, 3000);
           }
-        } catch (e) { alert('複製失敗'); }
+        } catch (e) { alert(_diagText('複製失敗', '复制失败', 'Copy failed')); }
         document.body.removeChild(ta);
       }
 
@@ -272,17 +295,41 @@
           return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
         var latestError = window.__APP_LOG_BUFFER__.filter(function(l) { return l.level === 'ERROR'; }).pop();
-        var errorMsg = latestError ? (latestError.message + (latestError.source ? ' (' + latestError.source + ')' : '')) : '頁面載入異常';
+        var errorMsg = latestError ? (latestError.message + (latestError.source ? ' (' + latestError.source + ')' : '')) : _diagText('頁面載入異常', '页面载入异常', 'Page load error');
         el.innerHTML = '<div class="diag-bar-content">' +
           '<span class="diag-bar-icon">[!]</span>' +
           '<div class="diag-bar-text">' +
-          '<strong>系統偵測到異常：</strong>' +
+          '<strong>' + _diagText('系統偵測到異常：', '系统检测到异常：', 'System error detected: ') + '</strong>' +
           '<span class="diag-bar-msg">' + escapeDiagHtml(errorMsg) + '</span>' +
           '</div>' +
-          '<button type="button" class="diag-copy-btn" onclick="window.__copyAppErrorLog(this)">複製錯誤日誌</button>' +
+          '<button type="button" class="diag-copy-btn" onclick="window.__copyAppErrorLog(this)">' + _diagText('複製錯誤日誌', '复制错误日志', 'Copy Error Log') + '</button>' +
           '</div>';
         el.style.display = 'block';
       }
+
+      window.__renderInPlaceError = function(containerId, title, errorObj) {
+        function escapeDiagHtml(str) {
+          return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        var container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
+        if (!container) return;
+        var errMsg = errorObj ? (errorObj.message || errorObj.stack || String(errorObj)) : _diagText('未知錯誤', '未知错误', 'Unknown error');
+        var stack = (errorObj && errorObj.stack) ? errorObj.stack : '';
+        container.innerHTML = '<div class="content-error-card">' +
+          '<div class="content-error-header">' +
+          '<span class="content-error-icon">[!]</span>' +
+          '<div class="content-error-title-group">' +
+          '<h3 class="content-error-title">' + escapeDiagHtml(title || _diagText('內容載入發生異常', '内容载入发生异常', 'Content load error')) + '</h3>' +
+          '<p class="content-error-sub">' + _diagText('請點擊下方按鈕複製完整診斷日誌並提供給開發者排查。', '请点击下方按钮复制完整诊断日志并提供给开发者排查。', 'Please click the button below to copy the full diagnostic log for troubleshooting.') + '</p>' +
+          '</div>' +
+          '<button type="button" class="diag-copy-btn-large" onclick="window.__copyAppErrorLog(this)">' + _diagText('複製完整錯誤日誌', '复制完整错误日志', 'Copy Full Error Log') + '</button>' +
+          '</div>' +
+          '<div class="content-error-box">' +
+          '<div class="content-error-msg"><strong>' + _diagText('錯誤資訊：', '错误信息：', 'Error details:') + '</strong> ' + escapeDiagHtml(errMsg) + '</div>' +
+          (stack ? '<pre class="content-error-stack">' + escapeDiagHtml(stack) + '</pre>' : '') +
+          '</div>' +
+          '</div>';
+      };
     })();
   </script>
 </head>
@@ -296,14 +343,14 @@
       </div>
 
       <div class="mobile-header-actions app-header-actions" style="display:flex;align-items:center;gap:4px;">
-        <button id="mobile-header-auth-btn" class="mobile-header-btn icon-action-btn borderless-btn is-guest" onclick="window.CloudSync && window.CloudSync.openAuthModal()" title="雲端帳號 登入 / 註冊" aria-label="登入註冊">
+        <button id="mobile-header-auth-btn" class="mobile-header-btn icon-action-btn borderless-btn is-guest" onclick="window.CloudSync && window.CloudSync.openAuthModal()" title="雲端帳號 登入 / 註冊" aria-label="登入註冊" data-i18n-title="settings.cloud_sync_btn" data-i18n-aria="settings.cloud_sync_btn">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
         </button>
         <!--  系統設定按鈕 (大一點、靠右) -->
-        <button id="sync-config-btn" class="mobile-header-btn settings-btn icon-action-btn borderless-btn" title="系統設定與主題切換" aria-label="系統設定">
+        <button id="sync-config-btn" class="mobile-header-btn settings-btn icon-action-btn borderless-btn" title="系統設定與主題切換" aria-label="系統設定" data-i18n-title="header.settings_title" data-i18n-aria="nav.settings">
           <svg class="header-svg-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -324,7 +371,7 @@
           </svg>
           <span data-i18n="settings.title">系統設定</span>
         </h3>
-        <button type="button" id="settings-modal-close-btn" class="settings-modal-close-btn" title="關閉" aria-label="關閉">
+        <button type="button" id="settings-modal-close-btn" class="settings-modal-close-btn" title="關閉" aria-label="關閉" data-i18n-title="common.close" data-i18n-aria="common.close">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -350,7 +397,7 @@
             <!-- 移動端反色開關 (標題右方精簡版：文字 + switch button，無外框) -->
             <div class="app-theme-invert-control-row">
               <label class="app-theme-invert-title" for="app-theme-invert-switch" data-i18n="settings.theme_invert">反色模式</label>
-              <label class="switch switch-sm" for="app-theme-invert-switch" title="反色模式">
+              <label class="switch switch-sm" for="app-theme-invert-switch" title="反色模式" data-i18n-title="header.invert_title">
                 <input type="checkbox" id="app-theme-invert-switch" class="switch-checkbox">
                 <span class="switch-slider"></span>
               </label>
@@ -468,7 +515,7 @@
             <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;line-height:1.4;">
               <span data-i18n="settings.telemetry_desc">監控首屏載入耗時、Web Vitals 與本地快取健康狀態。若遇到功能異常，可一鍵複製診斷報告排查問題。</span>
             </div>
-            <button type="button" id="settings-copy-diag-btn" class="app-backup-action-btn export-btn" style="width:100%;justify-content:center;" onclick="if(window.TelemetryManager){window.TelemetryManager.copyDiagnosticReport().then(function(ok){alert(ok?'診斷報告已複製至剪貼簿！':'複製失敗');});}">
+            <button type="button" id="settings-copy-diag-btn" class="app-backup-action-btn export-btn" style="width:100%;justify-content:center;" onclick="if(window.TelemetryManager){window.TelemetryManager.copyDiagnosticReport().then(function(ok){var l=(window.I18N&&window.I18N.getLanguage)?window.I18N.getLanguage():'zh-TW';alert(ok?(l==='en-US'?'Diagnostic report copied to clipboard!':(l==='zh-CN'?'诊断报告已复制至剪贴板！':'診斷報告已複製至剪貼簿！')):(l==='en-US'?'Copy failed':(l==='zh-CN'?'复制失败':'複製失敗')));});}">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -486,7 +533,7 @@
     <!-- Panel 1:  寶可夢圖鑑 -->
     <div id="panel-pokemon" class="view-panel pokemon-layout-view app-panel" style="display:block;">
       <!--  右下懸浮篩選按鈕 (Draggable Floating Action Button) -->
-      <button type="button" id="sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" title="展開圖鑑篩選器" aria-label="展開圖鑑篩選器">
+      <button type="button" id="sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" title="展開圖鑑篩選器" aria-label="展開圖鑑篩選器" data-i18n-title="pokedex.filter_bookmark" data-i18n-aria="pokedex.filter_bookmark">
         <span class="bookmark-icon">
           <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="4" y1="21" x2="4" y2="14"></line>
@@ -504,9 +551,9 @@
       </button>
 
       <!--  右側抽屜式篩選器 -->
-      <aside id="pokemon-filter-sidebar" class="pokemon-filter-sidebar collapsed" aria-label="寶可夢圖鑑篩選器">
+      <aside id="pokemon-filter-sidebar" class="pokemon-filter-sidebar collapsed" aria-label="寶可夢圖鑑篩選器" data-i18n-aria="pokedex.filter_sidebar_title">
         <div class="sidebar-header">
-          <button type="button" id="sidebar-close-btn" class="sidebar-close-btn" title="收合">
+          <button type="button" id="sidebar-close-btn" class="sidebar-close-btn" title="收合" data-i18n-title="common.close" data-i18n-aria="common.close">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -595,8 +642,9 @@
               <input type="text" id="search-input" class="search-input"
                 placeholder="搜尋寶可夢名稱或 No. 編號..."
                 data-i18n-placeholder="pokedex.search_placeholder"
+                data-i18n-aria="pokedex.search_placeholder"
                 aria-label="搜尋寶可夢">
-              <button type="button" id="pokemon-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">
+              <button type="button" id="pokemon-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋" data-i18n-title="pokedex.clear" data-i18n-aria="pokedex.clear">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -620,7 +668,7 @@
     <!-- Panel 2:  料理食譜 -->
     <div id="panel-recipes" class="view-panel recipe-layout-view app-panel" style="display:none;">
       <!--  右下懸浮料理篩選按鈕 (Draggable Floating Action Button) -->
-      <button type="button" id="recipe-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" title="展開料理篩選器" aria-label="展開料理篩選器">
+      <button type="button" id="recipe-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" title="展開料理篩選器" aria-label="展開料理篩選器" data-i18n-title="recipe.filter_bookmark" data-i18n-aria="recipe.filter_bookmark">
         <span class="bookmark-icon">
           <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 11h18a1 1 0 0 1 1 1v2a7 7 0 0 1-14 0v-2"></path>
@@ -632,9 +680,9 @@
       </button>
 
       <!--  右側抽屜式料理篩選器 -->
-      <aside id="recipe-filter-sidebar" class="pokemon-filter-sidebar recipe-filter-sidebar collapsed" aria-label="料理食譜篩選器">
+      <aside id="recipe-filter-sidebar" class="pokemon-filter-sidebar recipe-filter-sidebar collapsed" aria-label="料理食譜篩選器" data-i18n-aria="recipes.filter_title">
         <div class="sidebar-header">
-          <button type="button" id="recipe-sidebar-close-btn" class="sidebar-close-btn" title="收合">
+          <button type="button" id="recipe-sidebar-close-btn" class="sidebar-close-btn" title="收合" data-i18n-title="common.close" data-i18n-aria="common.close">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -678,7 +726,7 @@
             </div>
 
             <!-- 漂亮成功分數 Switch -->
-            <label class="sidebar-final-evo-label sidebar-switch-compact" for="tasty-toggle-btn" title="切換是否展示漂亮成功分數（2x / 3x）" style="margin-bottom:8px;">
+            <label class="sidebar-final-evo-label sidebar-switch-compact" for="tasty-toggle-btn" title="切換是否展示漂亮成功分數（2x / 3x）" data-i18n-title="recipe.tasty_toggle" style="margin-bottom:8px;">
               <span class="sidebar-final-evo-text" data-i18n="recipe.tasty_toggle">漂亮成功分數</span>
               <div class="sidebar-switch-wrapper">
                 <input type="checkbox" id="tasty-toggle-btn" class="switch-checkbox">
@@ -694,7 +742,7 @@
               </div>
               <div class="slider-row">
                 <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">Lv.1</span>
-                <input type="range" id="recipe-level-slider" class="rf-slider" min="1" max="70" step="1" value="1" aria-label="食譜等級">
+                <input type="range" id="recipe-level-slider" class="rf-slider" min="1" max="70" step="1" value="1" aria-label="食譜等級" data-i18n-aria="recipe.slider_level">
                 <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;" id="recipe-level-max-label">Lv.70</span>
               </div>
             </div>
@@ -707,7 +755,7 @@
               </div>
               <div class="slider-row">
                 <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">0%</span>
-                <input type="range" id="island-bonus-slider" class="rf-slider island-slider" min="0" max="95" step="5" value="0" aria-label="島嶼能量加成">
+                <input type="range" id="island-bonus-slider" class="rf-slider island-slider" min="0" max="95" step="5" value="0" aria-label="島嶼能量加成" data-i18n-aria="recipe.slider_island">
                 <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;" id="island-bonus-max-label">95%</span>
               </div>
             </div>
@@ -720,7 +768,7 @@
               </div>
               <div class="slider-row">
                 <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">1.00x</span>
-                <input type="range" id="event-bonus-slider" class="rf-slider event-slider" min="1.0" max="1.5" step="0.25" value="1.0" aria-label="活動能量加成">
+                <input type="range" id="event-bonus-slider" class="rf-slider event-slider" min="1.0" max="1.5" step="0.25" value="1.0" aria-label="活動能量加成" data-i18n-aria="recipe.slider_event">
                 <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">1.50x</span>
               </div>
             </div>
@@ -730,13 +778,13 @@
               <div class="slider-label-row">
                 <div class="slider-label-with-help">
                   <span class="rf-label" data-i18n="recipe.slider_pot_expansion">擴鍋預測</span>
-                  <button type="button" class="pot-expansion-help-btn pokedex-formula-help-btn" aria-label="擴鍋預測說明" title="預設每個追加食材以 100 基礎能量計算">?</button>
+                  <button type="button" class="pot-expansion-help-btn pokedex-formula-help-btn" aria-label="擴鍋預測說明" title="預設每個追加食材以 100 基礎能量計算" data-i18n-aria="recipe.slider_pot_expansion_help_title" data-i18n-title="recipe.slider_pot_expansion_desc">?</button>
                 </div>
-                <span id="pot-expansion-badge" class="slider-value-badge pot-expansion-badge">+0 (無追加)</span>
+                <span id="pot-expansion-badge" class="slider-value-badge pot-expansion-badge" data-i18n="recipes.pot_no_expansion">+0 (無追加)</span>
               </div>
               <div class="slider-row">
                 <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">0</span>
-                <input type="range" id="pot-expansion-slider" class="rf-slider pot-slider" min="0" max="700" step="1" value="0" aria-label="擴鍋預測">
+                <input type="range" id="pot-expansion-slider" class="rf-slider pot-slider" min="0" max="700" step="1" value="0" aria-label="擴鍋預測" data-i18n-aria="recipe.slider_pot_expansion">
                 <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">700</span>
               </div>
             </div>
@@ -786,8 +834,9 @@
               <input type="text" id="recipe-search-input" class="search-input"
                 placeholder="搜尋料理名稱、食材..."
                 data-i18n-placeholder="recipes.search_placeholder"
+                data-i18n-aria="recipes.search_placeholder"
                 aria-label="搜尋料理">
-              <button type="button" id="recipe-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">
+              <button type="button" id="recipe-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋" data-i18n-title="pokedex.clear" data-i18n-aria="pokedex.clear">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -818,7 +867,7 @@
     <!-- Panel 4: 寶可夢倉庫 -->
     <div id="panel-box" class="view-panel box-layout-view app-panel" style="display:none;">
       <!--  右下懸浮篩選按鈕 (Draggable Floating Action Button) -->
-      <button type="button" id="box-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" title="展開倉庫篩選器" aria-label="展開倉庫篩選器">
+      <button type="button" id="box-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" title="展開倉庫篩選器" aria-label="展開倉庫篩選器" data-i18n-title="box.filter_bookmark" data-i18n-aria="box.filter_bookmark">
         <span class="bookmark-icon">
           <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="4" y1="21" x2="4" y2="14"></line>
@@ -836,9 +885,9 @@
       </button>
 
       <!--  右側抽屜式篩選器 -->
-      <aside id="box-filter-sidebar" class="pokemon-filter-sidebar box-filter-sidebar collapsed" aria-label="寶可夢倉庫篩選器">
+      <aside id="box-filter-sidebar" class="pokemon-filter-sidebar box-filter-sidebar collapsed" aria-label="寶可夢倉庫篩選器" data-i18n-aria="box.filter_sidebar_title">
         <div class="sidebar-header">
-          <button type="button" id="box-sidebar-close-btn" class="sidebar-close-btn" title="收合">
+          <button type="button" id="box-sidebar-close-btn" class="sidebar-close-btn" title="收合" data-i18n-title="common.close" data-i18n-aria="common.close">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -856,7 +905,7 @@
             <div class="sidebar-section-header">
               <span class="sidebar-section-title" data-i18n="box.sort_title">排序方式</span>
             </div>
-            <select id="box-sort-select" class="sort-select box-sort-select" aria-label="倉庫排序" style="width:100%;height:36px;border-radius:10px;background:var(--table-row-odd-solid, #0d1527);border:1px solid var(--border-color);color:var(--text-primary);padding:0 38px 0 14px;font-size:13px;font-weight:600;">
+            <select id="box-sort-select" class="sort-select box-sort-select" aria-label="倉庫排序" data-i18n-aria="box.sort_title" style="width:100%;height:36px;border-radius:10px;background:var(--table-row-odd-solid, #0d1527);border:1px solid var(--border-color);color:var(--text-primary);padding:0 38px 0 14px;font-size:13px;font-weight:600;">
               <option value="id-asc" data-i18n="box.sort_id_asc" selected>編號由低到高</option>
               <option value="id-desc" data-i18n="box.sort_id_desc">編號由高到低</option>
               <option value="level-desc" data-i18n="box.sort_level_desc">等級由高到低</option>
@@ -934,15 +983,15 @@
               <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
             </svg>
           </div>
-          <h3 class="box-auth-prompt-title">登入啟用寶可夢雲端倉庫</h3>
-          <p class="box-auth-prompt-desc">登入或自訂帳號註冊，即可享有電腦與手機跨裝置秒級雙向同步、即時雲端備份與完整寶可夢管理功能。</p>
+          <h3 class="box-auth-prompt-title" data-i18n="box.auth_guest_title">登入啟用寶可夢雲端倉庫</h3>
+          <p class="box-auth-prompt-desc" data-i18n="box.auth_guest_desc">登入或自訂帳號註冊，即可享有電腦與手機跨裝置秒級雙向同步、即時雲端備份與完整寶可夢管理功能。</p>
           <button type="button" class="box-auth-prompt-btn cloud-auth-btn btn-primary" onclick="event.stopPropagation(); window.CloudSync && window.CloudSync.openAuthModal('signin')">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
               <polyline points="10 17 15 12 10 7"></polyline>
               <line x1="15" y1="12" x2="3" y2="12"></line>
             </svg>
-            <span>立即登入 / 註冊帳號</span>
+            <span data-i18n="box.auth_guest_login_btn">立即登入 / 註冊帳號</span>
           </button>
           <div class="box-auth-prompt-guest-row" onclick="event.stopPropagation()">
             <button type="button" class="box-auth-guest-link" onclick="window.CloudSync && window.CloudSync.dismissBoxAuthOverlay()">以本機訪客模式暫時使用 (離線模式)</button>
@@ -951,7 +1000,7 @@
       </div>
 
       <!-- 頂部 Segmented 子分頁切換列 -->
-      <nav class="box-subnav-bar" aria-label="倉庫次級分頁">
+      <nav class="box-subnav-bar" aria-label="倉庫次級分頁" data-i18n-aria="box.tab_list">
         <button type="button" id="box-subtab-list" class="box-subnav-item active" data-subtab="list" onclick="window.switchBoxSubtab && window.switchBoxSubtab('list')">
           <span class="subnav-label" data-i18n="box.tab_list">寶可夢倉庫</span>
         </button>
@@ -985,7 +1034,7 @@
         <!-- 截圖指引大圖 Lightbox 彈窗 -->
         <div id="box-guide-lightbox-modal" class="box-guide-lightbox-backdrop" style="display:none;">
           <div class="box-guide-lightbox-dialog">
-            <button type="button" id="box-guide-lightbox-close" class="box-guide-lightbox-close" aria-label="關閉大圖">✕</button>
+            <button type="button" id="box-guide-lightbox-close" class="box-guide-lightbox-close" aria-label="關閉大圖" data-i18n-aria="common.close" data-i18n-title="common.close">✕</button>
             <img src="../assets/guide/standard_screenshot_guide.png" alt="標準截圖完整大圖" class="box-guide-lightbox-img">
           </div>
         </div>
@@ -1022,8 +1071,9 @@
           <input type="text" id="news-search-input" class="search-input news-search-input"
             placeholder="搜尋公告標題、關鍵字、寶可夢..."
             data-i18n-placeholder="news.search_placeholder"
+            data-i18n-aria="news.search_placeholder"
             aria-label="搜尋新聞公告">
-          <button type="button" id="news-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
+          <button type="button" id="news-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋" data-i18n-title="pokedex.clear" data-i18n-aria="pokedex.clear">✕</button>
         </div>
 
         <!-- 2. 單行滑動分類標籤 -->
@@ -1034,7 +1084,7 @@
 
         <!-- 4. 統計計數 -->
         <div class="news-info-bar">
-          <div id="news-count-badge" class="result-count">載入最新公告中...</div>
+          <div id="news-count-badge" class="result-count" data-i18n="news.loading">載入最新公告中...</div>
         </div>
       </section>
 
@@ -1059,14 +1109,14 @@
   <!-- 原生 App 浮動操作按鈕區 (Floating Action Buttons - FAB) 獨立掛載於頂層，不受滾動容器干擾 -->
   <div class="box-fab-container" id="box-fab-container" style="display:none;">
     <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
-    <button type="button" id="box-dropzone" class="box-fab-btn box-fab-scan" title="拍照 / 選取截圖辨識" aria-label="截圖智能辨識">
+    <button type="button" id="box-dropzone" class="box-fab-btn box-fab-scan" title="拍照 / 選取截圖辨識" aria-label="截圖智能辨識" data-i18n-title="box.fab_scan" data-i18n-aria="box.fab_scan">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
         <circle cx="12" cy="13" r="4"></circle>
       </svg>
       <span class="fab-label" data-i18n="box.fab_scan">截圖辨識</span>
     </button>
-    <button type="button" id="box-manual-add-btn" class="box-fab-btn box-fab-add" title="手動新增寶可夢" aria-label="手動新增">
+    <button type="button" id="box-manual-add-btn" class="box-fab-btn box-fab-add" title="手動新增寶可夢" aria-label="手動新增" data-i18n-title="box.fab_add" data-i18n-aria="box.fab_add">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="12" y1="5" x2="12" y2="19"></line>
         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -1076,9 +1126,9 @@
   </div>
 
   <!-- 2 字極簡原生底部導覽欄 (Bottom Dock Navigation) -->
-  <nav id="bottom-dock" class="bottom-dock" aria-label="底部主要分頁導航">
+  <nav id="bottom-dock" class="bottom-dock" aria-label="底部主要分頁導航" data-i18n-aria="brand.app_title">
     <!-- 1.  圖鑑 (#tab-pokemon) -->
-    <button type="button" id="tab-pokemon" class="dock-tab dock-tab-btn active" data-tab="pokemon" aria-label="圖鑑">
+    <button type="button" id="tab-pokemon" class="dock-tab dock-tab-btn active" data-tab="pokemon" aria-label="圖鑑" data-i18n-aria="dock.pokemon">
       <span class="dock-icon">
         <svg class="dock-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
@@ -1092,7 +1142,7 @@
     </button>
 
     <!-- 2.  料理 (#tab-recipes) -->
-    <button type="button" id="tab-recipes" class="dock-tab dock-tab-btn" data-tab="recipes" aria-label="料理">
+    <button type="button" id="tab-recipes" class="dock-tab dock-tab-btn" data-tab="recipes" aria-label="料理" data-i18n-aria="dock.recipes">
       <span class="dock-icon">
         <svg class="dock-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 11h18a1 1 0 0 1 1 1v2a7 7 0 0 1-14 0v-2"></path>
@@ -1105,7 +1155,7 @@
     </button>
 
     <!-- 3.  百科 (#tab-wiki) -->
-    <button type="button" id="tab-wiki" class="dock-tab dock-tab-btn" data-tab="wiki" aria-label="百科">
+    <button type="button" id="tab-wiki" class="dock-tab dock-tab-btn" data-tab="wiki" aria-label="百科" data-i18n-aria="dock.wiki">
       <span class="dock-icon">
         <svg class="dock-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
@@ -1119,7 +1169,7 @@
     </button>
 
     <!-- 4.  盒子 (#tab-box) -->
-    <button type="button" id="tab-box" class="dock-tab dock-tab-btn" data-tab="box" aria-label="盒子">
+    <button type="button" id="tab-box" class="dock-tab dock-tab-btn" data-tab="box" aria-label="盒子" data-i18n-aria="dock.box">
       <span class="dock-icon">
         <svg class="dock-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -1132,7 +1182,7 @@
     </button>
 
     <!-- 5.  最新 (#tab-news) -->
-    <button type="button" id="tab-news" class="dock-tab dock-tab-btn" data-tab="news" aria-label="最新">
+    <button type="button" id="tab-news" class="dock-tab dock-tab-btn" data-tab="news" aria-label="最新" data-i18n-aria="dock.news">
       <span class="dock-icon">
         <svg class="dock-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1"></path>
@@ -1170,9 +1220,9 @@
                     <img id="modal-poke-selected-avatar" class="box-pkm-selected-avatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><circle cx='20' cy='20' r='18' fill='%23334155' stroke='%2364748b' stroke-width='2'/><path d='M2 20h36' stroke='%2364748b' stroke-width='2'/><circle cx='20' cy='20' r='6' fill='%231e293b' stroke='%2364748b' stroke-width='2'/><circle cx='20' cy='20' r='2.5' fill='%2394a3b8'/></svg>" alt="Pokémon">
                   </div>
                   <div class="box-pkm-combobox" id="box-pkm-combobox">
-                    <input type="text" id="modal-poke-search" class="box-form-input box-pkm-search-input" placeholder="中文 / 英文 / 編號" autocomplete="off" required>
+                    <input type="text" id="modal-poke-search" class="box-form-input box-pkm-search-input" placeholder="中文 / 英文 / 編號" data-i18n-placeholder="box.modal_search_placeholder" autocomplete="off" required>
                     <input type="hidden" id="modal-poke-name" name="pokemon_name" value="">
-                    <button type="button" id="box-pkm-dropdown-toggle" class="box-pkm-toggle-btn" aria-label="展開寶可夢列表">
+                    <button type="button" id="box-pkm-dropdown-toggle" class="box-pkm-toggle-btn" aria-label="展開寶可夢列表" data-i18n-aria="box.modal_poke_name">
                       <svg viewBox="0 0 12 8" width="12" height="8"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>
                     </button>
                     <div id="box-pkm-dropdown" class="box-pkm-dropdown" style="display:none;" role="listbox"></div>
@@ -1271,23 +1321,23 @@
               <div class="box-subskill-slots-row" id="box-subskill-slots-row">
                 <button type="button" class="box-subskill-slot-btn active" data-slot="1">
                   <span class="slot-lvl-header">Lv.10</span>
-                  <span class="slot-val-badge slot-val-empty">-- 未解鎖 --</span>
+                  <span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
                 </button>
                 <button type="button" class="box-subskill-slot-btn" data-slot="2">
                   <span class="slot-lvl-header">Lv.25</span>
-                  <span class="slot-val-badge slot-val-empty">-- 未解鎖 --</span>
+                  <span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
                 </button>
                 <button type="button" class="box-subskill-slot-btn" data-slot="3">
                   <span class="slot-lvl-header">Lv.50</span>
-                  <span class="slot-val-badge slot-val-empty">-- 未解鎖 --</span>
+                  <span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
                 </button>
                 <button type="button" class="box-subskill-slot-btn" data-slot="4">
                   <span class="slot-lvl-header">Lv.70</span>
-                  <span class="slot-val-badge slot-val-empty">-- 未解鎖 --</span>
+                  <span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
                 </button>
                 <button type="button" class="box-subskill-slot-btn" data-slot="5">
                   <span class="slot-lvl-header">Lv.80</span>
-                  <span class="slot-val-badge slot-val-empty">-- 未解鎖 --</span>
+                  <span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
                 </button>
               </div>
 
@@ -1339,21 +1389,21 @@
       </div>
 
       <div class="box-conflict-actions">
-        <button type="button" id="box-conflict-overwrite-btn" class="conflict-btn conflict-btn-primary" data-i18n="box.conflict_btn_overwrite">
+        <button type="button" id="box-conflict-overwrite-btn" class="conflict-btn conflict-btn-primary">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-1.19"/>
           </svg>
-          <span>覆蓋更新現有寶可夢</span>
+          <span data-i18n="box.conflict_btn_overwrite">覆蓋更新現有寶可夢</span>
         </button>
-        <button type="button" id="box-conflict-savenew-btn" class="conflict-btn conflict-btn-secondary" data-i18n="box.conflict_btn_save_new">
+        <button type="button" id="box-conflict-savenew-btn" class="conflict-btn conflict-btn-secondary">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
-          <span>另存為新寶可夢</span>
+          <span data-i18n="box.conflict_btn_save_new">另存為新寶可夢</span>
         </button>
-        <button type="button" id="box-conflict-cancel-btn" class="conflict-btn conflict-btn-cancel" data-i18n="box.conflict_btn_cancel">
-          <span>取消</span>
+        <button type="button" id="box-conflict-cancel-btn" class="conflict-btn conflict-btn-cancel">
+          <span data-i18n="box.conflict_btn_cancel">取消</span>
         </button>
       </div>
     </div>
@@ -1413,22 +1463,22 @@
   </button>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
-  <script src="../js/core/idbStorage.min.js?v=20261124_1601"></script>
-  <script src="../js/core/gameConfig.min.js?v=20261124_1601"></script>
-  <script src="../js/core/domUtils.min.js?v=20261124_1601"></script>
-  <script src="../js/core/cloudSync.min.js?v=20261124_1601"></script>
-  <script src="../js/core/i18n.min.js?v=20261124_1601"></script>
-  <script src="../js/core/telemetry.min.js?v=20261124_1601"></script>
-  <script src="../js/components/customSelect.min.js?v=20261124_1601"></script>
-  <script src="../js/components/popoverCoordinator.min.js?v=20261124_1601"></script>
-  <script src="../js/modules/app.min.js?v=20261124_1601"></script>
-  <script src="../js/modules/recipes.min.js?v=20261124_1601"></script>
-  <script src="../js/data/items.min.js?v=20261124_1601"></script>
-  <script src="../js/data/ladder_data.min.js?v=20261124_1601"></script>
-  <script src="../js/modules/wiki.min.js?v=20261124_1601"></script>
-  <script src="../js/modules/box.min.js?v=20261124_1601"></script>
-  <script src="../js/modules/news.min.js?v=20261124_1601"></script>
-  <script src="../js/modules/appraisal.min.js?v=20261124_1601"></script>
+  <script src="../js/core/idbStorage.min.js?v=20261125_0705"></script>
+  <script src="../js/core/gameConfig.min.js?v=20261125_0705"></script>
+  <script src="../js/core/domUtils.min.js?v=20261125_0705"></script>
+  <script src="../js/core/cloudSync.min.js?v=20261125_0705"></script>
+  <script src="../js/core/i18n.min.js?v=20261125_0705"></script>
+  <script src="../js/core/telemetry.min.js?v=20261125_0705"></script>
+  <script src="../js/components/customSelect.min.js?v=20261125_0705"></script>
+  <script src="../js/components/popoverCoordinator.min.js?v=20261125_0705"></script>
+  <script src="../js/modules/app.min.js?v=20261125_0705"></script>
+  <script src="../js/modules/recipes.min.js?v=20261125_0705"></script>
+  <script src="../js/data/items.min.js?v=20261125_0705"></script>
+  <script src="../js/data/ladder_data.min.js?v=20261125_0705"></script>
+  <script src="../js/modules/wiki.min.js?v=20261125_0705"></script>
+  <script src="../js/modules/box.min.js?v=20261125_0705"></script>
+  <script src="../js/modules/news.min.js?v=20261125_0705"></script>
+  <script src="../js/modules/appraisal.min.js?v=20261125_0705"></script>
 
   <!-- 桌面版切換監聽腳本 -->
   <script>

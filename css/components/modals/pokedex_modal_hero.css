@@ -681,8 +681,10 @@
   flex-shrink: 0;
 }
 
-[data-theme="dawn"] .sheet-drag-handle,
-[data-theme="emerald"] .sheet-drag-handle {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .sheet-drag-handle,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .sheet-drag-handle,
+[data-theme="midnight"][data-theme-inverted="true"] .sheet-drag-handle,
+[data-theme="onyx"][data-theme-inverted="true"] .sheet-drag-handle {
   background: rgba(0, 0, 0, 0.2);
 }
 

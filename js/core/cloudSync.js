@@ -41,6 +41,35 @@
   let lastToastSignature = '';
   let lastToastTime = 0;
 
+  function _getCloudLang() {
+    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') {
+      return window.I18N.getLanguage();
+    }
+    try {
+      const saved = typeof localStorage !== 'undefined' && localStorage.getItem('user_lang');
+      if (saved === 'en-US' || saved === 'zh-CN' || saved === 'zh-TW') return saved;
+    } catch (e) {}
+    if (typeof document !== 'undefined' && document.documentElement) {
+      const dl = document.documentElement.getAttribute('data-lang');
+      if (dl === 'en' || dl === 'en-US') return 'en-US';
+      if (dl === 'zh-CN') return 'zh-CN';
+    }
+    return 'zh-TW';
+  }
+
+  function _tCloud(tw, en, cn) {
+    const lang = _getCloudLang();
+    if (lang === 'en-US') return en;
+    if (lang === 'zh-CN') {
+      if (cn !== undefined) return cn;
+      if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function') {
+        return window.I18N.toSimplified(tw);
+      }
+      return tw;
+    }
+    return tw;
+  }
+
   /* ─── 記住帳號與混合加密信封管理 (由 cloudSync_crypto.js 提供實作) ─── */
 
   /* ─── 雲端倉庫資料防護與無害化 (Sanitize Remote Box) ──────────── */
@@ -169,7 +198,7 @@
       supabaseClient = null;
       currentUser = null;
       syncStatus = 'error';
-      lastSyncError = err.message || '初始化失敗';
+      lastSyncError = err.message || _tCloud('初始化失敗', 'Initialization failed', '初始化失败');
       updateSyncUI();
       return false;
     }
@@ -179,7 +208,7 @@
   function parseAndValidateAccount(input) {
     const raw = (input || '').trim();
     if (!raw) {
-      return { valid: false, error: '請輸入使用者帳號！' };
+      return { valid: false, error: _tCloud('請輸入使用者帳號！', 'Please enter a username!', '请输入用户账号！') };
     }
 
     // 兼容可能輸入完整 Email 的情況
@@ -187,15 +216,15 @@
       if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw)) {
         return { valid: true, username: raw.split('@')[0], email: raw.toLowerCase() };
       }
-      return { valid: false, error: '電子郵件格式不正確！' };
+      return { valid: false, error: _tCloud('電子郵件格式不正確！', 'Invalid email format!', '电子邮件格式不正确！') };
     }
 
     // 純帳號校驗：3 ~ 20 個字元，僅限英文、數字、底線
     if (raw.length < 3 || raw.length > 20) {
-      return { valid: false, error: '帳號長度需介於 3 到 20 個字元之間！' };
+      return { valid: false, error: _tCloud('帳號長度需介於 3 到 20 個字元之間！', 'Username must be between 3 and 20 characters!', '账号长度需介于 3 到 20 个字符之间！') };
     }
     if (!/^[a-zA-Z0-9_]+$/.test(raw)) {
-      return { valid: false, error: '帳號僅允許英文字母、數字與底線 (_)，不可包含空格或特殊符號！' };
+      return { valid: false, error: _tCloud('帳號僅允許英文字母、數字與底線 (_)，不可包含空格或特殊符號！', 'Username may only contain letters, numbers, and underscores (_), with no spaces or special symbols!', '账号仅允许英文字母、数字与下划线 (_)，不可包含空格或特殊符号！') };
     }
 
     const cleanUsername = raw.toLowerCase();
@@ -209,22 +238,22 @@
 
   function validatePassword(password) {
     if (!password) {
-      return { valid: false, error: '請輸入密碼！' };
+      return { valid: false, error: _tCloud('請輸入密碼！', 'Please enter a password!', '请输入密码！') };
     }
     if (password.length < 6 || password.length > 32) {
-      return { valid: false, error: '密碼長度需介於 6 到 32 個字元之間！' };
+      return { valid: false, error: _tCloud('密碼長度需介於 6 到 32 個字元之間！', 'Password must be between 6 and 32 characters!', '密码长度需介于 6 到 32 个字符之间！') };
     }
     if (/\s/.test(password)) {
-      return { valid: false, error: '密碼不可包含空白字元！' };
+      return { valid: false, error: _tCloud('密碼不可包含空白字元！', 'Password cannot contain whitespace!', '密码不可包含空白字符！') };
     }
     // 避免全部為相同字元，例如 111111 或 aaaaaa
     if (/^(.)\1+$/.test(password)) {
-      return { valid: false, error: '密碼過於簡單，請勿使用連續單一相同字元！' };
+      return { valid: false, error: _tCloud('密碼過於簡單，請勿使用連續單一相同字元！', 'Password is too simple; do not use a single repeated character!', '密码过于简单，请勿使用连续单一相同字符！') };
     }
     // 常見極弱密碼黑名單
     const weakPasswords = ['123456', '12345678', 'password', 'abcdef', '654321', 'qwerty', '000000'];
     if (weakPasswords.includes(password.toLowerCase())) {
-      return { valid: false, error: '密碼過於簡單，請更換較安全的組合！' };
+      return { valid: false, error: _tCloud('密碼過於簡單，請更換較安全的組合！', 'Password is too weak; please choose a stronger combination!', '密码过于简单，请更换较安全的组合！') };
     }
     return { valid: true };
   }
@@ -232,7 +261,7 @@
   /* ─── 帳號密碼註冊與登入 ───────────────────────────────────── */
   async function signUpWithPassword(accountInput, password) {
     if (!supabaseClient) {
-      return { success: false, error: '雲端同步服務未初始化，請稍後再試！' };
+      return { success: false, error: _tCloud('雲端同步服務未初始化，請稍後再試！', 'Cloud sync service is not initialized; please try again later!', '云端同步服务未初始化，请稍后再试！') };
     }
 
     const accResult = parseAndValidateAccount(accountInput);
@@ -257,11 +286,11 @@
       if (error) {
         syncStatus = currentUser ? 'synced' : 'guest';
         updateSyncUI();
-        let errMsg = error.message || '註冊失敗';
+        let errMsg = error.message || _tCloud('註冊失敗', 'Registration failed', '注册失败');
         if (errMsg.includes('User already registered')) {
-          errMsg = '此帳號已被註冊，請直接點擊「登入帳號」！';
+          errMsg = _tCloud('此帳號已被註冊，請直接點擊「登入帳號」！', 'This username is already registered; please click "Sign In" directly!', '此账号已被注册，请直接点击“登录账号”！');
         } else if (errMsg.includes('Password should be at least 6 characters')) {
-          errMsg = '密碼長度至少需為 6 個字元！';
+          errMsg = _tCloud('密碼長度至少需為 6 個字元！', 'Password must be at least 6 characters!', '密码长度至少需为 6 个字符！');
         }
         return { success: false, error: errMsg };
       }
@@ -278,17 +307,17 @@
         return { success: true, user: data.user, session: data.session };
       }
 
-      return { success: true, message: '註冊成功！' };
+      return { success: true, message: _tCloud('註冊成功！', 'Registration successful!', '注册成功！') };
     } catch (err) {
       syncStatus = currentUser ? 'synced' : 'guest';
       updateSyncUI();
-      return { success: false, error: err.message || '註冊時發生未知錯誤' };
+      return { success: false, error: err.message || _tCloud('註冊時發生未知錯誤', 'An unknown error occurred during registration', '注册时发生未知错误') };
     }
   }
 
   async function signInWithPassword(accountInput, password) {
     if (!supabaseClient) {
-      return { success: false, error: '雲端同步服務未初始化，請稍後再試！' };
+      return { success: false, error: _tCloud('雲端同步服務未初始化，請稍後再試！', 'Cloud sync service is not initialized; please try again later!', '云端同步服务未初始化，请稍后再试！') };
     }
 
     const accResult = parseAndValidateAccount(accountInput);
@@ -297,7 +326,7 @@
     }
 
     if (!password) {
-      return { success: false, error: '請輸入密碼！' };
+      return { success: false, error: _tCloud('請輸入密碼！', 'Please enter a password!', '请输入密码！') };
     }
 
     try {
@@ -312,11 +341,11 @@
       if (error) {
         syncStatus = currentUser ? 'synced' : 'guest';
         updateSyncUI();
-        let errMsg = error.message || '登入失敗';
+        let errMsg = error.message || _tCloud('登入失敗', 'Sign in failed', '登录失败');
         if (errMsg.includes('Invalid login credentials')) {
-          errMsg = '帳號或密碼錯誤，請檢查後重新輸入！';
+          errMsg = _tCloud('帳號或密碼錯誤，請檢查後重新輸入！', 'Incorrect username or password; please check and try again!', '账号或密码错误，请检查后重新输入！');
         } else if (errMsg.includes('Email not confirmed')) {
-          errMsg = '登入失敗：請管理員於 Supabase 後台關閉「Confirm email」驗證設定。';
+          errMsg = _tCloud('登入失敗：請管理員於 Supabase 後台關閉「Confirm email」驗證設定。', 'Sign in failed: please have the administrator disable "Confirm email" verification in the Supabase dashboard.', '登录失败：请管理员于 Supabase 后台关闭“Confirm email”验证设置。');
         }
         return { success: false, error: errMsg };
       }
@@ -333,11 +362,11 @@
         return { success: true, user: data.user, session: data.session };
       }
 
-      return { success: false, error: '登入失敗，查無使用者資訊' };
+      return { success: false, error: _tCloud('登入失敗，查無使用者資訊', 'Sign in failed: user information not found', '登录失败，查无用户信息') };
     } catch (err) {
       syncStatus = currentUser ? 'synced' : 'guest';
       updateSyncUI();
-      return { success: false, error: err.message || '登入時發生錯誤' };
+      return { success: false, error: err.message || _tCloud('登入時發生錯誤', 'An error occurred during sign in', '登录时发生错误') };
     }
   }
 
@@ -519,7 +548,7 @@
       console.error('[CloudSync] pushRemoteBox exception:', err);
       lastPushedBoxHash = '';
       syncStatus = 'error';
-      lastSyncError = err.message || '同步推送失敗';
+      lastSyncError = err.message || _tCloud('同步推送失敗', 'Sync push failed', '同步推送失败');
       updateSyncUI();
       return false;
     }
@@ -615,7 +644,7 @@
         console.error('[CloudSync] Initial sync failed:', err);
         lastInitialSyncTimestamp = 0;
         syncStatus = 'error';
-        lastSyncError = err.message || '首次同步失敗';
+        lastSyncError = err.message || _tCloud('首次同步失敗', 'Initial sync failed', '首次同步失败');
         updateSyncUI();
       } finally {
         initialSyncPromise = null;
@@ -1455,7 +1484,7 @@
         <div class="box-toast-title">${escapeHtml(title)}</div>
         <div class="box-toast-msg">${escapeHtml(message)}</div>
       </div>
-      <button type="button" class="box-toast-close" onclick="this.parentElement && this.parentElement.remove()" aria-label="關閉">✕</button>
+      <button type="button" class="box-toast-close" onclick="this.parentElement && this.parentElement.remove()" aria-label="${_tCloud('關閉', 'Close', '关闭')}">✕</button>
     `;
 
     if (container && typeof container.appendChild === 'function') {
@@ -1477,7 +1506,6 @@
   /* ─── UI 狀態與彈窗管理 ───────────────────────────────────── */
   function updateSyncUI() {
     if (typeof document === 'undefined') return;
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
     const userDisplay = currentUser && currentUser.email ? currentUser.email.split('@')[0] : 'User';
 
     // 1. 更新桌面導航頂欄登入按鈕 (#header-cloud-auth-btn)
@@ -1490,15 +1518,15 @@
           <span class="sync-dot dot-active"></span>
           <span class="header-auth-text">${escapeHtml(userDisplay)}</span>
         `;
-        headerAuthBtn.title = isEN ? `Logged in: ${userDisplay}. Click to manage sync.` : `已登入：${userDisplay}。點擊管理雲端同步。`;
+        headerAuthBtn.title = _tCloud(`已登入：${userDisplay}。點擊管理雲端同步。`, `Logged in: ${userDisplay}. Click to manage sync.`, `已登录：${userDisplay}。点击管理云端同步。`);
       } else {
         headerAuthBtn.classList.remove('is-logged-in');
         headerAuthBtn.classList.add('is-guest');
         headerAuthBtn.innerHTML = `
           <span class="sync-dot dot-guest"></span>
-          <span class="header-auth-text">${isEN ? 'Sign In / Register' : '登入 / 註冊'}</span>
+          <span class="header-auth-text">${_tCloud('登入 / 註冊', 'Sign In / Register', '登录 / 注册')}</span>
         `;
-        headerAuthBtn.title = isEN ? 'Sign in or register to enable cloud sync.' : '登入或註冊帳號以啟用手機/電腦即時同步。';
+        headerAuthBtn.title = _tCloud('登入或註冊帳號以啟用手機/電腦即時同步。', 'Sign in or register to enable cloud sync.', '登录或注册账号以启用手机/电脑实时同步。');
       }
     }
 
@@ -1508,11 +1536,11 @@
       if (currentUser) {
         mobileHeaderBtn.classList.add('is-logged-in');
         mobileHeaderBtn.classList.remove('is-guest');
-        mobileHeaderBtn.title = isEN ? `Logged in: ${userDisplay}` : `已登入：${userDisplay}`;
+        mobileHeaderBtn.title = _tCloud(`已登入：${userDisplay}`, `Logged in: ${userDisplay}`, `已登录：${userDisplay}`);
       } else {
         mobileHeaderBtn.classList.remove('is-logged-in');
         mobileHeaderBtn.classList.add('is-guest');
-        mobileHeaderBtn.title = isEN ? 'Sign In / Register' : '雲端帳號 登入 / 註冊';
+        mobileHeaderBtn.title = _tCloud('雲端帳號 登入 / 註冊', 'Sign In / Register', '云端账号 登录 / 注册');
       }
     }
 
@@ -1530,10 +1558,10 @@
           <div class="auth-status-card status-active">
             <div class="auth-status-row">
               <span class="status-indicator-dot dot-active"></span>
-              <strong>${isEN ? 'Cloud Sync Active' : '雲端即時同步中'}</strong>
+              <strong>${_tCloud('雲端即時同步中', 'Cloud Sync Active', '云端实时同步中')}</strong>
             </div>
-            <div class="auth-account-text">${isEN ? 'Account: ' : '登入帳號：'}${escapeHtml(userDisplay)}</div>
-            <div class="auth-sub-hint">${isEN ? 'Data is synced in real-time across your PC and mobile devices.' : '倉庫資料已自動與雲端連動，手機與電腦雙向秒級同步。'}</div>
+            <div class="auth-account-text">${_tCloud('登入帳號：', 'Account: ', '登录账号：')}${escapeHtml(userDisplay)}</div>
+            <div class="auth-sub-hint">${_tCloud('倉庫資料已自動與雲端連動，手機與電腦雙向秒級同步。', 'Data is synced in real-time across your PC and mobile devices.', '仓库数据已自动与云端联动，手机与电脑双向秒级同步。')}</div>
           </div>
         `;
       } else {
@@ -1541,11 +1569,13 @@
           <div class="auth-status-card status-guest">
             <div class="auth-status-row">
               <span class="status-indicator-dot dot-guest"></span>
-              <strong>${isEN ? 'Local Guest Mode (Not Logged In)' : '本機訪客模式 (未登入)'}</strong>
+              <strong>${_tCloud('本機訪客模式 (未登入)', 'Local Guest Mode (Not Logged In)', '本地访客模式 (未登录)')}</strong>
             </div>
-            <div class="auth-sub-hint">${isEN 
-              ? 'Enter username and password below to automatically sync your Pokémon box between phone and PC.' 
-              : '輸入帳號與密碼登入或註冊，即可自動在手機與電腦間同步寶可夢倉庫。'}</div>
+            <div class="auth-sub-hint">${_tCloud(
+              '輸入帳號與密碼登入或註冊，即可自動在手機與電腦間同步寶可夢倉庫。',
+              'Enter username and password below to automatically sync your Pokémon box between phone and PC.',
+              '输入账号与密码登录或注册，即可自动在手机与电脑间同步宝可梦仓库。'
+            )}</div>
           </div>
         `;
       }
@@ -1557,11 +1587,11 @@
     const titleEl = document.getElementById('cloud-auth-title-text');
     if (titleEl) {
       if (currentUser) {
-        titleEl.textContent = isEN ? 'Cloud Account Management' : '雲端帳號與同步管理';
+        titleEl.textContent = _tCloud('雲端帳號與同步管理', 'Cloud Account Management', '云端账号与同步管理');
       } else if (authViewMode === 'signup') {
-        titleEl.textContent = isEN ? 'Register Pokémon Sleep Cloud Account' : '註冊寶可夢雲端帳號';
+        titleEl.textContent = _tCloud('註冊寶可夢雲端帳號', 'Register Pokémon Sleep Cloud Account', '注册宝可梦云端账号');
       } else {
-        titleEl.textContent = isEN ? 'Sign In to Pokémon Sleep Cloud' : '登入寶可夢雲端帳號';
+        titleEl.textContent = _tCloud('登入寶可夢雲端帳號', 'Sign In to Pokémon Sleep Cloud', '登录宝可梦云端账号');
       }
     }
     if (loginSection && userSection) {
@@ -1615,8 +1645,6 @@
       return;
     }
 
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-
     if (!overlay) {
       overlay = document.createElement('div');
       overlay.id = 'box-auth-overlay';
@@ -1632,20 +1660,22 @@
             <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
           </svg>
         </div>
-        <h3 class="box-auth-prompt-title">${isEN ? 'Sign In to Pokémon Sleep Cloud Box' : '登入啟用寶可夢雲端倉庫'}</h3>
-        <p class="box-auth-prompt-desc">${isEN 
-          ? 'Sign in or register an account to enable real-time cross-device sync, cloud backup, and Pokémon box management.' 
-          : '登入或自訂帳號註冊，即可享有電腦與手機跨裝置秒級雙向同步、即時雲端備份與完整寶可夢管理功能。'}</p>
+        <h3 class="box-auth-prompt-title">${_tCloud('登入啟用寶可夢雲端倉庫', 'Sign In to Pokémon Sleep Cloud Box', '登录启用宝可梦云端仓库')}</h3>
+        <p class="box-auth-prompt-desc">${_tCloud(
+          '登入或自訂帳號註冊，即可享有電腦與手機跨裝置秒級雙向同步、即時雲端備份與完整寶可夢管理功能。',
+          'Sign in or register an account to enable real-time cross-device sync, cloud backup, and Pokémon box management.',
+          '登录或自定义账号注册，即可享有电脑与手机跨设备秒级双向同步、即时云端备份与完整宝可梦管理功能。'
+        )}</p>
         <button type="button" class="box-auth-prompt-btn cloud-auth-btn btn-primary" onclick="window.CloudSync && window.CloudSync.openAuthModal('signin')">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
             <polyline points="10 17 15 12 10 7"></polyline>
             <line x1="15" y1="12" x2="3" y2="12"></line>
           </svg>
-          <span>${isEN ? 'Sign In / Register' : '立即登入 / 註冊帳號'}</span>
+          <span>${_tCloud('立即登入 / 註冊帳號', 'Sign In / Register', '立即登录 / 注册账号')}</span>
         </button>
         <div class="box-auth-prompt-guest-row">
-          <button type="button" class="box-auth-guest-link" onclick="window.CloudSync && window.CloudSync.dismissBoxAuthOverlay()">${isEN ? 'Continue as local guest (offline mode)' : '以本機訪客模式暫時使用 (離線模式)'}</button>
+          <button type="button" class="box-auth-guest-link" onclick="window.CloudSync && window.CloudSync.dismissBoxAuthOverlay()">${_tCloud('以本機訪客模式暫時使用 (離線模式)', 'Continue as local guest (offline mode)', '以本地访客模式暂时使用 (离线模式)')}</button>
         </div>
       </div>
     `;
@@ -1653,7 +1683,6 @@
 
   function switchAuthView(mode) {
     authViewMode = (mode === 'signup') ? 'signup' : 'signin';
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
     const titleEl = document.getElementById('cloud-auth-title-text');
     const signinView = document.getElementById('cloud-auth-signin-view');
     const signupView = document.getElementById('cloud-auth-signup-view');
@@ -1661,7 +1690,7 @@
     if (msgBox) msgBox.style.display = 'none';
 
     if (authViewMode === 'signup') {
-      if (titleEl && !currentUser) titleEl.textContent = isEN ? 'Register Pokémon Sleep Cloud Account' : '註冊寶可夢雲端帳號';
+      if (titleEl && !currentUser) titleEl.textContent = _tCloud('註冊寶可夢雲端帳號', 'Register Pokémon Sleep Cloud Account', '注册宝可梦云端账号');
       if (signinView) signinView.style.display = 'none';
       if (signupView) signupView.style.display = 'block';
 
@@ -1673,7 +1702,7 @@
       }
       if (signupUser && typeof signupUser.focus === 'function') signupUser.focus();
     } else {
-      if (titleEl && !currentUser) titleEl.textContent = isEN ? 'Sign In to Pokémon Sleep Cloud' : '登入寶可夢雲端帳號';
+      if (titleEl && !currentUser) titleEl.textContent = _tCloud('登入寶可夢雲端帳號', 'Sign In to Pokémon Sleep Cloud', '登录宝可梦云端账号');
       if (signinView) signinView.style.display = 'block';
       if (signupView) signupView.style.display = 'none';
 
@@ -1702,6 +1731,10 @@
 
   function openAuthModal(mode = 'signin') {
     let modal = document.getElementById('cloud-auth-modal');
+    if (modal && modal.getAttribute('data-cloud-lang') !== _getCloudLang()) {
+      modal.remove();
+      modal = null;
+    }
     if (!modal) {
       createAuthModalDOM();
       modal = document.getElementById('cloud-auth-modal');
@@ -1723,11 +1756,10 @@
   }
 
   function createAuthModalDOM() {
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-
     const div = document.createElement('div');
     div.id = 'cloud-auth-modal';
     div.className = 'cloud-auth-backdrop';
+    div.setAttribute('data-cloud-lang', _getCloudLang());
     div.style.display = 'none';
     div.innerHTML = `
       <div class="cloud-auth-dialog">
@@ -1736,9 +1768,9 @@
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
             </svg>
-            <span id="cloud-auth-title-text">${isEN ? 'Sign In to Pokémon Sleep Cloud' : '登入寶可夢雲端帳號'}</span>
+            <span id="cloud-auth-title-text">${_tCloud('登入寶可夢雲端帳號', 'Sign In to Pokémon Sleep Cloud', '登录宝可梦云端账号')}</span>
           </div>
-          <button type="button" class="cloud-auth-close-btn" onclick="window.CloudSync.closeAuthModal()" aria-label="關閉">✕</button>
+          <button type="button" class="cloud-auth-close-btn" onclick="window.CloudSync.closeAuthModal()" aria-label="${_tCloud('關閉', 'Close', '关闭')}">✕</button>
         </div>
 
         <div class="cloud-auth-body">
@@ -1754,15 +1786,15 @@
             <!-- 視窗 1: 登入表單 (預設展示) -->
             <div id="cloud-auth-signin-view">
               <div class="cloud-auth-input-group">
-                <label for="cloud-auth-username" class="cloud-auth-label">${isEN ? 'Account / Username' : '帳號'}</label>
-                <input type="text" id="cloud-auth-username" class="cloud-auth-input" placeholder="${isEN ? 'Enter username' : '請輸入自訂帳號'}" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20">
+                <label for="cloud-auth-username" class="cloud-auth-label">${_tCloud('帳號', 'Account / Username', '账号')}</label>
+                <input type="text" id="cloud-auth-username" class="cloud-auth-input" placeholder="${_tCloud('請輸入自訂帳號', 'Enter username', '请输入自定义账号')}" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20">
               </div>
 
               <div class="cloud-auth-input-group">
-                <label for="cloud-auth-password" class="cloud-auth-label">${isEN ? 'Password' : '密碼'}</label>
+                <label for="cloud-auth-password" class="cloud-auth-label">${_tCloud('密碼', 'Password', '密码')}</label>
                 <div class="cloud-auth-password-wrap">
-                  <input type="password" id="cloud-auth-password" class="cloud-auth-input" placeholder="${isEN ? 'Enter password' : '請輸入密碼'}" autocomplete="current-password" maxlength="32">
-                  <button type="button" id="cloud-auth-pwd-toggle" class="cloud-auth-pwd-toggle" title="${isEN ? 'Toggle password visibility' : '顯示或隱藏密碼'}">
+                  <input type="password" id="cloud-auth-password" class="cloud-auth-input" placeholder="${_tCloud('請輸入密碼', 'Enter password', '请输入密码')}" autocomplete="current-password" maxlength="32">
+                  <button type="button" id="cloud-auth-pwd-toggle" class="cloud-auth-pwd-toggle" title="${_tCloud('顯示或隱藏密碼', 'Toggle password visibility', '显示或隐藏密码')}">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                       <circle cx="12" cy="12" r="3"></circle>
@@ -1774,29 +1806,29 @@
               <!-- 記住帳號與密碼 -->
               <label class="cloud-auth-remember-row" for="cloud-auth-remember-check">
                 <input type="checkbox" id="cloud-auth-remember-check">
-                <span>${isEN ? 'Remember account & password' : '記住帳號與密碼'}</span>
+                <span>${_tCloud('記住帳號與密碼', 'Remember account & password', '记住账号与密码')}</span>
               </label>
 
-              <button type="button" id="cloud-auth-signin-btn" class="cloud-auth-btn btn-primary" style="width: 100%;">${isEN ? 'Sign In' : '登入帳號'}</button>
+              <button type="button" id="cloud-auth-signin-btn" class="cloud-auth-btn btn-primary" style="width: 100%;">${_tCloud('登入帳號', 'Sign In', '登录账号')}</button>
 
               <div class="cloud-auth-footer-link">
-                ${isEN ? "Don't have an account yet?" : '還沒有雲端帳號？'}
-                <button type="button" id="cloud-switch-to-signup" class="cloud-auth-switch-btn">${isEN ? 'Register Now' : '一鍵註冊'}</button>
+                ${_tCloud('還沒有雲端帳號？', "Don't have an account yet?", '还没有云端账号？')}
+                <button type="button" id="cloud-switch-to-signup" class="cloud-auth-switch-btn">${_tCloud('一鍵註冊', 'Register Now', '一键注册')}</button>
               </div>
             </div>
 
             <!-- 視窗 2: 註冊表單 (獨立視窗) -->
             <div id="cloud-auth-signup-view" style="display: none;">
               <div class="cloud-auth-input-group">
-                <label for="cloud-signup-username" class="cloud-auth-label">${isEN ? 'Set Username' : '自訂帳號'}</label>
-                <input type="text" id="cloud-signup-username" class="cloud-auth-input" placeholder="${isEN ? '3-20 characters (letters, numbers, _)' : '3 ~ 20 位英文、數字或底線'}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20">
+                <label for="cloud-signup-username" class="cloud-auth-label">${_tCloud('自訂帳號', 'Set Username', '自定义账号')}</label>
+                <input type="text" id="cloud-signup-username" class="cloud-auth-input" placeholder="${_tCloud('3 ~ 20 位英文、數字或底線', '3-20 characters (letters, numbers, _)', '3 ~ 20 位英文、数字或下划线')}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20">
               </div>
 
               <div class="cloud-auth-input-group">
-                <label for="cloud-signup-password" class="cloud-auth-label">${isEN ? 'Set Password' : '自訂密碼'}</label>
+                <label for="cloud-signup-password" class="cloud-auth-label">${_tCloud('自訂密碼', 'Set Password', '自定义密码')}</label>
                 <div class="cloud-auth-password-wrap">
-                  <input type="password" id="cloud-signup-password" class="cloud-auth-input" placeholder="${isEN ? '6-32 characters' : '6 ~ 32 位密碼'}" autocomplete="new-password" maxlength="32">
-                  <button type="button" id="cloud-signup-pwd-toggle" class="cloud-auth-pwd-toggle" title="${isEN ? 'Toggle password visibility' : '顯示或隱藏密碼'}">
+                  <input type="password" id="cloud-signup-password" class="cloud-auth-input" placeholder="${_tCloud('6 ~ 32 位密碼', '6-32 characters', '6 ~ 32 位密码')}" autocomplete="new-password" maxlength="32">
+                  <button type="button" id="cloud-signup-pwd-toggle" class="cloud-auth-pwd-toggle" title="${_tCloud('顯示或隱藏密碼', 'Toggle password visibility', '显示或隐藏密码')}">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                       <circle cx="12" cy="12" r="3"></circle>
@@ -1806,10 +1838,10 @@
               </div>
 
               <div class="cloud-auth-input-group">
-                <label for="cloud-signup-pwd-confirm" class="cloud-auth-label">${isEN ? 'Confirm Password' : '確認密碼'}</label>
+                <label for="cloud-signup-pwd-confirm" class="cloud-auth-label">${_tCloud('確認密碼', 'Confirm Password', '确认密码')}</label>
                 <div class="cloud-auth-password-wrap">
-                  <input type="password" id="cloud-signup-pwd-confirm" class="cloud-auth-input" placeholder="${isEN ? 'Repeat password' : '請再次輸入密碼'}" autocomplete="new-password" maxlength="32">
-                  <button type="button" id="cloud-signup-confirm-toggle" class="cloud-auth-pwd-toggle" title="${isEN ? 'Toggle password visibility' : '顯示或隱藏密碼'}">
+                  <input type="password" id="cloud-signup-pwd-confirm" class="cloud-auth-input" placeholder="${_tCloud('請再次輸入密碼', 'Repeat password', '请再次输入密码')}" autocomplete="new-password" maxlength="32">
+                  <button type="button" id="cloud-signup-confirm-toggle" class="cloud-auth-pwd-toggle" title="${_tCloud('顯示或隱藏密碼', 'Toggle password visibility', '显示或隐藏密码')}">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                       <circle cx="12" cy="12" r="3"></circle>
@@ -1818,11 +1850,11 @@
                 </div>
               </div>
 
-              <button type="button" id="cloud-auth-signup-btn" class="cloud-auth-btn btn-primary" style="width: 100%;">${isEN ? 'Create Account' : '立即建立帳號'}</button>
+              <button type="button" id="cloud-auth-signup-btn" class="cloud-auth-btn btn-primary" style="width: 100%;">${_tCloud('立即建立帳號', 'Create Account', '立即创建账号')}</button>
 
               <div class="cloud-auth-footer-link">
-                ${isEN ? 'Already have an account?' : '已經有雲端帳號？'}
-                <button type="button" id="cloud-switch-to-signin" class="cloud-auth-switch-btn">${isEN ? 'Back to Sign In' : '返回登入'}</button>
+                ${_tCloud('已經有雲端帳號？', 'Already have an account?', '已经有云端账号？')}
+                <button type="button" id="cloud-switch-to-signin" class="cloud-auth-switch-btn">${_tCloud('返回登入', 'Back to Sign In', '返回登录')}</button>
               </div>
             </div>
           </div>
@@ -1830,8 +1862,8 @@
           <!-- 已登入操作區塊 (已登入時展示) -->
           <div id="cloud-auth-user-section" style="display:none; margin-top: 14px;">
             <div class="cloud-auth-btn-row">
-              <button type="button" id="cloud-auth-manual-sync-btn" class="cloud-auth-btn btn-primary">${isEN ? 'Sync Now' : '立即手動同步'}</button>
-              <button type="button" id="cloud-auth-signout-btn" class="cloud-auth-btn btn-danger">${isEN ? 'Sign Out' : '登出帳號'}</button>
+              <button type="button" id="cloud-auth-manual-sync-btn" class="cloud-auth-btn btn-primary">${_tCloud('立即手動同步', 'Sync Now', '立即手动同步')}</button>
+              <button type="button" id="cloud-auth-signout-btn" class="cloud-auth-btn btn-danger">${_tCloud('登出帳號', 'Sign Out', '退出登录')}</button>
             </div>
           </div>
         </div>
@@ -1955,19 +1987,19 @@
         const isRemember = rememberCheck ? rememberCheck.checked : false;
 
         if (!account) {
-          showMsg('請輸入自訂帳號！');
+          showMsg(_tCloud('請輸入自訂帳號！', 'Please enter a username!', '请输入自定义账号！'));
           return;
         }
         if (!pwd) {
-          showMsg('請輸入密碼！');
+          showMsg(_tCloud('請輸入密碼！', 'Please enter a password!', '请输入密码！'));
           return;
         }
 
         signInBtn.disabled = true;
-        signInBtn.textContent = '登入中...';
+        signInBtn.textContent = _tCloud('登入中...', 'Signing in...', '登录中...');
         const res = await signInWithPassword(account, pwd);
         signInBtn.disabled = false;
-        signInBtn.textContent = '登入帳號';
+        signInBtn.textContent = _tCloud('登入帳號', 'Sign In', '登录账号');
 
         if (res.success) {
           saveRememberedAuth(account, pwd, isRemember);
@@ -1975,9 +2007,13 @@
           closeAuthModal();
           dismissBoxAuthOverlay();
           // 使用右下角浮動 Toast 進行狀態提醒
-          showToast('登入成功', `歡迎回來，${account}！已連線雲端即時同步。`, 'success');
+          showToast(
+            _tCloud('登入成功', 'Signed In', '登录成功'),
+            _tCloud(`歡迎回來，${account}！已連線雲端即時同步。`, `Welcome back, ${account}! Cloud real-time sync is active.`, `欢迎回来，${account}！已连接云端实时同步。`),
+            'success'
+          );
         } else {
-          showMsg(res.error || '登入失敗，請檢查帳號密碼！');
+          showMsg(res.error || _tCloud('登入失敗，請檢查帳號密碼！', 'Sign in failed; please check your username and password!', '登录失败，请检查账号密码！'));
         }
       };
     }
@@ -1991,32 +2027,36 @@
         const confirm = signupConfirm ? signupConfirm.value : '';
 
         if (!account) {
-          showMsg('請輸入自訂帳號！');
+          showMsg(_tCloud('請輸入自訂帳號！', 'Please enter a username!', '请输入自定义账号！'));
           return;
         }
         if (!pwd) {
-          showMsg('請輸入自訂密碼！');
+          showMsg(_tCloud('請輸入自訂密碼！', 'Please enter a password!', '请输入自定义密码！'));
           return;
         }
         if (pwd !== confirm) {
-          showMsg('兩次輸入的密碼不一致，請重新檢查！');
+          showMsg(_tCloud('兩次輸入的密碼不一致，請重新檢查！', 'Passwords do not match; please check again!', '两次输入的密码不一致，请重新检查！'));
           return;
         }
 
         signUpBtn.disabled = true;
-        signUpBtn.textContent = '建立中...';
+        signUpBtn.textContent = _tCloud('建立中...', 'Creating...', '创建中...');
         const res = await signUpWithPassword(account, pwd);
         signUpBtn.disabled = false;
-        signUpBtn.textContent = '立即建立帳號';
+        signUpBtn.textContent = _tCloud('立即建立帳號', 'Create Account', '立即创建账号');
 
         if (res.success) {
           saveRememberedAuth(account, pwd, true);
           // 立即關閉視窗與遮罩，直接進入主頁面
           closeAuthModal();
           dismissBoxAuthOverlay();
-          showToast('註冊成功', `歡迎使用，${account}！已自動登入並建立雲端倉庫。`, 'success');
+          showToast(
+            _tCloud('註冊成功', 'Account Created', '注册成功'),
+            _tCloud(`歡迎使用，${account}！已自動登入並建立雲端倉庫。`, `Welcome, ${account}! Signed in and cloud box created.`, `欢迎使用，${account}！已自动登录并创建云端仓库。`),
+            'success'
+          );
         } else {
-          showMsg(res.error || '註冊失敗，請稍後再試！');
+          showMsg(res.error || _tCloud('註冊失敗，請稍後再試！', 'Registration failed; please try again later!', '注册失败，请稍后再试！'));
         }
       };
     }
@@ -2030,7 +2070,11 @@
         signOutBtn.disabled = false;
         closeAuthModal();
         updateBoxAuthOverlay(true);
-        showToast('已登出', '目前已切換為本機訪客模式。', 'info');
+        showToast(
+          _tCloud('已登出', 'Signed Out', '已退出登录'),
+          _tCloud('目前已切換為本機訪客模式。', 'Switched to local guest mode.', '当前已切换为本地访客模式。'),
+          'info'
+        );
       };
     }
 
@@ -2039,12 +2083,16 @@
       manualSyncBtn.onclick = async () => {
         clearMsg();
         manualSyncBtn.disabled = true;
-        manualSyncBtn.textContent = '同步中...';
+        manualSyncBtn.textContent = _tCloud('同步中...', 'Syncing...', '同步中...');
         await triggerInitialSyncAndMerge();
         manualSyncBtn.disabled = false;
-        manualSyncBtn.textContent = '立即手動同步';
+        manualSyncBtn.textContent = _tCloud('立即手動同步', 'Sync Now', '立即手动同步');
         closeAuthModal();
-        showToast('手動同步完成', '寶可夢倉庫已與雲端完成最新同步。', 'success');
+        showToast(
+          _tCloud('手動同步完成', 'Sync Complete', '手动同步完成'),
+          _tCloud('寶可夢倉庫已與雲端完成最新同步。', 'Your Pokémon Box is now synced with the cloud.', '宝可梦仓库已与云端完成最新同步。'),
+          'success'
+        );
       };
     }
   }

@@ -3,7 +3,7 @@
 
 .stat-type-biscuit-max {
   background: rgba(244, 114, 182, 0.18);
-  color: #f472b6;
+  color: #f9a8d4;
   border: none !important;
   box-shadow: none !important;
 }
@@ -39,6 +39,69 @@
   color: #fb923c;
   border: none !important;
   box-shadow: none !important;
+}
+
+/* Stat Badge 4-Light-Theme Contrast Overrides (WCAG AA >= 4.5:1) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-biscuit,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-biscuit,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-biscuit,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-biscuit {
+  color: #92400e;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-biscuit-max,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-biscuit-max,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-biscuit-max,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-biscuit-max {
+  color: #9d174d;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-seed,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-seed,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-seed,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-seed,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-mint,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-mint,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-mint,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-mint {
+  color: #065f46;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-candy,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-candy,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-candy,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-candy,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-shard,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-shard,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-shard,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-shard {
+  color: #0369a1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-energy,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-energy,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-energy,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-energy,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-whistle,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-whistle,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-whistle,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-whistle,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-camp,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-camp,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-camp,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-camp,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-ticket,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-ticket,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-ticket,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-ticket {
+  color: #6b21a8;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-evolution,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-evolution,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-evolution,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-evolution {
+  color: #9a3412;
 }
 
 /* Card Description Preview (Hidden on Cards) */
@@ -115,7 +178,7 @@
   grid-column: 1 / -1;
   text-align: center;
   padding: 48px 16px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
   background: var(--bg-card-inner);

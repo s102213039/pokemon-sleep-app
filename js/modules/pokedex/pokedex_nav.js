@@ -789,12 +789,12 @@
       .catch(err => {
         console.error('Error loading data.json:', err);
         if (typeof window.__renderInPlaceError === 'function') {
-          window.__renderInPlaceError('content-area', '寶可夢資料庫載入失敗 (data.json)', err);
+          window.__renderInPlaceError('content-area', _tDex('寶可夢資料庫載入失敗 (data.json)', 'Failed to load Pokédex database (data.json)'), err);
         } else if (contentArea) {
           const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
             ? window.DOMUtils.escapeHtml(err.message)
             : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-          contentArea.innerHTML = `<div style="text-align:center; padding: 40px; color: #ef4444;">載入 data.json 失敗：${safeMsg}</div>`;
+          contentArea.innerHTML = `<div style="text-align:center; padding: 40px; color: #ef4444;">${_tDex('載入 data.json 失敗：', 'Failed to load data.json: ')}${safeMsg}</div>`;
         }
       });
 

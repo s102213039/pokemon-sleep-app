@@ -9,7 +9,6 @@
   /* ─── 核心評估演算法 (單一維度/等級計算核心) ──────────── */
   function evaluateSingle(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, isPotential, cleanseMint) {
     if (!pkmData) return null;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     natureName = natureName || '坦率';
     subskills = subskills || [];
     const ingArr = (Array.isArray(ingredients) ? ingredients : []).map(normalizeIngName).filter(Boolean);
@@ -514,35 +513,35 @@
 
     // 評級判定 (7 級制: SSS, SS, S, A, B, C, D)
     let grade = 'B';
-    let gradeTitle = isEN ? 'Solid Choice' : '實用良品 (Solid Choice)';
+    let gradeTitle = _tLab('實用良品 (Solid Choice)', 'Solid Choice');
     let gradeColor = '#10b981';
     if (compositeScore >= 98) {
       grade = 'SSS';
-      gradeTitle = isEN ? 'Apex God' : '神級天花板 (Apex God)';
+      gradeTitle = _tLab('神級天花板 (Apex God)', 'Apex God');
       gradeColor = '#f43f5e';
     } else if (compositeScore >= 95) {
       grade = 'SS';
-      gradeTitle = isEN ? 'Mythic Tier' : '極品畢業 (Mythic Tier)';
+      gradeTitle = _tLab('極品畢業 (Mythic Tier)', 'Mythic Tier');
       gradeColor = '#8b5cf6';
     } else if (compositeScore >= 90) {
       grade = 'S';
-      gradeTitle = isEN ? 'Top Tier' : '頂級戰力 (Top Tier)';
+      gradeTitle = _tLab('頂級戰力 (Top Tier)', 'Top Tier');
       gradeColor = '#f59e0b';
     } else if (compositeScore >= 80) {
       grade = 'A';
-      gradeTitle = isEN ? 'Strong Pick' : '強力主力 (Strong Pick)';
+      gradeTitle = _tLab('強力主力 (Strong Pick)', 'Strong Pick');
       gradeColor = '#3b82f6';
     } else if (compositeScore >= 70) {
       grade = 'B';
-      gradeTitle = isEN ? '[✓] Solid Choice' : '[✓] 實用良品 (Solid Choice)';
+      gradeTitle = _tLab('[✓] 實用良品 (Solid Choice)', '[✓] Solid Choice');
       gradeColor = '#10b981';
     } else if (compositeScore >= 60) {
       grade = 'C';
-      gradeTitle = isEN ? '[~] Usable' : '[~] 過渡可用 (Usable)';
+      gradeTitle = _tLab('[~] 過渡可用 (Usable)', '[~] Usable');
       gradeColor = '#64748b';
     } else {
       grade = 'D';
-      gradeTitle = isEN ? '[-] Recycle' : '[-] 換糖回收 (Recycle)';
+      gradeTitle = _tLab('[-] 換糖回收 (Recycle)', '[-] Recycle');
       gradeColor = '#ef4444';
     }
 
@@ -554,173 +553,203 @@
 
     if (hasBFSInTotal) {
       if (isBerryBurst) {
-        pros.push(isEN
-          ? 'Perfectly synergizes with "Berry Burst"! "Berry Finding S" increases base helps by +1 berry while main skill unleashes massive team berry bursts, forming an elite island pusher (maximize yields via regular collection).'
-          : '完美契合「樹果遽增」機制！具備「樹果數量S」能在常態幫忙中額外產出樹果，同時透過主技能引爆全隊樹果能量，為島嶼衝分第一梯隊打手！（勤勞清包收益最大化）');
+        pros.push(_tLab(
+          '完美契合「樹果遽增」機制！具備「樹果數量S」能在常態幫忙中額外產出樹果，同時透過主技能引爆全隊樹果能量，為島嶼衝分第一梯隊打手！（勤勞清包收益最大化）',
+          'Perfectly synergizes with "Berry Burst"! "Berry Finding S" increases base helps by +1 berry while main skill unleashes massive team berry bursts, forming an elite island pusher (maximize yields via regular collection).'
+        ));
       } else if (isHelper) {
-        cons.push(isEN
-          ? '[!] Helper Boost base proc rate is extremely low (~2%); "Berry Finding S" causes rapid bag overflow and blocks main skill checks, crowding out trigger subskills.'
-          : '[!] 傳說神獸「幫手加速」基礎機率極低（約2%），持有「樹果數量S」會迅速塞滿背包並阻斷主技能判定，嚴重排擠關鍵技能機率與持有上限。');
+        cons.push(_tLab(
+          '[!] 傳說神獸「幫手加速」基礎機率極低（約2%），持有「樹果數量S」會迅速塞滿背包並阻斷主技能判定，嚴重排擠關鍵技能機率與持有上限。',
+          '[!] Helper Boost base proc rate is extremely low (~2%); "Berry Finding S" causes rapid bag overflow and blocks main skill checks, crowding out trigger subskills.'
+        ));
       } else if (isHealer) {
-        cons.push(isEN
-          ? '[!] Healer relies on all-day skill procs; "Berry Finding S" causes rapid bag overflow and blocks healing procs (especially overnight).'
-          : '[!] 活力療癒補師首重全隊活力維持，「樹果數量S」會大幅加速滿包並阻斷主技能判定（尤其睡眠過夜期間），需高頻清包。');
+        cons.push(_tLab(
+          '[!] 活力療癒補師首重全隊活力維持，「樹果數量S」會大幅加速滿包並阻斷主技能判定（尤其睡眠過夜期間），需高頻清包。',
+          '[!] Healer relies on all-day skill procs; "Berry Finding S" causes rapid bag overflow and blocks healing procs (especially overnight).'
+        ));
       } else if (isCharge || isSlaking) {
-        pros.push(isEN
-          ? 'Equipped with "Berry Finding S" for high-strength hybrid berry output (ensure frequent collection to avoid bag overflow blocking skill procs).'
-          : '具備「樹果數量S」解鎖高額樹果副輸出，兼顧單兵直傷與產果（需留意及時清包避免阻斷主技能判定）。');
+        pros.push(_tLab(
+          '具備「樹果數量S」解鎖高額樹果副輸出，兼顧單兵直傷與產果（需留意及時清包避免阻斷主技能判定）。',
+          'Equipped with "Berry Finding S" for high-strength hybrid berry output (ensure frequent collection to avoid bag overflow blocking skill procs).'
+        ));
       } else if (isExtraTasty || isPotExpander || isDreamShard || pkmName.includes('咚咚鼠') || pkmName.includes('Dedenne') || pkmName.includes('磁怪') || pkmName.includes('Magne') || pkmName.includes('喵喵') || pkmName.includes('Meowth')) {
-        cons.push(isEN
-          ? '[!] Tactical skill specialist; "Berry Finding S" causes early bag overflow and blocks main skill checks.'
-          : '[!] 純戰術型技能寶可夢持有上限較低，擁有「樹果數量S」容易過早滿包限制主技能判定。');
+        cons.push(_tLab(
+          '[!] 純戰術型技能寶可夢持有上限較低，擁有「樹果數量S」容易過早滿包限制主技能判定。',
+          '[!] Tactical skill specialist; "Berry Finding S" causes early bag overflow and blocks main skill checks.'
+        ));
       } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
         const hasCarryBuff = activeSubskills.some(s => s.includes('持有上限') || s.includes('Inventory Up'));
         if (hasCarryBuff) {
-          pros.push(isEN
-            ? 'Features "Berry Finding S" backed by Inventory Up, providing bonus berry value without hurting ingredient capacity.'
-            : '具備「樹果數量S」並搭配「持有上限提升」，兼顧穩定副產能且不易過早滿包。');
+          pros.push(_tLab(
+            '具備「樹果數量S」並搭配「持有上限提升」，兼顧穩定副產能且不易過早滿包。',
+            'Features "Berry Finding S" backed by Inventory Up, providing bonus berry value without hurting ingredient capacity.'
+          ));
         } else {
-          cons.push(isEN
-            ? '[-] "Berry Finding S" on ingredient specialist without Inventory Up causes rapid overflow, blocking ingredient drops during sleep.'
-            : '[-] 食材型持有「樹果數量S」但缺乏「持有上限提升」，易在離線期間快速滿包並提前進入偷吃樹果狀態阻斷產料。');
+          cons.push(_tLab(
+            '[-] 食材型持有「樹果數量S」但缺乏「持有上限提升」，易在離線期間快速滿包並提前進入偷吃樹果狀態阻斷產料。',
+            '[-] "Berry Finding S" on ingredient specialist without Inventory Up causes rapid overflow, blocking ingredient drops during sleep.'
+          ));
         }
       } else {
-        pros.push(isEN
-          ? 'Equipped with active God-tier sub-skill "Berry Finding S", +1 berry per help.'
-          : '擁有已解鎖神技「樹果數量S」，樹果產能躍升 +1 個。');
+        pros.push(_tLab(
+          '擁有已解鎖神技「樹果數量S」，樹果產能躍升 +1 個。',
+          'Equipped with active God-tier sub-skill "Berry Finding S", +1 berry per help.'
+        ));
       }
     } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
       const hasHB = activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1;
       const hasSpeedM = activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1;
       if (hasHB && hasSpeedM && nature.buffType === 'speed') {
-        pros.push(isEN
-          ? 'Features extreme speed kit (Helping Bonus + Helping Speed M + Speed Up Nature), qualifying as a viable core support.'
-          : '具備「幫手獎勵 + 幫忙速度M + 加幫速性格」之極限幫速配置，成功特例躋身主力行列！');
+        pros.push(_tLab(
+          '具備「幫手獎勵 + 幫忙速度M + 加幫速性格」之極限幫速配置，成功特例躋身主力行列！',
+          'Features extreme speed kit (Helping Bonus + Helping Speed M + Speed Up Nature), qualifying as a viable core support.'
+        ));
       } else {
-        cons.push(isEN
-          ? '[-] Berry specialist without active "Berry Finding S", production ceiling is capped below top tier.'
-          : '[-] 樹果型專長未激活「樹果數量S」，核心產能與頂標差距明顯，上限封頂於過渡可用（最高B級）。');
+        cons.push(_tLab(
+          '[-] 樹果型專長未激活「樹果數量S」，核心產能與頂標差距明顯，上限封頂於過渡可用（最高B級）。',
+          '[-] Berry specialist without active "Berry Finding S", production ceiling is capped below top tier.'
+        ));
       }
     }
 
     if (isSlowpoke) {
       const hasTailLv30 = ingredients.length >= 2 && (ingredients[1] === '美味尾巴' || (ingredients[1] && ingredients[1].includes('尾巴')) || (ingredients[1] && ingredients[1].includes('Tail')));
       if (hasTailLv30) {
-        pros.push(isEN
-          ? 'Lv.30 unlocks the most valuable ingredient "Slowpoke Tail", fulfilling primary strategic unlock mission!'
-          : 'Lv.30 解鎖遊戲最頂級食材「美味尾巴」，達成呆呆獸家族首要戰略解鎖使命！');
+        pros.push(_tLab(
+          'Lv.30 解鎖遊戲最頂級食材「美味尾巴」，達成呆呆獸家族首要戰略解鎖使命！',
+          'Lv.30 unlocks the most valuable ingredient "Slowpoke Tail", fulfilling primary strategic unlock mission!'
+        ));
       } else {
-        cons.push(isEN
-          ? '[-] Lv.30 does NOT yield "Slowpoke Tail", failing its core strategic unlock role.'
-          : '[-] 致命失職：Lv.30 未出「美味尾巴」，喪失呆呆獸家族核心戰略解鎖價值。');
+        cons.push(_tLab(
+          '[-] 致命失職：Lv.30 未出「美味尾巴」，喪失呆呆獸家族核心戰略解鎖價值。',
+          '[-] Lv.30 does NOT yield "Slowpoke Tail", failing its core strategic unlock role.'
+        ));
       }
     }
 
     if (isHealer) {
       if (nature.debuffType === 'skill') {
-        cons.push(isEN
-          ? '[-] Critical flaw: Healer has Main Skill Trigger Down nature, failing to sustain team energy.'
-          : '[-] 致命缺陷：補師性格為減主技能發動率（-20%），全天期望回能嚴重不足，無法勝任隊伍基石。');
+        cons.push(_tLab(
+          '[-] 致命缺陷：補師性格為減主技能發動率（-20%），全天期望回能嚴重不足，無法勝任隊伍基石。',
+          '[-] Critical flaw: Healer has Main Skill Trigger Down nature, failing to sustain team energy.'
+        ));
       } else if (!hasSkillM && !hasSkillS && nature.buffType !== 'skill') {
-        cons.push(isEN
-          ? '[!] Lacks any active Skill Trigger subskills or nature boost; healing frequency is too low for reliable team recovery.'
-          : '[!] 缺乏任何主技能發動率副技能或性格加成，發動期望偏低，無法穩定維持全隊活力。');
+        cons.push(_tLab(
+          '[!] 缺乏任何主技能發動率副技能或性格加成，發動期望偏低，無法穩定維持全隊活力。',
+          '[!] Lacks any active Skill Trigger subskills or nature boost; healing frequency is too low for reliable team recovery.'
+        ));
       }
     }
 
     const hasIngMInTotal = activeSubskills.indexOf('食材機率提升M') !== -1 || activeSubskills.indexOf('Ingredient Finder M') !== -1;
     if (hasIngMInTotal && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
-      pros.push(isEN
-        ? 'Features active "Ingredient Finder M", greatly stabilizing ingredient supply.'
-        : '具備已解鎖「食材機率提升M」，大幅提升料理食材供貨穩定度。');
+      pros.push(_tLab(
+        '具備已解鎖「食材機率提升M」，大幅提升料理食材供貨穩定度。',
+        'Features active "Ingredient Finder M", greatly stabilizing ingredient supply.'
+      ));
     }
 
     const hasSkillMInTotal = activeSubskills.indexOf('技能機率提升M') !== -1 || activeSubskills.indexOf('Skill Trigger M') !== -1;
     if (hasSkillMInTotal) {
       if (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') {
-        pros.push(isEN
-          ? 'Features active "Skill Trigger M", significantly raising main skill activation frequency.'
-          : '擁有已解鎖「技能機率提升M」，主技能發動頻率顯著提高。');
+        pros.push(_tLab(
+          '擁有已解鎖「技能機率提升M」，主技能發動頻率顯著提高。',
+          'Features active "Skill Trigger M", significantly raising main skill activation frequency.'
+        ));
       } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
         if (pkmData.main_skill && (pkmData.main_skill.includes('食材') || pkmData.main_skill.includes('Ingredient') || pkmData.main_skill.includes('怪力鉗') || pkmData.main_skill.includes('超幸運') || pkmData.main_skill.includes('禮物') || pkmData.main_skill.includes('正電') || pkmData.main_skill.includes('健美'))) {
-          pros.push(isEN
-            ? 'Unlocked "Skill Trigger M" synergizes with ingredient-fetching main skill for bonus food supplies.'
-            : '具備已解鎖「技能機率提升M」，輔助觸發食材獲取主技能，提供額外料理補給。');
+          pros.push(_tLab(
+            '具備已解鎖「技能機率提升M」，輔助觸發食材獲取主技能，提供額外料理補給。',
+            'Unlocked "Skill Trigger M" synergizes with ingredient-fetching main skill for bonus food supplies.'
+          ));
         }
       }
     }
 
     if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) {
-      pros.push(isEN
-        ? 'Features active top-tier team aura "Helping Bonus", reducing team helping time by 5%.'
-        : '具備已解鎖全隊頂級光環「幫手獎勵」，全員幫忙時間縮短 5%（相當於全隊淨產能大幅提升）。');
+      pros.push(_tLab(
+        '具備已解鎖全隊頂級光環「幫手獎勵」，全員幫忙時間縮短 5%（相當於全隊淨產能大幅提升）。',
+        'Features active top-tier team aura "Helping Bonus", reducing team helping time by 5%.'
+      ));
     }
 
     if (activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1) {
-      pros.push(isEN
-        ? 'Features active "Helping Speed M", shortening self helping interval by 14%.'
-        : '擁有已解鎖「幫忙速度M」，自身幫忙間隔縮短 14%。');
+      pros.push(_tLab(
+        '擁有已解鎖「幫忙速度M」，自身幫忙間隔縮短 14%。',
+        'Features active "Helping Speed M", shortening self helping interval by 14%.'
+      ));
     }
 
     if (skillLevel >= 6 && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
-      pros.push(isEN
-        ? `High Main Skill Level (Lv.${skillLevel}), maximizing main skill trigger output.`
-        : `主技能等級達到 Lv.${skillLevel}，技能單次發動效益已達極限。`);
+      pros.push(_tLab(
+        `主技能等級達到 Lv.${skillLevel}，技能單次發動效益已達極限。`,
+        `High Main Skill Level (Lv.${skillLevel}), maximizing main skill trigger output.`
+      ));
     }
 
     if (nature.buffType === 'speed') {
       if ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') && natureName === '固執') {
-        pros.push(isEN
-          ? 'Nature "Adamant" is the #1 God nature for Berry specialists (Speed of Help ▲ +10%, Ingredient Finding ▼ converts help cycles directly into berry output).'
-          : '性格「固執」為樹果型第一神性格（幫忙速度▲ +10%，食材發現率▼ 進一步轉化樹果產量）。');
+        pros.push(_tLab(
+          '性格「固執」為樹果型第一神性格（幫忙速度▲ +10%，食材發現率▼ 進一步轉化樹果產量）。',
+          'Nature "Adamant" is the #1 God nature for Berry specialists (Speed of Help ▲ +10%, Ingredient Finding ▼ converts help cycles directly into berry output).'
+        ));
       } else {
-        pros.push(isEN
-          ? `Nature "${natDisplayName}" provides Speed of Help ▲ (+10%), boosting all production.`
-          : '性格「' + natureName + '」帶來幫忙速度▲ (+10%)，強化所有產出判定。');
+        pros.push(_tLab(
+          `性格「${natDisplayName}」帶來幫忙速度▲ (+10%)，強化所有產出判定。`,
+          `Nature "${natDisplayName}" provides Speed of Help ▲ (+10%), boosting all production.`
+        ));
       }
     } else if (nature.debuffType === 'speed') {
-      cons.push(isEN
-        ? `[-] Nature "${natDisplayName}" reduces Speed of Help ▼ (-7.5%), severely impacting output.`
-        : '[-] 性格「' + natureName + '」幫忙速度▼ (-7.5%)，對全方位產出有顯著負面影響。');
+      cons.push(_tLab(
+        `[-] 性格「${natDisplayName}」幫忙速度▼ (-7.5%)，對全方位產出有顯著負面影響。`,
+        `[-] Nature "${natDisplayName}" reduces Speed of Help ▼ (-7.5%), severely impacting output.`
+      ));
     }
 
     if (nature.buffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
-      pros.push(isEN
-        ? `Nature "${natDisplayName}" perfectly synergizes with Ingredient specialty (Ingredient Finder ▲ +20%).`
-        : '性格「' + natureName + '」完美契合食材型專長 (食材發現率▲ +20%)。');
+      pros.push(_tLab(
+        `性格「${natDisplayName}」完美契合食材型專長 (食材發現率▲ +20%)。`,
+        `Nature "${natDisplayName}" perfectly synergizes with Ingredient specialty (Ingredient Finder ▲ +20%).`
+      ));
     } else if (nature.debuffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
-      cons.push(isEN
-        ? `[-] Nature "${natDisplayName}" reduces Ingredient Finding ▼ (-20%), severely weakening specialty advantage (disqualification flaw).`
-        : '[-] 致命缺陷：性格「' + natureName + '」導致食材發現率▼ (-20%)，產料嚴重不足，建議換糖回收。');
+      cons.push(_tLab(
+        `[-] 致命缺陷：性格「${natDisplayName}」導致食材發現率▼ (-20%)，產料嚴重不足，建議換糖回收。`,
+        `[-] Nature "${natDisplayName}" reduces Ingredient Finding ▼ (-20%), severely weakening specialty advantage (disqualification flaw).`
+      ));
     }
 
     if (nature.buffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
-      pros.push(isEN
-        ? `Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).`
-        : '性格「' + natureName + '」完美契合技能型專長 (主技能發動率▲ +20%)。');
+      pros.push(_tLab(
+        `性格「${natDisplayName}」完美契合技能型專長 (主技能發動率▲ +20%)。`,
+        `Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).`
+      ));
     } else if (nature.debuffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
-      cons.push(isEN
-        ? `[-] Nature "${natDisplayName}" reduces Main Skill Trigger ▼ (-20%), severely crippling skill output.`
-        : '[-] 致命缺陷：性格「' + natureName + '」導致主技能發動率▼ (-20%)，嚴重閹割核心發動頻率。');
+      cons.push(_tLab(
+        `[-] 致命缺陷：性格「${natDisplayName}」導致主技能發動率▼ (-20%)，嚴重閹割核心發動頻率。`,
+        `[-] Nature "${natDisplayName}" reduces Main Skill Trigger ▼ (-20%), severely crippling skill output.`
+      ));
     }
 
     if (isMint) {
-      pros.push(isEN
-        ? `Cleanse Mint used: original nature "${natDisplayName}" neutralized to standard baseline.`
-        : `已使用淨白薄荷：原性格「${natDisplayName}」個性效果已被中和消除。`);
+      pros.push(_tLab(
+        `已使用淨白薄荷：原性格「${natDisplayName}」個性效果已被中和消除。`,
+        `Cleanse Mint used: original nature "${natDisplayName}" neutralized to standard baseline.`
+      ));
     }
 
     if (ribbonBonus.level > 0) {
       const carryText = `+${ribbonBonus.carry}`;
       if (ribbonBonus.speedDiscount > 0) {
         const pctText = `${Math.round(ribbonBonus.speedDiscount * 100)}%`;
-        pros.push(isEN
-          ? `[Ribbon Lv.${ribbonBonus.level}] Helping interval shortened by ${pctText}, carry capacity increased by ${carryText}.`
-          : `[睡飽飽獎章 Lv.${ribbonBonus.level}] 幫忙間隔縮短 ${pctText}，持有上限增加 ${carryText}。`);
+        pros.push(_tLab(
+          `[睡飽飽獎章 Lv.${ribbonBonus.level}] 幫忙間隔縮短 ${pctText}，持有上限增加 ${carryText}。`,
+          `[Ribbon Lv.${ribbonBonus.level}] Helping interval shortened by ${pctText}, carry capacity increased by ${carryText}.`
+        ));
       } else {
-        pros.push(isEN
-          ? `[Ribbon Lv.${ribbonBonus.level}] Carry capacity increased by ${carryText}${remainingEvos === 0 ? ' (fully evolved/single-stage, no speed reduction)' : ''}.`
-          : `[睡飽飽獎章 Lv.${ribbonBonus.level}] 持有上限增加 ${carryText}${remainingEvos === 0 ? '（最終形態/無進化型態無速度縮短）' : ''}。`);
+        pros.push(_tLab(
+          `[睡飽飽獎章 Lv.${ribbonBonus.level}] 持有上限增加 ${carryText}${remainingEvos === 0 ? '（最終形態/無進化型態無速度縮短）' : ''}。`,
+          `[Ribbon Lv.${ribbonBonus.level}] Carry capacity increased by ${carryText}${remainingEvos === 0 ? ' (fully evolved/single-stage, no speed reduction)' : ''}.`
+        ));
       }
     }
 
@@ -730,17 +759,20 @@
         const i0 = ingredients[0], i1 = ingredients[1], i2 = ingredients[2];
         if (i0 && i1 && i2) {
           if (i0 === i1 && i1 === i2) {
-            pros.push(isEN
-              ? 'Pure mono-ingredient (AAA) configuration, maximizing targeted ingredient yield for top recipes.'
-              : '具備極品純色 AAA 食材配置，特定食材產量高度集中，為頂級食材專精配置。');
+            pros.push(_tLab(
+              '具備極品純色 AAA 食材配置，特定食材產量高度集中，為頂級食材專精配置。',
+              'Pure mono-ingredient (AAA) configuration, maximizing targeted ingredient yield for top recipes.'
+            ));
           } else if (i0 !== i1 && i1 === i2) {
-            pros.push(isEN
-              ? 'Dual-ingredient (ABB) configuration, excellent mid-to-late game specialized output.'
-              : '具備強勢 ABB 雙色食材配置，二階與三階食材量產能力卓越。');
+            pros.push(_tLab(
+              '具備強勢 ABB 雙色食材配置，二階與三階食材量產能力卓越。',
+              'Dual-ingredient (ABB) configuration, excellent mid-to-late game specialized output.'
+            ));
           } else if (i0 !== i1 && i1 !== i2 && i0 !== i2) {
-            cons.push(isEN
-              ? '[-] Split-ingredient (ABC) configuration, recipe ingredient dilution caps overall potential.'
-              : '[-] 三格食材分散 (ABC 雜菜配置)，產出種類嚴重稀釋難以穩定供應主力食譜，評級上限受限於A級。');
+            cons.push(_tLab(
+              '[-] 三格食材分散 (ABC 雜菜配置)，產出種類嚴重稀釋難以穩定供應主力食譜，評級上限受限於A級。',
+              '[-] Split-ingredient (ABC) configuration, recipe ingredient dilution caps overall potential.'
+            ));
           }
         }
       }
@@ -748,71 +780,81 @@
 
     // 持有上限防溢滿診斷
     if (activeSubskills.indexOf('持有上限提升L') !== -1 || activeSubskills.indexOf('持有上限提升M') !== -1) {
-      pros.push(isEN
-        ? 'Active Inventory Up subskill prevents overnight inventory capping, sustaining ingredient and skill production.'
-        : '具備已解鎖「持有上限提升」，大幅延長離線/睡眠產出時間，避免背包溢滿阻斷食材與技能。');
+      pros.push(_tLab(
+        '具備已解鎖「持有上限提升」，大幅延長離線/睡眠產出時間，避免背包溢滿阻斷食材與技能。',
+        'Active Inventory Up subskill prevents overnight inventory capping, sustaining ingredient and skill production.'
+      ));
     }
 
     // 樹果遽增型特殊診斷 (未帶 BFS 時)
     if (isBerryBurst && !hasBFSInTotal) {
-      pros.push(isEN
-        ? 'Berry Burst Specialist: Main skill detonates instant berry energy for Snorlax (and copies teammate berries); 1.4x boosted during Buncha Berries events.'
-        : '樹果遽增戰略型：主技能發動直接為卡比獸爆發樹果能量（並隨機獲取隊友樹果）；果實纍纍樹果週享有 1.4 倍加成！');
+      pros.push(_tLab(
+        '樹果遽增戰略型：主技能發動直接為卡比獸爆發樹果能量（並隨機獲取隊友樹果）；果實纍纍樹果週享有 1.4 倍加成！',
+        'Berry Burst Specialist: Main skill detonates instant berry energy for Snorlax (and copies teammate berries); 1.4x boosted during Buncha Berries events.'
+      ));
     }
 
     // 充能直傷型特殊診斷 (未帶 BFS 時)
     if (isCharge && !hasBFSInTotal) {
-      pros.push(isEN
-        ? 'High-Frequency Direct Charge: Pure skill build consistently fires Charge Strength throughout the day without inventory overflow risks.'
-        : '高頻單兵充能直傷：正統純技能流派，全天穩定發動能量填充，無背包過早滿包阻斷技能之顧慮。');
+      pros.push(_tLab(
+        '高頻單兵充能直傷：正統純技能流派，全天穩定發動能量填充，無背包過早滿包阻斷技能之顧慮。',
+        'High-Frequency Direct Charge: Pure skill build consistently fires Charge Strength throughout the day without inventory overflow risks.'
+      ));
     }
 
     // 傳說神獸特殊診斷
     if (isLegendary) {
-      pros.push(isEN
-        ? 'Legendary / Mythical Pokemon with signature mechanics, high base helping output and indispensable mono-type or domain tactical value.'
-        : '傳說/幻之寶可夢專屬機制：素質基礎高，在特定同屬性純色隊或領域戰術中具備無可替代的戰略地位。');
+      pros.push(_tLab(
+        '傳說/幻之寶可夢專屬機制：素質基礎高，在特定同屬性純色隊或領域戰術中具備無可替代的戰略地位。',
+        'Legendary / Mythical Pokemon with signature mechanics, high base helping output and indispensable mono-type or domain tactical value.'
+      ));
     }
 
     // 料理大成功 (咚咚鼠)
     if (isExtraTasty) {
-      pros.push(isEN
-        ? 'Extra Tasty Specialist: Stacks dish critical success chance, tailor-made for exploding weekend master recipes.'
-        : '料理大成功戰術手：疊加料理美味機率，專為週末大餐爆擊（數十萬能量突破）而生的高階戰略組件。');
+      pros.push(_tLab(
+        '料理大成功戰術手：疊加料理美味機率，專為週末大餐爆擊（數十萬能量突破）而生的高階戰術組件。',
+        'Extra Tasty Specialist: Stacks dish critical success chance, tailor-made for exploding weekend master recipes.'
+      ));
     }
 
     // 料理擴鍋 (自爆磁怪)
     if (isPotExpander) {
-      pros.push(isEN
-        ? 'Cooking Power Up Specialist: Expands pot capacity to cook limit-breaking high-tier recipes.'
-        : '料理擴鍋戰術手：突破鍋子容量上限，烹調極限大菜（如彈跳咖哩烏龍麵、採蜜巧克力格子鬆餅等大型食譜）不可或缺的擴容手。');
+      pros.push(_tLab(
+        '料理擴鍋戰術手：突破鍋子容量上限，烹調極限大菜（如彈跳咖哩烏龍麵、採蜜巧克力格子鬆餅等大型食譜）不可或缺的擴容手。',
+        'Cooking Power Up Specialist: Expands pot capacity to cook limit-breaking high-tier recipes.'
+      ));
     }
 
     // 夢之碎片 (路卡利歐)
     if (isDreamShard) {
-      pros.push(isEN
-        ? 'Dream Shard Farmer: High shard acquisition yield, essential for Candy Boost weeks and late-game leveling.'
-        : '夢之碎片收割手：高效獲取夢之碎片，為糖果強化週與後期高昂養成成本提供源源不絕的資金。');
+      pros.push(_tLab(
+        '夢之碎片收割手：高效獲取夢之碎片，為糖果強化週與後期高昂養成成本提供源源不絕的資金。',
+        'Dream Shard Farmer: High shard acquisition yield, essential for Candy Boost weeks and late-game leveling.'
+      ));
     }
 
     // 食材獲取 (水伊布)
     if (isIngSkill) {
-      pros.push(isEN
-        ? 'Ingredient Stockpile Specialist: Rapidly restocks ingredient inventory to resolve cooking shortages.'
-        : '應急食材庫存手：能高頻補充隨機食材庫存，化解大菜料理缺料危機。');
+      pros.push(_tLab(
+        '應急食材庫存手：能高頻補充隨機食材庫存，化解大菜料理缺料危機。',
+        'Ingredient Stockpile Specialist: Rapidly restocks ingredient inventory to resolve cooking shortages.'
+      ));
     }
 
     // 揮指隨機戰術 (波克基斯)
     if (isMetronome) {
-      pros.push(isEN
-        ? 'Metronome Specialist: Triggers unpredictable random skills with unmatched fun and high lucky ceilings.'
-        : '隨機揮指戰術手：能隨機發動全遊戲主技能，具備極高趣味性與驚喜爆發上限。');
+      pros.push(_tLab(
+        '隨機揮指戰術手：能隨機發動全遊戲主技能，具備極高趣味性與驚喜爆發上限。',
+        'Metronome Specialist: Triggers unpredictable random skills with unmatched fun and high lucky ceilings.'
+      ));
     }
 
     if (pros.length === 0) {
-      pros.push(isEN
-        ? 'Basic stats, suitable as a temporary placeholder.'
-        : '數值平庸，適合作為過渡期日常隊伍替補成員。');
+      pros.push(_tLab(
+        '數值平庸，適合作為過渡期日常隊伍替補成員。',
+        'Basic stats, suitable as a temporary placeholder.'
+      ));
     }
 
     // 升級消耗計算

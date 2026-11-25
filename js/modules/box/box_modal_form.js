@@ -119,8 +119,6 @@
     const ribbonSelect = document.getElementById('modal-poke-ribbon');
     if (!ribbonSelect) return;
 
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-
     // 計算剩餘進化次數
     let remainingEvos = 0;
     if (p) {
@@ -139,30 +137,30 @@
 
     const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
     let opt2Text = '';
-    let opt3Text = isEN ? '1000 hrs (+6 Carry Limit)' : '1000 小時 (+6 持有上限)';
+    let opt3Text = _tBox('1000 小時 (+6 持有上限)', '1000 hrs (+6 Carry Limit)');
     let opt4Text = '';
 
     if (!p) {
       // 未選擇寶可夢時的通用預設文案
-      opt2Text = isEN ? '500 hrs (+3 Carry Limit · Speed Boost)' : '500 小時 (+3 持有上限 · 幫速加成)';
-      opt4Text = isEN ? '2000 hrs (+8 Carry Limit · Max Speed Boost)' : '2000 小時 (+8 持有上限 · 幫速最大加成)';
+      opt2Text = _tBox('500 小時 (+3 持有上限 · 幫速加成)', '500 hrs (+3 Carry Limit · Speed Boost)');
+      opt4Text = _tBox('2000 小時 (+8 持有上限 · 幫速最大加成)', '2000 hrs (+8 Carry Limit · Max Speed Boost)');
     } else if (remainingEvos === 2) {
       // 尚可進化 2 次 (例如：小火龍、小貓怪、皮丘)
-      opt2Text = isEN ? '500 hrs (+3 Carry Limit · Speed -11%)' : '500 小時 (+3 持有上限 · 幫速加成 -11%)';
-      opt4Text = isEN ? '2000 hrs (+8 Carry Limit · Speed -25%)' : '2000 小時 (+8 持有上限 · 幫速最大加成 -25%)';
+      opt2Text = _tBox('500 小時 (+3 持有上限 · 幫速加成 -11%)', '500 hrs (+3 Carry Limit · Speed -11%)');
+      opt4Text = _tBox('2000 小時 (+8 持有上限 · 幫速最大加成 -25%)', '2000 hrs (+8 Carry Limit · Speed -25%)');
     } else if (remainingEvos === 1) {
       // 尚可進化 1 次 (例如：火恐龍、勒克貓、皮卡丘、伊布)
-      opt2Text = isEN ? '500 hrs (+3 Carry Limit · Speed -5%)' : '500 小時 (+3 持有上限 · 幫速加成 -5%)';
-      opt4Text = isEN ? '2000 hrs (+8 Carry Limit · Speed -12%)' : '2000 小時 (+8 持有上限 · 幫速最大加成 -12%)';
+      opt2Text = _tBox('500 小時 (+3 持有上限 · 幫速加成 -5%)', '500 hrs (+3 Carry Limit · Speed -5%)');
+      opt4Text = _tBox('2000 小時 (+8 持有上限 · 幫速最大加成 -12%)', '2000 hrs (+8 Carry Limit · Speed -12%)');
     } else {
       // 最終進化形或無法進化的寶可夢 (例如：噴火龍、倫琴貓、凱羅斯) -> 無幫速加成
-      opt2Text = isEN ? '500 hrs (+3 Carry Limit)' : '500 小時 (+3 持有上限)';
-      opt4Text = isEN ? '2000 hrs (+8 Carry Limit)' : '2000 小時 (+8 持有上限)';
+      opt2Text = _tBox('500 小時 (+3 持有上限)', '500 hrs (+3 Carry Limit)');
+      opt4Text = _tBox('2000 小時 (+8 持有上限)', '2000 hrs (+8 Carry Limit)');
     }
 
     const optionsData = [
-      { val: '0', text: isEN ? 'None (0h)' : '未佩戴 (0h)', icon: '' },
-      { val: '1', text: isEN ? '200 hrs (+1 Carry Limit)' : '200 小時 (+1 持有上限)', icon: `${base}assets/ribbons/ribbon_lv1.png` },
+      { val: '0', text: _tBox('未佩戴 (0h)', 'None (0h)'), icon: '' },
+      { val: '1', text: _tBox('200 小時 (+1 持有上限)', '200 hrs (+1 Carry Limit)'), icon: `${base}assets/ribbons/ribbon_lv1.png` },
       { val: '2', text: opt2Text, icon: `${base}assets/ribbons/ribbon_lv2.png` },
       { val: '3', text: opt3Text, icon: `${base}assets/ribbons/ribbon_lv3.png` },
       { val: '4', text: opt4Text, icon: `${base}assets/ribbons/ribbon_lv4.png` }
@@ -356,7 +354,6 @@
 
   /* ─── 寶可夢名稱 Combobox 搜尋選擇器 ───────────────────────── */
   function initPokemonCombobox(existingItem = null) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const searchInput = document.getElementById('modal-poke-search');
     const nameHidden = document.getElementById('modal-poke-name');
     const dropdown = document.getElementById('box-pkm-dropdown');
@@ -371,12 +368,12 @@
       const hasText = !!(searchInput.value && searchInput.value.trim().length > 0);
       if (hasText) {
         toggleBtn.innerHTML = CLEAR_ICON;
-        toggleBtn.title = isEN ? 'Clear selection' : '清除已選寶可夢';
-        toggleBtn.setAttribute('aria-label', isEN ? 'Clear selection' : '清除已選寶可夢');
+        toggleBtn.title = _tBox('清除已選寶可夢', 'Clear selection');
+        toggleBtn.setAttribute('aria-label', _tBox('清除已選寶可夢', 'Clear selection'));
       } else {
         toggleBtn.innerHTML = CHEVRON_ICON;
-        toggleBtn.title = isEN ? 'Expand list' : '展開寶可夢列表';
-        toggleBtn.setAttribute('aria-label', isEN ? 'Expand list' : '展開寶可夢列表');
+        toggleBtn.title = _tBox('展開寶可夢列表', 'Expand list');
+        toggleBtn.setAttribute('aria-label', _tBox('展開寶可夢列表', 'Expand list'));
       }
     }
 
@@ -447,13 +444,15 @@
 
     function renderFilteredItems(items) {
       if (items.length === 0) {
-        dropdown.innerHTML = `<div class="text-muted" style="padding: 12px; text-align: center; font-size: 12px;">${isEN ? 'No matching Pokémon' : '找不到符合之寶可夢'}</div>`;
+        dropdown.innerHTML = `<div class="text-muted" style="padding: 12px; text-align: center; font-size: 12px;">${_tBox('找不到符合之寶可夢', 'No matching Pokémon')}</div>`;
         dropdown.style.display = 'block';
         return;
       }
 
       dropdown.innerHTML = items.map(p => {
-        const pkmDisplayName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
+        const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+          ? window.I18N.getPokemonName(p)
+          : _tBox(p.name_cn, p.name_en || p.name_cn);
         const isSelected = nameHidden.value === p.name_cn;
         const avatarUrl = p.icon_url || p.icon || (p.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png` : '') || 'assets/placeholder.svg';
 
@@ -491,7 +490,9 @@
       if (p) {
         const avatarUrl = p.icon_url || p.icon || (p.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png` : '') || POKEBALL_PLACEHOLDER_SVG;
         avatarImg.src = avatarUrl;
-        avatarImg.alt = p.name_cn || 'Pokémon';
+        avatarImg.alt = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+          ? window.I18N.getPokemonName(p)
+          : (_tBox(p.name_cn, p.name_en || p.name_cn) || 'Pokémon');
         avatarImg.onerror = () => {
           avatarImg.src = POKEBALL_PLACEHOLDER_SVG;
         };
@@ -504,7 +505,9 @@
     function selectPokemonInCombobox(p, userChanged = false, existing = null) {
       if (!p) return;
       nameHidden.value = p.name_cn;
-      const pkmDisplayName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
+      const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+        ? window.I18N.getPokemonName(p)
+        : _tBox(p.name_cn, p.name_en || p.name_cn);
       searchInput.value = `No.${p.formatted_no} ${pkmDisplayName}`;
       dropdown.style.display = 'none';
       updateSelectedPokemonAvatar(p);
@@ -591,7 +594,6 @@
 
   /* ─── 解鎖食材組合平鋪選擇器 (符合官方解鎖規則：Lv.1=A, Lv.30=A/B, Lv.60=A/B/C) ── */
   function renderTiledIngredientPickers(basePkm, existingItem = null) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const slots = [
       { key: 'ing1', level: 1, containerId: 'modal-ing-options-1' },
       { key: 'ing2', level: 30, containerId: 'modal-ing-options-2' },
@@ -684,7 +686,6 @@
   /* ─── 單行 5 階副技能插槽 + 平鋪副技能選擇盤 ──────────────────── */
   function initSubskillFlowPicker(initialSubskills = []) {
     activeSubskillSlot = 1;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
     for (let slot = 1; slot <= 5; slot++) {
       const hiddenInput = document.getElementById(`modal-subskill-${slot}`);
@@ -714,11 +715,11 @@
         if (valBadge) {
           if (!curVal) {
             valBadge.className = 'slot-val-badge slot-val-empty';
-            valBadge.textContent = isEN ? '-- None --' : '-- 未解鎖 --';
+            valBadge.textContent = _tBox('-- 未解鎖 --', '-- None --');
           } else {
             const sk = SUBSKILLS_DATA.find(s => s.name === curVal);
             const tier = sk ? sk.tier : 'white';
-            const skDisplayName = window.I18N ? window.I18N.getSubSkillName(curVal) : curVal;
+            const skDisplayName = window.I18N ? window.I18N.getSubSkillName(curVal) : _tBox(curVal);
             valBadge.className = `slot-val-badge box-subskill-pill subskill-${tier}`;
             valBadge.textContent = skDisplayName;
           }
@@ -739,10 +740,10 @@
 
         const skillsInTier = SUBSKILLS_DATA.filter(s => s.tier === tier);
         container.innerHTML = skillsInTier.map(sk => {
-          const skDisplayName = window.I18N ? window.I18N.getSubSkillName(sk.name) : sk.name;
+          const skDisplayName = window.I18N ? window.I18N.getSubSkillName(sk.name) : _tBox(sk.name, sk.name_en);
           const isUsed = usedSkills.has(sk.name);
           return `
-            <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" ${isUsed ? 'disabled' : ''} title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Already Selected)' : '（已選用）') : ''}">
+            <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" ${isUsed ? 'disabled' : ''} title="${escapeHtml(skDisplayName)}${isUsed ? _tBox('（已選用）', ' (Already Selected)') : ''}">
               <span>${escapeHtml(skDisplayName)}</span>
               ${isUsed ? '<span style="font-size:10px;opacity:0.8;">[v]</span>' : ''}
             </button>

@@ -131,7 +131,7 @@
     const subskills = pkm.subskills || [];
 
     const isMint = !!(pkm && (pkm.cleanseMint || pkm.mint));
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+    const currentLang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
     const lab = (typeof window !== 'undefined' && window.AppraisalLab) || (typeof AppraisalLab !== 'undefined' ? AppraisalLab : null);
     const hasLab = !!(lab && typeof lab.evaluatePokemon === 'function' && base);
 
@@ -144,7 +144,7 @@
       ':' + (pkm.ribbon || 0) +
       ':' + (pkm.skillLevel || pkm.mainSkillLevel || '') +
       ':' + (isMint ? 1 : 0) +
-      ':' + (isEN ? 'en' : 'zh') +
+      ':' + currentLang +
       ':' + (hasLab ? 1 : 0);
 
     if (_boxPrCache[prCacheKey]) {
@@ -171,10 +171,10 @@
 
       if (isSpeedDown && !hasEarlyBFS && !hasEarlyHB) {
         passedBaseline = false;
-        baselineFailReason = isEN ? 'Speed down nature without BFS / HB to compensate' : '性格減慢幫忙速度，未達樹果手及格線（且前三格無樹果S/幫手獎勵補救）';
+        baselineFailReason = _tBox('性格減慢幫忙速度，未達樹果手及格線（且前三格無樹果S/幫手獎勵補救）', 'Speed down nature without BFS / HB to compensate');
       } else if (!hasEarlyBFS && !hasEarlyHB && !hasEarlySpeedM && !isSpeedUp) {
         passedBaseline = false;
-        baselineFailReason = isEN ? 'Lacks BFS or speed boost in first 3 slots' : '前三格缺乏樹果S/速度加成，未達樹果手及格線';
+        baselineFailReason = _tBox('前三格缺乏樹果S/速度加成，未達樹果手及格線', 'Lacks BFS or speed boost in first 3 slots');
       }
     } else if (specialty === '食材') {
       const hasEarlyIngM = earlySubskills.includes('食材機率提升M');
@@ -185,10 +185,10 @@
 
       if (isIngDown && !hasEarlyIngM) {
         passedBaseline = false;
-        baselineFailReason = isEN ? 'Ingredient down nature without Ingredient Finder M' : '性格減少食材機率，未達食材手及格線';
+        baselineFailReason = _tBox('性格減少食材機率，未達食材手及格線', 'Ingredient down nature without Ingredient Finder M');
       } else if (!hasEarlyIngM && !hasEarlyIngS && !hasEarlyHB && !isIngUp) {
         passedBaseline = false;
-        baselineFailReason = isEN ? 'Lacks ingredient finder boost in first 3 slots' : '缺乏食材機率加成，未達食材手及格線';
+        baselineFailReason = _tBox('缺乏食材機率加成，未達食材手及格線', 'Lacks ingredient finder boost in first 3 slots');
       }
     } else { // 技能型
       const hasEarlySkillM = earlySubskills.includes('技能機率提升M');
@@ -200,10 +200,10 @@
 
       if (isSkillDown && !hasEarlySkillM) {
         passedBaseline = false;
-        baselineFailReason = isEN ? 'Skill down nature without Skill Trigger M' : '性格減少主技能機率，未達技能手及格線';
+        baselineFailReason = _tBox('性格減少主技能機率，未達技能手及格線', 'Skill down nature without Skill Trigger M');
       } else if (!hasEarlySkillM && !hasEarlySkillS && !hasEarlySkillLvlM && !hasEarlyHB && !isSkillUp) {
         passedBaseline = false;
-        baselineFailReason = isEN ? 'Lacks skill trigger boost in first 3 slots' : '缺乏技能發動率加成，未達技能手及格線';
+        baselineFailReason = _tBox('缺乏技能發動率加成，未達技能手及格線', 'Lacks skill trigger boost in first 3 slots');
       }
     }
 
@@ -234,19 +234,19 @@
 
     // 1. 性格評分
     if (specialty === '樹果') {
-      if (buff === 'speed') { score += 25; highlights.push(isEN ? 'Speed ▲' : '幫忙速度▲'); }
+      if (buff === 'speed') { score += 25; highlights.push(_tBox('幫忙速度▲', 'Speed ▲')); }
       if (debuff === 'speed') { score -= 25; }
-      if (debuff === 'ingredient') { score += 12; highlights.push(isEN ? 'Ing. ▼ (Pure Berry)' : '食材▼ (樹果極限流)'); }
+      if (debuff === 'ingredient') { score += 12; highlights.push(_tBox('食材▼ (樹果極限流)', 'Ing. ▼ (Pure Berry)')); }
       if (buff === 'ingredient') { score -= 6; }
     } else if (specialty === '食材') {
-      if (buff === 'ingredient') { score += 28; highlights.push(isEN ? 'Ing. Rate ▲' : '食材機率▲'); }
+      if (buff === 'ingredient') { score += 28; highlights.push(_tBox('食材機率▲', 'Ing. Rate ▲')); }
       if (debuff === 'ingredient') { score -= 28; }
-      if (buff === 'speed') { score += 16; highlights.push(isEN ? 'Speed ▲' : '幫忙速度▲'); }
+      if (buff === 'speed') { score += 16; highlights.push(_tBox('幫忙速度▲', 'Speed ▲')); }
       if (debuff === 'speed') { score -= 16; }
     } else { // 技能
-      if (buff === 'skill') { score += 30; highlights.push(isEN ? 'Skill Trigger ▲' : '主技能機率▲'); }
+      if (buff === 'skill') { score += 30; highlights.push(_tBox('主技能機率▲', 'Skill Trigger ▲')); }
       if (debuff === 'skill') { score -= 30; }
-      if (buff === 'speed') { score += 15; highlights.push(isEN ? 'Speed ▲' : '幫忙速度▲'); }
+      if (buff === 'speed') { score += 15; highlights.push(_tBox('幫忙速度▲', 'Speed ▲')); }
       if (debuff === 'speed') { score -= 15; }
     }
 
@@ -261,28 +261,28 @@
 
       if (skName === '樹果數量S') {
         skScore = specialty === '樹果' ? 100 : 40;
-        highlights.push(isEN ? `Lv.${lvl} BFS` : `Lv.${lvl} 樹果S`);
+        highlights.push(_tBox(`Lv.${lvl} 樹果S`, `Lv.${lvl} BFS`));
       } else if (skName === '幫手獎勵') {
         skScore = 65;
-        highlights.push(isEN ? `Lv.${lvl} Helping Bonus` : `Lv.${lvl} 幫手獎勵`);
+        highlights.push(_tBox(`Lv.${lvl} 幫手獎勵`, `Lv.${lvl} Helping Bonus`));
       } else if (skName === '食材機率提升M') {
         skScore = specialty === '食材' ? 85 : 20;
-        if (specialty === '食材') highlights.push(isEN ? `Lv.${lvl} Ing. Finder M` : `Lv.${lvl} 食材機率M`);
+        if (specialty === '食材') highlights.push(_tBox(`Lv.${lvl} 食材機率M`, `Lv.${lvl} Ing. Finder M`));
       } else if (skName === '食材機率提升S') {
         skScore = specialty === '食材' ? 45 : 10;
       } else if (skName === '技能機率提升M') {
         skScore = specialty === '技能' ? 85 : 20;
-        if (specialty === '技能') highlights.push(isEN ? `Lv.${lvl} Skill Trigger M` : `Lv.${lvl} 技能機率M`);
+        if (specialty === '技能') highlights.push(_tBox(`Lv.${lvl} 技能機率M`, `Lv.${lvl} Skill Trigger M`));
       } else if (skName === '技能機率提升S') {
         skScore = specialty === '技能' ? 45 : 10;
       } else if (skName === '技能等級提升M') {
         skScore = specialty === '技能' ? 60 : 15;
-        if (specialty === '技能') highlights.push(isEN ? `Lv.${lvl} Skill Level M` : `Lv.${lvl} 技能等級M`);
+        if (specialty === '技能') highlights.push(_tBox(`Lv.${lvl} 技能等級M`, `Lv.${lvl} Skill Level M`));
       } else if (skName === '技能等級提升S') {
         skScore = specialty === '技能' ? 30 : 10;
       } else if (skName === '幫忙速度M') {
         skScore = 50;
-        highlights.push(isEN ? `Lv.${lvl} Speed M` : `Lv.${lvl} 幫忙速度M`);
+        highlights.push(_tBox(`Lv.${lvl} 幫忙速度M`, `Lv.${lvl} Speed M`));
       } else if (skName === '幫忙速度S') {
         skScore = 25;
       } else if (skName === '持有上限提升L') {
@@ -312,15 +312,15 @@
       
       if (ribbonBonus.speedDiscount > 0) {
         score += Math.round(ribbonBonus.speedDiscount * 25);
-        highlights.push(isEN ? `Ribbon -${Math.round(ribbonBonus.speedDiscount * 100)}% Speed` : `獎章幫速 -${Math.round(ribbonBonus.speedDiscount * 100)}%`);
+        highlights.push(_tBox(`獎章幫速 -${Math.round(ribbonBonus.speedDiscount * 100)}%`, `Ribbon -${Math.round(ribbonBonus.speedDiscount * 100)}% Speed`));
       } else {
         score += ribbonBonus.carry * 0.8;
-        highlights.push(isEN ? `Ribbon +${ribbonBonus.carry} Carry` : `獎章持有 +${ribbonBonus.carry}`);
+        highlights.push(_tBox(`獎章持有 +${ribbonBonus.carry}`, `Ribbon +${ribbonBonus.carry} Carry`));
       }
     }
 
     if (isMint) {
-      highlights.push(isEN ? 'Cleanse Mint: Neutralized Nature Effects' : '使用淨白薄荷消除個性效果');
+      highlights.push(_tBox('使用淨白薄荷消除個性效果', 'Cleanse Mint: Neutralized Nature Effects'));
     }
 
     // 3. 正規化至 PR 百分位數 [50 ~ 100] (及格線以上個體)
@@ -391,7 +391,7 @@
     } else if (highlights.length > 0) {
       summaryNote = highlights.slice(0, 3).join(' · ');
     } else {
-      summaryNote = isEN ? 'Solid baseline starter' : '及格主力，基礎能力扎實';
+      summaryNote = _tBox('及格主力，基礎能力扎實', 'Solid baseline starter');
     }
 
     const finalRes = {
@@ -554,9 +554,12 @@
 
       const getPkmName = (p) => {
         if (!p) return '';
+        if (p.nickname) return p.nickname;
         const base = findPokemonBase(p.pokemonId || p.name);
-        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-        return p.nickname || (base ? (isEN ? (base.name_en || base.name_cn) : (base.name_cn || base.name_en)) : p.name) || '';
+        if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function') {
+          return base ? window.I18N.getPokemonName(base) : window.I18N.getPokemonName(p.name || '');
+        }
+        return _tBox(base ? (base.name_cn || base.name_en) : p.name, base ? (base.name_en || base.name_cn) : p.name) || '';
       };
 
       const getPkmSpecialty = (p) => {
@@ -675,7 +678,6 @@
       toolbarControlRow = document.querySelector('#panel-box .box-toolbar-control-row, #view-box .box-toolbar-control-row') || document.querySelector('.box-toolbar-control-row');
     }
     const toggleGuideBtn = document.getElementById('box-toggle-guide-btn');
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
     // On desktop, dropzone is div.box-dropzone; on mobile H5, it is button.box-fab-scan
     const isDesktopDropzone = dropzone && !dropzone.classList.contains('box-fab-btn');
@@ -691,8 +693,8 @@
       if (toggleGuideBtn) {
         toggleGuideBtn.style.display = '';
         toggleGuideBtn.textContent = showGuide
-          ? (isEN ? 'Hide Guide' : '收合指引')
-          : (isEN ? 'Screenshot Guide' : '截圖拖曳與指引');
+          ? _tBox('收合指引', 'Hide Guide')
+          : _tBox('截圖拖曳與指引', 'Screenshot Guide');
       }
       if (searchFilterRow) searchFilterRow.style.display = '';
       if (toolbarControlRow) toolbarControlRow.style.display = '';

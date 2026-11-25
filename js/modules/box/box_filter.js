@@ -331,12 +331,11 @@
     const container = document.getElementById('box-berry-filter-tags');
     if (!container) return;
     const clearBtn = document.getElementById('box-clear-berries-btn');
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
     const berryData = getBerryData();
     container.innerHTML = berryData.map(b => {
       const isActive = boxSelectedBerries.has(b.name);
-      const berryName = typeof window !== 'undefined' && window.I18N ? window.I18N.getBerryName(b.name) : b.name;
-      const typeName = isEN && typeof window !== 'undefined' && window.I18N ? window.I18N.getTypeName(b.type) : b.type;
+      const berryName = typeof window !== 'undefined' && window.I18N ? window.I18N.getBerryName(b.name) : _tBox(b.name);
+      const typeName = typeof window !== 'undefined' && window.I18N ? window.I18N.getTypeName(b.type) : _tBox(b.type);
       return `
         <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${berryName} (${typeName})" aria-label="${berryName}">
           ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" alt="${berryName}" loading="lazy" onerror="this.style.display='none';">` : ''}
@@ -379,8 +378,12 @@
     const baseSkills = getBaseSkills();
     container.innerHTML = baseSkills.map(skillItem => {
       const isActive = boxSelectedSkills.has(skillItem.key);
-      const label = isEN ? (skillItem.label_en || (typeof window !== 'undefined' && window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label)) : (typeof window !== 'undefined' && window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label);
-      const fullTitle = isEN ? (typeof window !== 'undefined' && window.I18N ? window.I18N.getMainSkillName(skillItem.key) : skillItem.label) : skillItem.label;
+      const label = isEN
+        ? (skillItem.label_en || (typeof window !== 'undefined' && window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label))
+        : _tBox(skillItem.label, skillItem.label_en);
+      const fullTitle = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function')
+        ? window.I18N.getMainSkillName(skillItem.key || skillItem.label)
+        : _tBox(skillItem.label, skillItem.label_en);
       return `
         <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${fullTitle}">
           <span class="subfilter-skill-name">${label}</span>
@@ -432,7 +435,7 @@
       if (bookmarkHandle) {
         bookmarkHandle.classList.remove('drawer-open');
         bookmarkHandle.setAttribute('aria-expanded', 'false');
-        bookmarkHandle.title = '展開篩選側邊欄';
+        bookmarkHandle.title = _tBox('展開篩選側邊欄', 'Expand Filter Sidebar');
         bookmarkHandle.style.removeProperty('display');
         bookmarkHandle.style.removeProperty('opacity');
         bookmarkHandle.style.removeProperty('visibility');
@@ -454,7 +457,7 @@
       if (bookmarkHandle) {
         bookmarkHandle.classList.add('drawer-open');
         bookmarkHandle.setAttribute('aria-expanded', 'true');
-        bookmarkHandle.title = '收合篩選側邊欄';
+        bookmarkHandle.title = _tBox('收合篩選側邊欄', 'Collapse Filter Sidebar');
         bookmarkHandle.style.removeProperty('display');
         bookmarkHandle.style.removeProperty('opacity');
         bookmarkHandle.style.removeProperty('visibility');
@@ -490,7 +493,6 @@
       }
     }
 
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
     const escapeText = (s) => (s ? String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : '');
     bar.innerHTML = BOX_QUICK_FILTERS.map(qf => {
       let isActive = false;
@@ -498,7 +500,7 @@
       else if (qf.type === 'ribbon') isActive = boxRibbonOnly;
       else if (qf.type === 'subskill') isActive = boxSelectedKeySubskills.has(qf.subskill);
 
-      const label = isEN ? qf.label_en : qf.label;
+      const label = _tBox(qf.label, qf.label_en);
       return `<button type="button" class="box-quick-chip ${isActive ? 'active' : ''}" data-qf-id="${qf.id}">${escapeText(label)}</button>`;
     }).join('');
 

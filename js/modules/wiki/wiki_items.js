@@ -234,67 +234,67 @@
 
     // Biscuits
     if (id === 'poke_biscuit') {
-      return { val: '+1', unit: isEN ? 'pt' : '格', lbl: isEN ? 'Friendship' : (isCN ? '友好度' : '友好度'), type: 'biscuit' };
+      return { val: '+1', unit: _tWiki('格', 'pt'), lbl: _tWiki('友好度', 'Friendship'), type: 'biscuit' };
     }
     if (id === 'great_biscuit') {
-      return { val: '+3', unit: isEN ? 'pt' : '格', lbl: isEN ? 'Friendship' : (isCN ? '友好度' : '友好度'), type: 'biscuit' };
+      return { val: '+3', unit: _tWiki('格', 'pt'), lbl: _tWiki('友好度', 'Friendship'), type: 'biscuit' };
     }
     if (id === 'ultra_biscuit') {
-      return { val: '+5', unit: isEN ? 'pt' : '格', lbl: isEN ? 'Friendship' : (isCN ? '友好度' : '友好度'), type: 'biscuit' };
+      return { val: '+5', unit: _tWiki('格', 'pt'), lbl: _tWiki('友好度', 'Friendship'), type: 'biscuit' };
     }
     if (id === 'master_biscuit') {
-      return { val: 'MAX', unit: '', lbl: isEN ? 'Max Catch' : (isCN ? '友好度满格' : '友好度滿格'), type: 'biscuit-max' };
+      return { val: 'MAX', unit: '', lbl: _tWiki('友好度滿格', 'Max Catch'), type: 'biscuit-max' };
     }
 
     // Seeds & Mint
     if (id === 'main_skill_seed') {
-      return { val: '+1', unit: 'Lv', lbl: isEN ? 'Main Skill' : (isCN ? '主技能提升' : '主技能提升'), type: 'seed' };
+      return { val: '+1', unit: 'Lv', lbl: _tWiki('主技能提升', 'Main Skill'), type: 'seed' };
     }
     if (id === 'sub_skill_seed') {
-      return { val: '+1', unit: isEN ? 'Tier' : '階', lbl: isEN ? 'Sub Skill' : (isCN ? '副技能升级' : '副技能升級'), type: 'seed' };
+      return { val: '+1', unit: _tWiki('階', 'Tier'), lbl: _tWiki('副技能升級', 'Sub Skill'), type: 'seed' };
     }
     if (id === 'cleanse_mint') {
-      return { val: '1.00x', unit: '', lbl: isEN ? 'Neutral Nature' : (isCN ? '性格中性化' : '性格中性化'), type: 'mint' };
+      return { val: '1.00x', unit: '', lbl: _tWiki('性格中性化', 'Neutral Nature'), type: 'mint' };
     }
 
     // Candies & Shards
     if (id === 'handy_candy_s') {
-      return { val: '+3', unit: isEN ? 'candies' : '顆', lbl: isEN ? 'Universal Candy' : (isCN ? '万能糖果' : '萬能糖果'), type: 'candy' };
+      return { val: '+3', unit: _tWiki('顆', 'candies'), lbl: _tWiki('萬能糖果', 'Universal Candy'), type: 'candy' };
     }
     if (id === 'handy_candy_m') {
-      return { val: '+20', unit: isEN ? 'candies' : '顆', lbl: isEN ? 'Universal Candy' : (isCN ? '万能糖果' : '萬能糖果'), type: 'candy' };
+      return { val: '+20', unit: _tWiki('顆', 'candies'), lbl: _tWiki('萬能糖果', 'Universal Candy'), type: 'candy' };
     }
     if (id === 'handy_candy_l') {
-      return { val: '+100', unit: isEN ? 'candies' : '顆', lbl: isEN ? 'Universal Candy' : (isCN ? '万能糖果' : '萬能糖果'), type: 'candy' };
+      return { val: '+100', unit: _tWiki('顆', 'candies'), lbl: _tWiki('萬能糖果', 'Universal Candy'), type: 'candy' };
     }
     if (id === 'dream_cluster_s') {
-      return { val: 'S', unit: isEN ? 'Cluster' : '塊', lbl: isEN ? 'Dream Shards' : (isCN ? '梦之碎片' : '夢之碎片'), type: 'shard' };
+      return { val: 'S', unit: _tWiki('塊', 'Cluster'), lbl: _tWiki('夢之碎片', 'Dream Shards'), type: 'shard' };
     }
     if (id === 'dream_cluster_m') {
-      return { val: 'M', unit: isEN ? 'Cluster' : '塊', lbl: isEN ? 'Dream Shards' : (isCN ? '梦之碎片' : '夢之碎片'), type: 'shard' };
+      return { val: 'M', unit: _tWiki('塊', 'Cluster'), lbl: _tWiki('夢之碎片', 'Dream Shards'), type: 'shard' };
     }
     if (id === 'dream_cluster_l') {
-      return { val: 'L', unit: isEN ? 'Cluster' : '塊', lbl: isEN ? 'Dream Shards' : (isCN ? '梦之碎片' : '夢之碎片'), type: 'shard' };
+      return { val: 'L', unit: _tWiki('塊', 'Cluster'), lbl: _tWiki('夢之碎片', 'Dream Shards'), type: 'shard' };
     }
 
     // Supplies
     if (id === 'energy_pillow') {
-      return { val: '+50', unit: isEN ? 'Energy' : '活力', lbl: isEN ? 'Energy Restore' : (isCN ? '活力恢复' : '活力恢復'), type: 'energy' };
+      return { val: '+50', unit: _tWiki('活力', 'Energy'), lbl: _tWiki('活力恢復', 'Energy Restore'), type: 'energy' };
     }
     if (id === 'helper_whistle') {
-      return { val: '3 hrs', unit: '', lbl: isEN ? 'Help Yield' : (isCN ? '帮手即时产出' : '幫手即時產出'), type: 'whistle' };
+      return { val: '3 hrs', unit: '', lbl: _tWiki('幫手即時產出', 'Help Yield'), type: 'whistle' };
     }
     if (id === 'good_camp_ticket') {
-      return { val: '+50%', unit: 'Pot', lbl: isEN ? 'Pot & Help Speed' : (isCN ? '锅容量与帮手速度' : '鍋容量與幫手速度'), type: 'camp' };
+      return { val: '+50%', unit: 'Pot', lbl: _tWiki('鍋容量與幫手速度', 'Pot & Help Speed'), type: 'camp' };
     }
     if (id === 'ingredient_ticket_s') {
-      return { val: '+10', unit: isEN ? 'Ings' : '個', lbl: isEN ? 'Random Ings' : (isCN ? '随机食材' : '隨機食材'), type: 'ticket' };
+      return { val: '+10', unit: _tWiki('個', 'Ings'), lbl: _tWiki('隨機食材', 'Random Ings'), type: 'ticket' };
     }
     if (id === 'ingredient_ticket_m') {
-      return { val: '+30', unit: isEN ? 'Ings' : '個', lbl: isEN ? 'Random Ings' : (isCN ? '随机食材' : '隨機食材'), type: 'ticket' };
+      return { val: '+30', unit: _tWiki('個', 'Ings'), lbl: _tWiki('隨機食材', 'Random Ings'), type: 'ticket' };
     }
     if (id === 'e_zzz_travel_ticket') {
-      return { val: isEN ? 'MOVE' : '轉移', unit: '', lbl: isEN ? 'Relocate Camp' : (isCN ? '重新选点' : '重新選點'), type: 'ticket' };
+      return { val: _tWiki('轉移', 'MOVE'), unit: '', lbl: _tWiki('重新選點', 'Relocate Camp'), type: 'ticket' };
     }
 
     // Evolution items already have category badge and prominent target avatars; omit redundant static badge
@@ -308,7 +308,7 @@
   function getItemLocalizedName(item, isEN, isCN) {
     if (!item || !item.name) return '';
     if (isEN) return item.name['en-US'] || item.name['zh-TW'] || '';
-    if (isCN) return item.name['zh-CN'] || item.name['zh-TW'] || '';
+    if (isCN) return item.name['zh-CN'] || _tWiki(item.name['zh-TW'] || '', item.name['en-US'] || '');
     return item.name['zh-TW'] || item.name['zh-CN'] || item.name['en-US'] || '';
   }
 
@@ -317,7 +317,7 @@
     const obj = item.effects || item.description;
     if (!obj) return '';
     if (isEN) return obj['en-US'] || obj['zh-TW'] || '';
-    if (isCN) return obj['zh-CN'] || obj['zh-TW'] || '';
+    if (isCN) return obj['zh-CN'] || _tWiki(obj['zh-TW'] || '', obj['en-US'] || '');
     return obj['zh-TW'] || obj['zh-CN'] || obj['en-US'] || '';
   }
 
@@ -353,7 +353,11 @@
         const idStr = String(pkmId);
         const padId = idStr.padStart(3, '0');
         const p = idx['id:' + idStr] || idx['no:' + padId];
-        const pkmName = p ? (isEN ? (p.name_en || p.name_cn) : (isCN ? (p.name_cn || p.name) : (p.name_cn || p.name))) : `Pokemon #${pkmId}`;
+        const pkmName = p
+          ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
+              ? window.I18N.getPokemonName(p)
+              : _tWiki(p.name_cn || p.name, p.name_en || p.name_cn || p.name))
+          : `Pokemon #${pkmId}`;
         const pkmNo = p ? (p.formatted_no || String(p.id).padStart(3, '0')) : padId;
         const iconUrl = (p && typeof window !== 'undefined' && typeof window.getItemIcon === 'function')
           ? window.getItemIcon(p)
@@ -501,7 +505,7 @@
     const obj = item.effects || item.description;
     if (!obj) return '';
     if (isEN) return obj['en-US'] || obj['zh-TW'] || '';
-    if (isCN) return obj['zh-CN'] || obj['zh-TW'] || '';
+    if (isCN) return obj['zh-CN'] || _tWiki(obj['zh-TW'] || '', obj['en-US'] || '');
     return obj['zh-TW'] || obj['zh-CN'] || obj['en-US'] || '';
   }
 
@@ -509,16 +513,31 @@
     if (!item || !item.description) return '';
     const obj = item.description;
     if (isEN) return obj['en-US'] || obj['zh-TW'] || '';
-    if (isCN) return obj['zh-CN'] || obj['zh-TW'] || '';
+    if (isCN) return obj['zh-CN'] || _tWiki(obj['zh-TW'] || '', obj['en-US'] || '');
     return obj['zh-TW'] || obj['zh-CN'] || obj['en-US'] || '';
   }
 
   function getItemAcquisitionList(item, isEN, isCN) {
     if (!item || !item.acquisition) return [];
     if (isEN && Array.isArray(item.acquisition['en-US'])) return item.acquisition['en-US'];
-    if (isCN && Array.isArray(item.acquisition['zh-CN'])) return item.acquisition['zh-CN'];
+    if (isCN) {
+      if (Array.isArray(item.acquisition['zh-CN'])) return item.acquisition['zh-CN'];
+      if (Array.isArray(item.acquisition['zh-TW'])) return item.acquisition['zh-TW'].map(s => _tWiki(s, s));
+    }
     if (Array.isArray(item.acquisition['zh-TW'])) return item.acquisition['zh-TW'];
     return [];
+  }
+
+  function formatItemExchangeLimit(limitStr, isEN) {
+    if (!limitStr) return '';
+    if (isEN) {
+      const m = String(limitStr).match(/^每月\s*(\d+)\s*[個个]$/);
+      if (m) return `${m[1]}/month`;
+      return (typeof window !== 'undefined' && window.I18N && typeof window.I18N.translateDynamicText === 'function')
+        ? window.I18N.translateDynamicText(limitStr)
+        : limitStr;
+    }
+    return _tWiki(limitStr, limitStr);
   }
 
   function navigateToPokemonDex(pokemonId) {
@@ -540,9 +559,7 @@
     const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage && window.I18N.getLanguage() === 'zh-CN';
 
     const name = getItemLocalizedName(item, isEN, isCN);
-    const subName = isEN
-      ? (item.name['zh-TW'] || item.name['zh-CN'] || '')
-      : (item.name['en-US'] || '');
+    const subName = isEN ? '' : (item.name['en-US'] || '');
     const catBadgeText = getItemCategoryBadgeName(item.category, isEN, isCN);
     const effectsText = getItemLocalizedEffects(item, isEN, isCN);
     const descText = getItemFlavorDescription(item, isEN, isCN);
@@ -551,6 +568,14 @@
     const iconUrl = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
       ? (window.mapExternalToLocalAsset(rawIcon) || rawIcon)
       : rawIcon;
+
+    const _tModalKey = (key, tw, en) => (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+      ? window.I18N.t(key, _tWiki(tw, en))
+      : _tWiki(tw, en);
+    const closeLabel = _tModalKey('common.close', '關閉', 'Close');
+    const effectTitle = _tModalKey('wiki.item_effect_title', '效果與說明', 'Effects & Description');
+    const acqTitle = _tModalKey('wiki.item_acquisition_title', '獲取管道與睡點兌換', 'Acquisition & Sleep Points');
+    const relatedTitle = _tModalKey('wiki.item_related_pokemon', '對應寶可夢', 'Related Pokémon');
 
     // If modal inner elements are missing, generate full markup skeleton
     if (typeof modal.querySelector === 'function' && !modal.querySelector('#wiki-item-modal-body')) {
@@ -572,26 +597,26 @@
                 <p id="wiki-item-modal-subtitle" class="wiki-item-modal-subtitle">--</p>
               </div>
             </div>
-            <button type="button" id="wiki-item-modal-close-btn" class="box-modal-close wiki-item-modal-close-btn" onclick="window.WikiDB.closeItemDetailModal()" aria-label="關閉" data-i18n-aria="common.close">&times;</button>
+            <button type="button" id="wiki-item-modal-close-btn" class="box-modal-close wiki-item-modal-close-btn" onclick="window.WikiDB.closeItemDetailModal()" aria-label="${escapeHtml(closeLabel)}" data-i18n-aria="common.close">&times;</button>
           </div>
 
           <div class="box-modal-body wiki-item-modal-body" id="wiki-item-modal-body">
             <section class="wiki-item-modal-section wiki-item-desc-section">
-              <h4 class="wiki-item-section-title" data-i18n="wiki.item_effect_title">效果與說明</h4>
+              <h4 class="wiki-item-section-title" data-i18n="wiki.item_effect_title">${escapeHtml(effectTitle)}</h4>
               <div id="wiki-item-modal-stat-hero" class="wiki-item-modal-stat-hero" style="display:none;"></div>
               <p id="wiki-item-modal-effects" class="wiki-item-modal-effects font-bold">--</p>
               <p id="wiki-item-modal-desc" class="wiki-item-modal-desc">--</p>
             </section>
 
             <section class="wiki-item-modal-section wiki-item-shop-section">
-              <h4 class="wiki-item-section-title" data-i18n="wiki.item_acquisition_title">獲取管道與睡點兌換</h4>
+              <h4 class="wiki-item-section-title" data-i18n="wiki.item_acquisition_title">${escapeHtml(acqTitle)}</h4>
               <div class="wiki-item-pricing-grid" id="wiki-item-modal-pricing"></div>
               <ul class="wiki-item-acq-list" id="wiki-item-modal-acq-list"></ul>
             </section>
 
             <section class="wiki-item-modal-section wiki-item-pokemon-section" id="wiki-item-modal-pokemon-section">
               <div class="wiki-item-section-header">
-                <h4 class="wiki-item-section-title" id="wiki-item-pokemon-section-title" data-i18n="wiki.item_related_pokemon">對應寶可夢</h4>
+                <h4 class="wiki-item-section-title" id="wiki-item-pokemon-section-title" data-i18n="wiki.item_related_pokemon">${escapeHtml(relatedTitle)}</h4>
               </div>
               <div class="wiki-item-pokemon-grid" id="wiki-item-modal-pokemon-grid"></div>
             </section>
@@ -601,6 +626,27 @@
     }
 
     if (typeof modal.querySelector !== 'function') return;
+
+    // Ensure existing or newly created modal headings/aria labels reflect current language immediately
+    if (typeof modal.querySelectorAll === 'function') {
+      modal.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (key === 'wiki.item_effect_title') el.textContent = effectTitle;
+        else if (key === 'wiki.item_acquisition_title') el.textContent = acqTitle;
+        else if (key === 'wiki.item_related_pokemon') el.textContent = relatedTitle;
+        else if (key && typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+          el.textContent = window.I18N.t(key, el.textContent);
+        }
+      });
+      modal.querySelectorAll('[data-i18n-aria]').forEach(el => {
+        const key = el.getAttribute('data-i18n-aria');
+        if (key === 'common.close' && typeof el.setAttribute === 'function') {
+          el.setAttribute('aria-label', closeLabel);
+        } else if (key && typeof el.setAttribute === 'function' && typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+          el.setAttribute('aria-label', window.I18N.t(key, el.getAttribute('aria-label') || ''));
+        }
+      });
+    }
 
     // 1. Header populate
     const iconEl = modal.querySelector('#wiki-item-modal-icon');
@@ -688,12 +734,12 @@
       const regularValText = hasRegular
         ? `${Number(sleepPoints.regular).toLocaleString()} pt`
         : (hasPremium ? (isEN ? 'Premium Only' : (isCN ? '仅限高级交换所' : '僅限高級交換所')) : (isEN ? 'Not Sold' : (isCN ? '非交换所贩售' : '非交換所販售')));
-      const regularLimitText = hasRegular && sleepPoints.limit_regular ? sleepPoints.limit_regular : '';
+      const regularLimitText = hasRegular && sleepPoints.limit_regular ? formatItemExchangeLimit(sleepPoints.limit_regular, isEN) : '';
 
       const premiumValText = hasPremium
         ? `${Number(sleepPoints.premium).toLocaleString()} pt`
         : (isEN ? 'None' : (isCN ? '无' : '無'));
-      const premiumLimitText = hasPremium && sleepPoints.limit_premium ? sleepPoints.limit_premium : '';
+      const premiumLimitText = hasPremium && sleepPoints.limit_premium ? formatItemExchangeLimit(sleepPoints.limit_premium, isEN) : '';
 
       pricingEl.innerHTML = `
         <div class="wiki-item-price-pill ${hasRegular ? '' : 'is-empty'}">
@@ -763,7 +809,11 @@
               const idStr = String(pkmId);
               const padId = idStr.padStart(3, '0');
               const p = idx['id:' + idStr] || idx['no:' + padId];
-              const pkmName = p ? (isEN ? (p.name_en || p.name_cn) : (isCN ? (p.name_cn || p.name) : (p.name_cn || p.name))) : `Pokemon #${pkmId}`;
+              const pkmName = p
+                ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
+                    ? window.I18N.getPokemonName(p)
+                    : _tWiki(p.name_cn || p.name, p.name_en || p.name_cn || p.name))
+                : `Pokemon #${pkmId}`;
               const pkmNo = p ? (p.formatted_no || String(p.id).padStart(3, '0')) : padId;
               const pkmIcon = (p && typeof window !== 'undefined' && typeof window.getItemIcon === 'function')
                 ? window.getItemIcon(p)
@@ -773,7 +823,7 @@
               return `
                 <button type="button" class="wiki-item-pkm-card"
                   onclick="window.WikiDB.navigateToPokemonDex('${targetId}'); if (window.PokemonApp && window.PokemonApp.openPokemonDetailModal) { window.PokemonApp.openPokemonDetailModal('${targetId}'); }"
-                  title="${isEN ? 'View ' + escapeHtml(pkmName) + ' in Pokédex' : '查看 ' + escapeHtml(pkmName) + ' 圖鑑評測'}">
+                  title="${_tWiki('查看 ' + escapeHtml(pkmName) + ' 圖鑑評測', 'View ' + escapeHtml(pkmName) + ' in Pokédex')}">
                   <img src="${pkmIcon}" class="wiki-item-pkm-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="if(typeof handlePokemonIconError==='function'){handlePokemonIconError(this);}else{this.style.opacity='0.5';}" />
                   <div class="wiki-item-pkm-info">
                     <span class="wiki-item-pkm-no font-mono">No.${pkmNo}</span>
@@ -842,50 +892,23 @@
 
       renderItemDetailModalContent(modal, item);
 
-      try {
-        if (typeof window.portalMobileOverlays === 'function') {
-          window.portalMobileOverlays(modal);
-        } else if (typeof document !== 'undefined' && document.body && typeof document.body.appendChild === 'function' && modal.parentElement !== document.body) {
-          document.body.appendChild(modal);
-        }
-      } catch (e) {}
-
-      try {
-        if (typeof window.prepareOverlayOpen === 'function') {
-          window.prepareOverlayOpen(modal);
-        }
-      } catch (e) {}
-
+      try { if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(modal); else if (typeof document !== 'undefined' && document.body && typeof document.body.appendChild === 'function' && modal.parentElement !== document.body) document.body.appendChild(modal); } catch (e) {}
+      try { if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal); } catch (e) {}
       if (modal.style) modal.style.display = 'flex';
-
       try {
         if (document.body && document.body.classList && typeof document.body.classList.add === 'function') {
           document.body.classList.add('item-modal-open');
           document.body.classList.add('modal-open');
         }
-        if (document.body && document.body.style) {
-          document.body.style.overflow = 'hidden';
-        }
+        if (document.body && document.body.style) document.body.style.overflow = 'hidden';
       } catch (e) {}
-
-      try {
-        if (typeof window.syncOverlayOpenState === 'function') {
-          window.syncOverlayOpenState();
-        }
-      } catch (e) {}
-
+      try { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); } catch (e) {}
       try {
         if (activeItemModalEscHandler && typeof document !== 'undefined' && typeof document.removeEventListener === 'function') {
           document.removeEventListener('keydown', activeItemModalEscHandler);
         }
-        activeItemModalEscHandler = function(e) {
-          if (e && e.key === 'Escape') {
-            closeItemDetailModal();
-          }
-        };
-        if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
-          document.addEventListener('keydown', activeItemModalEscHandler);
-        }
+        activeItemModalEscHandler = (e) => { if (e && e.key === 'Escape') closeItemDetailModal(); };
+        if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') document.addEventListener('keydown', activeItemModalEscHandler);
       } catch (e) {}
     } catch (err) {
       console.warn('[WikiDB] openItemDetailModal error:', err);

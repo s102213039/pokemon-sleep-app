@@ -22,7 +22,7 @@
       const count = counts[cat.key] || 0;
       return `
         <button type="button" class="news-tag-btn ${active}" data-cat="${cat.key}">
-          <span>${labels[cat.key] || cat.label}</span>
+          <span>${labels[cat.key] || _tNews(cat.label, cat.label_en || cat.label)}</span>
           <span class="news-tag-count">${count}</span>
         </button>
       `;
@@ -205,6 +205,7 @@
             <div class="news-poke-pill-group">
               ${item.debut_pokemon.map(p => {
                 let pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
+                if (isEN && window.I18N && typeof window.I18N.translateDynamicText === 'function' && /[\u4e00-\u9fff]/.test(pName)) pName = window.I18N.translateDynamicText(pName);
                 if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') pName = window.I18N.toSimplified(pName);
                 return `<span class="news-poke-pill-new">${escapeHtml(pName)}</span>`;
               }).join('')}
@@ -218,6 +219,7 @@
             <div class="news-poke-pill-group">
               ${item.featured_pokemon.map(p => {
                 let pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
+                if (isEN && window.I18N && typeof window.I18N.translateDynamicText === 'function' && /[\u4e00-\u9fff]/.test(pName)) pName = window.I18N.translateDynamicText(pName);
                 if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') pName = window.I18N.toSimplified(pName);
                 return `<span class="news-poke-pill-featured">${escapeHtml(pName)}</span>`;
               }).join('')}
@@ -302,7 +304,7 @@
         statusBadgeHTML = `<span class="news-status-badge status-upcoming">${isEN ? 'UPCOMING' : (isCN ? '即将开始' : '即將開始')}</span>`;
       }
 
-      const badgeLabelText = categoryLabels[item.badge_key] || (isCN && window.I18N && typeof window.I18N.toSimplified === 'function' ? window.I18N.toSimplified(item.badge_label || item.category) : (item.badge_label || item.category)) || (isEN ? 'Notice' : '公告');
+      const badgeLabelText = categoryLabels[item.badge_key] || (isCN && window.I18N && typeof window.I18N.toSimplified === 'function' ? window.I18N.toSimplified(item.badge_label || item.category) : (item.badge_label || item.category)) || _tNews('公告', 'Notice');
 
       return `
         <article class="news-card news-accordion-card ${isExpanded ? 'expanded' : ''} ${isLatest ? 'news-card-featured' : ''} ${timeStatus === 'expired' ? 'is-expired' : ''}" id="news-${item.id}" data-id="${item.id}">
@@ -532,16 +534,18 @@
     let formatted = escapeHtml(processed);
 
     // 1. 機率分級標題高亮 (無 Emoji)
-    formatted = formatted.replace(/【\s*(?:機率中幅提升|Greater Appearance Rate)(?:\s*新登場\/焦點)?\s*】/g, '<span class="hl-rateup-mid">【' + (isEN ? 'Greater Appearance Rate' : '機率中幅提升 新登場/焦點') + '】</span>');
-    formatted = formatted.replace(/【\s*(?:機率大幅提升|Significantly Greater Appearance Rate)(?:\s*超絕UP)?\s*】/g, '<span class="hl-rateup-large">【' + (isEN ? 'Significantly Greater Appearance Rate' : '機率大幅提升 超絕UP') + '】</span>');
-    formatted = formatted.replace(/【\s*(?:機率小幅提升|Slightly Greater Appearance Rate)\s*】/g, '<span class="hl-rateup-small">【' + (isEN ? 'Slightly Greater Appearance Rate' : '機率小幅提升') + '】</span>');
-    formatted = formatted.replace(/【\s*(?:新登場|New Debut)\s*】/g, '<span class="hl-rateup-mid">【' + (isEN ? 'New Debut' : '新登場') + '】</span>');
+    formatted = formatted.replace(/【\s*(?:機率中幅提升|几率中幅提升|Greater Appearance Rate)(?:\s*(?:新登場|新登场)\/(?:焦點|焦点))?\s*】/g, '<span class="hl-rateup-mid">【' + _tNews('機率中幅提升 新登場/焦點', 'Greater Appearance Rate') + '】</span>');
+    formatted = formatted.replace(/【\s*(?:機率大幅提升|几率大幅提升|Significantly Greater Appearance Rate)(?:\s*(?:超絕UP|超绝UP))?\s*】/g, '<span class="hl-rateup-large">【' + _tNews('機率大幅提升 超絕UP', 'Significantly Greater Appearance Rate') + '】</span>');
+    formatted = formatted.replace(/【\s*(?:機率小幅提升|几率小幅提升|Slightly Greater Appearance Rate)\s*】/g, '<span class="hl-rateup-small">【' + _tNews('機率小幅提升', 'Slightly Greater Appearance Rate') + '】</span>');
+    formatted = formatted.replace(/【\s*(?:新登場|新登场|New Debut)\s*】/g, '<span class="hl-rateup-mid">【' + _tNews('新登場', 'New Debut') + '】</span>');
 
     // 2. 新登場 / 機率中幅提升寶可夢高亮（無 Emoji）
     const debutList = item.debut_pokemon || [];
     debutList.forEach(name => {
       if (!name) return;
-      const displayName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(name) : name;
+      const displayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+        ? window.I18N.getPokemonName(name)
+        : name;
       if (formatted.includes(displayName)) {
         formatted = formatted.replaceAll(displayName, `<span class="hl-poke-new">${displayName}</span>`);
       }
@@ -551,17 +555,19 @@
     const featList = item.featured_pokemon || [];
     featList.forEach(name => {
       if (!name || debutList.includes(name)) return;
-      const displayName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(name) : name;
+      const displayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+        ? window.I18N.getPokemonName(name)
+        : name;
       if (formatted.includes(displayName)) {
         formatted = formatted.replaceAll(displayName, `<span class="hl-poke-feat">${displayName}</span>`);
       }
     });
 
     // 4. 關鍵倍率與數值高亮 (如 1.25倍, 2.5x, +1,000pt, 1,200鑽石, 3,000鑽石, 250鑽石, 1,200 Diamonds)
-    formatted = formatted.replace(/([1-4](?:\.\d+)?(?:倍|x)|\+\d{1,3}(?:[,，]\d{3})*pt|(?:\d{1,3}(?:[,，]\d{3})+|\d+)\s*(?:鑽石|Diamonds))/gi, '<span class="hl-mult">$1</span>');
+    formatted = formatted.replace(/([1-4](?:\.\d+)?(?:倍|x)|\+\d{1,3}(?:[,，]\d{3})*pt|(?:\d{1,3}(?:[,，]\d{3})+|\d+)\s*(?:鑽石|钻石|Diamonds))/gi, '<span class="hl-mult">$1</span>');
 
     // 5. 島嶼 / 營地名稱高亮 (無 Emoji)
-    formatted = formatted.replace(/(Greengrass Isle EX|Greengrass Isle|Cyan Beach EX|Cyan Beach|Taupe Hollow|Snowdrop Tundra|Lapis Lakeside|Old Gold Power Plant|Amber Canyon|萌綠之島EX|天青沙灘EX|萌綠之島|天青沙灘|灰褐洞窟|白花雪原|拉碧絲湖畔|寶藍湖畔|黃金舊發電廠|琥褐溪谷)/g, '<span class="hl-island">$1</span>');
+    formatted = formatted.replace(/(Greengrass Isle EX|Greengrass Isle|Cyan Beach EX|Cyan Beach|Taupe Hollow|Snowdrop Tundra|Lapis Lakeside|Old Gold Power Plant|Amber Canyon|萌綠之島EX|萌绿之岛EX|天青沙灘EX|天青沙滩EX|萌綠之島|萌绿之岛|天青沙灘|天青沙滩|灰褐洞窟|白花雪原|拉碧絲湖畔|拉碧丝湖畔|寶藍湖畔|宝蓝湖畔|黃金舊發電廠|黄金旧发电厂|琥褐溪谷)/g, '<span class="hl-island">$1</span>');
 
     return formatted;
   }

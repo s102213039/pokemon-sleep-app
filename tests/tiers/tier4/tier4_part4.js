@@ -277,7 +277,7 @@ function registerTier4Part4() {
       'renderRadarChartSVG must use enlarged vertex score font size (12px)');
 
     // 6. Verify H5 and Desktop both use clean appraisal-summary-label without redundant colon
-    assert(appraisalCode.includes('<span class="appraisal-summary-label">${isEN ? \'Appraisal Note\' : \'智能簡評\'}</span>'),
+    assert(appraisalCode.includes('<span class="appraisal-summary-label">${_tLab(\'智能簡評\', \'Appraisal Note\')}</span>'),
       'appraisal.js must render embedded summary label without colon');
   });
 
@@ -2069,7 +2069,7 @@ function registerTier4Part4() {
     const pickerPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'lab', 'lab_team_picker.js');
     assert(fs.existsSync(pickerPath), 'lab_team_picker.js must exist');
     const pickerCode = fs.readFileSync(pickerPath, 'utf8');
-    assert(pickerCode.includes("!cat.includes('甜')"), 'lab_team_picker.js must include dessert category character [甜] match');
+    assert(pickerCode.includes("cat.includes('甜')") && pickerCode.includes('!matchesRecipeCategory('), 'lab_team_picker.js must include dessert category character [甜] match');
     assert(pickerCode.includes("cat.includes('甜')"), 'lab_recipe-cat-dessert class condition must include character [甜]');
 
     // 2. Recipe ingredient filter controls verification

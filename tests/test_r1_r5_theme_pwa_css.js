@@ -44,6 +44,12 @@ const wikiCampsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'mobile', 'wiki_
 const recipesPickerCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'recipes_picker.css'), 'utf8');
 const recipePickerModalCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'components', 'modals', 'recipe_picker.css'), 'utf8');
 const wikiItemsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'wiki', 'wiki_items.css'), 'utf8');
+const wikiSubskillsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'wiki', 'wiki_subskills.css'), 'utf8');
+const themePreviewCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'components', 'theme_preview.css'), 'utf8');
+const wikiCalcsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'mobile', 'wiki_calcs.css'), 'utf8');
+const itemModalCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'components', 'modals', 'item_modal.css'), 'utf8');
+const pokedexModalHeroCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'components', 'modals', 'pokedex_modal_hero.css'), 'utf8');
+const mobileItemsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'mobile', 'items.css'), 'utf8');
 const boxGridCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'box', 'box_grid.css'), 'utf8');
 const pokedexFiltersCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'pokedex_filters.css'), 'utf8');
 const labLightboxCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'lab', 'lab_lightbox.css'), 'utf8');
@@ -580,7 +586,202 @@ check('R3+8-Theme WCAG AA CSS Sync: inverted theme isolation, light/dark tooltip
   }
 });
 
-check('Zero Emoji & Zero Decorative Glyphs compliance in all modified R1-R5 files', () => {
+check('M2 Items Tab & Item Detail Modal 8-Theme CSS Sync & WCAG AA Contrast', () => {
+  // 1. #wiki-item-detail-modal & light/dark 8-theme rules in wiki_subskills.css <-> styles.css
+  for (const [label, css] of [
+    ['css/views/wiki/wiki_subskills.css', wikiSubskillsCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    for (const sel of [
+      '[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-modal-dialog',
+      '[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-modal-dialog',
+      '[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-modal-dialog',
+      '[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-modal-dialog',
+      '[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-modal-dialog',
+      '[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-modal-dialog',
+      '[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-modal-dialog',
+      '[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-modal-dialog',
+      '[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-price-pill .price-value.text-highlight',
+      '[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-price-pill .price-value.text-diamonds',
+      '.mobile-h5-app #wiki-item-detail-modal .wiki-item-modal-dialog.mobile-modal-sheet'
+    ]) {
+      assert(css.includes(sel), `${label} missing selector: ${sel}`);
+    }
+  }
+
+  // 2. .wiki-item-cat-* in theme_preview.css + recipe_picker.css <-> styles.css
+  for (const [label, css] of [
+    ['css/components/theme_preview.css', themePreviewCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    for (const cat of ['evolution', 'pokemon_incense', 'functional_incense', 'training', 'biscuit', 'supply']) {
+      assert(css.includes(`:root:not([data-theme-inverted="true"]) .wiki-item-cat-${cat}`), `${label} guards :root .wiki-item-cat-${cat}`);
+      assert(css.includes(`[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-cat-${cat}`), `${label} guards midnight .wiki-item-cat-${cat}`);
+      assert(css.includes(`[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-cat-${cat}`), `${label} styles dawn+inv .wiki-item-cat-${cat}`);
+      assert(css.includes(`[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-${cat}`), `${label} styles emerald+inv .wiki-item-cat-${cat}`);
+      assert(css.includes(`[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-${cat}`), `${label} guards onyx .wiki-item-cat-${cat}`);
+      assert(css.includes(`[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-${cat}`), `${label} guards dawn .wiki-item-cat-${cat}`);
+      assert(css.includes(`[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-${cat}`), `${label} styles midnight+inv .wiki-item-cat-${cat}`);
+      assert(css.includes(`[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-${cat}`), `${label} styles onyx+inv .wiki-item-cat-${cat}`);
+    }
+  }
+  for (const [label, css] of [
+    ['css/components/modals/recipe_picker.css', recipePickerModalCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    for (const cat of ['evolution', 'pokemon_incense', 'functional_incense', 'training', 'biscuit', 'supply']) {
+      assert(css.includes(`[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-${cat}`), `${label} guards emerald .wiki-item-cat-${cat}`);
+    }
+  }
+
+  // 3. .stat-type-* in wiki_calcs.css <-> styles.css
+  for (const [label, css] of [
+    ['css/mobile/wiki_calcs.css', wikiCalcsCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    for (const st of ['biscuit', 'biscuit-max', 'seed', 'mint', 'candy', 'shard', 'energy', 'whistle', 'camp', 'ticket', 'evolution']) {
+      assert(css.includes(`[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-${st}`), `${label} guards dawn .stat-type-${st}`);
+      assert(css.includes(`[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-${st}`), `${label} guards emerald .stat-type-${st}`);
+      assert(css.includes(`[data-theme="midnight"][data-theme-inverted="true"] .stat-type-${st}`), `${label} styles midnight+inv .stat-type-${st}`);
+      assert(css.includes(`[data-theme="onyx"][data-theme-inverted="true"] .stat-type-${st}`), `${label} styles onyx+inv .stat-type-${st}`);
+    }
+  }
+
+  // 4. .sheet-drag-handle, .wiki-items-filter-pills .wiki-pill-btn.active, .mobile-box-sheet .box-modal-close
+  for (const [label, css] of [
+    ['css/components/modals/pokedex_modal_hero.css', pokedexModalHeroCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .sheet-drag-handle'), `${label} guards dawn .sheet-drag-handle`);
+    assert(css.includes('[data-theme="emerald"]:not([data-theme-inverted="true"]) .sheet-drag-handle'), `${label} guards emerald .sheet-drag-handle`);
+    assert(css.includes('[data-theme="midnight"][data-theme-inverted="true"] .sheet-drag-handle'), `${label} styles midnight+inv .sheet-drag-handle`);
+    assert(css.includes('[data-theme="onyx"][data-theme-inverted="true"] .sheet-drag-handle'), `${label} styles onyx+inv .sheet-drag-handle`);
+  }
+  for (const [label, css] of [
+    ['css/views/wiki/wiki_items.css', wikiItemsCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .sheet-drag-handle'), `${label} guards dawn mobile sheet drag handle`);
+    assert(css.includes('[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle'), `${label} styles midnight+inv mobile sheet drag handle`);
+    assert(css.includes('[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle'), `${label} styles onyx+inv mobile sheet drag handle`);
+  }
+  for (const [label, css] of [
+    ['css/mobile/wiki_skills.css', wikiSkillsCss],
+    ['css/components/modals/item_modal.css', itemModalCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    assert(css.includes('.wiki-items-filter-pills .wiki-pill-btn.active'), `${label} styles .wiki-items-filter-pills .wiki-pill-btn.active`);
+    assert(css.includes('var(--accent-btn-bg') && css.includes('var(--accent-btn-text'), `${label} uses --accent-btn-bg/--accent-btn-text`);
+  }
+  for (const [label, css] of [
+    ['css/components/modals/item_modal.css', itemModalCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    for (const sel of [
+      '[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-close',
+      '[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-close',
+      '[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-modal-close',
+      '[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-modal-close'
+    ]) {
+      assert(css.includes(sel), `${label} missing ${sel}`);
+    }
+  }
+  for (const [label, css] of [
+    ['css/mobile/items.css', mobileItemsCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    assert(css.includes('color: var(--text-secondary) !important;'), `${label} uses --text-secondary for mobile item controls`);
+  }
+
+  // 5. Mathematical WCAG AA (>= 4.5:1) contrast for .wiki-item-cat-*, .stat-type-*, modal price/title/close across all 8 themes
+  function hexToRgb(hex) {
+    const clean = hex.replace('#', '');
+    return [parseInt(clean.slice(0, 2), 16), parseInt(clean.slice(2, 4), 16), parseInt(clean.slice(4, 6), 16)];
+  }
+  function blendOver(fgRgb, alpha, bgRgb) {
+    return [fgRgb[0] * alpha + bgRgb[0] * (1 - alpha), fgRgb[1] * alpha + bgRgb[1] * (1 - alpha), fgRgb[2] * alpha + bgRgb[2] * (1 - alpha)];
+  }
+  function relLumRgb(rgb) {
+    const lin = (c) => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); };
+    return 0.2126 * lin(rgb[0]) + 0.7152 * lin(rgb[1]) + 0.0722 * lin(rgb[2]);
+  }
+  function contrastRgb(fg, bg) {
+    const l1 = relLumRgb(fg), l2 = relLumRgb(bg);
+    return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+  }
+
+  const darkSurfaces = ['#131d31', '#0a0a0c', '#1c1917', '#0f172a'];
+  const catDarkSpecs = [
+    ['evolution', '#fbbf24', '#f59e0b', 0.2],
+    ['pokemon_incense', '#d8b4fe', '#a855f7', 0.2],
+    ['functional_incense', '#38bdf8', '#38bdf8', 0.2],
+    ['training', '#34d399', '#10b981', 0.2],
+    ['biscuit', '#f9a8d4', '#f472b6', 0.2],
+    ['supply', '#2dd4bf', '#14b8a6', 0.2]
+  ];
+  for (const [cat, fgHex, tintHex, alpha] of catDarkSpecs) {
+    for (const surf of darkSurfaces) {
+      const effBg = blendOver(hexToRgb(tintHex), alpha, hexToRgb(surf));
+      const ratio = contrastRgb(hexToRgb(fgHex), effBg);
+      assert(ratio >= 4.5, `Dark .wiki-item-cat-${cat} on ${surf} contrast ${ratio.toFixed(2)} < 4.5`);
+    }
+  }
+  const catOnyxFunctionalBg = blendOver(hexToRgb('#cbd5e1'), 0.15, hexToRgb('#0a0a0c'));
+  assert(contrastRgb(hexToRgb('#e2e8f0'), catOnyxFunctionalBg) >= 4.5, 'Onyx .wiki-item-cat-functional_incense < 4.5');
+
+  for (const [cat, fgHex, bgHex] of [
+    ['dawn evolution', '#92400e', '#fef3c7'],
+    ['dawn pokemon_incense', '#6b21a8', '#f3e8ff'],
+    ['dawn functional_incense', '#0369a1', '#e0f2fe'],
+    ['dawn training', '#166534', '#dcfce7'],
+    ['dawn biscuit', '#9d174d', '#fce7f3'],
+    ['dawn supply', '#0f766e', '#ccfbf1'],
+    ['emerald evolution', '#854d0e', '#fef9c3'],
+    ['emerald pokemon_incense', '#5b21b6', '#ede9fe'],
+    ['emerald functional_incense', '#075985', '#e0f2fe'],
+    ['emerald training', '#15803d', '#dcfce7'],
+    ['emerald biscuit', '#9d174d', '#fce7f3'],
+    ['emerald supply', '#115e59', '#ccfbf1']
+  ]) {
+    const ratio = contrastRgb(hexToRgb(fgHex), hexToRgb(bgHex));
+    assert(ratio >= 4.5, `${cat} contrast ${ratio.toFixed(2)} < 4.5`);
+  }
+
+  // .stat-type-* dark and light contrast checks
+  for (const [st, fgHex, tintHex, alpha] of [
+    ['biscuit', '#fbbf24', '#f59e0b', 0.18],
+    ['biscuit-max', '#f9a8d4', '#f472b6', 0.18],
+    ['seed/mint', '#34d399', '#10b981', 0.18],
+    ['candy/shard', '#38bdf8', '#38bdf8', 0.18],
+    ['energy/whistle/camp/ticket', '#d8b4fe', '#a855f7', 0.18],
+    ['evolution', '#fb923c', '#fb923c', 0.18]
+  ]) {
+    for (const surf of darkSurfaces) {
+      const effBg = blendOver(hexToRgb(tintHex), alpha, hexToRgb(surf));
+      const ratio = contrastRgb(hexToRgb(fgHex), effBg);
+      assert(ratio >= 4.5, `Dark .stat-type-${st} on ${surf} contrast ${ratio.toFixed(2)} < 4.5`);
+    }
+  }
+  for (const [st, fgHex, tintHex, alpha] of [
+    ['biscuit', '#92400e', '#f59e0b', 0.18],
+    ['biscuit-max', '#9d174d', '#f472b6', 0.18],
+    ['seed/mint', '#065f46', '#10b981', 0.18],
+    ['candy/shard', '#0369a1', '#38bdf8', 0.18],
+    ['energy/whistle/camp/ticket', '#6b21a8', '#a855f7', 0.18],
+    ['evolution', '#9a3412', '#fb923c', 0.18]
+  ]) {
+    for (const surf of ['#ffffff', '#f1f5f9']) {
+      const effBg = blendOver(hexToRgb(tintHex), alpha, hexToRgb(surf));
+      const ratio = contrastRgb(hexToRgb(fgHex), effBg);
+      assert(ratio >= 4.5, `Light .stat-type-${st} on ${surf} contrast ${ratio.toFixed(2)} < 4.5`);
+    }
+  }
+  assert(contrastRgb(hexToRgb('#0f172a'), hexToRgb('#f8fafc')) >= 4.5, 'Light .mobile-box-sheet .box-modal-close < 4.5');
+  assert(contrastRgb(hexToRgb('#b45309'), hexToRgb('#f1f5f9')) >= 4.5, 'Light .wiki-item-price-pill .price-value.text-highlight < 4.5');
+  assert(contrastRgb(hexToRgb('#0369a1'), hexToRgb('#f1f5f9')) >= 4.5, 'Light .wiki-item-price-pill .price-value.text-diamonds < 4.5');
+});
+
+check('Zero Emoji & Zero Decorative Glyphs compliance in all modified R1-R5 & M2 files', () => {
   const emojiRe = /[\u{1F300}-\u{1FAFF}\u23F1\u2605\u2606\u2B50\u2728\u2764\uFE0F\u20E3]/u;
   const glyphRe = /[★☆]|\[★\]|\[☆\]|\[\*\]|\[\+\]|\[#\]/;
   const files = [
@@ -599,9 +800,13 @@ check('Zero Emoji & Zero Decorative Glyphs compliance in all modified R1-R5 file
     'css/views/wiki/wiki_ladder.css',
     'css/views/wiki/wiki_skill_ladder.css',
     'css/views/wiki/wiki_ladder_meals.css',
+    'css/views/wiki/wiki_subskills.css',
     'css/views/recipes_cards.css',
     'css/views/recipes_picker.css',
     'css/components/modals/recipe_picker.css',
+    'css/components/modals/item_modal.css',
+    'css/components/modals/pokedex_modal_hero.css',
+    'css/components/theme_preview.css',
     'css/views/wiki/wiki_items.css',
     'css/views/box/box_grid.css',
     'css/views/box/box_calc.css',
@@ -613,6 +818,8 @@ check('Zero Emoji & Zero Decorative Glyphs compliance in all modified R1-R5 file
     'css/mobile/wiki_nav.css',
     'css/mobile/wiki_camps.css',
     'css/mobile/wiki_skills.css',
+    'css/mobile/wiki_calcs.css',
+    'css/mobile/items.css',
     'css/styles.css'
   ];
   for (const rel of files) {

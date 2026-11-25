@@ -95,8 +95,10 @@
 
     const radarSVG = renderRadarChartSVG(evaluation.scores, 360, 270);
     const SIX_DIM_META = getSixDimMeta(isEN);
-    const displayName = isEN ? (pkmData.name_en || pkmData.name_cn) : (pkmData.name_cn || pkmData.name_en);
-    const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : natureName;
+    const displayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
+      ? window.I18N.getPokemonName(pkmData)
+      : _tLab(pkmData.name_cn || pkmData.name_en, pkmData.name_en || pkmData.name_cn);
+    const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : _tLabStr(natureName);
 
     // 遊戲同款性格展示排版 (In-Game Style Nature Display)
     const natureObj = NATURE_DATA.find(function(n) { return n.name === natureName || n.name_en === natureName; });
@@ -105,15 +107,19 @@
       natureEffectHtml = `
         <div class="nature-effects-group">
           <div class="nature-effect-neutral nature-effect-mint">
-            ${isEN ? 'Has no distinctive personality traits (Cleanse Mint used)' : '沒有性格帶來的特色（使用淨白薄荷消除個性效果）'}
+            ${_tLab('沒有性格帶來的特色（使用淨白薄荷消除個性效果）', 'Has no distinctive personality traits (Cleanse Mint used)')}
           </div>
         </div>
       `;
     } else if (natureObj && natureObj.buff && natureObj.buff !== '無增減') {
-      const rawBuff = isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff;
-      const rawDebuff = isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff;
-      const buffLabel = rawBuff.replace(/[▲▼]/g, '').trim();
-      const debuffLabel = rawDebuff.replace(/[▲▼]/g, '').trim();
+      const buffLabel = _tLab(
+        (natureObj.buff || '').replace(/[▲▼]/g, '').trim(),
+        (natureObj.buff_en || natureObj.buff || '').replace(/[▲▼]/g, '').trim()
+      );
+      const debuffLabel = _tLab(
+        (natureObj.debuff || '').replace(/[▲▼]/g, '').trim(),
+        (natureObj.debuff_en || natureObj.debuff || '').replace(/[▲▼]/g, '').trim()
+      );
       natureEffectHtml = `
         <div class="nature-effects-group">
           <div class="nature-effect-row nature-buff-row">
@@ -130,7 +136,7 @@
       natureEffectHtml = `
         <div class="nature-effects-group">
           <div class="nature-effect-neutral">
-            ${isEN ? 'Has no distinctive personality traits' : '沒有性格帶來的特色（無影響）'}
+            ${_tLab('沒有性格帶來的特色（無影響）', 'Has no distinctive personality traits')}
           </div>
         </div>
       `;
@@ -139,20 +145,20 @@
     const berry = (typeof window.getPokemonBerry === 'function') 
       ? window.getPokemonBerry(pkmData) 
       : (pkmData.berry || { name: '', icon: '' });
-    const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
+    const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : _tLabStr(berry.name || '--');
 
     // 專長型態 (不展示「專長」二字，僅展示 食材型 / 技能型 / 樹果型，無外框)
-    let specTypeLabel = isEN ? 'Ingredient' : '食材型';
+    let specTypeLabel = _tLab('食材型', 'Ingredient');
     let specClass = 'spec-ingredient';
     if (pkmData.specialty && (pkmData.specialty.includes('樹果') || pkmData.specialty === 'Berries')) {
       specClass = 'spec-berry';
-      specTypeLabel = isEN ? 'Berries' : '樹果型';
+      specTypeLabel = _tLab('樹果型', 'Berries');
     } else if (pkmData.specialty && (pkmData.specialty.includes('技能') || pkmData.specialty === 'Skills')) {
       specClass = 'spec-skill';
-      specTypeLabel = isEN ? 'Skills' : '技能型';
+      specTypeLabel = _tLab('技能型', 'Skills');
     } else if (pkmData.specialty && (pkmData.specialty.includes('全能') || pkmData.specialty.includes('全部') || pkmData.specialty === 'All-Rounder' || pkmData.specialty.toLowerCase() === 'all')) {
       specClass = 'spec-all';
-      specTypeLabel = isEN ? 'All-Rounder' : '全能型';
+      specTypeLabel = _tLab('全能型', 'All-Rounder');
     }
 
     let summaryNote = pkmOrBoxItem.summaryNote || '';
@@ -162,7 +168,7 @@
 
     // 主技能資訊 (Main Skill & Level)
     const rawMainSkill = (pkmData && pkmData.main_skill) || (pkmData && pkmData.skill && pkmData.skill.name) || pkmOrBoxItem.main_skill || '';
-    const mainSkillName = rawMainSkill ? (window.I18N ? window.I18N.getMainSkillName(rawMainSkill) : rawMainSkill) : (isEN ? 'Main Skill' : '主技能');
+    const mainSkillName = rawMainSkill ? (window.I18N ? window.I18N.getMainSkillName(rawMainSkill) : _tLabStr(rawMainSkill)) : _tLab('主技能', 'Main Skill');
     const skillLvl = skillLevel || 1;
 
     // 食材組合資訊 (Ingredients & Quantity, 3 Slots with Level Unlock)
@@ -177,7 +183,7 @@
       const isUnlocked = currentLv >= unlockLv;
       const lockClass = !isUnlocked ? ' ing-locked' : '';
       const ingName = ingSlotNames[idx];
-      const lockTitleSuffix = !isUnlocked ? (isEN ? ' (Locked)' : ' (未開放)') : '';
+      const lockTitleSuffix = !isUnlocked ? _tLab(' (未開放)', ' (Locked)') : '';
 
       if (!ingName || ingName === '--') {
         return `
@@ -223,22 +229,22 @@
         <div class="box-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet" role="dialog" aria-modal="true">
           <div class="sheet-drag-handle"></div>
           <div class="box-modal-header">
-            <button type="button" class="box-modal-header-cancel" onclick="window.AppraisalLab.closeModal()">${isEN ? 'Close' : '關閉'}</button>
+            <button type="button" class="box-modal-header-cancel" onclick="window.AppraisalLab.closeModal()">${_tLab('關閉', 'Close')}</button>
             <!-- 雙軌綜合評級徽章 (居中置於標題原位) -->
             <div class="appraisal-dual-verdict-column">
               <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};">
-                <span class="pokedex-verdict-track-lbl" style="font-size:9.5px;color:#94a3b8;line-height:1;">${isEN ? 'Current' : '當前'}</span>
+                <span class="pokedex-verdict-track-lbl" style="font-size:9.5px;color:#94a3b8;line-height:1;">${_tLab('當前', 'Current')}</span>
                 <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:13px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
                 <span class="pokedex-header-score-text" style="font-size:10px;"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
               </div>
               <div class="pokedex-header-verdict-badge potential-track">
-                <span class="pokedex-verdict-track-lbl" style="font-size:8.5px;color:#64748b;line-height:1;">${isEN ? 'Max Lv' : '滿級'}</span>
+                <span class="pokedex-verdict-track-lbl" style="font-size:8.5px;color:#64748b;line-height:1;">${_tLab('滿級', 'Max Lv')}</span>
                 <span class="verdict-potential-grade pokedex-header-grade-text" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
                 <span class="pokedex-header-score-text" style="font-size:9.5px;color:#94a3b8;"><span class="verdict-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
               </div>
             </div>
             ${pkmOrBoxItem && (pkmOrBoxItem.rawItem || pkmOrBoxItem.uid) ? `
-              <button type="button" class="box-modal-header-confirm" onclick="window.AppraisalLab.openCurrentEditModal()">${isEN ? 'Edit' : '編輯'}</button>
+              <button type="button" class="box-modal-header-confirm" onclick="window.AppraisalLab.openCurrentEditModal()">${_tLab('編輯', 'Edit')}</button>
             ` : `<span style="width:36px;"></span>`}
           </div>
 
@@ -262,7 +268,7 @@
                     ${ribbonLevel > 0 ? `
                       <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border-radius:6px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:10.5px;font-weight:700;">
                         <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:14px;height:14px;object-fit:contain;" alt="Ribbon" />
-                        <span>+${evaluation.ribbonBonus.carry} ${isEN ? 'Carry' : '持有'}${evaluation.ribbonBonus.speedDiscount > 0 ? ` · ${isEN ? '-' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '% Spd' : '幫速 -' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '%'}` : ''}</span>
+                        <span>+${evaluation.ribbonBonus.carry} ${_tLab('持有', 'Carry')}${evaluation.ribbonBonus.speedDiscount > 0 ? ` · ${_tLab('幫速 -' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '%', '-' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '% Spd')}` : ''}</span>
                       </div>
                     ` : ''}
                   </div>
@@ -285,7 +291,7 @@
               <div class="appraisal-config-section" style="margin-top:2px;display:flex;justify-content:center;width:100%;">
                 <div class="appraisal-nature-game-card">
                   <div class="nature-pill-capsule">
-                    <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
+                    <span class="nature-capsule-tag">${_tLab('性格', 'Nature')}</span>
                     <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
                   </div>
                   ${natureEffectHtml}
@@ -297,21 +303,21 @@
                 <div class="pokedex-header-stats-row pokedex-header-stats-dual appraisal-header-stats-dual">
                   <div class="pokedex-header-stat-col">
                     <div class="pokedex-header-stat-item">
-                      <span class="header-stat-k">${isEN ? 'Frequency' : '幫忙間隔'}</span>
+                      <span class="header-stat-k">${_tLab('幫忙間隔', 'Frequency')}</span>
                       <span class="header-stat-v font-bold" id="appraisal-stat-interval-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIntervalValue === 'function') ? window.PokemonApp.renderPokedexIntervalValue(formulaData, pkmData) : '--'}</span>
                     </div>
                     <div class="pokedex-header-stat-item">
-                      <span class="header-stat-k">${isEN ? 'Carry' : '持有'}</span>
+                      <span class="header-stat-k">${_tLab('持有', 'Carry')}</span>
                       <span class="header-stat-v font-bold" id="appraisal-stat-carry-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexCarryValue === 'function') ? window.PokemonApp.renderPokedexCarryValue(formulaData, pkmData) : '--'}</span>
                     </div>
                   </div>
                   <div class="pokedex-header-stat-col">
                     <div class="pokedex-header-stat-item">
-                      <span class="header-stat-k">${isEN ? 'Ing Rate' : '食材率'}</span>
+                      <span class="header-stat-k">${_tLab('食材率', 'Ing Rate')}</span>
                       <span class="header-stat-v font-bold" id="appraisal-stat-ingredient-rate-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIngRateValue === 'function') ? window.PokemonApp.renderPokedexIngRateValue(formulaData, pkmData) : '--'}</span>
                     </div>
                     <div class="pokedex-header-stat-item">
-                      <span class="header-stat-k">${isEN ? 'Skill Rate' : '技能率'}</span>
+                      <span class="header-stat-k">${_tLab('技能率', 'Skill Rate')}</span>
                       <span class="header-stat-v font-bold" id="appraisal-stat-skill-rate-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexSkillRateValue === 'function') ? window.PokemonApp.renderPokedexSkillRateValue(formulaData, pkmData) : '--'}</span>
                     </div>
                   </div>
@@ -323,13 +329,13 @@
                 <div class="appraisal-subskills-grid">
                   ${[10, 25, 50, 70, 80].map(function(lv, idx) {
                     const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
-                    const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName) : '--';
+                    const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : _tLabStr(rawName)) : '--';
                     const tier = getSkillTier(rawName);
                     const isUnlocked = currentLv >= lv;
                     const lockClass = !isUnlocked ? 'subskill-locked' : '';
                     const titleText = rawName 
-                      ? (isEN ? `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})` : `${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`)
-                      : (isEN ? `Lv.${lv} Slot` : `Lv.${lv} 欄位`);
+                      ? _tLab(`${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`, `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})`)
+                      : _tLab(`Lv.${lv} 欄位`, `Lv.${lv} Slot`);
                     return `
                       <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
                         <span class="subskill-name">${escapeHtml(sName)}</span>
@@ -358,7 +364,7 @@
 
             <!-- 專長深度點評與優缺點 -->
             <div class="appraisal-analysis-card" style="margin-top:6px;">
-              <h4 class="appraisal-section-heading">${isEN ? 'Specialty, Nature & Sub-Skill Synergy Analysis' : '專長與性格副技能協同點評'}</h4>
+              <h4 class="appraisal-section-heading">${_tLab('專長與性格副技能協同點評', 'Specialty, Nature & Sub-Skill Synergy Analysis')}</h4>
               <div class="appraisal-pros-list">
                 ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
               </div>
@@ -371,7 +377,7 @@
 
             <!-- 智能簡評欄 (嵌入式膠囊標籤) -->
             <div class="appraisal-summary-bar">
-              <span class="appraisal-summary-label">${isEN ? 'Appraisal Note' : '智能簡評'}</span>
+              <span class="appraisal-summary-label">${_tLab('智能簡評', 'Appraisal Note')}</span>
               <span class="appraisal-summary-text">${summaryNote}</span>
             </div>
           </div>
@@ -384,7 +390,7 @@
           <!-- 頂部標題列 (高度加寬，垂直置中，整合雙軌評級與極簡關閉鈕) -->
           <div class="appraisal-modal-header">
             <div class="appraisal-header-title-group">
-              <span class="appraisal-modal-badge">${isEN ? 'Diagnostic Report' : '深度能力診斷報告'}</span>
+              <span class="appraisal-modal-badge">${_tLab('深度能力診斷報告', 'Diagnostic Report')}</span>
               <h2 class="appraisal-pokemon-title">
                 ${nickname ? `<span class="appraisal-pokemon-nickname">${escapeHtml(nickname)}</span> <span class="appraisal-pokemon-base-name" style="font-size:0.85em;color:var(--text-secondary);font-weight:normal;">(${displayName})</span>` : displayName}
               </h2>
@@ -394,14 +400,14 @@
               <!-- 雙軌綜合評級徽章 (對齊圖鑑彈窗風格，垂直置中，當前亮眼 + 滿級低調) -->
               <div class="appraisal-dual-verdict-column">
                 <!-- 當前實力 (Current Level Rating) -->
-                <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${isEN ? `Current Level Rating (Lv.${currentLv})` : `當前實力評級 (Lv.${currentLv})`}">
-                  <span class="pokedex-verdict-track-lbl" style="font-size:10px;color:#94a3b8;line-height:1;">${isEN ? 'Current' : '當前'}</span>
+                <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${_tLab(`當前實力評級 (Lv.${currentLv})`, `Current Level Rating (Lv.${currentLv})`)}">
+                  <span class="pokedex-verdict-track-lbl" style="font-size:10px;color:#94a3b8;line-height:1;">${_tLab('當前', 'Current')}</span>
                   <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:14px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
                   <span class="pokedex-header-score-text" style="font-size:11px;"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
                 </div>
                 <!-- 滿級潛力 (Max Potential Rating) -->
-                <div class="pokedex-header-verdict-badge potential-track" title="${isEN ? 'Max Potential Rating (Lv.100)' : '畢業潛力評級 (Lv.100)'}">
-                  <span class="pokedex-verdict-track-lbl" style="font-size:9px;color:#64748b;line-height:1;">${isEN ? 'Max Lv' : '滿級'}</span>
+                <div class="pokedex-header-verdict-badge potential-track" title="${_tLab('畢業潛力評級 (Lv.100)', 'Max Potential Rating (Lv.100)')}">
+                  <span class="pokedex-verdict-track-lbl" style="font-size:9px;color:#64748b;line-height:1;">${_tLab('滿級', 'Max Lv')}</span>
                   <span class="verdict-potential-grade pokedex-header-grade-text" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
                   <span class="pokedex-header-score-text" style="font-size:10px;color:#94a3b8;"><span class="verdict-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
                 </div>
@@ -409,14 +415,14 @@
 
               <!-- 編輯按鈕 (若來自倉庫) -->
               ${pkmOrBoxItem && (pkmOrBoxItem.rawItem || pkmOrBoxItem.uid) ? `
-                <button type="button" class="appraisal-edit-btn" onclick="window.AppraisalLab.openCurrentEditModal()" title="${isEN ? 'Edit Pokémon Stats' : '編輯寶可夢數值'}">
+                <button type="button" class="appraisal-edit-btn" onclick="window.AppraisalLab.openCurrentEditModal()" title="${_tLab('編輯寶可夢數值', 'Edit Pokémon Stats')}">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                  <span>${isEN ? 'Edit' : '編輯數值'}</span>
+                  <span>${_tLab('編輯數值', 'Edit')}</span>
                 </button>
               ` : ''}
 
               <!-- 極簡關閉按鈕 -->
-              <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closeModal()" title="${isEN ? 'Close' : '關閉'}" aria-label="${isEN ? 'Close' : '關閉'}">
+              <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closeModal()" title="${_tLab('關閉', 'Close')}" aria-label="${_tLab('關閉', 'Close')}">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -444,21 +450,21 @@
                   ${ribbonLevel > 0 ? `
                     <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:11.5px;font-weight:700;">
                       <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:16px;height:16px;object-fit:contain;" alt="Ribbon" />
-                      <span>+${evaluation.ribbonBonus.carry} ${isEN ? 'Carry' : '持有'}${evaluation.ribbonBonus.speedDiscount > 0 ? ` · ${isEN ? '-' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '% Spd' : '幫速 -' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '%'}` : ''}</span>
+                      <span>+${evaluation.ribbonBonus.carry} ${_tLab('持有', 'Carry')}${evaluation.ribbonBonus.speedDiscount > 0 ? ` · ${_tLab('幫速 -' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '%', '-' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '% Spd')}` : ''}</span>
                     </div>
                   ` : ''}
                 </div>
 
                 <!-- 主技能名稱與等級 (Appraisal Main Skill) -->
                 <div class="appraisal-mainskill-row">
-                  <span class="appraisal-mainskill-label">${isEN ? 'Main Skill:' : '主技能：'}</span>
+                  <span class="appraisal-mainskill-label">${_tLab('主技能：', 'Main Skill:')}</span>
                   <span class="appraisal-mainskill-name">${escapeHtml(mainSkillName)}</span>
                   <span class="appraisal-mainskill-level">Lv.${skillLvl}</span>
                 </div>
 
                 <!-- 食材三階插槽組合 (Appraisal Ingredients, 尚未開放插槽半透明) -->
                 <div class="appraisal-ing-parallel-row">
-                  <span class="appraisal-ing-row-label">${isEN ? 'Ingredients:' : '食材：'}</span>
+                  <span class="appraisal-ing-row-label">${_tLab('食材：', 'Ingredients:')}</span>
                   <div class="appraisal-ing-chips-grid">
                     ${ingChipsHtml}
                   </div>
@@ -468,7 +474,7 @@
                 <div class="appraisal-config-section" style="margin-top:12px;display:flex;justify-content:center;">
                   <div class="appraisal-nature-game-card">
                     <div class="nature-pill-capsule">
-                      <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
+                      <span class="nature-capsule-tag">${_tLab('性格', 'Nature')}</span>
                       <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
                     </div>
                     ${natureEffectHtml}
@@ -480,13 +486,13 @@
                   <div class="appraisal-subskills-grid">
                     ${[10, 25, 50, 70, 80].map(function(lv, idx) {
                       const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
-                      const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName) : '--';
+                      const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : _tLabStr(rawName)) : '--';
                       const tier = getSkillTier(rawName);
                       const isUnlocked = currentLv >= lv;
                       const lockClass = !isUnlocked ? 'subskill-locked' : '';
                       const titleText = rawName 
-                        ? (isEN ? `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})` : `${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`)
-                        : (isEN ? `Lv.${lv} Slot` : `Lv.${lv} 欄位`);
+                        ? _tLab(`${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`, `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})`)
+                        : _tLab(`Lv.${lv} 欄位`, `Lv.${lv} Slot`);
                       return `
                         <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
                           <span class="subskill-name">${escapeHtml(sName)}</span>
@@ -501,21 +507,21 @@
                   <div class="pokedex-header-stats-row pokedex-header-stats-dual appraisal-header-stats-dual">
                     <div class="pokedex-header-stat-col">
                       <div class="pokedex-header-stat-item">
-                        <span class="header-stat-k">${isEN ? 'Frequency' : '幫忙間隔'}</span>
+                        <span class="header-stat-k">${_tLab('幫忙間隔', 'Frequency')}</span>
                         <span class="header-stat-v font-bold" id="appraisal-stat-interval">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIntervalValue === 'function') ? window.PokemonApp.renderPokedexIntervalValue(formulaData, pkmData) : '--'}</span>
                       </div>
                       <div class="pokedex-header-stat-item">
-                        <span class="header-stat-k">${isEN ? 'Carry' : '持有'}</span>
+                        <span class="header-stat-k">${_tLab('持有', 'Carry')}</span>
                         <span class="header-stat-v font-bold" id="appraisal-stat-carry">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexCarryValue === 'function') ? window.PokemonApp.renderPokedexCarryValue(formulaData, pkmData) : '--'}</span>
                       </div>
                     </div>
                     <div class="pokedex-header-stat-col">
                       <div class="pokedex-header-stat-item">
-                        <span class="header-stat-k">${isEN ? 'Ing Rate' : '食材率'}</span>
+                        <span class="header-stat-k">${_tLab('食材率', 'Ing Rate')}</span>
                         <span class="header-stat-v font-bold" id="appraisal-stat-ingredient-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIngRateValue === 'function') ? window.PokemonApp.renderPokedexIngRateValue(formulaData, pkmData) : '--'}</span>
                       </div>
                       <div class="pokedex-header-stat-item">
-                        <span class="header-stat-k">${isEN ? 'Skill Rate' : '技能率'}</span>
+                        <span class="header-stat-k">${_tLab('技能率', 'Skill Rate')}</span>
                         <span class="header-stat-v font-bold" id="appraisal-stat-skill-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexSkillRateValue === 'function') ? window.PokemonApp.renderPokedexSkillRateValue(formulaData, pkmData) : '--'}</span>
                       </div>
                     </div>
@@ -545,13 +551,13 @@
 
               <!-- 中部：PR 智能簡評欄 (嵌入式膠囊標籤，不佔用內容展示空間) -->
               <div class="appraisal-summary-bar">
-                <span class="appraisal-summary-label">${isEN ? 'Appraisal Note' : '智能簡評'}</span>
+                <span class="appraisal-summary-label">${_tLab('智能簡評', 'Appraisal Note')}</span>
                 <span class="appraisal-summary-text">${summaryNote}</span>
               </div>
 
               <!-- 下方：專長深度點評與優缺點 (在智能簡評下方，同樣長度) -->
               <div class="appraisal-analysis-card">
-                <h4 class="appraisal-section-heading">${isEN ? 'Specialty & Synergy Analysis' : '專長與性格副技能協同點評'}</h4>
+                <h4 class="appraisal-section-heading">${_tLab('專長與性格副技能協同點評', 'Specialty & Synergy Analysis')}</h4>
                 <div class="appraisal-pros-list">
                   ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
                 </div>

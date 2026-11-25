@@ -1706,6 +1706,382 @@ addTest('E2E-R5-03', 'Global Skill Tooltip (#global-skill-tooltip) and CloudSync
   }
 });
 
+// ---------------------------------------------------------------------------
+// M2: Items Tab & Item Detail Modal 8-Theme Dark/Light & WCAG AA Verification
+// ---------------------------------------------------------------------------
+addTest('E2E-M2-ITEMS-01', 'Items Tab (#wiki-subpanel-items) and Item Detail Modal (#wiki-item-detail-modal) enforce dark/light luminance & >= 4.5:1 WCAG AA contrast across all 8 themes on Desktop & Mobile H5', async ({ cdp, baseUrl }) => {
+  const viewports = [
+    { label: 'Desktop', url: '/index.html?view=desktop', pref: 'desktop', width: 1280, height: 800, dpr: 1, mobile: false },
+    { label: 'MobileH5', url: '/app/index.html?view=mobile', pref: 'mobile', width: 390, height: 844, dpr: 2, mobile: true }
+  ];
+
+  for (const vp of viewports) {
+    await cdp.send('Emulation.setDeviceMetricsOverride', { width: vp.width, height: vp.height, deviceScaleFactor: vp.dpr, mobile: vp.mobile });
+    await cdp.send('Page.navigate', { url: `${baseUrl}/manifest.webmanifest` });
+    await sleep(50);
+    await cdp.evalJs(`(() => { localStorage.clear(); localStorage.setItem('user_lang', 'zh-TW'); localStorage.setItem('pksleep_view_pref', '${vp.pref}'); })()`);
+    await cdp.send('Page.navigate', { url: `${baseUrl}${vp.url}` });
+    await waitForAppReady(cdp, `Items 8-Theme (${vp.label})`);
+
+    const report = await cdp.evalJs(`(async () => {
+      const sleepMs = (ms) => new Promise(r => setTimeout(r, ms));
+      if (window.switchMainTab) window.switchMainTab('wiki');
+      await sleepMs(100);
+      if (window.WikiDB && window.WikiDB.switchWikiSubTab) window.WikiDB.switchWikiSubTab('items');
+      await sleepMs(150);
+
+      function parseRgba(str) {
+        const m = String(str || '').match(/rgba?\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)(?:\\s*,\\s*([\\d.]+))?\\s*\\)/);
+        if (!m) return null;
+        return { r: Number(m[1]), g: Number(m[2]), b: Number(m[3]), a: m[4] !== undefined ? Number(m[4]) : 1 };
+      }
+      function parseRgbList(str) {
+        return [...String(str || '').matchAll(/rgba?\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)(?:\\s*,\\s*([\\d.]+))?\\s*\\)/g)]
+          .map(m => ({ r: Number(m[1]), g: Number(m[2]), b: Number(m[3]), a: m[4] !== undefined ? Number(m[4]) : 1 }));
+      }
+      function blendOver(fg, bg) {
+        const a = fg.a;
+        return { r: fg.r * a + bg.r * (1 - a), g: fg.g * a + bg.g * (1 - a), b: fg.b * a + bg.b * (1 - a), a: 1 };
+      }
+      function getEffectiveBg(el, fallbackBg) {
+        const chain = [];
+        let cur = el;
+        while (cur && cur.nodeType === 1) {
+          const bg = parseRgba(window.getComputedStyle(cur).backgroundColor);
+          if (bg && bg.a > 0) chain.push(bg);
+          cur = cur.parentElement;
+        }
+        let acc = fallbackBg || { r: 10, g: 15, b: 29, a: 1 };
+        for (let i = chain.length - 1; i >= 0; i--) acc = blendOver(chain[i], acc);
+        return acc;
+      }
+      function relLum(rgb) {
+        const lin = (c) => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); };
+        return 0.2126 * lin(rgb.r) + 0.7152 * lin(rgb.g) + 0.0722 * lin(rgb.b);
+      }
+      function contrast(fg, bg) {
+        const f = fg.a < 1 ? blendOver(fg, bg) : fg;
+        const l1 = relLum(f), l2 = relLum(bg);
+        return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+      }
+      function minElContrast(el, rootBg) {
+        if (!el) return null;
+        const cs = window.getComputedStyle(el);
+        const fg = parseRgba(cs.color);
+        const effBg = getEffectiveBg(el, rootBg);
+        const stops = parseRgbList(cs.backgroundImage);
+        if (stops.length > 0) {
+          return Math.min(...stops.map(s => contrast(fg, s.a < 1 ? blendOver(s, effBg) : s)));
+        }
+        return contrast(fg, effBg);
+      }
+
+      const themes = [
+        ['midnight', false, false],
+        ['onyx', false, false],
+        ['dawn', false, true],
+        ['emerald', false, true],
+        ['midnight', true, true],
+        ['onyx', true, true],
+        ['dawn', true, false],
+        ['emerald', true, false]
+      ];
+
+      const out = [];
+      for (const [theme, inv, isLight] of themes) {
+        window.PokemonApp.applyTheme(theme, inv);
+        await sleepMs(220);
+        const rootBg = parseRgba(window.getComputedStyle(document.documentElement).backgroundColor);
+
+        const activePill = document.querySelector('#wiki-subpanel-items .wiki-items-filter-pills .wiki-pill-btn.active');
+        const firstCard = document.querySelector('#wiki-subpanel-items .wiki-item-card');
+        const cardName = firstCard ? firstCard.querySelector('.wiki-item-card-name') : null;
+        const cardCat = firstCard ? firstCard.querySelector('.wiki-item-cat-badge') : null;
+
+        // 1. Open Evolution item modal (thunder_stone) for pkm cards + evolution badge
+        window.WikiDB.openItemDetailModal('thunder_stone');
+        await sleepMs(220);
+        const modal = document.getElementById('wiki-item-detail-modal');
+        const dialog = modal ? modal.querySelector('.wiki-item-modal-dialog') : null;
+        const header = modal ? modal.querySelector('.wiki-item-modal-header') : null;
+        const titleEl = modal ? modal.querySelector('#wiki-item-modal-title') : null;
+        const closeBtn = modal ? modal.querySelector('#wiki-item-modal-close-btn') : null;
+        const modalCat = modal ? modal.querySelector('#wiki-item-modal-cat-badge') : null;
+        const secTitle = modal ? modal.querySelector('.wiki-item-section-title') : null;
+        const effectsEl = modal ? modal.querySelector('#wiki-item-modal-effects') : null;
+        const pricePill = modal ? modal.querySelector('.wiki-item-price-pill') : null;
+        const priceLbl = modal ? modal.querySelector('.wiki-item-price-pill .price-label') : null;
+        const priceVal = modal ? modal.querySelector('.wiki-item-price-pill .price-value.text-highlight, .wiki-item-price-pill .price-value:not(.text-muted)') : null;
+        const acqItem = modal ? modal.querySelector('.wiki-item-acq-item') : null;
+        const pkmCard = modal ? modal.querySelector('.wiki-item-pkm-card') : null;
+        const pkmNo = modal ? modal.querySelector('.wiki-item-pkm-no') : null;
+        const pkmName = modal ? modal.querySelector('.wiki-item-pkm-name') : null;
+
+        const dialogLum = dialog ? relLum(getEffectiveBg(dialog, rootBg)) : null;
+        const headerLum = header ? relLum(getEffectiveBg(header, rootBg)) : null;
+        const pricePillLum = pricePill ? relLum(getEffectiveBg(pricePill, rootBg)) : null;
+        const pkmCardLum = pkmCard ? relLum(getEffectiveBg(pkmCard, rootBg)) : null;
+
+        const evoSnapshot = {
+          dialogLum, headerLum, pricePillLum, pkmCardLum,
+          titleContrast: minElContrast(titleEl, rootBg),
+          closeContrast: minElContrast(closeBtn, rootBg),
+          modalCatContrast: minElContrast(modalCat, rootBg),
+          secTitleContrast: minElContrast(secTitle, rootBg),
+          effectsContrast: minElContrast(effectsEl, rootBg),
+          priceLblContrast: minElContrast(priceLbl, rootBg),
+          priceValContrast: minElContrast(priceVal, rootBg),
+          acqContrast: minElContrast(acqItem, rootBg),
+          pkmNoContrast: minElContrast(pkmNo, rootBg),
+          pkmNameContrast: minElContrast(pkmName, rootBg)
+        };
+        window.WikiDB.closeItemDetailModal();
+        await sleepMs(120);
+
+        // 2. Open Seed item modal (main_skill_seed) for .stat-type-seed hero
+        window.WikiDB.openItemDetailModal('main_skill_seed');
+        await sleepMs(220);
+        const statHero = document.querySelector('#wiki-item-detail-modal #wiki-item-modal-stat-hero');
+        const statVal = statHero ? statHero.querySelector('.stat-hero-val') : null;
+        const statTitle = statHero ? statHero.querySelector('.stat-hero-title') : null;
+        const seedSnapshot = {
+          statValContrast: minElContrast(statVal, rootBg),
+          statTitleContrast: minElContrast(statTitle, rootBg)
+        };
+        window.WikiDB.closeItemDetailModal();
+        await sleepMs(120);
+
+        out.push({
+          theme, inv, isLight,
+          activePillContrast: minElContrast(activePill, rootBg),
+          cardNameContrast: minElContrast(cardName, rootBg),
+          cardCatContrast: minElContrast(cardCat, rootBg),
+          ...evoSnapshot,
+          ...seedSnapshot
+        });
+      }
+      return out;
+    })()`);
+
+    assert.strictEqual(report.length, 8, `${vp.label}: must test all 8 themes on Items tab`);
+    for (const r of report) {
+      const label = `${vp.label} Items ${r.theme}:inv=${r.inv}`;
+      if (r.isLight) {
+        assert(r.dialogLum !== null && r.dialogLum > 0.8, `${label} light modal dialog luminance ${r.dialogLum} <= 0.8`);
+        assert(r.headerLum !== null && r.headerLum > 0.8, `${label} light modal header luminance ${r.headerLum} <= 0.8`);
+        assert(r.pricePillLum !== null && r.pricePillLum > 0.8, `${label} light price pill luminance ${r.pricePillLum} <= 0.8`);
+        assert(r.pkmCardLum !== null && r.pkmCardLum > 0.8, `${label} light pkm card luminance ${r.pkmCardLum} <= 0.8`);
+      } else {
+        assert(r.dialogLum !== null && r.dialogLum < 0.1, `${label} dark modal dialog luminance ${r.dialogLum} >= 0.1`);
+        assert(r.headerLum !== null && r.headerLum < 0.1, `${label} dark modal header luminance ${r.headerLum} >= 0.1`);
+        assert(r.pricePillLum !== null && r.pricePillLum < 0.1, `${label} dark price pill luminance ${r.pricePillLum} >= 0.1`);
+        assert(r.pkmCardLum !== null && r.pkmCardLum < 0.1, `${label} dark pkm card luminance ${r.pkmCardLum} >= 0.1`);
+      }
+
+      for (const field of [
+        'activePillContrast', 'cardNameContrast', 'cardCatContrast',
+        'titleContrast', 'closeContrast', 'modalCatContrast', 'secTitleContrast',
+        'effectsContrast', 'priceLblContrast', 'priceValContrast', 'acqContrast',
+        'pkmNoContrast', 'pkmNameContrast', 'statValContrast', 'statTitleContrast'
+      ]) {
+        assert(r[field] !== null && r[field] >= 4.5, `${label} ${field} contrast ${r[field]} < 4.5`);
+      }
+    }
+  }
+});
+
+// ---------------------------------------------------------------------------
+// M1: 3-Language Live DOM Verification (zh-TW, zh-CN, en-US)
+// ---------------------------------------------------------------------------
+addTest('E2E-M1-I18N-01', '3-Language Live DOM audit (zh-TW, zh-CN, en-US) across Pokédex, Recipes, Wiki (7 subtabs + Item Modal), Box + Lab + Appraisal, and News has 0 Traditional leaks in zh-CN and 0 unintended CJK in en-US', async ({ cdp, baseUrl }) => {
+  const t2sSrc = fs.readFileSync(path.join(ROOT_DIR, 'js', 'core', 'i18n', 'i18n_t2s.js'), 'utf8');
+  const tradChars = (t2sSrc.match(/const T2S_TRAD = "([^"]+)";/) || [])[1] || '';
+  assert(tradChars.length > 900, 'Expected T2S_TRAD table from i18n_t2s.js');
+
+  const sampleBox = JSON.stringify([{
+    uid: 'cdp_test_pika_1',
+    pokemonId: 25,
+    name: '皮卡丘',
+    nickname: 'Sparky',
+    level: 50,
+    nature: '固執',
+    subskills: ['樹果數量S', '幫忙速度M', '幫手獎勵', '持有上限提升L', '技能機率提升M'],
+    ingredients: ['特選蘋果', '特選蘋果', '暖暖薑'],
+    skillLevel: 3,
+    ribbon: 1
+  }]);
+
+  const viewports = [
+    { label: 'Desktop', url: '/index.html?view=desktop', pref: 'desktop', width: 1280, height: 800, dpr: 1, mobile: false },
+    { label: 'MobileH5', url: '/app/index.html?view=mobile', pref: 'mobile', width: 390, height: 844, dpr: 2, mobile: true }
+  ];
+
+  const langs = ['zh-TW', 'zh-CN', 'en-US'];
+
+  const allFailures = [];
+  for (const vp of viewports) {
+    for (const lang of langs) {
+      await cdp.send('Emulation.setDeviceMetricsOverride', { width: vp.width, height: vp.height, deviceScaleFactor: vp.dpr, mobile: vp.mobile });
+      await cdp.send('Page.navigate', { url: `${baseUrl}/manifest.webmanifest` });
+      await sleep(40);
+      await cdp.evalJs(`(() => {
+        localStorage.clear();
+        localStorage.setItem('user_lang', ${JSON.stringify(lang)});
+        localStorage.setItem('pksleep_view_pref', ${JSON.stringify(vp.pref)});
+        localStorage.setItem('PKMSLEEP_USER_BOX_V1', ${JSON.stringify(sampleBox)});
+      })()`);
+      await cdp.send('Page.navigate', { url: `${baseUrl}${vp.url}` });
+      await waitForAppReady(cdp, `I18N ${vp.label} ${lang}`);
+
+      const audit = await cdp.evalJs(`(async () => {
+        const sleepMs = (ms) => new Promise(r => setTimeout(r, ms));
+        const tradSet = new Set(${JSON.stringify([...tradChars])});
+        const cjkRe = /[\\u4e00-\\u9fff\\u3400-\\u4dbf]/;
+        const leaks = [];
+
+        function isVisibleEl(el) {
+          let cur = el;
+          while (cur && cur.nodeType === 1) {
+            const tag = cur.tagName;
+            if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT' || tag === 'TEMPLATE') return false;
+            const cs = window.getComputedStyle(cur);
+            if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) === 0) return false;
+            cur = cur.parentElement;
+          }
+          return true;
+        }
+
+        function scanVisibleDom(areaLabel) {
+          const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+          let node;
+          while ((node = walker.nextNode())) {
+            const txt = (node.nodeValue || '').trim();
+            if (!txt) continue;
+            const parent = node.parentElement;
+            if (!parent || !isVisibleEl(parent)) continue;
+            if (txt === '繁體中文' || txt === '简体中文' || txt === 'English') continue;
+
+            if (${JSON.stringify(lang)} === 'zh-CN') {
+              const bad = [];
+              for (const ch of txt) {
+                if (tradSet.has(ch)) bad.push(ch);
+              }
+              if (bad.length > 0) {
+                leaks.push({ area: areaLabel, chars: [...new Set(bad)].join(''), text: txt.slice(0, 120), selector: parent.id || parent.className || parent.tagName });
+              }
+            } else if (${JSON.stringify(lang)} === 'en-US') {
+              if (cjkRe.test(txt)) {
+                leaks.push({ area: areaLabel, text: txt.slice(0, 120), selector: parent.id || parent.className || parent.tagName });
+              }
+            }
+          }
+        }
+
+        // 1. Pokedex + Detail Modal
+        if (window.switchMainTab) window.switchMainTab('pokemon');
+        await sleepMs(120);
+        scanVisibleDom('pokedex-list');
+        if (window.PokemonApp && window.PokemonApp.openPokemonDetailModal) {
+          window.PokemonApp.openPokemonDetailModal(25);
+          await sleepMs(150);
+          scanVisibleDom('pokedex-detail-modal');
+          const pClose = document.querySelector('#pokedex-detail-modal .modal-close, #pokedex-detail-modal .pokedex-modal-close, #pokedex-detail-modal .box-modal-close');
+          if (pClose) pClose.click();
+          else if (window.PokemonApp.closePokemonDetailModal) window.PokemonApp.closePokemonDetailModal();
+          await sleepMs(380);
+        }
+
+        // 2. Recipes + Pot Filler Modal
+        if (window.switchMainTab) window.switchMainTab('recipes');
+        await sleepMs(150);
+        scanVisibleDom('recipes-list');
+        if (window.RecipesApp && window.RecipesApp.openPotFillerModal) {
+          const firstRecipe = (window.__RECIPES_CACHE__ && window.__RECIPES_CACHE__[0]) || null;
+          if (firstRecipe) {
+            window.RecipesApp.openPotFillerModal(firstRecipe);
+            await sleepMs(150);
+            scanVisibleDom('recipes-pot-filler-modal');
+            const fClose = document.getElementById('filler-dialog-close-btn');
+            if (fClose) fClose.click();
+            await sleepMs(380);
+          }
+        }
+
+        // 3. Wiki (all 7 subtabs + Item Detail Modal)
+        if (window.switchMainTab) window.switchMainTab('wiki');
+        await sleepMs(120);
+        for (const sub of ['skills', 'ratings', 'ingredients', 'skills_ladder', 'values', 'islands', 'items']) {
+          if (window.WikiDB && window.WikiDB.switchWikiSubTab) window.WikiDB.switchWikiSubTab(sub);
+          await sleepMs(120);
+          scanVisibleDom('wiki-' + sub);
+        }
+        if (window.WikiDB && window.WikiDB.openItemDetailModal) {
+          window.WikiDB.openItemDetailModal('thunder_stone');
+          await sleepMs(150);
+          scanVisibleDom('wiki-item-detail-modal');
+          window.WikiDB.closeItemDetailModal();
+          await sleepMs(380);
+        }
+
+        // 4. Box + Edit Modal + Lab (Team / Compare / Growth) + Appraisal Modal
+        if (window.switchMainTab) window.switchMainTab('box');
+        await sleepMs(150);
+        if (window.CloudSync && window.CloudSync.dismissBoxAuthOverlay) {
+          window.CloudSync.dismissBoxAuthOverlay();
+          await sleepMs(60);
+        }
+        scanVisibleDom('box-list');
+        const boxList = window.PokemonBoxApp && window.PokemonBoxApp.getUserBox ? window.PokemonBoxApp.getUserBox() : [];
+        if (boxList[0] && window.PokemonBoxApp && window.PokemonBoxApp.openBoxEditModal) {
+          window.PokemonBoxApp.openBoxEditModal(boxList[0]);
+          await sleepMs(120);
+          scanVisibleDom('box-edit-modal');
+          if (window.PokemonBoxApp.closeBoxEditModal) window.PokemonBoxApp.closeBoxEditModal();
+          await sleepMs(80);
+        }
+        if (window.AppraisalLab) {
+          for (const labSub of ['team', 'compare', 'growth']) {
+            if (window.AppraisalLab.switchSubTab) window.AppraisalLab.switchSubTab(labSub);
+            await sleepMs(120);
+            scanVisibleDom('lab-' + labSub);
+          }
+          if (boxList[0] && window.AppraisalLab.openModal) {
+            window.AppraisalLab.openModal(boxList[0]);
+            await sleepMs(120);
+            scanVisibleDom('lab-appraisal-modal');
+            if (window.AppraisalLab.closeModal) window.AppraisalLab.closeModal();
+            await sleepMs(80);
+          }
+        }
+
+        // 5. News + Timeline + Expanded Article
+        if (window.switchMainTab) window.switchMainTab('news');
+        await sleepMs(150);
+        scanVisibleDom('news-timeline');
+        const firstArticle = document.querySelector('#news-list .news-accordion-card');
+        if (firstArticle) {
+          firstArticle.click();
+          await sleepMs(120);
+          scanVisibleDom('news-expanded-article');
+        }
+
+        return {
+          docLang: document.documentElement.getAttribute('lang'),
+          leaksCount: leaks.length,
+          leaks: leaks.slice(0, 20)
+        };
+      })()`);
+
+      const expDocLang = lang === 'zh-TW' ? 'zh-Hant' : (lang === 'zh-CN' ? 'zh-Hans' : 'en');
+      assert.strictEqual(audit.docLang, expDocLang, `${vp.label} ${lang}: html[lang] mismatch`);
+      if (audit.leaksCount > 0) {
+        allFailures.push({ viewport: vp.label, lang, leaksCount: audit.leaksCount, leaks: audit.leaks });
+      }
+    }
+  }
+  assert.strictEqual(allFailures.length, 0, `Detected i18n leaks across viewports/languages: ${JSON.stringify(allFailures, null, 2)}`);
+});
+
 async function main() {
   let httpCtx = null;
   let chrome = null;

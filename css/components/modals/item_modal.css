@@ -208,9 +208,11 @@
   box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4) !important;
 }
 
-/*  亮色主題自適應 (Dawn & Emerald) */
+/*  亮色主題自適應 (Dawn, Emerald, Midnight Inverted, Onyx Inverted) */
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet {
   background: #ffffff !important;
 }
 
@@ -223,21 +225,35 @@
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-form-select,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-subskill-slot-btn,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-ing-opt-btn,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-close {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-close,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-form-input,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-form-select,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-subskill-slot-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-ing-opt-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-modal-close,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-form-input,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-form-select,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-subskill-slot-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-ing-opt-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-modal-close {
   background: #f8fafc !important;
   border-color: #e2e8f0 !important;
   color: #0f172a !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-btn-secondary,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-btn-secondary {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-btn-secondary,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-btn-secondary,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-btn-secondary {
   background: #f1f5f9 !important;
   border: none !important;
   color: #475569 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-footer,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-footer {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-footer,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-modal-footer,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .box-modal-footer {
   background: transparent !important;
   border: none !important;
 }
@@ -342,6 +358,12 @@
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+}
+
+.mobile-h5-app .wiki-items-filter-pills .wiki-pill-btn.active {
+  background: var(--accent-btn-bg, var(--accent-gradient, #0284c7)) !important;
+  color: var(--accent-btn-text, #ffffff) !important;
+  border-color: transparent !important;
 }
 
 /* Mobile H5 2-Column Responsive Card Grid */

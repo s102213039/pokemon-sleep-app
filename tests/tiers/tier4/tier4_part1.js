@@ -863,12 +863,12 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless
   assert(stylesCss.includes('.mobile-h5-app .strategy-item {\n  background: transparent !important;\n  border: none !important;'), 'Mobile strategy-item must have transparent background and no borders');
 
   // 5. Verify milestone table simplification and single-line column control
-  assert(wikiJs.includes('<th class="col-milestone-days">${isEN ? \'Daily Full Sleep\' : \'每天滿睡\'}</th>'), 'Milestone table header must be 每天滿睡');
-  assert(wikiJs.includes('<th class="col-milestone-exp">${isEN ? \'Required EXP\' : \'所需EXP\'}</th>'), 'Milestone table header must be 所需EXP');
-  assert(wikiJs.includes('<th class="col-milestone-note">${isEN ? \'Milestone\' : \'里程碑\'}</th>'), 'Milestone table header must be 里程碑');
+  assert(wikiJs.includes("<th class=\"col-milestone-days\">${_tWiki('每天滿睡', 'Daily Full Sleep')}</th>"), 'Milestone table header must be 每天滿睡');
+  assert(wikiJs.includes("<th class=\"col-milestone-exp\">${_tWiki('所需EXP', 'Required EXP')}</th>"), 'Milestone table header must be 所需EXP');
+  assert(wikiJs.includes("<th class=\"col-milestone-note\">${_tWiki('里程碑', 'Milestone')}</th>"), 'Milestone table header must be 里程碑');
   assert(wikiJs.includes('Lv.${row.level}'), 'Milestone level must not have spaces');
   assert(wikiJs.includes('${row.totalExp.toLocaleString()}</td>'), 'Milestone EXP value must not have EXP suffix text');
-  assert(wikiJs.includes("${row.days} ${isEN ? 'Days' : '天'}"), 'Milestone days must not have parentheses');
+  assert(wikiJs.includes("${row.days} ${_tWiki('天', 'Days')}"), 'Milestone days must not have parentheses');
   assert(wikiJs.includes('note: "解鎖第1個副技能"'), 'Milestone note Lv.10 must remove extra comma content');
   assert(wikiJs.includes('note: "解鎖第2個副技能"'), 'Milestone note Lv.25 must remove extra comma content');
   assert(wikiJs.includes('note: "解鎖第2種食材"'), 'Milestone note Lv.30 must remove extra comma content');
@@ -1654,10 +1654,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
   const cssCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
 
   // 1. Verify Ribbon Quick Guide displays independent progression (+1, +2, +3, +2)
-  assert(wikiCode.includes('+1 ${isEN ? \'Carry\' : \'持有上限\'}'), 'Ribbon Tier 1 must be +1');
-  assert(wikiCode.includes('+2 ${isEN ? \'Carry\' : \'持有\'}, ${isEN ? \'Speed\' : \'幫速\'} -5% / -11%'), 'Ribbon Tier 2 must be +2');
-  assert(wikiCode.includes('+3 ${isEN ? \'Carry\' : \'持有上限\'}'), 'Ribbon Tier 3 must be +3');
-  assert(wikiCode.includes('+2 ${isEN ? \'Carry\' : \'持有\'}, ${isEN ? \'Speed\' : \'幫速\'} -12% / -25%'), 'Ribbon Tier 4 must be +2');
+  assert(wikiCode.includes("+1 ${_tWiki('持有上限', 'Carry')}"), 'Ribbon Tier 1 must be +1');
+  assert(wikiCode.includes("+2 ${_tWiki('持有', 'Carry')}, ${_tWiki('幫速', 'Speed')} -5% / -11%"), 'Ribbon Tier 2 must be +2');
+  assert(wikiCode.includes("+3 ${_tWiki('持有上限', 'Carry')}"), 'Ribbon Tier 3 must be +3');
+  assert(wikiCode.includes("+2 ${_tWiki('持有', 'Carry')}, ${_tWiki('幫速', 'Speed')} -12% / -25%"), 'Ribbon Tier 4 must be +2');
 
   // 2. Verify CSS defines dropdown styling complying with dropdown arrow rule & custom-select-calc
   assert(cssCode.includes('.calc-select') && cssCode.includes('padding: 9px 36px 9px 12px;'), 'calc-select must have 36px right padding for arrow clearance');

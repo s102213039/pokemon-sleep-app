@@ -4,6 +4,17 @@ const GH_WORKFLOW = 'sync.yml';
 const GH_API_BASE = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}`;
 const GH_PAT_KEY  = 'pksleep_gh_pat';
 
+function _tDex(tw, en) {
+  if (typeof window !== 'undefined' && window.I18N) {
+    if (window.I18N.getLanguage() === 'en-US') return en;
+    if (window.I18N.getLanguage() === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
+      return window.I18N.toSimplified(tw);
+    }
+  }
+  return tw;
+}
+if (typeof window !== 'undefined') window._tDex = _tDex;
+
 const DEFAULT_SVG_ICON = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%2338bdf8"/></svg>';
 
 const SPECIAL_ICON_MAP = {
@@ -420,6 +431,9 @@ function getItemNo(p) {
 
 function getItemName(p) {
   if (!p) return '';
+  if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function') {
+    return window.I18N.getPokemonName(p) || '';
+  }
   const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
   return isEN ? (p.name_en || p.name_cn || '') : (p.name_cn || p.name_en || '');
 }

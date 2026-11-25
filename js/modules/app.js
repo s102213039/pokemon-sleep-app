@@ -4,6 +4,17 @@ const GH_WORKFLOW = 'sync.yml';
 const GH_API_BASE = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}`;
 const GH_PAT_KEY  = 'pksleep_gh_pat';
 
+function _tDex(tw, en) {
+  if (typeof window !== 'undefined' && window.I18N) {
+    if (window.I18N.getLanguage() === 'en-US') return en;
+    if (window.I18N.getLanguage() === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
+      return window.I18N.toSimplified(tw);
+    }
+  }
+  return tw;
+}
+if (typeof window !== 'undefined') window._tDex = _tDex;
+
 const DEFAULT_SVG_ICON = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%2338bdf8"/></svg>';
 
 const SPECIAL_ICON_MAP = {
@@ -420,6 +431,9 @@ function getItemNo(p) {
 
 function getItemName(p) {
   if (!p) return '';
+  if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function') {
+    return window.I18N.getPokemonName(p) || '';
+  }
   const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
   return isEN ? (p.name_en || p.name_cn || '') : (p.name_cn || p.name_en || '');
 }
@@ -1413,7 +1427,13 @@ function getSkillDescription(skillName, isEN) {
               BASE_SKILL_DETAILS[s.replace(/\(/g, '（').replace(/\)/g, '）')] ||
               BASE_SKILL_DETAILS[s.replace(/（/g, '(').replace(/）/g, ')')];
   if (!raw) return '';
-  return typeof raw === 'object' ? (raw[isEN ? 'en-US' : 'zh-TW'] || raw['zh-TW']) : raw;
+  if (typeof raw === 'object') {
+    if (isEN) return raw['en-US'] || raw['zh-TW'];
+    const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN';
+    const tw = raw['zh-TW'] || '';
+    return (isCN && typeof window.I18N.toSimplified === 'function') ? window.I18N.toSimplified(tw) : tw;
+  }
+  return raw;
 }
 
 function escapeHtml(str) {
@@ -1443,14 +1463,19 @@ function formatSkillNameHtml(displayName, isEN) {
   let cleaned = stripSpecialSkillParens(displayName)
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
     .replace(/活力全體療癒S/g, '全體療癒S')
+    .replace(/活力全体疗愈S/g, '全体疗愈S')
     .replace(/夢之碎片/g, '夢碎')
+    .replace(/梦之碎片/g, '梦碎')
     .replace(/\(Energy for Everyone S\)/gi, '(Energy All S)')
     .replace(/（/g, '(')
     .replace(/）/g, ')')
     .trim();
 
   if (!isEN) {
-    return `<span class="skill-single-line">${escapeHtml(cleaned)}</span>`;
+    const out = (typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN' && typeof window.I18N.toSimplified === 'function')
+      ? window.I18N.toSimplified(cleaned)
+      : cleaned;
+    return `<span class="skill-single-line">${escapeHtml(out)}</span>`;
   }
 
   // 縮短英文主技能名稱（例如 Ingredient -> Ingr., Strength -> Str., Everyone -> All 等）
@@ -1492,7 +1517,8 @@ function renderSkillWithTooltip(skillName, pkm) {
                     SPECIAL_SKILL_DETAILS[strippedKey] ||
                     SPECIAL_SKILL_DETAILS[skillName.replace(/\(/g, '（').replace(/\)/g, '）')] ||
                     SPECIAL_SKILL_DETAILS[skillName.replace(/（/g, '(').replace(/）/g, ')')];
-  let detail = rawDetail ? (typeof rawDetail === 'object' ? (rawDetail[isEN ? 'en-US' : 'zh-TW'] || rawDetail['zh-TW']) : rawDetail) : '';
+  const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN';
+  let detail = rawDetail ? (typeof rawDetail === 'object' ? (isEN ? (rawDetail['en-US'] || rawDetail['zh-TW']) : (isCN && typeof window.I18N.toSimplified === 'function' ? window.I18N.toSimplified(rawDetail['zh-TW']) : rawDetail['zh-TW'])) : rawDetail) : '';
 
   let plainTitle = detail;
   // 針對特定寶可夢的「食材精選S」系列（含超幸運、怪力鉗），精簡直接顯示該寶可夢專屬食材池（單行純圖標，無冗長換行）
@@ -1525,26 +1551,30 @@ function renderSkillWithTooltip(skillName, pkm) {
 
       const ingNamesPlain = targetIngs.map(ig => (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name).join(isEN ? ', ' : '、');
 
-      const prefix = isEN ? 'Draws: ' : '可精選食材: ';
+      const prefix = _tDex('可精選食材: ', 'Draws: ');
       if (isSuperLuck) {
-        const critText = isEN 
-          ? 'Crit effect: Rarely crits for massive Dream Shards instead of ingredients (up to 20,000 shards)!' 
-          : '暴擊效果: 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片)!';
+        const critText = _tDex(
+          '暴擊效果: 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片)!',
+          'Crit effect: Rarely crits for massive Dream Shards instead of ingredients (up to 20,000 shards)!'
+        );
         detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span></span><div style="font-size:11.5px;color:var(--accent-color,#f59e0b);margin-top:3px;line-height:1.35;font-weight:500;">${critText}</div>`;
-        plainTitle = isEN 
-          ? `Draws: ${ingNamesPlain}. ${critText}` 
-          : `可精選食材: ${ingNamesPlain}. ${critText}`;
+        plainTitle = _tDex(
+          `可精選食材: ${ingNamesPlain}. ${critText}`,
+          `Draws: ${ingNamesPlain}. ${critText}`
+        );
       } else if (isHyperCutter) {
-        const critText = isEN 
-          ? 'Crit effect: Extra Tasty crits to grant 2x ingredients (up to 36 items)!' 
-          : '暴擊效果: 漂亮成功 (大成功/暴擊) 時食材產出翻倍 (2 倍, 最高達 36 個)!';
+        const critText = _tDex(
+          '暴擊效果: 漂亮成功 (大成功/暴擊) 時食材產出翻倍 (2 倍, 最高達 36 個)!',
+          'Crit effect: Extra Tasty crits to grant 2x ingredients (up to 36 items)!'
+        );
         detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span></span><div style="font-size:11.5px;color:var(--accent-color,#f59e0b);margin-top:3px;line-height:1.35;font-weight:500;">${critText}</div>`;
-        plainTitle = isEN 
-          ? `Draws: ${ingNamesPlain}. ${critText}` 
-          : `可精選食材: ${ingNamesPlain}. ${critText}`;
+        plainTitle = _tDex(
+          `可精選食材: ${ingNamesPlain}. ${critText}`,
+          `Draws: ${ingNamesPlain}. ${critText}`
+        );
       } else {
         detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span></span>`;
-        plainTitle = isEN ? `Draws: ${ingNamesPlain}` : `可精選食材: ${ingNamesPlain}`;
+        plainTitle = _tDex(`可精選食材: ${ingNamesPlain}`, `Draws: ${ingNamesPlain}`);
       }
     }
   }
@@ -1553,7 +1583,9 @@ function renderSkillWithTooltip(skillName, pkm) {
   const cleanSkillKey = stripSpecialSkillParens(skillName || '')
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
     .replace(/活力全體療癒S/g, '全體療癒S')
+    .replace(/活力全体疗愈S/g, '全体疗愈S')
     .replace(/夢之碎片/g, '夢碎')
+    .replace(/梦之碎片/g, '梦碎')
     .replace(/（/g, '(')
     .replace(/）/g, ')')
     .trim();
@@ -1568,11 +1600,16 @@ function renderSkillWithTooltip(skillName, pkm) {
   let cleaned = stripSpecialSkillParens(displayName)
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
     .replace(/活力全體療癒S/g, '全體療癒S')
+    .replace(/活力全体疗愈S/g, '全体疗愈S')
     .replace(/夢之碎片/g, '夢碎')
+    .replace(/梦之碎片/g, '梦碎')
     .replace(/（/g, '(')
     .replace(/）/g, ')')
     .trim();
-  return escapeHtml(cleaned);
+  const out = (typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN' && typeof window.I18N.toSimplified === 'function')
+    ? window.I18N.toSimplified(cleaned)
+    : cleaned;
+  return escapeHtml(out);
 }
 
 function matchesSkill(pokemonSkill, targetBaseSkill) {
@@ -2535,7 +2572,7 @@ function toggleSidebar(forceState) {
     if (bookmarkHandle) {
       bookmarkHandle.classList.remove('drawer-open');
       bookmarkHandle.setAttribute('aria-expanded', 'false');
-      bookmarkHandle.title = '展開篩選側邊欄';
+      bookmarkHandle.title = _tDex('展開篩選側邊欄', 'Expand Filter Sidebar');
       bookmarkHandle.style.removeProperty('display');
       bookmarkHandle.style.removeProperty('opacity');
       bookmarkHandle.style.removeProperty('visibility');
@@ -2553,7 +2590,7 @@ function toggleSidebar(forceState) {
     if (bookmarkHandle) {
       bookmarkHandle.classList.add('drawer-open');
       bookmarkHandle.setAttribute('aria-expanded', 'true');
-      bookmarkHandle.title = '收合篩選側邊欄';
+      bookmarkHandle.title = _tDex('收合篩選側邊欄', 'Collapse Filter Sidebar');
       bookmarkHandle.style.removeProperty('display');
       bookmarkHandle.style.removeProperty('opacity');
       bookmarkHandle.style.removeProperty('visibility');
@@ -2835,7 +2872,7 @@ if (typeof document !== 'undefined') {
             ghPat = val;
             safeStorageSet(GH_PAT_KEY, val);
             animateOverlayClose(settingsModal, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
-            if (syncStatus) syncStatus.innerHTML = `<span style="color:#4ade80;">[✓] PAT Token 已儲存！現在可以點擊同步資料。</span>`;
+            if (syncStatus) syncStatus.innerHTML = `<span style="color:#4ade80;">${_tDex('[✓] PAT Token 已儲存！現在可以點擊同步資料。', '[✓] PAT Token saved! You can now click Sync Data.')}</span>`;
           } else {
             animateOverlayClose(settingsModal, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
           }
@@ -2852,15 +2889,15 @@ if (typeof document !== 'undefined') {
         if (!ghPat) {
           if (syncStatus) {
             syncStatus.innerHTML = `
-              <span style="color:#fbbf24;">[!] 尚未設定 GitHub PAT Token。</span><br>
-              請先點擊 <strong>設定</strong> 並填入你的 GitHub PAT。
+              <span style="color:#fbbf24;">${_tDex('[!] 尚未設定 GitHub PAT Token。', '[!] GitHub PAT Token is not configured.')}</span><br>
+              ${_tDex('請先點擊 <strong>設定</strong> 並填入你的 GitHub PAT。', 'Please click <strong>Settings</strong> and enter your GitHub PAT first.')}
             `;
           }
           return;
         }
 
         syncBtn.disabled = true;
-        syncBtn.textContent = '觸發同步中...';
+        syncBtn.textContent = _tDex('觸發同步中...', 'Triggering sync...');
         if (syncStatus) syncStatus.textContent = '';
 
         try {
@@ -2881,31 +2918,31 @@ if (typeof document !== 'undefined') {
           if (res.status === 204) {
             if (syncStatus) {
               syncStatus.innerHTML = `
-                <span style="color:#4ade80;">[v] GitHub Actions 同步已觸發！</span><br>
-                <span style="font-size:12px;color:#94a3b8;">約 60-120 秒後資料更新至 GitHub Pages。
+                <span style="color:#4ade80;">${_tDex('[v] GitHub Actions 同步已觸發！', '[v] GitHub Actions sync triggered!')}</span><br>
+                <span style="font-size:12px;color:#94a3b8;">${_tDex('約 60-120 秒後資料更新至 GitHub Pages。', 'Data will update on GitHub Pages in ~60-120s.')}
                   <a href="https://github.com/${GH_OWNER}/${GH_REPO}/actions" target="_blank" rel="noopener noreferrer"
-                    style="color:#38bdf8;">查看進度 -></a>
+                    style="color:#38bdf8;">${_tDex('查看進度 ->', 'View Progress ->')}</a>
                 </span>
               `;
             }
             setTimeout(() => location.reload(), 90000);
           } else if (res.status === 401 || res.status === 403) {
-            if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">[X] PAT Token 無效或權限不足，請重新設定。</span>`;
+            if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">${_tDex('[X] PAT Token 無效或權限不足，請重新設定。', '[X] Invalid PAT Token or insufficient permissions. Please reconfigure.')}</span>`;
           } else {
             const body = await res.text();
             const safeBody = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
               ? window.DOMUtils.escapeHtml(body.slice(0, 120))
               : String(body.slice(0, 120)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            if (syncStatus) syncStatus.innerHTML = `<span style="color:#fbbf24;">[!] 回應 ${res.status}：${safeBody}</span>`;
+            if (syncStatus) syncStatus.innerHTML = `<span style="color:#fbbf24;">${_tDex(`[!] 回應 ${res.status}：${safeBody}`, `[!] Response ${res.status}: ${safeBody}`)}</span>`;
           }
         } catch (e) {
           const safeErr = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
             ? window.DOMUtils.escapeHtml(e.message)
             : String(e.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-          if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">[X] 網路錯誤：${safeErr}</span>`;
+          if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">${_tDex(`[X] 網路錯誤：${safeErr}`, `[X] Network error: ${safeErr}`)}</span>`;
         } finally {
           syncBtn.disabled = false;
-          syncBtn.textContent = '同步資料';
+          syncBtn.textContent = _tDex('同步資料', 'Sync Data');
         }
       });
     }
@@ -3704,12 +3741,12 @@ if (typeof document !== 'undefined') {
       .catch(err => {
         console.error('Error loading data.json:', err);
         if (typeof window.__renderInPlaceError === 'function') {
-          window.__renderInPlaceError('content-area', '寶可夢資料庫載入失敗 (data.json)', err);
+          window.__renderInPlaceError('content-area', _tDex('寶可夢資料庫載入失敗 (data.json)', 'Failed to load Pokédex database (data.json)'), err);
         } else if (contentArea) {
           const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
             ? window.DOMUtils.escapeHtml(err.message)
             : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-          contentArea.innerHTML = `<div style="text-align:center; padding: 40px; color: #ef4444;">載入 data.json 失敗：${safeMsg}</div>`;
+          contentArea.innerHTML = `<div style="text-align:center; padding: 40px; color: #ef4444;">${_tDex('載入 data.json 失敗：', 'Failed to load data.json: ')}${safeMsg}</div>`;
         }
       });
 
@@ -3724,7 +3761,7 @@ if (typeof document !== 'undefined') {
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       typeFilterContainer.innerHTML = types.map(t => {
         const isActive = t === 'ALL' ? selectedTypes.size === 0 : selectedTypes.has(t);
-        const label = t === 'ALL' ? (isEN ? 'All Types' : '全部屬性') : (isEN && window.I18N ? window.I18N.getTypeName(t) : t);
+        const label = t === 'ALL' ? _tDex('全部屬性', 'All Types') : (window.I18N ? window.I18N.getTypeName(t) : t);
         return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-type="${t}">${label}</button>`;
       }).join('');
     }
@@ -3746,7 +3783,7 @@ if (typeof document !== 'undefined') {
       berryFilterContainer.innerHTML = sortedBerries.map(b => {
         const isActive = selectedBerries.has(b.name);
         const berryName = window.I18N ? window.I18N.getBerryName(b.name) : b.name;
-        const typeName = isEN && window.I18N ? window.I18N.getTypeName(b.type) : b.type;
+        const typeName = window.I18N ? window.I18N.getTypeName(b.type) : b.type;
         return `
           <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${berryName} (${typeName})" aria-label="${berryName}">
             ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" alt="${berryName}" loading="lazy" onerror="this.style.display='none';">` : ''}
@@ -3782,8 +3819,10 @@ if (typeof document !== 'undefined') {
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       skillFilterContainer.innerHTML = BASE_SKILLS.map(skillItem => {
         const isActive = selectedSkills.has(skillItem.key);
-        const label = isEN ? (skillItem.label_en || (window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label)) : (window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label);
-        const fullTitle = isEN ? (window.I18N ? window.I18N.getMainSkillName(skillItem.key) : skillItem.label) : skillItem.label;
+        const rawLabel = window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label;
+        const label = isEN ? (skillItem.label_en || rawLabel) : _tDex(rawLabel, rawLabel);
+        const rawFull = window.I18N ? window.I18N.getMainSkillName(skillItem.key) : skillItem.label;
+        const fullTitle = isEN ? rawFull : _tDex(rawFull, rawFull);
         return `
           <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${fullTitle}">
             <span class="subfilter-skill-name">${label}</span>
@@ -4068,7 +4107,7 @@ if (typeof document !== 'undefined') {
           if (bookmarkHandle) {
             bookmarkHandle.classList.remove('drawer-open');
             bookmarkHandle.setAttribute('aria-expanded', 'false');
-            bookmarkHandle.title = '展開篩選側邊欄';
+            bookmarkHandle.title = _tDex('展開篩選側邊欄', 'Expand Filter Sidebar');
             bookmarkHandle.style.opacity = '1';
             bookmarkHandle.style.pointerEvents = 'auto';
             bookmarkHandle.style.display = 'flex';
@@ -4084,7 +4123,7 @@ if (typeof document !== 'undefined') {
           if (bookmarkHandle) {
             bookmarkHandle.classList.add('drawer-open');
             bookmarkHandle.setAttribute('aria-expanded', 'true');
-            bookmarkHandle.title = '收合篩選側邊欄';
+            bookmarkHandle.title = _tDex('收合篩選側邊欄', 'Collapse Filter Sidebar');
             bookmarkHandle.style.opacity = '0';
             bookmarkHandle.style.pointerEvents = 'none';
             bookmarkHandle.style.display = 'none';
@@ -4430,17 +4469,17 @@ if (typeof document !== 'undefined') {
       let titleTip = '';
       if (on) {
         if (parsed.dir === 'newest') {
-          arrow = isEN ? ' (New)' : ' (新)';
+          arrow = _tDex(' (新)', ' (New)');
           aria = 'other';
-          titleTip = isEN ? 'Sorted: Newest to Oldest' : '排序：新增寶可夢（新到舊）';
+          titleTip = _tDex('排序：新增寶可夢（新到舊）', 'Sorted: Newest to Oldest');
         } else if (parsed.dir === 'desc') {
           arrow = '▼';
           aria = 'descending';
-          titleTip = isEN ? 'Sorted: Descending' : '排序：大到小';
+          titleTip = _tDex('排序：大到小', 'Sorted: Descending');
         } else {
           arrow = '▲';
           aria = 'ascending';
-          titleTip = isEN ? 'Sorted: Ascending' : '排序：小到大';
+          titleTip = _tDex('排序：小到大', 'Sorted: Ascending');
         }
       }
       return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}" ${titleTip ? `title="${titleTip}"` : ''}>${label}${arrow ? `<span class="sort-arrow" aria-hidden="true">${arrow}</span>` : ''}</th>`;
@@ -4453,7 +4492,7 @@ if (typeof document !== 'undefined') {
         const filtered = sortPokemonList(filterData(), currentSort);
         const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
         const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-        if (countBadge) countBadge.textContent = isEN ? `${filtered.length} ${t('pokedex.count_label', 'Pokémon')}` : `共 ${filtered.length} 隻寶可夢`;
+        if (countBadge) countBadge.textContent = isEN ? `${filtered.length} ${t('pokedex.count_label', 'Pokémon')}` : _tDex(`共 ${filtered.length} 隻寶可夢`, `${filtered.length} Pokémon`);
 
         if (filtered.length === 0) {
           contentArea.innerHTML = `<div style="text-align:center; padding: 60px; color: var(--text-muted); font-size: 16px;">${t('pokedex.no_results', '查無符合條件的寶可夢')}</div>`;
@@ -4470,7 +4509,7 @@ if (typeof document !== 'undefined') {
       } catch (err) {
         console.error('Error in renderUI:', err);
         if (typeof window.__renderInPlaceError === 'function') {
-          window.__renderInPlaceError('content-area', '圖鑑畫面渲染異常', err);
+          window.__renderInPlaceError('content-area', _tDex('圖鑑畫面渲染異常', 'Pokédex render error'), err);
         }
       }
     }
@@ -4483,7 +4522,7 @@ if (typeof document !== 'undefined') {
         <div class="pokemon-grid">
           ${data.map(p => {
             const iconUrl = getIconUrl(p);
-            const pkmName = isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en);
+            const pkmName = (window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : (isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en));
             const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
             let specClass = 'spec-ingredient';
             const rawSpec = p.specialty || '';
@@ -4590,7 +4629,7 @@ if (typeof document !== 'undefined') {
             <tbody>
               ${data.map(p => {
                 const iconUrl = getIconUrl(p);
-                const pkmName = isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en);
+                const pkmName = (window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : (isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en));
                 const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
                 let specClass = 'spec-ingredient';
                 const rawSpec = p.specialty || '';
@@ -5939,7 +5978,7 @@ function togglePokedexSubskillPalette() {
   }
   if (btn) {
     const textSpan = (typeof btn.querySelector === 'function') ? btn.querySelector('.pokedex-subskill-toggle-text') : null;
-    const label = pokedexSubskillPaletteExpanded ? (isEN ? 'Collapse Subskills' : '副技能收合') : (isEN ? 'Expand Subskills' : '副技能展開');
+    const label = pokedexSubskillPaletteExpanded ? _tDex('副技能收合', 'Collapse Subskills') : _tDex('副技能展開', 'Expand Subskills');
     if (textSpan) textSpan.textContent = label;
     else btn.textContent = label;
     if (pokedexSubskillPaletteExpanded) {
@@ -6034,14 +6073,16 @@ function updatePokedexSubskillUI() {
       let badgeHtml = '';
       if (!skName) {
         if (isLevelReached) {
-          badgeHtml = `<span class="slot-val-badge slot-val-empty">${isEN ? '-- Empty --' : '-- 未配置 --'}</span>`;
+          badgeHtml = `<span class="slot-val-badge slot-val-empty">${_tDex('-- 未配置 --', '-- Empty --')}</span>`;
         } else {
-          badgeHtml = `<span class="slot-val-badge slot-val-empty">${isEN ? '-- Locked --' : '-- 未解鎖 --'}</span>`;
+          badgeHtml = `<span class="slot-val-badge slot-val-empty">${_tDex('-- 未解鎖 --', '-- Locked --')}</span>`;
         }
       } else {
         const skObj = POKEDEX_MODAL_SUBSKILLS.find(s => s.name === skName);
         const tier = skObj ? skObj.tier : 'white';
-        const skLabel = isEN ? (skObj ? skObj.name_en : skName) : skName;
+        const skLabel = isEN
+          ? (skObj ? skObj.name_en : skName)
+          : _tDex((window.I18N && typeof window.I18N.getSubSkillName === 'function') ? window.I18N.getSubSkillName(skName) : skName, skObj ? skObj.name_en : skName);
         const inactiveCls = !isEffectActive ? 'pill-inactive' : '';
         badgeHtml = `<span class="slot-val-badge box-subskill-pill subskill-${tier} ${inactiveCls}">${escapeHtml(skLabel)}</span>`;
       }
@@ -6049,9 +6090,9 @@ function updatePokedexSubskillUI() {
       let statusTagHtml = '';
       if (!isLevelReached) {
         if (skName) {
-          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-inactive">${isEN ? 'Inactive' : '效果尚未生效'}</span>`;
+          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-inactive">${_tDex('效果尚未生效', 'Inactive')}</span>`;
         } else {
-          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-under-lvl">${isEN ? 'Level Low' : '等級不足'}</span>`;
+          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-under-lvl">${_tDex('等級不足', 'Level Low')}</span>`;
         }
       }
 
@@ -6062,9 +6103,9 @@ function updatePokedexSubskillUI() {
 
       let tooltipText = `Lv.${lvl}`;
       if (!isLevelReached) {
-        tooltipText = `Lv.${lvl} (${isEN ? `Requires Lv.${lvl}` : `等級不足：需達 Lv.${lvl} 方可生效`})`;
+        tooltipText = `Lv.${lvl} (${_tDex(`等級不足：需達 Lv.${lvl} 方可生效`, `Requires Lv.${lvl}`)})`;
       } else if (isUnreleasedSlot) {
-        tooltipText = `Lv.${lvl} (${isEN ? 'Simulation Level' : '模擬等級'})`;
+        tooltipText = `Lv.${lvl} (${_tDex('模擬等級', 'Simulation Level')})`;
       }
 
       return `
@@ -6087,10 +6128,12 @@ function updatePokedexSubskillUI() {
 
     const skillsInTier = POKEDEX_MODAL_SUBSKILLS.filter(s => s.tier === tier);
     chipContainer.innerHTML = skillsInTier.map(sk => {
-      const skDisplayName = isEN ? sk.name_en : sk.name;
+      const skDisplayName = isEN
+        ? sk.name_en
+        : _tDex((window.I18N && typeof window.I18N.getSubSkillName === 'function') ? window.I18N.getSubSkillName(sk.name) : sk.name, sk.name_en);
       const isUsed = usedSkills.has(sk.name);
       return `
-        <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" onclick="window.PokemonApp.choosePokedexSubskill('${escapeHtml(sk.name)}')" title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Selected)' : '（已選用）') : ''}">
+        <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" onclick="window.PokemonApp.choosePokedexSubskill('${escapeHtml(sk.name)}')" title="${escapeHtml(skDisplayName)}${isUsed ? _tDex('（已選用）', ' (Selected)') : ''}">
           <span>${escapeHtml(skDisplayName)}</span>
           ${isUsed ? '<span style="font-size:10px;opacity:0.8;margin-left:2px;">[✓]</span>' : ''}
         </button>
@@ -6102,7 +6145,7 @@ function updatePokedexSubskillUI() {
   const toggleBtn = document.getElementById('pokedex-subskill-toggle-btn');
   if (toggleBtn) {
     const textSpan = (typeof toggleBtn.querySelector === 'function') ? toggleBtn.querySelector('.pokedex-subskill-toggle-text') : null;
-    const label = pokedexSubskillPaletteExpanded ? (isEN ? 'Collapse Subskills' : '副技能收合') : (isEN ? 'Expand Subskills' : '副技能展開');
+    const label = pokedexSubskillPaletteExpanded ? _tDex('副技能收合', 'Collapse Subskills') : _tDex('副技能展開', 'Expand Subskills');
     if (textSpan) textSpan.textContent = label;
     else toggleBtn.textContent = label;
     if (pokedexSubskillPaletteExpanded) {
@@ -6162,6 +6205,8 @@ function getPokemonEvolutionFamily(pkmOrId, allList) {
   if (['9001', '9002', '9004', '9005', '9006', '9007'].includes(idStr)) return [[pkm]];
   if (['37', '38'].includes(idStr)) return [[byId('37')], [byId('38')]].filter(s => s[0]);
   if (['7006', '7007'].includes(idStr)) return [[byId('7006')], [byId('7007')]].filter(s => s[0]);
+  if (['58', '59'].includes(idStr)) return [[byId('58')], [byId('59')]].filter(s => s[0]);
+  if (['7013', '7014'].includes(idStr)) return [[byId('7013')], [byId('7014')]].filter(s => s[0]);
   if (['194', '195'].includes(idStr)) return [[byId('194')], [byId('195')]].filter(s => s[0]);
   if (['7054', '980'].includes(idStr)) {
     const s1 = byId('7054');
@@ -6317,7 +6362,13 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
   const s = mainSkillName || '';
   const lvl = parseInt(skillLevel, 10) || 1;
   const lvlIdx = Math.max(0, lvl - 1);
-  let label = isEN ? 'Main Skill' : (s || '主技能');
+  const isCN = !isEN && typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN';
+  const tYield = (tw, en) => {
+    if (isEN) return en;
+    if (isCN && typeof window.I18N.toSimplified === 'function') return window.I18N.toSimplified(tw);
+    return tw;
+  };
+  let label = isEN ? 'Main Skill' : tYield(s || '主技能', 'Main Skill');
   let singleVal = 0;
   let singleText = '';
   let valueText = '';
@@ -6332,13 +6383,9 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const dailyIng = dailyTriggers * ingVal;
     const dailyTasty = dailyTriggers * tastyVal;
     dailyTotal = dailyIng;
-    label = isEN ? 'Bulk Up' : '健美';
-    valueText = isEN 
-      ? `+${dailyIng.toFixed(1)} ings & +${dailyTasty.toFixed(1)}% Tasty` 
-      : `+${dailyIng.toFixed(1)} 顆食材 & +${dailyTasty.toFixed(1)}% 大成功率`;
-    singleText = isEN 
-      ? `single: ${ingVal} ings, +${tastyVal}% Tasty` 
-      : `單次: ${ingVal} 顆食材, +${tastyVal}% 大成功率`;
+    label = tYield('健美', 'Bulk Up');
+    valueText = tYield(`+${dailyIng.toFixed(1)} 顆食材 & +${dailyTasty.toFixed(1)}% 大成功率`, `+${dailyIng.toFixed(1)} ings & +${dailyTasty.toFixed(1)}% Tasty`);
+    singleText = tYield(`單次: ${ingVal} 顆食材, +${tastyVal}% 大成功率`, `single: ${ingVal} ings, +${tastyVal}% Tasty`);
   }
   // 1b. 魔法火焰 (料理強化S + 料理成功S)
   else if (s.includes('魔法火焰') || s.includes('料理躍進') || s.includes('Mystical Fire') || s.includes('Cooking Advance')) {
@@ -6349,76 +6396,72 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const dailyPot = dailyTriggers * potVal;
     const dailyTasty = dailyTriggers * tastyVal;
     dailyTotal = dailyPot;
-    label = isEN ? 'Mystical Fire' : '魔法火焰';
-    valueText = isEN 
-      ? `+${dailyPot.toFixed(1)} Pot & +${dailyTasty.toFixed(1)}% Tasty` 
-      : `+${dailyPot.toFixed(1)} 鍋子容量 & +${dailyTasty.toFixed(1)}% 大成功率`;
-    singleText = isEN 
-      ? `single: +${potVal} Pot, +${tastyVal}% Tasty` 
-      : `單次: +${potVal} 容量, +${tastyVal}% 大成功率`;
+    label = tYield('魔法火焰', 'Mystical Fire');
+    valueText = tYield(`+${dailyPot.toFixed(1)} 鍋子容量 & +${dailyTasty.toFixed(1)}% 大成功率`, `+${dailyPot.toFixed(1)} Pot & +${dailyTasty.toFixed(1)}% Tasty`);
+    singleText = tYield(`單次: +${potVal} 容量, +${tastyVal}% 大成功率`, `single: +${potVal} Pot, +${tastyVal}% Tasty`);
   }
   // 2. 正電
   else if (s.includes('正電') || s.includes('Plus')) {
     const table = [5, 7, 9, 12, 14, 16, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Plus' : '正電';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'extra ings' : '顆額外食材'}`;
-    singleText = `${isEN ? 'base' : '單次基準'} ${singleVal} ${isEN ? 'ings (+teammate bonus)' : '顆 (+同伴加成)'}`;
+    label = tYield('正電', 'Plus');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('顆額外食材', 'extra ings')}`;
+    singleText = `${tYield('單次基準', 'base')} ${singleVal} ${tYield('顆 (+同伴加成)', 'ings (+teammate bonus)')}`;
   }
   // 3. 禮物
   else if (s.includes('禮物') || s.includes('Present')) {
     const table = [4, 6, 8, 11, 13, 15, 17];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Present' : '禮物';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'extra ings' : '顆額外食材'}`;
-    singleText = `${isEN ? 'base' : '單次基準'} ${singleVal} ${isEN ? 'ings (+candy chance)' : '顆 (+機率糖果)'}`;
+    label = tYield('禮物', 'Present');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('顆額外食材', 'extra ings')}`;
+    singleText = `${tYield('單次基準', 'base')} ${singleVal} ${tYield('顆 (+機率糖果)', 'ings (+candy chance)')}`;
   }
   // 4. 食材獲取S
   else if (s.includes('食材獲取') || s.includes('Ingredient Magnet')) {
     const table = [6, 8, 11, 14, 17, 21, 24];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Magnet S' : '食材獲取S';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'extra ings' : '顆額外食材'}`;
-    singleText = `${isEN ? 'yield' : '單次'} ${singleVal} ${isEN ? 'ings' : '顆'}`;
+    label = tYield('食材獲取S', 'Magnet S');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('顆額外食材', 'extra ings')}`;
+    singleText = `${tYield('單次', 'yield')} ${singleVal} ${tYield('顆', 'ings')}`;
   }
   // 5. 怪力鉗
   else if (s.includes('怪力鉗') || s.includes('怪力钳') || s.includes('Hyper Cutter')) {
     const table = [5, 6, 8, 11, 13, 16, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Hyper Cutter' : '怪力鉗';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'selected ings' : '顆專屬食材'}`;
-    singleText = `${isEN ? 'base' : '單次基準'} ${singleVal} ${isEN ? 'ings (crit 2x)' : '顆 (暴擊2倍)'}`;
+    label = tYield('怪力鉗', 'Hyper Cutter');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('顆專屬食材', 'selected ings')}`;
+    singleText = `${tYield('單次基準', 'base')} ${singleVal} ${tYield('顆 (暴擊2倍)', 'ings (crit 2x)')}`;
   }
   // 6. 超幸運
   else if (s.includes('超幸運') || s.includes('Super Luck')) {
     const table = [5, 6, 8, 11, 13, 16, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Super Luck' : '超幸運';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'selected ings' : '顆專屬食材'}`;
-    singleText = `${isEN ? 'base' : '單次基準'} ${singleVal} ${isEN ? 'ings (crit Shards)' : '顆 (暴擊碎片)'}`;
+    label = tYield('超幸運', 'Super Luck');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('顆專屬食材', 'selected ings')}`;
+    singleText = `${tYield('單次基準', 'base')} ${singleVal} ${tYield('顆 (暴擊碎片)', 'ings (crit Shards)')}`;
   }
   // 7. 食材精選S
   else if (s.includes('食材精選') || s.includes('Ingredient Draw')) {
     const table = [5, 6, 8, 11, 13, 16, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Draw S' : '食材精選S';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'selected ings' : '顆專屬食材'}`;
-    singleText = `${isEN ? 'yield' : '單次'} ${singleVal} ${isEN ? 'ings' : '顆'}`;
+    label = tYield('食材精選S', 'Draw S');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('顆專屬食材', 'selected ings')}`;
+    singleText = `${tYield('單次', 'yield')} ${singleVal} ${tYield('顆', 'ings')}`;
   }
   // 8. 精神擊破
   else if (s.includes('精神擊破') || s.includes('Psystrike')) {
     const table = [2640, 3753, 5178, 7149, 9870, 13638, 18515];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Psystrike' : '精神擊破';
-    valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Strength + Berry Field' : '點能量 + 樹果領域'}`;
-    singleText = `${isEN ? 'base' : '單次'} ${singleVal.toLocaleString()} ${isEN ? 'Str + Field' : '能量 + 領域'}`;
+    label = tYield('精神擊破', 'Psystrike');
+    valueText = `+${Math.round(dailyTotal).toLocaleString()} ${tYield('點能量 + 樹果領域', 'Strength + Berry Field')}`;
+    singleText = `${tYield('單次', 'base')} ${singleVal.toLocaleString()} ${tYield('能量 + 領域', 'Str + Field')}`;
   }
   // 9. 能量填充M / 夢魘
   else if (s.includes('能量填充M') || s.includes('Charge Str. M') || s.includes('Charge Strength M') || s.includes('夢魘') || s.includes('Bad Dreams')) {
@@ -6426,9 +6469,9 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = isBadDreams ? [2640, 3753, 5178, 7149, 9870, 13638, 18515] : [880, 1251, 1726, 2383, 3290, 4546, 6409];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? (isBadDreams ? 'Bad Dreams' : 'Charge Str. M') : (isBadDreams ? '夢魘' : '能量填充M');
-    valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Strength' : '點能量'}`;
-    singleText = `${isEN ? 'base' : '單次'} ${singleVal.toLocaleString()} ${isEN ? 'Str' : '能量'}`;
+    label = isBadDreams ? tYield('夢魘', 'Bad Dreams') : tYield('能量填充M', 'Charge Str. M');
+    valueText = `+${Math.round(dailyTotal).toLocaleString()} ${tYield('點能量', 'Strength')}`;
+    singleText = `${tYield('單次', 'base')} ${singleVal.toLocaleString()} ${tYield('能量', 'Str')}`;
   }
   // 10. 能量填充S / 蓄力
   else if (s.includes('能量填充S') || s.includes('Charge Str. S') || s.includes('Charge Strength S') || s.includes('蓄力') || s.includes('Stockpile')) {
@@ -6436,23 +6479,23 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
       const table = [500, 712, 982, 1354, 1870, 2583, 4015];
       singleVal = table[Math.min(lvlIdx, table.length - 1)];
       dailyTotal = dailyTriggers * singleVal;
-      label = isEN ? 'Charge Str. S (Random)' : '能量填充S（隨機）';
-      valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Strength (Avg)' : '點能量 (均值)'}`;
-      singleText = `${isEN ? 'avg' : '單次均值'} ${singleVal.toLocaleString()} ${isEN ? 'Str' : '能量'}`;
+      label = tYield('能量填充S（隨機）', 'Charge Str. S (Random)');
+      valueText = `+${Math.round(dailyTotal).toLocaleString()} ${tYield('點能量 (均值)', 'Strength (Avg)')}`;
+      singleText = `${tYield('單次均值', 'avg')} ${singleVal.toLocaleString()} ${tYield('能量', 'Str')}`;
     } else if (s.includes('蓄力') || s.includes('Stockpile')) {
       const table = [600, 853, 1177, 1625, 2243, 3099, 4502];
       singleVal = table[Math.min(lvlIdx, table.length - 1)];
       dailyTotal = dailyTriggers * singleVal;
-      label = isEN ? 'Stockpile' : '蓄力';
-      valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Base Strength' : '點基準能量'}`;
-      singleText = `${isEN ? 'base' : '單次蓄力'} ${singleVal.toLocaleString()} ${isEN ? 'Str' : '能量'}`;
+      label = tYield('蓄力', 'Stockpile');
+      valueText = `+${Math.round(dailyTotal).toLocaleString()} ${tYield('點基準能量', 'Base Strength')}`;
+      singleText = `${tYield('單次蓄力', 'base')} ${singleVal.toLocaleString()} ${tYield('能量', 'Str')}`;
     } else {
       const table = [400, 569, 785, 1083, 1496, 2066, 3212];
       singleVal = table[Math.min(lvlIdx, table.length - 1)];
       dailyTotal = dailyTriggers * singleVal;
-      label = isEN ? 'Charge Str. S' : '能量填充S';
-      valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Strength' : '點能量'}`;
-      singleText = `${isEN ? 'base' : '單次'} ${singleVal.toLocaleString()} ${isEN ? 'Str' : '能量'}`;
+      label = tYield('能量填充S', 'Charge Str. S');
+      valueText = `+${Math.round(dailyTotal).toLocaleString()} ${tYield('點能量', 'Strength')}`;
+      singleText = `${tYield('單次', 'base')} ${singleVal.toLocaleString()} ${tYield('能量', 'Str')}`;
     }
   }
   // 11. 新月祈禱
@@ -6460,90 +6503,90 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [3, 4, 5, 7, 9, 11];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Lunar Prayer' : '新月祈禱';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Team Energy + Berries' : '點全員活力 + 樹果'}`;
-    singleText = `${isEN ? 'single' : '單次'} ${singleVal} ${isEN ? 'pts (+Psychic team berries)' : '點 (+超能力樹果)'}`;
+    label = tYield('新月祈禱', 'Lunar Prayer');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('點全員活力 + 樹果', 'Team Energy + Berries')}`;
+    singleText = `${tYield('單次', 'single')} ${singleVal} ${tYield('點 (+超能力樹果)', 'pts (+Psychic team berries)')}`;
   }
   // 12. 樹果汁
   else if (s.includes('樹果汁') || s.includes('Berry Juice')) {
     const table = [5, 7, 9, 11, 15, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Berry Juice' : '樹果汁';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Team Energy' : '點全員活力'}`;
-    singleText = `${isEN ? 'single' : '單次全員'} ${singleVal} ${isEN ? 'pts (+item chance)' : '點 (+機率產樹果汁)'}`;
+    label = tYield('樹果汁', 'Berry Juice');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('點全員活力', 'Team Energy')}`;
+    singleText = `${tYield('單次全員', 'single')} ${singleVal} ${tYield('點 (+機率產樹果汁)', 'pts (+item chance)')}`;
   }
   // 13. 活力全體療癒S
   else if (s.includes('活力全體療癒') || s.includes('Energy for Everyone')) {
     const table = [5, 7, 9, 11, 15, 18];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'E4E S' : '活力全體療癒S';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Team Energy' : '點全員活力'}`;
-    singleText = `${isEN ? 'heal' : '單次'} ${singleVal} ${isEN ? 'pts' : '點'}`;
+    label = tYield('活力全體療癒S', 'E4E S');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('點全員活力', 'Team Energy')}`;
+    singleText = `${tYield('單次', 'heal')} ${singleVal} ${tYield('點', 'pts')}`;
   }
   // 14. 月光
   else if (s.includes('月光') || s.includes('Moonlight')) {
     const table = [12, 16, 21, 26, 33, 43];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Moonlight' : '月光';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Self Energy' : '點自身活力'}`;
-    singleText = `${isEN ? 'single' : '單次自身'} ${singleVal} ${isEN ? 'pts (+ally on Tasty)' : '點 (大成功額外補隊友)'}`;
+    label = tYield('月光', 'Moonlight');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('點自身活力', 'Self Energy')}`;
+    singleText = `${tYield('單次自身', 'single')} ${singleVal} ${tYield('點 (大成功額外補隊友)', 'pts (+ally on Tasty)')}`;
   }
   // 15. 活力充填S
   else if (s.includes('活力充填') || s.includes('活力填充') || s.includes('Charge Energy')) {
     const table = [12, 16, 21, 26, 33, 43];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Charge Energy S' : '活力充填S';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Self Energy' : '點自身活力'}`;
-    singleText = `${isEN ? 'heal' : '單次'} ${singleVal} ${isEN ? 'pts' : '點'}`;
+    label = tYield('活力充填S', 'Charge Energy S');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('點自身活力', 'Self Energy')}`;
+    singleText = `${tYield('單次', 'heal')} ${singleVal} ${tYield('點', 'pts')}`;
   }
   // 16. 治癒波動
   else if (s.includes('治癒波動') || s.includes('Heal Pulse')) {
     const table = [6, 8, 11, 14, 18, 22];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal * 2;
-    label = isEN ? 'Heal Pulse' : '治癒波動';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Energy (2 Allies)' : '點隊友活力 (2隻)'}`;
-    singleText = `${isEN ? 'single: ' : '單次: 各'}${singleVal} ${isEN ? 'pts to 2 allies' : '點 (共2隻)'}`;
+    label = tYield('治癒波動', 'Heal Pulse');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('點隊友活力 (2隻)', 'Energy (2 Allies)')}`;
+    singleText = `${tYield('單次: 各', 'single: ')}${singleVal} ${tYield('點 (共2隻)', 'pts to 2 allies')}`;
   }
   // 17. 蹭蹭臉頰
   else if (s.includes('蹭蹭臉頰') || s.includes('Nuzzle')) {
     const table = [9, 12, 16, 20, 26, 35];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Nuzzle' : '蹭蹭臉頰';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Ally Energy' : '點隊友活力'}`;
-    singleText = `${isEN ? 'single' : '單次'} ${singleVal} ${isEN ? 'pts (+bonus proc chance)' : '點 (+機率追加發動)'}`;
+    label = tYield('蹭蹭臉頰', 'Nuzzle');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('點隊友活力', 'Ally Energy')}`;
+    singleText = `${tYield('單次', 'single')} ${singleVal} ${tYield('點 (+機率追加發動)', 'pts (+bonus proc chance)')}`;
   }
   // 18. 活力療癒S
   else if (s.includes('活力療癒') || s.includes('Energizing Cheer')) {
     const table = [12, 15, 20, 25, 33, 44];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Energizing Cheer S' : '活力療癒S';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Ally Energy' : '點隊友活力'}`;
-    singleText = `${isEN ? 'heal' : '單次'} ${singleVal} ${isEN ? 'pts' : '點'}`;
+    label = tYield('活力療癒S', 'Energizing Cheer S');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('點隊友活力', 'Ally Energy')}`;
+    singleText = `${tYield('單次', 'heal')} ${singleVal} ${tYield('點', 'pts')}`;
   }
   // 19. 幫手加速
   else if (s.includes('幫手加速') || s.includes('Helper Boost')) {
     const table = [6, 7, 8, 9, 10, 11];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Helper Boost' : (s.includes('（') ? s : '幫手加速');
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Team Helps' : '次全員幫忙'}`;
-    singleText = `${isEN ? 'max' : '單次最高'} ${singleVal} ${isEN ? 'helps' : '次'}`;
+    label = isEN ? 'Helper Boost' : tYield(s.includes('（') ? s : '幫手加速', 'Helper Boost');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('次全員幫忙', 'Team Helps')}`;
+    singleText = `${tYield('單次最高', 'max')} ${singleVal} ${tYield('次', 'helps')}`;
   }
   // 20. 幫手支援S
   else if (s.includes('幫手支援') || s.includes('Extra Helpful')) {
     const table = [6, 7, 8, 9, 10, 11, 12];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Extra Helpful S' : '幫手支援S';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Ally Helps' : '次隊友幫忙'}`;
-    singleText = `${isEN ? 'yield' : '單次'} ${singleVal} ${isEN ? 'helps' : '次'}`;
+    label = tYield('幫手支援S', 'Extra Helpful S');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('次隊友幫忙', 'Ally Helps')}`;
+    singleText = `${tYield('單次', 'yield')} ${singleVal} ${tYield('次', 'helps')}`;
   }
   // 21. 樹果遽增 / 流星群 / 畫皮 (excluding 精神擊破)
   else if (s.includes('樹果遽增') || s.includes('Berry Burst') || s.includes('流星群') || s.includes('Draco Meteor') || s.includes('畫皮') || s.includes('Disguise')) {
@@ -6552,9 +6595,9 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = isMimikyu ? [12, 18, 23, 29, 35, 41] : [15, 22, 29, 36, 43, 50];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? (isMimikyu ? 'Disguise' : (isDraco ? 'Draco Meteor' : 'Berry Burst')) : (isMimikyu ? '畫皮' : (isDraco ? '流星群' : '樹果遽增'));
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Extra Berries' : '顆額外樹果'}`;
-    singleText = `${isEN ? 'approx' : '單次約'} ${singleVal} ${isEN ? 'berries' : '顆'}`;
+    label = isMimikyu ? tYield('畫皮', 'Disguise') : (isDraco ? tYield('流星群', 'Draco Meteor') : tYield('樹果遽增', 'Berry Burst'));
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('顆額外樹果', 'Extra Berries')}`;
+    singleText = `${tYield('單次約', 'approx')} ${singleVal} ${tYield('顆', 'berries')}`;
   }
   // 22. 波導彈
   else if (s.includes('波導彈') || s.includes('Aura Sphere')) {
@@ -6565,13 +6608,9 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const dailyShard = dailyTriggers * singleShard;
     const dailyStr = dailyTriggers * singleStr;
     dailyTotal = dailyShard;
-    label = isEN ? 'Aura Sphere' : '波導彈';
-    valueText = isEN 
-      ? `+${Math.round(dailyShard).toLocaleString()} shards & +${Math.round(dailyStr).toLocaleString()} Str` 
-      : `+${Math.round(dailyShard).toLocaleString()} 碎片 & +${Math.round(dailyStr).toLocaleString()} 能量`;
-    singleText = isEN 
-      ? `single: ${singleShard.toLocaleString()} shards, +${singleStr.toLocaleString()} Str` 
-      : `單次: ${singleShard.toLocaleString()} 碎片, +${singleStr.toLocaleString()} 能量`;
+    label = tYield('波導彈', 'Aura Sphere');
+    valueText = tYield(`+${Math.round(dailyShard).toLocaleString()} 碎片 & +${Math.round(dailyStr).toLocaleString()} 能量`, `+${Math.round(dailyShard).toLocaleString()} shards & +${Math.round(dailyStr).toLocaleString()} Str`);
+    singleText = tYield(`單次: ${singleShard.toLocaleString()} 碎片, +${singleStr.toLocaleString()} 能量`, `single: ${singleShard.toLocaleString()} shards, +${singleStr.toLocaleString()} Str`);
   }
   // 23. 夢之碎片獲取S
   else if (s.includes('夢之碎片') || s.includes('Dream Shard')) {
@@ -6579,16 +6618,16 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
       const table = [300, 425, 600, 838, 1150, 1575, 2250, 2875];
       singleVal = table[Math.min(lvlIdx, table.length - 1)];
       dailyTotal = dailyTriggers * singleVal;
-      label = isEN ? 'Dream Shards (Random)' : '夢之碎片獲取S（隨機）';
-      valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Shards (Avg)' : '個夢之碎片 (均值)'}`;
-      singleText = `${isEN ? 'avg' : '單次均值'} ${singleVal.toLocaleString()}`;
+      label = tYield('夢之碎片獲取S（隨機）', 'Dream Shards (Random)');
+      valueText = `+${Math.round(dailyTotal).toLocaleString()} ${tYield('個夢之碎片 (均值)', 'Shards (Avg)')}`;
+      singleText = `${tYield('單次均值', 'avg')} ${singleVal.toLocaleString()}`;
     } else {
       const table = [240, 340, 480, 670, 920, 1260, 1800, 2500];
       singleVal = table[Math.min(lvlIdx, table.length - 1)];
       dailyTotal = dailyTriggers * singleVal;
-      label = isEN ? 'Dream Shards S' : '夢之碎片獲取S';
-      valueText = `+${Math.round(dailyTotal).toLocaleString()} ${isEN ? 'Dream Shards' : '個夢之碎片'}`;
-      singleText = `${isEN ? 'yield' : '單次'} ${singleVal.toLocaleString()} ${isEN ? 'shards' : '碎片'}`;
+      label = tYield('夢之碎片獲取S', 'Dream Shards S');
+      valueText = `+${Math.round(dailyTotal).toLocaleString()} ${tYield('個夢之碎片', 'Dream Shards')}`;
+      singleText = `${tYield('單次', 'yield')} ${singleVal.toLocaleString()} ${tYield('碎片', 'shards')}`;
     }
   }
   // 24. 負電
@@ -6596,43 +6635,45 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
     const table = [5, 7, 9, 12, 16, 20, 24];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Minus' : '負電';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Pot Space' : '鍋子容量'}`;
-    singleText = `${isEN ? 'single' : '單次'} +${singleVal} ${isEN ? 'cap (+energy heal)' : '容量 (+同伴回復)'}`;
+    label = tYield('負電', 'Minus');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('鍋子容量', 'Pot Space')}`;
+    singleText = `${tYield('單次', 'single')} +${singleVal} ${tYield('容量 (+同伴回復)', 'cap (+energy heal)')}`;
   }
   // 25. 料理強化S
   else if (s.includes('料理強化') || s.includes('Cooking Power Up')) {
     const table = [7, 10, 12, 17, 22, 27, 31];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Cooking Power Up S' : '料理強化S';
-    valueText = `+${dailyTotal.toFixed(1)} ${isEN ? 'Pot Space' : '鍋子容量'}`;
-    singleText = `${isEN ? 'boost' : '單次'} +${singleVal} ${isEN ? 'capacity' : '容量'}`;
+    label = tYield('料理強化S', 'Cooking Power Up S');
+    valueText = `+${dailyTotal.toFixed(1)} ${tYield('鍋子容量', 'Pot Space')}`;
+    singleText = `${tYield('單次', 'boost')} +${singleVal} ${tYield('容量', 'capacity')}`;
   }
   // 26. 料理成功S (not including 健美 / 魔法火焰)
   else if (s.includes('料理成功') || s.includes('Tasty Chance')) {
     const table = [4, 5, 6, 7, 8, 10];
     singleVal = table[Math.min(lvlIdx, table.length - 1)];
     dailyTotal = dailyTriggers * singleVal;
-    label = isEN ? 'Tasty Chance S' : '料理成功S';
-    valueText = `+${dailyTotal.toFixed(1)}% ${isEN ? 'Tasty Chance' : '大成功機率'}`;
-    singleText = `${isEN ? 'boost' : '單次'} +${singleVal}%`;
+    label = tYield('料理成功S', 'Tasty Chance S');
+    valueText = `+${dailyTotal.toFixed(1)}% ${tYield('大成功機率', 'Tasty Chance')}`;
+    singleText = `${tYield('單次', 'boost')} +${singleVal}%`;
   }
   // 27. 揮指 / 模仿 / 變身 / 十項全能
   else if (s.includes('揮指') || s.includes('Metronome') || s.includes('模仿') || s.includes('Mimic') || s.includes('變身') || s.includes('Transform') || s.includes('十項全能') || s.includes('All-Rounder')) {
     singleVal = 1;
     dailyTotal = dailyTriggers;
-    label = isEN
-      ? (s.includes('變身') || s.includes('Transform') ? 'Transform' : (s.includes('模仿') || s.includes('Mimic') ? 'Mimic' : (s.includes('十項全能') || s.includes('All-Rounder') ? 'All-Rounder' : 'Metronome')))
-      : (s.includes('變身') ? '變身' : (s.includes('模仿') ? '模仿' : (s.includes('十項全能') ? '十項全能' : '揮指')));
-    valueText = isEN ? 'Random / Mimic Skill Effect' : '隨機/複製發動各類主技能';
-    singleText = isEN ? 'variable' : '隨機觸發';
+    label = s.includes('變身') || s.includes('Transform')
+      ? tYield('變身', 'Transform')
+      : (s.includes('模仿') || s.includes('Mimic')
+        ? tYield('模仿', 'Mimic')
+        : (s.includes('十項全能') || s.includes('All-Rounder') ? tYield('十項全能', 'All-Rounder') : tYield('揮指', 'Metronome')));
+    valueText = tYield('隨機/複製發動各類主技能', 'Random / Mimic Skill Effect');
+    singleText = tYield('隨機觸發', 'variable');
   } else if (s) {
     singleVal = 1;
     dailyTotal = dailyTriggers;
-    label = s;
-    valueText = isEN ? `~${dailyTriggers.toFixed(2)} triggers / day` : `單日約 ${dailyTriggers.toFixed(2)} 次發動`;
-    singleText = isEN ? 'skill proc' : '主技能發動';
+    label = tYield(s, s);
+    valueText = tYield(`單日約 ${dailyTriggers.toFixed(2)} 次發動`, `~${dailyTriggers.toFixed(2)} triggers / day`);
+    singleText = tYield('主技能發動', 'skill proc');
   }
 
   const mainSkillDesc = typeof getSkillDescription === 'function' ? getSkillDescription(s, isEN) : '';
@@ -6682,6 +6723,7 @@ function calculatePokedexIngredientFormulas(customState) {
   const customIngredients = (state && (state.customIngredients || state.ingredients)) ? (state.customIngredients || state.ingredients) : null;
 
   const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+  const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
   const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
   const isCleanseMintFlag = !!(state && (state.cleanseMint || state.mint || (pkm && (pkm.cleanseMint || pkm.mint))));
   const pkmKey = pkm.id || pkm.formatted_no || pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || '';
@@ -6690,7 +6732,7 @@ function calculatePokedexIngredientFormulas(customState) {
     ? 'cust:' + customIngredients.map(c => typeof c === 'string' ? c : (c && c.name ? c.name : '')).join(',')
     : 'slots:' + (Array.isArray(ingSlots) ? ingSlots.join(',') : '');
   const pkmIngBaseKey = Array.isArray(pkm.ingredients) ? pkm.ingredients.map(i => `${i.name}:${i.l1 || ''}/${i.l30 || ''}/${i.l60 || ''}`).join(';') : '';
-  const statsCacheKey = `${isEN ? 'en' : 'zh'}|${pkmKey}|${pkm.interval || ''}|${pkm.ingredient_rate || ''}|${pkm.skill_rate || ''}|${pkm.carry || pkm.carryCapacity || ''}|${pkm.main_skill || ''}|${pkm.specialty || ''}|${pkm.is_final || ''}|${pkmIngBaseKey}|${currentLevel}|${currentNature}|${isCleanseMintFlag ? 1 : 0}|${ribbon}|${skillLevel}|${subKey}|${ingSlotKey}`;
+  const statsCacheKey = `${isEN ? 'en' : (isCN ? 'cn' : 'zh')}|${pkmKey}|${pkm.interval || ''}|${pkm.ingredient_rate || ''}|${pkm.skill_rate || ''}|${pkm.carry || pkm.carryCapacity || ''}|${pkm.main_skill || ''}|${pkm.specialty || ''}|${pkm.is_final || ''}|${pkmIngBaseKey}|${currentLevel}|${currentNature}|${isCleanseMintFlag ? 1 : 0}|${ribbon}|${skillLevel}|${subKey}|${ingSlotKey}`;
 
   if (_pokedexStatsCache.has(statsCacheKey)) {
     return _pokedexStatsCache.get(statsCacheKey);
@@ -6765,7 +6807,7 @@ function calculatePokedexIngredientFormulas(customState) {
 
   // 6. 樹果產量與單日能量 (12h) 精算
   const berryObj = (typeof getPokemonBerry === 'function') ? getPokemonBerry(pkm) : { name: '', icon: '' };
-  const berryName = isEN ? (window.I18N ? window.I18N.getBerryName(berryObj.name) : berryObj.name) : berryObj.name;
+  const berryName = window.I18N ? window.I18N.getBerryName(berryObj.name) : berryObj.name;
   const berryRawName = berryObj.name || '';
   const berryIcon = berryObj.icon || '';
   const berryBaseEnergy = getBerryBaseEnergy(berryRawName || pkm.type);
@@ -6812,7 +6854,7 @@ function calculatePokedexIngredientFormulas(customState) {
       else if (s === 2) count = parseInt(ingData.l60 || ingData.l30 || ingData.l1 || 1, 10);
     }
 
-    const ingName = isEN ? (window.I18N ? window.I18N.getIngredientName(ingData.name) : ingData.name) : ingData.name;
+    const ingName = window.I18N ? window.I18N.getIngredientName(ingData.name) : ingData.name;
     const ingDailyCount = (dailyIngDrops * (count / unlockedSlotCount));
 
     activeIngredientDetails.push({
@@ -7098,12 +7140,12 @@ function getPokemonEvolutionItems(pkm) {
 function renderPokedexEvoItemChipsHTML(pkm) {
   const items = getPokemonEvolutionItems(pkm);
   if (!items || items.length === 0) return '';
-  const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage && window.I18N.getLanguage() === 'en-US';
 
   return items.map(item => {
-    const tip = isEN
-      ? `Evolution Item: ${item.name} (Click for encyclopedia details)`
-      : `進化道具：${item.name}（點擊查看百科詳情）`;
+    const tip = _tDex(
+      `進化道具：${item.name}（點擊查看百科詳情）`,
+      `Evolution Item: ${item.name} (Click for encyclopedia details)`
+    );
     return `<button type="button" class="pokedex-evo-item-btn pokedex-evo-item-icon-only" data-evo-item-id="${item.id}" onclick="window.WikiDB && typeof window.WikiDB.openItemDetailModal === 'function' ? window.WikiDB.openItemDetailModal('${item.id}') : (window.openItemDetailModal && window.openItemDetailModal('${item.id}'))" title="${escapeHtml(tip)}" aria-label="${escapeHtml(tip)}">${item.icon_url ? `<img src="${item.icon_url}" class="pokedex-evo-item-icon" alt="${escapeHtml(item.name)}" loading="lazy">` : ''}</button>`;
   }).join('');
 }
@@ -7129,7 +7171,6 @@ function renderPokedexEvoGuardBadgeHTML(pkm, level) {
 }
 
 function renderPokedexRibbonOptionsHTML(pkm, currentRibbon) {
-  const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
   let remainingEvos = 0;
   if (pkm) {
     if (typeof window !== 'undefined' && window.AppraisalLab && typeof window.AppraisalLab.getRemainingEvolutions === 'function') {
@@ -7144,27 +7185,27 @@ function renderPokedexRibbonOptionsHTML(pkm, currentRibbon) {
 
   const currentVal = parseInt(currentRibbon, 10) || 0;
   let opt2Text = '';
-  let opt3Text = isEN ? '+6 Carry Limit' : '+6 持有上限';
+  let opt3Text = _tDex('+6 持有上限', '+6 Carry Limit');
   let opt4Text = '';
 
   if (!pkm) {
-    opt2Text = isEN ? '+3 Carry Limit · Speed Boost' : '+3 持有上限 · 幫速加成';
-    opt4Text = isEN ? '+8 Carry Limit · Max Speed Boost' : '+8 持有上限 · 幫速最大加成';
+    opt2Text = _tDex('+3 持有上限 · 幫速加成', '+3 Carry Limit · Speed Boost');
+    opt4Text = _tDex('+8 持有上限 · 幫速最大加成', '+8 Carry Limit · Max Speed Boost');
   } else if (remainingEvos === 2) {
-    opt2Text = isEN ? '+3 Carry Limit · Speed -11%' : '+3 持有上限 · 幫速加成 -11%';
-    opt4Text = isEN ? '+8 Carry Limit · Speed -25%' : '+8 持有上限 · 幫速最大加成 -25%';
+    opt2Text = _tDex('+3 持有上限 · 幫速加成 -11%', '+3 Carry Limit · Speed -11%');
+    opt4Text = _tDex('+8 持有上限 · 幫速最大加成 -25%', '+8 Carry Limit · Speed -25%');
   } else if (remainingEvos === 1) {
-    opt2Text = isEN ? '+3 Carry Limit · Speed -5%' : '+3 持有上限 · 幫速加成 -5%';
-    opt4Text = isEN ? '+8 Carry Limit · Speed -12%' : '+8 持有上限 · 幫速最大加成 -12%';
+    opt2Text = _tDex('+3 持有上限 · 幫速加成 -5%', '+3 Carry Limit · Speed -5%');
+    opt4Text = _tDex('+8 持有上限 · 幫速最大加成 -12%', '+8 Carry Limit · Speed -12%');
   } else {
-    opt2Text = isEN ? '+3 Carry Limit' : '+3 持有上限';
-    opt4Text = isEN ? '+8 Carry Limit' : '+8 持有上限';
+    opt2Text = _tDex('+3 持有上限', '+3 Carry Limit');
+    opt4Text = _tDex('+8 持有上限', '+8 Carry Limit');
   }
 
   const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : (typeof window !== 'undefined' && window.location && window.location.pathname.includes('/app/') ? '../' : '');
   const optionsData = [
-    { val: 0, text: isEN ? 'None' : '未佩戴', icon: '' },
-    { val: 1, text: isEN ? '+1 Carry Limit' : '+1 持有上限', icon: `${base}assets/ribbons/ribbon_lv1.png` },
+    { val: 0, text: _tDex('未佩戴', 'None'), icon: '' },
+    { val: 1, text: _tDex('+1 持有上限', '+1 Carry Limit'), icon: `${base}assets/ribbons/ribbon_lv1.png` },
     { val: 2, text: opt2Text, icon: `${base}assets/ribbons/ribbon_lv2.png` },
     { val: 3, text: opt3Text, icon: `${base}assets/ribbons/ribbon_lv3.png` },
     { val: 4, text: opt4Text, icon: `${base}assets/ribbons/ribbon_lv4.png` }
@@ -7177,39 +7218,35 @@ function renderPokedexRibbonOptionsHTML(pkm, currentRibbon) {
 
 function renderPokedexStrategyCardHTML(pkm) {
   if (!pkm) return '';
-  const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
   const specialty = pkm.specialty || '';
   let roleTitle = '';
   let roleDesc = '';
   let coreSkill = '';
-  let coreSkillDesc = '';
   let coreTier = 'gold';
   let recommendedSubs = [];
   let recommendedNatures = '';
 
   if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
-    roleTitle = isEN ? 'Berry Specialist' : '樹果高速量產定位';
-    roleDesc = isEN
-      ? 'Primary scoring relies on high-speed berry output into Snorlax.'
-      : '主要戰力仰賴高頻樹果產出累積能量，樹果數量與速度為絕對核心。';
-    coreSkill = isEN ? 'Berry Finding S' : '樹果數量S';
+    roleTitle = _tDex('樹果高速量產定位', 'Berry Specialist');
+    roleDesc = _tDex('主要戰力仰賴高頻樹果產出累積能量，樹果數量與速度為絕對核心。', 'Primary scoring relies on high-speed berry output into Snorlax.');
+    coreSkill = _tDex('樹果數量S', 'Berry Finding S');
     coreTier = 'gold';
-    recommendedSubs = isEN
-      ? ['Berry Finding S', 'Helping Bonus', 'Helping Speed M', 'Helping Speed S', 'Inventory Up L']
-      : ['樹果數量S', '幫手獎勵', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
-    recommendedNatures = isEN ? 'Speed UP (Adamant / Brave / Naughty / Lonely)' : '幫忙速度提升 (固執 / 勇敢 / 頑皮 / 怕寂寞，固執降食材首選)';
+    recommendedSubs = [
+      ['樹果數量S', 'Berry Finding S'], ['幫手獎勵', 'Helping Bonus'], ['幫忙速度M', 'Helping Speed M'],
+      ['幫忙速度S', 'Helping Speed S'], ['持有上限提升L', 'Inventory Up L']
+    ].map(p => _tDex(p[0], p[1]));
+    recommendedNatures = _tDex('幫忙速度提升 (固執 / 勇敢 / 頑皮 / 怕寂寞，固執降食材首選)', 'Speed UP (Adamant / Brave / Naughty / Lonely)');
   } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
-    roleTitle = isEN ? 'Ingredient Supplier' : '料理食材專精供貨';
-    roleDesc = isEN
-      ? 'Supplies vital recipe ingredients consistently to sustain high-pot dishes.'
-      : '專注於高階料理食譜所需食材之穩定產出，食材機率與背包上限至關重要。';
-    coreSkill = isEN ? 'Ingredient Finder M' : '食材機率提升M';
+    roleTitle = _tDex('料理食材專精供貨', 'Ingredient Supplier');
+    roleDesc = _tDex('專注於高階料理食譜所需食材之穩定產出，食材機率與背包上限至關重要。', 'Supplies vital recipe ingredients consistently to sustain high-pot dishes.');
+    coreSkill = _tDex('食材機率提升M', 'Ingredient Finder M');
     coreTier = 'blue';
-    recommendedSubs = isEN
-      ? ['Helping Bonus', 'Ingredient Finder M', 'Ingredient Finder S', 'Helping Speed M', 'Helping Speed S', 'Inventory Up L']
-      : ['幫手獎勵', '食材機率提升M', '食材機率提升S', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
-    recommendedNatures = isEN ? 'Ingredient UP (Quiet / Modest / Mild / Rash)' : '食材發現率提升 (冷靜 / 內斂 / 慢吞吞 / 溫和)';
+    recommendedSubs = [
+      ['幫手獎勵', 'Helping Bonus'], ['食材機率提升M', 'Ingredient Finder M'], ['食材機率提升S', 'Ingredient Finder S'],
+      ['幫忙速度M', 'Helping Speed M'], ['幫忙速度S', 'Helping Speed S'], ['持有上限提升L', 'Inventory Up L']
+    ].map(p => _tDex(p[0], p[1]));
+    recommendedNatures = _tDex('食材發現率提升 (冷靜 / 內斂 / 慢吞吞 / 溫和)', 'Ingredient UP (Quiet / Modest / Mild / Rash)');
   } else {
     const isBerryBurst = isBerryBurstSkillSpecialist(pkm);
     const isHealer = isHealerSkillSpecialist(pkm);
@@ -7217,65 +7254,64 @@ function renderPokedexStrategyCardHTML(pkm) {
     const isCharge = isChargeStrengthSkillSpecialist(pkm);
 
     if (isBerryBurst) {
-      roleTitle = isEN ? 'Berry Burst Hybrid Cannon' : '樹果遽增爆發定位';
-      roleDesc = isEN
-        ? 'Main skill directly bursts berries for Snorlax. Synergizes exceptionally well with Berry Finding S for massive dual-yield berry output.'
-        : '專長雖為技能型，但主技能能直接引爆海量樹果（含隊友樹果與大成功翻倍）。樹果數量S與技能機率雙修能達成天花板級產能，樹果週活動享有 1.4 倍加成。';
-      coreSkill = isEN ? ['Berry Finding S', 'Skill Trigger M'] : ['樹果數量S', '技能機率提升M'];
+      roleTitle = _tDex('樹果遽增爆發定位', 'Berry Burst Hybrid Cannon');
+      roleDesc = _tDex('專長雖為技能型，但主技能能直接引爆海量樹果（含隊友樹果與大成功翻倍）。樹果數量S與技能機率雙修能達成天花板級產能，樹果週活動享有 1.4 倍加成。', 'Main skill directly bursts berries for Snorlax. Synergizes exceptionally well with Berry Finding S for massive dual-yield berry output.');
+      coreSkill = [_tDex('樹果數量S', 'Berry Finding S'), _tDex('技能機率提升M', 'Skill Trigger M')];
       coreTier = 'gold';
-      recommendedSubs = isEN
-        ? ['Berry Finding S', 'Skill Trigger M', 'Helping Bonus', 'Helping Speed M', 'Inventory Up L', 'Skill Trigger S']
-        : ['樹果數量S', '技能機率提升M', '幫手獎勵', '幫忙速度M', '持有上限提升L', '技能機率提升S'];
-      recommendedNatures = isEN ? 'Skill UP or Speed UP (Careful / Adamant / Brave / Sassy)' : '主技能或幫速提升 (慎重 / 固執 / 勇敢 / 自大)';
+      recommendedSubs = [
+        ['樹果數量S', 'Berry Finding S'], ['技能機率提升M', 'Skill Trigger M'], ['幫手獎勵', 'Helping Bonus'],
+        ['幫忙速度M', 'Helping Speed M'], ['持有上限提升L', 'Inventory Up L'], ['技能機率提升S', 'Skill Trigger S']
+      ].map(p => _tDex(p[0], p[1]));
+      recommendedNatures = _tDex('主技能或幫速提升 (慎重 / 固執 / 勇敢 / 自大)', 'Skill UP or Speed UP (Careful / Adamant / Brave / Sassy)');
     } else if (isHealer) {
-      roleTitle = isEN ? 'All-Day Team Healer Core' : '全隊活力療癒核心定位';
-      roleDesc = isEN
-        ? 'Maintains team energy >80% for maximum 2.2x speed. Focuses purely on skill procs; avoids Berry Finding S which causes early bag overflow and blocks healing procs.'
-        : '維持全員高活力以常駐最高幫忙速。專精雙技能機率提升，避免「樹果數量S」加速滿包導致無法觸發療癒技能。';
-      coreSkill = isEN ? 'Skill Trigger M' : '技能機率提升M';
+      roleTitle = _tDex('全隊活力療癒核心定位', 'All-Day Team Healer Core');
+      roleDesc = _tDex('維持全員高活力以常駐最高幫忙速。專精雙技能機率提升，避免「樹果數量S」加速滿包導致無法觸發療癒技能。', 'Maintains team energy >80% for maximum 2.2x speed. Focuses purely on skill procs; avoids Berry Finding S which causes early bag overflow and blocks healing procs.');
+      coreSkill = _tDex('技能機率提升M', 'Skill Trigger M');
       coreTier = 'blue';
-      recommendedSubs = isEN
-        ? ['Skill Trigger M', 'Helping Bonus', 'Skill Trigger S', 'Helping Speed M', 'Helping Speed S', 'Inventory Up L']
-        : ['技能機率提升M', '幫手獎勵', '技能機率提升S', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
-      recommendedNatures = isEN ? 'Main Skill UP (Careful / Sassy / Calm / Gentle)' : '主技能機率提升 (慎重 / 自大 / 溫和 / 浮躁，慎重降食材最優)';
+      recommendedSubs = [
+        ['技能機率提升M', 'Skill Trigger M'], ['幫手獎勵', 'Helping Bonus'], ['技能機率提升S', 'Skill Trigger S'],
+        ['幫忙速度M', 'Helping Speed M'], ['幫忙速度S', 'Helping Speed S'], ['持有上限提升L', 'Inventory Up L']
+      ].map(p => _tDex(p[0], p[1]));
+      recommendedNatures = _tDex('主技能機率提升 (慎重 / 自大 / 溫和 / 浮躁，慎重降食材最優)', 'Main Skill UP (Careful / Sassy / Calm / Gentle)');
     } else if (isHelper) {
-      roleTitle = isEN ? 'Legendary Helper Boost Core' : '傳說幫手加速核心定位';
-      roleDesc = isEN
-        ? 'Triggers multi-help procs across the entire team. Base skill rate is extremely low (~2%); strictly prioritizes skill triggers & inventory capacity, strictly avoiding BFS bag overflow.'
-        : '引爆全隊多次幫忙以收穫巨額能量。基礎技能率極低（約2%），首重雙技能機率與持有上限防溢滿，嚴格避免「樹果數量S」加速滿包阻斷技能發動。';
-      coreSkill = isEN ? 'Skill Trigger M' : '技能機率提升M';
+      roleTitle = _tDex('傳說幫手加速核心定位', 'Legendary Helper Boost Core');
+      roleDesc = _tDex('引爆全隊多次幫忙以收穫巨額能量。基礎技能率極低（約2%），首重雙技能機率與持有上限防溢滿，嚴格避免「樹果數量S」加速滿包阻斷技能發動。', 'Triggers multi-help procs across the entire team. Base skill rate is extremely low (~2%); strictly prioritizes skill triggers & inventory capacity, strictly avoiding BFS bag overflow.');
+      coreSkill = _tDex('技能機率提升M', 'Skill Trigger M');
       coreTier = 'blue';
-      recommendedSubs = isEN
-        ? ['Skill Trigger M', 'Helping Bonus', 'Skill Trigger S', 'Inventory Up L', 'Helping Speed M', 'Inventory Up M']
-        : ['技能機率提升M', '幫手獎勵', '技能機率提升S', '持有上限提升L', '幫忙速度M', '持有上限提升M'];
-      recommendedNatures = isEN ? 'Main Skill UP (Careful / Sassy / Calm / Gentle)' : '主技能機率提升 (慎重 / 自大 / 溫和 / 浮躁，慎重降食材最優)';
+      recommendedSubs = [
+        ['技能機率提升M', 'Skill Trigger M'], ['幫手獎勵', 'Helping Bonus'], ['技能機率提升S', 'Skill Trigger S'],
+        ['持有上限提升L', 'Inventory Up L'], ['幫忙速度M', 'Helping Speed M'], ['持有上限提升M', 'Inventory Up M']
+      ].map(p => _tDex(p[0], p[1]));
+      recommendedNatures = _tDex('主技能機率提升 (慎重 / 自大 / 溫和 / 浮躁，慎重降食材最優)', 'Main Skill UP (Careful / Sassy / Calm / Gentle)');
     } else if (isCharge) {
-      roleTitle = isEN ? 'High-Frequency Direct Charge Power' : '高頻單體充能直傷定位';
-      roleDesc = isEN
-        ? 'Delivers massive direct Snorlax Strength via Charge Strength M. Maximizing skill triggers is the undisputed standard; active players can also opt for BFS hybrid variant.'
-        : '依賴「能量填充M」單次提供極高直傷能量。標準神配首選雙技機極致發動；勤勞收包玩家亦可選擇樹果S雙修分支。';
-      coreSkill = isEN ? 'Skill Trigger M' : '技能機率提升M';
+      roleTitle = _tDex('高頻單體充能直傷定位', 'High-Frequency Direct Charge Power');
+      roleDesc = _tDex('依賴「能量填充M」單次提供極高直傷能量。標準神配首選雙技機極致發動；勤勞收包玩家亦可選擇樹果S雙修分支。', 'Delivers massive direct Snorlax Strength via Charge Strength M. Maximizing skill triggers is the undisputed standard; active players can also opt for BFS hybrid variant.');
+      coreSkill = _tDex('技能機率提升M', 'Skill Trigger M');
       coreTier = 'blue';
-      recommendedSubs = isEN
-        ? ['Skill Trigger M', 'Helping Bonus', 'Skill Trigger S', 'Helping Speed M', 'Inventory Up L', 'Berry Finding S']
-        : ['技能機率提升M', '幫手獎勵', '技能機率提升S', '幫忙速度M', '持有上限提升L', '樹果數量S'];
-      recommendedNatures = isEN ? 'Main Skill UP (Careful / Sassy / Calm / Gentle)' : '主技能機率提升 (慎重 / 自大 / 溫和 / 浮躁，慎重降食材最優)';
+      recommendedSubs = [
+        ['技能機率提升M', 'Skill Trigger M'], ['幫手獎勵', 'Helping Bonus'], ['技能機率提升S', 'Skill Trigger S'],
+        ['幫忙速度M', 'Helping Speed M'], ['持有上限提升L', 'Inventory Up L'], ['樹果數量S', 'Berry Finding S']
+      ].map(p => _tDex(p[0], p[1]));
+      recommendedNatures = _tDex('主技能機率提升 (慎重 / 自大 / 溫和 / 浮躁，慎重降食材最優)', 'Main Skill UP (Careful / Sassy / Calm / Gentle)');
     } else {
-      roleTitle = isEN ? 'Pure Tactical Skill Specialist' : '高頻純戰術技能輔助定位';
-      roleDesc = isEN
-        ? 'Relies on maximum skill activation frequency; strictly avoids Berry Finding S to prevent early bag overflow from blocking procs.'
-        : '極度依賴高頻主技能發動，需避免背包過快塞滿（嚴格忌諱樹果S），優先追求技能機率與持有上限。';
-      coreSkill = isEN ? 'Skill Trigger M' : '技能機率提升M';
+      roleTitle = _tDex('高頻純戰術技能輔助定位', 'Pure Tactical Skill Specialist');
+      roleDesc = _tDex('極度依賴高頻主技能發動，需避免背包過快塞滿（嚴格忌諱樹果S），優先追求技能機率與持有上限。', 'Relies on maximum skill activation frequency; strictly avoids Berry Finding S to prevent early bag overflow from blocking procs.');
+      coreSkill = _tDex('技能機率提升M', 'Skill Trigger M');
       coreTier = 'blue';
-      recommendedSubs = isEN
-        ? ['Helping Bonus', 'Skill Trigger M', 'Skill Trigger S', 'Helping Speed M', 'Helping Speed S', 'Inventory Up L']
-        : ['幫手獎勵', '技能機率提升M', '技能機率提升S', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
-      recommendedNatures = isEN ? 'Main Skill UP (Sassy / Calm / Careful / Gentle)' : '主技能機率提升 (自大 / 慎重 / 溫和 / 浮躁)';
+      recommendedSubs = [
+        ['幫手獎勵', 'Helping Bonus'], ['技能機率提升M', 'Skill Trigger M'], ['技能機率提升S', 'Skill Trigger S'],
+        ['幫忙速度M', 'Helping Speed M'], ['幫忙速度S', 'Helping Speed S'], ['持有上限提升L', 'Inventory Up L']
+      ].map(p => _tDex(p[0], p[1]));
+      recommendedNatures = _tDex('主技能機率提升 (自大 / 慎重 / 溫和 / 浮躁)', 'Main Skill UP (Sassy / Calm / Careful / Gentle)');
     }
   }
 
   const getSubskillTier = (name) => {
-    const sk = POKEDEX_MODAL_SUBSKILLS.find(item => item.name === name || item.name_en === name);
+    const sk = POKEDEX_MODAL_SUBSKILLS.find(item =>
+      item.name === name ||
+      item.name_en === name ||
+      (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function' && window.I18N.toSimplified(item.name) === name)
+    );
     return sk ? sk.tier : 'white';
   };
 
@@ -7288,17 +7324,17 @@ function renderPokedexStrategyCardHTML(pkm) {
       <div class="strategy-card-title pokedex-formula-badge font-bold">${roleTitle}</div>
       <div class="strategy-details-grid">
         <div class="strategy-item strategy-item-core">
-          <span class="strategy-k strategy-core-k">${isEN ? 'Core Skill' : '核心神技'}：</span>
+          <span class="strategy-k strategy-core-k">${_tDex('核心神技', 'Core Skill')}：</span>
           ${coreChipsHtml}
         </div>
         <div class="strategy-item">
-          <span class="strategy-k">${isEN ? 'Recommended' : '推薦副技'}：</span>
+          <span class="strategy-k">${_tDex('推薦副技', 'Recommended')}：</span>
           <div class="strategy-chips-wrap">
             ${recommendedSubs.map(s => `<span class="strategy-chip subskill-${getSubskillTier(s)}">${escapeHtml(s)}</span>`).join('')}
           </div>
         </div>
         <div class="strategy-item">
-          <span class="strategy-k">${isEN ? 'Best Nature' : '契合性格'}：</span>
+          <span class="strategy-k">${_tDex('契合性格', 'Best Nature')}：</span>
           <span class="strategy-v text-accent">${recommendedNatures}</span>
         </div>
       </div>
@@ -7327,7 +7363,7 @@ function renderPokedexDetailModalContent() {
   const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
   const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
 
-  const pkmName = isEN ? (pkm.name_en || pkm.name_cn) : (pkm.name_cn || pkm.name_en);
+  const pkmName = (window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(pkm) : (isEN ? (pkm.name_en || pkm.name_cn) : (pkm.name_cn || pkm.name_en));
   const specName = window.I18N ? window.I18N.getSpecialtyName(pkm.specialty) : pkm.specialty;
   const berry = (typeof getPokemonBerry === 'function') ? getPokemonBerry(pkm) : { name: '', icon: '' };
   const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : berry.name;
@@ -7357,7 +7393,7 @@ function renderPokedexDetailModalContent() {
     evaluation = {
       compositeScore: 75,
       grade: 'A',
-      gradeTitle: isEN ? 'Solid Pick' : '實用良品 (Solid Pick)',
+      gradeTitle: _tDex('實用良品 (Solid Pick)', 'Solid Pick'),
       gradeColor: '#10b981',
       scores: { berry: 60, ingredient: 70, skill: 65, speed: 65, growth: 60, roi: 65 }
     };
@@ -7420,19 +7456,19 @@ function renderPokedexDetailModalContent() {
         <div class="pokedex-header-actions" style="display:flex;align-items:center;gap:10px;">
           <div class="pokedex-dual-verdict-column" style="display:flex;flex-direction:column;gap:3px;align-items:flex-end;">
             <!-- 當前實力 (主要，清晰亮眼) -->
-            <div class="pokedex-header-verdict-badge current-track" id="pokedex-header-verdict-badge" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${isEN ? `Current Level Rating (Lv.${pokedexModalState.level})` : `當前實力評級 (Lv.${pokedexModalState.level})`}">
-              <span class="pokedex-verdict-track-lbl" style="font-size:10px;color:#94a3b8;line-height:1;">${isEN ? `Lv.${pokedexModalState.level}` : `當前 Lv.${pokedexModalState.level}`}</span>
+            <div class="pokedex-header-verdict-badge current-track" id="pokedex-header-verdict-badge" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${_tDex(`當前實力評級 (Lv.${pokedexModalState.level})`, `Current Level Rating (Lv.${pokedexModalState.level})`)}">
+              <span class="pokedex-verdict-track-lbl" style="font-size:10px;color:#94a3b8;line-height:1;">${_tDex(`當前 Lv.${pokedexModalState.level}`, `Lv.${pokedexModalState.level}`)}</span>
               <span class="verdict-grade pokedex-header-grade-text" id="pokedex-header-verdict-grade" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:14px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
               <span class="pokedex-header-score-text" style="font-size:11px;"><span class="verdict-num font-bold" id="pokedex-header-verdict-num">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
             </div>
             <!-- 滿級潛力 (次要，小一點，上下並行在下方，一般較不明顯的顏色，不要高亮) -->
-            <div class="pokedex-header-verdict-badge potential-track" id="pokedex-header-potential-badge" title="${isEN ? 'Max Potential Rating (Lv.100)' : '畢業潛力評級 (Lv.100)'}">
-              <span class="pokedex-verdict-track-lbl" style="font-size:9px;color:#64748b;line-height:1;">${isEN ? 'Lv.100 Pot' : '滿級潛力'}</span>
+            <div class="pokedex-header-verdict-badge potential-track" id="pokedex-header-potential-badge" title="${_tDex('畢業潛力評級 (Lv.100)', 'Max Potential Rating (Lv.100)')}">
+              <span class="pokedex-verdict-track-lbl" style="font-size:9px;color:#64748b;line-height:1;">${_tDex('滿級潛力', 'Lv.100 Pot')}</span>
               <span class="verdict-potential-grade pokedex-header-grade-text" id="pokedex-header-potential-grade" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
               <span class="pokedex-header-score-text" style="font-size:10px;color:#94a3b8;"><span class="verdict-potential-num" id="pokedex-header-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
             </div>
           </div>
-          <button type="button" class="box-modal-close pokedex-modal-close-btn" onclick="window.PokemonApp.closePokemonDetailModal()" aria-label="${isEN ? 'Close' : '關閉'}"><svg class="pokedex-close-x-svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg></button>
+          <button type="button" class="box-modal-close pokedex-modal-close-btn" onclick="window.PokemonApp.closePokemonDetailModal()" aria-label="${_tDex('關閉', 'Close')}"><svg class="pokedex-close-x-svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg></button>
         </div>
       </div>
 
@@ -7470,7 +7506,7 @@ function renderPokedexDetailModalContent() {
                   <div class="pokedex-slider-track-bar">
                     <div class="pokedex-slider-fill-bar" id="pokedex-slider-fill-bar" style="width: ${((pokedexModalState.level - 1) / (maxLv - 1) * 100).toFixed(2)}%;"></div>
                     ${minEvoLvl > 1 ? `
-                      <div class="pokedex-slider-locked-zone" id="pokedex-slider-locked-zone" style="width: ${((minEvoLvl - 1) / (maxLv - 1) * 100).toFixed(2)}%;" title="${isEN ? `Locked: Below min evolution Lv.${minEvoLvl}` : `不可滑動區間：低於最低進化等級 Lv.${minEvoLvl}`}">
+                      <div class="pokedex-slider-locked-zone" id="pokedex-slider-locked-zone" style="width: ${((minEvoLvl - 1) / (maxLv - 1) * 100).toFixed(2)}%;" title="${_tDex(`不可滑動區間：低於最低進化等級 Lv.${minEvoLvl}`, `Locked: Below min evolution Lv.${minEvoLvl}`)}">
                         <span class="pokedex-slider-locked-edge"></span>
                       </div>
                     ` : ''}
@@ -7486,18 +7522,18 @@ function renderPokedexDetailModalContent() {
                     // 紅色不可滑動區間（低於最低進化等級）不展示快捷等級圖釘，亦不額外插入重疊門檻圖釘
                     const pins = allMilestones.filter(lv => lv >= minEvoLvl);
                     const unlockNotes = {
-                      10: isEN ? '1st Sub-Skill' : '解鎖第1副技能',
-                      25: isEN ? '2nd Sub-Skill' : '解鎖第2副技能',
-                      30: isEN ? '2nd Ingredient' : '解鎖第2食材',
-                      50: isEN ? '3rd Sub-Skill' : '解鎖第3副技能',
-                      60: isEN ? '3rd Ingredient' : '解鎖第3食材',
-                      80: isEN ? '4th Sub-Skill / Sim' : '解鎖第4副技能 / 模擬',
-                      [maxLv]: isEN ? '5th Sub-Skill / Max' : '五階滿等畢業 / 模擬'
+                      10: _tDex('解鎖第1副技能', '1st Sub-Skill'),
+                      25: _tDex('解鎖第2副技能', '2nd Sub-Skill'),
+                      30: _tDex('解鎖第2食材', '2nd Ingredient'),
+                      50: _tDex('解鎖第3副技能', '3rd Sub-Skill'),
+                      60: _tDex('解鎖第3食材', '3rd Ingredient'),
+                      80: _tDex('解鎖第4副技能 / 模擬', '4th Sub-Skill / Sim'),
+                      [maxLv]: _tDex('五階滿等畢業 / 模擬', '5th Sub-Skill / Max')
                     };
                     if (capLv !== 60) {
-                      unlockNotes[capLv] = isEN ? 'Current Level Cap' : '目前等級上限';
+                      unlockNotes[capLv] = _tDex('目前等級上限', 'Current Level Cap');
                     } else {
-                      unlockNotes[60] = isEN ? '3rd Ingredient & Current Level Cap' : '解鎖第3食材 / 目前等級上限';
+                      unlockNotes[60] = _tDex('解鎖第3食材 / 目前等級上限', '3rd Ingredient & Current Level Cap');
                     }
                     return pins.map(lv => {
                       const pct = ((lv - 1) / (maxLv - 1)) * 100;
@@ -7512,13 +7548,13 @@ function renderPokedexDetailModalContent() {
 
                       let tooltip = `Lv.${lv}`;
                       if (isCap && capLv !== 60) {
-                        tooltip += ` (${isEN ? 'Current Level Cap' : '目前等級上限'})`;
+                        tooltip += ` (${_tDex('目前等級上限', 'Current Level Cap')})`;
                       } else if (unlockNotes[lv]) {
                         tooltip += ` (${unlockNotes[lv]})`;
                       } else if (isUnreleased) {
-                        tooltip = `Lv.${lv} (${isEN ? 'Unreleased in game / Simulation only' : '遊戲尚未開放 / 模擬'})`;
+                        tooltip = `Lv.${lv} (${_tDex('遊戲尚未開放 / 模擬', 'Unreleased in game / Simulation only')})`;
                       } else if (isCap) {
-                        tooltip = `Lv.${lv} (${isEN ? 'Current Level Cap' : '目前等級上限'})`;
+                        tooltip = `Lv.${lv} (${_tDex('目前等級上限', 'Current Level Cap')})`;
                       }
 
                       return `
@@ -7570,9 +7606,9 @@ function renderPokedexDetailModalContent() {
                 <select id="pokedex-poke-nature" class="box-form-select pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalNature(this.value)">
                   ${POKEDEX_MODAL_NATURES.map(n => {
                     const natDisplayName = (window.I18N && typeof window.I18N.getNatureName === 'function') ? window.I18N.getNatureName(n.name) : n.name;
-                    const buffLabel = isEN ? (n.buff_en || n.buff) : n.buff;
-                    const debuffLabel = isEN ? (n.debuff_en || n.debuff) : n.debuff;
-                    return `<option value="${n.name}" ${pokedexModalState.nature === n.name ? 'selected' : ''}>${natDisplayName} (${buffLabel}${debuffLabel ? ' / ' + debuffLabel : ' (Neutral)'})</option>`;
+                    const buffLabel = _tDex(n.buff, n.buff_en || n.buff);
+                    const debuffLabel = _tDex(n.debuff, n.debuff_en || n.debuff);
+                    return `<option value="${n.name}" ${pokedexModalState.nature === n.name ? 'selected' : ''}>${natDisplayName} (${buffLabel}${debuffLabel ? ' / ' + debuffLabel : ''})</option>`;
                   }).join('')}
                 </select>
               </div>
@@ -7590,7 +7626,7 @@ function renderPokedexDetailModalContent() {
 
               <!-- H5 App 專用展開/隱藏切換按鈕 (佔滿版寬，網頁版維持默認顯示且不展示按鈕) -->
               <button type="button" id="pokedex-subskill-toggle-btn" class="pokedex-subskill-toggle-btn ${pokedexSubskillPaletteExpanded ? 'is-expanded' : ''}" onclick="window.PokemonApp.togglePokedexSubskillPalette()">
-                <span class="pokedex-subskill-toggle-text">${pokedexSubskillPaletteExpanded ? (isEN ? 'Collapse Subskills' : '副技能收合') : (isEN ? 'Expand Subskills' : '副技能展開')}</span>
+                <span class="pokedex-subskill-toggle-text">${pokedexSubskillPaletteExpanded ? _tDex('副技能收合', 'Collapse Subskills') : _tDex('副技能展開', 'Expand Subskills')}</span>
               </button>
 
               <!-- 平鋪副技能選擇盤 -->
@@ -7639,10 +7675,10 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
   const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
 
   const natureIngMultStr = f.cleanseMint 
-    ? (isEN ? `${f.natureIngMult.toFixed(2)} (Mint)` : `${f.natureIngMult.toFixed(2)} (薄荷)`)
+    ? _tDex(`${f.natureIngMult.toFixed(2)} (薄荷)`, `${f.natureIngMult.toFixed(2)} (Mint)`)
     : f.natureIngMult.toFixed(2);
   const natureSkillMultStr = f.cleanseMint 
-    ? (isEN ? `${f.natureSkillMult.toFixed(2)} (Mint)` : `${f.natureSkillMult.toFixed(2)} (薄荷)`)
+    ? _tDex(`${f.natureSkillMult.toFixed(2)} (薄荷)`, `${f.natureSkillMult.toFixed(2)} (Mint)`)
     : f.natureSkillMult.toFixed(2);
   const subskillIngMultStr = (1 + f.subskillIngBonus / 100).toFixed(2);
   const subskillSkillMultStr = (1 + f.subskillSkillBonus / 100).toFixed(2);
@@ -7652,16 +7688,17 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
       <div class="pokedex-formula-header">
         <div style="display:flex;align-items:center;gap:8px;">
           <span class="pokedex-formula-badge font-bold">${t('pokedex.formula_title', '產能算法精算拆解')}</span>
-          <button type="button" class="pokedex-formula-help-btn" onclick="window.PokemonApp.togglePokedexEnergyHelp(event)" title="${isEN ? 'Ideal Energy (>=80%) & 12h Daytime Baseline' : '滿活力 (活力≥80%) 幫忙間隔 0.45x 與 12 小時基準說明'}" aria-label="Energy Info">?</button>
+          <button type="button" class="pokedex-formula-help-btn" onclick="window.PokemonApp.togglePokedexEnergyHelp(event)" title="${_tDex('滿活力 (活力≥80%) 幫忙間隔 0.45x 與 12 小時基準說明', 'Ideal Energy (>=80%) & 12h Daytime Baseline')}" aria-label="Energy Info">?</button>
         </div>
         <div id="pokedex-energy-help-popover" class="pokedex-energy-help-popover" style="display:none;" role="tooltip">
           <div class="pokedex-energy-help-backdrop" onclick="window.PokemonApp.closePokedexEnergyHelp(event)"></div>
           <div class="pokedex-energy-help-bubble">
-            <div class="energy-help-title font-bold">${isEN ? 'Ideal Energy (0.45x) & 12h Daytime Baseline' : '理想活力 0.45x 與 12 小時基準說明'}</div>
+            <div class="energy-help-title font-bold">${_tDex('理想活力 0.45x 與 12 小時基準說明', 'Ideal Energy (0.45x) & 12h Daytime Baseline')}</div>
             <div class="energy-help-body">
-              ${isEN
-                ? 'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>).<br>Calculation adopts a <span class="text-accent font-bold">12 hours (43200s)</span> daytime active baseline: general players have 12-16 hours waking time, and Pokémon sleep requires ~8.5h, so 12h represents realistic daytime active output without non-active sleep downtime.'
-                : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。<br>此處算法採用 <span class="text-accent font-bold">12 小時 (43200秒)</span> 日間活躍基準：一般用戶非睡眠時間約 12-16 小時，且寶可夢睡飽需 8.5 小時，扣除夜間睡眠，以 12 小時試算最符合日間實際產能期望。'}
+              ${_tDex(
+                '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。<br>此處算法採用 <span class="text-accent font-bold">12 小時 (43200秒)</span> 日間活躍基準：一般用戶非睡眠時間約 12-16 小時，且寶可夢睡飽需 8.5 小時，扣除夜間睡眠，以 12 小時試算最符合日間實際產能期望。',
+                'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>).<br>Calculation adopts a <span class="text-accent font-bold">12 hours (43200s)</span> daytime active baseline: general players have 12-16 hours waking time, and Pokémon sleep requires ~8.5h, so 12h represents realistic daytime active output without non-active sleep downtime.'
+              )}
             </div>
           </div>
         </div>
@@ -7672,30 +7709,30 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
         <!-- 步驟 1：實質幫忙間隔與日間次數基準 -->
         <div class="unified-calc-row">
           <div class="calc-row-header">
-            <span class="calc-row-label font-bold">${isEN ? 'Helping Speed & Active Helps (12h)' : '實質幫忙間隔與日間次數 (12h)'}</span>
+            <span class="calc-row-label font-bold">${_tDex('實質幫忙間隔與日間次數 (12h)', 'Helping Speed & Active Helps (12h)')}</span>
             <div class="calc-row-header-values">
-              <span class="calc-val-main font-bold calc-color-helps">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps' : '次'}</span>
+              <span class="calc-val-main font-bold calc-color-helps">${f.dailyHelps.toFixed(1)} ${_tDex('次', 'helps')}</span>
             </div>
           </div>
           <div class="calc-row-formula">
-            <span class="formula-derive font-mono">${isEN ? '43200s (12h) ÷ (' : '43200秒 (12h) ÷ ('}${f.effectiveIntervalSec}s × 0.45) = <strong class="calc-color-helps">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps' : '次'}</strong></span>
+            <span class="formula-derive font-mono">${_tDex('43200秒 (12h) ÷ (', '43200s (12h) ÷ (')}${f.effectiveIntervalSec}s × 0.45) = <strong class="calc-color-helps">${f.dailyHelps.toFixed(1)} ${_tDex('次', 'helps')}</strong></span>
           </div>
         </div>
 
         <!-- 步驟 2：樹果產量與單日能量 -->
         <div class="unified-calc-row">
           <div class="calc-row-header">
-            <span class="calc-row-label font-bold">${isEN ? 'Berry Yield & Energy (12h)' : '樹果產量與單日能量 (12h)'}</span>
+            <span class="calc-row-label font-bold">${_tDex('樹果產量與單日能量 (12h)', 'Berry Yield & Energy (12h)')}</span>
             <div class="calc-row-header-values">
-              <span class="calc-val-main font-bold calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${isEN ? 'Strength' : '能量'}</span>
+              <span class="calc-val-main font-bold calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${_tDex('能量', 'Strength')}</span>
             </div>
           </div>
           <div class="calc-row-formula">
-            <span class="formula-derive font-mono"><span class="formula-var font-bold">${f.dailyBerryHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-berry font-bold">${f.berriesPerHelp}${isEN ? ' berries' : '顆'}</span> × <span class="formula-var" title="${isEN ? 'Single Berry Energy' : '單顆能量'}">${f.singleBerryEnergy}</span> = <strong class="calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${isEN ? 'Strength' : '能量'}</strong></span>
+            <span class="formula-derive font-mono"><span class="formula-var font-bold">${f.dailyBerryHelps.toFixed(1)}${_tDex('次', ' helps')}</span> × <span class="calc-color-berry font-bold">${f.berriesPerHelp}${_tDex('顆', ' berries')}</span> × <span class="formula-var" title="${_tDex('單顆能量', 'Single Berry Energy')}">${f.singleBerryEnergy}</span> = <strong class="calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${_tDex('能量', 'Strength')}</strong></span>
           </div>
           <div class="berry-row-detail font-mono">
-            <span class="berry-detail-left">${f.berryIcon ? `<img src="${f.berryIcon}" class="yield-pill-img" alt="${escapeHtml(f.berryName)}" loading="lazy" style="vertical-align:middle;margin-right:2px;">` : ''}<span class="yield-pill-name">${escapeHtml(f.berryName)}</span> <span class="calc-color-berry font-bold">${f.singleBerryEnergy} ${isEN ? 'energy/ea' : '能量/顆'}</span></span>
-            <span class="calc-color-berry-fav font-bold" title="${isEN ? 'Favorite Berry (2x Energy)' : '順果 (喜好樹果 2x 能量)'}">${isEN ? 'Fav ' : '順果 '}${f.dailyBerryEnergyFav.toLocaleString()} ${isEN ? 'Strength' : '能量'}</span>
+            <span class="berry-detail-left">${f.berryIcon ? `<img src="${f.berryIcon}" class="yield-pill-img" alt="${escapeHtml(f.berryName)}" loading="lazy" style="vertical-align:middle;margin-right:2px;">` : ''}<span class="yield-pill-name">${escapeHtml(f.berryName)}</span> <span class="calc-color-berry font-bold">${f.singleBerryEnergy} ${_tDex('能量/顆', 'energy/ea')}</span></span>
+            <span class="calc-color-berry-fav font-bold" title="${_tDex('順果 (喜好樹果 2x 能量)', 'Favorite Berry (2x Energy)')}">${_tDex('順果 ', 'Fav ')}${f.dailyBerryEnergyFav.toLocaleString()} ${_tDex('能量', 'Strength')}</span>
           </div>
         </div>
 
@@ -7708,15 +7745,15 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             </div>
           </div>
           <div class="calc-row-formula">
-            <span class="formula-var" title="${isEN ? 'Base Rate' : '基礎食材機率'}">${f.baseIngRate.toFixed(1)}%</span>
+            <span class="formula-var" title="${_tDex('基礎食材機率', 'Base Rate')}">${f.baseIngRate.toFixed(1)}%</span>
             <span class="formula-op">×</span>
-            <span class="formula-var" title="${isEN ? 'Subskills' : '副技能加成'}">${subskillIngMultStr}</span>
+            <span class="formula-var" title="${_tDex('副技能加成', 'Subskills')}">${subskillIngMultStr}</span>
             <span class="formula-op">×</span>
-            <span class="formula-var" title="${isEN ? (f.cleanseMint ? 'Nature (Cleanse Mint used)' : 'Nature') : (f.cleanseMint ? '性格修正（使用淨白薄荷消除個性效果）' : '性格修正')}">${natureIngMultStr}</span>
+            <span class="formula-var" title="${f.cleanseMint ? _tDex('性格修正（使用淨白薄荷消除個性效果）', 'Nature (Cleanse Mint used)') : _tDex('性格修正', 'Nature')}">${natureIngMultStr}</span>
             <span class="formula-op">=</span>
             <span class="formula-res font-bold calc-color-ing">${f.finalIngRate.toFixed(2)}%</span>
             <span class="formula-op">-&gt;</span>
-            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-ing font-bold">${f.finalIngRate.toFixed(2)}%</span> = <strong class="calc-color-yield">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops' : '次掉落'}</strong></span>
+            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${_tDex('次', ' helps')}</span> × <span class="calc-color-ing font-bold">${f.finalIngRate.toFixed(2)}%</span> = <strong class="calc-color-yield">${f.dailyIngDrops.toFixed(1)} ${_tDex('次掉落', 'drops')}</strong></span>
           </div>
           <div class="pokedex-yield-items-grid">
             ${f.summaryYieldList.map(item => `
@@ -7732,21 +7769,21 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
         <!-- 步驟 4：最終技能發動率與單日發動次數 -->
         <div class="unified-calc-row">
           <div class="calc-row-header">
-            <span class="calc-row-label font-bold">${isEN ? 'Final Skill Trigger Rate' : '最終技能發動率'}</span>
+            <span class="calc-row-label font-bold">${_tDex('最終技能發動率', 'Final Skill Trigger Rate')}</span>
             <div class="calc-row-header-values">
               <span class="calc-val-main font-bold calc-color-skill">${f.finalSkillRate.toFixed(2)}%</span>
             </div>
           </div>
           <div class="calc-row-formula">
-            <span class="formula-var" title="${isEN ? 'Base Skill Rate' : '基礎技能機率'}">${f.baseSkillRate.toFixed(1)}%</span>
+            <span class="formula-var" title="${_tDex('基礎技能機率', 'Base Skill Rate')}">${f.baseSkillRate.toFixed(1)}%</span>
             <span class="formula-op">×</span>
-            <span class="formula-var" title="${isEN ? 'Subskills' : '副技能加成'}">${subskillSkillMultStr}</span>
+            <span class="formula-var" title="${_tDex('副技能加成', 'Subskills')}">${subskillSkillMultStr}</span>
             <span class="formula-op">×</span>
-            <span class="formula-var" title="${isEN ? (f.cleanseMint ? 'Nature (Cleanse Mint used)' : 'Nature') : (f.cleanseMint ? '性格修正（使用淨白薄荷消除個性效果）' : '性格修正')}">${natureSkillMultStr}</span>
+            <span class="formula-var" title="${f.cleanseMint ? _tDex('性格修正（使用淨白薄荷消除個性效果）', 'Nature (Cleanse Mint used)') : _tDex('性格修正', 'Nature')}">${natureSkillMultStr}</span>
             <span class="formula-op">=</span>
             <span class="formula-res font-bold calc-color-skill">${f.finalSkillRate.toFixed(2)}%</span>
             <span class="formula-op">-&gt;</span>
-            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-skill font-bold">${f.finalSkillRate.toFixed(2)}%</span> = <strong class="calc-color-triggers">${f.dailyTriggers.toFixed(2)} ${isEN ? 'triggers' : '次'}</strong></span>
+            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${_tDex('次', ' helps')}</span> × <span class="calc-color-skill font-bold">${f.finalSkillRate.toFixed(2)}%</span> = <strong class="calc-color-triggers">${f.dailyTriggers.toFixed(2)} ${_tDex('次', 'triggers')}</strong></span>
           </div>
           ${f.mainSkillLabel ? `
             <div class="calc-row-subskill-extra">
@@ -7824,7 +7861,7 @@ function updatePokedexModalAppraisalLive() {
     evaluation = {
       compositeScore: 75,
       grade: 'A',
-      gradeTitle: isEN ? 'Solid Pick' : '實用良品 (Solid Pick)',
+      gradeTitle: _tDex('實用良品 (Solid Pick)', 'Solid Pick'),
       gradeColor: '#10b981',
       scores: { berry: 60, ingredient: 70, skill: 65, speed: 65, growth: 60, roi: 65 }
     };
@@ -7848,10 +7885,10 @@ function updatePokedexModalAppraisalLive() {
   if (curNumEl) curNumEl.textContent = curEval.compositeScore;
   if (curBadge) {
     curBadge.style.borderColor = curEval.gradeColor;
-    curBadge.setAttribute('title', isEN ? `Current Level Rating (Lv.${pokedexModalState.level})` : `當前實力評級 (Lv.${pokedexModalState.level})`);
+    curBadge.setAttribute('title', _tDex(`當前實力評級 (Lv.${pokedexModalState.level})`, `Current Level Rating (Lv.${pokedexModalState.level})`));
     if (typeof curBadge.querySelector === 'function') {
       const curLvLabel = curBadge.querySelector('.pokedex-verdict-track-lbl') || curBadge.querySelector('span:first-child');
-      if (curLvLabel) curLvLabel.textContent = isEN ? `Lv.${pokedexModalState.level}` : `當前 Lv.${pokedexModalState.level}`;
+      if (curLvLabel) curLvLabel.textContent = _tDex(`當前 Lv.${pokedexModalState.level}`, `Lv.${pokedexModalState.level}`);
     }
   }
 
@@ -7862,7 +7899,7 @@ function updatePokedexModalAppraisalLive() {
   if (potNumEl) potNumEl.textContent = potEval.compositeScore;
   if (potBadge) {
     potBadge.style.borderColor = 'rgba(148, 163, 184, 0.25)';
-    potBadge.setAttribute('title', isEN ? 'Max Potential Rating (Lv.100)' : '畢業潛力評級 (Lv.100)');
+    potBadge.setAttribute('title', _tDex('畢業潛力評級 (Lv.100)', 'Max Potential Rating (Lv.100)'));
   }
 
   // 3. 更新食材產能算法拆解卡片與動態數值 (幫忙間隔、持有、食材率、技能率)

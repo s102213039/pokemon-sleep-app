@@ -783,7 +783,7 @@ function registerTier4Part3() {
     // 3. Box Table Columns Overhaul (specialty column removed)
     // Header order: icon -> level -> name (centered) -> berry -> 食1 -> 食2 -> 食3 -> actions
     const lvlThIdx = boxJs.indexOf("t('th.level', '等級')");
-    const nameThIdx = boxJs.indexOf("isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'");
+    const nameThIdx = boxJs.indexOf("_tBox('寶可夢 / 暱稱', 'Name / Nickname')");
     const berryThIdx = boxJs.indexOf("t('th.berry', '樹果')");
     assert(lvlThIdx !== -1 && nameThIdx !== -1 && berryThIdx !== -1, 'All required th keys must exist');
     assert(lvlThIdx < nameThIdx, 'Level column must precede Name column');
@@ -792,7 +792,7 @@ function registerTier4Part3() {
     assert(!renderTableHeaderCheck.includes('th-spec') && !renderTableHeaderCheck.includes('td-spec') && !renderTableHeaderCheck.includes("t('th.specialty'"), 'Box table must not render specialty header or cell');
 
     // Ingredient headers simplified to 食1, 食2, 食3
-    assert(boxJs.includes("isEN ? 'Ing 1' : '食1'") && boxJs.includes("isEN ? 'Ing 2' : '食2'") && boxJs.includes("isEN ? 'Ing 3' : '食3'"), 'Ingredient columns must be simplified to 食1, 食2, 食3');
+    assert(boxJs.includes("_tBox('食1', 'Ing 1')") && boxJs.includes("_tBox('食2', 'Ing 2')") && boxJs.includes("_tBox('食3', 'Ing 3')"), 'Ingredient columns must be simplified to 食1, 食2, 食3');
 
     // Name and Nickname horizontally centered
     assert(boxJs.includes('justify-content:center;gap:4px;flex-wrap:wrap;text-align:center;'), 'table-name-cn must be centered');
@@ -1974,8 +1974,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     assert(!appraisalJs.includes('Tier ${ribbonLevel}'), 'appraisal.js must not contain "Tier X" text');
     assert(!appraisalJs.includes('appraisal-pokemon-en'), 'appraisal.js must NOT contain appraisal-pokemon-en');
     assert(appraisalJs.includes('appraisal-h5-pkm-name font-bold'), 'appraisal.js must give appraisal-h5-pkm-name font-bold');
-    assert(appraisalJs.includes("${isEN ? 'Current' : '當前'}"), 'dual verdict column current label must be simplified to Current / 當前');
-    assert(appraisalJs.includes("${isEN ? 'Max Lv' : '滿級'}"), 'dual verdict column max label must be simplified to Max Lv / 滿級');
+    assert(appraisalJs.includes("${_tLab('當前', 'Current')}"), 'dual verdict column current label must be simplified to Current / 當前');
+    assert(appraisalJs.includes("${_tLab('滿級', 'Max Lv')}"), 'dual verdict column max label must be simplified to Max Lv / 滿級');
 
     // Check that mainskill row, ing parallel row, and config section are inside appraisal-h5-header-summary
     const summaryStart = appraisalJs.indexOf('<div class="appraisal-h5-header-summary">');

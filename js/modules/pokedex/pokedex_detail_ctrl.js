@@ -575,7 +575,7 @@ function togglePokedexSubskillPalette() {
   }
   if (btn) {
     const textSpan = (typeof btn.querySelector === 'function') ? btn.querySelector('.pokedex-subskill-toggle-text') : null;
-    const label = pokedexSubskillPaletteExpanded ? (isEN ? 'Collapse Subskills' : '副技能收合') : (isEN ? 'Expand Subskills' : '副技能展開');
+    const label = pokedexSubskillPaletteExpanded ? _tDex('副技能收合', 'Collapse Subskills') : _tDex('副技能展開', 'Expand Subskills');
     if (textSpan) textSpan.textContent = label;
     else btn.textContent = label;
     if (pokedexSubskillPaletteExpanded) {
@@ -670,14 +670,16 @@ function updatePokedexSubskillUI() {
       let badgeHtml = '';
       if (!skName) {
         if (isLevelReached) {
-          badgeHtml = `<span class="slot-val-badge slot-val-empty">${isEN ? '-- Empty --' : '-- 未配置 --'}</span>`;
+          badgeHtml = `<span class="slot-val-badge slot-val-empty">${_tDex('-- 未配置 --', '-- Empty --')}</span>`;
         } else {
-          badgeHtml = `<span class="slot-val-badge slot-val-empty">${isEN ? '-- Locked --' : '-- 未解鎖 --'}</span>`;
+          badgeHtml = `<span class="slot-val-badge slot-val-empty">${_tDex('-- 未解鎖 --', '-- Locked --')}</span>`;
         }
       } else {
         const skObj = POKEDEX_MODAL_SUBSKILLS.find(s => s.name === skName);
         const tier = skObj ? skObj.tier : 'white';
-        const skLabel = isEN ? (skObj ? skObj.name_en : skName) : skName;
+        const skLabel = isEN
+          ? (skObj ? skObj.name_en : skName)
+          : _tDex((window.I18N && typeof window.I18N.getSubSkillName === 'function') ? window.I18N.getSubSkillName(skName) : skName, skObj ? skObj.name_en : skName);
         const inactiveCls = !isEffectActive ? 'pill-inactive' : '';
         badgeHtml = `<span class="slot-val-badge box-subskill-pill subskill-${tier} ${inactiveCls}">${escapeHtml(skLabel)}</span>`;
       }
@@ -685,9 +687,9 @@ function updatePokedexSubskillUI() {
       let statusTagHtml = '';
       if (!isLevelReached) {
         if (skName) {
-          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-inactive">${isEN ? 'Inactive' : '效果尚未生效'}</span>`;
+          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-inactive">${_tDex('效果尚未生效', 'Inactive')}</span>`;
         } else {
-          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-under-lvl">${isEN ? 'Level Low' : '等級不足'}</span>`;
+          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-under-lvl">${_tDex('等級不足', 'Level Low')}</span>`;
         }
       }
 
@@ -698,9 +700,9 @@ function updatePokedexSubskillUI() {
 
       let tooltipText = `Lv.${lvl}`;
       if (!isLevelReached) {
-        tooltipText = `Lv.${lvl} (${isEN ? `Requires Lv.${lvl}` : `等級不足：需達 Lv.${lvl} 方可生效`})`;
+        tooltipText = `Lv.${lvl} (${_tDex(`等級不足：需達 Lv.${lvl} 方可生效`, `Requires Lv.${lvl}`)})`;
       } else if (isUnreleasedSlot) {
-        tooltipText = `Lv.${lvl} (${isEN ? 'Simulation Level' : '模擬等級'})`;
+        tooltipText = `Lv.${lvl} (${_tDex('模擬等級', 'Simulation Level')})`;
       }
 
       return `
@@ -723,10 +725,12 @@ function updatePokedexSubskillUI() {
 
     const skillsInTier = POKEDEX_MODAL_SUBSKILLS.filter(s => s.tier === tier);
     chipContainer.innerHTML = skillsInTier.map(sk => {
-      const skDisplayName = isEN ? sk.name_en : sk.name;
+      const skDisplayName = isEN
+        ? sk.name_en
+        : _tDex((window.I18N && typeof window.I18N.getSubSkillName === 'function') ? window.I18N.getSubSkillName(sk.name) : sk.name, sk.name_en);
       const isUsed = usedSkills.has(sk.name);
       return `
-        <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" onclick="window.PokemonApp.choosePokedexSubskill('${escapeHtml(sk.name)}')" title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Selected)' : '（已選用）') : ''}">
+        <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" onclick="window.PokemonApp.choosePokedexSubskill('${escapeHtml(sk.name)}')" title="${escapeHtml(skDisplayName)}${isUsed ? _tDex('（已選用）', ' (Selected)') : ''}">
           <span>${escapeHtml(skDisplayName)}</span>
           ${isUsed ? '<span style="font-size:10px;opacity:0.8;margin-left:2px;">[✓]</span>' : ''}
         </button>
@@ -738,7 +742,7 @@ function updatePokedexSubskillUI() {
   const toggleBtn = document.getElementById('pokedex-subskill-toggle-btn');
   if (toggleBtn) {
     const textSpan = (typeof toggleBtn.querySelector === 'function') ? toggleBtn.querySelector('.pokedex-subskill-toggle-text') : null;
-    const label = pokedexSubskillPaletteExpanded ? (isEN ? 'Collapse Subskills' : '副技能收合') : (isEN ? 'Expand Subskills' : '副技能展開');
+    const label = pokedexSubskillPaletteExpanded ? _tDex('副技能收合', 'Collapse Subskills') : _tDex('副技能展開', 'Expand Subskills');
     if (textSpan) textSpan.textContent = label;
     else toggleBtn.textContent = label;
     if (pokedexSubskillPaletteExpanded) {
@@ -798,6 +802,8 @@ function getPokemonEvolutionFamily(pkmOrId, allList) {
   if (['9001', '9002', '9004', '9005', '9006', '9007'].includes(idStr)) return [[pkm]];
   if (['37', '38'].includes(idStr)) return [[byId('37')], [byId('38')]].filter(s => s[0]);
   if (['7006', '7007'].includes(idStr)) return [[byId('7006')], [byId('7007')]].filter(s => s[0]);
+  if (['58', '59'].includes(idStr)) return [[byId('58')], [byId('59')]].filter(s => s[0]);
+  if (['7013', '7014'].includes(idStr)) return [[byId('7013')], [byId('7014')]].filter(s => s[0]);
   if (['194', '195'].includes(idStr)) return [[byId('194')], [byId('195')]].filter(s => s[0]);
   if (['7054', '980'].includes(idStr)) {
     const s1 = byId('7054');

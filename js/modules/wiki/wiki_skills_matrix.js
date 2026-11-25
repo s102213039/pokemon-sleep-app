@@ -1,3 +1,14 @@
+  function _tWiki(tw, en) {
+    if (typeof window !== 'undefined' && window.I18N) {
+      const lang = typeof window.I18N.getLanguage === 'function' ? window.I18N.getLanguage() : '';
+      if (lang === 'en-US') return en !== undefined ? en : tw;
+      if (lang === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
+        return window.I18N.toSimplified(tw);
+      }
+    }
+    return tw;
+  }
+
   // 主技能機率矩陣速查表 (副技能 × 性格全排列)
   const TRIGGER_CHANCE_MATRIX = [
     {
@@ -6,6 +17,7 @@
         { name: "技能機率提升S", color: "white" }
       ],
       nature: "▲ 技能機率上升",
+      nature_en: "▲ Trigger Up",
       natureBadge: "up",
       calc: "1.54 × 1.20",
       multiplier: 1.848,
@@ -17,6 +29,7 @@
         { name: "技能機率提升M", color: "blue" }
       ],
       nature: "▲ 技能機率上升",
+      nature_en: "▲ Trigger Up",
       natureBadge: "up",
       calc: "1.36 × 1.20",
       multiplier: 1.632,
@@ -29,6 +42,7 @@
         { name: "技能機率提升S", color: "white" }
       ],
       nature: "無修正 / 其它性格",
+      nature_en: "Neutral",
       natureBadge: "neutral",
       calc: "1.54 × 1.00",
       multiplier: 1.530,
@@ -40,6 +54,7 @@
         { name: "技能機率提升S", color: "white" }
       ],
       nature: "▲ 技能機率上升",
+      nature_en: "▲ Trigger Up",
       natureBadge: "up",
       calc: "1.18 × 1.20",
       multiplier: 1.416,
@@ -51,6 +66,7 @@
         { name: "技能機率提升M", color: "blue" }
       ],
       nature: "無修正 / 其它性格",
+      nature_en: "Neutral",
       natureBadge: "neutral",
       calc: "1.36 × 1.00",
       multiplier: 1.360,
@@ -63,6 +79,7 @@
         { name: "技能機率提升S", color: "white" }
       ],
       nature: "▼ 技能機率下降",
+      nature_en: "▼ Trigger Down",
       natureBadge: "down",
       calc: "1.54 × 0.80",
       multiplier: 1.232,
@@ -72,6 +89,7 @@
     {
       subskills: [],
       nature: "▲ 技能機率上升",
+      nature_en: "▲ Trigger Up",
       natureBadge: "up",
       calc: "1.00 × 1.20",
       multiplier: 1.200,
@@ -83,6 +101,7 @@
         { name: "技能機率提升S", color: "white" }
       ],
       nature: "無修正 / 其它性格",
+      nature_en: "Neutral",
       natureBadge: "neutral",
       calc: "1.18 × 1.00",
       multiplier: 1.180,
@@ -94,6 +113,7 @@
         { name: "技能機率提升M", color: "blue" }
       ],
       nature: "▼ 技能機率下降",
+      nature_en: "▼ Trigger Down",
       natureBadge: "down",
       calc: "1.36 × 0.80",
       multiplier: 1.088,
@@ -103,6 +123,7 @@
     {
       subskills: [],
       nature: "無修正 / 其它性格",
+      nature_en: "Neutral",
       natureBadge: "neutral",
       calc: "1.00 × 1.00",
       multiplier: 1.000,
@@ -114,6 +135,7 @@
         { name: "技能機率提升S", color: "white" }
       ],
       nature: "▼ 技能機率下降",
+      nature_en: "▼ Trigger Down",
       natureBadge: "down",
       calc: "1.18 × 0.80",
       multiplier: 0.944,
@@ -123,6 +145,7 @@
     {
       subskills: [],
       nature: "▼ 技能機率下降",
+      nature_en: "▼ Trigger Down",
       natureBadge: "down",
       calc: "1.00 × 0.80",
       multiplier: 0.800,
@@ -376,15 +399,15 @@
       desc: "以高頻率產出大量樹果累積卡比獸能量為最高目標.",
       desc_en: "Maximizes Snorlax Strength via massive, high-speed berry output.",
       subskills: [
-        { name: "樹果數量S", name_en: "Berry Finding S", detail: "樹果+1,能量翻倍" },
-        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間" },
-        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間" },
-        { name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己-7%幫忙時間" }
+        { name: "樹果數量S", name_en: "Berry Finding S", detail: "樹果+1,能量翻倍", detail_en: "+1 Berry, energy doubles" },
+        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間", detail_en: "Team -5% help interval" },
+        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間", detail_en: "Self -14% help interval" },
+        { name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己-7%幫忙時間", detail_en: "Self -7% help interval" }
       ],
       natures: [
-        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "樹果產速提升" },
-        { name: "食材發現率▼", name_en: "Ingredient Finding ▼", detail: "變相提高樹果率" },
-        { name: "主技能機率▲/▼", name_en: "Main Skill Chance ▲ / ▼", detail: "影響不大" }
+        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "樹果產速提升", detail_en: "Boosts berry production speed" },
+        { name: "食材發現率▼", name_en: "Ingredient Finding ▼", detail: "變相提高樹果率", detail_en: "Effectively boosts berry rate" },
+        { name: "主技能機率▲/▼", name_en: "Main Skill Chance ▲ / ▼", detail: "影響不大", detail_en: "Minimal impact" }
       ]
     },
     ingredient: {
@@ -398,18 +421,18 @@
       desc: "以穩定供給高階食譜所需的高價值食材為核心職責.",
       desc_en: "Provides consistent supply of high-tier ingredients for powerful dishes.",
       subskills: [
-        { name: "食材機率提升M", name_en: "Ingredient Finder M", detail: "+36%食材機率" },
-        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間" },
-        { name: "食材機率提升S", name_en: "Ingredient Finder S", detail: "+18%食材機率" },
-        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間" },
-        { name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己-7%幫忙時間" },
-        { name: "持有上限提升 M/L", name_en: "Inventory Up M/L", detail: "防滿包停產" },
-        { name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "需常收取" }
+        { name: "食材機率提升M", name_en: "Ingredient Finder M", detail: "+36%食材機率", detail_en: "+36% Ingredient Rate" },
+        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間", detail_en: "Team -5% help interval" },
+        { name: "食材機率提升S", name_en: "Ingredient Finder S", detail: "+18%食材機率", detail_en: "+18% Ingredient Rate" },
+        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間", detail_en: "Self -14% help interval" },
+        { name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己-7%幫忙時間", detail_en: "Self -7% help interval" },
+        { name: "持有上限提升 M/L", name_en: "Inventory Up M/L", detail: "防滿包停產", detail_en: "Prevents full-bag stop" },
+        { name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "需常收取", detail_en: "Requires frequent collection" }
       ],
       natures: [
-        { name: "食材發現率▲", name_en: "Ingredient Finding ▲", detail: "食材量大增" },
-        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "提高判定頻率" },
-        { name: "主技能機率▲/▼", name_en: "Main Skill Chance ▲ / ▼", detail: "視技能而定" }
+        { name: "食材發現率▲", name_en: "Ingredient Finding ▲", detail: "食材量大增", detail_en: "Greatly boosts ingredient yield" },
+        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "提高判定頻率", detail_en: "Increases help frequency" },
+        { name: "主技能機率▲/▼", name_en: "Main Skill Chance ▲ / ▼", detail: "視技能而定", detail_en: "Depends on Main Skill" }
       ]
     },
     skill: {
@@ -423,18 +446,18 @@
       desc: "以高頻率觸發核心主技能(全體補血,神獸加速,高額能量,料理擴鍋)為核心職責.",
       desc_en: "Triggers crucial main skills (E4E heal, Legend boost, pot expand, energy burst) frequently.",
       subskills: [
-        { name: "技能機率提升M", name_en: "Skill Trigger M", detail: "+36%技能機率" },
-        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間" },
-        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間" },
-        { name: "技能機率提升S", name_en: "Skill Trigger S", detail: "+18%技能機率" },
-        { name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "補基本能量" },
-        { name: "技能等級提升M", name_en: "Skill Level Up M", detail: "技能等級+2" },
-        { name: "技能等級提升S", name_en: "Skill Level Up S", detail: "技能等級+1" }
+        { name: "技能機率提升M", name_en: "Skill Trigger M", detail: "+36%技能機率", detail_en: "+36% Skill Trigger" },
+        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間", detail_en: "Team -5% help interval" },
+        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間", detail_en: "Self -14% help interval" },
+        { name: "技能機率提升S", name_en: "Skill Trigger S", detail: "+18%技能機率", detail_en: "+18% Skill Trigger" },
+        { name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "補基本能量", detail_en: "Adds base berry strength" },
+        { name: "技能等級提升M", name_en: "Skill Level Up M", detail: "技能等級+2", detail_en: "Main Skill Lv.+2" },
+        { name: "技能等級提升S", name_en: "Skill Level Up S", detail: "技能等級+1", detail_en: "Main Skill Lv.+1" }
       ],
       natures: [
-        { name: "主技能發動機率▲", name_en: "Main Skill Chance ▲", detail: "觸發次數最大化" },
-        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "提高判定頻率" },
-        { name: "食材發現率▼", name_en: "Ingredient Finding ▼", detail: "無副作用" }
+        { name: "主技能發動機率▲", name_en: "Main Skill Chance ▲", detail: "觸發次數最大化", detail_en: "Maximizes skill triggers" },
+        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "提高判定頻率", detail_en: "Increases help frequency" },
+        { name: "食材發現率▼", name_en: "Ingredient Finding ▼", detail: "無副作用", detail_en: "No downside" }
       ]
     }
   };
