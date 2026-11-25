@@ -149,33 +149,20 @@
 
   const _rankBadgeCache = Object.create(null);
 
-  function _getWikiSleepStyleLang() {
-    return (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function')
-      ? window.I18N.getLanguage()
-      : 'zh-TW';
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('appLanguageChanged', () => {
+      for (const k in _rankBadgeCache) delete _rankBadgeCache[k];
+    });
   }
 
-  function _toSimplifiedSafe(str, fallbackCn) {
-    if (!str) return str;
-    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function') {
-      return window.I18N.toSimplified(str);
-    }
-    return fallbackCn !== undefined ? fallbackCn : str;
-  }
-
-  function formatSnorlaxRankBadge(rankStr, isEN) {
-    const lang = _getWikiSleepStyleLang();
-    if (typeof isEN === 'undefined') {
-      isEN = lang === 'en-US';
-    }
-    const isCN = !isEN && lang === 'zh-CN';
-    const langKey = isEN ? 'en' : (isCN ? 'cn' : 'tw');
-    const cacheKey = langKey + ':' + (rankStr || '-');
+  function formatSnorlaxRankBadge(rankStr) {
+    const localeTag = window.I18N?.t?.('wiki.ui_locale_tag') ?? 'tw';
+    const cacheKey = localeTag + ':' + (rankStr || '-');
     const cached = _rankBadgeCache[cacheKey];
     if (cached !== undefined) return cached;
 
     if (!rankStr || rankStr === '-') {
-      const dashTitle = isEN ? 'Unavailable' : (isCN ? _toSimplifiedSafe('未出現', '未出现') : '未出現');
+      const dashTitle = window.I18N?.t?.('wiki.ui_rank_unavailable') ?? '未出現';
       const dashHtml = `<span class="rank-badge rank-dash" title="${dashTitle}">-</span>`;
       _rankBadgeCache[cacheKey] = dashHtml;
       return dashHtml;
@@ -183,19 +170,15 @@
     const parts = rankStr.trim().split(/\s+/);
     const tier = (parts[0] || '').toLowerCase();
     const num = parts[1] || '';
-    const rawTierTitle = isEN ? rankStr : (
-      tier === 'basic' ? `普通 (Basic) ${num}` :
-      tier === 'great' ? `超級 (Great) ${num}` :
-      tier === 'ultra' ? `高級 (Ultra) ${num}` :
-      tier === 'master' ? `大師 (Master) ${num}` : rankStr
-    );
-    const fallbackCnTierTitle = (
-      tier === 'basic' ? `普通 (Basic) ${num}` :
-      tier === 'great' ? `超级 (Great) ${num}` :
-      tier === 'ultra' ? `高级 (Ultra) ${num}` :
-      tier === 'master' ? `大师 (Master) ${num}` : rankStr
-    );
-    const tierTitle = isEN ? rawTierTitle : (isCN ? _toSimplifiedSafe(rawTierTitle, fallbackCnTierTitle) : rawTierTitle);
+    const rankKeyMap = {
+      basic: 'wiki.ui_rank_basic',
+      great: 'wiki.ui_rank_great',
+      ultra: 'wiki.ui_rank_ultra',
+      master: 'wiki.ui_rank_master'
+    };
+    const tierKey = rankKeyMap[tier];
+    const rawTierTitle = tierKey ? window.I18N?.t?.(tierKey, { num }) : rankStr;
+    const tierTitle = (typeof rawTierTitle === 'string' ? rawTierTitle : String(rankStr)).trim();
 
     let ballSvg = '';
     if (tier === 'basic') {
@@ -243,12 +226,9 @@
       anchorEl = event.target.closest('.island-sleep-cell-wrap') || event.target;
     }
 
-    const lang = _getWikiSleepStyleLang();
-    const isEN = lang === 'en-US';
-    const isCN = lang === 'zh-CN';
-    const shardsLabel = isEN ? 'Dream Shards: ' : (isCN ? _toSimplifiedSafe('夢之碎片: ', '梦之碎片: ') : '夢之碎片: ');
-    const expLabel = isEN ? 'Research EXP: ' : (isCN ? _toSimplifiedSafe('研究EXP: ', '研究EXP: ') : '研究EXP: ');
-    const candyLabel = isEN ? 'Candy: ' : (isCN ? _toSimplifiedSafe('糖果數量: ', '糖果数量: ') : '糖果數量: ');
+    const shardsLabel = window.I18N?.t?.('wiki.ui_sleep_shards_lbl') ?? '夢之碎片: ';
+    const expLabel = window.I18N?.t?.('wiki.ui_sleep_exp_lbl') ?? '研究EXP: ';
+    const candyLabel = window.I18N?.t?.('wiki.ui_sleep_candy_lbl') ?? '糖果數量: ';
 
     const tip = document.createElement('div');
     tip.id = 'island-sleep-popover';

@@ -5,23 +5,19 @@
 (function () {
   'use strict';
 
-  function _tRecipes(tw, en) {
-    if (typeof window !== 'undefined' && window.I18N) {
-      const lang = typeof window.I18N.getLanguage === 'function' ? window.I18N.getLanguage() : 'zh-TW';
-      if (lang === 'en-US') return en !== undefined ? en : tw;
-      if (lang === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
-        return window.I18N.toSimplified(tw);
-      }
-    }
-    return tw;
-  }
+  const RECIPE_CATEGORY_KEYS = {
+    ALL: 'recipes.ui_cat_all',
+    '咖哩': 'recipes.ui_cat_curry',
+    '沙拉': 'recipes.ui_cat_salad',
+    '甜點': 'recipes.ui_cat_dessert'
+  };
 
   function _getRecipeCategoryLabel(cat) {
-    if (cat === 'ALL') return _tRecipes('全部', 'All');
-    if (cat === '咖哩') return _tRecipes('咖哩', 'Curry');
-    if (cat === '沙拉') return _tRecipes('沙拉', 'Salad');
-    if (cat === '甜點') return _tRecipes('甜點', 'Dessert');
-    return _tRecipes(cat, cat);
+    const key = RECIPE_CATEGORY_KEYS[cat];
+    if (key) {
+      return window.I18N?.t?.(key) ?? (cat === 'ALL' ? '全部' : cat);
+    }
+    return window.I18N?.text?.(cat) ?? (cat || '');
   }
 
   function isRecipesHealthy(data) {
@@ -460,7 +456,7 @@
   function syncPotExpansionUI() {
     if (!potExpansionSlider || !potExpansionBadge) return;
     potExpansionSlider.value = potExpansion;
-    potExpansionBadge.textContent = potExpansion === 0 ? _tRecipes('+0 (無追加)', '+0 (None)') : `+${potExpansion} (+${(potExpansion * 100).toLocaleString()})`;
+    potExpansionBadge.textContent = potExpansion === 0 ? (window.I18N?.t?.('recipes.ui_pot_expansion_none') ?? '+0 (無追加)') : `+${potExpansion} (+${(potExpansion * 100).toLocaleString()})`;
     updateSliderFill(potExpansionSlider, 0, 700);
   }
 
@@ -784,12 +780,12 @@
     .catch(err => {
       console.error('Error loading recipes.json:', err);
       if (typeof window.__renderInPlaceError === 'function') {
-        window.__renderInPlaceError('recipe-content-area', _tRecipes('料理食譜資料庫載入失敗 (recipes.json)', 'Failed to load recipe database (recipes.json)'), err);
+        window.__renderInPlaceError('recipe-content-area', window.I18N?.t?.('recipes.ui_err_load_db') ?? '料理食譜資料庫載入失敗 (recipes.json)', err);
       } else if (contentArea) {
         const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
           ? window.DOMUtils.escapeHtml(err.message)
           : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">${_tRecipes('載入 recipes.json 失敗：', 'Failed to load recipes.json: ')}${safeMsg}</div>`;
+        contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">${window.I18N?.t?.('recipes.ui_err_load_prefix') ?? '載入 recipes.json 失敗：'}${safeMsg}</div>`;
       }
     });
 
@@ -798,9 +794,8 @@
     if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getRecipeName === 'function') {
       return window.I18N.getRecipeName(r);
     }
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN';
-    if (isEN) return r.name_en || r.name_cn;
-    if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') return window.I18N.toSimplified(r.name_cn);
-    return r.name_cn;
+    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.field === 'function') {
+      return window.I18N.field(r, 'name');
+    }
+    return r.name_cn || r.name_en || r.name || '';
   }

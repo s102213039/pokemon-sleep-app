@@ -15,6 +15,8 @@ const {
   matchesSelector,
   createMockDocument,
   PokemonApp,
+  I18N,
+  i18nCode,
   getItemIcon,
   getItemId,
   getItemFormattedNo,
@@ -183,6 +185,7 @@ function registerTier4Part4() {
     };
     appCtx.window = appCtx;
     vm.createContext(appCtx);
+    vm.runInContext(i18nCode, appCtx);
     vm.runInContext(boxCode, appCtx);
     vm.runInContext(appraisalCode, appCtx);
 
@@ -201,9 +204,11 @@ function registerTier4Part4() {
     const bewearRecipe = appCtx.AppraisalLab.getSignatureRecipeRecommendations(['萌綠玉米', '豆製肉', '萌綠玉米'], false);
     assert(bewearRecipe.includes('採蜜巧克力格子鬆餅') || bewearRecipe.includes('彈跳咖哩烏龍麵') || bewearRecipe.includes('煉獄玉米乾咖哩'), 'Bewear Corn+Sausage must recommend top dishes');
 
-    // English localization check
-    const englishRecipe = appCtx.AppraisalLab.getSignatureRecipeRecommendations(['soothing cacao', 'moomoo milk'], true);
+    // English localization check via pre-resolved I18N language switch
+    appCtx.I18N.setLanguage('en-US');
+    const englishRecipe = appCtx.AppraisalLab.getSignatureRecipeRecommendations(['soothing cacao', 'moomoo milk']);
     assert(englishRecipe.includes('Target recipes:') || englishRecipe.includes('Target dish:'), 'English mode must produce English recipe header');
+    appCtx.I18N.setLanguage('zh-TW');
 
     // 2. Verify evaluatePokemon incorporates recipe recommendations into intelligent summary
     const absolPkm = { id: '359', name_cn: '阿勃梭魯', specialty: '食材', ingredients: [{ name: '特選蘋果' }, { name: '放鬆可可' }, { name: '放鬆可可' }] };
@@ -276,9 +281,14 @@ function registerTier4Part4() {
     assert(appraisalCode.includes("scoreFontSize = isCompact ? '9.5' : '12'"),
       'renderRadarChartSVG must use enlarged vertex score font size (12px)');
 
-    // 6. Verify H5 and Desktop both use clean appraisal-summary-label without redundant colon
-    assert(appraisalCode.includes('<span class="appraisal-summary-label">${_tLab(\'智能簡評\', \'Appraisal Note\')}</span>'),
-      'appraisal.js must render embedded summary label without colon');
+    // 6. Verify H5 and Desktop both use clean appraisal-summary-label without redundant colon (via pre-resolved I18N resource)
+    assert(
+      appraisalCode.includes('appraisal-summary-label') &&
+      appraisalCode.includes("'lab.t_summary_label'") &&
+      I18N.DICTIONARY['zh-TW']['lab.t_summary_label'] === '智能簡評' &&
+      I18N.DICTIONARY['en-US']['lab.t_summary_label'] === 'Appraisal Note',
+      'appraisal.js must render embedded summary label without colon'
+    );
   });
 
 
@@ -1325,6 +1335,7 @@ function registerTier4Part4() {
     ctx.document = ctx.window.document;
     ctx.localStorage = ctx.window.localStorage;
     vm.createContext(ctx);
+    vm.runInContext(i18nCode, ctx);
     vm.runInContext(appraisalJs, ctx);
 
     // Verify method exists
@@ -1482,6 +1493,7 @@ function registerTier4Part4() {
     ctx.document = ctx.window.document;
     ctx.localStorage = ctx.window.localStorage;
     vm.createContext(ctx);
+    vm.runInContext(i18nCode, ctx);
     vm.runInContext(appraisalJs, ctx);
 
     const Lab = ctx.window.AppraisalLab;
@@ -2429,6 +2441,7 @@ function registerTier4Part4() {
     };
     appCtx.window = appCtx;
     vm.createContext(appCtx);
+    vm.runInContext(i18nCode, appCtx);
     vm.runInContext(boxCode, appCtx);
     vm.runInContext(appraisalCode, appCtx);
     appCtx.PokemonBoxApp.setAllPokemons(dataJson);

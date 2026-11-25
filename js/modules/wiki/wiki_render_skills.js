@@ -22,7 +22,7 @@
         <div class="values-horizontal-section">
           <div class="values-section-header">
             <div class="values-section-title-group">
-              <span class="values-section-badge berry-badge">${_tWiki('樹果能量庫', 'Berry Power')}</span>
+              <span class="values-section-badge berry-badge">${window.I18N?.t?.('wiki.ui_berry_power') ?? '樹果能量庫'}</span>
             </div>
 
             <!-- 等級滑桿與島嶼加成控制器 -->
@@ -30,7 +30,7 @@
               <!-- 寶可夢等級滑桿 (1 ~ ${pokeCap}) -->
               <div class="berry-control-group">
                 <label for="berry-level-slider" class="berry-control-label">
-                  ${_tWiki('等級：', 'Level:')}<span id="berry-level-display" class="berry-level-tag">Lv. ${currentBerryLevel}</span>
+                  ${window.I18N?.t?.('wiki.ui_level_colon') ?? '等級：'}<span id="berry-level-display" class="berry-level-tag">Lv. ${currentBerryLevel}</span>
                 </label>
                 <input type="range" id="berry-level-slider" min="1" max="${pokeCap}" value="${currentBerryLevel}" step="1" class="berry-slider" oninput="window.WikiDB.updateBerryLevel(this.value)">
               </div>
@@ -38,7 +38,7 @@
               <!-- 島嶼加成滑桿 (0% ~ ${islandCap}%) -->
               <div class="berry-control-group">
                 <label for="berry-island-slider" class="berry-control-label">
-                  ${_tWiki('島嶼加成：', 'Island Bonus:')}<span id="berry-island-display" class="berry-island-tag">+${currentIslandBonus}%</span>
+                  ${window.I18N?.t?.('wiki.ui_island_bonus_colon') ?? '島嶼加成：'}<span id="berry-island-display" class="berry-island-tag">+${currentIslandBonus}%</span>
                 </label>
                 <input type="range" id="berry-island-slider" min="0" max="${islandCap}" value="${currentIslandBonus}" step="${islandStep}" class="berry-slider island-slider" oninput="window.WikiDB.updateBerryIsland(this.value)">
               </div>
@@ -49,18 +49,14 @@
             ${sortedBerries.map(b => {
               const energy1x = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, false);
               const energy2x = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, true);
-              const bName = (window.I18N && typeof window.I18N.getBerryName === 'function')
-                ? (window.I18N.getBerryName(b.name) || _tWiki(b.name, b.name))
-                : _tWiki(b.name, b.name);
-              const bType = (window.I18N && typeof window.I18N.getTypeName === 'function')
-                ? (window.I18N.getTypeName(b.type) || _tWiki(b.type, b.type))
-                : _tWiki(b.type, b.type);
-              const bonusStr = currentIslandBonus > 0 ? _tWiki(` +${currentIslandBonus}%島嶼`, ` +${currentIslandBonus}% Island`) : '';
+              const bName = window.I18N?.getBerryName?.(b.name) || (window.I18N?.text?.(b.name) ?? b.name);
+              const bType = window.I18N?.getTypeName?.(b.type) || (window.I18N?.text?.(b.type) ?? b.type);
+              const bonusStr = currentIslandBonus > 0 ? (window.I18N?.t?.('wiki.ui_island_bonus_inline', { bonus: currentIslandBonus }) ?? ` +${currentIslandBonus}%島嶼`) : '';
               return `
-                <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr} | ${_tWiki('基礎', 'Base')}: ${energy1x} / ${_tWiki('順果 2x', 'Fav 2x')}: ${energy2x}">
+                <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr} | ${window.I18N?.t?.('wiki.ui_base_label') ?? '基礎'}: ${energy1x} / ${window.I18N?.t?.('wiki.ui_fav_2x') ?? '順果 2x'}: ${energy2x}">
                   <img src="${b.icon}" class="value-compact-icon" alt="${bName}">
-                  <span class="value-compact-energy berry-val" title="${_tWiki('基礎能量 (1x)', 'Base Energy (1x)')}"><span class="energy-multiplier-prefix">1x</span> ${energy1x}</span>
-                  <span class="value-compact-energy berry-val-fav" title="${_tWiki('順果 2x 能量', 'Favorite Berry (2x)')}"><span class="energy-multiplier-prefix">2x</span> ${energy2x}</span>
+                  <span class="value-compact-energy berry-val" title="${window.I18N?.t?.('wiki.ui_base_energy_1x') ?? '基礎能量 (1x)'}"><span class="energy-multiplier-prefix">1x</span> ${energy1x}</span>
+                  <span class="value-compact-energy berry-val-fav" title="${window.I18N?.t?.('wiki.ui_fav_energy_2x') ?? '順果 2x 能量'}"><span class="energy-multiplier-prefix">2x</span> ${energy2x}</span>
                 </div>
               `;
             }).join('')}
@@ -71,20 +67,18 @@
         <div class="values-horizontal-section" style="margin-top: 8px;">
           <div class="values-section-header">
             <div class="values-section-title-group">
-              <span class="values-section-badge ing-badge">${_tWiki('食材基礎庫', 'Ingredient Base Values')}</span>
+              <span class="values-section-badge ing-badge">${window.I18N?.t?.('wiki.ui_ing_base_values') ?? '食材基礎庫'}</span>
             </div>
           </div>
 
           <div class="values-compact-grid values-ing-grid">
             ${sortedIngredients.map(ing => {
-              const ingName = (window.I18N && typeof window.I18N.getIngredientName === 'function')
-                ? (window.I18N.getIngredientName(ing.name) || _tWiki(ing.name, ing.enName || ing.name))
-                : _tWiki(ing.name, ing.enName || ing.name);
+              const ingName = window.I18N?.getIngredientName?.(ing.name) || (window.I18N?.pick?.({ 'zh-TW': ing.name, 'en-US': ing.enName || ing.name }) ?? ing.name);
               const ingIcon = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function' && ing.icon && ing.icon.startsWith('assets/'))
                 ? (window.mapExternalToLocalAsset(ing.icon) || ing.icon)
                 : ing.icon;
               return `
-              <div class="value-compact-node ${ing.id === 'tail' ? 'value-tail-highlight' : ''}" title="${ingName} - ${_tWiki('基礎能量', 'Base Energy')} ${ing.energy}">
+              <div class="value-compact-node ${ing.id === 'tail' ? 'value-tail-highlight' : ''}" title="${ingName} - ${window.I18N?.t?.('wiki.ui_base_energy') ?? '基礎能量'} ${ing.energy}">
                 <img src="${ingIcon}" class="value-compact-icon" alt="${ingName}">
                 <span class="value-compact-energy ing-val">${ing.energy}</span>
               </div>
@@ -96,14 +90,11 @@
   }
 
   // 渲染食材天梯榜卡片 (舊版清單檢視)
-  // 渲染食材天梯榜卡片 (舊版清單檢視)
   function renderIngredientLadders(ladders) {
     const mult = getLadderMultiplier();
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const perDayText = window.I18N?.t?.('wiki.ui_per_day') ?? '顆/天';
     return ladders.map(ing => {
-      const ingName = (window.I18N && typeof window.I18N.getIngredientName === 'function')
-        ? (window.I18N.getIngredientName(ing.name) || _tWiki(ing.name, ing.name))
-        : _tWiki(ing.name, ing.name);
+      const ingName = window.I18N?.getIngredientName?.(ing.name) || (window.I18N?.text?.(ing.name) ?? ing.name);
       const dishInfo = (typeof getDynamicTopRecipeForIngredient === 'function')
         ? getDynamicTopRecipeForIngredient(ing.id, ing.name)
         : (TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { need: 20 });
@@ -148,24 +139,22 @@
             <img src="${(typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon}" class="ladder-icon" alt="${ingName}">
             <h4 class="ladder-name">${ingName}</h4>
           </div>
-          <span class="ladder-max-badge">${filteredTiers.length > 0 ? _tWiki('最高日產 ~ ', 'Max Daily ~ ') + scaledMax + _tWiki('顆/天', '/day') : _tWiki('無符合', 'No Match')}</span>
+          <span class="ladder-max-badge">${filteredTiers.length > 0 ? (window.I18N?.t?.('wiki.ui_max_daily_prefix') ?? '最高日產 ~ ') + scaledMax + perDayText : (window.I18N?.t?.('wiki.ui_no_match') ?? '無符合')}</span>
         </div>
 
         <div class="ladder-tiers-list">
-          ${filteredTiers.length === 0 ? `<div class="text-muted" style="padding: 12px; text-align: center; font-size: 12px;">${_tWiki('無符合篩選條件之寶可夢', 'No matching Pokémon')}</div>` : filteredTiers.map(t => {
+          ${filteredTiers.length === 0 ? `<div class="text-muted" style="padding: 12px; text-align: center; font-size: 12px;">${window.I18N?.t?.('wiki.ui_no_matching_pkm') ?? '無符合篩選條件之寶可夢'}</div>` : filteredTiers.map(t => {
             const rawName = t.name || '';
-            const translatedPkm = (window.I18N && typeof window.I18N.getPokemonName === 'function')
-              ? (window.I18N.getPokemonName(rawName) || _tWiki(rawName, t.name_en || rawName))
-              : _tWiki(rawName, t.name_en || rawName);
+            const translatedPkm = window.I18N?.getPokemonName?.(rawName) || (window.I18N?.field?.(t, 'name') ?? rawName);
             const pkmDisplayName = `${translatedPkm} (${t.recipe || 'AAA'})`;
-            const noteText = formatLadderNote(t.note || '', isEN);
+            const noteText = formatLadderNote(t.note || '');
             const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
             const skillBonus = getPokemonSkillDrawBonus(t.name, ing.id, ing.name);
             const dropCount = (rawCountNum * mult).toFixed(1);
             const totalCount = (parseFloat(dropCount) + skillBonus).toFixed(1);
             const displayCount = skillBonus > 0
-              ? `${totalCount} ${_tWiki('顆/天', '/day')} <span class="ladder-split-text" style="font-size: 11px; color: #f59e0b; font-weight: normal; margin-left: 4px;">(${dropCount} + ${skillBonus})</span>`
-              : `${dropCount} ${_tWiki('顆/天', '/day')}`;
+              ? `${totalCount} ${perDayText} <span class="ladder-split-text" style="font-size: 11px; color: #f59e0b; font-weight: normal; margin-left: 4px;">(${dropCount} + ${skillBonus})</span>`
+              : `${dropCount} ${perDayText}`;
 
             return `
             <div class="ladder-tier-row">
@@ -225,37 +214,41 @@
   // 渲染技能卡片 (方案 C: 精華看板 + 點擊卡片展開/收合階梯)
   function renderSkillsCards(skills) {
     const catNameMap = {
-      energy: _tWiki('能量系', 'Strength'),
-      energy_heal: _tWiki('活力系', 'Energy Heal'),
-      ingredient: _tWiki('食材與料理', 'Ingredients'),
-      special: _tWiki('神獸與特殊專屬', 'Special/Legend'),
-      shards: _tWiki('夢之碎片', 'Dream Shards')
+      energy: window.I18N?.t?.('wiki.ui_cat_energy') ?? '能量系',
+      energy_heal: window.I18N?.t?.('wiki.ui_cat_energy_heal') ?? '活力系',
+      ingredient: window.I18N?.t?.('wiki.ui_cat_ingredient') ?? '食材與料理',
+      special: window.I18N?.t?.('wiki.ui_cat_special') ?? '神獸與特殊專屬',
+      shards: window.I18N?.t?.('wiki.ui_cat_shards') ?? '夢之碎片'
     };
+    const typeParen = window.I18N?.t?.('wiki.ui_type_paren') ?? '（屬性）';
+    const timesSuffix = window.I18N?.t?.('wiki.ui_times_suffix') ?? '次';
+    const helpsUnit = window.I18N?.t?.('wiki.ui_helps_unit') ?? '次幫忙';
+    const helpsShort = window.I18N?.t?.('wiki.ui_helps_short') ?? '次';
 
     return skills.map(skill => {
       let valuesHtml = '';
       const rawSkillName = skill.name || skill.id;
-      let skillName = (window.I18N && typeof window.I18N.getMainSkillName === 'function')
-        ? (window.I18N.getMainSkillName(rawSkillName) || _tWiki(rawSkillName, skill.name_en || rawSkillName))
-        : _tWiki(rawSkillName, skill.name_en || rawSkillName);
-      if (window.I18N && typeof window.I18N.getLanguage === 'function' && window.I18N.getLanguage() === 'en-US') {
-        skillName = skillName.replace(/[（\(]\s*屬性\s*[）\)]/g, '(Type)');
-      }
-      const catLabel = catNameMap[skill.category] || _tWiki(skill.catName, skill.catName_en || skill.catName);
-      const unitLabel = _tWiki(
-        skill.unit,
-        skill.unit_en || (skill.unit.includes('能量') ? ' Strength' : (skill.unit.includes('食材') ? ' Ingredients' : (skill.unit.includes('次') ? ' Helps' : (skill.unit.includes('點') ? ' Energy' : skill.unit))))
-      );
+      let skillName = window.I18N?.getMainSkillName?.(rawSkillName) || (window.I18N?.field?.(skill, 'name') ?? rawSkillName);
+      skillName = skillName.replace(/[（\(]\s*(?:屬性|属性)\s*[）\)]/g, typeParen);
+      const catLabel = catNameMap[skill.category] || (window.I18N?.field?.(skill, 'catName') ?? skill.catName);
+      const unitLabel = skill.unit_en
+        ? (window.I18N?.field?.(skill, 'unit') ?? skill.unit)
+        : (skill.unit.includes('能量') ? (window.I18N?.t?.('wiki.ui_unit_strength') ?? skill.unit)
+          : skill.unit.includes('食材') ? (window.I18N?.t?.('wiki.ui_unit_ingredients') ?? skill.unit)
+          : skill.unit.includes('次') ? (window.I18N?.t?.('wiki.ui_unit_helps') ?? skill.unit)
+          : skill.unit === ' 點' ? (window.I18N?.t?.('wiki.ui_unit_points') ?? skill.unit)
+          : skill.unit.includes('點') ? (window.I18N?.t?.('wiki.ui_unit_energy') ?? skill.unit)
+          : (window.I18N?.text?.(skill.unit) ?? skill.unit));
 
       if (skill.hasStackMatrix) {
         const sampleStrings = skill.matrix[10].vals.map(v => `${v.toLocaleString()} ${unitLabel}`);
         valuesHtml = `
           <div class="skill-interactive-section">
             <div class="stack-selector-row">
-              <span class="stack-selector-label">${_tWiki('蓄力次數切換：', 'Stack Count:')}</span>
+              <span class="stack-selector-label">${window.I18N?.t?.('wiki.ui_stack_count_label') ?? '蓄力次數切換：'}</span>
               <div class="stack-chips-group" id="charge-stack-chips">
                 ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(s => `
-                  <button type="button" class="stack-chip-btn ${s === 10 ? 'active' : ''}" data-stack-target="${s}" onclick="window.WikiDB.switchStack(${s})">${s}${_tWiki('次', 'x')}</button>
+                  <button type="button" class="stack-chip-btn ${s === 10 ? 'active' : ''}" data-stack-target="${s}" onclick="window.WikiDB.switchStack(${s})">${s}${timesSuffix}</button>
                 `).join('')}
               </div>
             </div>
@@ -265,7 +258,7 @@
             <!-- 展開完整對照表按鈕 -->
             <div style="margin-top: 8px;">
               <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="charge-matrix-table" onclick="window.WikiDB.toggleDetail('charge-matrix-table')">
-                ${_tWiki('展開 / 收合完整 0~10 次蓄力數值表', 'Toggle 0~10 Stack Value Matrix')}
+                ${window.I18N?.t?.('wiki.ui_toggle_stack_matrix') ?? '展開 / 收合完整 0~10 次蓄力數值表'}
               </button>
             </div>
 
@@ -273,14 +266,14 @@
               <table class="wiki-mini-table">
                 <thead>
                   <tr>
-                    <th>${_tWiki('蓄力', 'Stacks')}</th>
+                    <th>${window.I18N?.t?.('wiki.ui_stacks_th') ?? '蓄力'}</th>
                     ${[1, 2, 3, 4, 5, 6, 7].map(lv => `<th>Lv.${lv}</th>`).join('')}
                   </tr>
                 </thead>
                 <tbody>
                   ${skill.matrix.map(m => `
                     <tr class="${m.stacks === 10 ? 'row-highlight' : ''}">
-                      <td class="font-bold text-accent">${m.stacks}${_tWiki('次', 'x')}</td>
+                      <td class="font-bold text-accent">${m.stacks}${timesSuffix}</td>
                       ${m.vals.map(v => `<td>${v.toLocaleString()}</td>`).join('')}
                     </tr>
                   `).join('')}
@@ -290,14 +283,14 @@
           </div>
         `;
       } else if (skill.hasTypeKindsMatrix) {
-        const sampleStrings = skill.matrix[5].vals.map(v => `${v} ${_tWiki('次幫忙', 'Helps')}`);
+        const sampleStrings = skill.matrix[5].vals.map(v => `${v} ${helpsUnit}`);
         valuesHtml = `
           <div class="skill-interactive-section">
             <div class="stack-selector-row">
-              <span class="stack-selector-label">${_tWiki('同屬性種類數：', 'Same-type Species:')}</span>
+              <span class="stack-selector-label">${window.I18N?.t?.('wiki.ui_same_type_label') ?? '同屬性種類數：'}</span>
               <div class="stack-chips-group" id="helper-boost-chips">
                 ${[0, 1, 2, 3, 4, 5].map(k => `
-                  <button type="button" class="stack-chip-btn ${k === 5 ? 'active' : ''}" data-boost-kind="${k}" onclick="window.WikiDB.switchBoost(${k})">${k} ${_tWiki('種類', 'Types')}</button>
+                  <button type="button" class="stack-chip-btn ${k === 5 ? 'active' : ''}" data-boost-kind="${k}" onclick="window.WikiDB.switchBoost(${k})">${k} ${window.I18N?.t?.('wiki.ui_types_unit') ?? '種類'}</button>
                 `).join('')}
               </div>
             </div>
@@ -307,7 +300,7 @@
             <!-- 展開完整對照表按鈕 -->
             <div style="margin-top: 8px;">
               <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="helper-boost-table" onclick="window.WikiDB.toggleDetail('helper-boost-table')">
-                ${_tWiki('展開 / 收合完整 0~5 種類對照表', 'Toggle 0~5 Types Comparison Table')}
+                ${window.I18N?.t?.('wiki.ui_toggle_boost_matrix') ?? '展開 / 收合完整 0~5 種類對照表'}
               </button>
             </div>
 
@@ -315,15 +308,15 @@
               <table class="wiki-mini-table">
                 <thead>
                   <tr>
-                    <th>${_tWiki('同屬種類', 'Same-Type')}</th>
+                    <th>${window.I18N?.t?.('wiki.ui_same_type_th') ?? '同屬種類'}</th>
                     ${[1, 2, 3, 4, 5, 6].map(lv => `<th>Lv.${lv}</th>`).join('')}
                   </tr>
                 </thead>
                 <tbody>
                   ${skill.matrix.map(m => `
                     <tr class="${(m.kinds === '5 種類' || m.kinds_en === '5 Species') ? 'row-highlight' : ''}">
-                      <td class="font-bold text-accent">${_tWiki(m.kinds, m.kinds_en || m.kinds)}</td>
-                      ${m.vals.map(v => `<td>${v} ${_tWiki('次', 'Helps')}</td>`).join('')}
+                      <td class="font-bold text-accent">${window.I18N?.field?.(m, 'kinds') ?? m.kinds}</td>
+                      ${m.vals.map(v => `<td>${v} ${helpsShort}</td>`).join('')}
                     </tr>
                   `).join('')}
                 </tbody>
@@ -332,12 +325,15 @@
           </div>
         `;
       } else if (skill.hasMoonlightChips) {
-        const mlStrings = skill.selfValues.map((v, i) => _tWiki(`自${v}+他${skill.teamValues[i]}${unitLabel.trim()}`, `Self ${v}+Ally ${skill.teamValues[i]}${unitLabel.trim()}`));
+        const mlStrings = skill.selfValues.map((v, i) =>
+          window.I18N?.t?.('wiki.ui_moonlight_fmt', { self: v, team: skill.teamValues[i], unit: unitLabel.trim() })
+          ?? `自${v}+他${skill.teamValues[i]}${unitLabel.trim()}`
+        );
         valuesHtml = renderSkillHeroAndStepper(skill.id, mlStrings, unitLabel, 6);
       } else if (skill.hasLunarPrayerMatrix) {
         const lpStrings = skill.healValues.map((v, i) => {
           const formula = skill.berryFormulas ? skill.berryFormulas[i] : ["14+2n", "19+3n", "24+4n", "29+5n", "30+7n", "32+9n"][i];
-          return _tWiki(`全隊${v}點+${formula}`, `All ${v}+${formula}`);
+          return window.I18N?.t?.('wiki.ui_lunar_fmt', { val: v, formula }) ?? `全隊${v}點+${formula}`;
         });
         valuesHtml = `
           ${renderSkillHeroAndStepper(skill.id, lpStrings, unitLabel, 6)}
@@ -345,7 +341,7 @@
           <!-- 展開完整 1~5 種類隊友樹果對照表按鈕 -->
           <div style="margin-top: 6px;">
             <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="lunar-prayer-table" onclick="window.WikiDB.toggleDetail('lunar-prayer-table')">
-              ${_tWiki('展開 / 收合 1~5 種類隊友樹果表', 'Toggle 1~5 Species Berry Table')}
+              ${window.I18N?.t?.('wiki.ui_toggle_lunar_table') ?? '展開 / 收合 1~5 種類隊友樹果表'}
             </button>
           </div>
 
@@ -353,14 +349,14 @@
             <table class="wiki-mini-table">
               <thead>
                 <tr>
-                  <th style="white-space: nowrap;">${_tWiki('種類', 'Species')}</th>
+                  <th style="white-space: nowrap;">${window.I18N?.t?.('wiki.ui_species_th') ?? '種類'}</th>
                   ${[1, 2, 3, 4, 5, 6].map(lv => `<th>Lv.${lv}</th>`).join('')}
                 </tr>
               </thead>
               <tbody>
                 ${skill.berryMatrix.map((m, idx) => `
                   <tr class="${idx === 4 ? 'row-highlight' : ''}">
-                    <td class="font-bold text-accent" style="white-space: nowrap;">${_tWiki(m.kinds, m.kinds_en || m.kinds)}</td>
+                    <td class="font-bold text-accent" style="white-space: nowrap;">${window.I18N?.field?.(m, 'kinds') ?? m.kinds}</td>
                     ${m.vals.map(v => `<td style="font-size: 10.5px; white-space: nowrap;">${v}</td>`).join('')}
                   </tr>
                 `).join('')}
@@ -376,7 +372,7 @@
           <!-- 展開各寶可夢專屬食材池對照表按鈕 -->
           <div style="margin-top: 6px;">
             <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="ing-draw-matrix-table" onclick="window.WikiDB.toggleDetail('ing-draw-matrix-table')">
-              ${_tWiki('展開 / 收合 各寶可夢「專屬食材池」對照表', 'Toggle Candidate Ingredient Pools per Pokémon')}
+              ${window.I18N?.t?.('wiki.ui_toggle_ing_draw') ?? '展開 / 收合 各寶可夢「專屬食材池」對照表'}
             </button>
           </div>
 
@@ -384,32 +380,41 @@
             <table class="wiki-mini-table">
               <thead>
                 <tr>
-                  <th style="width: 44px; text-align: center;">${_tWiki('寶可夢', 'Pokémon')}</th>
-                  <th>${_tWiki('主技能型態', 'Skill Variant')}</th>
-                  <th style="text-align: center;">${_tWiki('專屬食材候選池 (3~4種)', 'Candidate Ingredients (3~4)')}</th>
+                  <th style="width: 44px; text-align: center;">${window.I18N?.t?.('wiki.ui_pkm_proper') ?? '寶可夢'}</th>
+                  <th>${window.I18N?.t?.('wiki.ui_skill_variant_th') ?? '主技能型態'}</th>
+                  <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_candidate_ings_th') ?? '專屬食材候選池 (3~4種)'}</th>
                 </tr>
               </thead>
               <tbody>
-                ${INGREDIENT_DRAW_POKEMONS.map(p => `
+                ${INGREDIENT_DRAW_POKEMONS.map(p => {
+                  const pName = window.I18N?.getPokemonName?.(p.name) || (window.I18N?.field?.(p, 'name') ?? p.name);
+                  const pTitle = p.family
+                    ? (window.I18N?.field?.(p, 'family') ?? p.family)
+                    : pName;
+                  const pSkill = window.I18N?.field?.(p, 'skill') ?? p.skill;
+                  const pExtra = (p.id === 430 || p.id === 303) ? (window.I18N?.field?.(p, 'extraEffect') ?? p.extraEffect) : '';
+                  return `
                   <tr>
                     <td style="text-align: center; padding: 5px 4px;">
-                      <img src="${p.icon}" width="34" height="34" style="object-fit: contain; vertical-align: middle;" alt="${_tWiki(p.name, p.name_en || p.name)}" title="${_tWiki(p.family || p.name, p.family_en || p.name_en || p.name)}">
+                      <img src="${p.icon}" width="34" height="34" style="object-fit: contain; vertical-align: middle;" alt="${pName}" title="${pTitle}">
                     </td>
                     <td style="text-align: center; padding: 5px 6px;">
-                      <span class="wiki-skill-badge skill-badge-blue">${_tWiki(p.skill, p.skill_en || p.skill)}</span>
-                      ${(p.id === 430 || p.id === 303) ? `<div style="font-size: 9.5px; color: var(--color-note-highlight, #d97706); margin-top: 3px; line-height: 1.2;">${_tWiki(p.extraEffect, p.extraEffect_en || p.extraEffect)}</div>` : ''}
+                      <span class="wiki-skill-badge skill-badge-blue">${pSkill}</span>
+                      ${pExtra ? `<div style="font-size: 9.5px; color: var(--color-note-highlight, #d97706); margin-top: 3px; line-height: 1.2;">${pExtra}</div>` : ''}
                     </td>
                     <td style="text-align: center; padding: 5px 4px;">
                       <div style="display: inline-flex; align-items: center; gap: 4px; justify-content: center; flex-direction: row; flex-wrap: nowrap;">
-                        ${p.ingredients.map(ig => `
-                          <div class="wiki-ing-badge" title="${_tWiki(ig.name, ig.name_en || ig.name)}" style="display: inline-flex; align-items: center; justify-content: center; background: transparent; border: none; padding: 0; cursor: help;">
-                            <img src="${ig.icon}" width="24" height="24" alt="${_tWiki(ig.name, ig.name_en || ig.name)}" style="object-fit: contain; vertical-align: middle;">
+                        ${p.ingredients.map(ig => {
+                          const igName = window.I18N?.getIngredientName?.(ig.name) || (window.I18N?.field?.(ig, 'name') ?? ig.name);
+                          return `
+                          <div class="wiki-ing-badge" title="${igName}" style="display: inline-flex; align-items: center; justify-content: center; background: transparent; border: none; padding: 0; cursor: help;">
+                            <img src="${ig.icon}" width="24" height="24" alt="${igName}" style="object-fit: contain; vertical-align: middle;">
                           </div>
-                        `).join('')}
+                        `;}).join('')}
                       </div>
                     </td>
                   </tr>
-                `).join('')}
+                `;})}
               </tbody>
             </table>
           </div>
@@ -427,9 +432,9 @@
         valuesHtml = `<div class="skill-level-chip"><span class="level-val">${unitLabel}</span></div>`;
       }
 
-      const skillDesc = _tWiki(skill.desc, skill.desc_en || skill.desc);
-      const specialNote = skill.specialNote ? _tWiki(skill.specialNote, skill.specialNote_en || skill.specialNote) : null;
-      const penaltyNote = skill.penaltyNote ? _tWiki(skill.penaltyNote, skill.penaltyNote_en || skill.penaltyNote) : null;
+      const skillDesc = window.I18N?.field?.(skill, 'desc') ?? skill.desc;
+      const specialNote = skill.specialNote ? (window.I18N?.field?.(skill, 'specialNote') ?? skill.specialNote) : null;
+      const penaltyNote = skill.penaltyNote ? (window.I18N?.field?.(skill, 'penaltyNote') ?? skill.penaltyNote) : null;
 
       const isVisible = currentSkillsCategory === 'all' || skill.category === currentSkillsCategory;
       return `
@@ -440,7 +445,7 @@
               <span class="skill-cat-tag cat-${skill.category}">${catLabel}</span>
             </div>
             <div class="skill-top-right">
-              <span class="skill-max-lv-badge">${_tWiki('上限 Lv.', 'Max Lv.')}${skill.maxLevel}</span>
+              <span class="skill-max-lv-badge">${window.I18N?.t?.('wiki.ui_max_lv_prefix') ?? '上限 Lv.'}${skill.maxLevel}</span>
               <span class="skill-card-chevron">▾</span>
             </div>
           </div>

@@ -279,6 +279,8 @@
   const SKILL_TRACK_DEFINITIONS = [
     {
       id: 'charge_energy',
+      nameKey: 'wiki.ldr_track_charge_energy_name',
+      descKey: 'wiki.ldr_track_charge_energy_desc',
       name: '能量填充',
       name_cn: '能量填充',
       name_en: 'Charge Strength',
@@ -291,6 +293,8 @@
     },
     {
       id: 'energy_all',
+      nameKey: 'wiki.ldr_track_energy_all_name',
+      descKey: 'wiki.ldr_track_energy_all_desc',
       name: '全體療癒',
       name_cn: '全體療癒',
       name_en: 'Energy for Everyone',
@@ -303,6 +307,8 @@
     },
     {
       id: 'energy_single',
+      nameKey: 'wiki.ldr_track_energy_single_name',
+      descKey: 'wiki.ldr_track_energy_single_desc',
       name: '單體療癒',
       name_cn: '單體療癒',
       name_en: 'Single/Random Heal',
@@ -315,6 +321,8 @@
     },
     {
       id: 'cooking_pot',
+      nameKey: 'wiki.ldr_track_cooking_pot_name',
+      descKey: 'wiki.ldr_track_cooking_pot_desc',
       name: '料理強化',
       name_cn: '料理強化',
       name_en: 'Cooking Power-up',
@@ -327,6 +335,8 @@
     },
     {
       id: 'cooking_chance',
+      nameKey: 'wiki.ldr_track_cooking_chance_name',
+      descKey: 'wiki.ldr_track_cooking_chance_desc',
       name: '料理成功',
       name_cn: '料理成功',
       name_en: 'Tasty Chance',
@@ -339,6 +349,8 @@
     },
     {
       id: 'helper_boost',
+      nameKey: 'wiki.ldr_track_helper_boost_name',
+      descKey: 'wiki.ldr_track_helper_boost_desc',
       name: '幫手支援',
       name_cn: '幫手支援',
       name_en: 'Helper Boost',
@@ -351,6 +363,8 @@
     },
     {
       id: 'dream_shards',
+      nameKey: 'wiki.ldr_track_dream_shards_name',
+      descKey: 'wiki.ldr_track_dream_shards_desc',
       name: '夢碎獲取',
       name_cn: '夢碎獲取',
       name_en: 'Dream Shards',
@@ -363,6 +377,8 @@
     },
     {
       id: 'ingredient',
+      nameKey: 'wiki.ldr_track_ingredient_name',
+      descKey: 'wiki.ldr_track_ingredient_desc',
       name: '食材獲取',
       name_cn: '食材獲取',
       name_en: 'Ingredients',
@@ -375,6 +391,8 @@
     },
     {
       id: 'berry_burst',
+      nameKey: 'wiki.ldr_track_berry_burst_name',
+      descKey: 'wiki.ldr_track_berry_burst_desc',
       name: '樹果遽增',
       name_cn: '樹果遽增',
       name_en: 'Berry Burst',
@@ -457,21 +475,24 @@
     return [];
   }
 
-  function _tSkillLadder(zhTw, en) {
-    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') {
-      const lang = window.I18N.getLanguage();
-      if (lang === 'en-US') return en !== undefined ? en : zhTw;
-      if (lang === 'zh-CN' && typeof window.I18N.toSimplified === 'function') return window.I18N.toSimplified(zhTw);
-    }
-    return zhTw;
+  function sanitizeSkillFullLabel(label) {
+    if (!label) return '';
+    const parenRandom = window.I18N?.t?.('wiki.ldr_paren_random') ?? '（隨機）';
+    const parenFixed = window.I18N?.t?.('wiki.ldr_paren_fixed') ?? '（固定）';
+    return String(label)
+      .replace(/(?:[（\(]\s*(?:隨機|随机)\s*[）\)])(?:\s*[（\(]\s*(?:隨機|随机)\s*[）\)])+/g, parenRandom)
+      .replace(/(?:[（\(]\s*Random\s*[）\)])(?:\s*[（\(]\s*Random\s*[）\)])+/gi, '(Random)')
+      .replace(/(?:[（\(]\s*固定\s*[）\)])(?:\s*[（\(]\s*固定\s*[）\)])+/g, parenFixed)
+      .replace(/(?:[（\(]\s*Fixed\s*[）\)])(?:\s*[（\(]\s*Fixed\s*[）\)])+/gi, '(Fixed)')
+      .replace(/([（\(])\s*([^）\(\)\s]+(?:\s+[^）\(\)\s]+)*)\s*([）\)])(?:\s*[（\(]\s*\2\s*[）\)])+/gi, '$1$2$3');
   }
 
-  function getSkillSubCategoryInfo(mainSkill, trackId, isEN) {
+  function getSkillSubCategoryInfo(mainSkill, trackId) {
     const s = String(mainSkill || '').trim();
     const sLower = s.toLowerCase();
     const skillDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function')
       ? (window.I18N.getMainSkillName(mainSkill) || mainSkill)
-      : (isEN ? (mainSkill || s) : s);
+      : (mainSkill || s);
 
     let subKey = '';
     let subLabel = '';
@@ -479,145 +500,138 @@
     if (trackId === 'energy_single') {
       if (s.includes('活力填充') || s.includes('活力充填') || sLower.includes('charge energy')) {
         subKey = 'self';
-        subLabel = _tSkillLadder('自己', 'Self');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_self') ?? '自己';
       } else if (s.includes('月光') || sLower.includes('moonlight')) {
         subKey = 'self';
-        subLabel = _tSkillLadder('自己 (+隨機他人)', 'Self (+Random Ally)');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_self_ally') ?? '自己 (+隨機他人)';
       } else {
         subKey = 'ally';
-        subLabel = _tSkillLadder('隨機他人', 'Random Ally');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_ally') ?? '隨機他人';
       }
     } else if (trackId === 'ingredient') {
       if (s.includes('食材精選') || s.includes('食材精选') || s.includes('超幸運') || s.includes('超幸运') || s.includes('怪力鉗') || s.includes('怪力钳') || sLower.includes('ingredient draw') || sLower.includes('ingr. select') || sLower.includes('super luck') || sLower.includes('hyper cutter')) {
         subKey = 'select';
-        subLabel = _tSkillLadder('食材精選', 'Ingredient Draw');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_ing_draw') ?? '食材精選';
       } else {
         subKey = 'magnet';
-        subLabel = _tSkillLadder('食材獲取', 'Ingredient Magnet');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_ing_magnet') ?? '食材獲取';
       }
     } else if (trackId === 'charge_energy') {
       if (s.includes('隨機') || s.includes('随机') || sLower.includes('random')) {
         subKey = 'random';
-        subLabel = _tSkillLadder('隨機', 'Random');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_random') ?? '隨機';
       } else if (s.includes('能量填充M') || s.includes('能量充填M') || sLower.includes('charge strength m')) {
         subKey = 'fixed_m';
-        subLabel = _tSkillLadder('高倍固定', 'Fixed M');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_fixed_m') ?? '高倍固定';
       } else if (s.includes('蓄力') || sLower.includes('stockpile')) {
         subKey = 'stockpile';
-        subLabel = _tSkillLadder('疊加爆發', 'Stockpile');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_stockpile') ?? '疊加爆發';
       } else if (s.includes('波導彈') || s.includes('波导弹') || sLower.includes('aura sphere')) {
         subKey = 'strength_shards';
-        subLabel = _tSkillLadder('能量+夢碎', 'Strength+Shards');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_strength_shards') ?? '能量+夢碎';
       } else if (s.includes('精神擊破') || s.includes('精神击破') || sLower.includes('psystrike')) {
         subKey = 'strength_field';
-        subLabel = _tSkillLadder('能量+樹果領域', 'Strength+Berry Field');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_strength_field') ?? '能量+樹果領域';
       } else if (s.includes('夢魘') || s.includes('梦魇') || sLower.includes('bad dreams') || sLower.includes('nightmare')) {
         subKey = 'nightmare';
-        subLabel = _tSkillLadder('高倍能量', 'High Strength');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_nightmare') ?? '高倍能量';
       } else {
         subKey = 'fixed_s';
-        subLabel = _tSkillLadder('固定', 'Fixed S');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_fixed_s') ?? '固定';
       }
     } else if (trackId === 'energy_all') {
       if (s.includes('樹果汁') || s.includes('树果汁') || sLower.includes('berry juice')) {
         subKey = 'berry_juice';
-        subLabel = _tSkillLadder('全體+樹果汁', 'Team+Berry Juice');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_berry_juice') ?? '全體+樹果汁';
       } else if (s.includes('新月祈禱') || s.includes('新月祈祷') || sLower.includes('lunar prayer')) {
         subKey = 'lunar_prayer';
-        subLabel = _tSkillLadder('全體+樹果遽增', 'Team+Berry Burst');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_lunar_prayer') ?? '全體+樹果遽增';
       } else {
         subKey = 'team_heal';
-        subLabel = _tSkillLadder('全體回復', 'Team Heal');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_team_heal') ?? '全體回復';
       }
     } else if (trackId === 'cooking_pot') {
       if (s.includes('魔法火焰') || sLower.includes('mystical fire')) {
         subKey = 'pot_tasty';
-        subLabel = _tSkillLadder('擴鍋+料理成功', 'Pot+Tasty');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_pot_tasty') ?? '擴鍋+料理成功';
       } else if (s.includes('負電') || s.includes('负电') || sLower.includes('minus')) {
         subKey = 'pot_heal';
-        subLabel = _tSkillLadder('擴鍋+隨機他人', 'Pot+Random Heal');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_pot_heal') ?? '擴鍋+隨機他人';
       } else {
         subKey = 'pot_expand';
-        subLabel = _tSkillLadder('擴鍋', 'Pot Expand');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_pot_expand') ?? '擴鍋';
       }
     } else if (trackId === 'cooking_chance') {
       if (s.includes('魔法火焰') || sLower.includes('mystical fire')) {
         subKey = 'tasty_pot';
-        subLabel = _tSkillLadder('大成功+擴鍋', 'Tasty+Pot');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_tasty_pot') ?? '大成功+擴鍋';
       } else if (s.includes('健美') || sLower.includes('bulk up')) {
         subKey = 'tasty_magnet';
-        subLabel = _tSkillLadder('大成功+食材獲取', 'Tasty+Ingr. Magnet');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_tasty_magnet') ?? '大成功+食材獲取';
       } else if (s.includes('怪力鉗') || s.includes('怪力钳') || sLower.includes('hyper cutter')) {
         subKey = 'tasty_draw';
-        subLabel = _tSkillLadder('大成功+食材精選', 'Tasty+Ingr. Draw');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_tasty_draw') ?? '大成功+食材精選';
       } else if (s.includes('畫皮') || s.includes('画皮') || sLower.includes('disguise')) {
         subKey = 'tasty_burst';
-        subLabel = _tSkillLadder('大成功3倍樹果', '3x Berry Burst');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_tasty_burst') ?? '大成功3倍樹果';
       } else {
         subKey = 'tasty_chance';
-        subLabel = _tSkillLadder('大成功機率', 'Tasty Chance');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_tasty_chance') ?? '大成功機率';
       }
     } else if (trackId === 'helper_boost') {
       if (s.includes('幫手加速') || s.includes('帮手加速') || sLower.includes('helper speed')) {
         subKey = 'team_boost';
-        subLabel = _tSkillLadder('同屬全隊加速', 'Team Type Boost');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_team_boost') ?? '同屬全隊加速';
       } else if (s.includes('正電') || s.includes('正电') || sLower.includes('plus')) {
         subKey = 'plus_synergy';
-        subLabel = _tSkillLadder('連動食材獲取', 'Plus Synergy');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_plus_synergy') ?? '連動食材獲取';
       } else if (s.includes('蹭蹭臉頰') || s.includes('蹭蹭脸颊') || sLower.includes('nuzzle')) {
         subKey = 'nuzzle_proc';
-        subLabel = _tSkillLadder('隨機他人+額外發動', 'Random Heal+Extra Proc');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_nuzzle_proc') ?? '隨機他人+額外發動';
       } else if (s.includes('治癒波動') || s.includes('治愈波动') || sLower.includes('heal pulse')) {
         subKey = 'heal_help';
-        subLabel = _tSkillLadder('隨機他人+立即幫忙', 'Random Heal+Instant Help');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_heal_help') ?? '隨機他人+立即幫忙';
       } else {
         subKey = 'single_boost';
-        subLabel = _tSkillLadder('單體支援', 'Single Boost');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_single_boost') ?? '單體支援';
       }
     } else if (trackId === 'dream_shards') {
       if (s.includes('隨機') || s.includes('随机') || sLower.includes('random')) {
         subKey = 'random';
-        subLabel = _tSkillLadder('隨機', 'Random');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_random') ?? '隨機';
       } else if (s.includes('波導彈') || s.includes('波导弹') || sLower.includes('aura sphere')) {
         subKey = 'shards_strength';
-        subLabel = _tSkillLadder('固定夢碎+能量', 'Shards+Strength');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_shards_strength') ?? '固定夢碎+能量';
       } else if (s.includes('超幸運') || s.includes('超幸运') || sLower.includes('super luck')) {
         subKey = 'draw_crit';
-        subLabel = _tSkillLadder('食材精選+暴擊夢碎', 'Ingr. Draw+Crit Shards');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_draw_crit') ?? '食材精選+暴擊夢碎';
       } else if (s.includes('禮物') || s.includes('礼物') || sLower.includes('present')) {
         subKey = 'magnet_candy';
-        subLabel = _tSkillLadder('食材獲取+隨機糖果', 'Ingr. Magnet+Candy');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_magnet_candy') ?? '食材獲取+隨機糖果';
       } else {
         subKey = 'fixed';
-        subLabel = _tSkillLadder('固定', 'Fixed');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_fixed') ?? '固定';
       }
     } else if (trackId === 'berry_burst') {
       if (s.includes('畫皮') || s.includes('画皮') || sLower.includes('disguise')) {
         subKey = 'disguise_burst';
-        subLabel = _tSkillLadder('大成功3倍樹果', 'Disguise 3x');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_disguise_burst') ?? '大成功3倍樹果';
       } else if (s.includes('流星群') || sLower.includes('draco meteor')) {
         subKey = 'dragon_burst';
-        subLabel = _tSkillLadder('龍屬樹果遽增', 'Dragon Burst');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_dragon_burst') ?? '龍屬樹果遽增';
       } else if (s.includes('新月祈禱') || s.includes('新月祈祷') || sLower.includes('lunar prayer')) {
         subKey = 'psychic_burst';
-        subLabel = _tSkillLadder('超能樹果遽增', 'Psychic Burst');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_psychic_burst') ?? '超能樹果遽增';
       } else if (s.includes('精神擊破') || s.includes('精神击破') || sLower.includes('psystrike')) {
         subKey = 'psychic_field';
-        subLabel = _tSkillLadder('超能樹果領域', 'Psychic Field');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_psychic_field') ?? '超能樹果領域';
       } else {
         subKey = 'standard_burst';
-        subLabel = _tSkillLadder('標準樹果遽增', 'Berry Burst');
+        subLabel = window.I18N?.t?.('wiki.ldr_sub_standard_burst') ?? '標準樹果遽增';
       }
     }
 
-    let fullLabel = skillDisplayName
-      .replace(/(?:[（\(]\s*隨機\s*[）\)])(?:\s*[（\(]\s*隨機\s*[）\)])+/g, '（隨機）')
-      .replace(/(?:[（\(]\s*Random\s*[）\)])(?:\s*[（\(]\s*Random\s*[）\)])+/gi, isEN ? '(Random)' : '（Random）')
-      .replace(/(?:[（\(]\s*固定\s*[）\)])(?:\s*[（\(]\s*固定\s*[）\)])+/g, '（固定）')
-      .replace(/(?:[（\(]\s*Fixed\s*[）\)])(?:\s*[（\(]\s*Fixed\s*[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
-      .replace(/[（\(]\s*([^）\(\)\s]+(?:\s+[^）\(\)\s]+)*)\s*[）\)](?:\s*[（\(]\s*\1\s*[）\)])+/gi, (match, p1) => {
-        return isEN ? `(${p1})` : `（${p1}）`;
-      });
+    const fullLabel = sanitizeSkillFullLabel(skillDisplayName);
 
     return {
       subKey,

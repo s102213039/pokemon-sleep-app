@@ -292,6 +292,16 @@ function createMockDocument() {
   };
 }
 
+// Load Pre-Resolved I18N Engine before App Script (mirrors browser load order)
+const i18nPath = path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js');
+const i18nCode = fs.readFileSync(i18nPath, 'utf8');
+if (typeof global.window === 'undefined') {
+  global.window = global;
+}
+const I18N = require(i18nPath);
+global.window.I18N = I18N;
+global.I18N = I18N;
+
 // Load App Script module
 const appPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js');
 const {
@@ -347,6 +357,8 @@ module.exports = {
   matchesSelector,
   createMockDocument,
   PokemonApp,
+  I18N,
+  i18nCode,
   getItemIcon,
   getItemId,
   getItemFormattedNo,

@@ -589,7 +589,7 @@ const BASE_SKILL_DETAILS = {
   }
 };
 
-function getSkillDescription(skillName, isEN) {
+function getSkillDescription(skillName) {
   if (!skillName) return '';
   const s = skillName;
   const raw = SPECIAL_SKILL_DETAILS[s] ||
@@ -600,12 +600,13 @@ function getSkillDescription(skillName, isEN) {
               BASE_SKILL_DETAILS[s.replace(/（/g, '(').replace(/）/g, ')')];
   if (!raw) return '';
   if (typeof raw === 'object') {
-    if (isEN) return raw['en-US'] || raw['zh-TW'];
-    const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN';
-    const tw = raw['zh-TW'] || '';
-    return (isCN && typeof window.I18N.toSimplified === 'function') ? window.I18N.toSimplified(tw) : tw;
+    return (typeof window !== 'undefined' && window.I18N && typeof window.I18N.pick === 'function')
+      ? window.I18N.pick(raw)
+      : (raw['zh-TW'] || '');
   }
-  return raw;
+  return (typeof window !== 'undefined' && window.I18N && typeof window.I18N.text === 'function')
+    ? window.I18N.text(raw)
+    : raw;
 }
 
 function escapeHtml(str) {
@@ -629,7 +630,7 @@ function shortenSkillName(name) {
     .replace(/\[Customizable\]/g, '[Custom]');
 }
 
-function formatSkillNameHtml(displayName, isEN) {
+function formatSkillNameHtml(displayName) {
   if (!displayName) return '';
   // 先將特殊主技能的括號去除，再處理基礎技能格式
   let cleaned = stripSpecialSkillParens(displayName)
@@ -643,9 +644,9 @@ function formatSkillNameHtml(displayName, isEN) {
     .replace(/）/g, ')')
     .trim();
 
-  if (!isEN) {
-    const out = (typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN' && typeof window.I18N.toSimplified === 'function')
-      ? window.I18N.toSimplified(cleaned)
+  if (!/[A-Za-z]{2,}/.test(cleaned)) {
+    const out = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.text === 'function')
+      ? window.I18N.text(cleaned)
       : cleaned;
     return `<span class="skill-single-line">${escapeHtml(out)}</span>`;
   }
@@ -681,16 +682,22 @@ const HYPER_CUTTER_INGS = [
 
 function renderSkillWithTooltip(skillName, pkm) {
   if (!skillName) return '--';
-  const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-  const rawDisplayName = (typeof window !== 'undefined' && window.I18N) ? window.I18N.getMainSkillName(skillName) : skillName;
+  const i18n = (typeof window !== 'undefined' && window.I18N) ? window.I18N : null;
+  const rawDisplayName = i18n ? i18n.getMainSkillName(skillName) : skillName;
   const displayName = stripSpecialSkillParens(rawDisplayName);
   const strippedKey = stripSpecialSkillParens(skillName);
-  const rawDetail = SPECIAL_SKILL_DETAILS[skillName] || 
+  const rawDetail = SPECIAL_SKILL_DETAILS[skillName] ||
                     SPECIAL_SKILL_DETAILS[strippedKey] ||
                     SPECIAL_SKILL_DETAILS[skillName.replace(/\(/g, '（').replace(/\)/g, '）')] ||
                     SPECIAL_SKILL_DETAILS[skillName.replace(/（/g, '(').replace(/）/g, ')')];
-  const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN';
-  let detail = rawDetail ? (typeof rawDetail === 'object' ? (isEN ? (rawDetail['en-US'] || rawDetail['zh-TW']) : (isCN && typeof window.I18N.toSimplified === 'function' ? window.I18N.toSimplified(rawDetail['zh-TW']) : rawDetail['zh-TW'])) : rawDetail) : '';
+  let detail = '';
+  if (rawDetail) {
+    if (typeof rawDetail === 'object') {
+      detail = (i18n && typeof i18n.pick === 'function') ? i18n.pick(rawDetail) : (rawDetail['zh-TW'] || '');
+    } else {
+      detail = (i18n && typeof i18n.text === 'function') ? i18n.text(rawDetail) : rawDetail;
+    }
+  }
 
   let plainTitle = detail;
   // 針對特定寶可夢的「食材精選S」系列（含超幸運、怪力鉗），精簡直接顯示該寶可夢專屬食材池（單行純圖標，無冗長換行）
@@ -714,44 +721,33 @@ function renderSkillWithTooltip(skillName, pkm) {
     }
 
     if (targetIngs.length > 0) {
-      const separator = isEN ? '<span class="skill-tooltip-sep">, </span>' : '<span class="skill-tooltip-sep">、</span>';
+      const separator = i18n?.t?.('dex.ui_list_sep_html') ?? '<span class="skill-tooltip-sep">、</span>';
       const ingIconsHtml = targetIngs.map(ig => {
-        const ingName = (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name;
-        const icon = ig.icon || (typeof window !== 'undefined' && window.I18N && window.I18N.getIngredientIcon(ig.name)) || '';
+        const ingName = i18n ? (i18n.getIngredientName(ig.name) || ig.name) : ig.name;
+        const icon = ig.icon || (i18n && i18n.getIngredientIcon(ig.name)) || '';
         return icon ? `<img src="${icon}" class="skill-tooltip-inline-ing" alt="${ingName}" title="${ingName}">` : '';
       }).filter(Boolean).join(separator);
 
-      const ingNamesPlain = targetIngs.map(ig => (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name).join(isEN ? ', ' : '、');
+      const plainSep = i18n?.t?.('dex.ui_list_sep') ?? '、';
+      const ingNamesPlain = targetIngs.map(ig => i18n ? (i18n.getIngredientName(ig.name) || ig.name) : ig.name).join(plainSep);
 
-      const prefix = _tDex('可精選食材: ', 'Draws: ');
+      const prefix = i18n?.t?.('dex.ui_draws_prefix') ?? 'dex.ui_draws_prefix';
       if (isSuperLuck) {
-        const critText = _tDex(
-          '暴擊效果: 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片)!',
-          'Crit effect: Rarely crits for massive Dream Shards instead of ingredients (up to 20,000 shards)!'
-        );
+        const critText = i18n?.t?.('dex.ui_super_luck_crit') ?? 'dex.ui_super_luck_crit';
         detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span></span><div style="font-size:11.5px;color:var(--accent-color,#f59e0b);margin-top:3px;line-height:1.35;font-weight:500;">${critText}</div>`;
-        plainTitle = _tDex(
-          `可精選食材: ${ingNamesPlain}. ${critText}`,
-          `Draws: ${ingNamesPlain}. ${critText}`
-        );
+        plainTitle = i18n?.t?.('dex.ui_draws_with_crit', { ings: ingNamesPlain, crit: critText }) ?? 'dex.ui_draws_with_crit';
       } else if (isHyperCutter) {
-        const critText = _tDex(
-          '暴擊效果: 漂亮成功 (大成功/暴擊) 時食材產出翻倍 (2 倍, 最高達 36 個)!',
-          'Crit effect: Extra Tasty crits to grant 2x ingredients (up to 36 items)!'
-        );
+        const critText = i18n?.t?.('dex.ui_hyper_cutter_crit') ?? 'dex.ui_hyper_cutter_crit';
         detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span></span><div style="font-size:11.5px;color:var(--accent-color,#f59e0b);margin-top:3px;line-height:1.35;font-weight:500;">${critText}</div>`;
-        plainTitle = _tDex(
-          `可精選食材: ${ingNamesPlain}. ${critText}`,
-          `Draws: ${ingNamesPlain}. ${critText}`
-        );
+        plainTitle = i18n?.t?.('dex.ui_draws_with_crit', { ings: ingNamesPlain, crit: critText }) ?? 'dex.ui_draws_with_crit';
       } else {
         detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span></span>`;
-        plainTitle = _tDex(`可精選食材: ${ingNamesPlain}`, `Draws: ${ingNamesPlain}`);
+        plainTitle = i18n?.t?.('dex.ui_draws_plain', { ings: ingNamesPlain }) ?? 'dex.ui_draws_plain';
       }
     }
   }
-  
-  const contentHtml = formatSkillNameHtml(displayName, isEN);
+
+  const contentHtml = formatSkillNameHtml(displayName);
   const cleanSkillKey = stripSpecialSkillParens(skillName || '')
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
     .replace(/活力全體療癒S/g, '全體療癒S')
@@ -766,7 +762,7 @@ function renderSkillWithTooltip(skillName, pkm) {
   if (detail) {
     return `<span class="special-skill-badge" role="button" tabindex="0" data-skill="${escapeHtml(cleanSkillKey)}" data-skill-detail="${escapeHtml(detail)}" title="${escapeHtml(plainTitle || detail)}"><span class="skill-name-text">${contentHtml}</span></span>`;
   }
-  if (isEN) {
+  if (/[A-Za-z]{2,}/.test(displayName)) {
     return `<span class="main-skill-text">${contentHtml}</span>`;
   }
   let cleaned = stripSpecialSkillParens(displayName)
@@ -778,9 +774,7 @@ function renderSkillWithTooltip(skillName, pkm) {
     .replace(/（/g, '(')
     .replace(/）/g, ')')
     .trim();
-  const out = (typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN' && typeof window.I18N.toSimplified === 'function')
-    ? window.I18N.toSimplified(cleaned)
-    : cleaned;
+  const out = (i18n && typeof i18n.text === 'function') ? i18n.text(cleaned) : cleaned;
   return escapeHtml(out);
 }
 

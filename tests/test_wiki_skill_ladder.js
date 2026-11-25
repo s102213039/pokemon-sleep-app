@@ -946,20 +946,27 @@ console.log('\n[Suite 14] Three-Language, Tooltips, Dual Hover & Final Evo Unifi
   assert(ladderHtml.includes("onkeydown=\"if(event.key==='Enter'||event.key===' ')"), 'Clickable track header has onkeydown for Enter and Space');
   assert(ladderHtml.includes("window.WikiSkillLadder.openCategoryModal("), 'Clickable track header delegates onkeydown to window.WikiSkillLadder.openCategoryModal');
 
-  // 3. Three-Language Support: zh-TW / zh-CN / en-US
+  // 3. Three-Language Support via Unified Pre-Resolved I18N: zh-TW / zh-CN / en-US
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/core/i18n.js'), 'utf8');
   const { sandbox: sandboxCN } = createLadderSandbox({ lang: 'zh-CN' });
-  const cnTrackName = sandboxCN._tSkillLadder('全體療癒', 'Energy for Everyone');
-  assertEquals(cnTrackName, '全体疗愈', '_tSkillLadder returns Simplified Chinese for zh-CN');
+  vm.runInContext(i18nCode, sandboxCN);
+  sandboxCN.window.I18N.setLanguage('zh-CN');
+  const cnTrackName = sandboxCN.window.I18N.t('wiki.ldr_track_energy_all_name');
+  assertEquals(cnTrackName, '全体疗愈', 'Pre-resolved I18N returns Simplified Chinese for zh-CN');
   const cnLadderHtml = sandboxCN.renderSkillCoordinateLadder();
   assert(cnLadderHtml.includes('全体疗愈'), 'zh-CN rendered ladder contains Simplified Chinese track name 全体疗愈');
 
   const { sandbox: sandboxEN } = createLadderSandbox({ lang: 'en-US' });
-  const enTrackName = sandboxEN._tSkillLadder('全體療癒', 'Energy for Everyone');
-  assertEquals(enTrackName, 'Energy for Everyone', '_tSkillLadder returns English for en-US');
+  vm.runInContext(i18nCode, sandboxEN);
+  sandboxEN.window.I18N.setLanguage('en-US');
+  const enTrackName = sandboxEN.window.I18N.t('wiki.ldr_track_energy_all_name');
+  assertEquals(enTrackName, 'Energy for Everyone', 'Pre-resolved I18N returns English for en-US');
 
   const { sandbox: sandboxTW } = createLadderSandbox({ lang: 'zh-TW' });
-  const twTrackName = sandboxTW._tSkillLadder('全體療癒', 'Energy for Everyone');
-  assertEquals(twTrackName, '全體療癒', '_tSkillLadder returns Traditional Chinese for zh-TW');
+  vm.runInContext(i18nCode, sandboxTW);
+  sandboxTW.window.I18N.setLanguage('zh-TW');
+  const twTrackName = sandboxTW.window.I18N.t('wiki.ldr_track_energy_all_name');
+  assertEquals(twTrackName, '全體療癒', 'Pre-resolved I18N returns Traditional Chinese for zh-TW');
 
   // 4. Unified isPokemonSkillLadderFinalEvo with window.isFinalEvolution & Fallback
   let isFinalCalled = false;

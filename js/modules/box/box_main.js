@@ -1,11 +1,3 @@
-  /* ─── 多語言輔助函式 (zh-TW / zh-CN / en-US) ───────────────────── */
-  function _tBox(zhTw, en) {
-    const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
-    if (lang === 'en-US') return (en !== undefined) ? en : zhTw;
-    if (lang === 'zh-CN' && typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function') return window.I18N.toSimplified(zhTw);
-    return zhTw;
-  }
-
   function showBoxToast(title, message, type = 'success') {
     if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
       return window.showToast(title, message, type);
@@ -57,9 +49,9 @@
         modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:10060;';
         document.body.appendChild(modal);
       }
-      const title = options.title || _tBox('確認操作', 'Confirm Action');
-      const confirmText = options.confirmText || _tBox('確認', 'Confirm');
-      const cancelText = options.cancelText || _tBox('取消', 'Cancel');
+      const title = options.title || ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_confirm_action') : undefined) ?? '確認操作');
+      const confirmText = options.confirmText || ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_confirm') : undefined) ?? '確認');
+      const cancelText = options.cancelText || ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_cancel') : undefined) ?? '取消');
       const isDanger = options.type === 'danger';
       modal.innerHTML = `
         <div class="box-modal-dialog modal-content" style="max-width:380px;width:90%;border-radius:16px;padding:24px 20px;text-align:center;box-sizing:border-box;margin:auto;background:var(--bg-card-solid, #1e293b);border:1px solid var(--border-color, rgba(255,255,255,0.1));box-shadow:var(--shadow-lg, 0 10px 25px rgba(0,0,0,0.5));">
@@ -98,12 +90,12 @@
     const rawName = (base && (base.name_cn || base.name_en)) || item.name || '';
     const pName = rawName
       ? ((window.I18N && typeof window.I18N.getPokemonName === 'function')
-          ? window.I18N.getPokemonName(base || rawName) : _tBox(rawName, (base && base.name_en) || rawName))
-      : _tBox('寶可夢', 'Pokémon');
-    const confirmMsg = _tBox(`確定要從倉庫刪除「${pName}」嗎？`, `Are you sure you want to delete "${pName}" from your Box?`);
+          ? window.I18N.getPokemonName(base || rawName) : (rawName || (base && base.name_en)))
+      : ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_pokemon') : undefined) ?? '寶可夢');
+    const confirmMsg = (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_confirm_delete_one', { name: pName }) : undefined) ?? `確定要從倉庫刪除「${pName}」嗎？`;
     const confirmed = await showBoxConfirmModal(confirmMsg, {
-      title: _tBox('確認刪除', 'Confirm Deletion'),
-      confirmText: _tBox('刪除', 'Delete'),
+      title: (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_confirm_delete_title') : undefined) ?? '確認刪除',
+      confirmText: (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_delete') : undefined) ?? '刪除',
       type: 'danger'
     });
     if (!confirmed) return false;
@@ -112,7 +104,11 @@
       userBox.splice(idx, 1);
       saveUserBox();
       renderBox();
-      showBoxToast(_tBox('刪除成功', 'Deleted Successfully'), _tBox(`已刪除「${pName}」`, `"${pName}" has been removed from Box`), 'info');
+      showBoxToast(
+        (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_delete_success_title') : undefined) ?? '刪除成功',
+        (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_deleted_one', { name: pName }) : undefined) ?? `已刪除「${pName}」`,
+        'info'
+      );
       return true;
     }
     return false;
@@ -219,7 +215,7 @@
   /* ─── 備份匯出與匯入 ─────────────────────────────────────── */
   function exportBoxJSON() {
     if (userBox.length === 0) {
-      showBoxToast(_tBox('匯出提醒', 'Export Notice'), _tBox('倉庫內目前沒有任何寶可夢可匯出！', 'Your Box is currently empty, nothing to export!'), 'warning');
+      showBoxToast((typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_export_notice') : undefined) ?? '匯出提醒', (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_export_empty') : undefined) ?? '倉庫內目前沒有任何寶可夢可匯出！', 'warning');
       return;
     }
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userBox, null, 2));
@@ -303,22 +299,20 @@
         const imported = JSON.parse(e.target.result);
         if (Array.isArray(imported)) {
           if (imported.length > MAX_IMPORT_COUNT) {
-            showBoxToast(_tBox('匯入超限', 'Import Limit Exceeded'), _tBox(`單次匯入不可超過 ${MAX_IMPORT_COUNT} 隻寶可夢！`, `Cannot import more than ${MAX_IMPORT_COUNT} Pokémon at once!`), 'warning');
+            showBoxToast((typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_import_limit_title') : undefined) ?? '匯入超限', (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_import_limit_desc', { max: MAX_IMPORT_COUNT }) : undefined) ?? `單次匯入不可超過 ${MAX_IMPORT_COUNT} 隻寶可夢！`, 'warning');
             return;
           }
           const validItems = imported.map(sanitizeImportedPokemon).filter(Boolean);
           if (validItems.length === 0) {
-            showBoxToast(_tBox('匯入失敗', 'Import Failed'), _tBox('無有效的寶可夢資料可匯入！', 'No valid Pokémon data to import!'), 'warning');
+            showBoxToast((typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_import_failed_title') : undefined) ?? '匯入失敗', (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_import_empty') : undefined) ?? '無有效的寶可夢資料可匯入！', 'warning');
             return;
           }
 
-          const confirmMsg = _tBox(
-            `確定要匯入 ${validItems.length} 隻寶可夢嗎？（將合併至現有倉庫）`,
-            `Import ${validItems.length} Pokémon? (They will be merged into your Box)`
-          );
+          const confirmMsg = (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_confirm_import', { count: validItems.length }) : undefined) ?? `確定要匯入 ${validItems.length} 隻寶可夢嗎？（將合併至現有倉庫）`;
+          const confirmTitle = (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_confirm_import_title') : undefined) ?? '確認匯入';
           const confirmed = await showBoxConfirmModal(confirmMsg, {
-            title: _tBox('確認匯入', 'Confirm Import'),
-            confirmText: _tBox('確認匯入', 'Confirm Import')
+            title: confirmTitle,
+            confirmText: confirmTitle
           });
           if (!confirmed) return;
 
@@ -336,16 +330,13 @@
           saveUserBox();
           renderBox();
 
-          const summaryMsg = _tBox(
-            `匯入完成！新增 ${addedCount} 隻，升級更新 ${upgradedCount} 隻，略過重複 ${skippedCount} 隻。`,
-            `Import complete! ${addedCount} added, ${upgradedCount} upgraded, ${skippedCount} duplicates skipped.`
-          );
-          showBoxToast(_tBox('匯入成功', 'Import Successful'), summaryMsg, 'success');
+          const summaryMsg = (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_import_summary', { added: addedCount, upgraded: upgradedCount, skipped: skippedCount }) : undefined) ?? `匯入完成！新增 ${addedCount} 隻，升級更新 ${upgradedCount} 隻，略過重複 ${skippedCount} 隻。`;
+          showBoxToast((typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_import_success_title') : undefined) ?? '匯入成功', summaryMsg, 'success');
         } else {
-          showBoxToast(_tBox('匯入失敗', 'Import Failed'), _tBox('匯入檔案格式錯誤，請確認為正確的 JSON 備份檔！', 'Invalid import file format. Please ensure it is a valid JSON backup file!'), 'warning');
+          showBoxToast((typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_import_failed_title') : undefined) ?? '匯入失敗', (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_import_invalid_format') : undefined) ?? '匯入檔案格式錯誤，請確認為正確的 JSON 備份檔！', 'warning');
         }
       } catch (err) {
-        showBoxToast(_tBox('解析失敗', 'Parse Failed'), _tBox('解析 JSON 備份檔案失敗：', 'Failed to parse JSON backup file: ') + err.message, 'error');
+        showBoxToast((typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_parse_failed_title') : undefined) ?? '解析失敗', (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_parse_failed_error', { error: err.message }) : undefined) ?? ('解析 JSON 備份檔案失敗：' + err.message), 'error');
       }
     };
     reader.readAsText(file);
@@ -451,9 +442,9 @@
         const isCollapsed = guideBody.style.display === 'none';
         guideBody.style.display = isCollapsed ? 'flex' : 'none';
         guideToggleBtn.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
-        guideToggleBtn.textContent = isCollapsed 
-          ? _tBox('收合說明', 'Collapse') 
-          : _tBox('展開說明', 'Expand Guide');
+        guideToggleBtn.textContent = isCollapsed
+          ? ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_guide_collapse') : undefined) ?? '收合說明')
+          : ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_guide_expand') : undefined) ?? '展開說明');
       });
     }
 
@@ -652,7 +643,7 @@
         if (window.AppraisalLab && typeof window.AppraisalLab.updateBoxItems === 'function') {
           window.AppraisalLab.updateBoxItems();
         }
-        showBoxToast(_tBox('雲端同步成功', 'Cloud Sync Successful'), _tBox('已從其他裝置即時同步最新寶可夢倉庫資料！', 'Latest Pokémon Box data synchronized from other devices!'), 'success');
+        showBoxToast((typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_cloud_sync_title') : undefined) ?? '雲端同步成功', (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_cloud_sync_desc') : undefined) ?? '已從其他裝置即時同步最新寶可夢倉庫資料！', 'success');
       });
 
       window.CloudSync.onAuthStateChange(() => {
@@ -870,7 +861,6 @@
     NATURE_DATA.forEach(n => { NATURE_DICT[n.name] = n; });
 
     window.PokemonBoxApp = {
-      _tBox,
       showBoxConfirmModal,
       removeFromUserBox,
       upsertImportedPokemonToBox,
@@ -930,7 +920,6 @@
       BOX_SORT_DEFAULT_DIR
     };
     window.UserBox = window.PokemonBoxApp;
-    window._tBox = _tBox;
     window.showBoxConfirmModal = showBoxConfirmModal;
     window.removeFromUserBox = removeFromUserBox;
     window.upsertImportedPokemonToBox = upsertImportedPokemonToBox;
@@ -939,7 +928,6 @@
 
   if (typeof module !== 'undefined' && module.exports) {
     const sharedExports = (typeof window !== 'undefined' && window.PokemonBoxApp) ? window.PokemonBoxApp : {
-      _tBox,
       showBoxConfirmModal,
       removeFromUserBox,
       upsertImportedPokemonToBox,

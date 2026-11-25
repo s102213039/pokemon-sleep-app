@@ -329,6 +329,77 @@ testCase('Adversarial Challenge', 'Detection of optional language parameter supp
   }
 });
 
+// ─── Group 9: Unified Pre-Resolved String Resource Architecture ──────
+testCase('Unified I18N Architecture', 'I18N.STR, I18N.field, I18N.pick, I18N.text & param interpolation across 3 locales', () => {
+  const sampleObj = {
+    title: '活動公告測試',
+    title_cn: '活动公告测试',
+    title_en: 'Event Notice Test',
+    items: ['特選蘋果', '好眠番茄'],
+    items_en: ['Fancy Apple', 'Snoozy Tomato']
+  };
+  const sampleMap = { 'zh-TW': '繁體標籤', 'zh-CN': '简体标签', 'en-US': 'English Tag' };
+
+  I18N.setLanguage('zh-TW');
+  if (I18N.STR['common.filtered'] !== '條件篩選中' || window.STR['common.filtered'] !== '條件篩選中') {
+    throw new Error('zh-TW STR lookup failed');
+  }
+  if (I18N.field(sampleObj, 'title') !== '活動公告測試') throw new Error('zh-TW field(title) failed');
+  if (I18N.pick(sampleMap) !== '繁體標籤') throw new Error('zh-TW pick failed');
+  if (I18N.getDateLocale() !== 'zh-TW') throw new Error('zh-TW dateLocale failed');
+
+  I18N.setLanguage('zh-CN');
+  if (I18N.STR['common.filtered'] !== '条件筛选中') throw new Error('zh-CN STR lookup failed');
+  if (I18N.field(sampleObj, 'title') !== '活动公告测试') throw new Error('zh-CN field(title) failed');
+  if (I18N.field(sampleObj, 'items')[0] !== '特选苹果') throw new Error('zh-CN field(items) auto-simplify failed');
+  if (I18N.pick(sampleMap) !== '简体标签') throw new Error('zh-CN pick failed');
+  if (I18N.getDateLocale() !== 'zh-CN') throw new Error('zh-CN dateLocale failed');
+
+  I18N.setLanguage('en-US');
+  if (I18N.STR['common.filtered'] !== 'Filtered') throw new Error('en-US STR lookup failed');
+  if (I18N.field(sampleObj, 'title') !== 'Event Notice Test') throw new Error('en-US field(title) failed');
+  if (I18N.field(sampleObj, 'items')[0] !== 'Fancy Apple') throw new Error('en-US field(items) failed');
+  if (I18N.pick(sampleMap) !== 'English Tag') throw new Error('en-US pick failed');
+  if (I18N.getDateLocale() !== 'en-US') throw new Error('en-US dateLocale failed');
+  if (!I18N.t('box.pr_hl_ribbon_speed', { pct: 12 }).includes('12%')) {
+    throw new Error('en-US param interpolation failed: ' + I18N.t('box.pr_hl_ribbon_speed', { pct: 12 }));
+  }
+
+  I18N.setLanguage('zh-TW');
+});
+
+testCase('Unified I18N Architecture', 'Zero duplicate local _t* wrappers and zero inline isEN/isCN/getLanguage checks across modular JS', () => {
+  const rootDir = path.resolve(__dirname, '..');
+  const bundles = new Set([
+    'js/modules/app.js', 'js/modules/wiki.js', 'js/modules/appraisal.js', 'js/modules/box.js',
+    'js/core/i18n.js', 'js/core/cloudSync.js', 'js/modules/recipes.js', 'js/modules/news.js',
+    'js/data/ladder_data.js', 'js/data/items.js'
+  ]);
+  const walk = (d) => {
+    let out = [];
+    for (const f of fs.readdirSync(d)) {
+      const p = path.join(d, f);
+      if (fs.statSync(p).isDirectory()) out = out.concat(walk(p));
+      else if (p.endsWith('.js') && !p.endsWith('.min.js')) out.push(p);
+    }
+    return out;
+  };
+  const violations = [];
+  for (const abs of walk(path.join(rootDir, 'js'))) {
+    const rel = path.relative(rootDir, abs).replace(/\\/g, '/');
+    if (bundles.has(rel) || rel.startsWith('js/core/i18n/')) continue;
+    const src = fs.readFileSync(abs, 'utf8');
+    const langHits = src.match(/\b(isEN|isEn|isCN|isCn|isEnMode)\b|getLanguage\s*\(/g) || [];
+    const helperHits = src.match(/\b(_tCloud|_tBox|_tLab|_tLabStr|_tNews|_tDex|_tRecipes|_tWiki|_tSkillLadder|_tModalKey|_getCloudLang)\b/g) || [];
+    if (langHits.length > 0 || helperHits.length > 0) {
+      violations.push(`${rel} (langChecks=${langHits.length}, localHelpers=${helperHits.length})`);
+    }
+  }
+  if (violations.length > 0) {
+    throw new Error('Found prohibited inline language checks or duplicate _t* helpers: ' + violations.join('; '));
+  }
+});
+
 console.log('\n=== CHALLENGER M1-2 SUMMARY ===');
 console.log('Total Tests Executed: ' + results.total);
 console.log('Passed: ' + results.passed);

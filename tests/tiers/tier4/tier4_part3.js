@@ -15,6 +15,8 @@ const {
   matchesSelector,
   createMockDocument,
   PokemonApp,
+  I18N,
+  i18nCode,
   getItemIcon,
   getItemId,
   getItemFormattedNo,
@@ -39,6 +41,7 @@ function registerTier4Part3() {
     const appCtx = { window: {}, console };
     appCtx.window = appCtx;
     vm.createContext(appCtx);
+    vm.runInContext(i18nCode, appCtx);
     vm.runInContext(appraisalCode, appCtx);
     vm.runInContext(boxCode, appCtx);
     const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
@@ -229,6 +232,7 @@ function registerTier4Part3() {
     const appCtx = { window: {}, console };
     appCtx.window = appCtx;
     vm.createContext(appCtx);
+    vm.runInContext(i18nCode, appCtx);
     vm.runInContext(appraisalCode, appCtx);
 
     const quaquaval = dataset.find(p => p.name_cn === '狂歡浪舞鴨') || { name_cn: '狂歡浪舞鴨', specialty: '食材', main_skill: '能量填充S' };
@@ -507,6 +511,7 @@ function registerTier4Part3() {
     const appCtx = { window: {}, console };
     appCtx.window = appCtx;
     vm.createContext(appCtx);
+    vm.runInContext(i18nCode, appCtx);
     vm.runInContext(appraisalCode, appCtx);
 
     // 1. Verify archetype helper functions on PokemonApp and AppraisalLab
@@ -782,17 +787,23 @@ function registerTier4Part3() {
 
     // 3. Box Table Columns Overhaul (specialty column removed)
     // Header order: icon -> level -> name (centered) -> berry -> 食1 -> 食2 -> 食3 -> actions
-    const lvlThIdx = boxJs.indexOf("t('th.level', '等級')");
-    const nameThIdx = boxJs.indexOf("_tBox('寶可夢 / 暱稱', 'Name / Nickname')");
-    const berryThIdx = boxJs.indexOf("t('th.berry', '樹果')");
+    const lvlThIdx = boxJs.indexOf("'th.level'");
+    const nameThIdx = boxJs.indexOf("'box.ui_th_name_nickname'");
+    const berryThIdx = boxJs.indexOf("'th.berry'");
     assert(lvlThIdx !== -1 && nameThIdx !== -1 && berryThIdx !== -1, 'All required th keys must exist');
     assert(lvlThIdx < nameThIdx, 'Level column must precede Name column');
     assert(nameThIdx < berryThIdx, 'Berry column must follow Name column');
     const renderTableHeaderCheck = boxJs.substring(boxJs.indexOf('function renderBoxTable(list'), boxJs.indexOf('function bindCardActions'));
     assert(!renderTableHeaderCheck.includes('th-spec') && !renderTableHeaderCheck.includes('td-spec') && !renderTableHeaderCheck.includes("t('th.specialty'"), 'Box table must not render specialty header or cell');
 
-    // Ingredient headers simplified to 食1, 食2, 食3
-    assert(boxJs.includes("_tBox('食1', 'Ing 1')") && boxJs.includes("_tBox('食2', 'Ing 2')") && boxJs.includes("_tBox('食3', 'Ing 3')"), 'Ingredient columns must be simplified to 食1, 食2, 食3');
+    // Ingredient headers simplified to 食1, 食2, 食3 via pre-resolved I18N resources
+    assert(
+      boxJs.includes("'box.ui_th_ing1'") && boxJs.includes("'box.ui_th_ing2'") && boxJs.includes("'box.ui_th_ing3'") &&
+      I18N.DICTIONARY['zh-TW']['box.ui_th_ing1'] === '食1' && I18N.DICTIONARY['en-US']['box.ui_th_ing1'] === 'Ing 1' &&
+      I18N.DICTIONARY['zh-TW']['box.ui_th_ing2'] === '食2' && I18N.DICTIONARY['en-US']['box.ui_th_ing2'] === 'Ing 2' &&
+      I18N.DICTIONARY['zh-TW']['box.ui_th_ing3'] === '食3' && I18N.DICTIONARY['en-US']['box.ui_th_ing3'] === 'Ing 3',
+      'Ingredient columns must be simplified to 食1, 食2, 食3'
+    );
 
     // Name and Nickname horizontally centered
     assert(boxJs.includes('justify-content:center;gap:4px;flex-wrap:wrap;text-align:center;'), 'table-name-cn must be centered');
@@ -1146,6 +1157,7 @@ function registerTier4Part3() {
     ctx.document = ctx.window.document;
     ctx.localStorage = ctx.window.localStorage;
     vm.createContext(ctx);
+    vm.runInContext(i18nCode, ctx);
 
     // Run appraisal.js in VM
     vm.runInContext(appraisalJs, ctx);
@@ -1674,6 +1686,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     ctx.document = ctx.window.document;
     ctx.localStorage = ctx.window.localStorage;
     vm.createContext(ctx);
+    vm.runInContext(i18nCode, ctx);
     vm.runInContext(appraisalJs, ctx);
 
     const mockContainer = mockDOMElement('appraisal-lab-container');
@@ -1854,6 +1867,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     ctx.document = ctx.window.document;
     ctx.localStorage = ctx.window.localStorage;
     vm.createContext(ctx);
+    vm.runInContext(i18nCode, ctx);
     vm.runInContext(appraisalJs, ctx);
 
     const mockContainer = mockDOMElement('appraisal-lab-container');
@@ -1974,8 +1988,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     assert(!appraisalJs.includes('Tier ${ribbonLevel}'), 'appraisal.js must not contain "Tier X" text');
     assert(!appraisalJs.includes('appraisal-pokemon-en'), 'appraisal.js must NOT contain appraisal-pokemon-en');
     assert(appraisalJs.includes('appraisal-h5-pkm-name font-bold'), 'appraisal.js must give appraisal-h5-pkm-name font-bold');
-    assert(appraisalJs.includes("${_tLab('當前', 'Current')}"), 'dual verdict column current label must be simplified to Current / 當前');
-    assert(appraisalJs.includes("${_tLab('滿級', 'Max Lv')}"), 'dual verdict column max label must be simplified to Max Lv / 滿級');
+    assert(appraisalJs.includes("'lab.t_track_current'") && I18N.DICTIONARY['zh-TW']['lab.t_track_current'] === '當前' && I18N.DICTIONARY['en-US']['lab.t_track_current'] === 'Current', 'dual verdict column current label must be simplified to Current / 當前');
+    assert(appraisalJs.includes("'lab.t_track_max_lv'") && I18N.DICTIONARY['zh-TW']['lab.t_track_max_lv'] === '滿級' && I18N.DICTIONARY['en-US']['lab.t_track_max_lv'] === 'Max Lv', 'dual verdict column max label must be simplified to Max Lv / 滿級');
 
     // Check that mainskill row, ing parallel row, and config section are inside appraisal-h5-header-summary
     const summaryStart = appraisalJs.indexOf('<div class="appraisal-h5-header-summary">');
@@ -2001,6 +2015,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     const appCtx = { window: {}, console };
     appCtx.window = appCtx;
     vm.createContext(appCtx);
+    vm.runInContext(i18nCode, appCtx);
     vm.runInContext(appraisalCode, appCtx);
     vm.runInContext(boxCode, appCtx);
     const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
@@ -2159,6 +2174,7 @@ SP 4,316
     const appCtx = { window: {}, console };
     appCtx.window = appCtx;
     vm.createContext(appCtx);
+    vm.runInContext(i18nCode, appCtx);
     vm.runInContext(appraisalCode, appCtx);
     vm.runInContext(boxCode, appCtx);
     const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
@@ -2268,7 +2284,7 @@ SP 4,316
     assert(appraisalJs.includes('appraisal-calc-mobile-wrap'), 'appraisal.js mobile layout must include appraisal-calc-mobile-wrap');
     assert(appraisalJs.includes('appraisal-header-stats-dual'), 'appraisal.js must render dual stats row');
     assert(appraisalJs.includes('appraisal-stats-section'), 'appraisal.js must place dual stats in appraisal-stats-section');
-    assert(appraisalJs.includes('Ing Rate') && appraisalJs.includes('Skill Rate'), 'appraisal.js must support concise EN labels (Ing Rate, Skill Rate)');
+    assert(appraisalJs.includes("'lab.t_ing_rate'") && appraisalJs.includes("'lab.t_skill_rate'") && I18N.DICTIONARY['en-US']['lab.t_ing_rate'] === 'Ing Rate' && I18N.DICTIONARY['en-US']['lab.t_skill_rate'] === 'Skill Rate', 'appraisal.js must support concise EN labels (Ing Rate, Skill Rate)');
 
     // 3. Strict check: No modification controls in appraisal calculation view
     assert(!appraisalJs.includes('pokedex-calc-slider'), 'appraisal.js must NOT contain pokedex-calc-slider (pure display)');
@@ -2491,6 +2507,8 @@ SP 4,316
     assert(sleepStylesJson.byName['顫弦蠑螈 (低調的樣子)'] && sleepStylesJson.byName['顫弦蠑螈（低調的樣子）'], 'sleep_styles.json must support both half-width and full-width parenthesis for Toxtricity Low Key');
     assert(sleepStylesJson.byName['顫弦蠑螈 (高調的樣子)'] && sleepStylesJson.byName['顫弦蠑螈（高調的樣子）'], 'sleep_styles.json must support both half-width and full-width parenthesis for Toxtricity Amped');
     for (const pkm of dataJson) {
+      // Skip unreleased preview Pokémon whose stats & sleep styles are not yet published
+      if (!pkm.interval && !pkm.carry) continue;
       const byId = sleepStylesJson.byNo[String(pkm.id)];
       const byName = sleepStylesJson.byName[pkm.name_cn];
       assert(byId || byName, `Pokemon #${pkm.id} (${pkm.name_cn}) must have sleep styles defined in sleep_styles.json`);

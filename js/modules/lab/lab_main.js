@@ -1,6 +1,5 @@
   function renderAppraisalLabContainer(targetElement) {
     if (!targetElement) return;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isMobileH5 = typeof document !== 'undefined' && (
       (typeof document.querySelector === 'function' && !!document.querySelector('.mobile-h5-app')) ||
       (document.body && document.body.classList && typeof document.body.classList.contains === 'function' && document.body.classList.contains('mobile-h5-app'))
@@ -11,7 +10,7 @@
     const userBox = (window.UserBox && typeof window.UserBox.getUserBox === 'function') ? window.UserBox.getUserBox() : [];
     
     if (pokemons.length === 0) {
-      targetElement.innerHTML = `<div style="padding:20px;text-align:center;color:#94a3b8;">${_tLab('載入圖鑑資料中...', 'Loading Pokédex data...', isEN)}</div>`;
+      targetElement.innerHTML = `<div style="padding:20px;text-align:center;color:#94a3b8;">${window.I18N?.t?.('lab.c_loading_pokedex') ?? 'lab.c_loading_pokedex'}</div>`;
       return;
     }
 
@@ -20,13 +19,13 @@
         <div class="lab-box-empty-container" style="padding:48px 20px;text-align:center;color:var(--text-muted);">
           <div style="font-size:32px;margin-bottom:12px;opacity:0.8;">[!]</div>
           <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">
-            ${_tLab('倉庫中尚無寶可夢', 'No Pokémon in Box', isEN)}
+            ${window.I18N?.t?.('lab.c_no_pokemon_box') ?? 'lab.c_no_pokemon_box'}
           </div>
           <div style="font-size:13px;color:var(--text-secondary);max-width:320px;margin:0 auto 18px;line-height:1.5;">
-            ${_tLab('請先在【寶可夢倉庫】新增登錄寶可夢後，再來進行深度評測！', 'Please register Pokémon in the Box tab first, then evaluate them here!', isEN)}
+            ${window.I18N?.t?.('lab.c_register_first_desc') ?? 'lab.c_register_first_desc'}
           </div>
           <button type="button" class="btn-primary" onclick="if(window.switchMainTab)window.switchMainTab('box');" style="padding:8px 20px;border-radius:8px;font-size:13px;cursor:pointer;">
-            ${_tLab('前往寶可夢倉庫', 'Go to Box', isEN)}
+            ${window.I18N?.t?.('lab.c_go_to_box') ?? 'lab.c_go_to_box'}
           </button>
         </div>
       `;
@@ -57,30 +56,30 @@
         <!-- 深度研究室 頂部子分頁導航 (Subnav Bar) -->
         <div class="lab-subnav-bar">
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'team' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('team')">
-            <span class="lab-subtab-title">${_tLab('幫手組隊', 'Team', isEN)}</span>
+            <span class="lab-subtab-title">${window.I18N?.t?.('lab.c_subtab_team') ?? 'lab.c_subtab_team'}</span>
           </button>
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'compare' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('compare')">
-            <span class="lab-subtab-title">${_tLab('寶可夢對比', 'Compare', isEN)}</span>
+            <span class="lab-subtab-title">${window.I18N?.t?.('lab.c_subtab_compare') ?? 'lab.c_subtab_compare'}</span>
           </button>
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'growth' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('growth')">
-            <span class="lab-subtab-title">${_tLab('培育精算', 'Growth', isEN)}</span>
+            <span class="lab-subtab-title">${window.I18N?.t?.('lab.c_subtab_growth') ?? 'lab.c_subtab_growth'}</span>
           </button>
         </div>
         ` : ''}
 
         <!-- 1. 幫手組隊子面板 (Team Builder & Simulator) -->
         <div id="lab-subpanel-team" class="lab-subpanel" style="${labState.currentSubTab === 'team' && !labState.editMode ? '' : 'display:none;'}">
-          ${renderTeamBuilderView(userBox, pokemons, isEN, isMobileH5)}
+          ${renderTeamBuilderView(userBox, pokemons, undefined, isMobileH5)}
         </div>
 
         <!-- 2. 寶可夢對比子面板 (Side-by-Side Comparison) -->
         <div id="lab-subpanel-compare" class="lab-subpanel" style="${labState.currentSubTab === 'compare' ? '' : 'display:none;'}">
-          ${renderComparisonView(userBox, pokemons, isEN, isMobileH5)}
+          ${renderComparisonView(userBox, pokemons, undefined, isMobileH5)}
         </div>
 
         <!-- 3. 培育精算子面板 (Growth & Seeds Calculator) -->
         <div id="lab-subpanel-growth" class="lab-subpanel" style="${labState.currentSubTab === 'growth' ? '' : 'display:none;'}">
-          ${renderGrowthView(userBox, pokemons, isEN, isMobileH5)}
+          ${renderGrowthView(userBox, pokemons, undefined, isMobileH5)}
         </div>
       </div>
     `;

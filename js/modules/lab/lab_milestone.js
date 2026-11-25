@@ -24,12 +24,12 @@
         if (isSlowpoke) {
           const hasTailLv30 = ingArr.length >= 2 && (ingArr[1] === '美味尾巴' || ingArr[1].includes('尾巴') || ingArr[1].toLowerCase().includes('tail'));
           if (hasTailLv30) {
-            targetSkillName = (window.I18N && typeof window.I18N.getIngredientName === 'function') ? window.I18N.getIngredientName('美味尾巴') : _tLab('美味尾巴', 'Slowpoke Tail');
+            targetSkillName = window.I18N?.getIngredientName?.('美味尾巴') ?? (window.I18N?.t?.('lab.c_slowpoke_tail') ?? '美味尾巴');
             milestoneType = 'ingredient';
             isKeyMilestone = true;
           }
         } else if (isIng && ingArr.length >= 2 && ingArr[1]) {
-          targetSkillName = window.I18N ? window.I18N.getIngredientName(ingArr[1]) : ingArr[1];
+          targetSkillName = window.I18N?.getIngredientName?.(ingArr[1]) ?? ingArr[1];
           milestoneType = 'ingredient';
         }
       }
@@ -49,7 +49,7 @@
         }
 
         if (isSpecialtyCore) {
-          targetSkillName = window.I18N ? window.I18N.getSubSkillName(skName) : skName;
+          targetSkillName = window.I18N?.getSubSkillName?.(skName) ?? skName;
           milestoneType = 'subskill';
           isKeyMilestone = true;
         }
@@ -65,18 +65,24 @@
       const isScoreLeap = scoreDiff >= 3;
 
       if (isGradeLeap || isScoreLeap || (isKeyMilestone && scoreDiff > 0)) {
-        const skillDisplay = targetSkillName || _tLab(`Lv.${targetLv} 解鎖`, `Lv.${targetLv} Unlock`);
+        const skillDisplay = targetSkillName || (window.I18N?.t?.('lab.c_lv_unlock', { lv: targetLv }) ?? `Lv.${targetLv} Unlock`);
         let milestoneText = '';
         if (isGradeLeap) {
-          milestoneText = _tLab(
-            `建議優先升至 Lv.${targetLv} 解鎖「${skillDisplay}」，評級將由 ${currentEval.grade} 級（${currentEval.compositeScore}分）跨階躍升至 ${projEval.grade} 級（${projEval.compositeScore}分）！`,
-            `Recommended to prioritize Lv.${targetLv} to unlock '${skillDisplay}': rating leaps from ${currentEval.grade} (${currentEval.compositeScore} pts) to ${projEval.grade} (${projEval.compositeScore} pts)!`
-          );
+          milestoneText = window.I18N?.t?.('lab.c_milestone_grade_leap', {
+            lv: targetLv,
+            skill: skillDisplay,
+            curGrade: currentEval.grade,
+            curScore: currentEval.compositeScore,
+            projGrade: projEval.grade,
+            projScore: projEval.compositeScore
+          }) ?? 'lab.c_milestone_grade_leap';
         } else {
-          milestoneText = _tLab(
-            `建議培育至 Lv.${targetLv} 解鎖核心「${skillDisplay}」，綜合能力將由 ${currentEval.compositeScore} 分實質提升至 ${projEval.compositeScore} 分。`,
-            `Recommended to train to Lv.${targetLv} to unlock core '${skillDisplay}': overall score increases from ${currentEval.compositeScore} pts to ${projEval.compositeScore} pts.`
-          );
+          milestoneText = window.I18N?.t?.('lab.c_milestone_score_leap', {
+            lv: targetLv,
+            skill: skillDisplay,
+            curScore: currentEval.compositeScore,
+            projScore: projEval.compositeScore
+          }) ?? 'lab.c_milestone_score_leap';
         }
 
         milestones.push({

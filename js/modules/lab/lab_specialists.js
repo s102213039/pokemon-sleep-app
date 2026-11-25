@@ -12,35 +12,15 @@
 (function () {
   'use strict';
 
-  function _tLab(tw, en, isENFlag) {
-    if (isENFlag === true) return en;
-    if (typeof window !== 'undefined' && window.I18N) {
-      const lang = typeof window.I18N.getLanguage === 'function' ? window.I18N.getLanguage() : '';
-      if (lang === 'en-US' && isENFlag !== false) return en;
-      if (lang === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
-        return window.I18N.toSimplified(tw);
-      }
-    }
-    return tw;
-  }
-
-  function _tLabStr(tw) {
-    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function' &&
-        window.I18N.getLanguage() === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
-      return window.I18N.toSimplified(tw);
-    }
-    return tw;
-  }
-
   /* ─── 六維度元資料定義 ─────────────────────────────────────── */
-  function getSixDimMeta(isEN) {
+  function getSixDimMeta() {
     return [
-      { key: 'berry', label: _tLab('樹果產能', 'Berry Output', isEN), icon: '', angle: -Math.PI / 2, desc: _tLab('單日樹果總能量潛力 (含樹果S、專長與幫速)', 'Total daily berry energy potential (BFS, specialty & speed)', isEN) },
-      { key: 'ingredient', label: _tLab('食材產能', 'Ingredient Output', isEN), icon: '', angle: -Math.PI / 6, desc: _tLab('食材獲取期望與解鎖組合協同效應', 'Ingredient drop rate and recipe combo synergies', isEN) },
-      { key: 'skill', label: _tLab('技能強度', 'Skill Power', isEN), icon: '', angle: Math.PI / 6, desc: _tLab('主技能觸發頻率、等級加成與爆發收益', 'Main skill trigger rate and value scaling', isEN) },
-      { key: 'speed', label: _tLab('幫忙速度', 'Helping Speed', isEN), icon: '', angle: Math.PI / 2, desc: _tLab('整體幫忙頻率 (基礎間隔、幫速SM、幫獎與性格)', 'Overall helping frequency (base interval, sub-skills & nature)', isEN) },
-      { key: 'growth', label: _tLab('後期成長', 'Late Growth', isEN), icon: '', angle: 5 * Math.PI / 6, desc: _tLab('Lv.50/70/80 後期技能與第三食材爆發潛能', 'Lv.50/70/80 late skill and ingredient scaling potential', isEN) },
-      { key: 'roi', label: _tLab('資源效益', 'Resource ROI', isEN), icon: '', angle: -5 * Math.PI / 6, desc: _tLab('成型週期、前中期戰力解鎖速度與糖果回報率', 'Early/mid power unlock and candy investment efficiency', isEN) }
+      { key: 'berry', label: window.I18N?.t?.('lab.t_dim_berry_lbl') ?? 'lab.t_dim_berry_lbl', icon: '', angle: -Math.PI / 2, desc: window.I18N?.t?.('lab.t_dim_berry_desc') ?? 'lab.t_dim_berry_desc' },
+      { key: 'ingredient', label: window.I18N?.t?.('lab.t_dim_ing_lbl') ?? 'lab.t_dim_ing_lbl', icon: '', angle: -Math.PI / 6, desc: window.I18N?.t?.('lab.t_dim_ing_desc') ?? 'lab.t_dim_ing_desc' },
+      { key: 'skill', label: window.I18N?.t?.('lab.t_dim_skill_lbl') ?? 'lab.t_dim_skill_lbl', icon: '', angle: Math.PI / 6, desc: window.I18N?.t?.('lab.t_dim_skill_desc') ?? 'lab.t_dim_skill_desc' },
+      { key: 'speed', label: window.I18N?.t?.('lab.t_dim_speed_lbl') ?? 'lab.t_dim_speed_lbl', icon: '', angle: Math.PI / 2, desc: window.I18N?.t?.('lab.t_dim_speed_desc') ?? 'lab.t_dim_speed_desc' },
+      { key: 'growth', label: window.I18N?.t?.('lab.t_dim_growth_lbl') ?? 'lab.t_dim_growth_lbl', icon: '', angle: 5 * Math.PI / 6, desc: window.I18N?.t?.('lab.t_dim_growth_desc') ?? 'lab.t_dim_growth_desc' },
+      { key: 'roi', label: window.I18N?.t?.('lab.t_dim_roi_lbl') ?? 'lab.t_dim_roi_lbl', icon: '', angle: -5 * Math.PI / 6, desc: window.I18N?.t?.('lab.t_dim_roi_desc') ?? 'lab.t_dim_roi_desc' }
     ];
   }
 

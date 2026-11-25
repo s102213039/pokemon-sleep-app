@@ -131,10 +131,14 @@ sandbox.window.window = sandbox.window;
 sandbox.window.document = mockDocument;
 sandbox.globalThis = sandbox.window;
 
+const i18nCode = fs.readFileSync(path.join(ROOT_DIR, 'js', 'core', 'i18n.js'), 'utf8');
 const appCode = fs.readFileSync(path.join(ROOT_DIR, 'js', 'modules', 'app.js'), 'utf8');
 const wikiCode = fs.readFileSync(path.join(ROOT_DIR, 'js', 'modules', 'wiki.js'), 'utf8');
 
 vm.createContext(sandbox);
+vm.runInContext(i18nCode, sandbox);
+sandbox.I18N = sandbox.window.I18N;
+sandbox.window.I18N.setLanguage('zh-TW');
 vm.runInContext(appCode, sandbox);
 vm.runInContext(wikiCode, sandbox);
 
@@ -199,11 +203,11 @@ assert(modalHtml.includes('皮丘') && modalHtml.includes('皮卡丘') && modalH
 PokemonApp.openPokemonDetailModal('南瓜怪人 (大顆種)');
 assert.strictEqual(PokemonApp.getPokedexModalState().pkm.name_cn, '南瓜怪人 (大顆種)');
 
-// Test English formatting of evolution requirements
-currentLang = 'en-US';
-const enReq = PokemonApp.formatPokemonEvoReq('睡 150 小時 + 06:00 ~ 18:00 + 80 糖', true, false);
+// Test English formatting of evolution requirements via pre-resolved I18N language switch
+sandbox.window.I18N.setLanguage('en-US');
+const enReq = PokemonApp.formatPokemonEvoReq('睡 150 小時 + 06:00 ~ 18:00 + 80 糖');
 assert(enReq.includes('Sleep 150h') && enReq.includes('80 Candies'), `English evo req should format properly, got: ${enReq}`);
-currentLang = 'zh-TW';
+sandbox.window.I18N.setLanguage('zh-TW');
 
 // 3. Test Island Camps Sleep Style Uncollected Checklist & Tonight's Sleep Type Recommendation
 assert.strictEqual(typeof WikiDB.toggleCollectedSleepStyle, 'function', 'toggleCollectedSleepStyle must be exported on WikiDB');

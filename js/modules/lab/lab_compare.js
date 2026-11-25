@@ -191,11 +191,14 @@
     };
   }
 
-  function formatSecsToMinSec(seconds, isEN) {
+  function formatSecsToMinSec(seconds, _unused) {
     if (!seconds) return '--';
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
-    return _tLab(`${m}分${s ? `${s}秒` : ''}`, `${m}m ${s ? `${s}s` : ''}`.trim(), isEN);
+    if (s) {
+      return window.I18N?.t?.('lab.c_fmt_min_sec', { m, s }) ?? `${m}m ${s}s`;
+    }
+    return window.I18N?.t?.('lab.c_fmt_min_only', { m }) ?? `${m}m`;
   }
 
   /* ─── 寶可夢對比 HTML 產生器 (最多 3 位選手並排比較) ──────── */
@@ -203,9 +206,9 @@
   const COMPARE_LETTERS = ['A', 'B', 'C'];
   const COMPARE_MAX = 3;
 
-  function renderComparisonView(userBox, pokemons, isEN, isMobileH5) {
+  function renderComparisonView(userBox, pokemons, _unused, isMobileH5) {
     if (userBox.length === 0) {
-      return `<div style="padding:40px;text-align:center;color:var(--text-muted);">${_tLab('請先在寶可夢倉庫新增寶可夢後再來對比！', 'Please register Pokémon in Box first', isEN)}</div>`;
+      return `<div style="padding:40px;text-align:center;color:var(--text-muted);">${window.I18N?.t?.('lab.c_cmp_register_first') ?? 'lab.c_cmp_register_first'}</div>`;
     }
 
     if (!Array.isArray(labState.compareSlots)) {
@@ -246,8 +249,8 @@
 
     const N = activePlayers.length;
     const fmt = n => Number(n).toLocaleString();
-    const pLabel = p => `${_tLab('選手', 'Player', isEN)} ${p.letter}`;
-    const unitIng = _tLab('顆/日', 'items/day', isEN);
+    const pLabel = p => window.I18N?.t?.('lab.c_cmp_player_label', { letter: p.letter }) ?? `Player ${p.letter}`;
+    const unitIng = window.I18N?.t?.('lab.c_cmp_unit_ing_day') ?? 'items/day';
     const fallbackAvatar = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
 
     // ── 頂部：3 個選手槽位 (單行並排展示 + 簡化卡片) ──
@@ -265,9 +268,9 @@
             </div>
             <div class="lab-compare-empty-content">
               <span class="lab-compare-empty-plus">+</span>
-              <span class="lab-compare-empty-text">${_tLab(`挑選選手 ${letter}`, `Pick Player ${letter}`, isEN)}</span>
+              <span class="lab-compare-empty-text">${window.I18N?.t?.('lab.c_cmp_pick_player', { letter }) ?? `Pick Player ${letter}`}</span>
             </div>
-            <div class="lab-compare-tap-hint">${_tLab('點選挑選', 'Tap to pick', isEN)}</div>
+            <div class="lab-compare-tap-hint">${window.I18N?.t?.('lab.c_cmp_tap_pick') ?? 'Tap to pick'}</div>
           </button>
         `;
       }
@@ -277,22 +280,23 @@
         ? window.getItemIcon(base)
         : ((base && (base.icon_url || base.icon)) || (base && base.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${base.formatted_no}.png` : '') || fallbackAvatar);
       const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : {});
-      const berryDisp = (window.I18N && typeof window.I18N.getBerryName === 'function') ? window.I18N.getBerryName(berry.name || '') : _tLabStr(berry.name || '');
+      const berryDisp = window.I18N?.getBerryName?.(berry.name || '') ?? (window.I18N?.text?.(berry.name || '') ?? (berry.name || ''));
       const specHtml = (window.I18N && window.I18N.getSpecialtyIconHtml && base) ? window.I18N.getSpecialtyIconHtml(base.specialty, 13) : '';
-      const natDisplayName = window.I18N ? window.I18N.getNatureName(item.nature) : _tLabStr(item.nature);
-      const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function') ? (item.nickname || window.I18N.getPokemonName(base || item.name)) : (item.nickname || _tLabStr(item.name));
+      const natDisplayName = window.I18N?.getNatureName?.(item.nature) ?? (window.I18N?.text?.(item.nature) ?? (item.nature || ''));
+      const pkmDisplayName = item.nickname || window.I18N?.getPokemonName?.(base || item.name) || (window.I18N?.text?.(item.name) ?? (item.name || ''));
       const effLevel = (currentBenchmark && currentBenchmark !== 'box') ? parseInt(currentBenchmark, 10) : (parseInt(item.level, 10) || 1);
+      const removeLabel = window.I18N?.t?.('lab.c_cmp_remove') ?? 'Remove';
 
       return `
         <div class="lab-compare-vs-player slot-${letter.toLowerCase()}" style="border-top-color:${color}; cursor:pointer;" onclick="window.AppraisalLab.openPicker({ type: 'compare', compareSlot: ${i} })">
           <div class="lab-compare-vs-header-top">
             <span class="lab-compare-slot-letter" style="background:${color};">${letter}</span>
-            <button type="button" class="lab-compare-remove-btn" aria-label="${_tLab('移除', 'Remove', isEN)}" title="${_tLab('移除', 'Remove', isEN)}" onclick="event.stopPropagation(); window.AppraisalLab.clearCompareSlot(${i});">
+            <button type="button" class="lab-compare-remove-btn" aria-label="${removeLabel}" title="${removeLabel}" onclick="event.stopPropagation(); window.AppraisalLab.clearCompareSlot(${i});">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
           </div>
           <div class="lab-compare-vs-avatar-wrap">
-            <img src="${avatarUrl}" class="lab-compare-vs-avatar" alt="${_tLab('選手', 'Player', isEN)} ${letter}" loading="lazy">
+            <img src="${avatarUrl}" class="lab-compare-vs-avatar" alt="${window.I18N?.t?.('lab.c_cmp_player_label', { letter }) ?? `Player ${letter}`}" loading="lazy">
             <span class="lab-compare-vs-lvl">Lv.${effLevel}</span>
           </div>
           <div class="lab-compare-micro-meta">
@@ -300,7 +304,7 @@
             ${berry && berry.icon ? `<img src="${berry.icon}" class="lab-compare-mini-berry" alt="Berry" title="${escapeHtml(berryDisp)}">` : ''}
             <span class="lab-compare-vs-tag nat-tag">${escapeHtml(natDisplayName)}</span>
           </div>
-          <div class="lab-compare-tap-hint">${_tLab('點選更換', 'Tap to change', isEN)}</div>
+          <div class="lab-compare-tap-hint">${window.I18N?.t?.('lab.c_cmp_tap_change') ?? 'Tap to change'}</div>
         </div>
       `;
     };
@@ -318,8 +322,8 @@
         ${slotCardHtml(2)}
       </div>
       <div class="lab-compare-pick-hint" style="margin-bottom:8px;font-size:11.5px;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
-        <span>${_tLab(`已選 ${N}/${COMPARE_MAX} 位選手，點選卡片可更換寶可夢（最多3位，不可重複選擇同一隻）`, `Selected ${N}/${COMPARE_MAX}. Tap a slot to change Pokémon (max 3, no duplicates).`, isEN)}</span>
-        ${N > 0 ? `<button type="button" class="box-btn box-btn-secondary" style="font-size:11px;padding:2px 8px;" onclick="[0,1,2].forEach(i=>window.AppraisalLab.clearCompareSlot(i));">${_tLab('清空對比', 'Clear All', isEN)}</button>` : ''}
+        <span>${window.I18N?.t?.('lab.c_cmp_selected_hint', { n: N, max: COMPARE_MAX }) ?? 'lab.c_cmp_selected_hint'}</span>
+        ${N > 0 ? `<button type="button" class="box-btn box-btn-secondary" style="font-size:11px;padding:2px 8px;" onclick="[0,1,2].forEach(i=>window.AppraisalLab.clearCompareSlot(i));">${window.I18N?.t?.('lab.c_cmp_clear_all') ?? 'Clear All'}</button>` : ''}
       </div>
     `;
 
@@ -329,34 +333,35 @@
     const maxLv = caps.THEORETICAL_MAX_LEVEL || 100;
     const milestoneLevels = Array.from(new Set([30, 50, 60, capLv, 80, maxLv])).sort((a, b) => a - b);
     const benchmarkLevels = [
-      { id: 'box', label: _tLab('各自等級', 'Box Lv', isEN), title: _tLab('使用每隻寶可夢各自倉儲等級', 'Use each Pokemon\'s box level', isEN) }
+      { id: 'box', label: window.I18N?.t?.('lab.c_cmp_box_lv') ?? 'Box Lv', title: window.I18N?.t?.('lab.c_cmp_box_lv_title') ?? 'lab.c_cmp_box_lv_title' }
     ];
     milestoneLevels.forEach(lv => {
-      let desc = '';
+      let descKey = 'lab.c_cmp_desc_milestone';
       if (lv === capLv && lv !== 60) {
-        desc = _tLab('目前遊戲等級上限', 'Current in-game maximum level cap', isEN);
+        descKey = 'lab.c_cmp_desc_cap';
       } else if (lv === 30) {
-        desc = _tLab('解鎖第2食材', 'Unlocks 2nd ingredient', isEN);
+        descKey = 'lab.c_cmp_desc_lv30';
       } else if (lv === 50) {
-        desc = _tLab('解鎖第3副技能', 'Unlocks 3rd sub-skill', isEN);
+        descKey = 'lab.c_cmp_desc_lv50';
       } else if (lv === 60) {
-        desc = capLv === 60 ? _tLab('解鎖第3食材 / 目前遊戲等級上限', 'Unlocks 3rd ingredient & Current in-game maximum level cap', isEN) : _tLab('解鎖第3食材', 'Unlocks 3rd ingredient', isEN);
+        descKey = capLv === 60 ? 'lab.c_cmp_desc_lv60_cap' : 'lab.c_cmp_desc_lv60';
       } else if (lv === 80) {
-        desc = _tLab('解鎖第4副技能 (模擬)', 'Unlocks 4th sub-skill (Sim)', isEN);
+        descKey = 'lab.c_cmp_desc_lv80';
       } else if (lv === maxLv) {
-        desc = _tLab('五階滿等畢業 (全開模擬)', 'Max level graduation with all 5 sub-skills', isEN);
-      } else {
-        desc = lv > capLv ? _tLab('模擬等級', 'Simulation Level', isEN) : _tLab('里程碑等級', 'Milestone', isEN);
+        descKey = 'lab.c_cmp_desc_max';
+      } else if (lv > capLv) {
+        descKey = 'lab.c_cmp_desc_sim';
       }
+      const desc = window.I18N?.t?.(descKey) ?? descKey;
       benchmarkLevels.push({
         id: String(lv),
         label: `Lv.${lv}`,
-        title: _tLab(`Lv.${lv}：${desc}`, `Lv.${lv}: ${desc}`, isEN)
+        title: window.I18N?.t?.('lab.c_cmp_bench_title', { lv, desc }) ?? `Lv.${lv}: ${desc}`
       });
     });
     const benchmarkBarHtml = `
       <div class="lab-compare-benchmark-row">
-        <span class="lab-compare-benchmark-title">${_tLab('基準等級:', 'Benchmark Level:', isEN)}</span>
+        <span class="lab-compare-benchmark-title">${window.I18N?.t?.('lab.c_cmp_benchmark_label') ?? 'Benchmark Level:'}</span>
         <div class="lab-compare-benchmark-chips">
           ${benchmarkLevels.map(b => `
             <button type="button" class="benchmark-chip${String(currentBenchmark) === String(b.id) ? ' active' : ''}" onclick="window.AppraisalLab.setCompareBenchmarkLevel('${b.id}')" title="${b.title || b.label}">
@@ -376,33 +381,33 @@
           <div class="lab-compare-kpi-card" id="lab-compare-energy">
             <div class="lab-compare-kpi-head">
               <div class="lab-compare-kpi-title">
-                <span>${_tLab('每日預估總能量比較', 'Daily Total Energy Output', isEN)}</span>
+                <span>${window.I18N?.t?.('lab.c_cmp_energy_title') ?? 'Daily Total Energy Output'}</span>
               </div>
             </div>
             <div class="lab-compare-empty-section-hint">
-              ${_tLab('請在上方挑選至少 2 位選手進行每日預估總能量比較', 'Select at least 2 Pokémon above to compare estimated daily energy output.', isEN)}
+              ${window.I18N?.t?.('lab.c_cmp_energy_empty') ?? 'lab.c_cmp_energy_empty'}
             </div>
           </div>
 
           <div class="lab-compare-kpi-card" id="lab-compare-ingredients">
             <div class="lab-compare-kpi-head">
               <div class="lab-compare-kpi-title">
-                <span>${_tLab('每日食材產量比較', 'Daily Ingredient Yield Comparison', isEN)}</span>
+                <span>${window.I18N?.t?.('lab.c_cmp_ing_title') ?? 'Daily Ingredient Yield Comparison'}</span>
               </div>
             </div>
             <div class="lab-compare-empty-section-hint">
-              ${_tLab('請在上方挑選至少 2 位選手進行每日食材產量比較', 'Select at least 2 Pokémon above to compare ingredient yields.', isEN)}
+              ${window.I18N?.t?.('lab.c_cmp_ing_empty') ?? 'lab.c_cmp_ing_empty'}
             </div>
           </div>
 
           <div class="lab-compare-kpi-card" id="lab-compare-skills">
             <div class="lab-compare-kpi-head">
               <div class="lab-compare-kpi-title">
-                <span>${_tLab('技能發動與幫手效能對照', 'Skill Procs, Speed & Specs', isEN)}</span>
+                <span>${window.I18N?.t?.('lab.c_cmp_skills_title') ?? 'Skill Procs, Speed & Specs'}</span>
               </div>
             </div>
             <div class="lab-compare-empty-section-hint">
-              ${_tLab('請在上方挑選至少 2 位選手進行技能發動與幫手效能對照', 'Select at least 2 Pokémon above to compare skill procs and helper speed.', isEN)}
+              ${window.I18N?.t?.('lab.c_cmp_skills_empty') ?? 'lab.c_cmp_skills_empty'}
             </div>
           </div>
         </div>
@@ -435,10 +440,10 @@
     const leadBadge = (vals, formatDiff) => {
       const sorted = vals.map((v, i) => ({ v, i })).sort((a, b) => b.v - a.v);
       const diff = sorted[0].v - sorted[1].v;
-      if (diff <= 0) return `<span class="lab-compare-kpi-badge tie">${_tLab('持平', 'Tie', isEN)}</span>`;
+      if (diff <= 0) return `<span class="lab-compare-kpi-badge tie">${window.I18N?.t?.('lab.c_cmp_tie') ?? 'Tie'}</span>`;
       const lead = activePlayers[sorted[0].i];
       const pct = sorted[1].v > 0 ? ((diff / sorted[1].v) * 100).toFixed(1) : null;
-      return `<span class="lab-compare-kpi-badge" style="background:${lead.color}2e;color:${lead.color};border:1px solid ${lead.color}59;">${lead.letter} ${_tLab('領先', 'Leads', isEN)} +${formatDiff(diff)}${pct ? ` (${pct}%)` : ''}</span>`;
+      return `<span class="lab-compare-kpi-badge" style="background:${lead.color}2e;color:${lead.color};border:1px solid ${lead.color}59;">${lead.letter} ${window.I18N?.t?.('lab.c_cmp_leads') ?? 'Leads'} +${formatDiff(diff)}${pct ? ` (${pct}%)` : ''}</span>`;
     };
 
     const tableHtml = rows => `
@@ -457,13 +462,13 @@
 
     // ── 1. 六維綜合戰力評定對照 (6-Dimension Evaluation Matrix) ──
     const sixDimRows = [
-      num(_tLab('每日總能量產出', 'Est. Total Energy', isEN), x => x.totalDailyEnergy, true),
-      num(_tLab('樹果強度能量', 'Berry Power', isEN), x => x.dailyBerryEnergy, true),
-      num(_tLab('食材產出能量', 'Ingredient Power', isEN), x => x.totalDailyIngredientEnergy, true),
-      num(_tLab('主技能期望次數', 'Skill Procs / Day', isEN), x => x.dailySkillProcs, true, v => `${v} ${_tLab('次/日', '/day', isEN)}`),
-      num(_tLab('幫手週期間隔', 'Help Interval', isEN), x => x.effectiveInterval, false, v => formatSecsToMinSec(v, isEN)),
+      num(window.I18N?.t?.('lab.c_cmp_total_energy') ?? 'Est. Total Energy', x => x.totalDailyEnergy, true),
+      num(window.I18N?.t?.('lab.c_cmp_berry_power') ?? 'Berry Power', x => x.dailyBerryEnergy, true),
+      num(window.I18N?.t?.('lab.c_cmp_ing_power') ?? 'Ingredient Power', x => x.totalDailyIngredientEnergy, true),
+      num(window.I18N?.t?.('lab.c_cmp_skill_procs_day') ?? 'Skill Procs / Day', x => x.dailySkillProcs, true, v => window.I18N?.t?.('lab.c_cmp_val_per_day', { v }) ?? `${v} /day`),
+      num(window.I18N?.t?.('lab.c_cmp_help_interval') ?? 'Help Interval', x => x.effectiveInterval, false, v => formatSecsToMinSec(v)),
       {
-        label: _tLab('綜合戰力評價', 'Composite Tier', isEN),
+        label: window.I18N?.t?.('lab.c_cmp_composite_tier') ?? 'Composite Tier',
         vals: activePlayers.map(p => (p.evaluation ? p.evaluation.compositeScore : 0)),
         higher: true,
         texts: activePlayers.map(p => {
@@ -471,7 +476,7 @@
           if (!ev) return '--';
           const grade = ev.grade || 'B';
           const score = ev.compositeScore || 70;
-          return `<div style="display:flex;align-items:center;justify-content:center;gap:4px;"><span class="lab-grade-badge" style="background:${ev.gradeColor || '#38bdf8'}26;color:${ev.gradeColor || '#38bdf8'};border:1px solid ${ev.gradeColor || '#38bdf8'}59;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:800;">${grade}</span><span style="font-size:11px;color:var(--text-secondary);font-weight:700;">${score}${_tLab('分', ' pts', isEN)}</span></div>`;
+          return `<div style="display:flex;align-items:center;justify-content:center;gap:4px;"><span class="lab-grade-badge" style="background:${ev.gradeColor || '#38bdf8'}26;color:${ev.gradeColor || '#38bdf8'};border:1px solid ${ev.gradeColor || '#38bdf8'}59;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:800;">${grade}</span><span style="font-size:11px;color:var(--text-secondary);font-weight:700;">${score}${window.I18N?.t?.('lab.c_cmp_pts_unit') ?? ' pts'}</span></div>`;
         })
       }
     ];
@@ -480,7 +485,7 @@
       <div class="lab-compare-kpi-card" id="lab-compare-sixdim">
         <div class="lab-compare-kpi-head">
           <div class="lab-compare-kpi-title">
-            <span>${_tLab('六維綜合戰力評定對照', '6-Dimension Evaluation Matrix', isEN)}</span>
+            <span>${window.I18N?.t?.('lab.c_cmp_sixdim_title') ?? '6-Dimension Evaluation Matrix'}</span>
           </div>
         </div>
         ${tableHtml(sixDimRows)}
@@ -492,14 +497,14 @@
     const energyHtml = `
       <div class="lab-compare-kpi-card" id="lab-compare-energy">
         <div class="lab-compare-kpi-head">
-          <div class="lab-compare-kpi-title"><span>${_tLab('每日預估總能量比較', 'Daily Total Energy Output', isEN)}</span></div>
+          <div class="lab-compare-kpi-title"><span>${window.I18N?.t?.('lab.c_cmp_energy_title') ?? 'Daily Total Energy Output'}</span></div>
           ${leadBadge(energyVals, d => fmt(d))}
         </div>
         ${barRowsHtml(energyVals, energyVals.map(v => `${fmt(v)}`))}
         ${tableHtml([
-          num(_tLab('樹果能量', 'Berry Energy', isEN), x => x.dailyBerryEnergy, true),
-          num(_tLab('食材能量', 'Ingredient Energy', isEN), x => x.totalDailyIngredientEnergy, true),
-          num(_tLab('主技能能量', 'Skill Energy (Est)', isEN), x => x.dailySkillEnergy, true)
+          num(window.I18N?.t?.('lab.c_cmp_berry_energy') ?? 'Berry Energy', x => x.dailyBerryEnergy, true),
+          num(window.I18N?.t?.('lab.c_cmp_ing_energy') ?? 'Ingredient Energy', x => x.totalDailyIngredientEnergy, true),
+          num(window.I18N?.t?.('lab.c_cmp_skill_energy') ?? 'Skill Energy (Est)', x => x.dailySkillEnergy, true)
         ])}
       </div>`;
 
@@ -515,7 +520,7 @@
           const effLv = p.perf.level;
           const isUnlocked = effLv >= tierLv;
           const sName = (p.item.subskills && p.item.subskills[slotIdx]) || '--';
-          const locName = (sName !== '--' && window.I18N) ? window.I18N.getSubSkillName(sName) : _tLabStr(sName);
+          const locName = sName !== '--' ? (window.I18N?.getSubSkillName?.(sName) ?? (window.I18N?.text?.(sName) ?? sName)) : '--';
           const tierColor = (sName !== '--' && typeof getSkillTier === 'function') ? getSkillTier(sName) : null;
           let badgeStyle = '';
           if (tierColor === 'gold' || tierColor === 'gold-tier') {
@@ -532,25 +537,25 @@
             badgeStyle += 'opacity:0.42;filter:grayscale(60%);';
           }
 
-          return `<span class="lab-subskill-pill${isUnlocked ? '' : ' locked'}" style="${badgeStyle}" title="${isUnlocked ? '' : _tLab('當前等級未解鎖', 'Locked at this level', isEN)}">${escapeHtml(locName)}${!isUnlocked && sName !== '--' ? _tLab(' [鎖]', ' [Locked]', isEN) : ''}</span>`;
+          return `<span class="lab-subskill-pill${isUnlocked ? '' : ' locked'}" style="${badgeStyle}" title="${isUnlocked ? '' : (window.I18N?.t?.('lab.c_cmp_subskill_locked_title') ?? 'Locked at this level')}">${escapeHtml(locName)}${!isUnlocked && sName !== '--' ? (window.I18N?.t?.('lab.c_cmp_subskill_locked_tag') ?? ' [Locked]') : ''}</span>`;
         })
       };
     });
 
     const natureRow = {
-      label: _tLab('性格配置', 'Nature', isEN),
+      label: window.I18N?.t?.('lab.c_cmp_nature_build') ?? 'Nature',
       higher: null,
       vals: activePlayers.map(() => 0),
       texts: activePlayers.map(p => {
         const isMint = !!(p.item.cleanseMint || p.item.mint);
-        const nName = window.I18N ? window.I18N.getNatureName(p.item.nature) : _tLabStr(p.item.nature);
+        const nName = window.I18N?.getNatureName?.(p.item.nature) ?? (window.I18N?.text?.(p.item.nature) ?? (p.item.nature || ''));
         const nat = isMint ? null : NATURE_DATA.find(n => n.name === p.item.nature || n.name_en === p.item.nature);
         let extra = '';
         if (isMint) {
-          extra = `<span style="font-size:10px;color:var(--accent-color,#38bdf8);">${_tLab('(薄荷中和)', '(Minted)', isEN)}</span>`;
+          extra = `<span style="font-size:10px;color:var(--accent-color,#38bdf8);">${window.I18N?.t?.('lab.c_cmp_minted') ?? '(Minted)'}</span>`;
         } else if (nat && nat.buff && nat.buff !== '無增減') {
-          const buffText = _tLab(nat.buff, nat.buff_en || nat.buff, isEN);
-          const debuffText = _tLab(nat.debuff, nat.debuff_en || nat.debuff, isEN);
+          const buffText = window.I18N?.field?.(nat, 'buff') || nat.buff || '';
+          const debuffText = window.I18N?.field?.(nat, 'debuff') || nat.debuff || '';
           extra = `<span style="font-size:9.5px;color:#10b981;">${escapeHtml(buffText)}</span> <span style="font-size:9.5px;color:#f43f5e;">${escapeHtml(debuffText)}</span>`;
         }
         return `<div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-weight:700;">${escapeHtml(nName)}</span>${extra}</div>`;
@@ -561,7 +566,7 @@
       <div class="lab-compare-kpi-card" id="lab-compare-builds">
         <div class="lab-compare-kpi-head">
           <div class="lab-compare-kpi-title">
-            <span>${_tLab('副技能與性格配置橫向對照', 'Subskills & Nature Build Matchup', isEN)}</span>
+            <span>${window.I18N?.t?.('lab.c_cmp_build_title') ?? 'Subskills & Nature Build Matchup'}</span>
           </div>
         </div>
         ${tableHtml([ ...subskillSlotRows, natureRow ])}
@@ -582,11 +587,11 @@
 
     let distinctIngRowsHtml;
     if (names.length === 0) {
-      distinctIngRowsHtml = `<div style="text-align:center;color:var(--text-muted);padding:14px;font-size:12px;">${_tLab('目前均無解鎖之食材', 'No ingredients unlocked yet', isEN)}</div>`;
+      distinctIngRowsHtml = `<div style="text-align:center;color:var(--text-muted);padding:14px;font-size:12px;">${window.I18N?.t?.('lab.c_cmp_no_ing_unlocked') ?? 'No ingredients unlocked yet'}</div>`;
     } else {
       distinctIngRowsHtml = names.map(n => {
         const vals = aggs.map(a => Math.round((a[n] || 0) * 10) / 10);
-        const nameText = window.I18N ? window.I18N.getIngredientName(n) : _tLabStr(n);
+        const nameText = window.I18N?.getIngredientName?.(n) ?? (window.I18N?.text?.(n) ?? n);
         const icon = (window.I18N && typeof window.I18N.getIngredientIcon === 'function') ? window.I18N.getIngredientIcon(n) : '';
         const holders = vals.filter(v => v > 0).length;
         let badge = '';
@@ -594,12 +599,12 @@
         const topIdx = vals.map((v, i) => (v === top ? i : -1)).filter(i => i >= 0);
         if (holders === 1) {
           const p = activePlayers[vals.findIndex(v => v > 0)];
-          badge = `<span class="lab-compare-kpi-badge" style="background:${p.color}2e;color:${p.color};border:1px solid ${p.color}59;">${p.letter} ${_tLab('獨佔', 'Exclusive', isEN)}</span>`;
+          badge = `<span class="lab-compare-kpi-badge" style="background:${p.color}2e;color:${p.color};border:1px solid ${p.color}59;">${p.letter} ${window.I18N?.t?.('lab.c_cmp_exclusive') ?? 'Exclusive'}</span>`;
         } else if (topIdx.length === 1) {
           const p = activePlayers[topIdx[0]];
-          badge = `<span class="lab-compare-kpi-badge" style="background:${p.color}2e;color:${p.color};border:1px solid ${p.color}59;">${p.letter} ${_tLab('領先', 'Leads', isEN)}</span>`;
+          badge = `<span class="lab-compare-kpi-badge" style="background:${p.color}2e;color:${p.color};border:1px solid ${p.color}59;">${p.letter} ${window.I18N?.t?.('lab.c_cmp_leads') ?? 'Leads'}</span>`;
         } else {
-          badge = `<span class="lab-compare-kpi-badge tie">${_tLab('持平', 'Tie', isEN)}</span>`;
+          badge = `<span class="lab-compare-kpi-badge tie">${window.I18N?.t?.('lab.c_cmp_tie') ?? 'Tie'}</span>`;
         }
         return `
           <div class="lab-compare-distinct-row">
@@ -619,12 +624,12 @@
     const ingredientsHtml = `
       <div class="lab-compare-kpi-card" id="lab-compare-ingredients">
         <div class="lab-compare-kpi-head">
-          <div class="lab-compare-kpi-title"><span>${_tLab('每日食材產量比較', 'Daily Ingredient Yield Comparison', isEN)}</span></div>
+          <div class="lab-compare-kpi-title"><span>${window.I18N?.t?.('lab.c_cmp_ing_title') ?? 'Daily Ingredient Yield Comparison'}</span></div>
           ${leadBadge(ingVals, d => `${Math.round(d * 10) / 10} ${unitIng}`)}
         </div>
         ${barRowsHtml(ingVals, ingVals.map(v => `${v} ${unitIng}`))}
         <div class="lab-compare-distinct-list" style="margin-top:6px;">
-          <div class="lab-compare-distinct-caption" style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">${_tLab('各食材總和產量對照（不同食材獨立比較）：', 'Per-ingredient total yield (each ingredient compared separately):', isEN)}</div>
+          <div class="lab-compare-distinct-caption" style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">${window.I18N?.t?.('lab.c_cmp_per_ing_caption') ?? 'lab.c_cmp_per_ing_caption'}</div>
           ${distinctIngRowsHtml}
         </div>
       </div>`;
@@ -632,30 +637,30 @@
     // ── 5. 技能發動與幫手效能全面對照 ──
     const skillLabel = p => {
       const nm = (p.base && (p.base.main_skill || (p.base.skill && p.base.skill.name))) || p.item.main_skill || '--';
-      const locNm = window.I18N ? window.I18N.getMainSkillName(nm) : _tLabStr(nm);
+      const locNm = window.I18N?.getMainSkillName?.(nm) ?? (window.I18N?.text?.(nm) ?? nm);
       return `${locNm} Lv.${p.item.skillLevel || 1}`;
     };
     const specRows = [
-      { label: _tLab('等級', 'Level', isEN), vals: activePlayers.map(p => p.perf.level), higher: null, texts: activePlayers.map(p => `Lv.${p.perf.level}`) },
-      num(_tLab('幫手週期', 'Help Interval', isEN), x => x.effectiveInterval, false, v => formatSecsToMinSec(v, isEN)),
-      num(_tLab('每日幫手次數', 'Daily Helps', isEN), x => x.dailyHelps, true, v => `${v} ${_tLab('次', '/day', isEN)}`),
-      num(_tLab('食材掉落率', 'Ingredient Rate', isEN), x => Math.round(x.effectiveIngRate * 1000) / 10, true, v => `${v}%`),
-      num(_tLab('每日樹果數量', 'Berries / Day', isEN), x => x.dailyBerryCount, true),
-      num(_tLab('單顆樹果能量', 'Energy / Berry', isEN), x => x.singleBerryPower, true),
-      { label: _tLab('主技能', 'Main Skill', isEN), vals: activePlayers.map(() => 0), higher: null, texts: activePlayers.map(p => skillLabel(p)) },
-      num(_tLab('技能發動率', 'Skill Proc Rate', isEN), x => Math.round(x.effectiveSkillRate * 1000) / 10, true, v => `${v}%`),
-      num(_tLab('技能每日發動次數', 'Skill Procs / Day', isEN), x => x.dailySkillProcs, true, v => `~${v} ${_tLab('次', '/day', isEN)}`),
-      num(_tLab('技能平均發動間隔', 'Avg Proc Interval', isEN), x => (x.dailySkillProcs > 0 ? Math.round((24 / x.dailySkillProcs) * 10) / 10 : 9999), false, v => (v >= 9999 ? '--' : `${v} ${_tLab('小時', 'h', isEN)}`)),
-      num(_tLab('主技能每日能量', 'Skill Energy / Day', isEN), x => x.dailySkillEnergy, true),
-      { label: _tLab('性格', 'Nature', isEN), vals: activePlayers.map(() => 0), higher: null, texts: activePlayers.map(p => {
-        const nName = window.I18N ? window.I18N.getNatureName(p.item.nature) : _tLabStr(p.item.nature);
-        return (p.item.cleanseMint || p.item.mint) ? `${nName}${_tLab(' (薄荷)', ' (Mint)', isEN)}` : nName;
+      { label: window.I18N?.t?.('lab.c_cmp_level') ?? 'Level', vals: activePlayers.map(p => p.perf.level), higher: null, texts: activePlayers.map(p => `Lv.${p.perf.level}`) },
+      num(window.I18N?.t?.('lab.c_cmp_help_period') ?? 'Help Interval', x => x.effectiveInterval, false, v => formatSecsToMinSec(v)),
+      num(window.I18N?.t?.('lab.c_cmp_daily_helps') ?? 'Daily Helps', x => x.dailyHelps, true, v => window.I18N?.t?.('lab.c_cmp_val_helps_day', { v }) ?? `${v} /day`),
+      num(window.I18N?.t?.('lab.c_cmp_ing_rate') ?? 'Ingredient Rate', x => Math.round(x.effectiveIngRate * 1000) / 10, true, v => `${v}%`),
+      num(window.I18N?.t?.('lab.c_cmp_berries_day') ?? 'Berries / Day', x => x.dailyBerryCount, true),
+      num(window.I18N?.t?.('lab.c_cmp_energy_berry') ?? 'Energy / Berry', x => x.singleBerryPower, true),
+      { label: window.I18N?.t?.('lab.c_cmp_main_skill') ?? 'Main Skill', vals: activePlayers.map(() => 0), higher: null, texts: activePlayers.map(p => skillLabel(p)) },
+      num(window.I18N?.t?.('lab.c_cmp_skill_proc_rate') ?? 'Skill Proc Rate', x => Math.round(x.effectiveSkillRate * 1000) / 10, true, v => `${v}%`),
+      num(window.I18N?.t?.('lab.c_cmp_skill_procs_day_row') ?? 'Skill Procs / Day', x => x.dailySkillProcs, true, v => window.I18N?.t?.('lab.c_cmp_val_procs_day', { v }) ?? `~${v} /day`),
+      num(window.I18N?.t?.('lab.c_cmp_avg_proc_interval') ?? 'Avg Proc Interval', x => (x.dailySkillProcs > 0 ? Math.round((24 / x.dailySkillProcs) * 10) / 10 : 9999), false, v => (v >= 9999 ? '--' : (window.I18N?.t?.('lab.c_cmp_hours', { v }) ?? `${v} h`))),
+      num(window.I18N?.t?.('lab.c_cmp_skill_energy_day') ?? 'Skill Energy / Day', x => x.dailySkillEnergy, true),
+      { label: window.I18N?.t?.('lab.c_cmp_nature') ?? 'Nature', vals: activePlayers.map(() => 0), higher: null, texts: activePlayers.map(p => {
+        const nName = window.I18N?.getNatureName?.(p.item.nature) ?? (window.I18N?.text?.(p.item.nature) ?? (p.item.nature || ''));
+        return (p.item.cleanseMint || p.item.mint) ? `${nName}${window.I18N?.t?.('lab.c_cmp_mint_suffix') ?? ' (Mint)'}` : nName;
       }) }
     ];
     const specHtml = `
       <div class="lab-compare-kpi-card lab-compare-matchup-table" id="lab-compare-skills">
         <div class="lab-compare-kpi-head">
-          <div class="lab-compare-kpi-title"><span>${_tLab('技能發動與幫手效能對照', 'Skill Procs, Speed & Specs', isEN)}</span></div>
+          <div class="lab-compare-kpi-title"><span>${window.I18N?.t?.('lab.c_cmp_skills_title') ?? 'Skill Procs, Speed & Specs'}</span></div>
         </div>
         ${tableHtml(specRows)}
       </div>`;
@@ -667,17 +672,19 @@
     const parts = [];
     if (!allEqual(energyVals)) {
       const p = activePlayers[topOf(energyVals)];
-      parts.push(_tLab(`【${pLabel(p)}】每日總能量最高 (${fmt(p.perf.totalDailyEnergy)})，適合衝島嶼分數。`, `${pLabel(p)} has the highest daily energy (${fmt(p.perf.totalDailyEnergy)}).`, isEN));
+      parts.push(window.I18N?.t?.('lab.c_cmp_verdict_energy', { player: pLabel(p), val: fmt(p.perf.totalDailyEnergy) }) ?? 'lab.c_cmp_verdict_energy');
     }
     if (!allEqual(ingVals)) {
       const p = activePlayers[topOf(ingVals)];
-      parts.push(_tLab(`【${pLabel(p)}】食材產量最高 (${p.perf.totalDailyIngredientsCount} ${unitIng})，適合支撐大鍋料理。`, `${pLabel(p)} yields the most ingredients (${p.perf.totalDailyIngredientsCount} ${unitIng}).`, isEN));
+      parts.push(window.I18N?.t?.('lab.c_cmp_verdict_ing', { player: pLabel(p), val: p.perf.totalDailyIngredientsCount, unit: unitIng }) ?? 'lab.c_cmp_verdict_ing');
     }
     if (!allEqual(skillProcVals)) {
       const p = activePlayers[topOf(skillProcVals)];
-      parts.push(_tLab(`【${pLabel(p)}】主技能發動最頻繁 (約 ${p.perf.dailySkillProcs} 次/日)。`, `${pLabel(p)} procs its main skill most often (~${p.perf.dailySkillProcs}/day).`, isEN));
+      parts.push(window.I18N?.t?.('lab.c_cmp_verdict_skill', { player: pLabel(p), val: p.perf.dailySkillProcs }) ?? 'lab.c_cmp_verdict_skill');
     }
-    const verdictSummary = parts.length ? parts.join(_tLab('', ' ', isEN)) : _tLab('所選寶可夢各項表現旗鼓相當，可依營地喜愛樹果與預備料理自行調配。', 'All selected Pokémon are evenly matched.', isEN);
+    const verdictSummary = parts.length
+      ? parts.join(window.I18N?.t?.('lab.c_cmp_verdict_sep') ?? ' ')
+      : (window.I18N?.t?.('lab.c_cmp_verdict_even') ?? 'All selected Pokémon are evenly matched.');
 
     return `
       <div class="lab-compare-view-container">
@@ -690,7 +697,7 @@
         ${specHtml}
         <div class="lab-compare-verdict-card" style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.25);border-radius:10px;padding:14px;">
           <div style="font-size:12.5px;font-weight:800;color:var(--accent-color,#38bdf8);margin-bottom:6px;">
-            ${_tLab('深度研究室對比結論與培育建議', 'Research Lab Comparative Verdict & Advice', isEN)}
+            ${window.I18N?.t?.('lab.c_cmp_verdict_title') ?? 'Research Lab Comparative Verdict & Advice'}
           </div>
           <div style="font-size:12px;color:#e2e8f0;line-height:1.6;">${verdictSummary}</div>
         </div>

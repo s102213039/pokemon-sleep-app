@@ -252,6 +252,9 @@ test('calculateMealEnergyWithFillers integrates recipe level, filler base energy
 // ─── 7. M2 Defensive Typing Fix in lab_team_calc.js ───────────────────────────
 test('simulateTeamPerformance handles truthy non-array objects safely without TypeError', () => {
   global.window = global;
+  const I18N = require('../js/core/i18n.js');
+  global.window.I18N = I18N;
+  I18N.setLanguage('zh-TW');
   const lab = require('../js/modules/appraisal.js');
 
   const emptyRes = lab.simulateTeamPerformance([], 'greengrass');

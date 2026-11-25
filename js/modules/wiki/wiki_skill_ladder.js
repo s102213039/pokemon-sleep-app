@@ -2,20 +2,6 @@
   // 主技能天梯邏輯與控制器 (Main Skill Ladder Controller)
   // =========================================================================
 
-  function _tSkillLadder(zhTw, en) {
-    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') {
-      const lang = window.I18N.getLanguage();
-      if (lang === 'en-US') return en !== undefined ? en : zhTw;
-      if (lang === 'zh-CN' && typeof window.I18N.toSimplified === 'function') return window.I18N.toSimplified(zhTw);
-    }
-    return zhTw;
-  }
-
-  if (typeof window !== 'undefined') {
-    window.WikiSkillLadder = window.WikiSkillLadder || {};
-    window.WikiSkillLadder._tSkillLadder = _tSkillLadder;
-  }
-
   let skillLadderSearchQuery = '';
   let skillLadderTop15Only = true;
   let skillLadderFinalOnly = true;
@@ -580,14 +566,13 @@
       }
     }
 
-    const isEN = typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function' && window.I18N.getLanguage() === 'en-US';
     const trackDef = (typeof SKILL_TRACK_DEFINITIONS !== 'undefined' && Array.isArray(SKILL_TRACK_DEFINITIONS))
       ? SKILL_TRACK_DEFINITIONS.find(t => t.id === trackId)
       : null;
     if (!trackDef) return;
 
-    const trackName = _tSkillLadder(trackDef.name_cn || trackDef.name, trackDef.name_en);
-    const trackDesc = _tSkillLadder(trackDef.desc_cn || trackDef.desc, trackDef.desc_en);
+    const trackName = window.I18N?.t?.(trackDef.nameKey) ?? (window.I18N?.field?.(trackDef, 'name') ?? (trackDef.name_cn || trackDef.name || ''));
+    const trackDesc = window.I18N?.t?.(trackDef.descKey) ?? (window.I18N?.field?.(trackDef, 'desc') ?? (trackDef.desc_cn || trackDef.desc || ''));
     const allPkm = getAllSkillPokemonList();
 
     const matchingPokemon = allPkm.filter(p => {
@@ -637,30 +622,24 @@
         : (specStr.includes('食材') || specStr === 'Ingredients') ? 'ingredient'
         : 'skill';
       const specDisplay = (specKey === 'berry')
-        ? _tSkillLadder('樹果型', 'Berries')
+        ? (window.I18N?.t?.('wiki.ldr_spec_berries') ?? '樹果型')
         : (specKey === 'ingredient')
-          ? _tSkillLadder('食材型', 'Ingredients')
-          : _tSkillLadder('技能型', 'Skills');
+          ? (window.I18N?.t?.('wiki.ldr_spec_ingredients') ?? '食材型')
+          : (window.I18N?.t?.('wiki.ldr_spec_skills') ?? '技能型');
 
       const pkmDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
         ? window.I18N.getPokemonName(p.name_cn || p.name)
-        : _tSkillLadder(p.name_cn || p.name, p.name_en || p.name_cn || p.name);
+        : (window.I18N?.field?.(p, 'name') ?? (p.name_cn || p.name || p.name_en || ''));
       const skillName = p.main_skill || '';
       const skillDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function')
         ? window.I18N.getMainSkillName(skillName)
         : skillName;
       const subInfo = typeof getSkillSubCategoryInfo === 'function'
-        ? getSkillSubCategoryInfo(skillName, trackId, isEN)
+        ? getSkillSubCategoryInfo(skillName, trackId)
         : { subKey: '', subLabel: '', fullLabel: skillDisplayName };
-      let skillFullDisplay = subInfo.fullLabel || skillDisplayName;
-      if (skillFullDisplay) {
-        skillFullDisplay = skillFullDisplay
-          .replace(/(?:[（\(]\s*(?:隨機|随机)\s*[）\)])(?:\s*[（\(]\s*(?:隨機|随机)\s*[）\)])+/g, _tSkillLadder('（隨機）', '(Random)'))
-          .replace(/(?:[（\(]\s*Random\s*[）\)])(?:\s*[（\(]\s*Random\s*[）\)])+/gi, isEN ? '(Random)' : '（Random）')
-          .replace(/(?:[（\(]\s*固定\s*[）\)])(?:\s*[（\(]\s*固定\s*[）\)])+/g, _tSkillLadder('（固定）', '(Fixed)'))
-          .replace(/(?:[（\(]\s*Fixed\s*[）\)])(?:\s*[（\(]\s*Fixed\s*[）\)])+/gi, isEN ? '(Fixed)' : '（Fixed）')
-          .replace(/[（\(]\s*([^）\(\)\s]+(?:\s+[^）\(\)\s]+)*)\s*[）\)](?:\s*[（\(]\s*\1\s*[）\)])+/gi, (m, p1) => isEN ? `(${p1})` : `（${p1}）`);
-      }
+      const skillFullDisplay = typeof sanitizeSkillFullLabel === 'function'
+        ? sanitizeSkillFullLabel(subInfo.fullLabel || skillDisplayName)
+        : (subInfo.fullLabel || skillDisplayName);
       const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 
       return {
@@ -719,7 +698,7 @@
 
     const itemsHTML = rankedList.length === 0 ? `
       <div class="ing-rank-empty">
-        <p>${_tSkillLadder('當前篩選條件下查無符合之寶可夢。', 'No Pokémon matched current skill ladder filter conditions.')}</p>
+        <p>${window.I18N?.t?.('wiki.ldr_skill_rank_empty') ?? '當前篩選條件下查無符合之寶可夢。'}</p>
       </div>
     ` : `
       <div class="ing-rank-list">
@@ -741,9 +720,9 @@
                 </div>
               </div>
               <div class="ing-rank-right" style="flex-shrink:0;margin-left:8px;">
-                <span class="ing-rank-yield-line"><span class="ing-rank-yield-num">${item.displayProcs}</span><span class="ing-rank-yield-unit">${_tSkillLadder(' 次/12h', ' /12h')}</span></span>
-                <span class="ing-rank-split-line" style="font-size:10px;color:var(--text-muted);" title="${_tSkillLadder('最終技能機率 / 日間 12h 幫忙次數', 'Final Skill Rate / 12h Helps')}">
-                  ${item.finalRatePct}% · ${item.helpsDisplay}${_tSkillLadder('次', 'h')}
+                <span class="ing-rank-yield-line"><span class="ing-rank-yield-num">${item.displayProcs}</span><span class="ing-rank-yield-unit">${window.I18N?.t?.('wiki.ldr_skill_procs_unit_short') ?? ' 次/12h'}</span></span>
+                <span class="ing-rank-split-line" style="font-size:10px;color:var(--text-muted);" title="${window.I18N?.t?.('wiki.ldr_skill_rate_helps_title') ?? '最終技能機率 / 日間 12h 幫忙次數'}">
+                  ${item.finalRatePct}% · ${item.helpsDisplay}${window.I18N?.t?.('wiki.ldr_skill_helps_short') ?? '次'}
                 </span>
               </div>
             </div>
@@ -763,11 +742,11 @@
                 </span>
               </div>
               <div class="ing-rank-header-sub">
-                <span>${esc(trackDesc)} · ${_tSkillLadder('Lv.60 滿活力 (0.45x)', 'Lv.60 Ideal Energy (0.45x)')} · ${rankedList.length} ${_tSkillLadder('隻寶可夢', 'Pokémon')}</span>
+                <span>${esc(trackDesc)} · ${window.I18N?.t?.('wiki.ldr_skill_lv60_ideal') ?? 'Lv.60 滿活力 (0.45x)'} · ${rankedList.length} ${window.I18N?.t?.('wiki.ldr_skill_pkm_unit') ?? '隻寶可夢'}</span>
               </div>
             </div>
           </div>
-          <button type="button" class="ing-rank-close-btn" onclick="window.WikiDB.closeSkillRankingModal()" title="${_tSkillLadder('關閉', 'Close')}" aria-label="Close">
+          <button type="button" class="ing-rank-close-btn" onclick="window.WikiDB.closeSkillRankingModal()" title="${window.I18N?.t?.('wiki.ldr_close') ?? '關閉'}" aria-label="Close">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>

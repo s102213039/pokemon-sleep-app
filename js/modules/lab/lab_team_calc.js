@@ -94,7 +94,7 @@
 
   function calculateProjectedSnorlaxRank(weeklyEnergy, islandId) {
     if (typeof weeklyEnergy !== 'number' || isNaN(weeklyEnergy) || !isFinite(weeklyEnergy) || weeklyEnergy <= 0) {
-      return _tLab('普通 1', 'Basic 1');
+      return window.I18N?.t?.('lab.t_rank_basic', { n: 1 }) ?? 'lab.t_rank_basic';
     }
     const key = (islandId || 'greengrass').toLowerCase();
     const tiers = ISLAND_SNORLAX_THRESHOLDS[key] || ISLAND_SNORLAX_THRESHOLDS.greengrass;
@@ -105,44 +105,44 @@
     const m20 = tiers.find(t => t.rank === 'Master 20') || { energy: 3245795 };
 
     if (weeklyEnergy >= m20.energy) {
-      return _tLab('大師 20', 'Master 20');
+      return window.I18N?.t?.('lab.t_rank_master', { n: 20 }) ?? 'lab.t_rank_master';
     }
     if (weeklyEnergy >= m15.energy) {
       const step = (m20.energy - m15.energy) / 5;
       const rankNum = Math.max(15, Math.min(20, 15 + Math.floor((weeklyEnergy - m15.energy) / Math.max(1, step))));
-      return _tLab(`大師 ${rankNum}`, `Master ${rankNum}`);
+      return window.I18N?.t?.('lab.t_rank_master', { n: rankNum }) ?? 'lab.t_rank_master';
     }
     if (weeklyEnergy >= m10.energy) {
       const step = (m15.energy - m10.energy) / 5;
       const rankNum = Math.max(10, Math.min(15, 10 + Math.floor((weeklyEnergy - m10.energy) / Math.max(1, step))));
-      return _tLab(`大師 ${rankNum}`, `Master ${rankNum}`);
+      return window.I18N?.t?.('lab.t_rank_master', { n: rankNum }) ?? 'lab.t_rank_master';
     }
     if (weeklyEnergy >= m5.energy) {
       const step = (m10.energy - m5.energy) / 5;
       const rankNum = Math.max(5, Math.min(10, 5 + Math.floor((weeklyEnergy - m5.energy) / Math.max(1, step))));
-      return _tLab(`大師 ${rankNum}`, `Master ${rankNum}`);
+      return window.I18N?.t?.('lab.t_rank_master', { n: rankNum }) ?? 'lab.t_rank_master';
     }
     if (weeklyEnergy >= m1.energy) {
       const step = (m5.energy - m1.energy) / 4;
       const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - m1.energy) / Math.max(1, step))));
-      return _tLab(`大師 ${rankNum}`, `Master ${rankNum}`);
+      return window.I18N?.t?.('lab.t_rank_master', { n: rankNum }) ?? 'lab.t_rank_master';
     }
     const u1 = tiers.find(t => t.rank === 'Ultra 1') || { energy: 79197 };
     if (weeklyEnergy >= u1.energy) {
       const step = (m1.energy - u1.energy) / 5;
       const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - u1.energy) / Math.max(1, step))));
-      return _tLab(`超級 ${rankNum}`, `Ultra ${rankNum}`);
+      return window.I18N?.t?.('lab.t_rank_ultra', { n: rankNum }) ?? 'lab.t_rank_ultra';
     }
     const g1 = tiers.find(t => t.rank === 'Great 1') || { energy: 23385 };
     if (weeklyEnergy >= g1.energy) {
       const step = (u1.energy - g1.energy) / 5;
       const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - g1.energy) / Math.max(1, step))));
-      return _tLab(`進階 ${rankNum}`, `Great ${rankNum}`);
+      return window.I18N?.t?.('lab.t_rank_great', { n: rankNum }) ?? 'lab.t_rank_great';
     }
     const b1 = tiers.find(t => t.rank === 'Basic 1') || { energy: 0 };
     const step = (g1.energy - b1.energy) / 5;
     const rankNum = Math.max(1, Math.min(5, 1 + Math.floor(weeklyEnergy / Math.max(1, step))));
-    return _tLab(`普通 ${rankNum}`, `Basic ${rankNum}`);
+    return window.I18N?.t?.('lab.t_rank_basic', { n: rankNum }) ?? 'lab.t_rank_basic';
   }
 
   /* ─── 幫手隊伍效益模擬器 (Team Synergy & Output Simulator) ─────────────── */
@@ -158,7 +158,7 @@
         dailyCookingEnergy: 0,
         dailySkillEnergy: 0,
         totalDailyEnergy: 0,
-        projectedSundayRank: _tLab('普通 1', 'Basic 1'),
+        projectedSundayRank: window.I18N?.t?.('lab.t_rank_basic', { n: 1 }) ?? 'lab.t_rank_basic',
         weeklyProjectedEnergy: 0,
         totalDailyIngredientsCount: 0,
         ingredientsMap: {},
@@ -802,34 +802,26 @@
 
     updateLabUI();
     if (showToastNotification && typeof window.showToast === 'function') {
-      const islandName = _tLab(island.name, island.name_en || island.name);
+      const islandName = window.I18N?.getIslandName?.(island.name) ?? (window.I18N?.field?.(island, 'name') || island.name);
       if (strategy === 'recipe' || strategy === 'ingredients') {
         const targetRecipe = findTargetRecipe(labState.targetRecipeName);
-        const rName = (window.I18N && typeof window.I18N.getRecipeName === 'function')
-          ? window.I18N.getRecipeName(targetRecipe)
-          : _tLab(targetRecipe.name_cn || targetRecipe.name, targetRecipe.name_en || targetRecipe.name_cn);
-        window.showToast(_tLab(
-          `已自動為【${islandName}】依目標料理【${rName}】配置單日覆蓋最佳食材陣容！`,
-          `Team optimized for target recipe: ${rName} on ${islandName} (Daily Coverage)!`
-        ));
+        const rName = window.I18N?.getRecipeName?.(targetRecipe) ?? (targetRecipe.name_cn || targetRecipe.name || '');
+        window.showToast(window.I18N?.t?.('lab.t_toast_opt_recipe', { islandName, recipeName: rName }) ?? 'lab.t_toast_opt_recipe');
       } else {
-        const stratNames = {
-          balanced: _tLab('綜合隊', 'Balanced'),
-          berries: _tLab('樹果隊', 'Berry-Focused'),
-          ingredients: _tLab('食材隊', 'Ingredient-Focused'),
-          skills: _tLab('技能隊', 'Skill-Focused')
+        const stratKeyMap = {
+          balanced: 'lab.t_strat_balanced',
+          berries: 'lab.t_strat_berries',
+          ingredients: 'lab.t_strat_ingredients',
+          skills: 'lab.t_strat_skills'
         };
-        const cookNames = {
-          curry: _tLab('咖哩/濃湯', 'Curry'),
-          salad: _tLab('沙拉', 'Salad'),
-          dessert: _tLab('點心/飲料', 'Dessert')
+        const cookKeyMap = {
+          curry: 'lab.t_cook_curry',
+          salad: 'lab.t_cook_salad',
+          dessert: 'lab.t_cook_dessert'
         };
-        const sName = stratNames[strategy] || strategy;
-        const cName = cookNames[cookingType] || cookingType;
-        window.showToast(_tLab(
-          `已自動為【${islandName}】推薦【${sName}】（料理目標：${cName}）！`,
-          `Team optimized: ${sName} on ${islandName} (${cName})!`
-        ));
+        const sName = stratKeyMap[strategy] ? (window.I18N?.t?.(stratKeyMap[strategy]) ?? stratKeyMap[strategy]) : strategy;
+        const cName = cookKeyMap[cookingType] ? (window.I18N?.t?.(cookKeyMap[cookingType]) ?? cookKeyMap[cookingType]) : cookingType;
+        window.showToast(window.I18N?.t?.('lab.t_toast_opt_strat', { islandName, stratName: sName, cookName: cName }) ?? 'lab.t_toast_opt_strat');
       }
     }
   }
@@ -887,8 +879,9 @@
 
     autoOptimizeTeam(autoBuild);
     if (!autoBuild && typeof window !== 'undefined' && typeof window.showToast === 'function') {
-      const berryDisplay = rolled.map(b => (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b) : _tLabStr(b))).join(_tLab('、', ', '));
-      window.showToast(_tLab(`萌綠之島喜愛樹果已隨機刷新：${berryDisplay}！`, `Greengrass favored berries rerolled: ${berryDisplay}`));
+      const sep = window.I18N?.t?.('lab.t_list_sep') ?? ', ';
+      const berryDisplay = rolled.map(b => window.I18N?.getBerryName?.(b) ?? b).join(sep);
+      window.showToast(window.I18N?.t?.('lab.t_toast_reroll_gg', { berries: berryDisplay }) ?? 'lab.t_toast_reroll_gg');
     }
   }
 

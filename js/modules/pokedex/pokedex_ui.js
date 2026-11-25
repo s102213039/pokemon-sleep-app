@@ -54,24 +54,23 @@
 
     function sortableTh(col, label, cls) {
       const parsed = parseTableSort(currentSort);
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       const on = parsed.col === col;
       let arrow = '';
       let aria = 'none';
       let titleTip = '';
       if (on) {
         if (parsed.dir === 'newest') {
-          arrow = _tDex(' (新)', ' (New)');
+          arrow = window.I18N?.t?.('dex.ui_sort_new_tag') ?? ' (新)';
           aria = 'other';
-          titleTip = _tDex('排序：新增寶可夢（新到舊）', 'Sorted: Newest to Oldest');
+          titleTip = window.I18N?.t?.('dex.ui_sort_tip_newest') ?? 'dex.ui_sort_tip_newest';
         } else if (parsed.dir === 'desc') {
           arrow = '▼';
           aria = 'descending';
-          titleTip = _tDex('排序：大到小', 'Sorted: Descending');
+          titleTip = window.I18N?.t?.('dex.ui_sort_tip_desc') ?? 'dex.ui_sort_tip_desc';
         } else {
           arrow = '▲';
           aria = 'ascending';
-          titleTip = _tDex('排序：小到大', 'Sorted: Ascending');
+          titleTip = window.I18N?.t?.('dex.ui_sort_tip_asc') ?? 'dex.ui_sort_tip_asc';
         }
       }
       return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}" ${titleTip ? `title="${titleTip}"` : ''}>${label}${arrow ? `<span class="sort-arrow" aria-hidden="true">${arrow}</span>` : ''}</th>`;
@@ -82,9 +81,8 @@
       try {
         if (typeof updateActiveFilterBadge === 'function') updateActiveFilterBadge();
         const filtered = sortPokemonList(filterData(), currentSort);
-        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
         const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-        if (countBadge) countBadge.textContent = isEN ? `${filtered.length} ${t('pokedex.count_label', 'Pokémon')}` : _tDex(`共 ${filtered.length} 隻寶可夢`, `${filtered.length} Pokémon`);
+        if (countBadge) countBadge.textContent = window.I18N?.t?.('dex.ui_count_fmt', { count: filtered.length }) ?? String(filtered.length);
 
         if (filtered.length === 0) {
           contentArea.innerHTML = `<div style="text-align:center; padding: 60px; color: var(--text-muted); font-size: 16px;">${t('pokedex.no_results', '查無符合條件的寶可夢')}</div>`;
@@ -101,20 +99,19 @@
       } catch (err) {
         console.error('Error in renderUI:', err);
         if (typeof window.__renderInPlaceError === 'function') {
-          window.__renderInPlaceError('content-area', _tDex('圖鑑畫面渲染異常', 'Pokédex render error'), err);
+          window.__renderInPlaceError('content-area', window.I18N?.t?.('dex.ui_render_error') ?? 'dex.ui_render_error', err);
         }
       }
     }
 
     function renderGrid(data) {
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
 
       contentArea.innerHTML = `
         <div class="pokemon-grid">
           ${data.map(p => {
             const iconUrl = getIconUrl(p);
-            const pkmName = (window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : (isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en));
+            const pkmName = window.I18N?.getPokemonName?.(p) ?? (p.name_cn || p.name_en || '');
             const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
             let specClass = 'spec-ingredient';
             const rawSpec = p.specialty || '';
@@ -135,7 +132,7 @@
                 <div class="card-title-group" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">
                   <div class="pokemon-no">No.${p.formatted_no}</div>
                   <div class="pokemon-name" style="white-space:nowrap;">${pkmName}</div>
-                  ${!isEN && p.name_en ? `<div class="pokemon-name-en" style="white-space:nowrap;">${p.name_en}</div>` : ''}
+                  ${p.name_en && pkmName !== p.name_en ? `<div class="pokemon-name-en" style="white-space:nowrap;">${p.name_en}</div>` : ''}
                 </div>
                 <div class="card-header-ingredients">
                   ${p.ingredients ? p.ingredients.map((ing, i) => {
@@ -189,7 +186,6 @@
     }
 
     function renderTable(data) {
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
       const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
       const isShowNo = (typeof PokemonApp !== 'undefined' && PokemonApp.showNo) || (typeof showNo !== 'undefined' && showNo) || false;
@@ -221,7 +217,7 @@
             <tbody>
               ${data.map(p => {
                 const iconUrl = getIconUrl(p);
-                const pkmName = (window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : (isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en));
+                const pkmName = window.I18N?.getPokemonName?.(p) ?? (p.name_cn || p.name_en || '');
                 const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
                 let specClass = 'spec-ingredient';
                 const rawSpec = p.specialty || '';

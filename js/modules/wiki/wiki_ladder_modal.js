@@ -207,19 +207,18 @@
   function renderLadderRecipeModalContent(modalEl) {
     const modal = modalEl || getOverlayEl('ladder-recipe-modal');
     if (!modal) return;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
     // 1. 渲染三大料理分類切換列
     const catBarEl = modal.querySelector('.ladder-recipe-cat-bar');
     if (catBarEl) {
       const categories = [
-        { id: 'curry', name: '咖哩、濃湯', name_en: 'Curry & Stew' },
-        { id: 'salad', name: '沙拉', name_en: 'Salad' },
-        { id: 'dessert', name: '點心、飲料', name_en: 'Dessert & Drinks' }
+        { id: 'curry', key: 'wiki.ldr_cat_curry', fallback: '咖哩、濃湯' },
+        { id: 'salad', key: 'wiki.ldr_cat_salad', fallback: '沙拉' },
+        { id: 'dessert', key: 'wiki.ldr_cat_dessert', fallback: '點心、飲料' }
       ];
       catBarEl.innerHTML = categories.map(cat => {
         const isActive = (ladderRecipeCategory === cat.id);
-        const label = _tWiki(cat.name, cat.name_en);
+        const label = window.I18N?.t?.(cat.key) ?? cat.fallback;
         return `<button type="button" class="ladder-recipe-cat-btn ${isActive ? 'active' : ''}" onclick="window.WikiDB.switchLadderRecipeCategory('${cat.id}')">${label}</button>`;
       }).join('');
     }
@@ -232,12 +231,14 @@
         const isCurrent = isHighlightRecipeSelected(r.name_cn);
         const displayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getRecipeName === 'function')
           ? window.I18N.getRecipeName(r)
-          : _tWiki(r.name_cn, r.name_en);
+          : (window.I18N?.field?.(r, 'name') ?? (r.name_cn || r.name_en || ''));
         const catLabel = r.category === '咖哩'
-          ? _tWiki('咖哩', 'Curry')
+          ? (window.I18N?.t?.('wiki.ldr_badge_curry') ?? '咖哩')
           : (r.category === '沙拉'
-            ? _tWiki('沙拉', 'Salad')
-            : (r.category === '甜點' ? _tWiki('甜點', 'Dessert') : _tWiki(r.category, r.category)));
+            ? (window.I18N?.t?.('wiki.ldr_badge_salad') ?? '沙拉')
+            : (r.category === '甜點'
+              ? (window.I18N?.t?.('wiki.ldr_badge_dessert') ?? '甜點')
+              : (window.I18N?.text?.(r.category) ?? (r.category || ''))));
         const recipeIconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(r.icon) : r.icon) || r.icon;
         return `
           <div class="ladder-recipe-card ${isCurrent ? 'selected' : ''}" onclick="window.WikiDB.selectLadderHighlightRecipe('${r.name_cn}')" role="button" tabindex="0">
@@ -248,19 +249,19 @@
                 <div class="recipe-card-name-row">
                   <span class="recipe-card-name">${displayName}</span>
                   <span class="recipe-card-cat-badge cat-${r.category}">${catLabel}</span>
-                  ${isCurrent ? `<span class="recipe-card-active-pill">${_tWiki('目前選取', 'Active')}</span>` : ''}
+                  ${isCurrent ? `<span class="recipe-card-active-pill">${window.I18N?.t?.('wiki.ldr_active') ?? '目前選取'}</span>` : ''}
                 </div>
                 <div class="recipe-card-energy-row">
                   <span class="recipe-card-energy-num">${r.base_energy.toLocaleString()}</span>
-                  <span class="recipe-card-pot">${_tWiki(`鍋容量 ${r.pot_size}`, `Pot ${r.pot_size}`)}</span>
+                  <span class="recipe-card-pot">${window.I18N?.t?.('wiki.ldr_pot_size', { size: r.pot_size }) ?? `鍋容量 ${r.pot_size}`}</span>
                 </div>
               </div>
             </div>
             <div class="recipe-card-ings-row">
               ${r.ingredients.map(ing => {
                 const ingDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getIngredientName === 'function')
-                  ? (window.I18N.getIngredientName(ing.name) || _tWiki(ing.name, ing.name))
-                  : _tWiki(ing.name, ing.name);
+                  ? (window.I18N.getIngredientName(ing.name) || (window.I18N?.text?.(ing.name) ?? ing.name))
+                  : (window.I18N?.text?.(ing.name) ?? ing.name);
                 const ingIconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon;
                 return `
                   <span class="recipe-card-ing-chip" title="${ingDisplayName}">
@@ -319,15 +320,8 @@
     const ladderPanel = document.getElementById('wiki-subpanel-ladder') || document.getElementById('panel-wiki') || document;
     const btn = (e && (e.currentTarget || e.target))
       || (ladderPanel && typeof ladderPanel.querySelector === 'function' ? ladderPanel.querySelector('.ladder-help-icon-btn') : (typeof document.querySelector === 'function' ? document.querySelector('.ladder-help-icon-btn') : null));
-    const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
-    const isEN = lang === 'en-US';
-    const isCN = lang === 'zh-CN';
-    const title = isEN ? 'Specialty Trigger Multipliers' : (isCN ? '专长发动几率加成' : '專長發動機率加成');
-    const body = isEN
-      ? 'All specialties use a 1.0x trigger baseline.<br>Use Skill Trigger M/S and Skill Chance ▲ to simulate boosts.'
-      : (isCN
-        ? '所有专长皆以 1.0 倍发动几率作为基准。<br>请用技能几率M/S与技能几率▲模拟补正。'
-        : '所有專長皆以 1.0 倍發動機率為基準。<br>請用技能機率M/S與技能機率▲模擬補正。');
+    const title = window.I18N?.t?.('wiki.ldr_skill_draw_help_title') ?? '專長發動機率加成';
+    const body = window.I18N?.t?.('wiki.ldr_skill_draw_help_body') ?? '所有專長皆以 1.0 倍發動機率為基準。<br>請用技能機率M/S與技能機率▲模擬補正。';
 
     if (window.PokemonApp && typeof window.PokemonApp.toggleGlobalTooltip === 'function') {
       window.PokemonApp.toggleGlobalTooltip(btn, title, body);

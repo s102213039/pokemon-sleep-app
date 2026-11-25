@@ -64,9 +64,9 @@ vm.runInContext(concatenatedCode, sandbox);
 
 const UserBox = sandbox.window.UserBox;
 assert(typeof UserBox === 'object', 'UserBox must be exposed on window');
-const { upsertImportedPokemonToBox, _tBox, getMainSkillMaxLevel } = UserBox;
+const { upsertImportedPokemonToBox, getMainSkillMaxLevel } = UserBox;
 assert(typeof upsertImportedPokemonToBox === 'function', 'upsertImportedPokemonToBox must be a function');
-assert(typeof _tBox === 'function', '_tBox must be a function');
+assert(typeof I18N.t === 'function' && typeof I18N.pick === 'function', 'Unified I18N.t and I18N.pick must be functions');
 assert(typeof getMainSkillMaxLevel === 'function', 'getMainSkillMaxLevel must be a function');
 
 // 2. upsertImportedPokemonToBox skips exact duplicates (status: 'skipped')
@@ -134,25 +134,27 @@ runTest('upsertImportedPokemonToBox adds new non-conflicting Pokemon', () => {
   assert(res.entry.createdAt || res.entry.addedAt, 'New entry must have a timestamp');
 });
 
-// 5. _tBox properly outputs zh-TW, zh-CN (Simplified Chinese), and en-US strings
-runTest('_tBox properly outputs zh-TW, zh-CN, and en-US strings', () => {
+// 5. Unified I18N engine properly outputs zh-TW, zh-CN (Simplified Chinese), and en-US strings without module wrappers
+runTest('Unified I18N engine properly outputs zh-TW, zh-CN, and en-US strings', () => {
   let currentLang = 'zh-TW';
   I18N.getLanguage = () => currentLang;
 
-  const twText = '寶可夢倉庫確認';
-  const enText = 'Confirm Pokemon Box';
+  const sampleMap = { 'zh-TW': '寶可夢倉庫確認', 'en-US': 'Confirm Pokemon Box' };
 
   // zh-TW
   currentLang = 'zh-TW';
-  assert.strictEqual(_tBox(twText, enText), '寶可夢倉庫確認', 'Must return Traditional Chinese in zh-TW');
+  assert.strictEqual(I18N.pick(sampleMap), '寶可夢倉庫確認', 'Must return Traditional Chinese in zh-TW');
+  assert.strictEqual(I18N.t('box.ui_th_ing1'), '食1', 'Pre-resolved resource key must return zh-TW');
 
   // zh-CN
   currentLang = 'zh-CN';
-  assert.strictEqual(_tBox(twText, enText), '宝可梦仓库确认', 'Must return Simplified Chinese in zh-CN');
+  assert.strictEqual(I18N.pick(sampleMap), '宝可梦仓库确认', 'Must return Simplified Chinese in zh-CN');
+  assert.strictEqual(I18N.t('box.ui_th_name_nickname'), '宝可梦 / 昵称', 'Pre-resolved resource key must return zh-CN');
 
   // en-US
   currentLang = 'en-US';
-  assert.strictEqual(_tBox(twText, enText), 'Confirm Pokemon Box', 'Must return English in en-US');
+  assert.strictEqual(I18N.pick(sampleMap), 'Confirm Pokemon Box', 'Must return English in en-US');
+  assert.strictEqual(I18N.t('box.ui_th_ing1'), 'Ing 1', 'Pre-resolved resource key must return en-US');
 });
 
 // 6. Authoritative getMainSkillMaxLevel check

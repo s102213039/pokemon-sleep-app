@@ -19,6 +19,14 @@ const I18N_MODULES = [
   'i18n_dict_en_us.js',
   'i18n_entities.js',
   'i18n_t2s.js',
+  'i18n_resources.js',
+  'res_cloud_box.js',
+  'res_recipes_news.js',
+  'res_pokedex.js',
+  'res_wiki_core.js',
+  'res_wiki_ladder.js',
+  'res_lab_core.js',
+  'res_lab_team.js',
   'i18n_core.js'
 ];
 

@@ -4,17 +4,6 @@ const GH_WORKFLOW = 'sync.yml';
 const GH_API_BASE = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}`;
 const GH_PAT_KEY  = 'pksleep_gh_pat';
 
-function _tDex(tw, en) {
-  if (typeof window !== 'undefined' && window.I18N) {
-    if (window.I18N.getLanguage() === 'en-US') return en;
-    if (window.I18N.getLanguage() === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
-      return window.I18N.toSimplified(tw);
-    }
-  }
-  return tw;
-}
-if (typeof window !== 'undefined') window._tDex = _tDex;
-
 const DEFAULT_SVG_ICON = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%2338bdf8"/></svg>';
 
 const SPECIAL_ICON_MAP = {
@@ -434,8 +423,7 @@ function getItemName(p) {
   if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function') {
     return window.I18N.getPokemonName(p) || '';
   }
-  const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-  return isEN ? (p.name_en || p.name_cn || '') : (p.name_cn || p.name_en || '');
+  return p.name_cn || p.name_en || '';
 }
 
 function getItemSpecialty(p) {
@@ -523,11 +511,14 @@ function sortPokemonList(list, sortKey) {
   const getter = col && SORT_GETTERS[col];
   if (!getter) return out;
   const mul = dir === 'desc' ? -1 : 1;
+  const dateLocale = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getDateLocale === 'function')
+    ? window.I18N.getDateLocale()
+    : 'zh-Hant';
   out.sort((a, b) => {
     const valA = getter(a);
     const valB = getter(b);
     if (typeof valA === 'string' && typeof valB === 'string') {
-      const cmp = valA.localeCompare(valB, 'zh-Hant');
+      const cmp = valA.localeCompare(valB, dateLocale);
       if (cmp !== 0) return cmp * mul;
       return getItemNo(a) - getItemNo(b);
     }

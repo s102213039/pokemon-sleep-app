@@ -35,7 +35,7 @@
     } catch (e) {
       console.error('Error rendering Wiki layout:', e);
       if (typeof window.__renderInPlaceError === 'function') {
-        window.__renderInPlaceError('panel-wiki', _tWiki('數據百科佈局渲染異常', 'Wiki layout rendering error'), e);
+        window.__renderInPlaceError('panel-wiki', window.I18N?.t?.('wiki.ui_layout_error') ?? '數據百科佈局渲染異常', e);
       }
     }
 
@@ -71,11 +71,11 @@
   // 渲染副技能標籤
   function renderSkillBadge(skill) {
     if (!skill || !skill.name || skill.name === '-') return '<span class="text-muted">-</span>';
-    const displayName = (window.I18N && typeof window.I18N.getSubSkillName === 'function')
-      ? (window.I18N.getSubSkillName(skill.name) || _tWiki(skill.name, skill.name))
-      : _tWiki(skill.name, skill.name);
+    const displayName = window.I18N?.getSubSkillName?.(skill.name) || (window.I18N?.text?.(skill.name) ?? skill.name);
     const cls = skill.color ? `skill-badge-${skill.color}` : '';
-    const statusNote = skill.status === 'unreleased' ? _tWiki(' <span class="badge-unreleased">(未開放)</span>', ' <span class="badge-unreleased">(Unreleased)</span>') : '';
+    const statusNote = skill.status === 'unreleased'
+      ? ` <span class="badge-unreleased">(${window.I18N?.t?.('wiki.ui_unreleased') ?? '未開放'})</span>`
+      : '';
     return `<span class="wiki-skill-badge ${cls}">${displayName}${statusNote}</span>`;
   }
 
@@ -103,11 +103,11 @@
   }
 
   // 渲染副技能徽章 (支援複合格式 如 "樹果數量S + 持有上限")
-  function renderRatingSubskillBadge(rawName, rawNameEn, isEN) {
+  function renderRatingSubskillBadge(rawName, rawNameEn) {
     if (!rawName) return '';
-    const text = isEN
-      ? (rawNameEn || (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName))
-      : _tWiki(rawName, rawNameEn || rawName);
+    const text = window.I18N?.field?.({ name: rawName, name_en: rawNameEn }, 'name')
+      || window.I18N?.getSubSkillName?.(rawName)
+      || rawName;
     if (text.includes('+')) {
       const parts = text.split('+').map(p => p.trim());
       return parts.map(part => {
@@ -147,10 +147,9 @@
 
   // 渲染專長評級卡片
   function renderRatingCard(data) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const badgeText = _tWiki(data.badge || data.title, data.badge_en || data.badge || data.title_en || data.title);
-    const specText = _tWiki(data.spec || '', data.spec_en || data.spec || '');
-    const desc = _tWiki(data.desc || '', data.desc_en || data.desc || '');
+    const badgeText = window.I18N?.field?.(data, 'badge') || window.I18N?.field?.(data, 'title') || data.badge || data.title || '';
+    const specText = window.I18N?.field?.(data, 'spec') ?? (data.spec || '');
+    const desc = window.I18N?.field?.(data, 'desc') ?? (data.desc || '');
     const type = data.type || 'berry';
     const themeColor = type === 'berry' ? '#f59e0b' : (type === 'ingredient' ? '#06b6d4' : '#a855f7');
 
@@ -166,24 +165,24 @@
         
         <div class="rating-subsections">
           <div class="rating-col">
-            <h4 class="rating-col-title" style="color: ${themeColor};">${_tWiki('副技能推薦梯度', 'Sub-Skill Priority')}</h4>
+            <h4 class="rating-col-title" style="color: ${themeColor};">${window.I18N?.t?.('wiki.ui_rating_subskill_priority') ?? '副技能推薦梯度'}</h4>
             <div class="rating-list">
               ${data.subskills.map(s => {
-                const sDetail = _tWiki(s.detail || '', s.detail_en || s.detail || '');
+                const sDetail = window.I18N?.field?.(s, 'detail') ?? (s.detail || '');
                 return `
                 <div class="rating-item">
-                  <span class="rating-item-badge">${renderRatingSubskillBadge(s.name, s.name_en, isEN)}</span><span class="rating-item-colon">:</span><span class="rating-item-detail text-secondary">${formatRatingDetail(sDetail)}</span>
+                  <span class="rating-item-badge">${renderRatingSubskillBadge(s.name, s.name_en)}</span><span class="rating-item-colon">:</span><span class="rating-item-detail text-secondary">${formatRatingDetail(sDetail)}</span>
                 </div>
               `;}).join('')}
             </div>
           </div>
 
           <div class="rating-col">
-            <h4 class="rating-col-title" style="color: ${themeColor};">${_tWiki('性格推薦梯度', 'Nature Priority')}</h4>
+            <h4 class="rating-col-title" style="color: ${themeColor};">${window.I18N?.t?.('wiki.ui_rating_nature_priority') ?? '性格推薦梯度'}</h4>
             <div class="rating-list">
               ${data.natures.map(n => {
-                const nName = _tWiki(n.name || '', n.name_en || (window.I18N ? window.I18N.getNatureName(n.name) : n.name));
-                const nDetail = _tWiki(n.detail || '', n.detail_en || n.detail || '');
+                const nName = window.I18N?.field?.(n, 'name') || window.I18N?.getNatureName?.(n.name) || n.name || '';
+                const nDetail = window.I18N?.field?.(n, 'detail') ?? (n.detail || '');
                 return `
                 <div class="rating-item">
                   <span class="rating-item-badge">${renderRatingNatureBadge(nName)}</span><span class="rating-item-colon">:</span><span class="rating-item-detail text-secondary">${formatRatingDetail(nDetail)}</span>
@@ -207,27 +206,30 @@
   ];
   const _ladderNoteCache = Object.create(null);
 
-  function formatLadderNote(note, isEN) {
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('appLanguageChanged', () => {
+      for (const k in _ladderNoteCache) delete _ladderNoteCache[k];
+    });
+  }
+
+  function formatLadderNote(note) {
     if (!note) return '';
-    const langKey = (window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : (isEN ? 'en-US' : 'zh-TW');
-    const cacheKey = langKey + ':' + note;
+    const localeKey = window.I18N?.t?.('wiki.ui_locale_tag') ?? 'tw';
+    const cacheKey = localeKey + ':' + note;
     const cached = _ladderNoteCache[cacheKey];
     if (cached !== undefined) return cached;
 
-    let translated = (window.I18N && typeof window.I18N.translateDynamicText === 'function') 
-      ? window.I18N.translateDynamicText(note) 
-      : note;
+    let translated = window.I18N?.text?.(note) ?? window.I18N?.translateDynamicText?.(note) ?? note;
 
     if (window.I18N && typeof window.I18N.getIngredientIcon === 'function') {
-      const toSimp = typeof window.I18N.toSimplified === 'function' ? window.I18N.toSimplified : null;
       for (let i = 0; i < LADDER_NOTE_ING_LIST.length; i++) {
         const ingName = LADDER_NOTE_ING_LIST[i];
-        const simpName = (langKey === 'zh-CN' && toSimp) ? toSimp(ingName) : ingName;
-        const matchToken = translated.includes(simpName) ? simpName : (translated.includes(ingName) ? ingName : '');
+        const localizedIng = window.I18N?.text?.(ingName) ?? ingName;
+        const matchToken = translated.includes(localizedIng) ? localizedIng : (translated.includes(ingName) ? ingName : '');
         if (matchToken) {
           const icon = window.I18N.getIngredientIcon(ingName);
           if (icon) {
-            const displayName = window.I18N.getIngredientName(ingName);
+            const displayName = window.I18N?.getIngredientName?.(ingName) ?? ingName;
             const tag = `<img src="${icon}" class="ladder-note-ing-icon" alt="${displayName}" title="${displayName}">`;
             translated = translated.split(matchToken).join(tag);
           }

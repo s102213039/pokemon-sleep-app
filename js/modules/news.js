@@ -6,16 +6,6 @@
 (function () {
   'use strict';
 
-  function _tNews(tw, en) {
-    if (typeof window !== 'undefined' && window.I18N) {
-      if (window.I18N.getLanguage() === 'en-US') return en;
-      if (window.I18N.getLanguage() === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
-        return window.I18N.toSimplified(tw);
-      }
-    }
-    return tw;
-  }
-
   let allNews = [];
   let currentCategory = 'ALL';
   let searchQuery = '';
@@ -228,15 +218,15 @@
     } catch (err) {
       console.error('Failed to load news.json:', err);
       if (typeof window.__renderInPlaceError === 'function') {
-        window.__renderInPlaceError('news-list-container', _tNews('最新新聞與公告載入失敗 (news.json)', 'Failed to load news and updates (news.json)'), err);
+        window.__renderInPlaceError('news-list-container', window.I18N?.t?.('news.ui_err_load_db') ?? '最新新聞與公告載入失敗 (news.json)', err);
       } else if (newsListContainer) {
         const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
           ? window.DOMUtils.escapeHtml(err.message)
           : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         newsListContainer.innerHTML = `
           <div class="empty-state" style="padding: 40px 20px; text-align: center;">
-            <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">${_tNews('新聞資料載入失敗：', 'Failed to load news data: ')}${safeMsg}</div>
-            <div style="font-size: 13px; color: var(--text-muted);">${_tNews('請稍後重整頁面，或點擊頂部「同步資料」更新最新官方新聞。', 'Please refresh the page later, or click "Sync Data" at the top to fetch the latest official news.')}</div>
+            <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">${window.I18N?.t?.('news.ui_err_load_prefix') ?? '新聞資料載入失敗：'}${safeMsg}</div>
+            <div style="font-size: 13px; color: var(--text-muted);">${window.I18N?.t?.('news.ui_err_load_hint') ?? '請稍後重整頁面，或點擊頂部「同步資料」更新最新官方新聞。'}</div>
           </div>
         `;
       }
@@ -328,8 +318,8 @@
       endCol = Math.max(startCol, Math.min(totalDays, endCol));
       const spanCols = Math.max(1, endCol - startCol + 1);
 
-      const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-      let rawTitle = (isEN && item.title_en) ? item.title_en : _tNews(item.title, item.title_en || item.title);
+      const i18nRef = typeof globalThis !== 'undefined' ? globalThis.I18N : null;
+      let rawTitle = i18nRef?.field?.(item, 'title') ?? (item.title || item.title_en || '');
       let cleanTitle = rawTitle
         .replace(/【[^】]+】|\[[^\]]+\]/g, '')
         .replace(/「|」|“|”/g, '')
@@ -337,94 +327,94 @@
         .trim();
 
       let eventCat = 'event';
-      let typeLabel = _tNews('活動企劃', 'Special Event');
+      let typeLabel = i18nRef?.t?.('news.ui_type_special_event') ?? '活動企劃';
       let typeClass = 'gantt-bar-event';
       let typeColor = '#f97316'; // 暖陽落日橘 (Warm Coral)
 
       const titleLower = (item.title + ' ' + (item.title_en || '')).toLowerCase();
       if (titleLower.includes('快照') || titleLower.includes('snapshot')) {
         eventCat = 'snapshot';
-        typeLabel = isPack ? _tNews('快照同樂包', 'Snapshot Pack') : _tNews('奇跡快照', 'Miracle Snapshot');
+        typeLabel = isPack ? (i18nRef?.t?.('news.ui_type_snapshot_pack') ?? '快照同樂包') : (i18nRef?.t?.('news.ui_type_miracle_snapshot') ?? '奇跡快照');
         typeClass = isPack ? 'gantt-bar-pack' : 'gantt-bar-event';
         typeColor = '#38bdf8'; // 亮天藍 (Sky Blue)
       } else if (titleLower.includes('超夢') || titleLower.includes('mewtwo') || titleLower.includes('秘境')) {
         eventCat = 'mewtwo';
-        typeLabel = _tNews('超夢秘境研究', 'Mewtwo Research');
+        typeLabel = i18nRef?.t?.('news.ui_type_mewtwo_research') ?? '超夢秘境研究';
         typeClass = 'gantt-bar-event';
         typeColor = '#a855f7'; // 霓虹亮紫
       } else if (titleLower.includes('好眠日限定包')) {
         eventCat = 'good-sleep';
-        typeLabel = _tNews('好眠限定包', 'Good Sleep Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_good_sleep_pack') ?? '好眠限定包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#f59e0b'; // 滿月曜石琥珀金
       } else if (titleLower.includes('好眠日') || titleLower.includes('good sleep')) {
         eventCat = 'good-sleep';
-        typeLabel = _tNews('好眠日', 'Good Sleep Day');
+        typeLabel = i18nRef?.t?.('news.ui_type_good_sleep_day') ?? '好眠日';
         typeClass = 'gantt-bar-event';
         typeColor = '#eab308'; // 陽光純金黃
       } else if (titleLower.includes('新月日限定包')) {
         eventCat = 'new-moon';
-        typeLabel = _tNews('新月限定包', 'New Moon Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_new_moon_pack') ?? '新月限定包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#a855f7'; // 霓虹亮紫
       } else if (titleLower.includes('新月日') || titleLower.includes('new moon')) {
         eventCat = 'new-moon';
-        typeLabel = _tNews('新月日', 'New Moon Day');
+        typeLabel = i18nRef?.t?.('news.ui_type_new_moon_day') ?? '新月日';
         typeClass = 'gantt-bar-event';
         typeColor = '#6366f1'; // 宇宙深靛藍
       } else if (titleLower.includes('30週年') || titleLower.includes('30th')) {
         eventCat = 'pack-bundle';
-        typeLabel = _tNews('30週年紀念包', '30th Anniv Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_30th_anniv_pack') ?? '30週年紀念包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#f43f5e'; // 慶典緋紅
       } else if (titleLower.includes('合作紀念包')) {
         eventCat = 'collab';
-        typeLabel = _tNews('合作紀念包', 'Collab Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_collab_pack') ?? '合作紀念包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#0284c7'; // 晴空海藍
       } else if (titleLower.includes('合作') || titleLower.includes('collab') || titleLower.includes('動畫')) {
         eventCat = 'collab';
-        typeLabel = _tNews('合作特企', 'Collab Event');
+        typeLabel = i18nRef?.t?.('news.ui_type_collab_event') ?? '合作特企';
         typeClass = 'gantt-bar-event';
         typeColor = '#ec4899'; // 洋紅亮粉
       } else if (titleLower.includes('小鍛匠')) {
         eventCat = 'pack-growth';
-        typeLabel = _tNews('小鍛匠培育包', 'Tinkatink Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_tinkatink_pack') ?? '小鍛匠培育包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#14b8a6'; // 薄荷青碧
       } else if (titleLower.includes('摔角鷹人')) {
         eventCat = 'pack-growth';
-        typeLabel = _tNews('摔角鷹人培育包', 'Hawlucha Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_hawlucha_pack') ?? '摔角鷹人培育包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#10b981'; // 翡翠翠綠
       } else if (titleLower.includes('培育包') || titleLower.includes('growth')) {
         eventCat = 'pack-growth';
-        typeLabel = _tNews('培育包', 'Growth Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_growth_pack') ?? '培育包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#10b981'; // 翡翠翠綠
       } else if (titleLower.includes('同樂包')) {
         eventCat = 'pack-bundle';
-        typeLabel = _tNews('同樂包', 'Festival Bundle');
+        typeLabel = i18nRef?.t?.('news.ui_type_festival_bundle') ?? '同樂包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#06b6d4'; // 加勒比天青
       } else if (titleLower.includes('嘉年華') || titleLower.includes('festival') || titleLower.includes('夏日') || titleLower.includes('慶典')) {
         eventCat = isPack ? 'pack-bundle' : 'festival';
-        typeLabel = isPack ? _tNews('活動禮包', 'Event Bundle') : _tNews('夏日嘉年華', 'Summer Carnival');
+        typeLabel = isPack ? (i18nRef?.t?.('news.ui_type_event_bundle') ?? '活動禮包') : (i18nRef?.t?.('news.ui_type_summer_carnival') ?? '夏日嘉年華');
         typeClass = isPack ? 'gantt-bar-pack' : 'gantt-bar-event';
         typeColor = isPack ? '#06b6d4' : '#f97316'; // 暖陽落日橘
       } else if (isPack || titleLower.includes('包') || titleLower.includes('bundle') || titleLower.includes('pack')) {
         eventCat = 'pack-bundle';
-        typeLabel = _tNews('活動禮包', 'Event Bundle');
+        typeLabel = i18nRef?.t?.('news.ui_type_event_bundle') ?? '活動禮包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#0284c7'; // 晴空海藍
       } else if (item.badge_key === 'update' || titleLower.includes('更新') || titleLower.includes('維護')) {
         eventCat = 'update';
-        typeLabel = _tNews('版本更新', 'Update');
+        typeLabel = i18nRef?.t?.('news.ui_type_update') ?? '版本更新';
         typeClass = 'gantt-bar-event';
         typeColor = '#f43f5e'; // 薔薇亮紅
       } else {
         eventCat = 'event';
-        typeLabel = _tNews('活動企劃', 'Special Event');
+        typeLabel = i18nRef?.t?.('news.ui_type_special_event') ?? '活動企劃';
         typeClass = 'gantt-bar-event';
         typeColor = '#d946ef'; // 炫彩紫羅蘭
       }
@@ -463,8 +453,6 @@
 
   function renderEventTimeline() {
     if (!newsTimelineContainer) return;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const ganttData = parseEventTimeline(allNews);
     if (ganttData.length === 0) {
       newsTimelineContainer.style.display = 'none';
@@ -499,11 +487,10 @@
       ev.trackIndex = assignedTrack;
     });
 
-    const monthNames = isEN
-      ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-      : ['1 月', '2 月', '3 月', '4 月', '5 月', '6 月', '7 月', '8 月', '9 月', '10 月', '11 月', '12 月'];
-    const monthTitle = isEN ? `${monthNames[calCurrentMonth]} ${calCurrentYear}` : `${calCurrentYear} 年 ${monthNames[calCurrentMonth]}`;
-    const weekdayLabels = isEN ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] : ['日', '一', '二', '三', '四', '五', '六'];
+    const defaultWeekdays = ['日', '一', '二', '三', '四', '五', '六'];
+    const monthName = window.I18N?.t?.(`news.ui_month_${calCurrentMonth + 1}`) ?? `${calCurrentMonth + 1} 月`;
+    const monthTitle = window.I18N?.t?.('news.ui_cal_header', { year: calCurrentYear, monthName }) ?? `${calCurrentYear} 年 ${monthName}`;
+    const weekdayLabels = defaultWeekdays.map((fallback, idx) => window.I18N?.t?.(`news.ui_weekday_${idx}`) ?? fallback);
 
     const firstDayWeekday = new Date(calCurrentYear, calCurrentMonth, 1).getDay();
     const daysInMonth = new Date(calCurrentYear, calCurrentMonth + 1, 0).getDate();
@@ -602,14 +589,14 @@
       selectedEventsHTML = selectedDateEvents.map(ev => {
         let evStatus = '';
         if (_today > ev.endDate) {
-          evStatus = `<span class="news-cal-status-tag status-expired">${_tNews('已結束', 'Ended')}</span>`;
+          evStatus = `<span class="news-cal-status-tag status-expired">${window.I18N?.t?.('news.ui_cal_status_ended') ?? '已結束'}</span>`;
         } else if (_today >= ev.startDate && _today <= ev.endDate) {
-          evStatus = `<span class="news-cal-status-tag status-ongoing">${_tNews('進行中', 'Ongoing')}</span>`;
+          evStatus = `<span class="news-cal-status-tag status-ongoing">${window.I18N?.t?.('news.ui_cal_status_ongoing') ?? '進行中'}</span>`;
         } else {
-          evStatus = `<span class="news-cal-status-tag status-upcoming">${_tNews('即將開始', 'Upcoming')}</span>`;
+          evStatus = `<span class="news-cal-status-tag status-upcoming">${window.I18N?.t?.('news.ui_cal_status_upcoming') ?? '即將開始'}</span>`;
         }
         return `
-        <div class="news-cal-event-item cat-${ev.eventCat} ${_today > ev.endDate ? 'is-expired' : ''}" data-event-id="${ev.id}" data-event-title="${escapeHtml(ev.title)}" title="${_tNews('點擊直接搜尋此活動', 'Click to search this event')}">
+        <div class="news-cal-event-item cat-${ev.eventCat} ${_today > ev.endDate ? 'is-expired' : ''}" data-event-id="${ev.id}" data-event-title="${escapeHtml(ev.title)}" title="${window.I18N?.t?.('news.ui_cal_click_search') ?? '點擊直接搜尋此活動'}">
           <div class="news-cal-event-left">
             <span class="news-cal-event-badge badge-${ev.eventCat}" style="border-left: 3px solid ${ev.typeColor};">${ev.typeLabel}</span>
             <span class="news-cal-event-name">${escapeHtml(ev.title)}</span>
@@ -621,28 +608,32 @@
     } else {
       selectedEventsHTML = `
         <div class="news-cal-empty-hint">
-          ${_tNews('當日暫無進行中的特殊活動或禮包', 'No active events or bundles on this date')}
+          ${window.I18N?.t?.('news.ui_cal_no_events') ?? '當日暫無進行中的特殊活動或禮包'}
         </div>
       `;
     }
 
     const isTodaySelected = (calCurrentYear === _today.getFullYear() && calCurrentMonth === _today.getMonth() && calSelectedDay === _today.getDate());
-    const selectedDateStr = isEN
-      ? `${monthNames[calCurrentMonth]} ${calSelectedDay}${isTodaySelected ? ' (Today)' : ''}`
-      : `${calCurrentMonth + 1}月${calSelectedDay}日${isTodaySelected ? _tNews(' (今日)', ' (Today)') : ''}`;
+    const baseDateStr = window.I18N?.t?.('news.ui_date_md', {
+      month: calCurrentMonth + 1,
+      day: calSelectedDay,
+      monthName
+    }) ?? `${calCurrentMonth + 1}月${calSelectedDay}日`;
+    const todaySuffix = isTodaySelected ? (window.I18N?.t?.('news.ui_today_suffix') ?? ' (今日)') : '';
+    const selectedDateStr = `${baseDateStr}${todaySuffix}`;
 
     newsTimelineContainer.innerHTML = `
       <div class="news-calendar-wrapper">
         <div class="news-calendar-cal-col">
           <div class="news-calendar-top-bar">
             <div class="news-calendar-title-group">
-              <span>${_tNews('活動日曆', 'Event Calendar')}</span>
+              <span>${window.I18N?.t?.('news.ui_cal_title') ?? '活動日曆'}</span>
               <span class="news-calendar-month-text">(${monthTitle})</span>
             </div>
             <div class="news-calendar-nav-group">
-              <button type="button" class="news-calendar-nav-btn prev-btn" title="${_tNews('上個月', 'Previous Month')}">◀</button>
-              <button type="button" class="news-calendar-nav-btn today-btn" title="${_tNews('今日', 'Return to Today')}">${_tNews('今日', 'Today')}</button>
-              <button type="button" class="news-calendar-nav-btn next-btn" title="${_tNews('下個月', 'Next Month')}">▶</button>
+              <button type="button" class="news-calendar-nav-btn prev-btn" title="${window.I18N?.t?.('news.ui_cal_prev') ?? '上個月'}">◀</button>
+              <button type="button" class="news-calendar-nav-btn today-btn" title="${window.I18N?.t?.('news.ui_cal_today_title') ?? '今日'}">${window.I18N?.t?.('news.ui_cal_today') ?? '今日'}</button>
+              <button type="button" class="news-calendar-nav-btn next-btn" title="${window.I18N?.t?.('news.ui_cal_next') ?? '下個月'}">▶</button>
             </div>
           </div>
 
@@ -658,11 +649,11 @@
         <div class="news-calendar-events-box">
           <div class="news-cal-box-title-row">
             <div class="news-cal-box-title-left">
-              <span class="news-cal-box-heading">${selectedDateStr} ${isEN ? 'Active Events' : (isCN ? '进行中的活动与礼包' : '進行中的活動與禮包')}</span>
-              <span class="news-cal-box-count">${selectedDateEvents.length} ${isEN ? 'items' : (isCN ? '项' : '項')}</span>
+              <span class="news-cal-box-heading">${selectedDateStr} ${window.I18N?.t?.('news.ui_cal_active_events') ?? '進行中的活動與禮包'}</span>
+              <span class="news-cal-box-count">${window.I18N?.t?.('news.ui_cal_items_count', { count: selectedDateEvents.length }) ?? `${selectedDateEvents.length} 項`}</span>
             </div>
-            <button type="button" class="news-cal-filter-ongoing-btn ${filterOnlyOngoing ? 'active' : ''}" title="${isEN ? 'Filter card list below to currently ongoing events' : (isCN ? '在下方卡片列表展示所有正在进行的活动' : '在下方卡片列表展示所有正在進行的活動')}">
-              ${filterOnlyOngoing ? (isEN ? '✕ Reset Cards' : (isCN ? '✕ 还原全部卡片' : '✕ 還原全部卡片')) : (isEN ? 'Show in Cards' : (isCN ? '在下方展示进行中活动' : '在下方展示進行中活動'))}
+            <button type="button" class="news-cal-filter-ongoing-btn ${filterOnlyOngoing ? 'active' : ''}" title="${window.I18N?.t?.('news.ui_cal_filter_ongoing_title') ?? '在下方卡片列表展示所有正在進行的活動'}">
+              ${filterOnlyOngoing ? (window.I18N?.t?.('news.ui_cal_reset_cards') ?? '× 還原全部卡片') : (window.I18N?.t?.('news.ui_cal_show_in_cards') ?? '在下方展示進行中活動')}
             </button>
           </div>
           <div class="news-cal-events-scroll-list">
@@ -786,14 +777,12 @@
   /* ─── 初始化分類標籤 ─────────────────────────────────── */
   function initCategoryTags() {
     if (!newsCategoryContainer) return;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const t = (k, def) => (window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t(k, def) : def;
     const labels = {
-      ALL: t('news.cat_all', isEN ? 'All' : '全部'),
-      event: t('news.cat_event', isEN ? 'Events' : (isCN ? '活动' : '活動')),
-      update: t('news.cat_update', isEN ? 'Updates' : '更新'),
-      maintenance: t('news.cat_maintenance', isEN ? 'Maint.' : (isCN ? '维护' : '維護'))
+      ALL: t('news.cat_all', '全部'),
+      event: t('news.cat_event', '活動'),
+      update: t('news.cat_update', '更新'),
+      maintenance: t('news.cat_maintenance', '維護')
     };
 
     // 計算各分類數量 (單次遍歷 O(N))
@@ -806,9 +795,10 @@
     newsCategoryContainer.innerHTML = CATEGORY_MAP.map(cat => {
       const active = cat.key === currentCategory ? 'active' : '';
       const count = counts[cat.key] || 0;
+      const catLabel = labels[cat.key] || window.I18N?.field?.(cat, 'label') || cat.label;
       return `
         <button type="button" class="news-tag-btn ${active}" data-cat="${cat.key}">
-          <span>${labels[cat.key] || _tNews(cat.label, cat.label_en || cat.label)}</span>
+          <span>${catLabel}</span>
           <span class="news-tag-count">${count}</span>
         </button>
       `;
@@ -893,12 +883,9 @@
   }
 
   /* ─── 官方詳細公告展開抽屜渲染器 (Reusable Official Announcement Reader) ─── */
-  function renderFormattedFullContent(item, isEN, isCN) {
-    let content = isEN && item.full_content_en ? item.full_content_en : (item.full_content || item.content_preview || '');
+  function renderFormattedFullContent(item) {
+    const content = window.I18N?.field?.(item, 'full_content') || window.I18N?.field?.(item, 'content_preview') || '';
     if (!content || !content.trim()) return '';
-    if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') {
-      content = window.I18N.toSimplified(content);
-    }
 
     const lines = content.split('\n');
     const htmlChunks = [];
@@ -957,11 +944,25 @@
   }
 
   /* ─── 渲染新聞列表 (折疊式 Accordion 卡片) ─────────────── */
+  const CATEGORY_LABEL_KEYS = {
+    event: 'news.ui_cat_label_event',
+    update: 'news.ui_cat_label_update',
+    maintenance: 'news.ui_cat_label_maintenance',
+    notice: 'news.ui_cat_label_notice'
+  };
+
+  function _resolveNewsPokemonName(p) {
+    const rawName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+      ? window.I18N.getPokemonName(p)
+      : p;
+    return (window.I18N && typeof window.I18N.text === 'function')
+      ? window.I18N.text(rawName)
+      : rawName;
+  }
+
   function renderNews() {
     if (!newsListContainer) return;
     const filtered = getFilteredNews();
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
 
     // 隱藏統計數量列
     if (newsCountBadge) {
@@ -971,8 +972,8 @@
     if (filtered.length === 0) {
       newsListContainer.innerHTML = `
         <div class="empty-state" style="padding: 50px 20px; text-align: center;">
-          <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">${isEN ? 'No matching news or updates found' : (isCN ? '找不到符合的新闻或公告' : '找不到符合的新聞或公告')}</div>
-          <div style="font-size: 13px; color: var(--text-muted);">${isEN ? 'Try different keywords or switch to the "All" category.' : (isCN ? '请尝试更换搜索关键字，或切换至“全部”分类。' : '請嘗試更換搜尋關鍵字，或切換至「全部」分類。')}</div>
+          <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">${window.I18N?.t?.('news.ui_empty_title') ?? '找不到符合的新聞或公告'}</div>
+          <div style="font-size: 13px; color: var(--text-muted);">${window.I18N?.t?.('news.ui_empty_sub') ?? '請嘗試更換搜尋關鍵字，或切換至「全部」分類。'}</div>
         </div>
       `;
       return;
@@ -987,28 +988,18 @@
       if (item.debut_pokemon && item.debut_pokemon.length > 0) {
         debutBannerHTML = `
           <div class="news-debut-banner">
-            <span class="news-debut-label">${isEN ? 'Debut: ' : (isCN ? '新登场：' : '新登場：')}</span>
+            <span class="news-debut-label">${window.I18N?.t?.('news.ui_debut_label') ?? '新登場：'}</span>
             <div class="news-poke-pill-group">
-              ${item.debut_pokemon.map(p => {
-                let pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
-                if (isEN && window.I18N && typeof window.I18N.translateDynamicText === 'function' && /[\u4e00-\u9fff]/.test(pName)) pName = window.I18N.translateDynamicText(pName);
-                if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') pName = window.I18N.toSimplified(pName);
-                return `<span class="news-poke-pill-new">${escapeHtml(pName)}</span>`;
-              }).join('')}
+              ${item.debut_pokemon.map(p => `<span class="news-poke-pill-new">${escapeHtml(_resolveNewsPokemonName(p))}</span>`).join('')}
             </div>
           </div>
         `;
       } else if (item.featured_pokemon && item.featured_pokemon.length > 0 && item.badge_key === 'event') {
         debutBannerHTML = `
           <div class="news-featured-banner">
-            <span class="news-featured-label">${isEN ? 'Focus: ' : (isCN ? '焦点：' : '焦點：')}</span>
+            <span class="news-featured-label">${window.I18N?.t?.('news.ui_featured_label') ?? '焦點：'}</span>
             <div class="news-poke-pill-group">
-              ${item.featured_pokemon.map(p => {
-                let pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
-                if (isEN && window.I18N && typeof window.I18N.translateDynamicText === 'function' && /[\u4e00-\u9fff]/.test(pName)) pName = window.I18N.translateDynamicText(pName);
-                if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') pName = window.I18N.toSimplified(pName);
-                return `<span class="news-poke-pill-featured">${escapeHtml(pName)}</span>`;
-              }).join('')}
+              ${item.featured_pokemon.map(p => `<span class="news-poke-pill-featured">${escapeHtml(_resolveNewsPokemonName(p))}</span>`).join('')}
             </div>
           </div>
         `;
@@ -1021,11 +1012,9 @@
           <div class="news-ai-dashboard">
             <div class="news-ai-sections-grid">
               ${item.sections.map(sec => {
-                let secTitle = isEN ? (sec.title_en || sec.title) : sec.title;
-                if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') {
-                  secTitle = window.I18N.toSimplified(secTitle);
-                }
-                const secItems = isEN && sec.items_en ? sec.items_en : sec.items;
+                const secTitle = window.I18N?.field?.(sec, 'title') ?? (sec.title || '');
+                const rawItems = window.I18N?.field?.(sec, 'items') ?? sec.items;
+                const secItems = Array.isArray(rawItems) ? rawItems : [];
                 const cleanTitle = (secTitle || '').replace(/^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\s]+/u, '').replace(/^[^\w\u4e00-\u9fa5\s]+/, '').trim();
                 return `
                 <div class="news-ai-section-box news-sec-${sec.key || 'general'}">
@@ -1041,7 +1030,8 @@
           </div>
         `;
       } else if (item.highlights && item.highlights.length > 0) {
-        const highlightsList = isEN && item.highlights_en ? item.highlights_en : item.highlights;
+        const rawHighlights = window.I18N?.field?.(item, 'highlights') ?? item.highlights;
+        const highlightsList = Array.isArray(rawHighlights) ? rawHighlights : [];
         aiSectionsHTML = `
           <div class="news-ai-highlights">
             <ul class="news-ai-list">
@@ -1051,19 +1041,8 @@
         `;
       }
 
-      const categoryLabels = {
-        event: isEN ? 'Event' : (isCN ? '活动企划' : '活動企劃'),
-        update: isEN ? 'Update' : (isCN ? '版本更新' : '版本更新'),
-        maintenance: isEN ? 'Maintenance' : (isCN ? '维护公告' : '維護公告'),
-        notice: isEN ? 'Notice' : (isCN ? '重要通知' : '重要通知')
-      };
-
-      let displayTitle = isEN ? (item.title_en || item.title) : item.title;
-      let displayOverview = isEN ? (item.overview_en || item.overview) : item.overview;
-      if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') {
-        displayTitle = window.I18N.toSimplified(displayTitle);
-        displayOverview = window.I18N.toSimplified(displayOverview);
-      }
+      const displayTitle = window.I18N?.field?.(item, 'title') ?? (item.title || '');
+      const displayOverview = window.I18N?.field?.(item, 'overview') ?? (item.overview || '');
 
       const isEvent = item.badge_key === 'event' || (item.title && (item.title.includes('活動') || item.title.includes('企畫') || item.title.includes('企劃') || item.title.includes('快照') || item.title.includes('新月日') || item.title.includes('好眠日') || item.title.includes('秘境') || item.title.includes('超夢') || item.title.includes('夢幻') || item.title.includes('任務')));
       const isPack = (item.title && (item.title.includes('包') || item.title.includes('限定包') || item.title.includes('培育包') || item.title.includes('同樂包') || item.title.includes('紀念包')));
@@ -1083,14 +1062,17 @@
 
       let statusBadgeHTML = '';
       if (timeStatus === 'expired') {
-        statusBadgeHTML = `<span class="news-status-badge status-expired">${isEN ? 'EXPIRED' : (isCN ? '已结束' : '已結束')}</span>`;
+        statusBadgeHTML = `<span class="news-status-badge status-expired">${window.I18N?.t?.('news.ui_status_expired') ?? '已結束'}</span>`;
       } else if (timeStatus === 'ongoing') {
-        statusBadgeHTML = `<span class="news-status-badge status-ongoing">${isEN ? 'ONGOING' : (isCN ? '进行中' : '進行中')}</span>`;
+        statusBadgeHTML = `<span class="news-status-badge status-ongoing">${window.I18N?.t?.('news.ui_status_ongoing') ?? '進行中'}</span>`;
       } else if (timeStatus === 'upcoming') {
-        statusBadgeHTML = `<span class="news-status-badge status-upcoming">${isEN ? 'UPCOMING' : (isCN ? '即将开始' : '即將開始')}</span>`;
+        statusBadgeHTML = `<span class="news-status-badge status-upcoming">${window.I18N?.t?.('news.ui_status_upcoming') ?? '即將開始'}</span>`;
       }
 
-      const badgeLabelText = categoryLabels[item.badge_key] || (isCN && window.I18N && typeof window.I18N.toSimplified === 'function' ? window.I18N.toSimplified(item.badge_label || item.category) : (item.badge_label || item.category)) || _tNews('公告', 'Notice');
+      const catKey = CATEGORY_LABEL_KEYS[item.badge_key];
+      const badgeLabelText = catKey
+        ? (window.I18N?.t?.(catKey) ?? catKey)
+        : (window.I18N?.field?.(item, 'badge_label') || window.I18N?.field?.(item, 'category') || window.I18N?.t?.('news.ui_badge_notice_default') || '公告');
 
       return `
         <article class="news-card news-accordion-card ${isExpanded ? 'expanded' : ''} ${isLatest ? 'news-card-featured' : ''} ${timeStatus === 'expired' ? 'is-expired' : ''}" id="news-${item.id}" data-id="${item.id}">
@@ -1104,7 +1086,7 @@
               ${isLatest ? '<span class="news-latest-tag">NEW</span>' : ''}
             </div>
             <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-official-link-btn" onclick="event.stopPropagation()">
-              <span>${isEN ? 'Official ↗' : (isCN ? '官方原文 ↗' : '官方原文 ↗')}</span>
+              <span>${window.I18N?.t?.('news.ui_official_link') ?? '官方原文 ↗'}</span>
             </a>
           </div>
 
@@ -1239,91 +1221,98 @@
   ];
 
   /* ─── 關鍵字高亮與雙語格式化 ─────────────────────────────────── */
+  function _applyEnNewsFormatting(str) {
+    let processed = str;
+
+    // 1. 執行語句與通用模式替換
+    for (let i = 0; i < GAME_PHRASE_RULES.length; i++) {
+      processed = processed.replace(GAME_PHRASE_RULES[i][0], GAME_PHRASE_RULES[i][1]);
+    }
+
+    // 2. 翻譯營地 / 島嶼名稱
+    for (let i = 0; i < ISLAND_MAP_ENTRIES.length; i++) {
+      const cn = ISLAND_MAP_ENTRIES[i][0];
+      if (processed.includes(cn)) {
+        processed = processed.replaceAll(cn, ISLAND_MAP_ENTRIES[i][1]);
+      }
+    }
+
+    // 3. 翻譯遊戲道具與單位
+    for (let i = 0; i < GAME_ITEM_ENTRIES.length; i++) {
+      const cn = GAME_ITEM_ENTRIES[i][0];
+      if (processed.includes(cn)) {
+        processed = processed.replaceAll(cn, GAME_ITEM_ENTRIES[i][1]);
+      }
+    }
+
+    // 4. 翻譯寶可夢名稱 (長度由長至短依序取代，避免部分覆蓋)
+    if (window.I18N && window.I18N.POKEMON_NAMES) {
+      if (!_sortedNewsPkmNames) {
+        _sortedNewsPkmNames = Object.keys(window.I18N.POKEMON_NAMES).sort((a, b) => b.length - a.length);
+      }
+      const pkmMap = window.I18N.POKEMON_NAMES;
+      for (let i = 0; i < _sortedNewsPkmNames.length; i++) {
+        const cn = _sortedNewsPkmNames[i];
+        if (processed.includes(cn)) {
+          processed = processed.replaceAll(cn, pkmMap[cn]);
+        }
+      }
+    }
+
+    // 5. 標點符號與常見標籤規格化 (無 Emoji)
+    return processed
+      .replaceAll('、', ', ')
+      .replaceAll('：', ': ')
+      .replaceAll('；', '; ')
+      .replaceAll('【機率中幅提升】', '【Greater Appearance Rate】')
+      .replaceAll('【機率大幅提升】', '【Significantly Greater Appearance Rate】')
+      .replaceAll('【機率小幅提升】', '【Slightly Greater Appearance Rate】')
+      .replaceAll('【新登場】', '【New Debut】')
+      .replaceAll('【各營地出現寶可夢一覽】', '【Featured Pokémon by Area】')
+      .replaceAll('【活動時間】', '【Event Period】')
+      .replaceAll('【活動營地】', '【Event Areas】')
+      .replaceAll('【特別任務】', '【Special Missions】')
+      .replaceAll('【活動禮包】', '【Event Bundles】')
+      .replaceAll('【禮包內容】', '【Bundle Contents】')
+      .replaceAll('【販售期間】', '【Sale Period】')
+      .replaceAll('【注意事項】', '【Important Notes】')
+      .replaceAll('【平衡調整】', '【Balance Adjustments】')
+      .replaceAll('【機能追加】', '【New Features】')
+      .replaceAll('【異常修復】', '【Bug Fixes】')
+      .replaceAll('【更新維護】', '【Maintenance】')
+      .replaceAll('【限定任務】', '【Limited-Time Missions】');
+  }
+
+  const NEWS_ITEM_FORMATTERS = {
+    'zh-TW': (s) => s,
+    'zh-CN': (s) => s,
+    'en-US': _applyEnNewsFormatting
+  };
+
   function formatAiListItem(text, item) {
     if (!text) return '';
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN';
     let processed = String(text);
 
     // 移除所有 Emoji 字符
     processed = processed.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}]/gu, '').trim();
 
-    if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') {
-      processed = window.I18N.toSimplified(processed);
+    if (window.I18N && typeof window.I18N.text === 'function') {
+      processed = window.I18N.text(processed);
     }
-
-    if (isEN) {
-      // 0. 優先調用中央 I18N 動態翻譯引擎 (單一來源規範)
-      if (window.I18N && typeof window.I18N.translateDynamicText === 'function') {
-        processed = window.I18N.translateDynamicText(processed);
-      }
-
-      // 1. 執行語句與通用模式替換
-      for (let i = 0; i < GAME_PHRASE_RULES.length; i++) {
-        processed = processed.replace(GAME_PHRASE_RULES[i][0], GAME_PHRASE_RULES[i][1]);
-      }
-
-      // 2. 翻譯營地 / 島嶼名稱
-      for (let i = 0; i < ISLAND_MAP_ENTRIES.length; i++) {
-        const cn = ISLAND_MAP_ENTRIES[i][0];
-        if (processed.includes(cn)) {
-          processed = processed.replaceAll(cn, ISLAND_MAP_ENTRIES[i][1]);
-        }
-      }
-
-      // 3. 翻譯遊戲道具與單位
-      for (let i = 0; i < GAME_ITEM_ENTRIES.length; i++) {
-        const cn = GAME_ITEM_ENTRIES[i][0];
-        if (processed.includes(cn)) {
-          processed = processed.replaceAll(cn, GAME_ITEM_ENTRIES[i][1]);
-        }
-      }
-
-      // 4. 翻譯寶可夢名稱 (長度由長至短依序取代，避免部分覆蓋)
-      if (window.I18N && window.I18N.POKEMON_NAMES) {
-        if (!_sortedNewsPkmNames) {
-          _sortedNewsPkmNames = Object.keys(window.I18N.POKEMON_NAMES).sort((a, b) => b.length - a.length);
-        }
-        const pkmMap = window.I18N.POKEMON_NAMES;
-        for (let i = 0; i < _sortedNewsPkmNames.length; i++) {
-          const cn = _sortedNewsPkmNames[i];
-          if (processed.includes(cn)) {
-            processed = processed.replaceAll(cn, pkmMap[cn]);
-          }
-        }
-      }
-
-      // 5. 標點符號與常見標籤規格化 (無 Emoji)
-      processed = processed
-        .replaceAll('、', ', ')
-        .replaceAll('：', ': ')
-        .replaceAll('；', '; ')
-        .replaceAll('【機率中幅提升】', '【Greater Appearance Rate】')
-        .replaceAll('【機率大幅提升】', '【Significantly Greater Appearance Rate】')
-        .replaceAll('【機率小幅提升】', '【Slightly Greater Appearance Rate】')
-        .replaceAll('【新登場】', '【New Debut】')
-        .replaceAll('【各營地出現寶可夢一覽】', '【Featured Pokémon by Area】')
-        .replaceAll('【活動時間】', '【Event Period】')
-        .replaceAll('【活動營地】', '【Event Areas】')
-        .replaceAll('【特別任務】', '【Special Missions】')
-        .replaceAll('【活動禮包】', '【Event Bundles】')
-        .replaceAll('【禮包內容】', '【Bundle Contents】')
-        .replaceAll('【販售期間】', '【Sale Period】')
-        .replaceAll('【注意事項】', '【Important Notes】')
-        .replaceAll('【平衡調整】', '【Balance Adjustments】')
-        .replaceAll('【機能追加】', '【New Features】')
-        .replaceAll('【異常修復】', '【Bug Fixes】')
-        .replaceAll('【更新維護】', '【Maintenance】')
-        .replaceAll('【限定任務】', '【Limited-Time Missions】');
+    const postFormatter = (window.I18N && typeof window.I18N.pick === 'function')
+      ? window.I18N.pick(NEWS_ITEM_FORMATTERS)
+      : null;
+    if (typeof postFormatter === 'function') {
+      processed = postFormatter(processed);
     }
 
     let formatted = escapeHtml(processed);
 
     // 1. 機率分級標題高亮 (無 Emoji)
-    formatted = formatted.replace(/【\s*(?:機率中幅提升|几率中幅提升|Greater Appearance Rate)(?:\s*(?:新登場|新登场)\/(?:焦點|焦点))?\s*】/g, '<span class="hl-rateup-mid">【' + _tNews('機率中幅提升 新登場/焦點', 'Greater Appearance Rate') + '】</span>');
-    formatted = formatted.replace(/【\s*(?:機率大幅提升|几率大幅提升|Significantly Greater Appearance Rate)(?:\s*(?:超絕UP|超绝UP))?\s*】/g, '<span class="hl-rateup-large">【' + _tNews('機率大幅提升 超絕UP', 'Significantly Greater Appearance Rate') + '】</span>');
-    formatted = formatted.replace(/【\s*(?:機率小幅提升|几率小幅提升|Slightly Greater Appearance Rate)\s*】/g, '<span class="hl-rateup-small">【' + _tNews('機率小幅提升', 'Slightly Greater Appearance Rate') + '】</span>');
-    formatted = formatted.replace(/【\s*(?:新登場|新登场|New Debut)\s*】/g, '<span class="hl-rateup-mid">【' + _tNews('新登場', 'New Debut') + '】</span>');
+    formatted = formatted.replace(/【\s*(?:機率中幅提升|几率中幅提升|Greater Appearance Rate)(?:\s*(?:新登場|新登场)\/(?:焦點|焦点))?\s*】/g, '<span class="hl-rateup-mid">【' + (window.I18N?.t?.('news.ui_hl_rateup_mid') ?? '機率中幅提升 新登場/焦點') + '】</span>');
+    formatted = formatted.replace(/【\s*(?:機率大幅提升|几率大幅提升|Significantly Greater Appearance Rate)(?:\s*(?:超絕UP|超绝UP))?\s*】/g, '<span class="hl-rateup-large">【' + (window.I18N?.t?.('news.ui_hl_rateup_large') ?? '機率大幅提升 超絕UP') + '】</span>');
+    formatted = formatted.replace(/【\s*(?:機率小幅提升|几率小幅提升|Slightly Greater Appearance Rate)\s*】/g, '<span class="hl-rateup-small">【' + (window.I18N?.t?.('news.ui_hl_rateup_small') ?? '機率小幅提升') + '】</span>');
+    formatted = formatted.replace(/【\s*(?:新登場|新登场|New Debut)\s*】/g, '<span class="hl-rateup-mid">【' + (window.I18N?.t?.('news.ui_hl_new_debut') ?? '新登場') + '】</span>');
 
     // 2. 新登場 / 機率中幅提升寶可夢高亮（無 Emoji）
     const debutList = item.debut_pokemon || [];

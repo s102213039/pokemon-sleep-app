@@ -15,6 +15,8 @@ const {
   matchesSelector,
   createMockDocument,
   PokemonApp,
+  I18N,
+  i18nCode,
   getItemIcon,
   getItemId,
   getItemFormattedNo,
@@ -295,15 +297,16 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Sub-skills
 // --- NEW Tier 4 Tests: Real-World Scenarios ---
 
 test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 End-to-End User Journey (Entry -> Dock Nav -> Dex -> Cook -> Wiki -> Box -> News)', () => {
+  const expectedFinalCount = dataset.filter(p => p.is_final === '〇').length;
   PokemonApp.init([...dataset]);
   PokemonApp.onlyFinal = true;
-  assertEquals(PokemonApp.filterData().length, 130, 'Step 1: Pokedex starts with 130 final stage Pokemon');
+  assertEquals(PokemonApp.filterData().length, expectedFinalCount, `Step 1: Pokedex starts with ${expectedFinalCount} final stage Pokemon`);
 
   PokemonApp.currentSearch = '皮卡丘';
   const pikachuMatch = PokemonApp.filterData();
   assert(pikachuMatch.length >= 1, 'Step 2: Found Pikachu in search');
   PokemonApp.currentSearch = '';
-  assertEquals(PokemonApp.filterData().length, 130, 'Step 2: Cleared search restores 130 items');
+  assertEquals(PokemonApp.filterData().length, expectedFinalCount, `Step 2: Cleared search restores ${expectedFinalCount} items`);
 
   const recipes = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'recipes.json'), 'utf8'));
   const curry57 = recipes.filter(r => r.category === '咖哩' && r.pot_size <= 57);
@@ -331,9 +334,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 End-to-End User Jou
 
 
 test('Tier 4 - Real-World Application Scenarios', 'Desktop Baseline User Session Workflow Preservation', () => {
+  const expectedFinalCount = dataset.filter(p => p.is_final === '〇').length;
   PokemonApp.init([...dataset]);
   PokemonApp.onlyFinal = true;
-  assertEquals(PokemonApp.filterData().length, 130, 'Desktop: 130 final stage Pokemon');
+  assertEquals(PokemonApp.filterData().length, expectedFinalCount, `Desktop: ${expectedFinalCount} final stage Pokemon`);
 
   PokemonApp.onlyFinal = false;
   assertEquals(PokemonApp.filterData().length, dataset.length, 'Desktop: all items when onlyFinal=false');
@@ -862,13 +866,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless
   assert(stylesCss.includes('.strategy-header {\n  display: flex;\n  align-items: center;\n  gap: 8px;'), 'CSS must include strategy-header layout');
   assert(stylesCss.includes('.mobile-h5-app .strategy-item {\n  background: transparent !important;\n  border: none !important;'), 'Mobile strategy-item must have transparent background and no borders');
 
-  // 5. Verify milestone table simplification and single-line column control
-  assert(wikiJs.includes("<th class=\"col-milestone-days\">${_tWiki('每天滿睡', 'Daily Full Sleep')}</th>"), 'Milestone table header must be 每天滿睡');
-  assert(wikiJs.includes("<th class=\"col-milestone-exp\">${_tWiki('所需EXP', 'Required EXP')}</th>"), 'Milestone table header must be 所需EXP');
-  assert(wikiJs.includes("<th class=\"col-milestone-note\">${_tWiki('里程碑', 'Milestone')}</th>"), 'Milestone table header must be 里程碑');
+  // 5. Verify milestone table simplification and single-line column control (via pre-resolved I18N resources)
+  assert(wikiJs.includes("col-milestone-days") && wikiJs.includes("'wiki.ui_daily_sleep_th'") && I18N.DICTIONARY['zh-TW']['wiki.ui_daily_sleep_th'] === '每天滿睡', 'Milestone table header must be 每天滿睡');
+  assert(wikiJs.includes("col-milestone-exp") && wikiJs.includes("'wiki.ui_req_exp_th'") && I18N.DICTIONARY['zh-TW']['wiki.ui_req_exp_th'] === '所需EXP', 'Milestone table header must be 所需EXP');
+  assert(wikiJs.includes("col-milestone-note") && wikiJs.includes("'wiki.ui_milestone_th'") && I18N.DICTIONARY['zh-TW']['wiki.ui_milestone_th'] === '里程碑', 'Milestone table header must be 里程碑');
   assert(wikiJs.includes('Lv.${row.level}'), 'Milestone level must not have spaces');
   assert(wikiJs.includes('${row.totalExp.toLocaleString()}</td>'), 'Milestone EXP value must not have EXP suffix text');
-  assert(wikiJs.includes("${row.days} ${_tWiki('天', 'Days')}"), 'Milestone days must not have parentheses');
+  assert(wikiJs.includes("${row.days} ") && !wikiJs.includes("(${row.days}"), 'Milestone days must not have parentheses');
   assert(wikiJs.includes('note: "解鎖第1個副技能"'), 'Milestone note Lv.10 must remove extra comma content');
   assert(wikiJs.includes('note: "解鎖第2個副技能"'), 'Milestone note Lv.25 must remove extra comma content');
   assert(wikiJs.includes('note: "解鎖第2種食材"'), 'Milestone note Lv.30 must remove extra comma content');
@@ -1653,11 +1657,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
   const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
   const cssCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
 
-  // 1. Verify Ribbon Quick Guide displays independent progression (+1, +2, +3, +2)
-  assert(wikiCode.includes("+1 ${_tWiki('持有上限', 'Carry')}"), 'Ribbon Tier 1 must be +1');
-  assert(wikiCode.includes("+2 ${_tWiki('持有', 'Carry')}, ${_tWiki('幫速', 'Speed')} -5% / -11%"), 'Ribbon Tier 2 must be +2');
-  assert(wikiCode.includes("+3 ${_tWiki('持有上限', 'Carry')}"), 'Ribbon Tier 3 must be +3');
-  assert(wikiCode.includes("+2 ${_tWiki('持有', 'Carry')}, ${_tWiki('幫速', 'Speed')} -12% / -25%"), 'Ribbon Tier 4 must be +2');
+  // 1. Verify Ribbon Quick Guide displays independent progression (+1, +2, +3, +2) via pre-resolved I18N resources
+  assert(wikiCode.includes("'wiki.ui_ribbon_200h'") && I18N.DICTIONARY['zh-TW']['wiki.ui_ribbon_200h'] === '+1 持有上限', 'Ribbon Tier 1 must be +1');
+  assert(wikiCode.includes("'wiki.ui_ribbon_500h'") && I18N.DICTIONARY['zh-TW']['wiki.ui_ribbon_500h'] === '+2 持有, 幫速 -5% / -11%', 'Ribbon Tier 2 must be +2');
+  assert(wikiCode.includes("'wiki.ui_ribbon_1000h'") && I18N.DICTIONARY['zh-TW']['wiki.ui_ribbon_1000h'] === '+3 持有上限', 'Ribbon Tier 3 must be +3');
+  assert(wikiCode.includes("'wiki.ui_ribbon_2000h'") && I18N.DICTIONARY['zh-TW']['wiki.ui_ribbon_2000h'] === '+2 持有, 幫速 -12% / -25%', 'Ribbon Tier 4 must be +2');
 
   // 2. Verify CSS defines dropdown styling complying with dropdown arrow rule & custom-select-calc
   assert(cssCode.includes('.calc-select') && cssCode.includes('padding: 9px 36px 9px 12px;'), 'calc-select must have 36px right padding for arrow clearance');

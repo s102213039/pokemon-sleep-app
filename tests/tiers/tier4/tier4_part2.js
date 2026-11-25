@@ -15,6 +15,8 @@ const {
   matchesSelector,
   createMockDocument,
   PokemonApp,
+  I18N,
+  i18nCode,
   getItemIcon,
   getItemId,
   getItemFormattedNo,
@@ -919,17 +921,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   // 3. Setup mock DOM and window environment
   const mockElements = new Map();
 
+  I18N.setLanguage('zh-TW');
   global.window = {
     PokemonApp,
-    I18N: {
-      getLanguage: () => 'zh-TW',
-      t: (k, def) => def,
-      getTypeName: (t) => t,
-      getTypeIconSvg: () => '',
-      getSpecialtyName: (s) => s,
-      getBerryName: (b) => b,
-      getIngredientName: (i) => i
-    },
+    I18N,
     AppraisalLab: {
       evaluatePokemon: (pkm, level, nature, subskills, ings, ribbon) => ({
         compositeScore: 85,
@@ -1854,9 +1849,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appJs.includes('dailyBerryEnergy,'), 'formula return must include dailyBerryEnergy');
     assert(appJs.includes('dailyBerryEnergyFav,'), 'formula return must include dailyBerryEnergyFav');
 
-    // 6. Verify Step 2 berry calculation block is rendered in formula breakdown HTML
-    assert(appJs.includes("'Berry Yield & Energy (12h)'"), 'renderPokedexFormulaBreakdownHTML must include EN berry step header');
-    assert(appJs.includes("'樹果產量與單日能量 (12h)'"), 'renderPokedexFormulaBreakdownHTML must include ZH berry step header');
+    // 6. Verify Step 2 berry calculation block is rendered in formula breakdown HTML (via pre-resolved I18N resources)
+    assert(appJs.includes("'dex.ui_step_berry_title'") && I18N.DICTIONARY['en-US']['dex.ui_step_berry_title'] === 'Berry Yield & Energy (12h)', 'renderPokedexFormulaBreakdownHTML must include EN berry step header');
+    assert(I18N.DICTIONARY['zh-TW']['dex.ui_step_berry_title'] === '樹果產量與單日能量 (12h)', 'renderPokedexFormulaBreakdownHTML must include ZH berry step header');
     assert(appJs.includes('calc-color-berry'), 'renderPokedexFormulaBreakdownHTML must use calc-color-berry class');
     assert(appJs.includes('berry-row-detail'), 'renderPokedexFormulaBreakdownHTML must use berry-row-detail for space-between energy row');
     assert(appJs.includes('berry-detail-left'), 'renderPokedexFormulaBreakdownHTML must use berry-detail-left');
@@ -1864,7 +1859,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
 
 
     // 7. Verify formula title updated to 產能算法精算拆解 (general yield, not just ingredient)
-    assert(appJs.includes("'產能算法精算拆解'"), 'app.js fallback title must be 產能算法精算拆解');
+    assert(appJs.includes("'pokedex.formula_title'"), 'app.js must reference pokedex.formula_title resource key');
     assert(i18nJs.includes("'pokedex.formula_title': '產能算法精算拆解'"), 'i18n zh-TW formula_title must be 產能算法精算拆解');
     assert(i18nJs.includes("'pokedex.formula_title': 'Formula Breakdown'") || i18nJs.includes("'pokedex.formula_title': 'Yield Formula Breakdown'"), 'i18n en-US formula_title must be Formula Breakdown');
 
@@ -1911,6 +1906,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const appCtx = { window: {}, console };
     appCtx.window = appCtx;
     vm.createContext(appCtx);
+    vm.runInContext(i18nCode, appCtx);
     vm.runInContext(appraisalCode, appCtx);
     assert(typeof appCtx.AppraisalLab.isBfsSkillSpecialist === 'function', 'AppraisalLab.isBfsSkillSpecialist must be exported');
     assert(typeof appCtx.AppraisalLab.isHealerSkillSpecialist === 'function', 'AppraisalLab.isHealerSkillSpecialist must be exported');
@@ -2035,17 +2031,20 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     // 1. Verify getPokedexMainSkillYield is exported
     assert(typeof PokemonApp.getPokedexMainSkillYield === 'function', 'PokemonApp.getPokedexMainSkillYield must be a function');
 
-    // 2. Test Ingredient Magnet S (Chinese & English)
-    const ingMagnetCn = PokemonApp.getPokedexMainSkillYield('食材獲取S', 6, 4.5, false);
+    // 2. Test Ingredient Magnet S (Chinese & English via pre-resolved I18N language switch)
+    I18N.setLanguage('zh-TW');
+    const ingMagnetCn = PokemonApp.getPokedexMainSkillYield('食材獲取S', 6, 4.5);
     assert(ingMagnetCn !== null, 'Ingredient Magnet yield must not be null');
     assertEquals(ingMagnetCn.mainSkillLabel, '食材獲取S (Lv.6)', 'Magnet Chinese label');
     assertEquals(ingMagnetCn.mainSkillValueText, '+94.5 顆額外食材', 'Magnet Chinese daily text');
     assertEquals(ingMagnetCn.mainSkillSingleText, '單次 21 顆', 'Magnet Chinese single text');
 
-    const ingMagnetEn = PokemonApp.getPokedexMainSkillYield('食材獲取S', 6, 4.5, true);
+    I18N.setLanguage('en-US');
+    const ingMagnetEn = PokemonApp.getPokedexMainSkillYield('食材獲取S', 6, 4.5);
     assertEquals(ingMagnetEn.mainSkillLabel, 'Magnet S (Lv.6)', 'Magnet English label');
     assertEquals(ingMagnetEn.mainSkillValueText, '+94.5 extra ings', 'Magnet English daily text');
     assertEquals(ingMagnetEn.mainSkillSingleText, 'yield 21 ings', 'Magnet English single text');
+    I18N.setLanguage('zh-TW');
 
     // 3. Test Charge Strength M (Ampharos / Espeon)
     const chargeMCn = PokemonApp.getPokedexMainSkillYield('能量填充M', 7, 5.0, false);
@@ -2771,6 +2770,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const appCtx = { window: {}, console };
     appCtx.window = appCtx;
     vm.createContext(appCtx);
+    vm.runInContext(i18nCode, appCtx);
     vm.runInContext(appraisalCode, appCtx);
 
     const pikachu = dataset.find(p => p.name_cn === '皮卡丘');
@@ -2865,6 +2865,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const appCtx = { window: {}, console };
     appCtx.window = appCtx;
     vm.createContext(appCtx);
+    vm.runInContext(i18nCode, appCtx);
     vm.runInContext(appraisalCode, appCtx);
     vm.runInContext(boxCode, appCtx);
 

@@ -139,7 +139,7 @@
     };
   }
 
-  function evaluateSubskillSeedUpgrades(targetPkm, basePkm, isEN) {
+  function evaluateSubskillSeedUpgrades(targetPkm, basePkm, _unused) {
     if (!targetPkm || !basePkm) return [];
     const subskills = Array.isArray(targetPkm.subskills) ? [...targetPkm.subskills] : [];
     if (subskills.length === 0) return [];
@@ -173,8 +173,8 @@
       const newPR = newEval ? newEval.compositeScore : basePR;
       const deltaPR = Math.max(0, newPR - basePR);
 
-      const fromDisp = window.I18N ? window.I18N.getSubSkillName(skName) : _tLabStr(skName);
-      const toDisp = window.I18N ? window.I18N.getSubSkillName(upgradedName) : _tLabStr(upgradedName);
+      const fromDisp = window.I18N?.getSubSkillName?.(skName) ?? (window.I18N?.text?.(skName) ?? skName);
+      const toDisp = window.I18N?.getSubSkillName?.(upgradedName) ?? (window.I18N?.text?.(upgradedName) ?? upgradedName);
 
       upgradeResults.push({
         slotIndex: idx,
@@ -191,16 +191,17 @@
     return upgradeResults;
   }
 
-  function evaluateMainSkillSeedROI(targetPkm, basePkm, isEN) {
+  function evaluateMainSkillSeedROI(targetPkm, basePkm, _unused) {
     if (!targetPkm || !basePkm) {
+      const noneLabel = window.I18N?.t?.('lab.c_growth_none') ?? 'None';
       return {
-        skillName: _tLab('無', 'None', isEN),
-        skillDisplay: _tLab('無', 'None', isEN),
+        skillName: noneLabel,
+        skillDisplay: noneLabel,
         currentLevel: 1,
         maxLevel: 6,
         seedsNeeded: 0,
         roiGrade: 'C',
-        recommendation: _tLab('暫無主技能資訊。', 'No main skill data.', isEN),
+        recommendation: window.I18N?.t?.('lab.c_growth_no_skill_data') ?? 'No main skill data.',
         gainSummary: ''
       };
     }
@@ -209,8 +210,8 @@
     if (rawSkill && typeof rawSkill === 'object') {
       rawSkill = rawSkill.name || rawSkill.name_cn || rawSkill.name_en || '';
     }
-    const skillName = String(rawSkill || _tLab('主技能', 'Main Skill', isEN));
-    const skillDisp = window.I18N ? window.I18N.getMainSkillName(skillName) : _tLabStr(skillName);
+    const skillName = String(rawSkill || (window.I18N?.t?.('lab.c_growth_main_skill') ?? 'Main Skill'));
+    const skillDisp = window.I18N?.getMainSkillName?.(skillName) ?? (window.I18N?.text?.(skillName) ?? skillName);
     const curSkillLv = parseInt(targetPkm.skillLevel || 1, 10) || 1;
 
     // 主技能上限判定：優先採用主技能等級上限查詢函式，支援 Lv.7 及 Lv.8
@@ -236,64 +237,32 @@
 
     if (hasSkillDebuff) {
       roiGrade = 'C';
-      recommendation = _tLab(
-        '性格減主技能發動機率，嚴重壓低發動期望值，強烈不建議投資金種子。',
-        'Skill Trigger Down nature severely cripples activation frequency. Gold seed investment is not recommended.',
-        isEN
-      );
+      recommendation = window.I18N?.t?.('lab.c_growth_roi_debuff') ?? 'lab.c_growth_roi_debuff';
     } else if (isHealer) {
       if (hasTriggerM || hasSkillBuff) {
         roiGrade = 'S';
-        recommendation = _tLab(
-          '極品高頻補師！滿級主技能單次回復全隊18點活力，全天維持極速產能，值得最高優先級投資金種子。',
-          'Elite team healer with high proc frequency! Maxing main skill sustains full team energy throughout the day.',
-          isEN
-        );
+        recommendation = window.I18N?.t?.('lab.c_growth_roi_healer_s') ?? 'lab.c_growth_roi_healer_s';
       } else {
         roiGrade = 'A';
-        recommendation = _tLab(
-          '隊伍核心補師，升滿主技能能大幅提升全隊續航力，投資性價比極高。',
-          'Core team healer. High investment value to maintain team energy stability.',
-          isEN
-        );
+        recommendation = window.I18N?.t?.('lab.c_growth_roi_healer_a') ?? 'lab.c_growth_roi_healer_a';
       }
     } else if (isSkillSpec) {
       if (hasTriggerM && (hasSkillBuff || hasTriggerS)) {
         roiGrade = 'S';
-        recommendation = _tLab(
-          '極限發動率頂級技能手！副技能與性格高度契合，滿等主技能產能爆發極高，強烈推薦投資。',
-          'Top-tier skill specialist with extreme trigger rates! Gold seeds unleash maximum potential.',
-          isEN
-        );
+        recommendation = window.I18N?.t?.('lab.c_growth_roi_skill_s') ?? 'lab.c_growth_roi_skill_s';
       } else if (hasTriggerM || hasSkillBuff) {
         roiGrade = 'A';
-        recommendation = _tLab(
-          '具備良好技能加成，作為主力隊員時投資金種子效益顯著。',
-          'Solid skill specialist. Recommended investment if this Pokemon is a key roster member.',
-          isEN
-        );
+        recommendation = window.I18N?.t?.('lab.c_growth_roi_skill_a') ?? 'lab.c_growth_roi_skill_a';
       } else {
         roiGrade = 'B';
-        recommendation = _tLab(
-          '發動頻率普通，建議優先將金種子保留給核心補師或頂級神獸。',
-          'Moderate trigger rate. Consider investing only after core healers are maxed.',
-          isEN
-        );
+        recommendation = window.I18N?.t?.('lab.c_growth_roi_skill_b') ?? 'lab.c_growth_roi_skill_b';
       }
     } else if (isHighImpact) {
       roiGrade = 'B';
-      recommendation = _tLab(
-        '實用戰術型技能，在主力隊伍成型後可酌量升級，優先級次於技能專長型。',
-        'Support utility skill. Can be upgraded if resources permit, but lower priority than skill specialists.',
-        isEN
-      );
+      recommendation = window.I18N?.t?.('lab.c_growth_roi_high_impact') ?? 'lab.c_growth_roi_high_impact';
     } else {
       roiGrade = 'C';
-      recommendation = _tLab(
-        '非技能專長個體，主技能升級收益有限，建議保留金種子給專長寶可夢。',
-        'Berry/Ingredient specialist. Skill leveling grants marginal returns; save seeds for dedicated specialists.',
-        isEN
-      );
+      recommendation = window.I18N?.t?.('lab.c_growth_roi_other') ?? 'lab.c_growth_roi_other';
     }
 
     return {
@@ -332,17 +301,15 @@
     return { item: mockItem, base: defaultBase };
   }
 
-  function renderGrowthView(userBox, pokemons, isEN, isMobileH5) {
+  function renderGrowthView(userBox, pokemons, _unused, isMobileH5) {
     const targetObj = getActiveGrowthTarget(userBox, pokemons);
     const targetPkm = targetObj.item;
     const basePkm = targetObj.base;
 
     const baseName = basePkm.name_cn || basePkm.name || targetPkm.name || '';
-    const pDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
-      ? window.I18N.getPokemonName(basePkm)
-      : _tLab(baseName, basePkm.name_en || baseName, isEN);
+    const pDisplayName = window.I18N?.getPokemonName?.(basePkm) ?? (window.I18N?.field?.(basePkm, 'name') || baseName);
     const avatarUrl = (basePkm && (basePkm.icon_url || basePkm.icon)) || (basePkm && basePkm.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${basePkm.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
-    const specDisp = (window.I18N && window.I18N.getSpecialtyName) ? window.I18N.getSpecialtyName(basePkm.specialty) : _tLabStr(basePkm.specialty || '樹果');
+    const specDisp = window.I18N?.getSpecialtyName?.(basePkm.specialty) ?? (window.I18N?.text?.(basePkm.specialty || '樹果') ?? (basePkm.specialty || '樹果'));
 
     const growthCaps = _getGrowthCaps();
     const capLv = growthCaps.POKEMON_LEVEL_CAP || 70;
@@ -388,29 +355,29 @@
     const cost = calculateGrowthCost(growthState.fromLevel, growthState.targetLevel, curveMult, expMod);
 
     // 技能種子評估
-    const subskillUpgrades = evaluateSubskillSeedUpgrades(targetPkm, basePkm, isEN);
-    const mainskillROI = evaluateMainSkillSeedROI(targetPkm, basePkm, isEN);
+    const subskillUpgrades = evaluateSubskillSeedUpgrades(targetPkm, basePkm);
+    const mainskillROI = evaluateMainSkillSeedROI(targetPkm, basePkm);
 
     // 曲線標籤字串
-    const curveLabel = curveMult === 1.5
-      ? _tLab('準神 (1.5倍)', 'Pseudo-Legendary (1.5x)', isEN)
+    const curveKey = curveMult === 1.5
+      ? 'lab.c_growth_curve_pseudo'
       : curveMult === 1.8
-      ? _tLab('神獸 (1.8倍)', 'Legendary (1.8x)', isEN)
+      ? 'lab.c_growth_curve_legendary'
       : curveMult === 3.0
-      ? _tLab('特殊神獸 (3.0倍)', 'Mythical/Special (3.0x)', isEN)
-      : _tLab('一般 (1.0倍)', 'Standard (1.0x)', isEN);
+      ? 'lab.c_growth_curve_mythical'
+      : 'lab.c_growth_curve_standard';
+    const curveLabel = window.I18N?.t?.(curveKey) ?? curveKey;
 
     // 性格 EXP 標籤字串
-    const natureExpLabel = expMod === 'up'
-      ? _tLab('經驗提升 (+18%)', 'EXP Up (+18%)', isEN)
+    const natureExpKey = expMod === 'up'
+      ? 'lab.c_growth_exp_up'
       : expMod === 'down'
-      ? _tLab('經驗下降 (-18%)', 'EXP Down (-18%)', isEN)
-      : _tLab('無修正', 'Neutral', isEN);
+      ? 'lab.c_growth_exp_down'
+      : 'lab.c_growth_exp_neutral';
+    const natureExpLabel = window.I18N?.t?.(natureExpKey) ?? natureExpKey;
 
     const growthNatName = targetPkm.nature || '坦率';
-    const growthNatDisp = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getNatureName === 'function')
-      ? window.I18N.getNatureName(growthNatName)
-      : _tLabStr(growthNatName);
+    const growthNatDisp = window.I18N?.getNatureName?.(growthNatName) ?? (window.I18N?.text?.(growthNatName) ?? growthNatName);
 
     return `
       <div class="lab-growth-container">
@@ -435,7 +402,7 @@
             </div>
           </div>
           <button type="button" class="lab-growth-change-btn" onclick="window.AppraisalLab.openGrowthPicker()">
-            ${_tLab('更換寶可夢', 'Change Pokémon', isEN)}
+            ${window.I18N?.t?.('lab.c_growth_change_pkm') ?? 'Change Pokémon'}
           </button>
         </div>
 
@@ -444,20 +411,20 @@
           <!-- 左欄：培育等級與資源消耗精算 -->
           <div class="lab-growth-card">
             <div class="lab-growth-card-title">
-              <span>${_tLab('培育升級消耗精算', 'Level & Resource Calculator', isEN)}</span>
+              <span>${window.I18N?.t?.('lab.c_growth_calc_title') ?? 'Level & Resource Calculator'}</span>
               <span style="font-size:12px;color:var(--text-secondary);font-weight:normal;">${curveLabel}</span>
             </div>
 
             <!-- 等級滑桿與區間控制 (min="2" max="100") -->
             <div class="lab-growth-level-control">
               <div class="lab-growth-range-display">
-                <span class="lab-growth-range-label">${_tLab('起始等級', 'Current Level', isEN)}</span>
+                <span class="lab-growth-range-label">${window.I18N?.t?.('lab.c_growth_from_level') ?? 'Current Level'}</span>
                 <span class="lab-growth-range-val">Lv.${growthState.fromLevel}</span>
               </div>
               <input type="range" class="lab-growth-slider" min="1" max="${maxLv - 1}" value="${growthState.fromLevel}" oninput="window.AppraisalLab.setGrowthFromLevel(this.value)">
 
               <div class="lab-growth-range-display" style="margin-top:10px;">
-                <span class="lab-growth-range-label">${_tLab('目標等級', 'Target Level', isEN)}</span>
+                <span class="lab-growth-range-label">${window.I18N?.t?.('lab.c_growth_target_level') ?? 'Target Level'}</span>
                 <span class="lab-growth-range-val">Lv.${growthState.targetLevel}</span>
               </div>
               <input type="range" class="lab-growth-slider" min="2" max="${maxLv}" value="${growthState.targetLevel}" oninput="window.AppraisalLab.setGrowthTargetLevel(this.value)">
@@ -473,15 +440,15 @@
             <!-- 消耗總結看板 -->
             <div class="lab-growth-cost-board">
               <div class="lab-growth-cost-cell">
-                <div class="lab-growth-cost-label">${_tLab('所需寶可夢糖果', 'Required Candies', isEN)}</div>
-                <div class="lab-growth-cost-val lab-growth-cost-candies">${cost.candiesNeeded.toLocaleString()} <span style="font-size:12px;color:var(--text-secondary);font-weight:normal;">(${cost.expPerCandy} EXP/${_tLab('顆', 'ea', isEN)})</span></div>
+                <div class="lab-growth-cost-label">${window.I18N?.t?.('lab.c_growth_req_candies') ?? 'Required Candies'}</div>
+                <div class="lab-growth-cost-val lab-growth-cost-candies">${cost.candiesNeeded.toLocaleString()} <span style="font-size:12px;color:var(--text-secondary);font-weight:normal;">${window.I18N?.t?.('lab.c_growth_exp_per_candy', { exp: cost.expPerCandy }) ?? `(${cost.expPerCandy} EXP/ea)`}</span></div>
               </div>
               <div class="lab-growth-cost-cell">
-                <div class="lab-growth-cost-label">${_tLab('所需夢之碎片', 'Required Dream Shards', isEN)}</div>
+                <div class="lab-growth-cost-label">${window.I18N?.t?.('lab.c_growth_req_shards') ?? 'Required Dream Shards'}</div>
                 <div class="lab-growth-cost-val lab-growth-cost-shards">${cost.shardsNeeded.toLocaleString()}</div>
               </div>
               <div class="lab-growth-cost-cell" style="grid-column: 1 / -1;">
-                <div class="lab-growth-cost-label">${_tLab('所需經驗值累計 (EXP)', 'Cumulative Experience', isEN)}</div>
+                <div class="lab-growth-cost-label">${window.I18N?.t?.('lab.c_growth_req_exp') ?? 'Cumulative Experience'}</div>
                 <div class="lab-growth-cost-val lab-growth-cost-exp">${cost.expNeeded.toLocaleString()} EXP</div>
               </div>
             </div>
@@ -489,16 +456,16 @@
             <!-- 萬能糖果換算列 -->
             <div class="lab-growth-handy-bar">
               <div class="lab-growth-handy-item">
-                <span class="lab-growth-handy-name">${_tLab('萬能糖果 S (+3)', 'Handy Candy S (+3)', isEN)}</span>
-                <span class="lab-growth-handy-count">${cost.handyCandyS.toLocaleString()} ${_tLab('顆', 'pcs', isEN)}</span>
+                <span class="lab-growth-handy-name">${window.I18N?.t?.('lab.c_growth_handy_s') ?? 'Handy Candy S (+3)'}</span>
+                <span class="lab-growth-handy-count">${window.I18N?.t?.('lab.c_growth_pcs', { count: cost.handyCandyS.toLocaleString() }) ?? `${cost.handyCandyS.toLocaleString()} pcs`}</span>
               </div>
               <div class="lab-growth-handy-item">
-                <span class="lab-growth-handy-name">${_tLab('萬能糖果 M (+20)', 'Handy Candy M (+20)', isEN)}</span>
-                <span class="lab-growth-handy-count">${cost.handyCandyM.toLocaleString()} ${_tLab('顆', 'pcs', isEN)}</span>
+                <span class="lab-growth-handy-name">${window.I18N?.t?.('lab.c_growth_handy_m') ?? 'Handy Candy M (+20)'}</span>
+                <span class="lab-growth-handy-count">${window.I18N?.t?.('lab.c_growth_pcs', { count: cost.handyCandyM.toLocaleString() }) ?? `${cost.handyCandyM.toLocaleString()} pcs`}</span>
               </div>
               <div class="lab-growth-handy-item">
-                <span class="lab-growth-handy-name">${_tLab('萬能糖果 L (+100)', 'Handy Candy L (+100)', isEN)}</span>
-                <span class="lab-growth-handy-count">${cost.handyCandyL.toLocaleString()} ${_tLab('顆', 'pcs', isEN)}</span>
+                <span class="lab-growth-handy-name">${window.I18N?.t?.('lab.c_growth_handy_l') ?? 'Handy Candy L (+100)'}</span>
+                <span class="lab-growth-handy-count">${window.I18N?.t?.('lab.c_growth_pcs', { count: cost.handyCandyL.toLocaleString() }) ?? `${cost.handyCandyL.toLocaleString()} pcs`}</span>
               </div>
             </div>
           </div>
@@ -506,18 +473,18 @@
           <!-- 右欄：技能種子效益精算 -->
           <div class="lab-growth-card">
             <div class="lab-growth-card-title">
-              <span>${_tLab('技能種子投資效益精算', 'Skill Seeds ROI & Upgrade Analysis', isEN)}</span>
+              <span>${window.I18N?.t?.('lab.c_growth_seed_roi_title') ?? 'Skill Seeds ROI & Upgrade Analysis'}</span>
             </div>
 
             <!-- 1. 銀色技能種子區塊 -->
             <div class="lab-growth-seed-section">
               <div class="lab-growth-seed-title-row">
-                <span style="font-size:13px;font-weight:600;color:var(--text-primary);">${_tLab('銀色技能種子', 'Sub Skill Seed', isEN)}</span>
-                <span class="lab-growth-seed-badge lab-growth-seed-badge-silver">${_tLab('副技能升階', 'Sub-Skills', isEN)}</span>
+                <span style="font-size:13px;font-weight:600;color:var(--text-primary);">${window.I18N?.t?.('lab.c_growth_sub_seed') ?? 'Sub Skill Seed'}</span>
+                <span class="lab-growth-seed-badge lab-growth-seed-badge-silver">${window.I18N?.t?.('lab.c_growth_sub_seed_badge') ?? 'Sub-Skills'}</span>
               </div>
               ${subskillUpgrades.length === 0 ? `
                 <div class="lab-growth-no-subskills">
-                  ${_tLab('無可使用銀色技能種子之副技能（已達上限或無階梯技能）', 'No eligible sub-skills for Sub Skill Seed (already max tier or no ladder skills).', isEN)}
+                  ${window.I18N?.t?.('lab.c_growth_no_sub_upgrades') ?? 'lab.c_growth_no_sub_upgrades'}
                 </div>
               ` : `
                 <div class="lab-growth-subskill-list">
@@ -540,21 +507,21 @@
             <!-- 2. 金色技能種子區塊 -->
             <div class="lab-growth-seed-section" style="margin-bottom:0;">
               <div class="lab-growth-seed-title-row">
-                <span style="font-size:13px;font-weight:600;color:var(--text-primary);">${_tLab('金色技能種子', 'Main Skill Seed', isEN)}</span>
-                <span class="lab-growth-seed-badge lab-growth-seed-badge-gold">${_tLab('主技能突破', 'Main Skill', isEN)}</span>
+                <span style="font-size:13px;font-weight:600;color:var(--text-primary);">${window.I18N?.t?.('lab.c_growth_main_seed') ?? 'Main Skill Seed'}</span>
+                <span class="lab-growth-seed-badge lab-growth-seed-badge-gold">${window.I18N?.t?.('lab.c_growth_main_seed_badge') ?? 'Main Skill'}</span>
               </div>
               <div class="lab-growth-mainskill-box">
                 <div class="lab-growth-mainskill-header">
                   <span class="lab-growth-mainskill-name">${escapeHtml(mainskillROI.skillDisplay)}</span>
-                  <span class="lab-growth-roi-pill lab-growth-roi-${mainskillROI.roiGrade.toLowerCase()}">${_tLab('性價比評級：', 'ROI Rating: ', isEN)}${mainskillROI.roiGrade}</span>
+                  <span class="lab-growth-roi-pill lab-growth-roi-${mainskillROI.roiGrade.toLowerCase()}">${window.I18N?.t?.('lab.c_growth_roi_rating', { grade: mainskillROI.roiGrade }) ?? `ROI Rating: ${mainskillROI.roiGrade}`}</span>
                 </div>
                 <div class="lab-growth-mainskill-detail">
-                  <span>${_tLab('當前等級 -> 上限', 'Current Level -> Max', isEN)}</span>
+                  <span>${window.I18N?.t?.('lab.c_growth_cur_to_max') ?? 'Current Level -> Max'}</span>
                   <span class="lab-growth-mainskill-val">Lv.${mainskillROI.currentLevel} -> Lv.${mainskillROI.maxLevel}</span>
                 </div>
                 <div class="lab-growth-mainskill-detail">
-                  <span>${_tLab('升滿所需金種子', 'Seeds Needed to Max', isEN)}</span>
-                  <span class="lab-growth-mainskill-val">${mainskillROI.seedsNeeded} ${_tLab('顆', 'Seeds', isEN)}</span>
+                  <span>${window.I18N?.t?.('lab.c_growth_seeds_needed') ?? 'Seeds Needed to Max'}</span>
+                  <span class="lab-growth-mainskill-val">${window.I18N?.t?.('lab.c_growth_seeds_unit', { count: mainskillROI.seedsNeeded }) ?? `${mainskillROI.seedsNeeded} Seeds`}</span>
                 </div>
                 <div style="font-size:12px;color:var(--text-secondary);line-height:1.5;background:rgba(15,23,42,0.3);padding:8px 10px;border-radius:6px;">
                   ${escapeHtml(mainskillROI.recommendation)}

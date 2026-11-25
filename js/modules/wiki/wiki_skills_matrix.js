@@ -1,14 +1,3 @@
-  function _tWiki(tw, en) {
-    if (typeof window !== 'undefined' && window.I18N) {
-      const lang = typeof window.I18N.getLanguage === 'function' ? window.I18N.getLanguage() : '';
-      if (lang === 'en-US') return en !== undefined ? en : tw;
-      if (lang === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
-        return window.I18N.toSimplified(tw);
-      }
-    }
-    return tw;
-  }
-
   // 主技能機率矩陣速查表 (副技能 × 性格全排列)
   const TRIGGER_CHANCE_MATRIX = [
     {

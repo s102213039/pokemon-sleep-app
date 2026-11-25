@@ -1,18 +1,19 @@
   const SUPPORTED_LANGS = ['zh-TW', 'zh-CN', 'en-US'];
 
   function initLanguage() {
+    let initialLang = DEFAULT_LANG;
     try {
       const saved = localStorage.getItem(STORAGE_KEY_LANG);
       if (saved && SUPPORTED_LANGS.includes(saved)) {
-        currentLang = saved;
+        initialLang = saved;
       }
     } catch (e) {}
 
+    syncActiveLocale(initialLang);
+
     if (typeof document !== 'undefined' && document.documentElement) {
-      const docLang = currentLang === 'zh-TW' ? 'zh-Hant' : (currentLang === 'zh-CN' ? 'zh-Hans' : 'en');
-      const dataLang = currentLang === 'zh-TW' ? 'zh-TW' : (currentLang === 'zh-CN' ? 'zh-CN' : 'en');
-      document.documentElement.setAttribute('lang', docLang);
-      document.documentElement.setAttribute('data-lang', dataLang);
+      document.documentElement.setAttribute('lang', activeStrategy.docLang);
+      document.documentElement.setAttribute('data-lang', activeStrategy.dataLang);
       const onReady = () => {
         updatePageTranslations();
       };
@@ -30,16 +31,14 @@
 
   function setLanguage(lang) {
     if (!SUPPORTED_LANGS.includes(lang)) return;
-    currentLang = lang;
+    syncActiveLocale(lang);
     try {
-      localStorage.setItem(STORAGE_KEY_LANG, lang);
+      localStorage.setItem(STORAGE_KEY_LANG, activeStrategy.lang);
     } catch (e) {}
 
     if (typeof document !== 'undefined' && document.documentElement) {
-      const docLang = lang === 'zh-TW' ? 'zh-Hant' : (lang === 'zh-CN' ? 'zh-Hans' : 'en');
-      const dataLang = lang === 'zh-TW' ? 'zh-TW' : (lang === 'zh-CN' ? 'zh-CN' : 'en');
-      document.documentElement.setAttribute('lang', docLang);
-      document.documentElement.setAttribute('data-lang', dataLang);
+      document.documentElement.setAttribute('lang', activeStrategy.docLang);
+      document.documentElement.setAttribute('data-lang', activeStrategy.dataLang);
       updatePageTranslations();
     }
 
@@ -123,24 +122,15 @@
     } catch (e) {}
   }
 
-  function lookupBilingualDict(dict, query, lang = currentLang) {
+  function lookupBilingualDict(dict, query, lang) {
     if (!query || !dict) return null;
     const str = String(query).trim();
     if (!str) return '';
-
-    function getResultFromVal(val) {
-      if (typeof val === 'object') {
-        if (lang === 'zh-CN') {
-          return val['zh-CN'] || toSimplifiedChinese(val['zh-TW'] || val['en-US'] || str);
-        }
-        return val[lang] || val['en-US'] || str;
-      }
-      return lang === 'zh-CN' ? toSimplifiedChinese(val) : val;
-    }
+    const strategy = _getStrategy(lang);
 
     // Level 1: 直接精確命中 (Direct Fast Match)
     if (dict[str] !== undefined) {
-      return getResultFromVal(dict[str]);
+      return strategy.resolveLookupVal(dict[str], str);
     }
 
     // 建立或讀取 O(1) 預索引表 (Pre-indexed O(1) Lookup Maps)
@@ -149,20 +139,16 @@
     // Level 2: 標點符號與括號正規化比對 (O(1) Normalized Match)
     const normTarget = normalizeSearchKey(str);
     if (dict.__normIndex && dict.__normIndex[normTarget] !== undefined) {
-      return getResultFromVal(dict.__normIndex[normTarget]);
+      return strategy.resolveLookupVal(dict.__normIndex[normTarget], str);
     }
 
     // Level 3: 緊湊無視空格比對 (O(1) Compact Match without Whitespace)
     const compactTarget = compactSearchKey(str);
     if (dict.__compactIndex && dict.__compactIndex[compactTarget] !== undefined) {
-      return getResultFromVal(dict.__compactIndex[compactTarget]);
+      return strategy.resolveLookupVal(dict.__compactIndex[compactTarget], str);
     }
 
-    if (lang === 'zh-CN') {
-      return toSimplifiedChinese(str);
-    }
-
-    return null;
+    return strategy.fallbackLookup(str);
   }
 
   const _I18N_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
@@ -196,19 +182,22 @@
       .replace(/\{maxIslandMult\}/g, String(maxIslandMult));
   }
 
-  function t(key, fallback = '') {
-    const dict = DICTIONARY[currentLang] || DICTIONARY[DEFAULT_LANG];
-    let res = null;
-    if (dict && dict[key] !== undefined) {
-      res = dict[key];
-    } else if (currentLang === 'zh-CN') {
-      const twVal = DICTIONARY['zh-TW'] && DICTIONARY['zh-TW'][key];
-      if (twVal !== undefined) res = toSimplifiedChinese(twVal);
-      else if (fallback) res = toSimplifiedChinese(fallback);
+  function t(key, paramsOrFallback, fallbackOrParams) {
+    _ensureActiveLocale();
+    let params = null;
+    let fallback = '';
+    if (paramsOrFallback && typeof paramsOrFallback === 'object') {
+      params = paramsOrFallback;
+      if (typeof fallbackOrParams === 'string') fallback = fallbackOrParams;
+    } else {
+      if (typeof paramsOrFallback === 'string') fallback = paramsOrFallback;
+      if (fallbackOrParams && typeof fallbackOrParams === 'object') params = fallbackOrParams;
     }
-    if (res === null) {
-      res = fallback || key;
+    let res = activeDict[key];
+    if (res === undefined) {
+      res = fallback ? activeStrategy.text(fallback) : key;
     }
+    if (params) res = _interpolateParams(res, params);
     return _resolveDynamicCaps(res);
   }
 
@@ -353,7 +342,7 @@
 
   function getRecipeName(rec, lang) {
     if (!rec) return '';
-    const targetLang = lang || currentLang;
+    const strategy = _getStrategy(lang);
     let name_cn = '';
     let name_en = '';
     if (typeof rec === 'object') {
@@ -375,43 +364,41 @@
       }
     }
 
-    const resolvedLang = (typeof targetLang === 'string') ? targetLang.trim() : (currentLang || DEFAULT_LANG);
-    if (resolvedLang === 'en-US' || resolvedLang === 'en') {
-      return name_en || name_cn;
-    }
-    if (resolvedLang === 'zh-CN' || resolvedLang === 'zh-Hans' || resolvedLang === 'cn') {
-      return toSimplifiedChinese(name_cn || name_en);
-    }
-    return name_cn || name_en;
+    return strategy.recipeFromNames(name_cn, name_en);
   }
 
-  function getBerryName(berry, lang = currentLang) {
+  function getBerryName(berry, lang) {
     if (!berry) return '';
     return lookupBilingualDict(BERRY_NAMES, berry, lang) || berry;
   }
 
-  function getNatureName(nat, lang = currentLang) {
+  function getNatureName(nat, lang) {
     if (!nat) return '';
     return lookupBilingualDict(NATURE_NAMES, nat, lang) || nat;
   }
 
-  function getMainSkillName(skill, lang = currentLang) {
+  function getMainSkillName(skill, lang) {
     if (!skill) return '';
-    const res = lookupBilingualDict(MAIN_SKILL_NAMES, skill, lang);
+    const strategy = _getStrategy(lang);
+    const res = lookupBilingualDict(MAIN_SKILL_NAMES, skill, strategy.lang);
     if (res) return res;
 
-    // 支援複合型括號變體 (例如：能量填充S (隨機))
+    // 支援整段括號包覆（如 "(幫手支援S)"）與複合型括號變體（如 "能量填充S (隨機)"）
     const trimmed = String(skill).trim();
+    const outerParen = trimmed.match(/^([(\[（【])([^()\[\]（）【】]+)([)\]）】])$/);
+    if (outerParen) {
+      return `${outerParen[1]}${getMainSkillName(outerParen[2], strategy.lang)}${outerParen[3]}`;
+    }
     const parenMatch = trimmed.match(/^(.+?)\s*([(\[（【].+[)\]）】])$/);
     if (parenMatch) {
-      const baseSkill = getMainSkillName(parenMatch[1], lang);
-      const suffix = lang === 'zh-CN' ? toSimplifiedChinese(parenMatch[2]) : (lang === 'en-US' ? translateDynamicText(parenMatch[2]) : parenMatch[2]);
+      const baseSkill = getMainSkillName(parenMatch[1], strategy.lang);
+      const suffix = strategy.text(parenMatch[2]);
       return `${baseSkill} ${suffix}`;
     }
-    return lang === 'zh-CN' ? toSimplifiedChinese(trimmed) : trimmed;
+    return strategy.fallbackLookup(trimmed) || trimmed;
   }
 
-  const POKEMON_NAMES = {"妙蛙種子":"Bulbasaur","妙蛙草":"Ivysaur","妙蛙花":"Venusaur","小火龍":"Charmander","火恐龍":"Charmeleon","噴火龍":"Charizard","傑尼龜":"Squirtle","卡咪龜":"Wartortle","水箭龜":"Blastoise","綠毛蟲":"Caterpie","鐵甲蛹":"Metapod","巴大蝶":"Butterfree","小拉達":"Rattata","拉達":"Raticate","阿柏蛇":"Ekans","阿柏怪":"Arbok","皮丘":"Pichu","皮卡丘":"Pikachu","皮卡丘（萬聖節）":"Pikachu (Halloween)","皮卡丘（佳節）":"Pikachu (Holiday)","皮卡丘（船長）":"Pikachu (Captain)","雷丘":"Raichu","穿山鼠":"Sandshrew","穿山王":"Sandslash","皮寶寶":"Cleffa","皮皮":"Clefairy","皮可西":"Clefable","六尾":"Vulpix","六尾（阿羅拉的樣子）":"Vulpix (Alolan Form)","九尾":"Ninetales","九尾（阿羅拉的樣子）":"Ninetales (Alolan Form)","寶寶丁":"Igglybuff","胖丁":"Jigglypuff","胖可丁":"Wigglytuff","地鼠":"Diglett","三地鼠":"Dugtrio","喵喵":"Meowth","貓老大":"Persian","可達鴨":"Psyduck","哥達鴨":"Golduck","猴怪":"Mankey","火爆猴":"Primeape","卡蒂狗":"Growlithe","卡蒂狗（洗翠的樣子）":"Growlithe (Hisuian Form)","風速狗":"Arcanine","風速狗（洗翠的樣子）":"Arcanine (Hisuian Form)","喇叭芽":"Bellsprout","口呆花":"Weepinbell","大食花":"Victreebel","小拳石":"Geodude","隆隆石":"Graveler","隆隆岩":"Golem","呆呆獸":"Slowpoke","呆殼獸":"Slowbro","呆呆王":"Slowking","小磁怪":"Magnemite","三合一磁怪":"Magneton","自爆磁怪":"Magnezone","大蔥鴨":"Farfetch'd","嘟嘟":"Doduo","嘟嘟利":"Dodrio","鬼斯":"Gastly","鬼斯通":"Haunter","耿鬼":"Gengar","大岩蛇":"Onix","大鋼蛇":"Steelix","大綱蛇":"Steelix","卡拉卡拉":"Cubone","嘎啦嘎啦":"Marowak","小福蛋":"Happiny","吉利蛋":"Chansey","幸福蛋":"Blissey","袋獸":"Kangaskhan","魔尼尼":"Mime Jr.","魔牆人偶":"Mr. Mime","凱羅斯":"Pinsir","百變怪":"Ditto","伊布":"Eevee","伊布（佳節）":"Eevee (Holiday)","伊布（萬聖節）":"Eevee (Halloween)","伊布家族（8種進化）":"Eevee Evolutions (8 Forms)","伊布家族":"Eevee Evolutions","水伊布":"Vaporeon","雷伊布":"Jolteon","火伊布":"Flareon","太陽伊布":"Espeon","月亮伊布":"Umbreon","葉伊布":"Leafeon","冰伊布":"Glaceon","仙子伊布":"Sylveon","迷你龍":"Dratini","哈克龍":"Dragonair","快龍":"Dragonite","超夢":"Mewtwo","夢幻":"Mew","菊草葉":"Chikorita","月桂葉":"Bayleef","大竺葵":"Meganium","火球鼠":"Cyndaquil","火岩鼠":"Quilava","火爆獸":"Typhlosion","小鋸鱷":"Totodile","藍鱷":"Croconaw","大力鱷":"Feraligatr","波克比":"Togepi","波克基古":"Togetic","波克基斯":"Togekiss","天然雀":"Natu","天然鳥":"Xatu","咩利羊":"Mareep","茸茸羊":"Flaaffy","電龍":"Ampharos","盆才怪":"Bonsly","樹才怪":"Sudowoodo","烏波":"Wooper","烏波（阿羅拉的樣子）":"Wooper (Paldea Form)","烏波（帕底亞的樣子）":"Wooper (Paldea Form)","沼王":"Quagsire","土王":"Clodsire","黑暗鴉":"Murkrow","烏鴉頭頭":"Honchkrow","夢妖":"Misdreavus","夢妖魔":"Mismagius","小果然":"Wynaut","果然翁":"Wobbuffet","壺壺":"Shuckle","赫拉克羅斯":"Heracross","狃拉":"Sneasel","瑪狃拉":"Weavile","信使鳥":"Delibird","戴魯比":"Houndour","黑魯加":"Houndoom","雷公":"Raikou","炎帝":"Entei","水君":"Suicune","幼基拉斯":"Larvitar","沙基拉斯":"Pupitar","班基拉斯":"Tyranitar","木守宮":"Treecko","森林蜥蜴":"Grovyle","蜥蜴王":"Sceptile","火稚雞":"Torchic","力壯雞":"Combusken","火焰雞":"Blaziken","水躍魚":"Mudkip","沼躍魚":"Marshtomp","巨沼怪":"Swampert","拉魯拉絲":"Ralts","奇鲁莉安":"Kirlia","沙奈朵":"Gardevoir","艾路雷朵":"Gallade","懶人獺":"Slakoth","過動猿":"Vigoroth","請假王":"Slaking","勾魂眼":"Sableye","大嘴娃":"Mawile","可可多拉":"Aron","可多拉":"Lairon","波士可多拉":"Aggron","正電拍拍":"Plusle","負電拍拍":"Minun","溶食獸":"Gulpin","吞食獸":"Swalot","大顎蟻":"Trapinch","超音波幼蟲":"Vibrava","沙漠蜻蜓":"Flygon","青綿鳥":"Swablu","七夕青鳥":"Altaria","怨影娃娃":"Shuppet","詛咒娃娃":"Banette","阿勃梭魯":"Absol","海豹球":"Spheal","海豹球（佳節）":"Spheal (Holiday)","海魔獅":"Sealeo","帝牙海獅":"Walrein","寶貝龍":"Bagon","甲殼龍":"Shelgon","暴飛龍":"Salamence","拉帝亞斯":"Latias","拉帝歐斯":"Latios","草苗龜":"Turtwig","樹林龜":"Grotle","土台龜":"Torterra","小火焰猴":"Chimchar","猛火猴":"Monferno","烈焰猴":"Infernape","波加曼":"Piplup","波皇子":"Prinplup","帝王拿波":"Empoleon","小貓怪":"Shinx","勒克貓":"Luxio","倫琴貓":"Luxray","飄飄球":"Drifloon","隨風球":"Drifblim","花岩怪":"Spiritomb","利歐路":"Riolu","路卡利歐":"Lucario","不良蛙":"Croagunk","毒骷蛙":"Toxicroak","雪笠怪":"Snover","暴雪王":"Abomasnow","克雷色利亞":"Cresselia","達克萊伊":"Darkrai","食夢夢":"Munna","夢夢蝕":"Musharna","石居蟹":"Dwebble","岩殿居蟹":"Crustle","毛頭小鷹":"Rufflet","勇士雄鷹":"Braviary","寶寶暴龍":"Tyrunt","怪顎龍":"Tyrantrum","摔角鷹人":"Hawlucha","咚咚鼠":"Dedenne","南瓜精":"Pumpkaboo","南瓜怪人":"Gourgeist","南瓜精 (小顆種)":"Pumpkaboo (Small Variety)","南瓜精 (中顆種)":"Pumpkaboo (Medium Variety)","南瓜精 (大顆種)":"Pumpkaboo (Large Variety)","南瓜精 (巨顆種)":"Pumpkaboo (Jumbo Variety)","南瓜怪人 (小顆種)":"Gourgeist (Small Variety)","南瓜怪人 (中顆種)":"Gourgeist (Medium Variety)","南瓜怪人 (大顆種)":"Gourgeist (Large Variety)","南瓜怪人 (巨顆種)":"Gourgeist (Jumbo Variety)","嗡蝠":"Noibat","音波龍":"Noivern","強顎雞母蟲":"Grubbin","蟲電寶":"Charjabug","鍬農炮蟲":"Vikavolt","萌虻":"Cutiefly","蝶結萌虻":"Ribombee","童偶熊":"Stufful","穿著熊":"Bewear","花療環環":"Comfey","托戈德瑪爾":"Togedemaru","謎擬Q":"Mimikyu","老翁龍":"Drampa","古月鳥":"Cramorant","毒電嬰":"Toxel","顫弦蠑螈（高調的樣子）":"Toxtricity (Amped Form)","顫弦蠑螈（低調的樣子）":"Toxtricity (Low Key Form)","新葉喵":"Sprigatito","蒂蕾喵":"Floragato","魔幻假面喵":"Meowscarada","呆火鱷":"Fuecoco","炙燙鱷":"Crocalor","骨紋巨聲鱷":"Skeledirge","潤水鴨":"Quaxly","湧躍鴨":"Quaxwell","狂歡浪舞鴨":"Quaquaval","布撥":"Pawmi","布土撥":"Pawmo","巴布土撥":"Pawmot","小鍛匠":"Tinkatink","巧鍛匠":"Tinkatuff","巨鍛匠":"Tinkaton","哎呀球菇":"Foongus","敗露球菇":"Amoonguss","走鯨":"Cetoddle","浩大鯨":"Cetitan","木棉球":"Cottonee","風妖精":"Whimsicott"};
+  const POKEMON_NAMES = {"妙蛙種子":"Bulbasaur","妙蛙草":"Ivysaur","妙蛙花":"Venusaur","小火龍":"Charmander","火恐龍":"Charmeleon","噴火龍":"Charizard","傑尼龜":"Squirtle","卡咪龜":"Wartortle","水箭龜":"Blastoise","綠毛蟲":"Caterpie","鐵甲蛹":"Metapod","巴大蝶":"Butterfree","小拉達":"Rattata","拉達":"Raticate","阿柏蛇":"Ekans","阿柏怪":"Arbok","皮丘":"Pichu","皮卡丘":"Pikachu","皮卡丘（萬聖節）":"Pikachu (Halloween)","皮卡丘（佳節）":"Pikachu (Holiday)","皮卡丘（船長）":"Pikachu (Captain)","雷丘":"Raichu","穿山鼠":"Sandshrew","穿山王":"Sandslash","皮寶寶":"Cleffa","皮皮":"Clefairy","皮可西":"Clefable","六尾":"Vulpix","六尾（阿羅拉的樣子）":"Vulpix (Alolan Form)","九尾":"Ninetales","九尾（阿羅拉的樣子）":"Ninetales (Alolan Form)","寶寶丁":"Igglybuff","胖丁":"Jigglypuff","胖可丁":"Wigglytuff","地鼠":"Diglett","三地鼠":"Dugtrio","喵喵":"Meowth","貓老大":"Persian","可達鴨":"Psyduck","哥達鴨":"Golduck","猴怪":"Mankey","火爆猴":"Primeape","卡蒂狗":"Growlithe","卡蒂狗（洗翠的樣子）":"Growlithe (Hisuian Form)","風速狗":"Arcanine","風速狗（洗翠的樣子）":"Arcanine (Hisuian Form)","喇叭芽":"Bellsprout","口呆花":"Weepinbell","大食花":"Victreebel","小拳石":"Geodude","隆隆石":"Graveler","隆隆岩":"Golem","呆呆獸":"Slowpoke","呆殼獸":"Slowbro","呆呆王":"Slowking","小磁怪":"Magnemite","三合一磁怪":"Magneton","自爆磁怪":"Magnezone","大蔥鴨":"Farfetch'd","嘟嘟":"Doduo","嘟嘟利":"Dodrio","鬼斯":"Gastly","鬼斯通":"Haunter","耿鬼":"Gengar","大岩蛇":"Onix","大鋼蛇":"Steelix","大綱蛇":"Steelix","卡拉卡拉":"Cubone","嘎啦嘎啦":"Marowak","小福蛋":"Happiny","吉利蛋":"Chansey","幸福蛋":"Blissey","袋獸":"Kangaskhan","魔尼尼":"Mime Jr.","魔牆人偶":"Mr. Mime","凱羅斯":"Pinsir","百變怪":"Ditto","伊布":"Eevee","伊布（佳節）":"Eevee (Holiday)","伊布（萬聖節）":"Eevee (Halloween)","伊布家族（8種進化）":"Eevee Evolutions (8 Forms)","伊布家族":"Eevee Evolutions","水伊布":"Vaporeon","雷伊布":"Jolteon","火伊布":"Flareon","太陽伊布":"Espeon","月亮伊布":"Umbreon","葉伊布":"Leafeon","冰伊布":"Glaceon","仙子伊布":"Sylveon","迷你龍":"Dratini","哈克龍":"Dragonair","快龍":"Dragonite","超夢":"Mewtwo","夢幻":"Mew","菊草葉":"Chikorita","月桂葉":"Bayleef","大竺葵":"Meganium","火球鼠":"Cyndaquil","火岩鼠":"Quilava","火爆獸":"Typhlosion","小鋸鱷":"Totodile","藍鱷":"Croconaw","大力鱷":"Feraligatr","波克比":"Togepi","波克基古":"Togetic","波克基斯":"Togekiss","天然雀":"Natu","天然鳥":"Xatu","咩利羊":"Mareep","茸茸羊":"Flaaffy","電龍":"Ampharos","盆才怪":"Bonsly","樹才怪":"Sudowoodo","烏波":"Wooper","烏波（阿羅拉的樣子）":"Wooper (Paldea Form)","烏波（帕底亞的樣子）":"Wooper (Paldea Form)","沼王":"Quagsire","土王":"Clodsire","黑暗鴉":"Murkrow","烏鴉頭頭":"Honchkrow","夢妖":"Misdreavus","夢妖魔":"Mismagius","小果然":"Wynaut","果然翁":"Wobbuffet","壺壺":"Shuckle","赫拉克羅斯":"Heracross","狃拉":"Sneasel","瑪狃拉":"Weavile","信使鳥":"Delibird","戴魯比":"Houndour","黑魯加":"Houndoom","雷公":"Raikou","炎帝":"Entei","水君":"Suicune","幼基拉斯":"Larvitar","沙基拉斯":"Pupitar","班基拉斯":"Tyranitar","木守宮":"Treecko","森林蜥蜴":"Grovyle","蜥蜴王":"Sceptile","火稚雞":"Torchic","力壯雞":"Combusken","火焰雞":"Blaziken","水躍魚":"Mudkip","沼躍魚":"Marshtomp","巨沼怪":"Swampert","拉魯拉絲":"Ralts","奇鲁莉安":"Kirlia","沙奈朵":"Gardevoir","艾路雷朵":"Gallade","懶人獺":"Slakoth","過動猿":"Vigoroth","請假王":"Slaking","勾魂眼":"Sableye","大嘴娃":"Mawile","可可多拉":"Aron","可多拉":"Lairon","波士可多拉":"Aggron","正電拍拍":"Plusle","負電拍拍":"Minun","溶食獸":"Gulpin","吞食獸":"Swalot","大顎蟻":"Trapinch","超音波幼蟲":"Vibrava","沙漠蜻蜓":"Flygon","青綿鳥":"Swablu","七夕青鳥":"Altaria","怨影娃娃":"Shuppet","詛咒娃娃":"Banette","阿勃梭魯":"Absol","海豹球":"Spheal","海豹球（佳節）":"Spheal (Holiday)","海魔獅":"Sealeo","帝牙海獅":"Walrein","寶貝龍":"Bagon","甲殼龍":"Shelgon","暴飛龍":"Salamence","拉帝亞斯":"Latias","拉帝歐斯":"Latios","草苗龜":"Turtwig","樹林龜":"Grotle","土台龜":"Torterra","小火焰猴":"Chimchar","猛火猴":"Monferno","烈焰猴":"Infernape","波加曼":"Piplup","波皇子":"Prinplup","帝王拿波":"Empoleon","小貓怪":"Shinx","勒克貓":"Luxio","倫琴貓":"Luxray","飄飄球":"Drifloon","隨風球":"Drifblim","花岩怪":"Spiritomb","利歐路":"Riolu","路卡利歐":"Lucario","不良蛙":"Croagunk","毒骷蛙":"Toxicroak","雪笠怪":"Snover","暴雪王":"Abomasnow","克雷色利亞":"Cresselia","達克萊伊":"Darkrai","食夢夢":"Munna","夢夢蝕":"Musharna","石居蟹":"Dwebble","岩殿居蟹":"Crustle","毛頭小鷹":"Rufflet","勇士雄鷹":"Braviary","寶寶暴龍":"Tyrunt","怪顎龍":"Tyrantrum","摔角鷹人":"Hawlucha","咚咚鼠":"Dedenne","南瓜精":"Pumpkaboo","南瓜怪人":"Gourgeist","南瓜精 (小顆種)":"Pumpkaboo (Small Variety)","南瓜精 (中顆種)":"Pumpkaboo (Medium Variety)","南瓜精 (大顆種)":"Pumpkaboo (Large Variety)","南瓜精 (巨顆種)":"Pumpkaboo (Jumbo Variety)","南瓜怪人 (小顆種)":"Gourgeist (Small Variety)","南瓜怪人 (中顆種)":"Gourgeist (Medium Variety)","南瓜怪人 (大顆種)":"Gourgeist (Large Variety)","南瓜怪人 (巨顆種)":"Gourgeist (Jumbo Variety)","嗡蝠":"Noibat","音波龍":"Noivern","強顎雞母蟲":"Grubbin","蟲電寶":"Charjabug","鍬農炮蟲":"Vikavolt","萌虻":"Cutiefly","蝶結萌虻":"Ribombee","童偶熊":"Stufful","穿著熊":"Bewear","花療環環":"Comfey","托戈德瑪爾":"Togedemaru","謎擬Q":"Mimikyu","謎擬Ｑ":"Mimikyu","谜拟Q":"Mimikyu","谜拟Ｑ":"Mimikyu","老翁龍":"Drampa","古月鳥":"Cramorant","毒電嬰":"Toxel","顫弦蠑螈（高調的樣子）":"Toxtricity (Amped Form)","顫弦蠑螈（低調的樣子）":"Toxtricity (Low Key Form)","新葉喵":"Sprigatito","蒂蕾喵":"Floragato","魔幻假面喵":"Meowscarada","呆火鱷":"Fuecoco","炙燙鱷":"Crocalor","骨紋巨聲鱷":"Skeledirge","潤水鴨":"Quaxly","湧躍鴨":"Quaxwell","狂歡浪舞鴨":"Quaquaval","布撥":"Pawmi","布土撥":"Pawmo","巴布土撥":"Pawmot","小鍛匠":"Tinkatink","巧鍛匠":"Tinkatuff","巨鍛匠":"Tinkaton","哎呀球菇":"Foongus","敗露球菇":"Amoonguss","走鯨":"Cetoddle","浩大鯨":"Cetitan","木棉球":"Cottonee","風妖精":"Whimsicott"};
 
   // 預排序與預建立英文對照快取，避免於每次呼叫時重複排序與建構陣列
   const SORTED_POKEMON_NAMES_KEYS = Object.keys(POKEMON_NAMES).sort((a, b) => b.length - a.length);
@@ -423,17 +410,7 @@
   let _allPkmEnMapLen = 0;
   let _allPkmEnMap = null;
 
-  function getPokemonName(name) {
-    if (!name) return '';
-    if (typeof name === 'object') {
-      if (currentLang === 'en-US') return name.name_en || name.name_cn || name.name;
-      if (currentLang === 'zh-CN') return toSimplifiedChinese(name.name_cn || name.name_en || name.name);
-      return name.name_cn || name.name_en || name.name;
-    }
-    const str = String(name).trim();
-    if (currentLang === 'zh-CN') return toSimplifiedChinese(str);
-    if (currentLang !== 'en-US') return str;
-
+  function _resolvePokemonNameEn(str) {
     // Level 1 & 2 & 3 字典比對 (O(1))
     const direct = lookupBilingualDict(POKEMON_NAMES, str, 'en-US');
     if (direct) return direct;
@@ -441,8 +418,8 @@
     // Level 4: 支援括號後綴（如 毒骷蛙 (ABB)、皮卡丘（萬聖節）等）
     const parenMatch = str.match(/^(.+?)\s*([(\[（【].+[)\]）】])$/);
     if (parenMatch) {
-      const baseName = getPokemonName(parenMatch[1]);
-      const suffix = translateDynamicText(parenMatch[2]);
+      const baseName = _resolvePokemonNameEn(parenMatch[1]);
+      const suffix = _translateDynamicToEn(parenMatch[2]);
       return `${baseName} ${suffix}`;
     }
 
@@ -471,7 +448,16 @@
     return str;
   }
 
-  function getSubSkillName(subskill, lang = currentLang) {
+  function getPokemonName(name, lang) {
+    if (!name) return '';
+    const strategy = _getStrategy(lang);
+    if (typeof name === 'object') {
+      return strategy.pokemonFromObj(name);
+    }
+    return strategy.pokemonFromStr(String(name).trim());
+  }
+
+  function getSubSkillName(subskill, lang) {
     if (!subskill) return '';
     const res = lookupBilingualDict(SUBSKILL_NAMES, subskill, lang);
     return res || String(subskill).trim();
@@ -482,8 +468,12 @@
 
   function translateDynamicText(text) {
     if (!text || typeof text !== 'string') return text;
-    if (currentLang === 'zh-CN') return toSimplifiedChinese(text);
-    if (currentLang !== 'en-US') return text;
+    _ensureActiveLocale();
+    return activeStrategy.text(text);
+  }
+
+  function _translateDynamicToEn(text) {
+    if (!text || typeof text !== 'string') return text;
     if (text.length <= 500 && _dynTextEnCache[text] !== undefined) {
       return _dynTextEnCache[text];
     }
@@ -807,7 +797,7 @@
     document.querySelectorAll('.search-filtering-badge').forEach(badge => {
       const labelSpan = badge.querySelector('span:last-child');
       if (labelSpan) {
-        labelSpan.textContent = currentLang === 'en-US' ? 'Filtered' : (currentLang === 'zh-CN' ? '条件筛选中' : '條件篩選中');
+        labelSpan.textContent = t('common.filtered');
       }
     });
 
@@ -832,23 +822,18 @@
   }
 
   function getShortMainSkillName(skill) {
-    const full = getMainSkillName(skill);
-    return currentLang === 'en-US' ? shortenSkillName(full) : full;
+    _ensureActiveLocale();
+    return activeStrategy.shortenSkill(getMainSkillName(skill));
   }
 
   let _itemsDataRef = null;
   let _itemsDataIndex = null;
 
-  function getItemName(item, lang = currentLang) {
+  function getItemName(item, lang) {
     if (!item) return '';
-    const targetLang = lang || currentLang;
-    if (typeof item === 'object') {
-      if (item.name) {
-        if (targetLang === 'zh-CN') {
-          return item.name['zh-CN'] || toSimplifiedChinese(item.name['zh-TW'] || item.name['en-US'] || '');
-        }
-        return item.name[targetLang] || item.name['zh-TW'] || item.name['en-US'] || '';
-      }
+    const strategy = _getStrategy(lang);
+    if (typeof item === 'object' && item.name) {
+      return strategy.pick(item.name);
     }
     if (typeof window !== 'undefined' && Array.isArray(window.ITEMS_DATA)) {
       if (_itemsDataRef !== window.ITEMS_DATA || !_itemsDataIndex) {
@@ -867,23 +852,20 @@
       }
       const match = _itemsDataIndex[item];
       if (match && match.name) {
-        if (targetLang === 'zh-CN') {
-          return match.name['zh-CN'] || toSimplifiedChinese(match.name['zh-TW'] || match.name['en-US'] || '');
-        }
-        return match.name[targetLang] || match.name['zh-TW'] || match.name['en-US'] || '';
+        return strategy.pick(match.name);
       }
     }
-    const res = lookupBilingualDict(ITEM_NAMES, item, targetLang);
+    const res = lookupBilingualDict(ITEM_NAMES, item, strategy.lang);
     if (res) return res;
-    return targetLang === 'zh-CN' ? toSimplifiedChinese(item) : item;
+    return strategy.fallbackLookup(item) || item;
   }
 
-  function getIslandName(island, lang = currentLang) {
+  function getIslandName(island, lang) {
     if (!island) return '';
-    const targetLang = lang || currentLang;
-    const res = lookupBilingualDict(ISLAND_NAMES, island, targetLang);
+    const strategy = _getStrategy(lang);
+    const res = lookupBilingualDict(ISLAND_NAMES, island, strategy.lang);
     if (res) return res;
-    return targetLang === 'zh-CN' ? toSimplifiedChinese(island) : island;
+    return strategy.fallbackLookup(island) || island;
   }
 
   /**
@@ -903,9 +885,6 @@
       container.classList.toggle('has-value', hasVal);
       let badge = container.querySelector('.search-filtering-badge');
       if (hasVal) {
-        const lang = getLanguage();
-        const isEN = lang === 'en-US';
-        const isCN = lang === 'zh-CN';
         if (!badge) {
           badge = document.createElement('span');
           badge.className = 'search-filtering-badge';
@@ -915,7 +894,7 @@
             container.appendChild(badge);
           }
         }
-        badge.innerHTML = `<span class="search-pulse-dot"></span><span>${isEN ? 'Filtered' : (isCN ? '条件筛选中' : '條件篩選中')}</span>`;
+        badge.innerHTML = `<span class="search-pulse-dot"></span><span>${t('common.filtered')}</span>`;
       } else if (badge) {
         badge.remove();
       }
@@ -940,7 +919,8 @@
   }
 
   const I18NExport = {
-    t, getLanguage, setLanguage, toSimplified: toSimplifiedChinese, updateSearchInputHighlight,
+    t, STR, field, pick, text, getDateLocale, registerResources,
+    getLanguage, setLanguage, toSimplified: toSimplifiedChinese, updateSearchInputHighlight,
     getTypeName, getTypeIconSvg, TYPE_SVG_PATHS, TYPE_CANONICAL_MAP,
     getSpecialtyName, getSpecialtyKey, getSpecialtyIconHtml,
     getIngredientName, getIngredientIcon, getRecipeName, getBerryName, getNatureName,
@@ -952,6 +932,8 @@
 
   if (typeof window !== 'undefined') {
     window.I18N = I18NExport;
+    window.STR = STR;
+    window.$t = t;
     window.getSpecialtyIconHtml = getSpecialtyIconHtml;
     window.getSpecialtyKey = getSpecialtyKey;
     window.updateSearchInputHighlight = updateSearchInputHighlight;

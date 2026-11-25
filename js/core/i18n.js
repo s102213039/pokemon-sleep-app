@@ -2150,21 +2150,2270 @@
     return out;
   }
 
+  // ─── 預解析統一字串資源引擎 (Pre-Resolved Unified String Resource Engine) ───
+  // 在初始化與切換語言時預先鎖定語系資源包與策略物件，業務與 UI 層無需重複判斷語言。
+
+  const RESOLVED_BUNDLES = {
+    'zh-TW': Object.create(null),
+    'zh-CN': Object.create(null),
+    'en-US': Object.create(null)
+  };
+
+  const LANG_ALIAS_MAP = {
+    'zh-TW': 'zh-TW', 'zh-Hant': 'zh-TW', 'tw': 'zh-TW',
+    'zh-CN': 'zh-CN', 'zh-Hans': 'zh-CN', 'cn': 'zh-CN',
+    'en-US': 'en-US', 'en': 'en-US'
+  };
+
+  function _bootstrapResolvedBundles() {
+    const tw = DICTIONARY['zh-TW'] || {};
+    const cn = DICTIONARY['zh-CN'] || {};
+    const en = DICTIONARY['en-US'] || {};
+    const keys = Object.keys(tw);
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i];
+      RESOLVED_BUNDLES['zh-TW'][k] = tw[k];
+      RESOLVED_BUNDLES['zh-CN'][k] = cn[k] !== undefined ? cn[k] : toSimplifiedChinese(tw[k]);
+      RESOLVED_BUNDLES['en-US'][k] = en[k] !== undefined ? en[k] : tw[k];
+    }
+    for (const k in cn) {
+      if (Object.prototype.hasOwnProperty.call(cn, k) && RESOLVED_BUNDLES['zh-CN'][k] === undefined) {
+        RESOLVED_BUNDLES['zh-CN'][k] = cn[k];
+      }
+    }
+    for (const k in en) {
+      if (Object.prototype.hasOwnProperty.call(en, k) && RESOLVED_BUNDLES['en-US'][k] === undefined) {
+        RESOLVED_BUNDLES['en-US'][k] = en[k];
+      }
+    }
+  }
+  _bootstrapResolvedBundles();
+
+  function registerResources(entries) {
+    if (!entries || typeof entries !== 'object') return;
+    const twDict = DICTIONARY['zh-TW'];
+    const cnDict = DICTIONARY['zh-CN'];
+    const enDict = DICTIONARY['en-US'];
+    const twRes = RESOLVED_BUNDLES['zh-TW'];
+    const cnRes = RESOLVED_BUNDLES['zh-CN'];
+    const enRes = RESOLVED_BUNDLES['en-US'];
+
+    const keys = Object.keys(entries);
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i];
+      const entry = entries[k];
+      if (!entry) continue;
+      let tw, en, cn;
+      if (Array.isArray(entry)) {
+        tw = entry[0];
+        en = entry[1];
+        cn = entry[2];
+      } else if (typeof entry === 'object') {
+        tw = entry['zh-TW'] !== undefined ? entry['zh-TW'] : entry.tw;
+        en = entry['en-US'] !== undefined ? entry['en-US'] : entry.en;
+        cn = entry['zh-CN'] !== undefined ? entry['zh-CN'] : entry.cn;
+      } else {
+        continue;
+      }
+      const resolvedTw = tw !== undefined ? String(tw) : '';
+      const resolvedCn = cn !== undefined ? String(cn) : toSimplifiedChinese(resolvedTw);
+      const resolvedEn = en !== undefined ? String(en) : resolvedTw;
+      twDict[k] = resolvedTw;
+      cnDict[k] = resolvedCn;
+      enDict[k] = resolvedEn;
+      twRes[k] = resolvedTw;
+      cnRes[k] = resolvedCn;
+      enRes[k] = resolvedEn;
+    }
+  }
+
+  function _transformFieldVal(val, fn) {
+    if (val === undefined || val === null) return '';
+    if (Array.isArray(val)) return fn ? val.map(v => (typeof v === 'string' ? fn(v) : v)) : val;
+    if (typeof val === 'string') return fn ? fn(val) : val;
+    return val;
+  }
+
+  const LOCALE_STRATEGIES = {
+    'zh-TW': {
+      lang: 'zh-TW',
+      docLang: 'zh-Hant',
+      dataLang: 'zh-TW',
+      dateLocale: 'zh-TW',
+      dict: RESOLVED_BUNDLES['zh-TW'],
+      pick(map) {
+        if (map == null) return '';
+        if (typeof map !== 'object') return String(map);
+        if (map['zh-TW'] !== undefined) return map['zh-TW'];
+        if (map.tw !== undefined) return map.tw;
+        if (map['zh-CN'] !== undefined) return map['zh-CN'];
+        if (map.cn !== undefined) return map.cn;
+        if (map['en-US'] !== undefined) return map['en-US'];
+        if (map.en !== undefined) return map.en;
+        return '';
+      },
+      field(obj, baseKey) {
+        if (!obj || typeof obj !== 'object') return '';
+        const direct = obj[baseKey];
+        if (direct && typeof direct === 'object' && !Array.isArray(direct)) {
+          return this.pick(direct);
+        }
+        const twVal = obj[baseKey + '_tw'];
+        if (twVal !== undefined && twVal !== null && twVal !== '') return twVal;
+        if (direct !== undefined && direct !== null && direct !== '') return direct;
+        const cnVal = obj[baseKey + '_cn'];
+        if (cnVal !== undefined && cnVal !== null && cnVal !== '') return cnVal;
+        return obj[baseKey + '_en'] ?? '';
+      },
+      text(str) {
+        return str == null ? '' : String(str);
+      },
+      shortenSkill(name) {
+        return name || '';
+      },
+      resolveLookupVal(val, rawStr) {
+        if (typeof val === 'object') return val['zh-TW'] || val['en-US'] || rawStr;
+        return val;
+      },
+      fallbackLookup() {
+        return null;
+      },
+      pokemonFromObj(obj) {
+        return obj.name_cn || obj.name_en || obj.name || '';
+      },
+      pokemonFromStr(str) {
+        return str;
+      },
+      recipeFromNames(nameCn, nameEn) {
+        return nameCn || nameEn || '';
+      }
+    },
+    'zh-CN': {
+      lang: 'zh-CN',
+      docLang: 'zh-Hans',
+      dataLang: 'zh-CN',
+      dateLocale: 'zh-CN',
+      dict: RESOLVED_BUNDLES['zh-CN'],
+      pick(map) {
+        if (map == null) return '';
+        if (typeof map !== 'object') return toSimplifiedChinese(String(map));
+        if (map['zh-CN'] !== undefined) return typeof map['zh-CN'] === 'string' ? toSimplifiedChinese(map['zh-CN']) : map['zh-CN'];
+        if (map.cn !== undefined) return typeof map.cn === 'string' ? toSimplifiedChinese(map.cn) : map.cn;
+        const tw = map['zh-TW'] !== undefined ? map['zh-TW'] : map.tw;
+        if (tw !== undefined) return typeof tw === 'string' ? toSimplifiedChinese(tw) : tw;
+        return map['en-US'] ?? map.en ?? '';
+      },
+      field(obj, baseKey) {
+        if (!obj || typeof obj !== 'object') return '';
+        const direct = obj[baseKey];
+        if (direct && typeof direct === 'object' && !Array.isArray(direct)) {
+          return this.pick(direct);
+        }
+        const cnVal = obj[baseKey + '_cn'];
+        if (cnVal !== undefined && cnVal !== null && cnVal !== '') {
+          return _transformFieldVal(cnVal, toSimplifiedChinese);
+        }
+        const twVal = obj[baseKey + '_tw'];
+        if (twVal !== undefined && twVal !== null && twVal !== '') {
+          return _transformFieldVal(twVal, toSimplifiedChinese);
+        }
+        if (direct !== undefined && direct !== null && direct !== '') {
+          return _transformFieldVal(direct, toSimplifiedChinese);
+        }
+        return obj[baseKey + '_en'] ?? '';
+      },
+      text(str) {
+        return str == null ? '' : toSimplifiedChinese(String(str));
+      },
+      shortenSkill(name) {
+        return name || '';
+      },
+      resolveLookupVal(val, rawStr) {
+        if (typeof val === 'object') {
+          return val['zh-CN'] || toSimplifiedChinese(val['zh-TW'] || val['en-US'] || rawStr);
+        }
+        return toSimplifiedChinese(val);
+      },
+      fallbackLookup(rawStr) {
+        return toSimplifiedChinese(rawStr);
+      },
+      pokemonFromObj(obj) {
+        return toSimplifiedChinese(obj.name_cn || obj.name_en || obj.name || '');
+      },
+      pokemonFromStr(str) {
+        return toSimplifiedChinese(str);
+      },
+      recipeFromNames(nameCn, nameEn) {
+        return toSimplifiedChinese(nameCn || nameEn || '');
+      }
+    },
+    'en-US': {
+      lang: 'en-US',
+      docLang: 'en',
+      dataLang: 'en',
+      dateLocale: 'en-US',
+      dict: RESOLVED_BUNDLES['en-US'],
+      pick(map) {
+        if (map == null) return '';
+        if (typeof map !== 'object') return _translateDynamicToEn(String(map));
+        if (map['en-US'] !== undefined) return map['en-US'];
+        if (map.en !== undefined) return map.en;
+        const tw = map['zh-TW'] !== undefined ? map['zh-TW'] : map.tw;
+        if (tw !== undefined) return typeof tw === 'string' ? _translateDynamicToEn(tw) : tw;
+        return '';
+      },
+      field(obj, baseKey) {
+        if (!obj || typeof obj !== 'object') return '';
+        const direct = obj[baseKey];
+        if (direct && typeof direct === 'object' && !Array.isArray(direct)) {
+          return this.pick(direct);
+        }
+        const enVal = obj[baseKey + '_en'];
+        if (enVal !== undefined && enVal !== null && enVal !== '') return enVal;
+        const raw = (direct !== undefined && direct !== null && direct !== '')
+          ? direct
+          : (obj[baseKey + '_tw'] ?? obj[baseKey + '_cn'] ?? '');
+        return _transformFieldVal(raw, _translateDynamicToEn);
+      },
+      text(str) {
+        return str == null ? '' : _translateDynamicToEn(String(str));
+      },
+      shortenSkill(name) {
+        return shortenSkillName(name || '');
+      },
+      resolveLookupVal(val, rawStr) {
+        if (typeof val === 'object') return val['en-US'] || val['zh-TW'] || rawStr;
+        return val;
+      },
+      fallbackLookup() {
+        return null;
+      },
+      pokemonFromObj(obj) {
+        return obj.name_en || obj.name_cn || obj.name || '';
+      },
+      pokemonFromStr(str) {
+        return _resolvePokemonNameEn(str);
+      },
+      recipeFromNames(nameCn, nameEn) {
+        return nameEn || nameCn || '';
+      }
+    }
+  };
+
+  let activeStrategy = LOCALE_STRATEGIES[DEFAULT_LANG];
+  let activeDict = activeStrategy.dict;
+
+  function syncActiveLocale(lang) {
+    const canonical = (typeof lang === 'string' && LANG_ALIAS_MAP[lang.trim()]) || DEFAULT_LANG;
+    const strat = LOCALE_STRATEGIES[canonical] || LOCALE_STRATEGIES[DEFAULT_LANG];
+    currentLang = strat.lang;
+    activeStrategy = strat;
+    activeDict = strat.dict;
+  }
+
+  function _ensureActiveLocale() {
+    if (typeof I18NExport !== 'undefined' && I18NExport.getLanguage !== getLanguage && typeof I18NExport.getLanguage === 'function') {
+      const patched = I18NExport.getLanguage();
+      if (patched && patched !== activeStrategy.lang) {
+        const canonical = LANG_ALIAS_MAP[String(patched).trim()];
+        if (canonical && LOCALE_STRATEGIES[canonical]) {
+          syncActiveLocale(canonical);
+        }
+      }
+    }
+  }
+
+  function _getStrategy(lang) {
+    _ensureActiveLocale();
+    if (!lang || lang === activeStrategy.lang) return activeStrategy;
+    const canonical = typeof lang === 'string' ? LANG_ALIAS_MAP[lang.trim()] : null;
+    return (canonical && LOCALE_STRATEGIES[canonical]) || activeStrategy;
+  }
+
+  function _interpolateParams(str, params) {
+    if (!params || typeof params !== 'object' || typeof str !== 'string' || !str.includes('{')) {
+      return str;
+    }
+    return str.replace(/\{([a-zA-Z0-9_]+)\}/g, (match, token) => {
+      return Object.prototype.hasOwnProperty.call(params, token) && params[token] !== undefined && params[token] !== null
+        ? String(params[token])
+        : match;
+    });
+  }
+
+  function field(obj, baseKey) {
+    _ensureActiveLocale();
+    return activeStrategy.field(obj, baseKey);
+  }
+
+  function pick(map) {
+    _ensureActiveLocale();
+    return activeStrategy.pick(map);
+  }
+
+  function text(str) {
+    _ensureActiveLocale();
+    return activeStrategy.text(str);
+  }
+
+  function getDateLocale() {
+    _ensureActiveLocale();
+    return activeStrategy.dateLocale;
+  }
+
+  const STR = (typeof Proxy === 'function')
+    ? new Proxy(Object.create(null), {
+        get(_target, prop) {
+          if (typeof prop !== 'string') return undefined;
+          _ensureActiveLocale();
+          const val = activeDict[prop];
+          return val !== undefined ? _resolveDynamicCaps(val) : prop;
+        },
+        has(_target, prop) {
+          _ensureActiveLocale();
+          return typeof prop === 'string' && prop in activeDict;
+        },
+        ownKeys() {
+          _ensureActiveLocale();
+          return Object.keys(activeDict);
+        },
+        getOwnPropertyDescriptor(_target, prop) {
+          _ensureActiveLocale();
+          if (typeof prop === 'string' && prop in activeDict) {
+            return { enumerable: true, configurable: true, value: _resolveDynamicCaps(activeDict[prop]) };
+          }
+          return undefined;
+        }
+      })
+    : activeDict;
+
+  // 核心共用資源（供 i18n_core 本身與全站共用，消除內聯語系判斷）
+  registerResources({
+    'common.filtered': ['條件篩選中', 'Filtered', '条件筛选中']
+  });
+  // ─── CloudSync 與 Box 模組共用字串資源 (CloudSync & Box i18n Resources) ───
+  registerResources({
+    // CloudSync: Validation & Error Messages
+    'cloud.err_init_failed': ['初始化失敗', 'Initialization failed', '初始化失败'],
+    'cloud.err_username_required': ['請輸入使用者帳號！', 'Please enter a username!', '请输入用户账号！'],
+    'cloud.err_custom_username_required': ['請輸入自訂帳號！', 'Please enter a username!', '请输入自定义账号！'],
+    'cloud.err_email_invalid': ['電子郵件格式不正確！', 'Invalid email format!', '电子邮件格式不正确！'],
+    'cloud.err_username_length': ['帳號長度需介於 3 到 20 個字元之間！', 'Username must be between 3 and 20 characters!', '账号长度需介于 3 到 20 个字符之间！'],
+    'cloud.err_username_chars': ['帳號僅允許英文字母、數字與底線 (_)，不可包含空格或特殊符號！', 'Username may only contain letters, numbers, and underscores (_), with no spaces or special symbols!', '账号仅允许英文字母、数字与下划线 (_)，不可包含空格或特殊符号！'],
+    'cloud.err_password_required': ['請輸入密碼！', 'Please enter a password!', '请输入密码！'],
+    'cloud.err_custom_pwd_required': ['請輸入自訂密碼！', 'Please enter a password!', '请输入自定义密码！'],
+    'cloud.err_password_length': ['密碼長度需介於 6 到 32 個字元之間！', 'Password must be between 6 and 32 characters!', '密码长度需介于 6 到 32 个字符之间！'],
+    'cloud.err_password_whitespace': ['密碼不可包含空白字元！', 'Password cannot contain whitespace!', '密码不可包含空白字符！'],
+    'cloud.err_password_repeated': ['密碼過於簡單，請勿使用連續單一相同字元！', 'Password is too simple; do not use a single repeated character!', '密码过于简单，请勿使用连续单一相同字符！'],
+    'cloud.err_password_weak': ['密碼過於簡單，請更換較安全的組合！', 'Password is too weak; please choose a stronger combination!', '密码过于简单，请更换较安全的组合！'],
+    'cloud.err_pwd_mismatch': ['兩次輸入的密碼不一致，請重新檢查！', 'Passwords do not match; please check again!', '两次输入的密码不一致，请重新检查！'],
+    'cloud.err_not_initialized': ['雲端同步服務未初始化，請稍後再試！', 'Cloud sync service is not initialized; please try again later!', '云端同步服务未初始化，请稍后再试！'],
+    'cloud.err_register_failed': ['註冊失敗', 'Registration failed', '注册失败'],
+    'cloud.err_user_exists': ['此帳號已被註冊，請直接點擊「登入帳號」！', 'This username is already registered; please click "Sign In" directly!', '此账号已被注册，请直接点击“登录账号”！'],
+    'cloud.err_password_min6': ['密碼長度至少需為 6 個字元！', 'Password must be at least 6 characters!', '密码长度至少需为 6 个字符！'],
+    'cloud.msg_register_ok': ['註冊成功！', 'Registration successful!', '注册成功！'],
+    'cloud.err_register_unknown': ['註冊時發生未知錯誤', 'An unknown error occurred during registration', '注册时发生未知错误'],
+    'cloud.err_signup_later': ['註冊失敗，請稍後再試！', 'Registration failed; please try again later!', '注册失败，请稍后再试！'],
+    'cloud.err_signin_failed': ['登入失敗', 'Sign in failed', '登录失败'],
+    'cloud.err_invalid_credentials': ['帳號或密碼錯誤，請檢查後重新輸入！', 'Incorrect username or password; please check and try again!', '账号或密码错误，请检查后重新输入！'],
+    'cloud.err_email_not_confirmed': ['登入失敗：請管理員於 Supabase 後台關閉「Confirm email」驗證設定。', 'Sign in failed: please have the administrator disable "Confirm email" verification in the Supabase dashboard.', '登录失败：请管理员于 Supabase 后台关闭“Confirm email”验证设置。'],
+    'cloud.err_user_not_found': ['登入失敗，查無使用者資訊', 'Sign in failed: user information not found', '登录失败，查无用户信息'],
+    'cloud.err_signin_exception': ['登入時發生錯誤', 'An error occurred during sign in', '登录时发生错误'],
+    'cloud.err_signin_check': ['登入失敗，請檢查帳號密碼！', 'Sign in failed; please check your username and password!', '登录失败，请检查账号密码！'],
+    'cloud.err_sync_push_failed': ['同步推送失敗', 'Sync push failed', '同步推送失败'],
+    'cloud.err_initial_sync_failed': ['首次同步失敗', 'Initial sync failed', '首次同步失败'],
+
+    // CloudSync: UI & Modals & Toasts
+    'cloud.ui_close': ['關閉', 'Close', '关闭'],
+    'cloud.ui_logged_in_title': ['已登入：{user}。點擊管理雲端同步。', 'Logged in: {user}. Click to manage sync.', '已登录：{user}。点击管理云端同步。'],
+    'cloud.ui_auth_btn': ['登入 / 註冊', 'Sign In / Register', '登录 / 注册'],
+    'cloud.ui_auth_btn_title': ['登入或註冊帳號以啟用手機/電腦即時同步。', 'Sign in or register to enable cloud sync.', '登录或注册账号以启用手机/电脑实时同步。'],
+    'cloud.ui_mobile_logged_in': ['已登入：{user}', 'Logged in: {user}', '已登录：{user}'],
+    'cloud.ui_mobile_guest': ['雲端帳號 登入 / 註冊', 'Sign In / Register', '云端账号 登录 / 注册'],
+    'cloud.ui_sync_active': ['雲端即時同步中', 'Cloud Sync Active', '云端实时同步中'],
+    'cloud.ui_account_label': ['登入帳號：', 'Account: ', '登录账号：'],
+    'cloud.ui_sync_active_hint': ['倉庫資料已自動與雲端連動，手機與電腦雙向秒級同步。', 'Data is synced in real-time across your PC and mobile devices.', '仓库数据已自动与云端联动，手机与电脑双向秒级同步。'],
+    'cloud.ui_guest_mode': ['本機訪客模式 (未登入)', 'Local Guest Mode (Not Logged In)', '本地访客模式 (未登录)'],
+    'cloud.ui_guest_hint': ['輸入帳號與密碼登入或註冊，即可自動在手機與電腦間同步寶可夢倉庫。', 'Enter username and password below to automatically sync your Pokémon box between phone and PC.', '输入账号与密码登录或注册，即可自动在手机与电脑间同步宝可梦仓库。'],
+    'cloud.ui_title_manage': ['雲端帳號與同步管理', 'Cloud Account Management', '云端账号与同步管理'],
+    'cloud.ui_title_signup': ['註冊寶可夢雲端帳號', 'Register Pokémon Sleep Cloud Account', '注册宝可梦云端账号'],
+    'cloud.ui_title_signin': ['登入寶可夢雲端帳號', 'Sign In to Pokémon Sleep Cloud', '登录宝可梦云端账号'],
+    'cloud.ui_prompt_title': ['登入啟用寶可夢雲端倉庫', 'Sign In to Pokémon Sleep Cloud Box', '登录启用宝可梦云端仓库'],
+    'cloud.ui_prompt_desc': ['登入或自訂帳號註冊，即可享有電腦與手機跨裝置秒級雙向同步、即時雲端備份與完整寶可夢管理功能。', 'Sign in or register an account to enable real-time cross-device sync, cloud backup, and Pokémon box management.', '登录或自定义账号注册，即可享有电脑与手机跨设备秒级双向同步、即时云端备份与完整宝可梦管理功能。'],
+    'cloud.ui_prompt_btn': ['立即登入 / 註冊帳號', 'Sign In / Register', '立即登录 / 注册账号'],
+    'cloud.ui_prompt_guest': ['以本機訪客模式暫時使用 (離線模式)', 'Continue as local guest (offline mode)', '以本地访客模式暂时使用 (离线模式)'],
+    'cloud.ui_label_account': ['帳號', 'Account / Username', '账号'],
+    'cloud.ui_ph_account': ['請輸入自訂帳號', 'Enter username', '请输入自定义账号'],
+    'cloud.ui_label_password': ['密碼', 'Password', '密码'],
+    'cloud.ui_ph_password': ['請輸入密碼', 'Enter password', '请输入密码'],
+    'cloud.ui_toggle_pwd': ['顯示或隱藏密碼', 'Toggle password visibility', '显示或隐藏密码'],
+    'cloud.ui_remember': ['記住帳號與密碼', 'Remember account & password', '记住账号与密码'],
+    'cloud.ui_btn_signin': ['登入帳號', 'Sign In', '登录账号'],
+    'cloud.ui_signing_in': ['登入中...', 'Signing in...', '登录中...'],
+    'cloud.ui_no_account': ['還沒有雲端帳號？', "Don't have an account yet?", '还没有云端账号？'],
+    'cloud.ui_switch_signup': ['一鍵註冊', 'Register Now', '一键注册'],
+    'cloud.ui_label_signup_user': ['自訂帳號', 'Set Username', '自定义账号'],
+    'cloud.ui_ph_signup_user': ['3 ~ 20 位英文、數字或底線', '3-20 characters (letters, numbers, _)', '3 ~ 20 位英文、数字或下划线'],
+    'cloud.ui_label_signup_pwd': ['自訂密碼', 'Set Password', '自定义密码'],
+    'cloud.ui_ph_signup_pwd': ['6 ~ 32 位密碼', '6-32 characters', '6 ~ 32 位密码'],
+    'cloud.ui_label_confirm_pwd': ['確認密碼', 'Confirm Password', '确认密码'],
+    'cloud.ui_ph_confirm_pwd': ['請再次輸入密碼', 'Repeat password', '请再次输入密码'],
+    'cloud.ui_btn_create_account': ['立即建立帳號', 'Create Account', '立即创建账号'],
+    'cloud.ui_creating': ['建立中...', 'Creating...', '创建中...'],
+    'cloud.ui_has_account': ['已經有雲端帳號？', 'Already have an account?', '已经有云端账号？'],
+    'cloud.ui_switch_signin': ['返回登入', 'Back to Sign In', '返回登录'],
+    'cloud.ui_btn_manual_sync': ['立即手動同步', 'Sync Now', '立即手动同步'],
+    'cloud.ui_syncing': ['同步中...', 'Syncing...', '同步中...'],
+    'cloud.ui_btn_signout': ['登出帳號', 'Sign Out', '退出登录'],
+    'cloud.toast_signin_title': ['登入成功', 'Signed In', '登录成功'],
+    'cloud.toast_signin_msg': ['歡迎回來，{account}！已連線雲端即時同步。', 'Welcome back, {account}! Cloud real-time sync is active.', '欢迎回来，{account}！已连接云端实时同步。'],
+    'cloud.toast_signup_title': ['註冊成功', 'Account Created', '注册成功'],
+    'cloud.toast_signup_msg': ['歡迎使用，{account}！已自動登入並建立雲端倉庫。', 'Welcome, {account}! Signed in and cloud box created.', '欢迎使用，{account}！已自动登录并创建云端仓库。'],
+    'cloud.toast_signout_title': ['已登出', 'Signed Out', '已退出登录'],
+    'cloud.toast_signout_msg': ['目前已切換為本機訪客模式。', 'Switched to local guest mode.', '当前已切换为本地访客模式。'],
+    'cloud.toast_sync_title': ['手動同步完成', 'Sync Complete', '手动同步完成'],
+    'cloud.toast_sync_msg': ['寶可夢倉庫已與雲端完成最新同步。', 'Your Pokémon Box is now synced with the cloud.', '宝可梦仓库已与云端完成最新同步。'],
+
+    // Box: Filter & Sidebar & Guide
+    'box.ui_expand_sidebar': ['展開篩選側邊欄', 'Expand Filter Sidebar'],
+    'box.ui_collapse_sidebar': ['收合篩選側邊欄', 'Collapse Filter Sidebar'],
+    'box.ui_hide_guide': ['收合指引', 'Hide Guide'],
+    'box.ui_show_guide': ['截圖拖曳與指引', 'Screenshot Guide'],
+    'box.ui_guide_collapse': ['收合說明', 'Collapse'],
+    'box.ui_guide_expand': ['展開說明', 'Expand Guide'],
+
+    // Box: Main, Confirm, Export/Import & Cloud Sync Toasts
+    'box.ui_confirm_action': ['確認操作', 'Confirm Action'],
+    'box.ui_confirm': ['確認', 'Confirm'],
+    'box.ui_cancel': ['取消', 'Cancel'],
+    'box.ui_pokemon': ['寶可夢', 'Pokémon'],
+    'box.ui_unknown': ['未知', 'Unknown'],
+    'box.ui_notice': ['提示', 'Notice'],
+    'box.ui_delete': ['刪除', 'Delete'],
+    'box.ui_edit': ['編輯', 'Edit'],
+    'box.ui_confirm_delete_title': ['確認刪除', 'Confirm Deletion'],
+    'box.msg_confirm_delete_one': ['確定要從倉庫刪除「{name}」嗎？', 'Are you sure you want to delete "{name}" from your Box?'],
+    'box.msg_delete_success_title': ['刪除成功', 'Deleted Successfully'],
+    'box.msg_deleted_one': ['已刪除「{name}」', '"{name}" has been removed from Box'],
+    'box.msg_export_notice': ['匯出提醒', 'Export Notice'],
+    'box.msg_export_empty': ['倉庫內目前沒有任何寶可夢可匯出！', 'Your Box is currently empty, nothing to export!'],
+    'box.msg_import_limit_title': ['匯入超限', 'Import Limit Exceeded'],
+    'box.msg_import_limit_desc': ['單次匯入不可超過 {max} 隻寶可夢！', 'Cannot import more than {max} Pokémon at once!'],
+    'box.msg_import_failed_title': ['匯入失敗', 'Import Failed'],
+    'box.msg_import_empty': ['無有效的寶可夢資料可匯入！', 'No valid Pokémon data to import!'],
+    'box.msg_confirm_import': ['確定要匯入 {count} 隻寶可夢嗎？（將合併至現有倉庫）', 'Import {count} Pokémon? (They will be merged into your Box)'],
+    'box.ui_confirm_import_title': ['確認匯入', 'Confirm Import'],
+    'box.msg_import_summary': ['匯入完成！新增 {added} 隻，升級更新 {upgraded} 隻，略過重複 {skipped} 隻。', 'Import complete! {added} added, {upgraded} upgraded, {skipped} duplicates skipped.'],
+    'box.msg_import_success_title': ['匯入成功', 'Import Successful'],
+    'box.msg_import_invalid_format': ['匯入檔案格式錯誤，請確認為正確的 JSON 備份檔！', 'Invalid import file format. Please ensure it is a valid JSON backup file!'],
+    'box.msg_parse_failed_title': ['解析失敗', 'Parse Failed'],
+    'box.msg_parse_failed_error': ['解析 JSON 備份檔案失敗：{error}', 'Failed to parse JSON backup file: {error}'],
+    'box.msg_cloud_sync_title': ['雲端同步成功', 'Cloud Sync Successful'],
+    'box.msg_cloud_sync_desc': ['已從其他裝置即時同步最新寶可夢倉庫資料！', 'Latest Pokémon Box data synchronized from other devices!'],
+
+    // Box: Render (Cards, Table, Empty State, Delete Modal)
+    'box.ui_empty_title': ['目前尚未登錄任何寶可夢', 'No Pokémon recorded yet'],
+    'box.ui_empty_hint': ['請點擊右下角的「截圖辨識」或「手動新增」按鈕開始建立你的幫手隊伍！', 'Tap the "Scan OCR" or "Add Pokémon" button at the bottom right to start building your team!'],
+    'box.ui_no_match_title': ['查無符合條件的寶可夢', 'No Pokémon matched the filter'],
+    'box.ui_no_match_hint': ['請嘗試更換搜尋關鍵字或清空篩選條件。', 'Try searching different keywords or clearing filters.'],
+    'box.ui_render_error': ['寶可夢倉庫渲染異常', 'Failed to render Pokémon Box'],
+    'box.ui_ing_locked_suffix': [' (未開放)', ' (Locked)'],
+    'box.ui_pr_score_title': ['PR 潛力評分: {score}%', 'PR Potential Score: {score}%'],
+    'box.ui_appraisal_report_long': ['深度診斷報告書與六維雷達圖', 'Appraisal Report'],
+    'box.ui_appraisal_report': ['深度診斷報告', 'Appraisal Report'],
+    'box.ui_edit_pokemon': ['編輯寶可夢', 'Edit'],
+    'box.ui_delete_pokemon': ['刪除寶可夢', 'Delete'],
+    'box.ui_shiny_pokemon': ['異色寶可夢', 'Shiny Pokémon'],
+    'box.ui_shiny_tag': ['異色', 'Shiny'],
+    'box.ui_ribbon_tier_title': ['睡飽飽獎章', 'Good-Night Ribbon Tier {tier}'],
+    'box.ui_card_ingredients': ['食材：', 'Ingredients:'],
+    'box.ui_subskills': ['副技能組合', 'Sub-Skills'],
+    'box.ui_subskill_locked_suffix': ['未解鎖', ' - Locked'],
+    'box.ui_subskill_slot_title': ['第 {slot} 欄位 (Lv.{lv})', 'Slot {slot} (Lv.{lv})'],
+    'box.ui_card_nature': ['性格：', 'Nature:'],
+    'box.ui_default_nature_hardy': ['坦率', 'Hardy'],
+    'box.ui_cleanse_mint_title': ['使用淨白薄荷消除個性效果', 'Cleanse Mint used: eliminated nature traits'],
+    'box.ui_cleanse_mint_tag': ['使用淨白薄荷消除個性效果', 'Cleanse Mint (Neutralized)'],
+    'box.ui_nature_neutral': ['無修正', 'Neutral'],
+    'box.ui_card_appraisal_note': ['智能簡評：', 'Appraisal Note:'],
+    'box.ui_th_name_nickname': ['寶可夢 / 暱稱', 'Name / Nickname'],
+    'box.ui_th_ing1': ['食1', 'Ing 1'],
+    'box.ui_th_ing2': ['食2', 'Ing 2'],
+    'box.ui_th_ing3': ['食3', 'Ing 3'],
+    'box.ui_delete_modal_title': ['確認刪除寶可夢？', 'Delete Pokémon?'],
+    'box.ui_delete_modal_desc': ['確定要將此隻寶可夢從倉庫中永久刪除嗎？刪除後將無法還原。', 'Are you sure you want to delete this Pokémon from your Box? This action cannot be undone.'],
+    'box.ui_confirm_delete_btn': ['確認刪除', 'Confirm Delete'],
+    'box.ui_deleted_toast': ['已刪除「{name}」', 'Deleted {name}'],
+
+    // Box: Form & Modal & Conflict & OCR
+    'box.ui_edit_modal_title': ['編輯寶可夢', 'Edit Pokémon'],
+    'box.ui_confirm_ocr_entry': ['截圖辨識確認入庫', 'Confirm OCR Entry'],
+    'box.ui_add_pokemon': ['手動新增寶可夢', 'Add Pokémon'],
+    'box.ui_original_screenshot': ['原始截圖對照', 'Original Screenshot'],
+    'box.msg_select_pokemon': ['請選擇寶可夢！', 'Please select a Pokémon.'],
+    'box.msg_invalid_level': ['請輸入有效的等級 (1 ~ 100)！', 'Please enter a valid level (1 ~ 100).'],
+    'box.ui_level': ['等級', 'Level'],
+    'box.ui_nickname': ['自訂暱稱', 'Nickname'],
+    'box.ui_none_unset': ['未設定', 'None'],
+    'box.ui_retain_nickname': ['(維持原暱稱：{nickname})', '(Retain: {nickname})'],
+    'box.ui_main_skill_level': ['主技能等級', 'Main Skill Level'],
+    'box.ui_nature': ['性格', 'Nature'],
+    'box.ui_cleanse_mint': ['淨白薄荷', 'Cleanse Mint'],
+    'box.ui_mint_used': ['已消除效果', 'Used'],
+    'box.ui_mint_none': ['未消除', 'None'],
+    'box.ui_conflict_ribbon_0': ['未佩戴 (0h)', 'None (0h)'],
+    'box.ui_conflict_ribbon_1': ['200 小時 (+1 上限)', '200h (+1 Carry)'],
+    'box.ui_conflict_ribbon_2': ['500 小時 (+3 上限 · 幫速)', '500h (+3 Carry · Speed)'],
+    'box.ui_conflict_ribbon_3': ['1000 小時 (+6 上限)', '1000h (+6 Carry)'],
+    'box.ui_conflict_ribbon_4': ['2000 小時 (+8 上限 · 最大幫速)', '2000h (+8 Carry · Max)'],
+    'box.ui_ribbon': ['睡飽飽獎章', 'Good-Night Ribbon'],
+    'box.ui_ingredients_combo': ['食材組合 (Lv1/30/60)', 'Ingredients (Lv1/30/60)'],
+    'box.ui_none': ['無', 'None'],
+    'box.ui_list_sep': ['、', ', '],
+    'box.ui_existing_lv': ['現有 Lv.{level}', 'Lv.{level}'],
+    'box.ui_conflict_updates': ['項更新', 'Updates'],
+    'box.ui_conflict_same': ['項相同', 'Same'],
+    'box.ui_tag_same': ['相同', 'Same'],
+    'box.ui_tag_updated': ['已更新', 'Updated'],
+    'box.ui_in_box': ['倉庫現有', 'In Box'],
+    'box.ui_new_screenshot': ['截圖新值', 'New Screenshot'],
+    'box.msg_overwrite_success_title': ['寶可夢覆蓋更新成功！', 'Pokémon Overwritten & Updated'],
+    'box.msg_overwrite_success_desc': ['已成功將「{name}」覆蓋更新為最新截圖數據！', 'Successfully updated "{name}" with latest screenshot data.'],
+    'box.msg_upload_valid_images': ['請上傳圖片檔案 (PNG, JPG, WebP)！', 'Please upload valid image files (PNG, JPG, WebP).'],
+    'box.ocr_analyzing': ['正在智能解析截圖中，請稍候...', 'Analyzing screenshot with AI OCR, please wait...'],
+    'box.ocr_batch_title': ['批次智能辨識入庫中...', 'Batch OCR Smart Ingestion...'],
+    'box.ocr_initializing': ['初始化 OCR 引擎中...', 'Initializing OCR engine...'],
+    'box.ocr_recognizing_file': ['正在辨識：{name} ({current}/{total})...', 'Recognizing: {name} ({current}/{total})...'],
+    'box.ocr_batch_summary': ['成功入庫 {added} 隻，升級更新 {upgraded} 隻，略過重複 {skipped} 隻。', 'Successfully added {added}, upgraded {upgraded}, skipped {skipped} duplicates.'],
+    'box.ocr_batch_failed_part': ['失敗 {count} 張（{files}）。', 'Failed {count} images ({files}).'],
+    'box.ocr_batch_complete_title': ['批次辨識入庫完成！', 'Batch OCR Import Complete!'],
+    'box.ui_form_ribbon_0': ['未佩戴 (0h)', 'None (0h)'],
+    'box.ui_form_ribbon_1': ['200 小時 (+1 持有上限)', '200 hrs (+1 Carry Limit)'],
+    'box.ui_form_ribbon_2_default': ['500 小時 (+3 持有上限 · 幫速加成)', '500 hrs (+3 Carry Limit · Speed Boost)'],
+    'box.ui_form_ribbon_4_default': ['2000 小時 (+8 持有上限 · 幫速最大加成)', '2000 hrs (+8 Carry Limit · Max Speed Boost)'],
+    'box.ui_form_ribbon_2_evo2': ['500 小時 (+3 持有上限 · 幫速加成 -11%)', '500 hrs (+3 Carry Limit · Speed -11%)'],
+    'box.ui_form_ribbon_4_evo2': ['2000 小時 (+8 持有上限 · 幫速最大加成 -25%)', '2000 hrs (+8 Carry Limit · Speed -25%)'],
+    'box.ui_form_ribbon_2_evo1': ['500 小時 (+3 持有上限 · 幫速加成 -5%)', '500 hrs (+3 Carry Limit · Speed -5%)'],
+    'box.ui_form_ribbon_4_evo1': ['2000 小時 (+8 持有上限 · 幫速最大加成 -12%)', '2000 hrs (+8 Carry Limit · Speed -12%)'],
+    'box.ui_form_ribbon_2_final': ['500 小時 (+3 持有上限)', '500 hrs (+3 Carry Limit)'],
+    'box.ui_form_ribbon_4_final': ['2000 小時 (+8 持有上限)', '2000 hrs (+8 Carry Limit)'],
+    'box.ui_form_ribbon_3': ['1000 小時 (+6 持有上限)', '1000 hrs (+6 Carry Limit)'],
+    'box.ui_clear_selection': ['清除已選寶可夢', 'Clear selection'],
+    'box.ui_expand_list': ['展開寶可夢列表', 'Expand list'],
+    'box.ui_no_matching_pokemon': ['找不到符合之寶可夢', 'No matching Pokémon'],
+    'box.ui_slot_empty': ['-- 未解鎖 --', '-- None --'],
+    'box.ui_already_selected': ['（已選用）', ' (Already Selected)'],
+
+    // Box: PR Appraisal Highlights & Baseline Messages
+    'box.pr_fail_berry_speed_down': ['性格減慢幫忙速度，未達樹果手及格線（且前三格無樹果S/幫手獎勵補救）', 'Speed down nature without BFS / HB to compensate'],
+    'box.pr_fail_berry_no_boost': ['前三格缺乏樹果S/速度加成，未達樹果手及格線', 'Lacks BFS or speed boost in first 3 slots'],
+    'box.pr_fail_ing_down': ['性格減少食材機率，未達食材手及格線', 'Ingredient down nature without Ingredient Finder M'],
+    'box.pr_fail_ing_no_boost': ['缺乏食材機率加成，未達食材手及格線', 'Lacks ingredient finder boost in first 3 slots'],
+    'box.pr_fail_skill_down': ['性格減少主技能機率，未達技能手及格線', 'Skill down nature without Skill Trigger M'],
+    'box.pr_fail_skill_no_boost': ['缺乏技能發動率加成，未達技能手及格線', 'Lacks skill trigger boost in first 3 slots'],
+    'box.pr_hl_speed_up': ['幫忙速度▲', 'Speed ▲'],
+    'box.pr_hl_ing_down_berry': ['食材▼ (樹果極限流)', 'Ing. ▼ (Pure Berry)'],
+    'box.pr_hl_ing_up': ['食材機率▲', 'Ing. Rate ▲'],
+    'box.pr_hl_skill_up': ['主技能機率▲', 'Skill Trigger ▲'],
+    'box.pr_hl_bfs': ['Lv.{lv} 樹果S', 'Lv.{lv} BFS'],
+    'box.pr_hl_hb': ['Lv.{lv} 幫手獎勵', 'Lv.{lv} Helping Bonus'],
+    'box.pr_hl_ing_m': ['Lv.{lv} 食材機率M', 'Lv.{lv} Ing. Finder M'],
+    'box.pr_hl_skill_m': ['Lv.{lv} 技能機率M', 'Lv.{lv} Skill Trigger M'],
+    'box.pr_hl_skill_lvl_m': ['Lv.{lv} 技能等級M', 'Lv.{lv} Skill Level M'],
+    'box.pr_hl_speed_m': ['Lv.{lv} 幫忙速度M', 'Lv.{lv} Speed M'],
+    'box.pr_hl_ribbon_speed': ['獎章幫速 -{pct}%', 'Ribbon -{pct}% Speed'],
+    'box.pr_hl_ribbon_carry': ['獎章持有 +{carry}', 'Ribbon +{carry} Carry'],
+    'box.pr_hl_cleanse_mint': ['使用淨白薄荷消除個性效果', 'Cleanse Mint: Neutralized Nature Effects'],
+    'box.pr_solid_starter': ['及格主力，基礎能力扎實', 'Solid baseline starter']
+  });
+  // ─── 食譜與最新消息模組 UI 字串資源 (Recipes & News UI Resources) ───
+  registerResources({
+    // Recipes UI
+    'recipes.ui_cat_all': ['全部', 'All'],
+    'recipes.ui_cat_curry': ['咖哩', 'Curry', '咖喱'],
+    'recipes.ui_cat_salad': ['沙拉', 'Salad'],
+    'recipes.ui_cat_dessert': ['甜點', 'Dessert', '甜点'],
+    'recipes.ui_pot_expansion_none': ['+0 (無追加)', '+0 (None)', '+0 (无追加)'],
+    'recipes.ui_err_load_db': ['料理食譜資料庫載入失敗 (recipes.json)', 'Failed to load recipe database (recipes.json)', '料理食谱数据库加载失败 (recipes.json)'],
+    'recipes.ui_err_load_prefix': ['載入 recipes.json 失敗：', 'Failed to load recipes.json: ', '加载 recipes.json 失败：'],
+    'recipes.ui_pantry_clear_btn': ['清空', 'Clear'],
+    'recipes.ui_pantry_toggle': ['收合/展開', 'Collapse / Expand'],
+    'recipes.ui_pantry_fill_demo': ['+10 全食材', '+10 All'],
+    'recipes.ui_pantry_reset_zero': ['全設為 0', 'Zero All'],
+    'recipes.ui_req_pot_slots': ['{count}料', '{count} slots'],
+    'recipes.ui_close': ['關閉', 'Close'],
+    'recipes.ui_filler_step1': ['1. 鍋子容量配置', '1. Pot Capacity Configuration'],
+    'recipes.ui_base_pot_size': ['基礎鍋子容量', 'Base Pot Size'],
+    'recipes.ui_good_camp_ticket': ['好露營券 (+50%)', 'Good Camp Ticket (+50%)'],
+    'recipes.ui_sunday_cooking': ['週末料理加倍 (×2)', 'Sunday Cooking (2x)'],
+    'recipes.ui_effective_pot': ['有效總容量', 'Effective Pot'],
+    'recipes.ui_base_required': ['料理基礎需求', 'Base Required'],
+    'recipes.ui_filler_slots': ['剩餘填鍋格數', 'Filler Slots'],
+    'recipes.ui_filler_step2': ['2. 填鍋加料最佳推薦', '2. Optimal Filler Ingredients'],
+    'recipes.ui_filler_mode_pantry': ['依庫存食材', 'From Pantry'],
+    'recipes.ui_filler_mode_all': ['理論最高能量', 'Theoretical Best'],
+    'recipes.ui_filler_zero_hint': ['有效鍋容量等於料理基礎需求，無需追加多餘食材。', 'Pot capacity matches recipe requirement (0 filler slots).'],
+    'recipes.ui_filler_empty_pantry': ['目前食材庫存已無剩餘多餘食材可供加料。可切換為「理論最高能量」。', 'No available pantry ingredients for filling. Switch to Theoretical Best.'],
+    'recipes.ui_filler_th_ing': ['推薦食材', 'Ingredient'],
+    'recipes.ui_filler_th_unit': ['單個能量', 'Base'],
+    'recipes.ui_filler_th_count': ['填入數量', 'Count'],
+    'recipes.ui_filler_th_added': ['追加基礎分', 'Added Base'],
+    'recipes.ui_filler_unfilled': ['庫存已耗盡之未填格數', 'Unfilled Slots (Exhausted)'],
+    'recipes.ui_filler_total_energy': ['最終試算預估總能量', 'Total Projected Meal Energy'],
+    'recipes.ui_filler_apply_btn': ['一鍵同步至主介面擴鍋滑桿', 'Apply to Pot Expansion Slider'],
+    'recipes.ui_pantry_missing_count': ['缺 {count}', 'Missing {count}'],
+    'recipes.ui_sidebar_expand': ['展開食譜篩選側邊欄', 'Expand Recipe Filter Sidebar'],
+    'recipes.ui_sidebar_collapse': ['收合食譜篩選側邊欄', 'Collapse Recipe Filter Sidebar'],
+    'recipes.ui_pot_extra': ['+{count}料', '+{count} extra'],
+    'recipes.ui_dishes_count_mobile': ['食譜 <strong>{count}</strong> 道', 'Dishes <strong>{count}</strong>'],
+    'recipes.ui_dishes_count_desktop': ['食譜 <strong>{count}</strong> 道（{breakdown}）', 'Dishes <strong>{count}</strong> ({breakdown})'],
+    'recipes.ui_no_matching': ['未找到符合條件的料理食譜', 'No matching recipes found'],
+    'recipes.ui_optimize_pot_title': ['填鍋與容量最佳化', 'Optimize Pot Fillers'],
+    'recipes.ui_optimizer_btn': ['最佳加料', 'Optimizer'],
+    'recipes.ui_optimizer_btn_short': ['加料', 'Opt'],
+
+    // News UI
+    'news.ui_err_load_db': ['最新新聞與公告載入失敗 (news.json)', 'Failed to load news and updates (news.json)'],
+    'news.ui_err_load_prefix': ['新聞資料載入失敗：', 'Failed to load news data: ', '新闻数据加载失败：'],
+    'news.ui_err_load_hint': ['請稍後重整頁面，或點擊頂部「同步資料」更新最新官方新聞。', 'Please refresh the page later, or click "Sync Data" at the top to fetch the latest official news.'],
+    'news.ui_type_special_event': ['活動企劃', 'Special Event'],
+    'news.ui_type_snapshot_pack': ['快照同樂包', 'Snapshot Pack'],
+    'news.ui_type_miracle_snapshot': ['奇跡快照', 'Miracle Snapshot'],
+    'news.ui_type_mewtwo_research': ['超夢秘境研究', 'Mewtwo Research'],
+    'news.ui_type_good_sleep_pack': ['好眠限定包', 'Good Sleep Pack'],
+    'news.ui_type_good_sleep_day': ['好眠日', 'Good Sleep Day'],
+    'news.ui_type_new_moon_pack': ['新月限定包', 'New Moon Pack'],
+    'news.ui_type_new_moon_day': ['新月日', 'New Moon Day'],
+    'news.ui_type_30th_anniv_pack': ['30週年紀念包', '30th Anniv Pack'],
+    'news.ui_type_collab_pack': ['合作紀念包', 'Collab Pack'],
+    'news.ui_type_collab_event': ['合作特企', 'Collab Event'],
+    'news.ui_type_tinkatink_pack': ['小鍛匠培育包', 'Tinkatink Pack'],
+    'news.ui_type_hawlucha_pack': ['摔角鷹人培育包', 'Hawlucha Pack'],
+    'news.ui_type_growth_pack': ['培育包', 'Growth Pack'],
+    'news.ui_type_festival_bundle': ['同樂包', 'Festival Bundle'],
+    'news.ui_type_event_bundle': ['活動禮包', 'Event Bundle'],
+    'news.ui_type_summer_carnival': ['夏日嘉年華', 'Summer Carnival'],
+    'news.ui_type_update': ['版本更新', 'Update'],
+    'news.ui_month_1': ['1 月', 'January'],
+    'news.ui_month_2': ['2 月', 'February'],
+    'news.ui_month_3': ['3 月', 'March'],
+    'news.ui_month_4': ['4 月', 'April'],
+    'news.ui_month_5': ['5 月', 'May'],
+    'news.ui_month_6': ['6 月', 'June'],
+    'news.ui_month_7': ['7 月', 'July'],
+    'news.ui_month_8': ['8 月', 'August'],
+    'news.ui_month_9': ['9 月', 'September'],
+    'news.ui_month_10': ['10 月', 'October'],
+    'news.ui_month_11': ['11 月', 'November'],
+    'news.ui_month_12': ['12 月', 'December'],
+    'news.ui_cal_header': ['{year} 年 {monthName}', '{monthName} {year}'],
+    'news.ui_weekday_0': ['日', 'Sun'],
+    'news.ui_weekday_1': ['一', 'Mon'],
+    'news.ui_weekday_2': ['二', 'Tue'],
+    'news.ui_weekday_3': ['三', 'Wed'],
+    'news.ui_weekday_4': ['四', 'Thu'],
+    'news.ui_weekday_5': ['五', 'Fri'],
+    'news.ui_weekday_6': ['六', 'Sat'],
+    'news.ui_cal_status_ended': ['已結束', 'Ended'],
+    'news.ui_cal_status_ongoing': ['進行中', 'Ongoing'],
+    'news.ui_cal_status_upcoming': ['即將開始', 'Upcoming'],
+    'news.ui_cal_click_search': ['點擊直接搜尋此活動', 'Click to search this event'],
+    'news.ui_cal_no_events': ['當日暫無進行中的特殊活動或禮包', 'No active events or bundles on this date'],
+    'news.ui_date_md': ['{month}月{day}日', '{monthName} {day}'],
+    'news.ui_today_suffix': [' (今日)', ' (Today)'],
+    'news.ui_cal_title': ['活動日曆', 'Event Calendar'],
+    'news.ui_cal_prev': ['上個月', 'Previous Month'],
+    'news.ui_cal_today': ['今日', 'Today'],
+    'news.ui_cal_today_title': ['今日', 'Return to Today'],
+    'news.ui_cal_next': ['下個月', 'Next Month'],
+    'news.ui_cal_active_events': ['進行中的活動與禮包', 'Active Events', '进行中的活动与礼包'],
+    'news.ui_cal_items_count': ['{count} 項', '{count} items', '{count} 项'],
+    'news.ui_cal_filter_ongoing_title': ['在下方卡片列表展示所有正在進行的活動', 'Filter card list below to currently ongoing events', '在下方卡片列表展示所有正在进行的活动'],
+    'news.ui_cal_reset_cards': ['× 還原全部卡片', '× Reset Cards', '× 还原全部卡片'],
+    'news.ui_cal_show_in_cards': ['在下方展示進行中活動', 'Show in Cards', '在下方展示进行中活动'],
+    'news.ui_empty_title': ['找不到符合的新聞或公告', 'No matching news or updates found', '找不到符合的新闻或公告'],
+    'news.ui_empty_sub': ['請嘗試更換搜尋關鍵字，或切換至「全部」分類。', 'Try different keywords or switch to the "All" category.', '请尝试更换搜索关键字，或切换至“全部”分类。'],
+    'news.ui_debut_label': ['新登場：', 'Debut: ', '新登场：'],
+    'news.ui_featured_label': ['焦點：', 'Focus: ', '焦点：'],
+    'news.ui_cat_label_event': ['活動企劃', 'Event', '活动企划'],
+    'news.ui_cat_label_update': ['版本更新', 'Update', '版本更新'],
+    'news.ui_cat_label_maintenance': ['維護公告', 'Maintenance', '维护公告'],
+    'news.ui_cat_label_notice': ['重要通知', 'Notice', '重要通知'],
+    'news.ui_badge_notice_default': ['公告', 'Notice'],
+    'news.ui_status_expired': ['已結束', 'EXPIRED', '已结束'],
+    'news.ui_status_ongoing': ['進行中', 'ONGOING', '进行中'],
+    'news.ui_status_upcoming': ['即將開始', 'UPCOMING', '即将开始'],
+    'news.ui_official_link': ['官方原文 ↗', 'Official ↗'],
+    'news.ui_hl_rateup_mid': ['機率中幅提升 新登場/焦點', 'Greater Appearance Rate', '几率中幅提升 新登场/焦点'],
+    'news.ui_hl_rateup_large': ['機率大幅提升 超絕UP', 'Significantly Greater Appearance Rate', '几率大幅提升 超绝UP'],
+    'news.ui_hl_rateup_small': ['機率小幅提升', 'Slightly Greater Appearance Rate', '几率小幅提升'],
+    'news.ui_hl_new_debut': ['新登場', 'New Debut', '新登场']
+  });
+// Pokedex UI String Resources (Pre-Resolved Unified String Resource Engine)
+// Concatenated inside the i18n.js IIFE right after i18n_resources.js.
+
+registerResources({
+  'dex.ui_locale_tag': ['zh-TW', 'en-US', 'zh-CN'],
+  'dex.ui_all_types': ['全部屬性', 'All Types', '全部属性'],
+  'dex.ui_expand_filter_sidebar': ['展開篩選側邊欄', 'Expand Filter Sidebar', '展开筛选侧边栏'],
+  'dex.ui_collapse_filter_sidebar': ['收合篩選側邊欄', 'Collapse Filter Sidebar', '收合筛选侧边栏'],
+
+  // Sidebar / GitHub Sync & PAT
+  'dex.ui_pat_saved': ['[✓] PAT Token 已儲存！現在可以點擊同步資料。', '[✓] PAT Token saved! You can now click Sync Data.', '[✓] PAT Token 已保存！现在可以点击同步数据。'],
+  'dex.ui_pat_missing': ['[!] 尚未設定 GitHub PAT Token。', '[!] GitHub PAT Token is not configured.', '[!] 尚未设置 GitHub PAT Token。'],
+  'dex.ui_pat_missing_hint': ['請先點擊 <strong>設定</strong> 並填入你的 GitHub PAT。', 'Please click <strong>Settings</strong> and enter your GitHub PAT first.', '请先点击 <strong>设置</strong> 并填入你的 GitHub PAT。'],
+  'dex.ui_sync_triggering': ['觸發同步中...', 'Triggering sync...', '触发同步中...'],
+  'dex.ui_sync_triggered': ['[v] GitHub Actions 同步已觸發！', '[v] GitHub Actions sync triggered!', '[v] GitHub Actions 同步已触发！'],
+  'dex.ui_sync_eta': ['約 60-120 秒後資料更新至 GitHub Pages。', 'Data will update on GitHub Pages in ~60-120s.', '约 60-120 秒后数据更新至 GitHub Pages。'],
+  'dex.ui_sync_view_progress': ['查看進度 ->', 'View Progress ->', '查看进度 ->'],
+  'dex.ui_pat_invalid': ['[X] PAT Token 無效或權限不足，請重新設定。', '[X] Invalid PAT Token or insufficient permissions. Please reconfigure.', '[X] PAT Token 无效或权限不足，请重新设置。'],
+  'dex.ui_sync_http_err': ['[!] 回應 {status}：{body}', '[!] Response {status}: {body}', '[!] 响应 {status}：{body}'],
+  'dex.ui_sync_net_err': ['[X] 網路錯誤：{err}', '[X] Network error: {err}', '[X] 网络错误：{err}'],
+  'dex.ui_sync_data': ['同步資料', 'Sync Data', '同步数据'],
+
+  // Navigation / Loading Errors
+  'dex.ui_db_load_failed': ['寶可夢資料庫載入失敗 (data.json)', 'Failed to load Pokédex database (data.json)', '宝可梦资料库载入失败 (data.json)'],
+  'dex.ui_data_json_load_err': ['載入 data.json 失敗：', 'Failed to load data.json: ', '载入 data.json 失败：'],
+
+  // List / Table / Grid UI
+  'dex.ui_sort_new_tag': [' (新)', ' (New)', ' (新)'],
+  'dex.ui_sort_tip_newest': ['排序：新增寶可夢（新到舊）', 'Sorted: Newest to Oldest', '排序：新增宝可梦（新到旧）'],
+  'dex.ui_sort_tip_desc': ['排序：大到小', 'Sorted: Descending', '排序：大到小'],
+  'dex.ui_sort_tip_asc': ['排序：小到大', 'Sorted: Ascending', '排序：小到大'],
+  'dex.ui_count_fmt': ['共 {count} 隻寶可夢', '{count} Pokémon', '共 {count} 只宝可梦'],
+  'dex.ui_render_error': ['圖鑑畫面渲染異常', 'Pokédex render error', '图鉴画面渲染异常'],
+
+  // Help Tooltips
+  'dex.ui_ladder_formula_help_title': ['天梯基準：Lv.60 滿活力', 'Baseline: Lv.60 Ideal Energy', '天梯基准：Lv.60 满活力'],
+  'dex.ui_ladder_formula_help_body': [
+    '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。',
+    'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daily yield.',
+    '以 Lv.60 满活力理想状态 (活力 ≥ 80%，间隔 0.45x) 试算单日产能。'
+  ],
+  'dex.ui_energy_help_btn_tip': [
+    '滿活力 (活力≥80%) 幫忙間隔 0.45x 與 12 小時基準說明',
+    'Ideal Energy (>=80%) & 12h Daytime Baseline',
+    '满活力 (活力≥80%) 帮忙间隔 0.45x 与 12 小时基准说明'
+  ],
+  'dex.ui_energy_help_title': ['理想活力 0.45x 與 12 小時基準說明', 'Ideal Energy (0.45x) & 12h Daytime Baseline', '理想活力 0.45x 与 12 小时基准说明'],
+  'dex.ui_energy_help_body': [
+    '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。<br>此處算法採用 <span class="text-accent font-bold">12 小時 (43200秒)</span> 日間活躍基準：一般用戶非睡眠時間約 12-16 小時，且寶可夢睡飽需 8.5 小時，扣除夜間睡眠，以 12 小時試算最符合日間實際產能期望。',
+    'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>).<br>Calculation adopts a <span class="text-accent font-bold">12 hours (43200s)</span> daytime active baseline: general players have 12-16 hours waking time, and Pokémon sleep requires ~8.5h, so 12h represents realistic daytime active output without non-active sleep downtime.',
+    '活力 ≥ 80% 理想状态下，帮忙间隔缩短为 <span class="text-accent font-bold">0.45 倍</span>（产能约 <span class="text-accent font-bold">2.22 倍</span>）。<br>此处算法采用 <span class="text-accent font-bold">12 小时 (43200秒)</span> 日间活跃基准：一般用户非睡眠时间约 12-16 小时，且宝可梦睡饱需 8.5 小时，扣除夜间睡眠，以 12 小时试算最符合日间实际产能期望。'
+  ],
+  'dex.ui_ladder_trigger_help_title': ['專長發動機率加成', 'Specialty Trigger Multipliers', '专长发动几率加成'],
+  'dex.ui_ladder_trigger_help_body': [
+    '所有專長皆以 1.0 倍發動機率為基準。<br>請用技能機率M/S與技能機率▲模擬補正。',
+    'All specialties use a 1.0x trigger baseline.<br>Use Skill Trigger M/S and Skill Chance ▲ to simulate boosts.',
+    '所有专长皆以 1.0 倍发动几率作为基准。<br>请用技能几率M/S与技能几率▲模拟补正。'
+  ],
+
+  // Skill Tooltip & Ingredient Draw
+  'dex.ui_list_sep': ['、', ', ', '、'],
+  'dex.ui_list_sep_html': ['<span class="skill-tooltip-sep">、</span>', '<span class="skill-tooltip-sep">, </span>', '<span class="skill-tooltip-sep">、</span>'],
+  'dex.ui_draws_prefix': ['可精選食材: ', 'Draws: ', '可精选食材: '],
+  'dex.ui_super_luck_crit': [
+    '暴擊效果: 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片)!',
+    'Crit effect: Rarely crits for massive Dream Shards instead of ingredients (up to 20,000 shards)!',
+    '暴击效果: 少数情况下暴击获得大量梦之碎片代替食材 (暴击时最高达 20,000 碎片)!'
+  ],
+  'dex.ui_hyper_cutter_crit': [
+    '暴擊效果: 漂亮成功 (大成功/暴擊) 時食材產出翻倍 (2 倍, 最高達 36 個)!',
+    'Crit effect: Extra Tasty crits to grant 2x ingredients (up to 36 items)!',
+    '暴击效果: 漂亮成功 (大成功/暴击) 时食材产出翻倍 (2 倍, 最高达 36 个)!'
+  ],
+  'dex.ui_draws_with_crit': ['可精選食材: {ings}. {crit}', 'Draws: {ings}. {crit}', '可精选食材: {ings}. {crit}'],
+  'dex.ui_draws_plain': ['可精選食材: {ings}', 'Draws: {ings}', '可精选食材: {ings}'],
+
+  // Modal Header & Controls
+  'dex.ui_solid_pick': ['實用良品 (Solid Pick)', 'Solid Pick', '实用良品 (Solid Pick)'],
+  'dex.ui_cur_rating_tip': ['當前實力評級 (Lv.{level})', 'Current Level Rating (Lv.{level})', '当前实力评级 (Lv.{level})'],
+  'dex.ui_cur_lv_badge': ['當前 Lv.{level}', 'Lv.{level}', '当前 Lv.{level}'],
+  'dex.ui_pot_rating_tip': ['畢業潛力評級 (Lv.100)', 'Max Potential Rating (Lv.100)', '毕业潜力评级 (Lv.100)'],
+  'dex.ui_pot_badge': ['滿級潛力', 'Lv.100 Pot', '满级潜力'],
+  'dex.ui_close': ['關閉', 'Close', '关闭'],
+  'dex.ui_locked_evo_tip': ['不可滑動區間：低於最低進化等級 Lv.{level}', 'Locked: Below min evolution Lv.{level}', '不可滑动区间：低于最低进化等级 Lv.{level}'],
+  'dex.ui_pin_sub1': ['解鎖第1副技能', '1st Sub-Skill', '解锁第1副技能'],
+  'dex.ui_pin_sub2': ['解鎖第2副技能', '2nd Sub-Skill', '解锁第2副技能'],
+  'dex.ui_pin_ing2': ['解鎖第2食材', '2nd Ingredient', '解锁第2食材'],
+  'dex.ui_pin_sub3': ['解鎖第3副技能', '3rd Sub-Skill', '解锁第3副技能'],
+  'dex.ui_pin_ing3': ['解鎖第3食材', '3rd Ingredient', '解锁第3食材'],
+  'dex.ui_pin_sub4': ['解鎖第4副技能 / 模擬', '4th Sub-Skill / Sim', '解锁第4副技能 / 模拟'],
+  'dex.ui_pin_max': ['五階滿等畢業 / 模擬', '5th Sub-Skill / Max', '五阶满等毕业 / 模拟'],
+  'dex.ui_pin_cap': ['目前等級上限', 'Current Level Cap', '目前等级上限'],
+  'dex.ui_pin_ing3_cap': ['解鎖第3食材 / 目前等級上限', '3rd Ingredient & Current Level Cap', '解锁第3食材 / 目前等级上限'],
+  'dex.ui_pin_unreleased': ['遊戲尚未開放 / 模擬', 'Unreleased in game / Simulation only', '游戏尚未开放 / 模拟'],
+  'dex.ui_collapse_subskills': ['副技能收合', 'Collapse Subskills', '副技能收合'],
+  'dex.ui_expand_subskills': ['副技能展開', 'Expand Subskills', '副技能展开'],
+
+  // Formula Breakdown Card
+  'dex.ui_mint_mult': ['{val} (薄荷)', '{val} (Mint)', '{val} (薄荷)'],
+  'dex.ui_step_helps_title': ['實質幫忙間隔與日間次數 (12h)', 'Helping Speed & Active Helps (12h)', '实质帮忙间隔与日间次数 (12h)'],
+  'dex.ui_unit_helps': ['次', 'helps', '次'],
+  'dex.ui_helps_formula_prefix': ['43200秒 (12h) ÷ (', '43200s (12h) ÷ (', '43200秒 (12h) ÷ ('],
+  'dex.ui_step_berry_title': ['樹果產量與單日能量 (12h)', 'Berry Yield & Energy (12h)', '树果产量与单日能量 (12h)'],
+  'dex.ui_unit_strength': ['能量', 'Strength', '能量'],
+  'dex.ui_unit_helps_compact': ['次', ' helps', '次'],
+  'dex.ui_unit_berries_compact': ['顆', ' berries', '颗'],
+  'dex.ui_single_berry_tip': ['單顆能量', 'Single Berry Energy', '单颗能量'],
+  'dex.ui_energy_per_berry': ['能量/顆', 'energy/ea', '能量/颗'],
+  'dex.ui_fav_berry_tip': ['順果 (喜好樹果 2x 能量)', 'Favorite Berry (2x Energy)', '顺果 (喜好树果 2x 能量)'],
+  'dex.ui_fav_berry_prefix': ['順果 ', 'Fav ', '顺果 '],
+  'dex.ui_base_ing_rate_tip': ['基礎食材機率', 'Base Rate', '基础食材几率'],
+  'dex.ui_subskill_mult_tip': ['副技能加成', 'Subskills', '副技能加成'],
+  'dex.ui_nature_mint_tip': ['性格修正（使用淨白薄荷消除個性效果）', 'Nature (Cleanse Mint used)', '性格修正（使用净白薄荷消除个性效果）'],
+  'dex.ui_nature_tip': ['性格修正', 'Nature', '性格修正'],
+  'dex.ui_unit_drops': ['次掉落', 'drops', '次掉落'],
+  'dex.ui_step_skill_title': ['最終技能發動率', 'Final Skill Trigger Rate', '最终技能发动率'],
+  'dex.ui_base_skill_rate_tip': ['基礎技能機率', 'Base Skill Rate', '基础技能几率'],
+  'dex.ui_unit_triggers': ['次', 'triggers', '次'],
+
+  // Subskill Slots & Evolution Tree
+  'dex.ui_slot_empty': ['-- 未配置 --', '-- Empty --', '-- 未配置 --'],
+  'dex.ui_slot_locked': ['-- 未解鎖 --', '-- Locked --', '-- 未解锁 --'],
+  'dex.ui_slot_inactive': ['效果尚未生效', 'Inactive', '效果尚未生效'],
+  'dex.ui_slot_level_low': ['等級不足', 'Level Low', '等级不足'],
+  'dex.ui_slot_requires_lv': ['等級不足：需達 Lv.{level} 方可生效', 'Requires Lv.{level}', '等级不足：需达 Lv.{level} 方可生效'],
+  'dex.ui_slot_sim_lv': ['模擬等級', 'Simulation Level', '模拟等级'],
+  'dex.ui_subskill_selected': ['（已選用）', ' (Selected)', '（已选用）'],
+  'dex.ui_evo_item_tip': ['進化道具：{name}（點擊查看百科詳情）', 'Evolution Item: {name} (Click for encyclopedia details)', '进化道具：{name}（点击查看百科详情）'],
+  'dex.ui_evo_branch_stage': ['{count} 階分支進化鏈', '{count}-Stage Branching Evolution', '{count} 阶分支进化链'],
+  'dex.ui_evo_chain_stage': ['{count} 階進化鏈', '{count}-Stage Evolution Chain', '{count} 阶进化链'],
+  'dex.ui_evo_current_tip': ['當前檢視：{name}', 'Current: {name}', '当前检视：{name}'],
+  'dex.ui_evo_switch_tip': ['點擊切換至 {name}', 'Click to switch to {name}', '点击切换至 {name}'],
+
+  // Good-Night Ribbon Options
+  'dex.ui_ribbon_lv0': ['未佩戴', 'None', '未佩戴'],
+  'dex.ui_ribbon_lv1': ['+1 持有上限', '+1 Carry Limit', '+1 持有上限'],
+  'dex.ui_ribbon_lv2_generic': ['+3 持有上限 · 幫速加成', '+3 Carry Limit · Speed Boost', '+3 持有上限 · 帮速加成'],
+  'dex.ui_ribbon_lv4_generic': ['+8 持有上限 · 幫速最大加成', '+8 Carry Limit · Max Speed Boost', '+8 持有上限 · 帮速最大加成'],
+  'dex.ui_ribbon_lv2_evo2': ['+3 持有上限 · 幫速加成 -11%', '+3 Carry Limit · Speed -11%', '+3 持有上限 · 帮速加成 -11%'],
+  'dex.ui_ribbon_lv4_evo2': ['+8 持有上限 · 幫速最大加成 -25%', '+8 Carry Limit · Speed -25%', '+8 持有上限 · 帮速最大加成 -25%'],
+  'dex.ui_ribbon_lv2_evo1': ['+3 持有上限 · 幫速加成 -5%', '+3 Carry Limit · Speed -5%', '+3 持有上限 · 帮速加成 -5%'],
+  'dex.ui_ribbon_lv4_evo1': ['+8 持有上限 · 幫速最大加成 -12%', '+8 Carry Limit · Speed -12%', '+8 持有上限 · 帮速最大加成 -12%'],
+  'dex.ui_ribbon_lv2_evo0': ['+3 持有上限', '+3 Carry Limit', '+3 持有上限'],
+  'dex.ui_ribbon_lv3': ['+6 持有上限', '+6 Carry Limit', '+6 持有上限'],
+  'dex.ui_ribbon_lv4_evo0': ['+8 持有上限', '+8 Carry Limit', '+8 持有上限'],
+
+  // Strategy Card
+  'dex.ui_strat_berry_title': ['樹果高速量產定位', 'Berry Specialist', '树果高速量产定位'],
+  'dex.ui_strat_berry_desc': ['主要戰力仰賴高頻樹果產出累積能量，樹果數量與速度為絕對核心。', 'Primary scoring relies on high-speed berry output into Snorlax.', '主要战力仰赖高频树果产出累积能量，树果数量与速度为绝对核心。'],
+  'dex.ui_strat_berry_nature': ['幫忙速度提升 (固執 / 勇敢 / 頑皮 / 怕寂寞，固執降食材首選)', 'Speed UP (Adamant / Brave / Naughty / Lonely)', '帮忙速度提升 (固执 / 勇敢 / 顽皮 / 怕寂寞，固执降食材首选)'],
+  'dex.ui_strat_ing_title': ['料理食材專精供貨', 'Ingredient Supplier', '料理食材专精供货'],
+  'dex.ui_strat_ing_desc': ['專注於高階料理食譜所需食材之穩定產出，食材機率與背包上限至關重要。', 'Supplies vital recipe ingredients consistently to sustain high-pot dishes.', '专注于高阶料理食谱所需食材之稳定产出，食材几率与背包上限至关重要。'],
+  'dex.ui_strat_ing_nature': ['食材發現率提升 (冷靜 / 內斂 / 慢吞吞 / 溫和)', 'Ingredient UP (Quiet / Modest / Mild / Rash)', '食材发现率提升 (冷静 / 内敛 / 慢吞吞 / 温和)'],
+  'dex.ui_strat_burst_title': ['樹果遽增爆發定位', 'Berry Burst Hybrid Cannon', '树果遽增爆发定位'],
+  'dex.ui_strat_burst_desc': ['專長雖為技能型，但主技能能直接引爆海量樹果（含隊友樹果與大成功翻倍）。樹果數量S與技能機率雙修能達成天花板級產能，樹果週活動享有 1.4 倍加成。', 'Main skill directly bursts berries for Snorlax. Synergizes exceptionally well with Berry Finding S for massive dual-yield berry output.', '专长虽为技能型，但主技能能直接引爆海量树果（含队友树果与大成功翻倍）。树果数量S与技能几率双修能达成天花板级产能，树果周活动享有 1.4 倍加成。'],
+  'dex.ui_strat_burst_nature': ['主技能或幫速提升 (慎重 / 固執 / 勇敢 / 自大)', 'Skill UP or Speed UP (Careful / Adamant / Brave / Sassy)', '主技能或帮速提升 (慎重 / 固执 / 勇敢 / 自大)'],
+  'dex.ui_strat_healer_title': ['全隊活力療癒核心定位', 'All-Day Team Healer Core', '全队活力疗愈核心定位'],
+  'dex.ui_strat_healer_desc': ['維持全員高活力以常駐最高幫忙速。專精雙技能機率提升，避免「樹果數量S」加速滿包導致無法觸發療癒技能。', 'Maintains team energy >80% for maximum 2.2x speed. Focuses purely on skill procs; avoids Berry Finding S which causes early bag overflow and blocks healing procs.', '维持全员高活力以常驻最高帮忙速。专精双技能几率提升，避免“树果数量S”加速满包导致无法触发疗愈技能。'],
+  'dex.ui_strat_healer_nature': ['主技能機率提升 (慎重 / 自大 / 溫和 / 浮躁，慎重降食材最優)', 'Main Skill UP (Careful / Sassy / Calm / Gentle)', '主技能几率提升 (慎重 / 自大 / 温和 / 浮躁，慎重降食材最优)'],
+  'dex.ui_strat_helper_title': ['傳說幫手加速核心定位', 'Legendary Helper Boost Core', '传说帮手加速核心定位'],
+  'dex.ui_strat_helper_desc': ['引爆全隊多次幫忙以收穫巨額能量。基礎技能率極低（約2%），首重雙技能機率與持有上限防溢滿，嚴格避免「樹果數量S」加速滿包阻斷技能發動。', 'Triggers multi-help procs across the entire team. Base skill rate is extremely low (~2%); strictly prioritizes skill triggers & inventory capacity, strictly avoiding BFS bag overflow.', '引爆全队多次帮忙以收获巨额能量。基础技能率极低（约2%），首重双技能几率与持有上限防溢满，严格避免“树果数量S”加速满包阻断技能发动。'],
+  'dex.ui_strat_helper_nature': ['主技能機率提升 (慎重 / 自大 / 溫和 / 浮躁，慎重降食材最優)', 'Main Skill UP (Careful / Sassy / Calm / Gentle)', '主技能几率提升 (慎重 / 自大 / 温和 / 浮躁，慎重降食材最优)'],
+  'dex.ui_strat_charge_title': ['高頻單體充能直傷定位', 'High-Frequency Direct Charge Power', '高频单体充能直伤定位'],
+  'dex.ui_strat_charge_desc': ['依賴「能量填充M」單次提供極高直傷能量。標準神配首選雙技機極致發動；勤勞收包玩家亦可選擇樹果S雙修分支。', 'Delivers massive direct Snorlax Strength via Charge Strength M. Maximizing skill triggers is the undisputed standard; active players can also opt for BFS hybrid variant.', '依赖“能量填充M”单次提供极高直伤能量。标准神配首选双技机极致发动；勤劳收包玩家亦可选择树果S双修分支。'],
+  'dex.ui_strat_charge_nature': ['主技能機率提升 (慎重 / 自大 / 溫和 / 浮躁，慎重降食材最優)', 'Main Skill UP (Careful / Sassy / Calm / Gentle)', '主技能几率提升 (慎重 / 自大 / 温和 / 浮躁，慎重降食材最优)'],
+  'dex.ui_strat_tactical_title': ['高頻純戰術技能輔助定位', 'Pure Tactical Skill Specialist', '高频纯战术技能辅助定位'],
+  'dex.ui_strat_tactical_desc': ['極度依賴高頻主技能發動，需避免背包過快塞滿（嚴格忌諱樹果S），優先追求技能機率與持有上限。', 'Relies on maximum skill activation frequency; strictly avoids Berry Finding S to prevent early bag overflow from blocking procs.', '极度依赖高频主技能发动，需避免背包过快塞满（严格忌讳树果S），优先追求技能几率与持有上限。'],
+  'dex.ui_strat_tactical_nature': ['主技能機率提升 (自大 / 慎重 / 溫和 / 浮躁)', 'Main Skill UP (Sassy / Calm / Careful / Gentle)', '主技能几率提升 (自大 / 慎重 / 温和 / 浮躁)'],
+  'dex.ui_strat_core_skill': ['核心神技', 'Core Skill', '核心神技'],
+  'dex.ui_strat_recommended': ['推薦副技', 'Recommended', '推荐副技'],
+  'dex.ui_strat_best_nature': ['契合性格', 'Best Nature', '契合性格'],
+
+  // Main Skill Yield Calculator
+  'dex.ui_main_skill_default': ['主技能', 'Main Skill', '主技能'],
+  'dex.ui_sy_bulk_up_lbl': ['健美', 'Bulk Up'],
+  'dex.ui_sy_bulk_up_val': ['+{ing} 顆食材 & +{tasty}% 大成功率', '+{ing} ings & +{tasty}% Tasty', '+{ing} 颗食材 & +{tasty}% 大成功率'],
+  'dex.ui_sy_bulk_up_sgl': ['單次: {ing} 顆食材, +{tasty}% 大成功率', 'single: {ing} ings, +{tasty}% Tasty', '单次: {ing} 颗食材, +{tasty}% 大成功率'],
+  'dex.ui_sy_mystical_fire_lbl': ['魔法火焰', 'Mystical Fire'],
+  'dex.ui_sy_mystical_fire_val': ['+{pot} 鍋子容量 & +{tasty}% 大成功率', '+{pot} Pot & +{tasty}% Tasty', '+{pot} 锅子容量 & +{tasty}% 大成功率'],
+  'dex.ui_sy_mystical_fire_sgl': ['單次: +{pot} 容量, +{tasty}% 大成功率', 'single: +{pot} Pot, +{tasty}% Tasty', '单次: +{pot} 容量, +{tasty}% 大成功率'],
+  'dex.ui_sy_plus_lbl': ['正電', 'Plus', '正电'],
+  'dex.ui_sy_present_lbl': ['禮物', 'Present', '礼物'],
+  'dex.ui_sy_magnet_s_lbl': ['食材獲取S', 'Magnet S', '食材获取S'],
+  'dex.ui_sy_extra_ings_val': ['+{val} 顆額外食材', '+{val} extra ings', '+{val} 颗额外食材'],
+  'dex.ui_sy_plus_sgl': ['單次基準 {val} 顆 (+同伴加成)', 'base {val} ings (+teammate bonus)', '单次基准 {val} 颗 (+同伴加成)'],
+  'dex.ui_sy_present_sgl': ['單次基準 {val} 顆 (+機率糖果)', 'base {val} ings (+candy chance)', '单次基准 {val} 颗 (+几率糖果)'],
+  'dex.ui_sy_ings_sgl': ['單次 {val} 顆', 'yield {val} ings', '单次 {val} 颗'],
+  'dex.ui_sy_hyper_cutter_lbl': ['怪力鉗', 'Hyper Cutter', '怪力钳'],
+  'dex.ui_sy_super_luck_lbl': ['超幸運', 'Super Luck', '超幸运'],
+  'dex.ui_sy_draw_s_lbl': ['食材精選S', 'Draw S', '食材精选S'],
+  'dex.ui_sy_selected_ings_val': ['+{val} 顆專屬食材', '+{val} selected ings', '+{val} 颗专属食材'],
+  'dex.ui_sy_hyper_cutter_sgl': ['單次基準 {val} 顆 (暴擊2倍)', 'base {val} ings (crit 2x)', '单次基准 {val} 颗 (暴击2倍)'],
+  'dex.ui_sy_super_luck_sgl': ['單次基準 {val} 顆 (暴擊碎片)', 'base {val} ings (crit Shards)', '单次基准 {val} 颗 (暴击碎片)'],
+  'dex.ui_sy_psystrike_lbl': ['精神擊破', 'Psystrike', '精神击破'],
+  'dex.ui_sy_psystrike_val': ['+{val} 點能量 + 樹果領域', '+{val} Strength + Berry Field', '+{val} 点能量 + 树果领域'],
+  'dex.ui_sy_psystrike_sgl': ['單次 {val} 能量 + 領域', 'base {val} Str + Field', '单次 {val} 能量 + 领域'],
+  'dex.ui_sy_bad_dreams_lbl': ['夢魘', 'Bad Dreams', '梦魇'],
+  'dex.ui_sy_charge_m_lbl': ['能量填充M', 'Charge Str. M'],
+  'dex.ui_sy_str_val': ['+{val} 點能量', '+{val} Strength', '+{val} 点能量'],
+  'dex.ui_sy_str_sgl': ['單次 {val} 能量', 'base {val} Str', '单次 {val} 能量'],
+  'dex.ui_sy_charge_s_rand_lbl': ['能量填充S（隨機）', 'Charge Str. S (Random)', '能量填充S（随机）'],
+  'dex.ui_sy_charge_s_rand_val': ['+{val} 點能量 (均值)', '+{val} Strength (Avg)', '+{val} 点能量 (均值)'],
+  'dex.ui_sy_charge_s_rand_sgl': ['單次均值 {val} 能量', 'avg {val} Str', '单次均值 {val} 能量'],
+  'dex.ui_sy_stockpile_lbl': ['蓄力', 'Stockpile'],
+  'dex.ui_sy_stockpile_val': ['+{val} 點基準能量', '+{val} Base Strength', '+{val} 点基准能量'],
+  'dex.ui_sy_stockpile_sgl': ['單次蓄力 {val} 能量', 'base {val} Str', '单次蓄力 {val} 能量'],
+  'dex.ui_sy_charge_s_lbl': ['能量填充S', 'Charge Str. S'],
+  'dex.ui_sy_lunar_prayer_lbl': ['新月祈禱', 'Lunar Prayer', '新月祈祷'],
+  'dex.ui_sy_lunar_prayer_val': ['+{val} 點全員活力 + 樹果', '+{val} Team Energy + Berries', '+{val} 点全员活力 + 树果'],
+  'dex.ui_sy_lunar_prayer_sgl': ['單次 {val} 點 (+超能力樹果)', 'single {val} pts (+Psychic team berries)', '单次 {val} 点 (+超能力树果)'],
+  'dex.ui_sy_berry_juice_lbl': ['樹果汁', 'Berry Juice', '树果汁'],
+  'dex.ui_sy_team_ene_val': ['+{val} 點全員活力', '+{val} Team Energy', '+{val} 点全员活力'],
+  'dex.ui_sy_berry_juice_sgl': ['單次全員 {val} 點 (+機率產樹果汁)', 'single {val} pts (+item chance)', '单次全员 {val} 点 (+几率产树果汁)'],
+  'dex.ui_sy_e4e_s_lbl': ['活力全體療癒S', 'E4E S', '活力全体疗愈S'],
+  'dex.ui_sy_heal_pts_sgl': ['單次 {val} 點', 'heal {val} pts', '单次 {val} 点'],
+  'dex.ui_sy_moonlight_lbl': ['月光', 'Moonlight'],
+  'dex.ui_sy_self_ene_val': ['+{val} 點自身活力', '+{val} Self Energy', '+{val} 点自身活力'],
+  'dex.ui_sy_moonlight_sgl': ['單次自身 {val} 點 (大成功額外補隊友)', 'single {val} pts (+ally on Tasty)', '单次自身 {val} 点 (大成功额外补队友)'],
+  'dex.ui_sy_charge_ene_s_lbl': ['活力充填S', 'Charge Energy S'],
+  'dex.ui_sy_heal_pulse_lbl': ['治癒波動', 'Heal Pulse', '治愈波动'],
+  'dex.ui_sy_heal_pulse_val': ['+{val} 點隊友活力 (2隻)', '+{val} Energy (2 Allies)', '+{val} 点队友活力 (2只)'],
+  'dex.ui_sy_heal_pulse_sgl': ['單次: 各 {val} 點 (共2隻)', 'single: {val} pts to 2 allies', '单次: 各 {val} 点 (共2只)'],
+  'dex.ui_sy_nuzzle_lbl': ['蹭蹭臉頰', 'Nuzzle', '蹭蹭脸颊'],
+  'dex.ui_sy_ally_ene_val': ['+{val} 點隊友活力', '+{val} Ally Energy', '+{val} 点队友活力'],
+  'dex.ui_sy_nuzzle_sgl': ['單次 {val} 點 (+機率追加發動)', 'single {val} pts (+bonus proc chance)', '单次 {val} 点 (+几率追加发动)'],
+  'dex.ui_sy_cheer_s_lbl': ['活力療癒S', 'Energizing Cheer S', '活力疗愈S'],
+  'dex.ui_sy_helper_boost_val': ['+{val} 次全員幫忙', '+{val} Team Helps', '+{val} 次全员帮忙'],
+  'dex.ui_sy_helper_boost_sgl': ['單次最高 {val} 次', 'max {val} helps', '单次最高 {val} 次'],
+  'dex.ui_sy_extra_helpful_lbl': ['幫手支援S', 'Extra Helpful S', '帮手支援S'],
+  'dex.ui_sy_extra_helpful_val': ['+{val} 次隊友幫忙', '+{val} Ally Helps', '+{val} 次队友帮忙'],
+  'dex.ui_sy_helps_sgl': ['單次 {val} 次', 'yield {val} helps', '单次 {val} 次'],
+  'dex.ui_sy_disguise_lbl': ['畫皮', 'Disguise', '画皮'],
+  'dex.ui_sy_draco_meteor_lbl': ['流星群', 'Draco Meteor'],
+  'dex.ui_sy_berry_burst_lbl': ['樹果遽增', 'Berry Burst', '树果遽增'],
+  'dex.ui_sy_extra_berries_val': ['+{val} 顆額外樹果', '+{val} Extra Berries', '+{val} 颗额外树果'],
+  'dex.ui_sy_approx_berries_sgl': ['單次約 {val} 顆', 'approx {val} berries', '单次约 {val} 颗'],
+  'dex.ui_sy_aura_sphere_lbl': ['波導彈', 'Aura Sphere', '波导弹'],
+  'dex.ui_sy_aura_sphere_val': ['+{shards} 碎片 & +{str} 能量', '+{shards} shards & +{str} Str'],
+  'dex.ui_sy_aura_sphere_sgl': ['單次: {shards} 碎片, +{str} 能量', 'single: {shards} shards, +{str} Str', '单次: {shards} 碎片, +{str} 能量'],
+  'dex.ui_sy_shards_rand_lbl': ['夢之碎片獲取S（隨機）', 'Dream Shards (Random)', '梦之碎片获取S（随机）'],
+  'dex.ui_sy_shards_rand_val': ['+{val} 個夢之碎片 (均值)', '+{val} Shards (Avg)', '+{val} 个梦之碎片 (均值)'],
+  'dex.ui_sy_shards_rand_sgl': ['單次均值 {val}', 'avg {val}', '单次均值 {val}'],
+  'dex.ui_sy_shards_s_lbl': ['夢之碎片獲取S', 'Dream Shards S', '梦之碎片获取S'],
+  'dex.ui_sy_shards_s_val': ['+{val} 個夢之碎片', '+{val} Dream Shards', '+{val} 个梦之碎片'],
+  'dex.ui_sy_shards_s_sgl': ['單次 {val} 碎片', 'yield {val} shards', '单次 {val} 碎片'],
+  'dex.ui_sy_minus_lbl': ['負電', 'Minus', '负电'],
+  'dex.ui_sy_pot_val': ['+{val} 鍋子容量', '+{val} Pot Space', '+{val} 锅子容量'],
+  'dex.ui_sy_minus_sgl': ['單次 +{val} 容量 (+同伴回復)', 'single +{val} cap (+energy heal)', '单次 +{val} 容量 (+同伴回复)'],
+  'dex.ui_sy_cook_power_lbl': ['料理強化S', 'Cooking Power Up S', '料理强化S'],
+  'dex.ui_sy_pot_sgl': ['單次 +{val} 容量', 'boost +{val} capacity', '单次 +{val} 容量'],
+  'dex.ui_sy_tasty_chance_lbl': ['料理成功S', 'Tasty Chance S'],
+  'dex.ui_sy_tasty_chance_val': ['+{val}% 大成功機率', '+{val}% Tasty Chance', '+{val}% 大成功几率'],
+  'dex.ui_sy_tasty_chance_sgl': ['單次 +{val}%', 'boost +{val}%', '单次 +{val}%'],
+  'dex.ui_sy_transform_lbl': ['變身', 'Transform', '变身'],
+  'dex.ui_sy_mimic_lbl': ['模仿', 'Mimic'],
+  'dex.ui_sy_all_rounder_lbl': ['十項全能', 'All-Rounder', '十项全能'],
+  'dex.ui_sy_metronome_lbl': ['揮指', 'Metronome', '挥指'],
+  'dex.ui_sy_metronome_val': ['隨機/複製發動各類主技能', 'Random / Mimic Skill Effect', '随机/复制发动各类主技能'],
+  'dex.ui_sy_metronome_sgl': ['隨機觸發', 'variable', '随机触发'],
+  'dex.ui_sy_generic_val': ['單日約 {val} 次發動', '~{val} triggers / day', '单日约 {val} 次发动'],
+  'dex.ui_sy_generic_sgl': ['主技能發動', 'skill proc', '主技能发动']
+});
+  registerResources({
+    'wiki.ui_locale_tag': ['tw', 'en', 'cn'],
+    'wiki.ui_close': ['關閉', 'Close', '关闭'],
+    'wiki.ui_all': ['全部', 'All', '全部'],
+    'wiki.ui_clear': ['清空', 'Clear', '清空'],
+    'wiki.ui_clear_btn': ['清除', 'Clear', '清除'],
+    'wiki.ui_reset': ['重設', 'Reset', '重设'],
+    'wiki.ui_per_day': ['顆/天', '/day', '颗/天'],
+    'wiki.ui_space_per_day': [' 顆/天', ' /day', ' 颗/天'],
+    'wiki.ui_energy_label': ['能量', 'Energy', '能量'],
+    'wiki.ui_strength_unit': ['能量', 'Strength', '能量'],
+    'wiki.ui_helps_unit': ['次幫忙', 'Helps', '次帮忙'],
+    'wiki.ui_pkm_col': ['寶可夢', 'Pokemon', '宝可梦'],
+    'wiki.ui_pkm_proper': ['寶可夢', 'Pokémon', '宝可梦'],
+
+    // Sleep Styles & Rank Badges
+    'wiki.ui_rank_unavailable': ['未出現', 'Unavailable', '未出现'],
+    'wiki.ui_rank_basic': ['普通 (Basic) {num}', 'Basic {num}', '普通 (Basic) {num}'],
+    'wiki.ui_rank_great': ['超級 (Great) {num}', 'Great {num}', '超级 (Great) {num}'],
+    'wiki.ui_rank_ultra': ['高級 (Ultra) {num}', 'Ultra {num}', '高级 (Ultra) {num}'],
+    'wiki.ui_rank_master': ['大師 (Master) {num}', 'Master {num}', '大师 (Master) {num}'],
+    'wiki.ui_sleep_shards_lbl': ['夢之碎片: ', 'Dream Shards: ', '梦之碎片: '],
+    'wiki.ui_sleep_exp_lbl': ['研究EXP: ', 'Research EXP: ', '研究EXP: '],
+    'wiki.ui_sleep_candy_lbl': ['糖果數量: ', 'Candy: ', '糖果数量: '],
+
+    // Ratings & Layout Init
+    'wiki.ui_layout_error': ['數據百科佈局渲染異常', 'Wiki layout rendering error', '数据百科布局渲染异常'],
+    'wiki.ui_unreleased': ['未開放', 'Unreleased', '未开放'],
+    'wiki.ui_rating_subskill_priority': ['副技能推薦梯度', 'Sub-Skill Priority', '副技能推荐梯度'],
+    'wiki.ui_rating_nature_priority': ['性格推薦梯度', 'Nature Priority', '性格推荐梯度'],
+
+    // Values Board & Skills Rendering
+    'wiki.ui_berry_power': ['樹果能量庫', 'Berry Power', '树果能量库'],
+    'wiki.ui_level_colon': ['等級：', 'Level:', '等级：'],
+    'wiki.ui_island_bonus_colon': ['島嶼加成：', 'Island Bonus:', '岛屿加成：'],
+    'wiki.ui_island_bonus_inline': [' +{bonus}%島嶼', ' +{bonus}% Island', ' +{bonus}%岛屿'],
+    'wiki.ui_base_label': ['基礎', 'Base', '基础'],
+    'wiki.ui_fav_2x': ['順果 2x', 'Fav 2x', '顺果 2x'],
+    'wiki.ui_base_energy_1x': ['基礎能量 (1x)', 'Base Energy (1x)', '基础能量 (1x)'],
+    'wiki.ui_fav_energy_2x': ['順果 2x 能量', 'Favorite Berry (2x)', '顺果 2x 能量'],
+    'wiki.ui_ing_base_values': ['食材基礎庫', 'Ingredient Base Values', '食材基础库'],
+    'wiki.ui_base_energy': ['基礎能量', 'Base Energy', '基础能量'],
+    'wiki.ui_max_daily_prefix': ['最高日產 ~ ', 'Max Daily ~ ', '最高日产 ~ '],
+    'wiki.ui_no_match': ['無符合', 'No Match', '无符合'],
+    'wiki.ui_no_matching_pkm': ['無符合篩選條件之寶可夢', 'No matching Pokémon', '无符合筛选条件之宝可梦'],
+    'wiki.ui_cat_energy': ['能量系', 'Strength', '能量系'],
+    'wiki.ui_cat_energy_heal': ['活力系', 'Energy Heal', '活力系'],
+    'wiki.ui_cat_ingredient': ['食材與料理', 'Ingredients', '食材与料理'],
+    'wiki.ui_cat_special': ['神獸與特殊專屬', 'Special/Legend', '神兽与特殊专属'],
+    'wiki.ui_cat_shards': ['夢之碎片', 'Dream Shards', '梦之碎片'],
+    'wiki.ui_type_paren': ['（屬性）', '(Type)', '（属性）'],
+    'wiki.ui_unit_strength': [' 能量', ' Strength', ' 能量'],
+    'wiki.ui_unit_ingredients': [' 個食材', ' Ingredients', ' 个食材'],
+    'wiki.ui_unit_helps': [' 次幫忙', ' Helps', ' 次帮忙'],
+    'wiki.ui_unit_energy': [' 點活力', ' Energy', ' 点活力'],
+    'wiki.ui_unit_points': [' 點', ' Energy', ' 点'],
+    'wiki.ui_stack_count_label': ['蓄力次數切換：', 'Stack Count:', '蓄力次数切换：'],
+    'wiki.ui_times_suffix': ['次', 'x', '次'],
+    'wiki.ui_toggle_stack_matrix': ['展開 / 收合完整 0~10 次蓄力數值表', 'Toggle 0~10 Stack Value Matrix', '展开 / 收合完整 0~10 次蓄力数值表'],
+    'wiki.ui_stacks_th': ['蓄力', 'Stacks', '蓄力'],
+    'wiki.ui_same_type_label': ['同屬性種類數：', 'Same-type Species:', '同属性种类数：'],
+    'wiki.ui_types_unit': ['種類', 'Types', '种类'],
+    'wiki.ui_toggle_boost_matrix': ['展開 / 收合完整 0~5 種類對照表', 'Toggle 0~5 Types Comparison Table', '展开 / 收合完整 0~5 种类对照表'],
+    'wiki.ui_same_type_th': ['同屬種類', 'Same-Type', '同属种类'],
+    'wiki.ui_helps_short': ['次', 'Helps', '次'],
+    'wiki.ui_moonlight_fmt': ['自{self}+他{team}{unit}', 'Self {self}+Ally {team}{unit}', '自{self}+他{team}{unit}'],
+    'wiki.ui_lunar_fmt': ['全隊{val}點+{formula}', 'All {val}+{formula}', '全队{val}点+{formula}'],
+    'wiki.ui_toggle_lunar_table': ['展開 / 收合 1~5 種類隊友樹果表', 'Toggle 1~5 Species Berry Table', '展开 / 收合 1~5 种类队友树果表'],
+    'wiki.ui_species_th': ['種類', 'Species', '种类'],
+    'wiki.ui_toggle_ing_draw': ['展開 / 收合 各寶可夢「專屬食材池」對照表', 'Toggle Candidate Ingredient Pools per Pokémon', '展开 / 收合 各宝可梦「专属食材池」对照表'],
+    'wiki.ui_skill_variant_th': ['主技能型態', 'Skill Variant', '主技能型态'],
+    'wiki.ui_candidate_ings_th': ['專屬食材候選池 (3~4種)', 'Candidate Ingredients (3~4)', '专属食材候选池 (3~4种)'],
+    'wiki.ui_max_lv_prefix': ['上限 Lv.', 'Max Lv.', '上限 Lv.'],
+
+    // Calculators & Ingredient Ranking Modal
+    'wiki.ui_key_dish': ['核心大菜', 'Key Dish', '核心大菜'],
+    'wiki.ui_ladder_modal_empty': ['當前篩選條件下查無符合之寶可夢。', 'No Pokémon matched current ladder filter conditions.', '当前筛选条件下查无符合之宝可梦。'],
+    'wiki.ui_ing_split_title': ['食材掉落: {drop} + 技能獲取: {skill}', 'Drop: {drop} + Skill: {skill}', '食材掉落: {drop} + 技能获取: {skill}'],
+    'wiki.ui_key_dish_colon': ['核心大菜：', 'Key Dish:', '核心大菜：'],
+    'wiki.ui_per_meal': ['顆/餐', '/meal', '颗/餐'],
+    'wiki.ui_ideal_energy': ['滿活力 (0.45x)', 'Ideal Energy (0.45x)', '满活力 (0.45x)'],
+    'wiki.ui_pkm_count_suffix': ['隻寶可夢', 'Pokémon', '只宝可梦'],
+    'wiki.ui_mult_x': [' 倍', 'x', ' 倍'],
+    'wiki.ui_grade_a_good': ['A (良好)', 'A (Good)', 'A (良好)'],
+    'wiki.ui_grade_sss': ['SSS (頂級發動極限)', 'SSS (God Tier Max)', 'SSS (顶级发动极限)'],
+    'wiki.ui_grade_ss': ['SS (優秀極限)', 'SS (Excellent Max)', 'SS (优秀极限)'],
+    'wiki.ui_grade_s': ['S (雙副技極高)', 'S (Dual Sub-Skills Very High)', 'S (双副技极高)'],
+    'wiki.ui_grade_a': ['A (單STM無性格)', 'A (Single STM Neutral Nature)', 'A (单STM无性格)'],
+    'wiki.ui_grade_b': ['B (微幅加成)', 'B (Moderate Boost)', 'B (微幅加成)'],
+    'wiki.ui_grade_c': ['C (基準線附近)', 'C (Baseline)', 'C (基准线附近)'],
+    'wiki.ui_grade_d': ['D (受性格下修影響)', 'D (Impacted by Nature Down)', 'D (受性格下修影响)'],
+    'wiki.ui_grade_e': ['E (嚴重受阻)', 'E (Severely Hindered)', 'E (严重受阻)'],
+    'wiki.ui_sleep_0_days': ['0 天', '0 Days', '0 天'],
+    'wiki.ui_sleep_reached': ['已達目標等級, 無需額外 EXP', 'Target Level Already Reached', '已达目标等级, 无需额外 EXP'],
+    'wiki.ui_sleep_0_candies': ['無需額外糖果', '0 Candies Needed', '无需额外糖果'],
+    'wiki.ui_space_days': [' 天', ' Days', ' 天'],
+    'wiki.ui_sleep_approx_exp': ['約需 {exp} EXP', 'Approx. {exp} EXP', '约需 {exp} EXP'],
+    'wiki.ui_sleep_approx_candies': ['約需 {candies} 顆糖果 (每顆 {per} EXP)', 'Approx. {candies} Candies ({per} EXP/ea)', '约需 {candies} 颗糖果 (每颗 {per} EXP)'],
+
+    // Islands & Camps
+    'wiki.ui_island_fav_berries': ['喜好樹果:', 'Favored:', '喜好树果:'],
+    'wiki.ui_island_ex_berry_random': ['1種主樹果 + 2種副樹果 (每週隨機)', '1 Primary + 2 Random (Weekly)', '1种主树果 + 2种副树果 (每周随机)'],
+    'wiki.ui_island_ex_berry_choice': ['3選1主果 + 2隨機', '1 of 3 Primary + 2 Random', '3选1主果 + 2随机'],
+    'wiki.ui_sleep_collected_title': ['已收集 (點擊標記為未收集)', 'Collected (Click to mark uncollected)', '已收集 (点击标记为未收集)'],
+    'wiki.ui_sleep_uncollected_title': ['未收集 (點擊標記為已收集)', 'Uncollected (Click to mark collected)', '未收集 (点击标记为已收集)'],
+    'wiki.ui_pkm_count_unit': ['隻', 'Pokemon', '只'],
+    'wiki.ui_sleep_dozing': ['淺淺入夢', 'Dozing', '浅浅入梦'],
+    'wiki.ui_sleep_snoozing': ['安然入睡', 'Snoozing', '安然入睡'],
+    'wiki.ui_sleep_slumbering': ['深深入眠', 'Slumbering', '深深入眠'],
+    'wiki.ui_island_leg_empty': ['目前選取條件下無棲息之神獸寶可夢', 'No legendary Pokémon found for current selection', '目前选取条件下无栖息之神兽宝可梦'],
+    'wiki.ui_island_empty': ['目前無符合條件之寶可夢', 'No Pokémon found', '目前无符合条件之宝可梦'],
+    'wiki.ui_sort_desc': ['降冪', 'Descending', '降幂'],
+    'wiki.ui_sort_asc': ['升冪', 'Ascending', '升幂'],
+    'wiki.ui_island_ex_pass': ['需消耗 EX券 1張', 'Requires 1 EX Pass', '需消耗 EX券 1张'],
+    'wiki.ui_island_ex_indep': ['獨立 EX 營地加成', 'Independent EX Bonus', '独立 EX 营地加成'],
+    'wiki.ui_island_ex_mode': ['EX 專家模式', 'EX Expert Mode', 'EX 专家模式'],
+    'wiki.ui_island_rank_energy': ['評級所需能量', 'Rank Energy', '评级所需能量'],
+    'wiki.ui_island_rank_col': ['評級', 'Rank', '评级'],
+    'wiki.ui_island_energy_col': ['所需能量', 'Energy', '所需能量'],
+    'wiki.ui_island_spawn_thresholds': ['出現數門檻', 'Spawn Thresholds', '出现数门槛'],
+    'wiki.ui_island_spawns_col': ['出現數', 'Spawns', '出现数'],
+    'wiki.ui_island_min_power': ['最低門檻', 'Min Power', '最低门槛'],
+    'wiki.ui_island_100pt_rank': ['分數100分', '100pt Rank', '分数100分'],
+    'wiki.ui_island_habitats_title': ['棲息寶可夢與各星級睡姿解鎖門檻', 'Habitats & Sleep Styles', '栖息宝可梦与各星级睡姿解锁门槛'],
+    'wiki.ui_island_leg_title': ['僅展示神獸寶可夢', 'Show Legendary Pokémon Only', '仅展示神兽宝可梦'],
+    'wiki.ui_island_leg_label': ['神獸寶可夢', 'Legendary', '神兽宝可梦'],
+    'wiki.ui_island_uncol_title': ['僅顯示尚有未收集睡姿之寶可夢', 'Show Pokémon with Uncollected Sleep Styles Only', '仅显示尚有未收集睡姿之宝可梦'],
+    'wiki.ui_island_uncol_label': ['僅未收集', 'Uncollected Only', '仅未收集'],
+    'wiki.ui_island_collected_lbl': ['睡姿收集進度:', 'Collected Styles:', '睡姿收集进度:'],
+    'wiki.ui_island_rec_done': ['本島嶼睡姿已 100% 收集完成', 'Rec. Sleep: Any (100% Done)', '本岛屿睡姿已 100% 收集完成'],
+    'wiki.ui_island_rec_left': ['今晚推薦睡眠類型: {recLabel} (尚有 {count} 種未收集)', 'Rec. Sleep: {recLabel} ({count} left)', '今晚推荐睡眠类型: {recLabel} (尚有 {count} 种未收集)'],
+    'wiki.ui_island_rec_title': ['點擊篩選推薦睡眠類型', 'Click to filter by recommended sleep type', '点击筛选推荐睡眠类型'],
+    'wiki.ui_island_sort_pkm_title': ['點選依寶可夢編號排序 (降冪 -> 升冪 -> 回復預設)', 'Sort by Pokemon Dex No. (Desc -> Asc -> Default)', '点选依宝可梦编号排序 (降幂 -> 升幂 -> 回复预设)'],
+    'wiki.ui_island_sort_star_title': ['點選依 {star} 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)', 'Sort by {star}-Star Unlock Rank (Desc -> Asc -> Default)', '点选依 {star} 星睡姿门槛排序 (降幂 -> 升幂 -> 回复预设)'],
+
+    // Items Encyclopedia
+    'wiki.ui_item_cat_all': ['全部道具', 'All Items', '全部道具'],
+    'wiki.ui_item_cat_evolution': ['進化道具', 'Evolution', '进化道具'],
+    'wiki.ui_item_cat_training': ['培育與種子', 'Training & Seeds', '培育与种子'],
+    'wiki.ui_item_cat_biscuit': ['捕捉沙布蕾', 'Biscuits', '捕捉沙布蕾'],
+    'wiki.ui_item_cat_supply': ['探索與補給', 'Supplies', '探索与补给'],
+    'wiki.ui_item_cat_default': ['道具', 'Item', '道具'],
+    'wiki.ui_unit_pt': ['格', 'pt', '格'],
+    'wiki.ui_lbl_friendship': ['友好度', 'Friendship', '友好度'],
+    'wiki.ui_lbl_max_catch': ['友好度滿格', 'Max Catch', '友好度满格'],
+    'wiki.ui_lbl_main_skill': ['主技能提升', 'Main Skill', '主技能提升'],
+    'wiki.ui_unit_tier': ['階', 'Tier', '阶'],
+    'wiki.ui_lbl_sub_skill': ['副技能升級', 'Sub Skill', '副技能升级'],
+    'wiki.ui_lbl_neutral_nature': ['性格中性化', 'Neutral Nature', '性格中性化'],
+    'wiki.ui_unit_candies': ['顆', 'candies', '颗'],
+    'wiki.ui_lbl_uni_candy': ['萬能糖果', 'Universal Candy', '万能糖果'],
+    'wiki.ui_unit_cluster': ['塊', 'Cluster', '块'],
+    'wiki.ui_lbl_dream_shards': ['夢之碎片', 'Dream Shards', '梦之碎片'],
+    'wiki.ui_unit_energy_lbl': ['活力', 'Energy', '活力'],
+    'wiki.ui_lbl_energy_restore': ['活力恢復', 'Energy Restore', '活力恢复'],
+    'wiki.ui_lbl_help_yield': ['幫手即時產出', 'Help Yield', '帮手即时产出'],
+    'wiki.ui_lbl_pot_speed': ['鍋容量與幫手速度', 'Pot & Help Speed', '锅容量与帮手速度'],
+    'wiki.ui_unit_ings': ['個', 'Ings', '个'],
+    'wiki.ui_lbl_random_ings': ['隨機食材', 'Random Ings', '随机食材'],
+    'wiki.ui_val_move': ['轉移', 'MOVE', '转移'],
+    'wiki.ui_lbl_relocate': ['重新選點', 'Relocate Camp', '重新选点'],
+    'wiki.ui_items_search_ph': ['搜尋道具名稱、效果或對應寶可夢...', 'Search items, effects, or Pokemon...', '搜索道具名称、效果或对应宝可梦...'],
+    'wiki.ui_items_empty': ['未找到符合條件的道具。', 'No matching items found.', '未找到符合条件的道具。'],
+    'wiki.ui_item_monthly_limit': ['每月 {n} 個', '{n}/month', '每月 {n} 个'],
+    'wiki.ui_item_prem_only': ['僅限高級交換所', 'Premium Only', '仅限高级交换所'],
+    'wiki.ui_item_not_sold': ['非交換所販售', 'Not Sold', '非交换所贩售'],
+    'wiki.ui_item_none': ['無', 'None', '无'],
+    'wiki.ui_item_reg_exchange': ['一般睡眠點數', 'Regular Exchange', '一般睡眠点数'],
+    'wiki.ui_item_prem_exchange': ['高級睡眠點數', 'Premium Exchange', '高级睡眠点数'],
+    'wiki.ui_item_diamond_shop': ['鑽石商店', 'Diamond Shop', '钻石商店'],
+    'wiki.ui_item_diamonds_unit': ['鑽石', 'Diamonds', '钻石'],
+    'wiki.ui_item_direct_buy': ['直接購買', 'Direct Purchase', '直接购买'],
+    'wiki.ui_item_no_channels': ['暫無常規獲取紀錄', 'No standard channels recorded', '暂无常规获取记录'],
+    'wiki.ui_item_evo_pkm': ['對應可進化寶可夢', 'Evolvable Pokémon', '对应可进化宝可梦'],
+    'wiki.ui_item_assoc_pkm': ['對應寶可夢', 'Associated Pokémon', '对应宝可梦'],
+    'wiki.ui_item_pkm_empty': ['目前圖鑑中尚無需要此道具的寶可夢。', 'Currently no Pokémon in the Pokédex requires this item.', '当前图鉴中暂无需要此道具的宝可梦。'],
+    'wiki.ui_item_view_pkm': ['查看 {name} 圖鑑評測', 'View {name} in Pokédex', '查看 {name} 图鉴评测'],
+
+    // Wiki Main Layout & Subtabs
+    'wiki.ui_highlight_recipe': ['選取料理高亮食材', 'Highlight by Top Recipe', '选取料理高亮食材'],
+    'wiki.ui_highlight_recipe_modal': ['選取料理高亮食材', 'Highlight Ingredients by Recipe', '选取料理高亮食材'],
+    'wiki.ui_multi_select': ['多選', 'Multi', '多选'],
+    'wiki.ui_highlight_recipe_sub': ['各前10高分料理，標記所需食材', 'Top 10 High Score Recipes, Mark Ingredients', '各前10高分料理，标记所需食材'],
+    'wiki.ui_clear_selection': ['清除選取', 'Clear Selection', '清除选取'],
+    'wiki.ui_open_ladder_filter': ['展開天梯篩選器', 'Filter', '展开天梯筛选器'],
+    'wiki.ui_filter_label': ['篩選器', 'Filter', '筛选器'],
+    'wiki.ui_expand_ladder_sidebar': ['展開天梯篩選側邊欄', 'Expand Filter', '展开天梯筛选侧边栏'],
+    'wiki.ui_filter_short': ['篩選', 'Filter', '筛选'],
+    'wiki.ui_collapse_sidebar': ['收合側邊欄', 'Collapse Filter', '收合侧边栏'],
+    'wiki.ui_ladder_baseline_title': ['基準：Lv.60 滿活力 (0.45x)', 'Baseline: Lv.60 Ideal Energy (0.45x)', '基准：Lv.60 满活力 (0.45x)'],
+    'wiki.ui_reset_filters_title': ['重設所有條件', 'Reset Filters', '重设所有条件'],
+    'wiki.ui_ladder_energy_help_title': ['天梯基準：Lv.60 滿活力', 'Baseline: Lv.60 Ideal Energy', '天梯基准：Lv.60 满活力'],
+    'wiki.ui_ladder_energy_help_body': ['以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。', 'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daily yield.', '以 Lv.60 满活力理想状态 (活力 ≥ 80%，间隔 0.45x) 试算单日产能。'],
+    'wiki.ui_search_pkm': ['搜尋寶可夢', 'Search Pokémon', '搜索宝可梦'],
+    'wiki.ui_search_pkm_ph': ['搜尋寶可夢名稱...', 'Search Pokémon...', '搜索宝可梦名称...'],
+    'wiki.ui_track_sorting': ['天梯軌道排序', 'Track Sorting', '天梯轨道排序'],
+    'wiki.ui_top15_title': ['預設開啟前15名排行', 'Show Top 15 Only', '默认开启前15名排行'],
+    'wiki.ui_top15': ['前15名', 'Top 15', '前15名'],
+    'wiki.ui_sort_energy_asc': ['能量：低到高', 'Energy: Asc', '能量：低到高'],
+    'wiki.ui_sort_energy_desc': ['能量：高到低', 'Energy: Desc', '能量：高到低'],
+    'wiki.ui_sort_yield_desc': ['產量：多到少', 'Yield: Desc', '产量：多到少'],
+    'wiki.ui_sort_demand_desc': ['大菜需求：多到少', 'Demand: Desc', '大菜需求：多到少'],
+    'wiki.ui_supply_tier': ['產量供餐梯隊', 'Supply Tier', '产量供餐梯队'],
+    'wiki.ui_final_evo_title': ['僅顯示最終進化（稀有食材不足 2 種時自動補入未進化）', 'Show Final Evolution Only (rare ingredients <2 final evos auto-include pre-evos)', '仅显示最终进化（稀有食材不足 2 种时自动补入未进化）'],
+    'wiki.ui_final_evo': ['最終進化', 'Final Evo', '最终进化'],
+    'wiki.ui_top5': ['前五名', 'Top 5', '前五名'],
+    'wiki.ui_meals_3': ['滿載 3 餐', '3 Meals', '满载 3 餐'],
+    'wiki.ui_meals_2': ['充足 2 餐', '2 Meals', '充足 2 餐'],
+    'wiki.ui_recipe_structure': ['食材組合型態', 'Recipe Structure', '食材组合型态'],
+    'wiki.ui_recipe_aaa': ['純種 AAA', 'Pure AAA', '纯种 AAA'],
+    'wiki.ui_recipe_abb': ['雙食材 ABB', 'Dual ABB', '双食材 ABB'],
+    'wiki.ui_recipe_axx': ['混搭 AXX', 'Mix AXX', '混搭 AXX'],
+    'wiki.ui_specialty_type': ['寶可夢專長', 'Specialty Type', '宝可梦专长'],
+    'wiki.ui_ing_draw_tooltip': ['所有專長皆以 1.0 倍發動機率為基準\n請用技能機率M/S與技能機率▲模擬補正', 'All specialties use a 1.0x trigger baseline\nUse Skill Trigger M/S and Skill Chance ▲ to simulate boosts', '所有专长皆以 1.0 倍发动几率为基准\n请用技能几率M/S与技能几率▲模拟补正'],
+    'wiki.ui_ing_draw': ['食材精選', 'Ingr. Draw', '食材精选'],
+    'wiki.ui_skill_help': ['技能說明', 'Skill Help', '技能说明'],
+    'wiki.ui_ing_draw_line1': ['所有專長皆以 1.0 倍發動機率為基準', 'All specialties use a 1.0x trigger baseline', '所有专长皆以 1.0 倍发动几率为基准'],
+    'wiki.ui_ing_draw_line2': ['請用技能機率M/S與技能機率▲模擬補正', 'Use Skill Trigger M/S and Skill Chance ▲ to simulate boosts', '请用技能几率M/S与技能几率▲模拟补正'],
+    'wiki.ui_spec_ing': ['食材型', 'Ingredient', '食材型'],
+    'wiki.ui_spec_berry': ['樹果型', 'Berry', '树果型'],
+    'wiki.ui_spec_skill': ['技能型', 'Skill', '技能型'],
+    'wiki.ui_subskill_boost': ['副技能補正模擬', 'Sub-Skills', '副技能补正模拟'],
+    'wiki.ui_sub_ing_m': ['食材機率M', 'Ing Finder M', '食材几率M'],
+    'wiki.ui_sub_ing_s': ['食材機率S', 'Ing Finder S', '食材几率S'],
+    'wiki.ui_sub_spd_m': ['幫忙速度M', 'Speed M', '帮忙速度M'],
+    'wiki.ui_sub_spd_s': ['幫忙速度S', 'Speed S', '帮忙速度S'],
+    'wiki.ui_sub_skl_m': ['技能機率M', 'Skill M', '技能几率M'],
+    'wiki.ui_sub_skl_s': ['技能機率S', 'Skill S', '技能几率S'],
+    'wiki.ui_nature_boost': ['性格補正模擬', 'Nature Boost', '性格补正模拟'],
+    'wiki.ui_nat_ing': ['食材機率▲', 'Ing Rate ▲', '食材几率▲'],
+    'wiki.ui_nat_spd': ['幫忙速度▲', 'Speed ▲', '帮忙速度▲'],
+    'wiki.ui_nat_skl': ['技能機率▲', 'Skill ▲', '技能几率▲'],
+
+    // Subtabs
+    'wiki.ui_tab_skills_m': ['主技能', 'Skills', '主技能'],
+    'wiki.ui_tab_skills': ['主技能數值庫', 'Main Skills', '主技能数值库'],
+    'wiki.ui_tab_subskills_m': ['副技性格', 'Subskills', '副技性格'],
+    'wiki.ui_tab_subskills': ['副技能與性格指南', 'Sub-Skills', '副技能与性格指南'],
+    'wiki.ui_tab_ing_m': ['食材天梯', 'Ing. Ladder', '食材天梯'],
+    'wiki.ui_tab_ing': ['食材產量天梯榜', 'Ing. Ladder', '食材产量天梯榜'],
+    'wiki.ui_tab_skl_m': ['技能天梯', 'Skill Ladder', '技能天梯'],
+    'wiki.ui_tab_skl': ['主技能天梯榜', 'Skill Ladder', '主技能天梯榜'],
+    'wiki.ui_tab_values_m': ['能量速查', 'Values', '能量速查'],
+    'wiki.ui_tab_values': ['樹果與食材能量', 'Berry & Ings', '树果与食材能量'],
+    'wiki.ui_tab_ratings_m': ['培育指南', 'Guide', '培育指南'],
+    'wiki.ui_tab_ratings': ['培育與評級指南', 'Guide', '培育与评级指南'],
+    'wiki.ui_tab_islands_m': ['島嶼營地', 'Islands', '岛屿营地'],
+    'wiki.ui_tab_islands': ['島嶼營地與EX模式', 'Camps & EX', '岛屿营地与EX模式'],
+    'wiki.ui_tab_items': ['道具百科', 'Items', '道具百科'],
+
+    // Skills Filter Bar
+    'wiki.ui_skill_cat_label': ['技能類型：', 'Category:', '技能类型：'],
+    'wiki.ui_all_skills': ['全部技能', 'All', '全部技能'],
+    'wiki.ui_cat_energy_heal_btn': ['活力系', 'Recovery', '活力系'],
+    'wiki.ui_cat_special_btn': ['神獸與特殊專屬', 'Special', '神兽与特殊专属'],
+    'wiki.ui_cat_shards_btn': ['夢之碎片', 'Shards', '梦之碎片'],
+
+    // Subskills & Speed & Ribbon & Nature Tables
+    'wiki.ui_trigger_matrix_title': ['主技能發動機率矩陣', 'Trigger Chance Matrix', '主技能发动几率矩阵'],
+    'wiki.ui_trigger_matrix_formula': ['<strong>公式</strong>: <code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>', '<strong>Formula</strong>: <code>(1 + Sub-Skill %) × Nature Multiplier = Final Multiplier</code>', '<strong>公式</strong>: <code>(1 + 副技能提升%) × 性格倍率 = 最终发动总倍率</code>'],
+    'wiki.ui_subskills_col': ['副技能組合', 'Sub-Skills', '副技能组合'],
+    'wiki.ui_nature_col': ['性格', 'Nature', '性格'],
+    'wiki.ui_formula_mult_col': ['乘算計算式', 'Formula', '乘算计算式'],
+    'wiki.ui_multiplier_col': ['總倍率', 'Multiplier', '总倍率'],
+    'wiki.ui_trigger_tier_col': ['發動強度評級', 'Tier', '发动强度评级'],
+    'wiki.ui_trigger_m_short': ['機率提升M', 'Trigger M', '几率提升M'],
+    'wiki.ui_trigger_s_short': ['機率提升S', 'Trigger S', '几率提升S'],
+    'wiki.ui_nature_up': ['▲ 上升', '▲ Up', '▲ 上升'],
+    'wiki.ui_nature_down': ['▼ 下降', '▼ Down', '▼ 下降'],
+    'wiki.ui_speed_guide_title': ['幫忙速度極限與計算機制指南', 'Helping Speed Limits & Calculation Mechanics Guide', '帮忙速度极限与计算机制指南'],
+    'wiki.ui_speed_pt1_title': ['副技能上限35%:', 'Sub-Skills 35% Cap:', '副技能上限35%:'],
+    'wiki.ui_speed_pt1_desc': ['副技能合計縮短上限為35%,溢出無效.', 'Combined reduction capped at 35%, excess is ignored.', '副技能合计缩短上限为35%,溢出无效.'],
+    'wiki.ui_speed_pt2_title': ['性格獨立乘區:', 'Independent Nature:', '性格独立乘区:'],
+    'wiki.ui_speed_pt2_desc': ['直接與副技能相乘,不受35%上限約束.', 'Multiplies after sub-skills, exempt from 35% cap.', '直接与副技能相乘,不受35%上限约束.'],
+    'wiki.ui_speed_pt3_title': ['產能換算:', 'Output Conversion:', '产能换算:'],
+    'wiki.ui_speed_pt3_desc': ['產能為時間倒數,間隔58.5%等同產能提升70.94%.', 'Output is inverse of time. 58.5% interval equals +70.94% output.', '产能为时间倒数,间隔58.5%等同产能提升70.94%.'],
+    'wiki.ui_formula_col': ['計算式', 'Formula', '计算式'],
+    'wiki.ui_interval_col': ['幫忙間隔', 'Interval Ratio', '帮忙间隔'],
+    'wiki.ui_boost_col': ['產能提升', 'Output Boost', '产能提升'],
+    'wiki.ui_speed_tier_col': ['強度評級', 'Tier', '强度评级'],
+    'wiki.ui_ribbon_guide_title': ['睡飽飽獎章加成指南', 'Good-Night Ribbon Guide', '睡饱饱奖章加成指南'],
+    'wiki.ui_ribbon_200h': ['+1 持有上限', '+1 Carry', '+1 持有上限'],
+    'wiki.ui_ribbon_500h': ['+2 持有, 幫速 -5% / -11%', '+2 Carry, Speed -5% / -11%', '+2 持有, 帮速 -5% / -11%'],
+    'wiki.ui_ribbon_1000h': ['+3 持有上限', '+3 Carry', '+3 持有上限'],
+    'wiki.ui_ribbon_2000h': ['+2 持有, 幫速 -12% / -25%', '+2 Carry, Speed -12% / -25%', '+2 持有, 帮速 -12% / -25%'],
+    'wiki.ui_ribbon_core_lbl': ['核心規則:', 'Core Rule:', '核心规则:'],
+    'wiki.ui_ribbon_core_txt': ['僅未完全進化寶可夢享有幫速縮短(最高 -25%), 與性格/副技能獨立相乘, 不受 35% 上限限制.', 'Speed boost applies only to unevolved Pokemon (up to -25%), compounding independently with Nature & Subskills.', '仅未完全进化宝可梦享有帮速缩短(最高 -25%), 与性格/副技能独立相乘, 不受 35% 上限限制.'],
+    'wiki.ui_ribbon_case_lbl': ['經典案例:', 'Classic Case:', '经典案例:'],
+    'wiki.ui_ribbon_case_txt': ['吉利蛋 vs 幸福蛋: 吉利蛋(能再進化 1 次)滿 2000h 幫速縮短 12% 至 <strong>2904 秒</strong>, 反超幸福蛋(3100 秒).', 'Chansey vs Blissey: Chansey (1 evo left, base 3,300s) reaches <strong>2,904s</strong> (-12%) at 2,000h, surpassing Blissey (3,100s).', '吉利蛋 vs 幸福蛋: 吉利蛋(能再进化 1 次)满 2000h 帮速缩短 12% 至 <strong>2904 秒</strong>, 反超幸福蛋(3100 秒).'],
+    'wiki.ui_subskills_overview': ['副技能階級與數值總覽', 'Sub-Skills Overview', '副技能阶级与数值总览'],
+    'wiki.ui_skills_col': ['技能標籤', 'Skills', '技能标签'],
+    'wiki.ui_effect_col': ['詳細效果說明', 'Effect', '详细效果说明'],
+    'wiki.ui_nature_modifiers': ['性格五維屬性倍率表', 'Nature Modifiers', '性格五维属性倍率表'],
+    'wiki.ui_stat_col': ['屬性項目', 'Stat', '属性项目'],
+    'wiki.ui_nat_up_col': ['▲ 性格', '▲ Up', '▲ 性格'],
+    'wiki.ui_nat_down_col': ['▼ 性格', '▼ Down', '▼ 性格'],
+
+    // Ratings & Sleep EXP Calc
+    'wiki.ui_growth_title': ['新手與進階養成核心週期指引', 'Growth & Investment Guide', '新手与进阶养成核心周期指引'],
+    'wiki.ui_growth_sub': ['掌握前期突破門檻,活力常駐加成與種子珍稀資源的養成核心思維.', 'Key milestones, energy management, and seed mechanics for early to late-game development.', '掌握前期突破门槛,活力常驻加成与种子珍稀资源的养成核心思维.'],
+    'wiki.ui_early_badge': ['前期目標', 'Early Goal', '前期目标'],
+    'wiki.ui_early_title': ['優先放置在 <span class="text-accent font-bold">Lv.30</span>', 'Prioritize <span class="text-accent font-bold">Lv.30</span>', '优先放置在 <span class="text-accent font-bold">Lv.30</span>'],
+    'wiki.ui_early_desc': ['先看性格與 <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> 副技能,無課/微課約養成 <span class="text-warning font-bold">2~4個月</span>即可解鎖<span class="text-accent font-bold">第2種食材</span>,成為中流砥柱.', 'Focus on nature and <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> sub-skills. Takes <span class="text-warning font-bold">~2-4 months</span> for free/light players to unlock <span class="text-accent font-bold">2nd ingredient slot</span>, becoming core pillars.', '先看性格与 <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> 副技能,无课/微课约养成 <span class="text-warning font-bold">2~4个月</span>即可解锁<span class="text-accent font-bold">第2种食材</span>,成为中流砥柱.'],
+    'wiki.ui_late_badge': ['後期投資', 'Late Game', '后期投资'],
+    'wiki.ui_late_title': ['慎選投入 <span class="text-accent font-bold">Lv.50~60</span>', 'Carefully Invest in <span class="text-accent font-bold">Lv.50~60</span>', '慎选投入 <span class="text-accent font-bold">Lv.50~60</span>'],
+    'wiki.ui_late_desc': ['確認副技能與性格皆達畢業級再投入大量糖果與<span class="text-warning font-bold">金種子</span>(約需 <span class="text-warning font-bold">5~10個月</span>養成時間).', 'Ensure sub-skills and nature reach graduation tier before heavily investing candies and <span class="text-warning font-bold">Main Skill Seeds</span> (<span class="text-warning font-bold">~5-10 months</span>).', '确认副技能与性格皆达毕业级再投入大量糖果与<span class="text-warning font-bold">金种子</span>(约需 <span class="text-warning font-bold">5~10个月</span>养成时间).'],
+    'wiki.ui_energy_badge': ['活力核心', 'Energy Core', '活力核心'],
+    'wiki.ui_energy_title': ['優先養成一隻主力補師', 'Raise One Dedicated Healer First', '优先养成一只主力补师'],
+    'wiki.ui_energy_desc': ['全體活力維持在 <span class="text-success font-bold">80%以上</span>可享受 <span class="text-accent font-bold">約2.22倍 (間隔 0.45x)</span> 幫忙速度!建議先練:<span class="text-warning font-bold">胖可丁</span>,<span class="text-warning font-bold">仙子伊布</span>,<span class="text-warning font-bold">沙奈朵</span>,<span class="text-warning font-bold">巴布土撥</span>或<span class="text-warning font-bold">土台龜</span>.', 'Maintaining team energy <span class="text-success font-bold">&gt; 80%</span> grants <span class="text-accent font-bold">~2.22x speed (interval 0.45x)</span>! Recommended healers: <span class="text-warning font-bold">Wigglytuff</span>, <span class="text-warning font-bold">Sylveon</span>, <span class="text-warning font-bold">Gardevoir</span>, <span class="text-warning font-bold">Pawmot</span>, or <span class="text-warning font-bold">Torterra</span>.', '全体活力维持在 <span class="text-success font-bold">80%以上</span>可享受 <span class="text-accent font-bold">约2.22倍 (间隔 0.45x)</span> 帮忙速度!建议先练:<span class="text-warning font-bold">胖可丁</span>,<span class="text-warning font-bold">仙子伊布</span>,<span class="text-warning font-bold">沙奈朵</span>,<span class="text-warning font-bold">巴布土拨</span>或<span class="text-warning font-bold">土台龟</span>.'],
+    'wiki.ui_seeds_badge': ['種子機制', 'Seed Rules', '种子机制'],
+    'wiki.ui_seeds_title': ['主技能與副技能種子規則', 'Main &amp; Sub Skill Seed Rules', '主技能与副技能种子规则'],
+    'wiki.ui_seeds_desc': ['每次進化<span class="text-success font-bold">主技能+1</span>.副技能不能同時存在相同名稱技能(如已有S與M,則S無法再升階為M).', 'Each evolution grants <span class="text-success font-bold">Main Skill Lv.+1</span>. Duplicate sub-skills cannot coexist (if S and M already exist, S cannot upgrade to M).', '每次进化<span class="text-success font-bold">主技能+1</span>.副技能不能同时存在相同名称技能(如已有S与M,则S无法再升阶为M).'],
+    'wiki.ui_grad_title': ['三大專長畢業評級指南', 'Graduation Tier Guide', '三大专长毕业评级指南'],
+    'wiki.ui_grad_sub': ['樹果,食材,技能三大專長的頂級副技能與黃金性格搭配方向.', 'Optimal sub-skill and nature combinations for Berry, Ingredient, and Skill specialists.', '树果,食材,技能三大专长的顶级副技能与黄金性格搭配方向.'],
+    'wiki.ui_sleep_calc_title': ['寶可夢睡眠升級天數計算器', 'Sleep EXP Calculator', '宝可梦睡眠升级天数计算器'],
+    'wiki.ui_sleep_calc_sub': ['依據每日睡滿100分(100 EXP基礎),計算從目前等級升至目標等級所需睡眠天數與經驗值.', 'Based on 100 daily sleep score (100 base EXP), calculates required sleep days and EXP from current to target level.', '依据每日睡满100分(100 EXP基础),计算从目前等级升至目标等级所需睡眠天数与经验值.'],
+    'wiki.ui_cur_lv_lbl': ['目前等級:', 'Current:', '目前等级:'],
+    'wiki.ui_target_lv_lbl': ['目標等級:', 'Target:', '目标等级:'],
+    'wiki.ui_sleep_exp_sub': ['睡眠EXP獎勵 (+14%)', 'Sleep EXP (+14%)', '睡眠EXP奖励 (+14%)'],
+    'wiki.ui_exp_neutral': ['性格無EXP修正', 'Neutral EXP', '性格无EXP修正'],
+    'wiki.ui_exp_up': ['性格EXP▲ (+18%)', 'EXP Up ▲ (+18%)', '性格EXP▲ (+18%)'],
+    'wiki.ui_exp_down': ['性格EXP▼ (-18%)', 'EXP Down ▼ (-18%)', '性格EXP▼ (-18%)'],
+    'wiki.ui_exp_type_10': ['一般 (1.0倍)', 'Normal EXP (1.0x)', '一般 (1.0倍)'],
+    'wiki.ui_exp_type_15': ['準神 (1.5倍)', 'Pseudo-Legendary (1.5x)', '准神 (1.5倍)'],
+    'wiki.ui_exp_type_18': ['神獸 (1.8倍)', 'Legendary (1.8x)', '神兽 (1.8倍)'],
+    'wiki.ui_exp_type_22': ['幻之寶可夢 (2.2倍)', 'Mythical (2.2x)', '幻之宝可梦 (2.2倍)'],
+    'wiki.ui_est_days_lbl': ['預估所需睡眠天數', 'Estimated Days', '预估所需睡眠天数'],
+    'wiki.ui_default_days': ['120 天', '120 Days', '120 天'],
+    'wiki.ui_default_exp': ['約需 11,992 EXP', 'Approx. 11,992 EXP', '约需 11,992 EXP'],
+    'wiki.ui_default_candies': ['約需 480 顆糖果 (每顆 25 EXP)', 'Approx. 480 Candies (25 EXP/ea)', '约需 480 颗糖果 (每颗 25 EXP)'],
+    'wiki.ui_target_lv_th': ['目標等級', 'Target Level', '目标等级'],
+    'wiki.ui_req_exp_th': ['所需EXP', 'Required EXP', '所需EXP'],
+    'wiki.ui_daily_sleep_th': ['每天滿睡', 'Daily Full Sleep', '每天满睡'],
+    'wiki.ui_milestone_th': ['里程碑', 'Milestone', '里程碑'],
+    'wiki.ui_days_unit': ['天', 'Days', '天']
+  });
+  // ─── Wiki 天梯模組字串資源 (Wiki Ladder Module Resources) ───
+  // 供 wiki_ladder_modal / wiki_ladder_recipes / wiki_render_ladder / wiki_skill_ladder* 使用
+
+  registerResources({
+    'wiki.ldr_locale': ['zh-TW', 'en-US', 'zh-CN'],
+
+    // 共用控制與篩選標籤
+    'wiki.ldr_clear': ['清除', 'Clear'],
+    'wiki.ldr_close': ['關閉', 'Close'],
+    'wiki.ldr_active': ['目前選取', 'Active'],
+    'wiki.ldr_all': ['全部', 'All'],
+    'wiki.ldr_filter_title': ['篩選器', 'Filter'],
+    'wiki.ldr_filter_bookmark': ['篩選', 'Filter'],
+    'wiki.ldr_collapse_sidebar': ['收合側邊欄', 'Collapse Filter'],
+    'wiki.ldr_reset': ['重設', 'Reset'],
+    'wiki.ldr_reset_all_title': ['重設所有條件', 'Reset Filters'],
+    'wiki.ldr_clear_input': ['清空', 'Clear'],
+
+    // 料理高亮彈窗與食材天梯
+    'wiki.ldr_cat_curry': ['咖哩、濃湯', 'Curry & Stew'],
+    'wiki.ldr_cat_salad': ['沙拉', 'Salad'],
+    'wiki.ldr_cat_dessert': ['點心、飲料', 'Dessert & Drinks'],
+    'wiki.ldr_badge_curry': ['咖哩', 'Curry'],
+    'wiki.ldr_badge_salad': ['沙拉', 'Salad'],
+    'wiki.ldr_badge_dessert': ['甜點', 'Dessert', '甜点'],
+    'wiki.ldr_pot_size': ['鍋容量 {size}', 'Pot {size}', '锅容量 {size}'],
+    'wiki.ldr_skill_draw_help_title': ['專長發動機率加成', 'Specialty Trigger Multipliers', '专长发动几率加成'],
+    'wiki.ldr_skill_draw_help_body': [
+      '所有專長皆以 1.0 倍發動機率為基準。<br>請用技能機率M/S與技能機率▲模擬補正。',
+      'All specialties use a 1.0x trigger baseline.<br>Use Skill Trigger M/S and Skill Chance ▲ to simulate boosts.',
+      '所有专长皆以 1.0 倍发动几率作为基准。<br>请用技能几率M/S与技能几率▲模拟补正。'
+    ],
+    'wiki.ldr_expand_ladder_sidebar': ['展開天梯篩選側邊欄', 'Expand Filter'],
+    'wiki.ldr_collapse_ladder_sidebar': ['收合天梯篩選側邊欄', 'Collapse Filter'],
+    'wiki.ldr_ing_help_title': ['天梯基準：Lv.60 滿活力', 'Baseline: Lv.60 Ideal Energy', '天梯基准：Lv.60 满活力'],
+    'wiki.ldr_ing_help_body': [
+      '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。',
+      'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daily yield.',
+      '以 Lv.60 满活力理想状态 (活力 ≥ 80%，间隔 0.45x) 试算单日产能。'
+    ],
+    'wiki.ldr_high_tier_dish': ['高階料理', 'High Tier Dish'],
+    'wiki.ldr_dish': ['料理', 'Dish'],
+    'wiki.ldr_recipes_count': ['{count} 道料理', '{count} recipes'],
+    'wiki.ldr_clear_recipe_highlight': ['清除料理高亮', 'Clear recipe highlight'],
+    'wiki.ldr_base_energy': ['基礎能量', 'Base Energy'],
+    'wiki.ldr_selected_dish': ['選定料理: ', 'Selected Dish: '],
+    'wiki.ldr_key_dish': ['核心大菜: ', 'Key Dish: '],
+    'wiki.ldr_not_in_recipe': ['非此料理所需食材', 'Not in current recipe'],
+    'wiki.ldr_not_required_for_recipe': ['非此料理所需食材', 'Not required for this recipe'],
+    'wiki.ldr_click_view_yield_rank': ['點擊查看產量排名', 'Click to view rankings'],
+    'wiki.ldr_per_meal': ['顆/餐', '/meal'],
+    'wiki.ldr_per_day': ['顆/天', '/day'],
+    'wiki.ldr_items_unit': ['顆', 'items'],
+    'wiki.ldr_recipe_range': ['配方跨度: ', 'Range: '],
+    'wiki.ldr_dish_full_3': ['滿載 3 餐大菜 ({meals} 餐/天)', 'Full 3 Meals ({meals} meals/day)'],
+    'wiki.ldr_dish_solid_2': ['充足供應 2 餐大菜 ({meals} 餐/天)', 'Solid 2 Meals ({meals} meals/day)'],
+    'wiki.ldr_dish_assist': ['輔助支援 ({meals} 餐/天)', 'Auxiliary Support ({meals} meals/day)'],
+    'wiki.ldr_skill_draw_badge_title': [
+      '常規食材掉落: {drop} + 食材精選S Lv.7: {bonus}',
+      'Base Drop: {drop} + Ingr. Selection Lv.7: {bonus}',
+      '常规食材掉落: {drop} + 食材精选S Lv.7: {bonus}'
+    ],
+    'wiki.ldr_ing_select_pkm_title': ['食材精選類技能寶可夢', 'Ingredient Selection Skill Pokemon'],
+    'wiki.ldr_top1_yield': ['產量 TOP 1 ', 'Top 1 Yield '],
+    'wiki.ldr_est_daily_total': ['預估總日產：', 'Est. Daily Output: '],
+    'wiki.ldr_est_daily_output': ['預估日產：', 'Est. Daily Output: '],
+    'wiki.ldr_ing_drop_label': ['常規食材掉落：', 'Ingredient Drop:'],
+    'wiki.ldr_ing_select_gain_label': ['食材精選S 獲取 (Lv.7)：', 'Ingr. Selection S (Lv.7):'],
+    'wiki.ldr_3meals_target': ['三餐及格線: ', '3 Meals Target: '],
+    'wiki.ldr_slowpoke_tail': ['美味尾巴', 'Slowpoke Tail'],
+
+    // 主技能天梯軌道定義
+    'wiki.ldr_track_charge_energy_name': ['能量填充', 'Charge Strength'],
+    'wiki.ldr_track_charge_energy_desc': ['增加卡比獸的能量', 'Increases Snorlax Strength'],
+    'wiki.ldr_track_energy_all_name': ['全體療癒', 'Energy for Everyone'],
+    'wiki.ldr_track_energy_all_desc': ['讓全體隊友回復活力', 'Restores Energy to all teammates'],
+    'wiki.ldr_track_energy_single_name': ['單體療癒', 'Single/Random Heal'],
+    'wiki.ldr_track_energy_single_desc': ['回復自身或隊友活力', 'Restores Energy to a specific or random ally'],
+    'wiki.ldr_track_cooking_pot_name': ['料理強化', 'Cooking Power-up'],
+    'wiki.ldr_track_cooking_pot_desc': ['擴大下一次料理的鍋子容量', 'Expands pot capacity for next cooking'],
+    'wiki.ldr_track_cooking_chance_name': ['料理成功', 'Tasty Chance'],
+    'wiki.ldr_track_cooking_chance_desc': ['提升下一次料理大成功的機率', 'Boosts extra tasty chance for next dish', '提升下一次料理大成功的几率'],
+    'wiki.ldr_track_helper_boost_name': ['幫手支援', 'Helper Boost'],
+    'wiki.ldr_track_helper_boost_desc': ['全隊或特定屬性立即完成幫忙', 'Instant helps for team or matching types'],
+    'wiki.ldr_track_dream_shards_name': ['夢碎獲取', 'Dream Shards'],
+    'wiki.ldr_track_dream_shards_desc': ['直接獲得夢之碎片', 'Obtains Dream Shards directly'],
+    'wiki.ldr_track_ingredient_name': ['食材獲取', 'Ingredients'],
+    'wiki.ldr_track_ingredient_desc': ['隨機或精選獲得多個食材', 'Gathers random or selected ingredients'],
+    'wiki.ldr_track_berry_burst_name': ['樹果遽增', 'Berry Burst'],
+    'wiki.ldr_track_berry_burst_desc': ['直接獲得大量樹果', 'Instantly obtains multiple berries'],
+
+    // 主技能子分類與括號正規化
+    'wiki.ldr_sub_self': ['自己', 'Self'],
+    'wiki.ldr_sub_self_ally': ['自己 (+隨機他人)', 'Self (+Random Ally)'],
+    'wiki.ldr_sub_ally': ['隨機他人', 'Random Ally'],
+    'wiki.ldr_sub_ing_draw': ['食材精選', 'Ingredient Draw'],
+    'wiki.ldr_sub_ing_magnet': ['食材獲取', 'Ingredient Magnet'],
+    'wiki.ldr_sub_random': ['隨機', 'Random'],
+    'wiki.ldr_sub_fixed_m': ['高倍固定', 'Fixed M'],
+    'wiki.ldr_sub_stockpile': ['疊加爆發', 'Stockpile'],
+    'wiki.ldr_sub_strength_shards': ['能量+夢碎', 'Strength+Shards'],
+    'wiki.ldr_sub_strength_field': ['能量+樹果領域', 'Strength+Berry Field'],
+    'wiki.ldr_sub_nightmare': ['高倍能量', 'High Strength'],
+    'wiki.ldr_sub_fixed_s': ['固定', 'Fixed S'],
+    'wiki.ldr_sub_berry_juice': ['全體+樹果汁', 'Team+Berry Juice'],
+    'wiki.ldr_sub_lunar_prayer': ['全體+樹果遽增', 'Team+Berry Burst'],
+    'wiki.ldr_sub_team_heal': ['全體回復', 'Team Heal'],
+    'wiki.ldr_sub_pot_tasty': ['擴鍋+料理成功', 'Pot+Tasty'],
+    'wiki.ldr_sub_pot_heal': ['擴鍋+隨機他人', 'Pot+Random Heal'],
+    'wiki.ldr_sub_pot_expand': ['擴鍋', 'Pot Expand'],
+    'wiki.ldr_sub_tasty_pot': ['大成功+擴鍋', 'Tasty+Pot'],
+    'wiki.ldr_sub_tasty_magnet': ['大成功+食材獲取', 'Tasty+Ingr. Magnet'],
+    'wiki.ldr_sub_tasty_draw': ['大成功+食材精選', 'Tasty+Ingr. Draw'],
+    'wiki.ldr_sub_tasty_burst': ['大成功3倍樹果', '3x Berry Burst'],
+    'wiki.ldr_sub_tasty_chance': ['大成功機率', 'Tasty Chance', '大成功几率'],
+    'wiki.ldr_sub_team_boost': ['同屬全隊加速', 'Team Type Boost'],
+    'wiki.ldr_sub_plus_synergy': ['連動食材獲取', 'Plus Synergy'],
+    'wiki.ldr_sub_nuzzle_proc': ['隨機他人+額外發動', 'Random Heal+Extra Proc'],
+    'wiki.ldr_sub_heal_help': ['隨機他人+立即幫忙', 'Random Heal+Instant Help'],
+    'wiki.ldr_sub_single_boost': ['單體支援', 'Single Boost'],
+    'wiki.ldr_sub_shards_strength': ['固定夢碎+能量', 'Shards+Strength'],
+    'wiki.ldr_sub_draw_crit': ['食材精選+暴擊夢碎', 'Ingr. Draw+Crit Shards'],
+    'wiki.ldr_sub_magnet_candy': ['食材獲取+隨機糖果', 'Ingr. Magnet+Candy'],
+    'wiki.ldr_sub_fixed': ['固定', 'Fixed'],
+    'wiki.ldr_sub_disguise_burst': ['大成功3倍樹果', 'Disguise 3x'],
+    'wiki.ldr_sub_dragon_burst': ['龍屬樹果遽增', 'Dragon Burst'],
+    'wiki.ldr_sub_psychic_burst': ['超能樹果遽增', 'Psychic Burst'],
+    'wiki.ldr_sub_psychic_field': ['超能樹果領域', 'Psychic Field'],
+    'wiki.ldr_sub_standard_burst': ['標準樹果遽增', 'Berry Burst'],
+    'wiki.ldr_paren_open': ['（', '('],
+    'wiki.ldr_paren_close': ['）', ')'],
+    'wiki.ldr_paren_random': ['（隨機）', '(Random)', '（随机）'],
+    'wiki.ldr_paren_fixed': ['（固定）', '(Fixed)'],
+
+    // 主技能天梯渲染、排名彈窗與側邊欄
+    'wiki.ldr_spec_berries': ['樹果型', 'Berries'],
+    'wiki.ldr_spec_ingredients': ['食材型', 'Ingredients'],
+    'wiki.ldr_spec_skills': ['技能型', 'Skills'],
+    'wiki.ldr_spec_skill_short': ['技能型', 'Skill'],
+    'wiki.ldr_spec_berry_short': ['樹果型', 'Berry'],
+    'wiki.ldr_spec_ing_short': ['食材型', 'Ingredient'],
+    'wiki.ldr_skill_rank_empty': ['當前篩選條件下查無符合之寶可夢。', 'No Pokémon matched current skill ladder filter conditions.'],
+    'wiki.ldr_skill_procs_unit_short': [' 次/12h', ' /12h'],
+    'wiki.ldr_skill_rate_helps_title': ['最終技能機率 / 日間 12h 幫忙次數', 'Final Skill Rate / 12h Helps', '最终技能几率 / 日间 12h 帮忙次数'],
+    'wiki.ldr_skill_helps_short': ['次', 'h'],
+    'wiki.ldr_skill_lv60_ideal': ['Lv.60 滿活力 (0.45x)', 'Lv.60 Ideal Energy (0.45x)'],
+    'wiki.ldr_skill_pkm_unit': ['隻寶可夢', 'Pokémon', '只宝可梦'],
+    'wiki.ldr_click_view_procs_rank': ['點擊查看發動次數排名', 'Click to view rankings'],
+    'wiki.ldr_species_unit': ['種', 'species'],
+    'wiki.ldr_12h_expected_triggers': ['日間 12h 預估發動次數：', '12h Expected Triggers: '],
+    'wiki.ldr_main_skill_label': ['主技能：', 'Main Skill:'],
+    'wiki.ldr_base_rate_label': ['基礎機率：', 'Base Rate:', '基础几率：'],
+    'wiki.ldr_final_rate_label': ['最終機率：', 'Final Rate:', '最终几率：'],
+    'wiki.ldr_ideal_interval_label': ['滿活力間隔 (0.45x)：', 'Ideal Interval (0.45x):'],
+    'wiki.ldr_min_unit': ['分', 'm '],
+    'wiki.ldr_sec_unit': ['秒', 's'],
+    'wiki.ldr_est_helps_12h_label': ['日間 12h 總幫忙次數：', 'Est. Helps (12h):'],
+    'wiki.ldr_helps_unit': ['次', 'helps'],
+    'wiki.ldr_procs_12h_unit': ['次/12h', 'procs/12h'],
+    'wiki.ldr_expand_skill_filter_fab': ['展開技能天梯篩選器', 'Filter'],
+    'wiki.ldr_expand_skill_sidebar': ['展開技能天梯篩選側邊欄', 'Expand Filter'],
+    'wiki.ldr_skill_baseline_tooltip': ['基準：Lv.60 滿活力 (0.45x) 12小時', 'Baseline: Lv.60 Ideal Energy (0.45x) 12h'],
+    'wiki.ldr_skill_help_title': ['天梯基準：Lv.60 滿活力 (12h)', 'Baseline: Lv.60 Ideal Energy (12h)'],
+    'wiki.ldr_skill_help_body': [
+      '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算日間 12 小時主技能發動次數：43200 / (有效間隔 * 0.45) * 最終技能機率。',
+      'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daytime 12-hour procs: 43200 / (effectiveInterval * 0.45) * finalSkillRate.',
+      '以 Lv.60 满活力理想状态 (活力 ≥ 80%，间隔 0.45x) 试算日间 12 小时主技能发动次数：43200 / (有效间隔 * 0.45) * 最终技能几率。'
+    ],
+    'wiki.ldr_search_pokemon': ['搜尋寶可夢', 'Search Pokémon'],
+    'wiki.ldr_search_placeholder': ['搜尋寶可夢名稱...', 'Search Pokémon...'],
+    'wiki.ldr_track_sorting': ['天梯軌道排序', 'Track Sorting'],
+    'wiki.ldr_top10_tooltip': ['預設開啟前10名排行', 'Show Top 10 Only'],
+    'wiki.ldr_top10': ['前10名', 'Top 10'],
+    'wiki.ldr_sort_default': ['預設分類', 'Default'],
+    'wiki.ldr_sort_procs_desc': ['次數：多到少', 'Procs: Desc'],
+    'wiki.ldr_sort_count_desc': ['數量：多到少', 'Count: Desc'],
+    'wiki.ldr_specialty_type': ['寶可夢專長', 'Specialty Type'],
+    'wiki.ldr_final_evo_tooltip': ['僅保留最終進化寶可夢', 'Show Final Evolution Only'],
+    'wiki.ldr_final_evo': ['最終進化', 'Final Evo'],
+    'wiki.ldr_subskills_sim': ['副技能補正模擬', 'Sub-Skills'],
+    'wiki.ldr_speed_m': ['幫忙速度M', 'Speed M'],
+    'wiki.ldr_speed_s': ['幫忙速度S', 'Speed S'],
+    'wiki.ldr_skill_m': ['技能機率M', 'Skill M', '技能几率M'],
+    'wiki.ldr_skill_s': ['技能機率S', 'Skill S', '技能几率S'],
+    'wiki.ldr_nature_sim': ['性格補正模擬', 'Nature Boost'],
+    'wiki.ldr_nature_speed': ['幫忙速度▲', 'Speed ▲'],
+    'wiki.ldr_nature_skill': ['技能機率▲', 'Skill ▲', '技能几率▲']
+  });
+  // ─── 深度研究室核心與對比/培育模組字串資源 (Lab Core, Compare & Growth) ───
+  registerResources({
+    // lab_main.js
+    'lab.c_loading_pokedex': ['載入圖鑑資料中...', 'Loading Pokédex data...'],
+    'lab.c_no_pokemon_box': ['倉庫中尚無寶可夢', 'No Pokémon in Box'],
+    'lab.c_register_first_desc': ['請先在【寶可夢倉庫】新增登錄寶可夢後，再來進行深度評測！', 'Please register Pokémon in the Box tab first, then evaluate them here!'],
+    'lab.c_go_to_box': ['前往寶可夢倉庫', 'Go to Box'],
+    'lab.c_subtab_team': ['幫手組隊', 'Team'],
+    'lab.c_subtab_compare': ['寶可夢對比', 'Compare'],
+    'lab.c_subtab_growth': ['培育精算', 'Growth'],
+
+    // lab_milestone.js
+    'lab.c_slowpoke_tail': ['美味尾巴', 'Slowpoke Tail'],
+    'lab.c_lv_unlock': ['Lv.{lv} 解鎖', 'Lv.{lv} Unlock'],
+    'lab.c_milestone_grade_leap': [
+      '建議優先升至 Lv.{lv} 解鎖「{skill}」，評級將由 {curGrade} 級（{curScore}分）跨階躍升至 {projGrade} 級（{projScore}分）！',
+      "Recommended to prioritize Lv.{lv} to unlock '{skill}': rating leaps from {curGrade} ({curScore} pts) to {projGrade} ({projScore} pts)!"
+    ],
+    'lab.c_milestone_score_leap': [
+      '建議培育至 Lv.{lv} 解鎖核心「{skill}」，綜合能力將由 {curScore} 分實質提升至 {projScore} 分。',
+      "Recommended to train to Lv.{lv} to unlock core '{skill}': overall score increases from {curScore} pts to {projScore} pts."
+    ],
+
+    // lab_editor.js
+    'lab.c_pkm_updated': ['寶可夢數值已成功更新！', 'Pokémon updated successfully!'],
+    'lab.c_no_matching_pkm': ['找不到符合之寶可夢', 'No matching Pokémon'],
+    'lab.c_pokemon_a': ['選手 A', 'Pokémon A'],
+    'lab.c_pokemon_b': ['選手 B', 'Pokémon B'],
+
+    // lab_engine.js
+    'lab.c_grade_b_plain': ['實用良品 (Solid Choice)', 'Solid Choice'],
+    'lab.c_grade_sss': ['神級天花板 (Apex God)', 'Apex God'],
+    'lab.c_grade_ss': ['極品畢業 (Mythic Tier)', 'Mythic Tier'],
+    'lab.c_grade_s': ['頂級戰力 (Top Tier)', 'Top Tier'],
+    'lab.c_grade_a': ['強力主力 (Strong Pick)', 'Strong Pick'],
+    'lab.c_grade_b': ['[✓] 實用良品 (Solid Choice)', '[✓] Solid Choice'],
+    'lab.c_grade_c': ['[~] 過渡可用 (Usable)', '[~] Usable'],
+    'lab.c_grade_d': ['[-] 換糖回收 (Recycle)', '[-] Recycle'],
+    'lab.c_pro_bfs_berry_burst': [
+      '完美契合「樹果遽增」機制！具備「樹果數量S」能在常態幫忙中額外產出樹果，同時透過主技能引爆全隊樹果能量，為島嶼衝分第一梯隊打手！（勤勞清包收益最大化）',
+      'Perfectly synergizes with "Berry Burst"! "Berry Finding S" increases base helps by +1 berry while main skill unleashes massive team berry bursts, forming an elite island pusher (maximize yields via regular collection).'
+    ],
+    'lab.c_con_bfs_helper_boost': [
+      '[!] 傳說神獸「幫手加速」基礎機率極低（約2%），持有「樹果數量S」會迅速塞滿背包並阻斷主技能判定，嚴重排擠關鍵技能機率與持有上限。',
+      '[!] Helper Boost base proc rate is extremely low (~2%); "Berry Finding S" causes rapid bag overflow and blocks main skill checks, crowding out trigger subskills.'
+    ],
+    'lab.c_con_bfs_healer': [
+      '[!] 活力療癒補師首重全隊活力維持，「樹果數量S」會大幅加速滿包並阻斷主技能判定（尤其睡眠過夜期間），需高頻清包。',
+      '[!] Healer relies on all-day skill procs; "Berry Finding S" causes rapid bag overflow and blocks healing procs (especially overnight).'
+    ],
+    'lab.c_pro_bfs_charge_slaking': [
+      '具備「樹果數量S」解鎖高額樹果副輸出，兼顧單兵直傷與產果（需留意及時清包避免阻斷主技能判定）。',
+      'Equipped with "Berry Finding S" for high-strength hybrid berry output (ensure frequent collection to avoid bag overflow blocking skill procs).'
+    ],
+    'lab.c_con_bfs_tactical_skill': [
+      '[!] 純戰術型技能寶可夢持有上限較低，擁有「樹果數量S」容易過早滿包限制主技能判定。',
+      '[!] Tactical skill specialist; "Berry Finding S" causes early bag overflow and blocks main skill checks.'
+    ],
+    'lab.c_pro_bfs_ing_with_carry': [
+      '具備「樹果數量S」並搭配「持有上限提升」，兼顧穩定副產能且不易過早滿包。',
+      'Features "Berry Finding S" backed by Inventory Up, providing bonus berry value without hurting ingredient capacity.'
+    ],
+    'lab.c_con_bfs_ing_no_carry': [
+      '[-] 食材型持有「樹果數量S」但缺乏「持有上限提升」，易在離線期間快速滿包並提前進入偷吃樹果狀態阻斷產料。',
+      '[-] "Berry Finding S" on ingredient specialist without Inventory Up causes rapid overflow, blocking ingredient drops during sleep.'
+    ],
+    'lab.c_pro_bfs_generic': [
+      '擁有已解鎖神技「樹果數量S」，樹果產能躍升 +1 個。',
+      'Equipped with active God-tier sub-skill "Berry Finding S", +1 berry per help.'
+    ],
+    'lab.c_pro_berry_extreme_speed': [
+      '具備「幫手獎勵 + 幫忙速度M + 加幫速性格」之極限幫速配置，成功特例躋身主力行列！',
+      'Features extreme speed kit (Helping Bonus + Helping Speed M + Speed Up Nature), qualifying as a viable core support.'
+    ],
+    'lab.c_con_berry_no_bfs': [
+      '[-] 樹果型專長未激活「樹果數量S」，核心產能與頂標差距明顯，上限封頂於過渡可用（最高B級）。',
+      '[-] Berry specialist without active "Berry Finding S", production ceiling is capped below top tier.'
+    ],
+    'lab.c_pro_slowpoke_tail': [
+      'Lv.30 解鎖遊戲最頂級食材「美味尾巴」，達成呆呆獸家族首要戰略解鎖使命！',
+      'Lv.30 unlocks the most valuable ingredient "Slowpoke Tail", fulfilling primary strategic unlock mission!'
+    ],
+    'lab.c_con_slowpoke_no_tail': [
+      '[-] 致命失職：Lv.30 未出「美味尾巴」，喪失呆呆獸家族核心戰略解鎖價值。',
+      '[-] Lv.30 does NOT yield "Slowpoke Tail", failing its core strategic unlock role.'
+    ],
+    'lab.c_con_healer_skill_down': [
+      '[-] 致命缺陷：補師性格為減主技能發動率（-20%），全天期望回能嚴重不足，無法勝任隊伍基石。',
+      '[-] Critical flaw: Healer has Main Skill Trigger Down nature, failing to sustain team energy.'
+    ],
+    'lab.c_con_healer_no_trigger': [
+      '[!] 缺乏任何主技能發動率副技能或性格加成，發動期望偏低，無法穩定維持全隊活力。',
+      '[!] Lacks any active Skill Trigger subskills or nature boost; healing frequency is too low for reliable team recovery.'
+    ],
+    'lab.c_pro_ing_m': [
+      '具備已解鎖「食材機率提升M」，大幅提升料理食材供貨穩定度。',
+      'Features active "Ingredient Finder M", greatly stabilizing ingredient supply.'
+    ],
+    'lab.c_pro_skill_m_spec': [
+      '擁有已解鎖「技能機率提升M」，主技能發動頻率顯著提高。',
+      'Features active "Skill Trigger M", significantly raising main skill activation frequency.'
+    ],
+    'lab.c_pro_skill_m_ing': [
+      '具備已解鎖「技能機率提升M」，輔助觸發食材獲取主技能，提供額外料理補給。',
+      'Unlocked "Skill Trigger M" synergizes with ingredient-fetching main skill for bonus food supplies.'
+    ],
+    'lab.c_pro_helping_bonus': [
+      '具備已解鎖全隊頂級光環「幫手獎勵」，全員幫忙時間縮短 5%（相當於全隊淨產能大幅提升）。',
+      'Features active top-tier team aura "Helping Bonus", reducing team helping time by 5%.'
+    ],
+    'lab.c_pro_helping_speed_m': [
+      '擁有已解鎖「幫忙速度M」，自身幫忙間隔縮短 14%。',
+      'Features active "Helping Speed M", shortening self helping interval by 14%.'
+    ],
+    'lab.c_pro_high_skill_lv': [
+      '主技能等級達到 Lv.{lv}，技能單次發動效益已達極限。',
+      'High Main Skill Level (Lv.{lv}), maximizing main skill trigger output.'
+    ],
+    'lab.c_pro_adamant_berry': [
+      '性格「固執」為樹果型第一神性格（幫忙速度▲ +10%，食材發現率▼ 進一步轉化樹果產量）。',
+      'Nature "Adamant" is the #1 God nature for Berry specialists (Speed of Help ▲ +10%, Ingredient Finding ▼ converts help cycles directly into berry output).'
+    ],
+    'lab.c_pro_nature_speed_up': [
+      '性格「{nature}」帶來幫忙速度▲ (+10%)，強化所有產出判定。',
+      'Nature "{nature}" provides Speed of Help ▲ (+10%), boosting all production.'
+    ],
+    'lab.c_con_nature_speed_down': [
+      '[-] 性格「{nature}」幫忙速度▼ (-7.5%)，對全方位產出有顯著負面影響。',
+      '[-] Nature "{nature}" reduces Speed of Help ▼ (-7.5%), severely impacting output.'
+    ],
+    'lab.c_pro_nature_ing_up': [
+      '性格「{nature}」完美契合食材型專長 (食材發現率▲ +20%)。',
+      'Nature "{nature}" perfectly synergizes with Ingredient specialty (Ingredient Finder ▲ +20%).'
+    ],
+    'lab.c_con_nature_ing_down': [
+      '[-] 致命缺陷：性格「{nature}」導致食材發現率▼ (-20%)，產料嚴重不足，建議換糖回收。',
+      '[-] Nature "{nature}" reduces Ingredient Finding ▼ (-20%), severely weakening specialty advantage (disqualification flaw).'
+    ],
+    'lab.c_pro_nature_skill_up': [
+      '性格「{nature}」完美契合技能型專長 (主技能發動率▲ +20%)。',
+      'Nature "{nature}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).'
+    ],
+    'lab.c_con_nature_skill_down': [
+      '[-] 致命缺陷：性格「{nature}」導致主技能發動率▼ (-20%)，嚴重閹割核心發動頻率。',
+      '[-] Nature "{nature}" reduces Main Skill Trigger ▼ (-20%), severely crippling skill output.'
+    ],
+    'lab.c_pro_cleanse_mint': [
+      '已使用淨白薄荷：原性格「{nature}」個性效果已被中和消除。',
+      'Cleanse Mint used: original nature "{nature}" neutralized to standard baseline.'
+    ],
+    'lab.c_pro_ribbon_speed': [
+      '[睡飽飽獎章 Lv.{lv}] 幫忙間隔縮短 {pct}，持有上限增加 {carry}。',
+      '[Ribbon Lv.{lv}] Helping interval shortened by {pct}, carry capacity increased by {carry}.'
+    ],
+    'lab.c_pro_ribbon_carry_final': [
+      '[睡飽飽獎章 Lv.{lv}] 持有上限增加 {carry}（最終形態/無進化型態無速度縮短）。',
+      '[Ribbon Lv.{lv}] Carry capacity increased by {carry} (fully evolved/single-stage, no speed reduction).'
+    ],
+    'lab.c_pro_ribbon_carry': [
+      '[睡飽飽獎章 Lv.{lv}] 持有上限增加 {carry}。',
+      '[Ribbon Lv.{lv}] Carry capacity increased by {carry}.'
+    ],
+    'lab.c_pro_ing_aaa': [
+      '具備極品純色 AAA 食材配置，特定食材產量高度集中，為頂級食材專精配置。',
+      'Pure mono-ingredient (AAA) configuration, maximizing targeted ingredient yield for top recipes.'
+    ],
+    'lab.c_pro_ing_abb': [
+      '具備強勢 ABB 雙色食材配置，二階與三階食材量產能力卓越。',
+      'Dual-ingredient (ABB) configuration, excellent mid-to-late game specialized output.'
+    ],
+    'lab.c_con_ing_abc': [
+      '[-] 三格食材分散 (ABC 雜菜配置)，產出種類嚴重稀釋難以穩定供應主力食譜，評級上限受限於A級。',
+      '[-] Split-ingredient (ABC) configuration, recipe ingredient dilution caps overall potential.'
+    ],
+    'lab.c_pro_inventory_up': [
+      '具備已解鎖「持有上限提升」，大幅延長離線/睡眠產出時間，避免背包溢滿阻斷食材與技能。',
+      'Active Inventory Up subskill prevents overnight inventory capping, sustaining ingredient and skill production.'
+    ],
+    'lab.c_pro_berry_burst_no_bfs': [
+      '樹果遽增戰略型：主技能發動直接為卡比獸爆發樹果能量（並隨機獲取隊友樹果）；果實纍纍樹果週享有 1.4 倍加成！',
+      'Berry Burst Specialist: Main skill detonates instant berry energy for Snorlax (and copies teammate berries); 1.4x boosted during Buncha Berries events.'
+    ],
+    'lab.c_pro_charge_no_bfs': [
+      '高頻單兵充能直傷：正統純技能流派，全天穩定發動能量填充，無背包過早滿包阻斷技能之顧慮。',
+      'High-Frequency Direct Charge: Pure skill build consistently fires Charge Strength throughout the day without inventory overflow risks.'
+    ],
+    'lab.c_pro_legendary': [
+      '傳說/幻之寶可夢專屬機制：素質基礎高，在特定同屬性純色隊或領域戰術中具備無可替代的戰略地位。',
+      'Legendary / Mythical Pokemon with signature mechanics, high base helping output and indispensable mono-type or domain tactical value.'
+    ],
+    'lab.c_pro_extra_tasty': [
+      '料理大成功戰術手：疊加料理美味機率，專為週末大餐爆擊（數十萬能量突破）而生的高階戰術組件。',
+      'Extra Tasty Specialist: Stacks dish critical success chance, tailor-made for exploding weekend master recipes.'
+    ],
+    'lab.c_pro_pot_expander': [
+      '料理擴鍋戰術手：突破鍋子容量上限，烹調極限大菜（如彈跳咖哩烏龍麵、採蜜巧克力格子鬆餅等大型食譜）不可或缺的擴容手。',
+      'Cooking Power Up Specialist: Expands pot capacity to cook limit-breaking high-tier recipes.'
+    ],
+    'lab.c_pro_dream_shard': [
+      '夢之碎片收割手：高效獲取夢之碎片，為糖果強化週與後期高昂養成成本提供源源不絕的資金。',
+      'Dream Shard Farmer: High shard acquisition yield, essential for Candy Boost weeks and late-game leveling.'
+    ],
+    'lab.c_pro_ing_skill': [
+      '應急食材庫存手：能高頻補充隨機食材庫存，化解大菜料理缺料危機。',
+      'Ingredient Stockpile Specialist: Rapidly restocks ingredient inventory to resolve cooking shortages.'
+    ],
+    'lab.c_pro_metronome': [
+      '隨機揮指戰術手：能隨機發動全遊戲主技能，具備極高趣味性與驚喜爆發上限。',
+      'Metronome Specialist: Triggers unpredictable random skills with unmatched fun and high lucky ceilings.'
+    ],
+    'lab.c_pro_basic_fallback': [
+      '數值平庸，適合作為過渡期日常隊伍替補成員。',
+      'Basic stats, suitable as a temporary placeholder.'
+    ],
+
+    // lab_compare.js
+    'lab.c_fmt_min_sec': ['{m}分{s}秒', '{m}m {s}s'],
+    'lab.c_fmt_min_only': ['{m}分', '{m}m'],
+    'lab.c_cmp_register_first': ['請先在寶可夢倉庫新增寶可夢後再來對比！', 'Please register Pokémon in Box first'],
+    'lab.c_cmp_player_label': ['選手 {letter}', 'Player {letter}'],
+    'lab.c_cmp_unit_ing_day': ['顆/日', 'items/day'],
+    'lab.c_cmp_pick_player': ['挑選選手 {letter}', 'Pick Player {letter}'],
+    'lab.c_cmp_tap_pick': ['點選挑選', 'Tap to pick'],
+    'lab.c_cmp_remove': ['移除', 'Remove'],
+    'lab.c_cmp_tap_change': ['點選更換', 'Tap to change'],
+    'lab.c_cmp_selected_hint': [
+      '已選 {n}/{max} 位選手，點選卡片可更換寶可夢（最多3位，不可重複選擇同一隻）',
+      'Selected {n}/{max}. Tap a slot to change Pokémon (max 3, no duplicates).'
+    ],
+    'lab.c_cmp_clear_all': ['清空對比', 'Clear All'],
+    'lab.c_cmp_box_lv': ['各自等級', 'Box Lv'],
+    'lab.c_cmp_box_lv_title': ['使用每隻寶可夢各自倉儲等級', "Use each Pokemon's box level"],
+    'lab.c_cmp_desc_cap': ['目前遊戲等級上限', 'Current in-game maximum level cap'],
+    'lab.c_cmp_desc_lv30': ['解鎖第2食材', 'Unlocks 2nd ingredient'],
+    'lab.c_cmp_desc_lv50': ['解鎖第3副技能', 'Unlocks 3rd sub-skill'],
+    'lab.c_cmp_desc_lv60_cap': ['解鎖第3食材 / 目前遊戲等級上限', 'Unlocks 3rd ingredient & Current in-game maximum level cap'],
+    'lab.c_cmp_desc_lv60': ['解鎖第3食材', 'Unlocks 3rd ingredient'],
+    'lab.c_cmp_desc_lv80': ['解鎖第4副技能 (模擬)', 'Unlocks 4th sub-skill (Sim)'],
+    'lab.c_cmp_desc_max': ['五階滿等畢業 (全開模擬)', 'Max level graduation with all 5 sub-skills'],
+    'lab.c_cmp_desc_sim': ['模擬等級', 'Simulation Level'],
+    'lab.c_cmp_desc_milestone': ['里程碑等級', 'Milestone'],
+    'lab.c_cmp_bench_title': ['Lv.{lv}：{desc}', 'Lv.{lv}: {desc}'],
+    'lab.c_cmp_benchmark_label': ['基準等級:', 'Benchmark Level:'],
+    'lab.c_cmp_energy_title': ['每日預估總能量比較', 'Daily Total Energy Output'],
+    'lab.c_cmp_energy_empty': ['請在上方挑選至少 2 位選手進行每日預估總能量比較', 'Select at least 2 Pokémon above to compare estimated daily energy output.'],
+    'lab.c_cmp_ing_title': ['每日食材產量比較', 'Daily Ingredient Yield Comparison'],
+    'lab.c_cmp_ing_empty': ['請在上方挑選至少 2 位選手進行每日食材產量比較', 'Select at least 2 Pokémon above to compare ingredient yields.'],
+    'lab.c_cmp_skills_title': ['技能發動與幫手效能對照', 'Skill Procs, Speed & Specs'],
+    'lab.c_cmp_skills_empty': ['請在上方挑選至少 2 位選手進行技能發動與幫手效能對照', 'Select at least 2 Pokémon above to compare skill procs and helper speed.'],
+    'lab.c_cmp_tie': ['持平', 'Tie'],
+    'lab.c_cmp_leads': ['領先', 'Leads'],
+    'lab.c_cmp_total_energy': ['每日總能量產出', 'Est. Total Energy'],
+    'lab.c_cmp_berry_power': ['樹果強度能量', 'Berry Power'],
+    'lab.c_cmp_ing_power': ['食材產出能量', 'Ingredient Power'],
+    'lab.c_cmp_skill_procs_day': ['主技能期望次數', 'Skill Procs / Day'],
+    'lab.c_cmp_val_per_day': ['{v} 次/日', '{v} /day'],
+    'lab.c_cmp_val_helps_day': ['{v} 次', '{v} /day'],
+    'lab.c_cmp_val_procs_day': ['~{v} 次', '~{v} /day'],
+    'lab.c_cmp_help_interval': ['幫手週期間隔', 'Help Interval'],
+    'lab.c_cmp_composite_tier': ['綜合戰力評價', 'Composite Tier'],
+    'lab.c_cmp_pts_unit': ['分', ' pts'],
+    'lab.c_cmp_sixdim_title': ['六維綜合戰力評定對照', '6-Dimension Evaluation Matrix'],
+    'lab.c_cmp_berry_energy': ['樹果能量', 'Berry Energy'],
+    'lab.c_cmp_ing_energy': ['食材能量', 'Ingredient Energy'],
+    'lab.c_cmp_skill_energy': ['主技能能量', 'Skill Energy (Est)'],
+    'lab.c_cmp_subskill_locked_title': ['當前等級未解鎖', 'Locked at this level'],
+    'lab.c_cmp_subskill_locked_tag': [' [鎖]', ' [Locked]'],
+    'lab.c_cmp_nature_build': ['性格配置', 'Nature'],
+    'lab.c_cmp_minted': ['(薄荷中和)', '(Minted)'],
+    'lab.c_cmp_build_title': ['副技能與性格配置橫向對照', 'Subskills & Nature Build Matchup'],
+    'lab.c_cmp_no_ing_unlocked': ['目前均無解鎖之食材', 'No ingredients unlocked yet'],
+    'lab.c_cmp_exclusive': ['獨佔', 'Exclusive'],
+    'lab.c_cmp_per_ing_caption': ['各食材總和產量對照（不同食材獨立比較）：', 'Per-ingredient total yield (each ingredient compared separately):'],
+    'lab.c_cmp_level': ['等級', 'Level'],
+    'lab.c_cmp_help_period': ['幫手週期', 'Help Interval'],
+    'lab.c_cmp_daily_helps': ['每日幫手次數', 'Daily Helps'],
+    'lab.c_cmp_ing_rate': ['食材掉落率', 'Ingredient Rate'],
+    'lab.c_cmp_berries_day': ['每日樹果數量', 'Berries / Day'],
+    'lab.c_cmp_energy_berry': ['單顆樹果能量', 'Energy / Berry'],
+    'lab.c_cmp_main_skill': ['主技能', 'Main Skill'],
+    'lab.c_cmp_skill_proc_rate': ['技能發動率', 'Skill Proc Rate'],
+    'lab.c_cmp_skill_procs_day_row': ['技能每日發動次數', 'Skill Procs / Day'],
+    'lab.c_cmp_avg_proc_interval': ['技能平均發動間隔', 'Avg Proc Interval'],
+    'lab.c_cmp_hours': ['{v} 小時', '{v} h'],
+    'lab.c_cmp_skill_energy_day': ['主技能每日能量', 'Skill Energy / Day'],
+    'lab.c_cmp_nature': ['性格', 'Nature'],
+    'lab.c_cmp_mint_suffix': [' (薄荷)', ' (Mint)'],
+    'lab.c_cmp_verdict_energy': ['【{player}】每日總能量最高 ({val})，適合衝島嶼分數。', '{player} has the highest daily energy ({val}).'],
+    'lab.c_cmp_verdict_ing': ['【{player}】食材產量最高 ({val} {unit})，適合支撐大鍋料理。', '{player} yields the most ingredients ({val} {unit}).'],
+    'lab.c_cmp_verdict_skill': ['【{player}】主技能發動最頻繁 (約 {val} 次/日)。', '{player} procs its main skill most often (~{val}/day).'],
+    'lab.c_cmp_verdict_sep': ['', ' '],
+    'lab.c_cmp_verdict_even': ['所選寶可夢各項表現旗鼓相當，可依營地喜愛樹果與預備料理自行調配。', 'All selected Pokémon are evenly matched.'],
+    'lab.c_cmp_verdict_title': ['深度研究室對比結論與培育建議', 'Research Lab Comparative Verdict & Advice'],
+
+    // lab_growth.js
+    'lab.c_growth_none': ['無', 'None'],
+    'lab.c_growth_no_skill_data': ['暫無主技能資訊。', 'No main skill data.'],
+    'lab.c_growth_main_skill': ['主技能', 'Main Skill'],
+    'lab.c_growth_roi_debuff': [
+      '性格減主技能發動機率，嚴重壓低發動期望值，強烈不建議投資金種子。',
+      'Skill Trigger Down nature severely cripples activation frequency. Gold seed investment is not recommended.'
+    ],
+    'lab.c_growth_roi_healer_s': [
+      '極品高頻補師！滿級主技能單次回復全隊18點活力，全天維持極速產能，值得最高優先級投資金種子。',
+      'Elite team healer with high proc frequency! Maxing main skill sustains full team energy throughout the day.'
+    ],
+    'lab.c_growth_roi_healer_a': [
+      '隊伍核心補師，升滿主技能能大幅提升全隊續航力，投資性價比極高。',
+      'Core team healer. High investment value to maintain team energy stability.'
+    ],
+    'lab.c_growth_roi_skill_s': [
+      '極限發動率頂級技能手！副技能與性格高度契合，滿等主技能產能爆發極高，強烈推薦投資。',
+      'Top-tier skill specialist with extreme trigger rates! Gold seeds unleash maximum potential.'
+    ],
+    'lab.c_growth_roi_skill_a': [
+      '具備良好技能加成，作為主力隊員時投資金種子效益顯著。',
+      'Solid skill specialist. Recommended investment if this Pokemon is a key roster member.'
+    ],
+    'lab.c_growth_roi_skill_b': [
+      '發動頻率普通，建議優先將金種子保留給核心補師或頂級神獸。',
+      'Moderate trigger rate. Consider investing only after core healers are maxed.'
+    ],
+    'lab.c_growth_roi_high_impact': [
+      '實用戰術型技能，在主力隊伍成型後可酌量升級，優先級次於技能專長型。',
+      'Support utility skill. Can be upgraded if resources permit, but lower priority than skill specialists.'
+    ],
+    'lab.c_growth_roi_other': [
+      '非技能專長個體，主技能升級收益有限，建議保留金種子給專長寶可夢。',
+      'Berry/Ingredient specialist. Skill leveling grants marginal returns; save seeds for dedicated specialists.'
+    ],
+    'lab.c_growth_curve_pseudo': ['準神 (1.5倍)', 'Pseudo-Legendary (1.5x)'],
+    'lab.c_growth_curve_legendary': ['神獸 (1.8倍)', 'Legendary (1.8x)'],
+    'lab.c_growth_curve_mythical': ['特殊神獸 (3.0倍)', 'Mythical/Special (3.0x)'],
+    'lab.c_growth_curve_standard': ['一般 (1.0倍)', 'Standard (1.0x)'],
+    'lab.c_growth_exp_up': ['經驗提升 (+18%)', 'EXP Up (+18%)'],
+    'lab.c_growth_exp_down': ['經驗下降 (-18%)', 'EXP Down (-18%)'],
+    'lab.c_growth_exp_neutral': ['無修正', 'Neutral'],
+    'lab.c_growth_change_pkm': ['更換寶可夢', 'Change Pokémon'],
+    'lab.c_growth_calc_title': ['培育升級消耗精算', 'Level & Resource Calculator'],
+    'lab.c_growth_from_level': ['起始等級', 'Current Level'],
+    'lab.c_growth_target_level': ['目標等級', 'Target Level'],
+    'lab.c_growth_req_candies': ['所需寶可夢糖果', 'Required Candies'],
+    'lab.c_growth_exp_per_candy': ['({exp} EXP/顆)', '({exp} EXP/ea)'],
+    'lab.c_growth_req_shards': ['所需夢之碎片', 'Required Dream Shards'],
+    'lab.c_growth_req_exp': ['所需經驗值累計 (EXP)', 'Cumulative Experience'],
+    'lab.c_growth_handy_s': ['萬能糖果 S (+3)', 'Handy Candy S (+3)'],
+    'lab.c_growth_handy_m': ['萬能糖果 M (+20)', 'Handy Candy M (+20)'],
+    'lab.c_growth_handy_l': ['萬能糖果 L (+100)', 'Handy Candy L (+100)'],
+    'lab.c_growth_pcs': ['{count} 顆', '{count} pcs'],
+    'lab.c_growth_seed_roi_title': ['技能種子投資效益精算', 'Skill Seeds ROI & Upgrade Analysis'],
+    'lab.c_growth_sub_seed': ['銀色技能種子', 'Sub Skill Seed'],
+    'lab.c_growth_sub_seed_badge': ['副技能升階', 'Sub-Skills'],
+    'lab.c_growth_no_sub_upgrades': [
+      '無可使用銀色技能種子之副技能（已達上限或無階梯技能）',
+      'No eligible sub-skills for Sub Skill Seed (already max tier or no ladder skills).'
+    ],
+    'lab.c_growth_main_seed': ['金色技能種子', 'Main Skill Seed'],
+    'lab.c_growth_main_seed_badge': ['主技能突破', 'Main Skill'],
+    'lab.c_growth_roi_rating': ['性價比評級：{grade}', 'ROI Rating: {grade}'],
+    'lab.c_growth_cur_to_max': ['當前等級 -> 上限', 'Current Level -> Max'],
+    'lab.c_growth_seeds_needed': ['升滿所需金種子', 'Seeds Needed to Max'],
+    'lab.c_growth_seeds_unit': ['{count} 顆', '{count} Seeds']
+  });
+  registerResources({
+    // ─── 六維雷達圖元資料 (lab_specialists.js) ───
+    'lab.t_dim_berry_lbl': ['樹果產能', 'Berry Output'],
+    'lab.t_dim_berry_desc': ['單日樹果總能量潛力 (含樹果S、專長與幫速)', 'Total daily berry energy potential (BFS, specialty & speed)'],
+    'lab.t_dim_ing_lbl': ['食材產能', 'Ingredient Output'],
+    'lab.t_dim_ing_desc': ['食材獲取期望與解鎖組合協同效應', 'Ingredient drop rate and recipe combo synergies'],
+    'lab.t_dim_skill_lbl': ['技能強度', 'Skill Power'],
+    'lab.t_dim_skill_desc': ['主技能觸發頻率、等級加成與爆發收益', 'Main skill trigger rate and value scaling'],
+    'lab.t_dim_speed_lbl': ['幫忙速度', 'Helping Speed'],
+    'lab.t_dim_speed_desc': ['整體幫忙頻率 (基礎間隔、幫速SM、幫獎與性格)', 'Overall helping frequency (base interval, sub-skills & nature)'],
+    'lab.t_dim_growth_lbl': ['後期成長', 'Late Growth'],
+    'lab.t_dim_growth_desc': ['Lv.50/70/80 後期技能與第三食材爆發潛能', 'Lv.50/70/80 late skill and ingredient scaling potential'],
+    'lab.t_dim_roi_lbl': ['資源效益', 'Resource ROI'],
+    'lab.t_dim_roi_desc': ['成型週期、前中期戰力解鎖速度與糖果回報率', 'Early/mid power unlock and candy investment efficiency'],
+
+    // ─── 診斷報告彈窗 (lab_modal.js) ───
+    'lab.t_nature_mint_neutral': ['沒有性格帶來的特色（使用淨白薄荷消除個性效果）', 'Has no distinctive personality traits (Cleanse Mint used)'],
+    'lab.t_nature_neutral': ['沒有性格帶來的特色（無影響）', 'Has no distinctive personality traits'],
+    'lab.t_spec_ing': ['食材型', 'Ingredient'],
+    'lab.t_spec_berry': ['樹果型', 'Berries'],
+    'lab.t_spec_skill': ['技能型', 'Skills'],
+    'lab.t_spec_all': ['全能型', 'All-Rounder'],
+    'lab.t_main_skill': ['主技能', 'Main Skill'],
+    'lab.t_ing_locked': [' (未開放)', ' (Locked)'],
+    'lab.t_close': ['關閉', 'Close'],
+    'lab.t_track_current': ['當前', 'Current'],
+    'lab.t_track_max_lv': ['滿級', 'Max Lv'],
+    'lab.t_edit': ['編輯', 'Edit'],
+    'lab.t_carry': ['持有', 'Carry'],
+    'lab.t_ribbon_spd': ['幫速 -{pct}%', '-{pct}% Spd'],
+    'lab.t_nature': ['性格', 'Nature'],
+    'lab.t_frequency': ['幫忙間隔', 'Frequency'],
+    'lab.t_ing_rate': ['食材率', 'Ing Rate'],
+    'lab.t_skill_rate': ['技能率', 'Skill Rate'],
+    'lab.t_subskill_title_unlocked': ['{name} (Lv.{lv})', '{name} (Lv.{lv})'],
+    'lab.t_subskill_title_locked': ['{name} (Lv.{lv}未解鎖)', '{name} (Lv.{lv} - Locked)'],
+    'lab.t_subskill_slot': ['Lv.{lv} 欄位', 'Lv.{lv} Slot'],
+    'lab.t_synergy_heading_mobile': ['專長與性格副技能協同點評', 'Specialty, Nature & Sub-Skill Synergy Analysis'],
+    'lab.t_synergy_heading': ['專長與性格副技能協同點評', 'Specialty & Synergy Analysis'],
+    'lab.t_summary_label': ['智能簡評', 'Appraisal Note'],
+    'lab.t_modal_badge': ['深度能力診斷報告', 'Diagnostic Report'],
+    'lab.t_current_rating_title': ['當前實力評級 (Lv.{lv})', 'Current Level Rating (Lv.{lv})'],
+    'lab.t_max_rating_title': ['畢業潛力評級 (Lv.100)', 'Max Potential Rating (Lv.100)'],
+    'lab.t_edit_stats_title': ['編輯寶可夢數值', 'Edit Pokémon Stats'],
+    'lab.t_edit_stats': ['編輯數值', 'Edit'],
+    'lab.t_main_skill_colon': ['主技能：', 'Main Skill:'],
+    'lab.t_ingredients_colon': ['食材：', 'Ingredients:'],
+
+    // ─── 智能深度簡評與雷達圖 (lab_summary.js) ───
+    'lab.t_recipe_quote': ['『{name}』', '"{name}"'],
+    'lab.t_sig_recipes_two': ['直通頂尖料理 {chip1} 與 {chip2} 關鍵供料。', 'Target recipes: prime pipeline for {chip1} & {chip2}.'],
+    'lab.t_sig_recipes_one': ['直通頂尖料理 {chip1} 關鍵供料。', 'Target recipe: prime pipeline for {chip1}.'],
+    'lab.t_pts_unit': [' 分', ' pts'],
+    'lab.t_sum_slowpoke_ok': [
+      '戰略解鎖專門手：Lv.30 精準解鎖「美味尾巴」，圓滿達成全遊戲最高能量食材之戰略開圖使命！直通頂尖料理 {chip1} 與 {chip2} 關鍵供料，解鎖後可常駐作為後備庫存手。',
+      'Strategic Unlock Specialist: Lv.30 unlocks "Slowpoke Tail", fulfilling the primary strategic mission of unlocking the highest-energy ingredient in Pokémon Sleep! Direct pipeline for {chip1} & {chip2}.'
+    ],
+    'lab.t_sum_slowpoke_fail': [
+      '戰略定位失職：Lv.30 未能開出「美味尾巴」，喪失了呆呆獸家族核心戰略開圖價值，建議作為過渡替補或換糖。',
+      'Fatal Strategic Flaw: Lv.30 fails to roll "Slowpoke Tail", missing the essential strategic unlock value of the Slowpoke family.'
+    ],
+    'lab.t_sum_berry_top': [
+      '天花板級樹果砲台！解鎖第一神技「樹果數量S（樹果S）」配合極致幫忙速度加成，單次幫忙穩定產出 3 顆樹果，卡比獸能量滾雪球的最強主力。',
+      'Top-Tier Berry Cannon! "Berry Finding S" combined with excellent Speed boosts produces 3 berries per help cycle, serving as the ultimate Snorlax energy engine.'
+    ],
+    'lab.t_sum_berry_bfs': [
+      '畢業級樹果主力：已解鎖第一核心神技「樹果數量S（樹果S）」，單次產果直接 +1，具備極強的島嶼推分實力。',
+      'Core Berry Anchor: Unlocked God-tier "Berry Finding S", providing +1 berry per cycle and delivering strong, reliable island pushing power.'
+    ],
+    'lab.t_sum_berry_future_bfs': [
+      '未來潛力股：核心神技「樹果數量S（樹果S）」將於 Lv.{lv} 解鎖，建議作為重點種子培育，解鎖後產能將迎來決定性質變！',
+      'High Potential Seed: "Berry Finding S" unlocks at Lv.{lv}. Recommended to prioritize training to unlock this game-changing leap in berry output!'
+    ],
+    'lab.t_sum_berry_speed': [
+      '極限速攻流：雖缺乏「樹果數量S」，但憑藉「幫手獎勵 + 幫忙速度加成」大幅縮短全員幫忙間隔，適合作為優質團隊加速掛件與過渡主力。',
+      'High-Speed Auxiliary: Lacks "Berry Finding S", but extreme speed kit (Helping Bonus + Speed buffs) makes it a valuable team accelerator and transitional anchor.'
+    ],
+    'lab.t_sum_berry_slow': [
+      '致命減速：性格減幫忙速度（-7.5%）拖慢節奏，且未持有「樹果數量S」，產能難以支撐島嶼進度。',
+      'Severely Handicapped: Speed Down nature directly cripples help cycles. Combined with no BFS, output is too low for competitive island production.'
+    ],
+    'lab.t_sum_berry_trans': [
+      '過渡型樹果手：缺乏核心神技「樹果數量S」，單次僅能產出 2 顆樹果，產能上限受限，適合作為島嶼前期拓荒過渡。',
+      'Transitional Berry Specialist: Lacks core "Berry Finding S", capping output at 2 berries per help. Suitable as an early island transitional placeholder.'
+    ],
+    'lab.t_sum_burst_top': [
+      '天花板級樹果爆發砲台！「樹果遽增」主技能與「樹果數量S」完美結合，單次幫忙穩定產出加倍樹果，技能觸發更能引爆全隊巨額樹果能量（謎擬Q大成功翻倍爆發更強）！在喜愛樹果島嶼或樹果週（1.4倍加成）為頂尖衝分主力，勤勞收包可享極限產能。',
+      'Top-Tier Berry Burst Cannon! "Berry Burst" combined with "Berry Finding S" yields double help berries and triggers explosive team berry surges (Mimikyu doubles on Great Success!). An apex island pusher for active collectors; 1.4x boosted during Buncha Berries events.'
+    ],
+    'lab.t_sum_burst_bfs': [
+      '樹果遽增推進主力：具備「樹果數量S」大幅提升常態樹果產量，配合主技能隨機爆發隊友樹果，具備極佳的推分爆發力。建議勤勞收包並搭配主技能種子或技能機率副技能。',
+      'Berry Burst Pusher: Equipped with "Berry Finding S" for high baseline berry generation, synergizing with Berry Burst procs for strong island push power. Regular collection recommended.'
+    ],
+    'lab.t_sum_burst_freq': [
+      '高頻樹果遽增核心：主技能發動率卓越，能頻繁為卡比獸爆發樹果能量；若未來能解鎖樹果數量S或配合樹果週活動（1.4倍加成），將具備天花板級爆發上限！',
+      'High-Frequency Berry Burst Core: Excellent main skill trigger rate triggers frequent berry surges directly into Snorlax. Unlocking BFS or leveling main skill offers enormous burst potential (1.4x during Berry Weeks).'
+    ],
+    'lab.t_sum_burst_base': [
+      '樹果遽增技能型：主技能為「樹果遽增」，能瞬間爆發樹果能量，建議搭配主技能種子或技能機率副技能以提升發動次數。',
+      'Berry Burst Specialist: Main skill "Berry Burst" provides instant team berry surges. Prioritize skill seeds and skill trigger subskills for maximum efficiency.'
+    ],
+    'lab.t_sum_healer_bad': [
+      '致命硬傷：補師性格為減少主技能機率（-20%），全天期望回能次數嚴重不足，難以維持全隊 80% 以上極限活力運轉。',
+      'Fatal Healer Flaw: Main Skill Trigger Down nature (-20%) cripples daily activation rate, failing to maintain team energy above the 80% speed threshold.'
+    ],
+    'lab.t_sum_healer_bfs_note': [
+      '（注意：持有樹果S易過早滿包，睡前務必清空背包避免阻斷技能判定）。',
+      ' (Note: BFS accelerates bag overflow; clear inventory before sleep to prevent blocked procs).'
+    ],
+    'lab.t_sum_healer_top': [
+      '頂尖隊伍回能引擎！雙重技能發動機率加成，全天期望觸發 4~6 次以上，能牢牢鎖定全隊高活力上限，享受 2.2 倍極限幫忙速！{extraNote}',
+      'Top-tier Team Healer Engine! High trigger rate guarantees 4-6 procs daily, locking the team at high energy for 2.2x maximum helping speed.{extraNote}'
+    ],
+    'lab.t_sum_healer_future': [
+      '潛力補師：關鍵「技能機率提升M」將於 Lv.{lv} 解鎖，建議優先培育升級以構築全隊回能防線。',
+      'Promising Healer: Core "Skill Trigger M" unlocks at Lv.{lv}. Prioritize leveling to establish reliable team energy coverage.'
+    ],
+    'lab.t_sum_healer_low': [
+      '發動期望不足：缺乏主技能機率提升副技能或性格加成，發動頻率偏低，無法勝任穩定維持全隊活力的隊伍核心基石。',
+      'Insufficient Trigger Rate: Lacks active Skill Trigger subskills or nature boost; healing frequency is too low to sustain all-day team vitality.'
+    ],
+    'lab.t_sum_healer_ok': [
+      '及格團隊補師：具備穩健的發動頻率，能提供基礎活力續航，協助隊伍維持日間高水準工作效率。',
+      'Qualified Team Healer: Decent trigger rate for stable energy support, helping the team maintain high daytime work efficiency.'
+    ],
+    'lab.t_sum_helper_top': [
+      '同屬性純色隊終極放大器！主技能「幫手加速」單次發動可引爆全隊即時產出，隊伍中同屬性不同種類寶可夢越多倍率越高。神獸本體首重技能機率與持有上限防溢滿，而將樹果數量S交由「隊友」攜帶以最大化技能爆發收益！',
+      'Mono-Type Team Amplifier: "Helper Boost" triggers instant team-wide production cycles, scaling higher with more unique same-type team members! Prioritizes Skill Triggers and Helping Bonus to avoid self-bag overflow, while teammates carry BFS to massively amplify output.'
+    ],
+    'lab.t_sum_helper_base': [
+      '同屬性純色隊發動機：主技能「幫手加速」能帶動同屬性隊員進行多次額外幫忙。基礎發動率偏低（約2%），極度依賴技能機率副技能與主技能種子投入。',
+      'Mono-Type Helper Specialist: "Helper Boost" triggers instant multi-helps for all same-type members. Skill trigger subskills and Main Skill Seeds are primary priorities.'
+    ],
+    'lab.t_sum_charge_hybrid_top': [
+      '頂級雙修能量砲台！解鎖「能量填充 + 樹果數量S」雙修形態。在對應喜好樹果島嶼上（如電龍在發電廠、太陽伊布在湖畔、哥達鴨在海灘），為勤勞收包玩家提供極限級總能量期望（單次直傷數千 + 每次雙倍島嶼樹果）！放置時需注意及時清包以防滿包阻斷技能判定。',
+      'Top-Tier Hybrid Charge Cannon! Unlocks the "Charge Strength + Berry Finding S" dual-track form. On favorite berry islands (e.g. Ampharos at Power Plant, Espeon at Lakeside, Golduck at Beach), active collectors achieve the ultimate theoretical energy ceiling (thousands in direct skill strength + double island berries)! Collect regularly to prevent bag overflow.'
+    ],
+    'lab.t_sum_charge_hybrid': [
+      '雙修型單兵直傷手：持有「樹果數量S」提供可觀樹果副產能，配合主技能能量填充提供穩定分數進帳，建議高頻收包以防滿包偷吃阻斷技能。',
+      'Hybrid Charge Producer: "Berry Finding S" provides high-value island berry yield alongside steady Charge Strength direct energy. High-frequency collection is recommended to prevent Sneaky Snacking from halting skill checks.'
+    ],
+    'lab.t_sum_charge_freq': [
+      '強力單兵能量砲台：倚賴「能量填充」提供高額直傷分數，發動機率加成顯著，具備極佳的單兵獨立產分戰鬥力。',
+      'High-Yield Energy Cannon: Leverages frequent "Charge Strength" activations for heavy single-target Snorlax point generation.'
+    ],
+    'lab.t_sum_charge_base': [
+      '單兵能量手：主技能為直接提升卡比獸能量，依賴主技能等級與發動頻率支撐產能。',
+      'Charge Strength Specialist: Provides steady direct Snorlax energy, depending primarily on skill trigger rate and main skill level.'
+    ],
+    'lab.t_sum_leg_psystrike': [
+      '傳說樹果領域核心！專屬主技能「精神擊破」能展開樹果領域，全面提升特定屬性樹果能量，為全隊帶來跨維度的戰略爆發！',
+      'Legendary Berry Field Engine! Signature move "Psystrike" deploys a Berry Field, massively multiplying specific berry yields for team-wide strategic breakthroughs.'
+    ],
+    'lab.t_sum_leg_decathlon': [
+      '幻之十項全能戰術手！專屬主技能「十項全能」技能池深不可測，為全隊提供極具彈性的戰術補強與意外上限。',
+      'Mythical All-Rounder! Signature move "Decathlon" draws from an unpredictable repertoire of master skills, serving as an adaptable wildcard.'
+    ],
+    'lab.t_sum_leg_dark': [
+      '幻之惡系直傷爆發手！專屬主技能「夢魘」單次提供巨額卡比獸直傷能量，基礎速度快，為頂級獨立產分戰力。',
+      'Mythical Dark Charge Burst! Signature move "Bad Dreams" unleashes massive direct energy points with outstanding base speed.'
+    ],
+    'lab.t_sum_tasty_top': [
+      '料理大成功爆擊手：主技能「料理成功S」能不斷疊加下次料理的大成功機率，專為每週衝擊大師高階時引爆週末大餐（數十萬能量爆擊）的終極戰術組件！首重技能機率與持有上限，嚴禁樹果S阻斷判定。',
+      'Premier Extra Tasty Specialist: High trigger rate stacks dish crit probability rapidly, tailor-made for exploding weekend master dishes with multi-hundred-thousand point bursts! Strictly avoid BFS to protect skill procs.'
+    ],
+    'lab.t_sum_tasty_base': [
+      '料理大成功戰術手：疊加料理美味機率，專為週末大餐爆擊儲備機率，建議提高技能機率與持有上限。',
+      'Tactical Extra Tasty Specialist: Stacks dish critical success chance to prepare for explosive cooking scores during event weeks.'
+    ],
+    'lab.t_sum_pot_top': [
+      '極品戰術擴鍋手：具備優秀的主技能發動加成，能高頻擴充鍋子容量，專為週末衝擊頂級極限大菜（突破鍋子上限）而生！',
+      'Premier Pot Expander: High main skill trigger rate expands pot size rapidly, tailor-made for breaking cooking limits on weekends!'
+    ],
+    'lab.t_sum_pot_base': [
+      '戰術擴鍋專門：主技能「料理強化S」能擴充鍋容量，適合週末囤積鍋空間以衝擊極限大型食譜。',
+      'Tactical Pot Specialist: Main skill "Cooking Power Up S" expands pot capacity for preparing high-tier recipes during event weeks.'
+    ],
+    'lab.t_sum_shard_top': [
+      '夢之碎片頂級收割手：高頻發動夢之碎片主技能，在好眠日活動與糖果強化週是不可或缺的頂尖資金農夫！',
+      'Premier Dream Shard Harvester: High trigger rate paired with Dream Shard subskills yields massive currency during Good Sleep Days and Candy Boost weeks!'
+    ],
+    'lab.t_sum_shard_base': [
+      '夢之碎片專門手：主技能為直接獲取夢之碎片，為後期高昂的寶可夢升級糖果消耗提供資金支持。',
+      'Dream Shard Specialist: Main skill provides direct Dream Shards, crucial for sustaining high late-game candy power-up costs.'
+    ],
+    'lab.t_sum_ingskill_top': [
+      '應急食材爆發中樞：高額技能發動率能瞬間填補龐大食材庫存，化解高階料理缺料危機，是食材告急時的最佳急救隊員！',
+      'Rapid Stockpile Emergency Support: High trigger rate pours abundant random ingredients into inventory, instantly curing recipe ingredient shortages!'
+    ],
+    'lab.t_sum_ingskill_base': [
+      '應急食材補給手：主技能為獲取額外隨機食材，能輔助日常烹飪食材供給。',
+      'Ingredient Draw Specialist: Main skill fetches bonus random ingredients to support daily kitchen consumption.'
+    ],
+    'lab.t_sum_metronome': [
+      '隨機揮指戰術手：能隨機發動全遊戲主技能，具備極高趣味性與意外上限，在日常探索中常有驚喜表現。',
+      'Wildcard Metronome Specialist: Triggers unpredictable random skills across the game, delivering high excitement and unexpected score leaps.'
+    ],
+    'lab.t_sum_skill_bad': [
+      '致命缺陷：性格減少主技能發動機率（-20%），嚴重閹割核心發動頻率，不符技能型定位。',
+      'Fatal Specialty Flaw: Nature reduces Main Skill Trigger (-20%), severely crippling core activation frequency.'
+    ],
+    'lab.t_sum_skill_anchor_future': [
+      '專精技能主力：當前技能發動表現活躍，且後續 Lv.{lv} 仍有技能提升空間，戰術運轉流暢。',
+      'Specialized Skill Anchor: Strong active skill trigger frequency, with further performance leaps upon reaching Lv.{lv}.'
+    ],
+    'lab.t_sum_skill_anchor': [
+      '專精技能主力：優質的技能機率加成確保了穩定的觸發頻率，能充分發揮技能專長優勢。',
+      'Specialized Skill Anchor: Excellent skill trigger bonuses ensure high activation frequency for stable specialty performance.'
+    ],
+    'lab.t_sum_skill_future': [
+      '潛力技能手：關鍵「技能機率提升M」將於 Lv.{lv} 解鎖，建議優先培育升級以釋放核心潛力。',
+      'Future Skill Prospect: Core "Skill Trigger M" unlocks at Lv.{lv}. Prioritize leveling to unleash true skill potential.'
+    ],
+    'lab.t_sum_skill_base': [
+      '常規技能手：技能觸發率處於基準線，適合作為特定情境替補或過渡成員。',
+      'Standard Skill Specialist: Baseline skill trigger rate; suitable as a situational support or transitional pick.'
+    ],
+    'lab.t_sum_ing_bad': [
+      '致命短板：性格減少食材發現率（-20%），產出頻繁被樹果稀釋，極難穩定供應主力食譜所需食材，不建議投入過多資源。',
+      'Fatal Specialty Flaw: Nature reduces Ingredient Finding (-20%), causing frequent berry dilution and unstable cooking supply. Not recommended for major investment.'
+    ],
+    'lab.t_sum_ing_aaa': [
+      '搭配極品純色 AAA 食材配置，特定食材產量高度集中。',
+      ' Features pure mono-ingredient (AAA) spread for maximum focused output.'
+    ],
+    'lab.t_sum_ing_abb': [
+      '搭配強勢 ABB 雙色配置，二階與三階食材量產能力卓越。',
+      ' Features strong ABB dual spread, excelling in mid-to-late advanced ingredient yield.'
+    ],
+    'lab.t_sum_ing_abc': [
+      '三色 ABC 雜色配置略微稀釋單項食材產量。',
+      ' Split ABC spread dilutes single ingredient yield.'
+    ],
+    'lab.t_sum_ing_hybrid_inv': [
+      '極品雙修食材手！食材機率大幅提升搭配「樹果數量S」與「持有上限提升」，食材爆發力極強且兼顧頂級樹果副產能！{recipePhrase}',
+      'Top Hybrid Specialist: Active "Ingredient Finder M" backed by BFS and Inventory Up provides exceptional food yields with massive bonus berries.{recipePhrase}'
+    ],
+    'lab.t_sum_ing_hybrid_noinv': [
+      '高爆發雙修型：食材機率優異並持有「樹果數量S」，但缺乏持有上限容易在睡眠期間提早滿包阻斷產料，建議勤勞收成。{recipePhrase}',
+      'High-Burst Hybrid: Excellent ingredient rate and BFS provide huge dual yield, but inventory caps fast overnight—collect regularly.{recipePhrase}'
+    ],
+    'lab.t_sum_ing_top': [
+      '頂級食材供應中樞！高額食材發現率確保了穩定龐大的料理供應，做大菜的最佳後勤基石。{recipePhrase}{ingSpreadDesc}',
+      'Premier Kitchen Anchor! High ingredient finding rate ensures abundant cooking supply for top recipes.{recipePhrase}{ingSpreadDesc}'
+    ],
+    'lab.t_sum_ing_future': [
+      '潛力食材手：關鍵「食材機率提升M」將於 Lv.{lv} 解鎖，建議優先培育升級以構築主力供貨能力。{recipePhrase}',
+      'Future Ingredient Prospect: Core "Ingredient Finder M" unlocks at Lv.{lv}. Prioritize leveling to establish reliable kitchen supply.{recipePhrase}'
+    ],
+    'lab.t_sum_ing_speed': [
+      '幫速彌補型：雖缺乏直接食材機率提升，但憑藉優良的幫忙速度維持了合格的基礎供貨，適合作為實用過渡。{recipePhrase}',
+      'Speed-Driven Producer: Lacks direct ingredient finder boost, but high helping speed compensates to provide acceptable general output.{recipePhrase}'
+    ],
+    'lab.t_sum_ing_low': [
+      '缺乏食材爆發力：前中期未持有食材機率加成或顯著幫速，產量難以滿足高階大型料理（如彈跳咖哩烏龍麵、大塊滿滿熱水沙拉等頂級大菜）的消耗需求。{recipePhrase}',
+      'Lacks Ingredient Output: Missing ingredient finder and speed boosts; yields are insufficient to sustain demanding high-tier dishes.{recipePhrase}'
+    ],
+    'lab.t_sum_ing_solid': [
+      '穩健食材供應手：供貨節奏穩定，足以勝任日常食譜輪替與食材儲備。{recipePhrase}{ingSpreadDesc}',
+      'Solid Ingredient Provider: Steady supply for regular meals, serving reliably in daily cooking rotations.{recipePhrase}{ingSpreadDesc}'
+    ],
+    'lab.t_sum_fallback': [
+      '{grade} 級（{score}分）- 基礎素質均衡，適合作為隊伍實用成員。',
+      '{grade} Grade ({score} pts) - Reliable team member with balanced baseline performance.'
+    ],
+
+    // ─── 隊伍模擬與最佳化 (lab_team_calc.js) ───
+    'lab.t_rank_basic': ['普通 {n}', 'Basic {n}'],
+    'lab.t_rank_great': ['進階 {n}', 'Great {n}'],
+    'lab.t_rank_ultra': ['超級 {n}', 'Ultra {n}'],
+    'lab.t_rank_master': ['大師 {n}', 'Master {n}'],
+    'lab.t_toast_opt_recipe': [
+      '已自動為【{islandName}】依目標料理【{recipeName}】配置單日覆蓋最佳食材陣容！',
+      'Team optimized for target recipe: {recipeName} on {islandName} (Daily Coverage)!'
+    ],
+    'lab.t_toast_opt_strat': [
+      '已自動為【{islandName}】推薦【{stratName}】（料理目標：{cookName}）！',
+      'Team optimized: {stratName} on {islandName} ({cookName})!'
+    ],
+    'lab.t_strat_balanced': ['綜合隊', 'Balanced'],
+    'lab.t_strat_berries': ['樹果隊', 'Berry-Focused'],
+    'lab.t_strat_ingredients': ['食材隊', 'Ingredient-Focused'],
+    'lab.t_strat_skills': ['技能隊', 'Skill-Focused'],
+    'lab.t_cook_curry': ['咖哩/濃湯', 'Curry'],
+    'lab.t_cook_salad': ['沙拉', 'Salad'],
+    'lab.t_cook_dessert': ['點心/飲料', 'Dessert'],
+    'lab.t_list_sep': ['、', ', '],
+    'lab.t_toast_reroll_gg': [
+      '萌綠之島喜愛樹果已隨機刷新：{berries}！',
+      'Greengrass favored berries rerolled: {berries}'
+    ],
+
+    // ─── 挑選彈窗 (lab_team_picker.js) ───
+    'lab.t_toast_dup_compare': ['該寶可夢已在對比選手名單中，無法重複選擇！', 'This Pokémon is already selected in comparison!'],
+    'lab.t_picker_no_recipe': ['未找到符合條件的料理', 'No matching recipes found'],
+    'lab.t_pots_unit': ['格', ' Pots'],
+    'lab.t_current_badge': ['當前', 'Current'],
+    'lab.t_all': ['全部', 'All'],
+    'lab.t_all_ings': ['全部食材', 'All Ingredients'],
+    'lab.t_all_berries': ['全部樹果', 'All Berries'],
+    'lab.t_picker_recipe_title': ['挑選目標料理', 'Select Target Recipe'],
+    'lab.t_dishes_unit': ['道料理', 'Dishes'],
+    'lab.t_picker_recipe_search_ph': ['搜尋料理名稱或所需食材...', 'Search recipe name or ingredient...'],
+    'lab.t_ingr_colon': ['食材:', 'Ingr:'],
+    'lab.t_picker_title_team': ['挑選隊員 (隊員槽位 {slot})', 'Select Member for Slot {slot}'],
+    'lab.t_picker_title_growth': ['挑選培育精算對象', 'Select Pokémon for Growth & Seeds Calculation'],
+    'lab.t_picker_title_compare': ['挑選選手 {letter}', 'Select Pokémon for Player {letter}'],
+    'lab.t_picker_no_pkm': ['倉庫中未找到符合條件的寶可夢', 'No matching Pokémon found in Box'],
+    'lab.t_locked_paren': [' (未解鎖)', ' (Locked)'],
+    'lab.t_already_compare_title': ['已在對比選手中', 'Already in comparison'],
+    'lab.t_in_compare_badge': ['已在對比中', 'In Comparison'],
+    'lab.t_picker_pkm_search_ph': ['搜尋寶可夢暱稱或編號...', 'Search nickname or Dex No...'],
+    'lab.t_filter_fav': ['喜愛樹果', 'Favored'],
+    'lab.t_filter_berries': ['樹果型', 'Berries'],
+    'lab.t_filter_ings': ['食材型', 'Ingredients'],
+    'lab.t_filter_skills': ['技能型', 'Skills'],
+    'lab.t_berry_colon': ['樹果:', 'Berry:'],
+
+    // ─── 幫手組隊 UI (lab_team_ui.js) ───
+    'lab.t_gg_berries_title': ['萌綠之島本週喜愛樹果 (可自由自選):', 'Greengrass Favored Berries (Customizable):'],
+    'lab.t_gg_berries_sub': ['自選本週 3 種喜愛樹果，產能與推薦即時享有 2x 能量加成', 'Select 3 favored berries for this week (2x energy boost)'],
+    'lab.t_reroll_title': ['從 18 種樹果隨機刷新 3 種', 'Reroll 3 random berries from 18'],
+    'lab.t_reroll_btn': ['隨機擲骰', 'Random Reroll'],
+    'lab.t_roll_build_title': ['隨機抽出 3 種樹果並立即自動推薦最佳陣容', 'Reroll 3 random berries and immediately auto-optimize team'],
+    'lab.t_roll_build_btn': ['擲骰並自動配隊', 'Roll & Build'],
+    'lab.t_pot_ok': ['容量充裕', 'Capacity OK'],
+    'lab.t_pot_short': ['鍋容量不足', 'Pot Short'],
+    'lab.t_pot_size_label': ['鍋子容量:', 'Pot Size:'],
+    'lab.t_pot_dec_title': ['鍋容量 -3', 'Decrease Pot Size by 3'],
+    'lab.t_pot_base_title': ['基礎鍋容量: {size}', 'Base Pot Size: {size}'],
+    'lab.t_pot_inc_title': ['鍋容量 +3', 'Increase Pot Size by 3'],
+    'lab.t_pot_sunday_title': ['週日特別擴鍋：料理鍋容量 2 倍', 'Sunday Pot Expansion: 2x Pot Capacity'],
+    'lab.t_pot_sunday_btn': ['週日2倍', 'Sunday 2x'],
+    'lab.t_pot_camp_title': ['好露營券：料理鍋容量 +50%', 'Good Camp Ticket: +50% Pot Capacity'],
+    'lab.t_pot_camp_btn': ['好露營券(+50%)', 'Camp +50%'],
+    'lab.t_pot_effective_label': ['實際容納:', 'Effective:'],
+    'lab.t_team_focus_label': ['隊伍類型:', 'Team Focus:'],
+    'lab.t_pill_berries': ['樹果隊', 'Berries'],
+    'lab.t_pill_ingredients': ['食材隊', 'Ingredients'],
+    'lab.t_pill_skills': ['技能隊', 'Skills'],
+    'lab.t_pill_recipe': ['目標料理', 'Target Recipe'],
+    'lab.t_target_dish_label': ['目標料理:', 'Target Dish:'],
+    'lab.t_click_to_change': ['點擊更換', 'Click to change'],
+    'lab.t_change': ['更換', 'Change'],
+    'lab.t_cooking_goal_label': ['料理種類:', 'Cooking Goal:'],
+    'lab.t_aura_helping_title': ['全體幫手速度 +{pct}%', 'Team Helping Speed +{pct}%'],
+    'lab.t_aura_helping': ['幫手獎勵', 'Helping Bonus'],
+    'lab.t_aura_energy_title': ['全體睡眠活力回復 +{pct}%', 'Team Energy Recovery +{pct}%'],
+    'lab.t_aura_energy': ['活力回復獎勵', 'Energy Recovery'],
+    'lab.t_aura_sleepexp_title': ['全體睡眠EXP +{pct}%', 'Team Sleep EXP +{pct}%'],
+    'lab.t_aura_sleepexp': ['睡眠EXP獎勵', 'Sleep EXP'],
+    'lab.t_aura_researchexp_title': ['研究EXP +{pct}%', 'Research EXP +{pct}%'],
+    'lab.t_aura_researchexp': ['研究EXP獎勵', 'Research EXP'],
+    'lab.t_aura_dreamshard_title': ['夢之碎片 +{pct}%', 'Dream Shards +{pct}%'],
+    'lab.t_aura_dreamshard': ['夢之碎片獎勵', 'Dream Shard'],
+    'lab.t_auras_bar_label': ['隊伍全體光環彙總:', 'Team Shared Bonuses:'],
+    'lab.t_auras_empty': ['目前隊內無全體加成光環 (個人特化陣容)', 'No team bonuses active (personal builds)'],
+    'lab.t_slot_empty_title': ['點擊挑選隊員', 'Click to select team member'],
+    'lab.t_slot_empty_text': ['點擊挑選隊員', 'Select Team Member'],
+    'lab.t_skill_short': ['技能', 'Skill'],
+    'lab.t_aura_team_shared': ['全體隊伍加成', 'Team Shared Bonus'],
+    'lab.t_aura_locked_until': ['未解鎖 · Lv.{lv}', 'Locked until Lv.{lv}'],
+    'lab.t_solo_spec_title': ['個人特化專精：副技能均為個人加成，無全隊光環', 'Individual Specialist: Subskills focus on personal performance rather than whole team'],
+    'lab.t_solo_spec': ['個人專精', 'Solo Specialist'],
+    'lab.t_mint_short': ['薄荷', 'Mint'],
+    'lab.t_replace': ['更換', 'Replace'],
+    'lab.t_daily_berry_energy_title': ['每日樹果能量', 'Daily berry energy'],
+    'lab.t_energy_pts': ['能量', 'pts'],
+    'lab.t_ing_surplus_paren': [' (三餐自給充裕)', ' (Daily Self-Sufficient)'],
+    'lab.t_ing_synergy_paren': [' (料理契合)', ' (Recipe Synergy)'],
+    'lab.t_supply_surplus': ['充裕', 'Surplus'],
+    'lab.t_supply_deficit': ['缺口', 'Deficit'],
+    'lab.t_supply_meal_title': ['單餐需求', 'Single meal requirement'],
+    'lab.t_supply_meal_lbl': ['每餐:', 'Meal:'],
+    'lab.t_supply_daily_title': ['每日 3 餐總需求', 'Daily 3-meal total demand'],
+    'lab.t_supply_daily_lbl': ['日需:', 'Daily:'],
+    'lab.t_supply_yield_title': ['隊伍每日預估產出', 'Team estimated daily harvest'],
+    'lab.t_supply_yield_lbl': ['日產:', 'Yield:'],
+    'lab.t_supply_satisfied': ['100% 達成 · 可完全自給自足', '100% Self-Sufficient'],
+    'lab.t_supply_overall': ['全體達成率: {pct}%', 'Overall: {pct}%'],
+    'lab.t_supply_pots_meta': ['格鍋容量', 'Pots'],
+    'lab.t_supply_base_energy_meta': ['基礎能量', 'Base Energy'],
+    'lab.t_supply_board_sub': ['目標料理食材供需看板 · 精算每日 3 餐食材缺口與隊伍自給自足率', 'Target Recipe Ingredient Supply vs Daily Demand Dashboard (3 Meals/Day)'],
+    'lab.t_change_recipe_btn': ['更換目標料理', 'Change Recipe'],
+    'lab.t_favored_berries_lbl': ['喜愛樹果 (2x 能量):', 'Favored Berries (2x Power):'],
+    'lab.t_est_daily_total': ['預估每日能量總產出', 'Estimated Daily Total Energy'],
+    'lab.t_projected_rank_title': ['依據每日產能 x7 預估週日卡比獸可達階級', 'Estimated Sunday Snorlax Rank at 7x Daily Energy'],
+    'lab.t_projected_rank_lbl': ['預估週日卡比獸階級: ', 'Projected Sunday Snorlax Rank: '],
+    'lab.t_pts_per_day': ['能量/日', 'pts/day'],
+    'lab.t_chip_berry': ['樹果: ', 'Berry: '],
+    'lab.t_chip_cooking': ['料理 (3餐): ', 'Cooking (3 meals): '],
+    'lab.t_chip_skill': ['技能: ', 'Skill: '],
+    'lab.t_metric_sub': [
+      '依據【{islandName}】喜愛樹果加成、每日 3 餐料理產能與主技能發動綜合精算。',
+      'Comprehensive simulation based on {islandName} 2x berry power, 3-meal cooking synergy, and direct skill triggers.'
+    ],
+    'lab.t_est_daily_ings': ['預估每日食材總產量', 'Daily Ingredients Harvest'],
+    'lab.t_items_per_day': ['個/日', 'items/day'],
+    'lab.t_no_ings_yet': ['尚無食材產出', 'No ingredients yet']
+  });
   const SUPPORTED_LANGS = ['zh-TW', 'zh-CN', 'en-US'];
 
   function initLanguage() {
+    let initialLang = DEFAULT_LANG;
     try {
       const saved = localStorage.getItem(STORAGE_KEY_LANG);
       if (saved && SUPPORTED_LANGS.includes(saved)) {
-        currentLang = saved;
+        initialLang = saved;
       }
     } catch (e) {}
 
+    syncActiveLocale(initialLang);
+
     if (typeof document !== 'undefined' && document.documentElement) {
-      const docLang = currentLang === 'zh-TW' ? 'zh-Hant' : (currentLang === 'zh-CN' ? 'zh-Hans' : 'en');
-      const dataLang = currentLang === 'zh-TW' ? 'zh-TW' : (currentLang === 'zh-CN' ? 'zh-CN' : 'en');
-      document.documentElement.setAttribute('lang', docLang);
-      document.documentElement.setAttribute('data-lang', dataLang);
+      document.documentElement.setAttribute('lang', activeStrategy.docLang);
+      document.documentElement.setAttribute('data-lang', activeStrategy.dataLang);
       const onReady = () => {
         updatePageTranslations();
       };
@@ -2182,16 +4431,14 @@
 
   function setLanguage(lang) {
     if (!SUPPORTED_LANGS.includes(lang)) return;
-    currentLang = lang;
+    syncActiveLocale(lang);
     try {
-      localStorage.setItem(STORAGE_KEY_LANG, lang);
+      localStorage.setItem(STORAGE_KEY_LANG, activeStrategy.lang);
     } catch (e) {}
 
     if (typeof document !== 'undefined' && document.documentElement) {
-      const docLang = lang === 'zh-TW' ? 'zh-Hant' : (lang === 'zh-CN' ? 'zh-Hans' : 'en');
-      const dataLang = lang === 'zh-TW' ? 'zh-TW' : (lang === 'zh-CN' ? 'zh-CN' : 'en');
-      document.documentElement.setAttribute('lang', docLang);
-      document.documentElement.setAttribute('data-lang', dataLang);
+      document.documentElement.setAttribute('lang', activeStrategy.docLang);
+      document.documentElement.setAttribute('data-lang', activeStrategy.dataLang);
       updatePageTranslations();
     }
 
@@ -2275,24 +4522,15 @@
     } catch (e) {}
   }
 
-  function lookupBilingualDict(dict, query, lang = currentLang) {
+  function lookupBilingualDict(dict, query, lang) {
     if (!query || !dict) return null;
     const str = String(query).trim();
     if (!str) return '';
-
-    function getResultFromVal(val) {
-      if (typeof val === 'object') {
-        if (lang === 'zh-CN') {
-          return val['zh-CN'] || toSimplifiedChinese(val['zh-TW'] || val['en-US'] || str);
-        }
-        return val[lang] || val['en-US'] || str;
-      }
-      return lang === 'zh-CN' ? toSimplifiedChinese(val) : val;
-    }
+    const strategy = _getStrategy(lang);
 
     // Level 1: 直接精確命中 (Direct Fast Match)
     if (dict[str] !== undefined) {
-      return getResultFromVal(dict[str]);
+      return strategy.resolveLookupVal(dict[str], str);
     }
 
     // 建立或讀取 O(1) 預索引表 (Pre-indexed O(1) Lookup Maps)
@@ -2301,20 +4539,16 @@
     // Level 2: 標點符號與括號正規化比對 (O(1) Normalized Match)
     const normTarget = normalizeSearchKey(str);
     if (dict.__normIndex && dict.__normIndex[normTarget] !== undefined) {
-      return getResultFromVal(dict.__normIndex[normTarget]);
+      return strategy.resolveLookupVal(dict.__normIndex[normTarget], str);
     }
 
     // Level 3: 緊湊無視空格比對 (O(1) Compact Match without Whitespace)
     const compactTarget = compactSearchKey(str);
     if (dict.__compactIndex && dict.__compactIndex[compactTarget] !== undefined) {
-      return getResultFromVal(dict.__compactIndex[compactTarget]);
+      return strategy.resolveLookupVal(dict.__compactIndex[compactTarget], str);
     }
 
-    if (lang === 'zh-CN') {
-      return toSimplifiedChinese(str);
-    }
-
-    return null;
+    return strategy.fallbackLookup(str);
   }
 
   const _I18N_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
@@ -2348,19 +4582,22 @@
       .replace(/\{maxIslandMult\}/g, String(maxIslandMult));
   }
 
-  function t(key, fallback = '') {
-    const dict = DICTIONARY[currentLang] || DICTIONARY[DEFAULT_LANG];
-    let res = null;
-    if (dict && dict[key] !== undefined) {
-      res = dict[key];
-    } else if (currentLang === 'zh-CN') {
-      const twVal = DICTIONARY['zh-TW'] && DICTIONARY['zh-TW'][key];
-      if (twVal !== undefined) res = toSimplifiedChinese(twVal);
-      else if (fallback) res = toSimplifiedChinese(fallback);
+  function t(key, paramsOrFallback, fallbackOrParams) {
+    _ensureActiveLocale();
+    let params = null;
+    let fallback = '';
+    if (paramsOrFallback && typeof paramsOrFallback === 'object') {
+      params = paramsOrFallback;
+      if (typeof fallbackOrParams === 'string') fallback = fallbackOrParams;
+    } else {
+      if (typeof paramsOrFallback === 'string') fallback = paramsOrFallback;
+      if (fallbackOrParams && typeof fallbackOrParams === 'object') params = fallbackOrParams;
     }
-    if (res === null) {
-      res = fallback || key;
+    let res = activeDict[key];
+    if (res === undefined) {
+      res = fallback ? activeStrategy.text(fallback) : key;
     }
+    if (params) res = _interpolateParams(res, params);
     return _resolveDynamicCaps(res);
   }
 
@@ -2505,7 +4742,7 @@
 
   function getRecipeName(rec, lang) {
     if (!rec) return '';
-    const targetLang = lang || currentLang;
+    const strategy = _getStrategy(lang);
     let name_cn = '';
     let name_en = '';
     if (typeof rec === 'object') {
@@ -2527,43 +4764,41 @@
       }
     }
 
-    const resolvedLang = (typeof targetLang === 'string') ? targetLang.trim() : (currentLang || DEFAULT_LANG);
-    if (resolvedLang === 'en-US' || resolvedLang === 'en') {
-      return name_en || name_cn;
-    }
-    if (resolvedLang === 'zh-CN' || resolvedLang === 'zh-Hans' || resolvedLang === 'cn') {
-      return toSimplifiedChinese(name_cn || name_en);
-    }
-    return name_cn || name_en;
+    return strategy.recipeFromNames(name_cn, name_en);
   }
 
-  function getBerryName(berry, lang = currentLang) {
+  function getBerryName(berry, lang) {
     if (!berry) return '';
     return lookupBilingualDict(BERRY_NAMES, berry, lang) || berry;
   }
 
-  function getNatureName(nat, lang = currentLang) {
+  function getNatureName(nat, lang) {
     if (!nat) return '';
     return lookupBilingualDict(NATURE_NAMES, nat, lang) || nat;
   }
 
-  function getMainSkillName(skill, lang = currentLang) {
+  function getMainSkillName(skill, lang) {
     if (!skill) return '';
-    const res = lookupBilingualDict(MAIN_SKILL_NAMES, skill, lang);
+    const strategy = _getStrategy(lang);
+    const res = lookupBilingualDict(MAIN_SKILL_NAMES, skill, strategy.lang);
     if (res) return res;
 
-    // 支援複合型括號變體 (例如：能量填充S (隨機))
+    // 支援整段括號包覆（如 "(幫手支援S)"）與複合型括號變體（如 "能量填充S (隨機)"）
     const trimmed = String(skill).trim();
+    const outerParen = trimmed.match(/^([(\[（【])([^()\[\]（）【】]+)([)\]）】])$/);
+    if (outerParen) {
+      return `${outerParen[1]}${getMainSkillName(outerParen[2], strategy.lang)}${outerParen[3]}`;
+    }
     const parenMatch = trimmed.match(/^(.+?)\s*([(\[（【].+[)\]）】])$/);
     if (parenMatch) {
-      const baseSkill = getMainSkillName(parenMatch[1], lang);
-      const suffix = lang === 'zh-CN' ? toSimplifiedChinese(parenMatch[2]) : (lang === 'en-US' ? translateDynamicText(parenMatch[2]) : parenMatch[2]);
+      const baseSkill = getMainSkillName(parenMatch[1], strategy.lang);
+      const suffix = strategy.text(parenMatch[2]);
       return `${baseSkill} ${suffix}`;
     }
-    return lang === 'zh-CN' ? toSimplifiedChinese(trimmed) : trimmed;
+    return strategy.fallbackLookup(trimmed) || trimmed;
   }
 
-  const POKEMON_NAMES = {"妙蛙種子":"Bulbasaur","妙蛙草":"Ivysaur","妙蛙花":"Venusaur","小火龍":"Charmander","火恐龍":"Charmeleon","噴火龍":"Charizard","傑尼龜":"Squirtle","卡咪龜":"Wartortle","水箭龜":"Blastoise","綠毛蟲":"Caterpie","鐵甲蛹":"Metapod","巴大蝶":"Butterfree","小拉達":"Rattata","拉達":"Raticate","阿柏蛇":"Ekans","阿柏怪":"Arbok","皮丘":"Pichu","皮卡丘":"Pikachu","皮卡丘（萬聖節）":"Pikachu (Halloween)","皮卡丘（佳節）":"Pikachu (Holiday)","皮卡丘（船長）":"Pikachu (Captain)","雷丘":"Raichu","穿山鼠":"Sandshrew","穿山王":"Sandslash","皮寶寶":"Cleffa","皮皮":"Clefairy","皮可西":"Clefable","六尾":"Vulpix","六尾（阿羅拉的樣子）":"Vulpix (Alolan Form)","九尾":"Ninetales","九尾（阿羅拉的樣子）":"Ninetales (Alolan Form)","寶寶丁":"Igglybuff","胖丁":"Jigglypuff","胖可丁":"Wigglytuff","地鼠":"Diglett","三地鼠":"Dugtrio","喵喵":"Meowth","貓老大":"Persian","可達鴨":"Psyduck","哥達鴨":"Golduck","猴怪":"Mankey","火爆猴":"Primeape","卡蒂狗":"Growlithe","卡蒂狗（洗翠的樣子）":"Growlithe (Hisuian Form)","風速狗":"Arcanine","風速狗（洗翠的樣子）":"Arcanine (Hisuian Form)","喇叭芽":"Bellsprout","口呆花":"Weepinbell","大食花":"Victreebel","小拳石":"Geodude","隆隆石":"Graveler","隆隆岩":"Golem","呆呆獸":"Slowpoke","呆殼獸":"Slowbro","呆呆王":"Slowking","小磁怪":"Magnemite","三合一磁怪":"Magneton","自爆磁怪":"Magnezone","大蔥鴨":"Farfetch'd","嘟嘟":"Doduo","嘟嘟利":"Dodrio","鬼斯":"Gastly","鬼斯通":"Haunter","耿鬼":"Gengar","大岩蛇":"Onix","大鋼蛇":"Steelix","大綱蛇":"Steelix","卡拉卡拉":"Cubone","嘎啦嘎啦":"Marowak","小福蛋":"Happiny","吉利蛋":"Chansey","幸福蛋":"Blissey","袋獸":"Kangaskhan","魔尼尼":"Mime Jr.","魔牆人偶":"Mr. Mime","凱羅斯":"Pinsir","百變怪":"Ditto","伊布":"Eevee","伊布（佳節）":"Eevee (Holiday)","伊布（萬聖節）":"Eevee (Halloween)","伊布家族（8種進化）":"Eevee Evolutions (8 Forms)","伊布家族":"Eevee Evolutions","水伊布":"Vaporeon","雷伊布":"Jolteon","火伊布":"Flareon","太陽伊布":"Espeon","月亮伊布":"Umbreon","葉伊布":"Leafeon","冰伊布":"Glaceon","仙子伊布":"Sylveon","迷你龍":"Dratini","哈克龍":"Dragonair","快龍":"Dragonite","超夢":"Mewtwo","夢幻":"Mew","菊草葉":"Chikorita","月桂葉":"Bayleef","大竺葵":"Meganium","火球鼠":"Cyndaquil","火岩鼠":"Quilava","火爆獸":"Typhlosion","小鋸鱷":"Totodile","藍鱷":"Croconaw","大力鱷":"Feraligatr","波克比":"Togepi","波克基古":"Togetic","波克基斯":"Togekiss","天然雀":"Natu","天然鳥":"Xatu","咩利羊":"Mareep","茸茸羊":"Flaaffy","電龍":"Ampharos","盆才怪":"Bonsly","樹才怪":"Sudowoodo","烏波":"Wooper","烏波（阿羅拉的樣子）":"Wooper (Paldea Form)","烏波（帕底亞的樣子）":"Wooper (Paldea Form)","沼王":"Quagsire","土王":"Clodsire","黑暗鴉":"Murkrow","烏鴉頭頭":"Honchkrow","夢妖":"Misdreavus","夢妖魔":"Mismagius","小果然":"Wynaut","果然翁":"Wobbuffet","壺壺":"Shuckle","赫拉克羅斯":"Heracross","狃拉":"Sneasel","瑪狃拉":"Weavile","信使鳥":"Delibird","戴魯比":"Houndour","黑魯加":"Houndoom","雷公":"Raikou","炎帝":"Entei","水君":"Suicune","幼基拉斯":"Larvitar","沙基拉斯":"Pupitar","班基拉斯":"Tyranitar","木守宮":"Treecko","森林蜥蜴":"Grovyle","蜥蜴王":"Sceptile","火稚雞":"Torchic","力壯雞":"Combusken","火焰雞":"Blaziken","水躍魚":"Mudkip","沼躍魚":"Marshtomp","巨沼怪":"Swampert","拉魯拉絲":"Ralts","奇鲁莉安":"Kirlia","沙奈朵":"Gardevoir","艾路雷朵":"Gallade","懶人獺":"Slakoth","過動猿":"Vigoroth","請假王":"Slaking","勾魂眼":"Sableye","大嘴娃":"Mawile","可可多拉":"Aron","可多拉":"Lairon","波士可多拉":"Aggron","正電拍拍":"Plusle","負電拍拍":"Minun","溶食獸":"Gulpin","吞食獸":"Swalot","大顎蟻":"Trapinch","超音波幼蟲":"Vibrava","沙漠蜻蜓":"Flygon","青綿鳥":"Swablu","七夕青鳥":"Altaria","怨影娃娃":"Shuppet","詛咒娃娃":"Banette","阿勃梭魯":"Absol","海豹球":"Spheal","海豹球（佳節）":"Spheal (Holiday)","海魔獅":"Sealeo","帝牙海獅":"Walrein","寶貝龍":"Bagon","甲殼龍":"Shelgon","暴飛龍":"Salamence","拉帝亞斯":"Latias","拉帝歐斯":"Latios","草苗龜":"Turtwig","樹林龜":"Grotle","土台龜":"Torterra","小火焰猴":"Chimchar","猛火猴":"Monferno","烈焰猴":"Infernape","波加曼":"Piplup","波皇子":"Prinplup","帝王拿波":"Empoleon","小貓怪":"Shinx","勒克貓":"Luxio","倫琴貓":"Luxray","飄飄球":"Drifloon","隨風球":"Drifblim","花岩怪":"Spiritomb","利歐路":"Riolu","路卡利歐":"Lucario","不良蛙":"Croagunk","毒骷蛙":"Toxicroak","雪笠怪":"Snover","暴雪王":"Abomasnow","克雷色利亞":"Cresselia","達克萊伊":"Darkrai","食夢夢":"Munna","夢夢蝕":"Musharna","石居蟹":"Dwebble","岩殿居蟹":"Crustle","毛頭小鷹":"Rufflet","勇士雄鷹":"Braviary","寶寶暴龍":"Tyrunt","怪顎龍":"Tyrantrum","摔角鷹人":"Hawlucha","咚咚鼠":"Dedenne","南瓜精":"Pumpkaboo","南瓜怪人":"Gourgeist","南瓜精 (小顆種)":"Pumpkaboo (Small Variety)","南瓜精 (中顆種)":"Pumpkaboo (Medium Variety)","南瓜精 (大顆種)":"Pumpkaboo (Large Variety)","南瓜精 (巨顆種)":"Pumpkaboo (Jumbo Variety)","南瓜怪人 (小顆種)":"Gourgeist (Small Variety)","南瓜怪人 (中顆種)":"Gourgeist (Medium Variety)","南瓜怪人 (大顆種)":"Gourgeist (Large Variety)","南瓜怪人 (巨顆種)":"Gourgeist (Jumbo Variety)","嗡蝠":"Noibat","音波龍":"Noivern","強顎雞母蟲":"Grubbin","蟲電寶":"Charjabug","鍬農炮蟲":"Vikavolt","萌虻":"Cutiefly","蝶結萌虻":"Ribombee","童偶熊":"Stufful","穿著熊":"Bewear","花療環環":"Comfey","托戈德瑪爾":"Togedemaru","謎擬Q":"Mimikyu","老翁龍":"Drampa","古月鳥":"Cramorant","毒電嬰":"Toxel","顫弦蠑螈（高調的樣子）":"Toxtricity (Amped Form)","顫弦蠑螈（低調的樣子）":"Toxtricity (Low Key Form)","新葉喵":"Sprigatito","蒂蕾喵":"Floragato","魔幻假面喵":"Meowscarada","呆火鱷":"Fuecoco","炙燙鱷":"Crocalor","骨紋巨聲鱷":"Skeledirge","潤水鴨":"Quaxly","湧躍鴨":"Quaxwell","狂歡浪舞鴨":"Quaquaval","布撥":"Pawmi","布土撥":"Pawmo","巴布土撥":"Pawmot","小鍛匠":"Tinkatink","巧鍛匠":"Tinkatuff","巨鍛匠":"Tinkaton","哎呀球菇":"Foongus","敗露球菇":"Amoonguss","走鯨":"Cetoddle","浩大鯨":"Cetitan","木棉球":"Cottonee","風妖精":"Whimsicott"};
+  const POKEMON_NAMES = {"妙蛙種子":"Bulbasaur","妙蛙草":"Ivysaur","妙蛙花":"Venusaur","小火龍":"Charmander","火恐龍":"Charmeleon","噴火龍":"Charizard","傑尼龜":"Squirtle","卡咪龜":"Wartortle","水箭龜":"Blastoise","綠毛蟲":"Caterpie","鐵甲蛹":"Metapod","巴大蝶":"Butterfree","小拉達":"Rattata","拉達":"Raticate","阿柏蛇":"Ekans","阿柏怪":"Arbok","皮丘":"Pichu","皮卡丘":"Pikachu","皮卡丘（萬聖節）":"Pikachu (Halloween)","皮卡丘（佳節）":"Pikachu (Holiday)","皮卡丘（船長）":"Pikachu (Captain)","雷丘":"Raichu","穿山鼠":"Sandshrew","穿山王":"Sandslash","皮寶寶":"Cleffa","皮皮":"Clefairy","皮可西":"Clefable","六尾":"Vulpix","六尾（阿羅拉的樣子）":"Vulpix (Alolan Form)","九尾":"Ninetales","九尾（阿羅拉的樣子）":"Ninetales (Alolan Form)","寶寶丁":"Igglybuff","胖丁":"Jigglypuff","胖可丁":"Wigglytuff","地鼠":"Diglett","三地鼠":"Dugtrio","喵喵":"Meowth","貓老大":"Persian","可達鴨":"Psyduck","哥達鴨":"Golduck","猴怪":"Mankey","火爆猴":"Primeape","卡蒂狗":"Growlithe","卡蒂狗（洗翠的樣子）":"Growlithe (Hisuian Form)","風速狗":"Arcanine","風速狗（洗翠的樣子）":"Arcanine (Hisuian Form)","喇叭芽":"Bellsprout","口呆花":"Weepinbell","大食花":"Victreebel","小拳石":"Geodude","隆隆石":"Graveler","隆隆岩":"Golem","呆呆獸":"Slowpoke","呆殼獸":"Slowbro","呆呆王":"Slowking","小磁怪":"Magnemite","三合一磁怪":"Magneton","自爆磁怪":"Magnezone","大蔥鴨":"Farfetch'd","嘟嘟":"Doduo","嘟嘟利":"Dodrio","鬼斯":"Gastly","鬼斯通":"Haunter","耿鬼":"Gengar","大岩蛇":"Onix","大鋼蛇":"Steelix","大綱蛇":"Steelix","卡拉卡拉":"Cubone","嘎啦嘎啦":"Marowak","小福蛋":"Happiny","吉利蛋":"Chansey","幸福蛋":"Blissey","袋獸":"Kangaskhan","魔尼尼":"Mime Jr.","魔牆人偶":"Mr. Mime","凱羅斯":"Pinsir","百變怪":"Ditto","伊布":"Eevee","伊布（佳節）":"Eevee (Holiday)","伊布（萬聖節）":"Eevee (Halloween)","伊布家族（8種進化）":"Eevee Evolutions (8 Forms)","伊布家族":"Eevee Evolutions","水伊布":"Vaporeon","雷伊布":"Jolteon","火伊布":"Flareon","太陽伊布":"Espeon","月亮伊布":"Umbreon","葉伊布":"Leafeon","冰伊布":"Glaceon","仙子伊布":"Sylveon","迷你龍":"Dratini","哈克龍":"Dragonair","快龍":"Dragonite","超夢":"Mewtwo","夢幻":"Mew","菊草葉":"Chikorita","月桂葉":"Bayleef","大竺葵":"Meganium","火球鼠":"Cyndaquil","火岩鼠":"Quilava","火爆獸":"Typhlosion","小鋸鱷":"Totodile","藍鱷":"Croconaw","大力鱷":"Feraligatr","波克比":"Togepi","波克基古":"Togetic","波克基斯":"Togekiss","天然雀":"Natu","天然鳥":"Xatu","咩利羊":"Mareep","茸茸羊":"Flaaffy","電龍":"Ampharos","盆才怪":"Bonsly","樹才怪":"Sudowoodo","烏波":"Wooper","烏波（阿羅拉的樣子）":"Wooper (Paldea Form)","烏波（帕底亞的樣子）":"Wooper (Paldea Form)","沼王":"Quagsire","土王":"Clodsire","黑暗鴉":"Murkrow","烏鴉頭頭":"Honchkrow","夢妖":"Misdreavus","夢妖魔":"Mismagius","小果然":"Wynaut","果然翁":"Wobbuffet","壺壺":"Shuckle","赫拉克羅斯":"Heracross","狃拉":"Sneasel","瑪狃拉":"Weavile","信使鳥":"Delibird","戴魯比":"Houndour","黑魯加":"Houndoom","雷公":"Raikou","炎帝":"Entei","水君":"Suicune","幼基拉斯":"Larvitar","沙基拉斯":"Pupitar","班基拉斯":"Tyranitar","木守宮":"Treecko","森林蜥蜴":"Grovyle","蜥蜴王":"Sceptile","火稚雞":"Torchic","力壯雞":"Combusken","火焰雞":"Blaziken","水躍魚":"Mudkip","沼躍魚":"Marshtomp","巨沼怪":"Swampert","拉魯拉絲":"Ralts","奇鲁莉安":"Kirlia","沙奈朵":"Gardevoir","艾路雷朵":"Gallade","懶人獺":"Slakoth","過動猿":"Vigoroth","請假王":"Slaking","勾魂眼":"Sableye","大嘴娃":"Mawile","可可多拉":"Aron","可多拉":"Lairon","波士可多拉":"Aggron","正電拍拍":"Plusle","負電拍拍":"Minun","溶食獸":"Gulpin","吞食獸":"Swalot","大顎蟻":"Trapinch","超音波幼蟲":"Vibrava","沙漠蜻蜓":"Flygon","青綿鳥":"Swablu","七夕青鳥":"Altaria","怨影娃娃":"Shuppet","詛咒娃娃":"Banette","阿勃梭魯":"Absol","海豹球":"Spheal","海豹球（佳節）":"Spheal (Holiday)","海魔獅":"Sealeo","帝牙海獅":"Walrein","寶貝龍":"Bagon","甲殼龍":"Shelgon","暴飛龍":"Salamence","拉帝亞斯":"Latias","拉帝歐斯":"Latios","草苗龜":"Turtwig","樹林龜":"Grotle","土台龜":"Torterra","小火焰猴":"Chimchar","猛火猴":"Monferno","烈焰猴":"Infernape","波加曼":"Piplup","波皇子":"Prinplup","帝王拿波":"Empoleon","小貓怪":"Shinx","勒克貓":"Luxio","倫琴貓":"Luxray","飄飄球":"Drifloon","隨風球":"Drifblim","花岩怪":"Spiritomb","利歐路":"Riolu","路卡利歐":"Lucario","不良蛙":"Croagunk","毒骷蛙":"Toxicroak","雪笠怪":"Snover","暴雪王":"Abomasnow","克雷色利亞":"Cresselia","達克萊伊":"Darkrai","食夢夢":"Munna","夢夢蝕":"Musharna","石居蟹":"Dwebble","岩殿居蟹":"Crustle","毛頭小鷹":"Rufflet","勇士雄鷹":"Braviary","寶寶暴龍":"Tyrunt","怪顎龍":"Tyrantrum","摔角鷹人":"Hawlucha","咚咚鼠":"Dedenne","南瓜精":"Pumpkaboo","南瓜怪人":"Gourgeist","南瓜精 (小顆種)":"Pumpkaboo (Small Variety)","南瓜精 (中顆種)":"Pumpkaboo (Medium Variety)","南瓜精 (大顆種)":"Pumpkaboo (Large Variety)","南瓜精 (巨顆種)":"Pumpkaboo (Jumbo Variety)","南瓜怪人 (小顆種)":"Gourgeist (Small Variety)","南瓜怪人 (中顆種)":"Gourgeist (Medium Variety)","南瓜怪人 (大顆種)":"Gourgeist (Large Variety)","南瓜怪人 (巨顆種)":"Gourgeist (Jumbo Variety)","嗡蝠":"Noibat","音波龍":"Noivern","強顎雞母蟲":"Grubbin","蟲電寶":"Charjabug","鍬農炮蟲":"Vikavolt","萌虻":"Cutiefly","蝶結萌虻":"Ribombee","童偶熊":"Stufful","穿著熊":"Bewear","花療環環":"Comfey","托戈德瑪爾":"Togedemaru","謎擬Q":"Mimikyu","謎擬Ｑ":"Mimikyu","谜拟Q":"Mimikyu","谜拟Ｑ":"Mimikyu","老翁龍":"Drampa","古月鳥":"Cramorant","毒電嬰":"Toxel","顫弦蠑螈（高調的樣子）":"Toxtricity (Amped Form)","顫弦蠑螈（低調的樣子）":"Toxtricity (Low Key Form)","新葉喵":"Sprigatito","蒂蕾喵":"Floragato","魔幻假面喵":"Meowscarada","呆火鱷":"Fuecoco","炙燙鱷":"Crocalor","骨紋巨聲鱷":"Skeledirge","潤水鴨":"Quaxly","湧躍鴨":"Quaxwell","狂歡浪舞鴨":"Quaquaval","布撥":"Pawmi","布土撥":"Pawmo","巴布土撥":"Pawmot","小鍛匠":"Tinkatink","巧鍛匠":"Tinkatuff","巨鍛匠":"Tinkaton","哎呀球菇":"Foongus","敗露球菇":"Amoonguss","走鯨":"Cetoddle","浩大鯨":"Cetitan","木棉球":"Cottonee","風妖精":"Whimsicott"};
 
   // 預排序與預建立英文對照快取，避免於每次呼叫時重複排序與建構陣列
   const SORTED_POKEMON_NAMES_KEYS = Object.keys(POKEMON_NAMES).sort((a, b) => b.length - a.length);
@@ -2575,17 +4810,7 @@
   let _allPkmEnMapLen = 0;
   let _allPkmEnMap = null;
 
-  function getPokemonName(name) {
-    if (!name) return '';
-    if (typeof name === 'object') {
-      if (currentLang === 'en-US') return name.name_en || name.name_cn || name.name;
-      if (currentLang === 'zh-CN') return toSimplifiedChinese(name.name_cn || name.name_en || name.name);
-      return name.name_cn || name.name_en || name.name;
-    }
-    const str = String(name).trim();
-    if (currentLang === 'zh-CN') return toSimplifiedChinese(str);
-    if (currentLang !== 'en-US') return str;
-
+  function _resolvePokemonNameEn(str) {
     // Level 1 & 2 & 3 字典比對 (O(1))
     const direct = lookupBilingualDict(POKEMON_NAMES, str, 'en-US');
     if (direct) return direct;
@@ -2593,8 +4818,8 @@
     // Level 4: 支援括號後綴（如 毒骷蛙 (ABB)、皮卡丘（萬聖節）等）
     const parenMatch = str.match(/^(.+?)\s*([(\[（【].+[)\]）】])$/);
     if (parenMatch) {
-      const baseName = getPokemonName(parenMatch[1]);
-      const suffix = translateDynamicText(parenMatch[2]);
+      const baseName = _resolvePokemonNameEn(parenMatch[1]);
+      const suffix = _translateDynamicToEn(parenMatch[2]);
       return `${baseName} ${suffix}`;
     }
 
@@ -2623,7 +4848,16 @@
     return str;
   }
 
-  function getSubSkillName(subskill, lang = currentLang) {
+  function getPokemonName(name, lang) {
+    if (!name) return '';
+    const strategy = _getStrategy(lang);
+    if (typeof name === 'object') {
+      return strategy.pokemonFromObj(name);
+    }
+    return strategy.pokemonFromStr(String(name).trim());
+  }
+
+  function getSubSkillName(subskill, lang) {
     if (!subskill) return '';
     const res = lookupBilingualDict(SUBSKILL_NAMES, subskill, lang);
     return res || String(subskill).trim();
@@ -2634,8 +4868,12 @@
 
   function translateDynamicText(text) {
     if (!text || typeof text !== 'string') return text;
-    if (currentLang === 'zh-CN') return toSimplifiedChinese(text);
-    if (currentLang !== 'en-US') return text;
+    _ensureActiveLocale();
+    return activeStrategy.text(text);
+  }
+
+  function _translateDynamicToEn(text) {
+    if (!text || typeof text !== 'string') return text;
     if (text.length <= 500 && _dynTextEnCache[text] !== undefined) {
       return _dynTextEnCache[text];
     }
@@ -2959,7 +5197,7 @@
     document.querySelectorAll('.search-filtering-badge').forEach(badge => {
       const labelSpan = badge.querySelector('span:last-child');
       if (labelSpan) {
-        labelSpan.textContent = currentLang === 'en-US' ? 'Filtered' : (currentLang === 'zh-CN' ? '条件筛选中' : '條件篩選中');
+        labelSpan.textContent = t('common.filtered');
       }
     });
 
@@ -2984,23 +5222,18 @@
   }
 
   function getShortMainSkillName(skill) {
-    const full = getMainSkillName(skill);
-    return currentLang === 'en-US' ? shortenSkillName(full) : full;
+    _ensureActiveLocale();
+    return activeStrategy.shortenSkill(getMainSkillName(skill));
   }
 
   let _itemsDataRef = null;
   let _itemsDataIndex = null;
 
-  function getItemName(item, lang = currentLang) {
+  function getItemName(item, lang) {
     if (!item) return '';
-    const targetLang = lang || currentLang;
-    if (typeof item === 'object') {
-      if (item.name) {
-        if (targetLang === 'zh-CN') {
-          return item.name['zh-CN'] || toSimplifiedChinese(item.name['zh-TW'] || item.name['en-US'] || '');
-        }
-        return item.name[targetLang] || item.name['zh-TW'] || item.name['en-US'] || '';
-      }
+    const strategy = _getStrategy(lang);
+    if (typeof item === 'object' && item.name) {
+      return strategy.pick(item.name);
     }
     if (typeof window !== 'undefined' && Array.isArray(window.ITEMS_DATA)) {
       if (_itemsDataRef !== window.ITEMS_DATA || !_itemsDataIndex) {
@@ -3019,23 +5252,20 @@
       }
       const match = _itemsDataIndex[item];
       if (match && match.name) {
-        if (targetLang === 'zh-CN') {
-          return match.name['zh-CN'] || toSimplifiedChinese(match.name['zh-TW'] || match.name['en-US'] || '');
-        }
-        return match.name[targetLang] || match.name['zh-TW'] || match.name['en-US'] || '';
+        return strategy.pick(match.name);
       }
     }
-    const res = lookupBilingualDict(ITEM_NAMES, item, targetLang);
+    const res = lookupBilingualDict(ITEM_NAMES, item, strategy.lang);
     if (res) return res;
-    return targetLang === 'zh-CN' ? toSimplifiedChinese(item) : item;
+    return strategy.fallbackLookup(item) || item;
   }
 
-  function getIslandName(island, lang = currentLang) {
+  function getIslandName(island, lang) {
     if (!island) return '';
-    const targetLang = lang || currentLang;
-    const res = lookupBilingualDict(ISLAND_NAMES, island, targetLang);
+    const strategy = _getStrategy(lang);
+    const res = lookupBilingualDict(ISLAND_NAMES, island, strategy.lang);
     if (res) return res;
-    return targetLang === 'zh-CN' ? toSimplifiedChinese(island) : island;
+    return strategy.fallbackLookup(island) || island;
   }
 
   /**
@@ -3055,9 +5285,6 @@
       container.classList.toggle('has-value', hasVal);
       let badge = container.querySelector('.search-filtering-badge');
       if (hasVal) {
-        const lang = getLanguage();
-        const isEN = lang === 'en-US';
-        const isCN = lang === 'zh-CN';
         if (!badge) {
           badge = document.createElement('span');
           badge.className = 'search-filtering-badge';
@@ -3067,7 +5294,7 @@
             container.appendChild(badge);
           }
         }
-        badge.innerHTML = `<span class="search-pulse-dot"></span><span>${isEN ? 'Filtered' : (isCN ? '条件筛选中' : '條件篩選中')}</span>`;
+        badge.innerHTML = `<span class="search-pulse-dot"></span><span>${t('common.filtered')}</span>`;
       } else if (badge) {
         badge.remove();
       }
@@ -3092,7 +5319,8 @@
   }
 
   const I18NExport = {
-    t, getLanguage, setLanguage, toSimplified: toSimplifiedChinese, updateSearchInputHighlight,
+    t, STR, field, pick, text, getDateLocale, registerResources,
+    getLanguage, setLanguage, toSimplified: toSimplifiedChinese, updateSearchInputHighlight,
     getTypeName, getTypeIconSvg, TYPE_SVG_PATHS, TYPE_CANONICAL_MAP,
     getSpecialtyName, getSpecialtyKey, getSpecialtyIconHtml,
     getIngredientName, getIngredientIcon, getRecipeName, getBerryName, getNatureName,
@@ -3104,6 +5332,8 @@
 
   if (typeof window !== 'undefined') {
     window.I18N = I18NExport;
+    window.STR = STR;
+    window.$t = t;
     window.getSpecialtyIconHtml = getSpecialtyIconHtml;
     window.getSpecialtyKey = getSpecialtyKey;
     window.updateSearchInputHighlight = updateSearchInputHighlight;

@@ -131,7 +131,7 @@
     const subskills = pkm.subskills || [];
 
     const isMint = !!(pkm && (pkm.cleanseMint || pkm.mint));
-    const currentLang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
+    const currentLang = (typeof window !== 'undefined' && window.I18N?.getDateLocale?.()) || 'zh-TW';
     const lab = (typeof window !== 'undefined' && window.AppraisalLab) || (typeof AppraisalLab !== 'undefined' ? AppraisalLab : null);
     const hasLab = !!(lab && typeof lab.evaluatePokemon === 'function' && base);
 
@@ -171,10 +171,10 @@
 
       if (isSpeedDown && !hasEarlyBFS && !hasEarlyHB) {
         passedBaseline = false;
-        baselineFailReason = _tBox('性格減慢幫忙速度，未達樹果手及格線（且前三格無樹果S/幫手獎勵補救）', 'Speed down nature without BFS / HB to compensate');
+        baselineFailReason = (typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_fail_berry_speed_down') : undefined) ?? '性格減慢幫忙速度，未達樹果手及格線（且前三格無樹果S/幫手獎勵補救）';
       } else if (!hasEarlyBFS && !hasEarlyHB && !hasEarlySpeedM && !isSpeedUp) {
         passedBaseline = false;
-        baselineFailReason = _tBox('前三格缺乏樹果S/速度加成，未達樹果手及格線', 'Lacks BFS or speed boost in first 3 slots');
+        baselineFailReason = (typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_fail_berry_no_boost') : undefined) ?? '前三格缺乏樹果S/速度加成，未達樹果手及格線';
       }
     } else if (specialty === '食材') {
       const hasEarlyIngM = earlySubskills.includes('食材機率提升M');
@@ -185,10 +185,10 @@
 
       if (isIngDown && !hasEarlyIngM) {
         passedBaseline = false;
-        baselineFailReason = _tBox('性格減少食材機率，未達食材手及格線', 'Ingredient down nature without Ingredient Finder M');
+        baselineFailReason = (typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_fail_ing_down') : undefined) ?? '性格減少食材機率，未達食材手及格線';
       } else if (!hasEarlyIngM && !hasEarlyIngS && !hasEarlyHB && !isIngUp) {
         passedBaseline = false;
-        baselineFailReason = _tBox('缺乏食材機率加成，未達食材手及格線', 'Lacks ingredient finder boost in first 3 slots');
+        baselineFailReason = (typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_fail_ing_no_boost') : undefined) ?? '缺乏食材機率加成，未達食材手及格線';
       }
     } else { // 技能型
       const hasEarlySkillM = earlySubskills.includes('技能機率提升M');
@@ -200,10 +200,10 @@
 
       if (isSkillDown && !hasEarlySkillM) {
         passedBaseline = false;
-        baselineFailReason = _tBox('性格減少主技能機率，未達技能手及格線', 'Skill down nature without Skill Trigger M');
+        baselineFailReason = (typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_fail_skill_down') : undefined) ?? '性格減少主技能機率，未達技能手及格線';
       } else if (!hasEarlySkillM && !hasEarlySkillS && !hasEarlySkillLvlM && !hasEarlyHB && !isSkillUp) {
         passedBaseline = false;
-        baselineFailReason = _tBox('缺乏技能發動率加成，未達技能手及格線', 'Lacks skill trigger boost in first 3 slots');
+        baselineFailReason = (typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_fail_skill_no_boost') : undefined) ?? '缺乏技能發動率加成，未達技能手及格線';
       }
     }
 
@@ -234,19 +234,19 @@
 
     // 1. 性格評分
     if (specialty === '樹果') {
-      if (buff === 'speed') { score += 25; highlights.push(_tBox('幫忙速度▲', 'Speed ▲')); }
+      if (buff === 'speed') { score += 25; highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_speed_up') : undefined) ?? '幫忙速度▲'); }
       if (debuff === 'speed') { score -= 25; }
-      if (debuff === 'ingredient') { score += 12; highlights.push(_tBox('食材▼ (樹果極限流)', 'Ing. ▼ (Pure Berry)')); }
+      if (debuff === 'ingredient') { score += 12; highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_ing_down_berry') : undefined) ?? '食材▼ (樹果極限流)'); }
       if (buff === 'ingredient') { score -= 6; }
     } else if (specialty === '食材') {
-      if (buff === 'ingredient') { score += 28; highlights.push(_tBox('食材機率▲', 'Ing. Rate ▲')); }
+      if (buff === 'ingredient') { score += 28; highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_ing_up') : undefined) ?? '食材機率▲'); }
       if (debuff === 'ingredient') { score -= 28; }
-      if (buff === 'speed') { score += 16; highlights.push(_tBox('幫忙速度▲', 'Speed ▲')); }
+      if (buff === 'speed') { score += 16; highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_speed_up') : undefined) ?? '幫忙速度▲'); }
       if (debuff === 'speed') { score -= 16; }
     } else { // 技能
-      if (buff === 'skill') { score += 30; highlights.push(_tBox('主技能機率▲', 'Skill Trigger ▲')); }
+      if (buff === 'skill') { score += 30; highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_skill_up') : undefined) ?? '主技能機率▲'); }
       if (debuff === 'skill') { score -= 30; }
-      if (buff === 'speed') { score += 15; highlights.push(_tBox('幫忙速度▲', 'Speed ▲')); }
+      if (buff === 'speed') { score += 15; highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_speed_up') : undefined) ?? '幫忙速度▲'); }
       if (debuff === 'speed') { score -= 15; }
     }
 
@@ -261,28 +261,28 @@
 
       if (skName === '樹果數量S') {
         skScore = specialty === '樹果' ? 100 : 40;
-        highlights.push(_tBox(`Lv.${lvl} 樹果S`, `Lv.${lvl} BFS`));
+        highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_bfs', { lv: lvl }) : undefined) ?? `Lv.${lvl} 樹果S`);
       } else if (skName === '幫手獎勵') {
         skScore = 65;
-        highlights.push(_tBox(`Lv.${lvl} 幫手獎勵`, `Lv.${lvl} Helping Bonus`));
+        highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_hb', { lv: lvl }) : undefined) ?? `Lv.${lvl} 幫手獎勵`);
       } else if (skName === '食材機率提升M') {
         skScore = specialty === '食材' ? 85 : 20;
-        if (specialty === '食材') highlights.push(_tBox(`Lv.${lvl} 食材機率M`, `Lv.${lvl} Ing. Finder M`));
+        if (specialty === '食材') highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_ing_m', { lv: lvl }) : undefined) ?? `Lv.${lvl} 食材機率M`);
       } else if (skName === '食材機率提升S') {
         skScore = specialty === '食材' ? 45 : 10;
       } else if (skName === '技能機率提升M') {
         skScore = specialty === '技能' ? 85 : 20;
-        if (specialty === '技能') highlights.push(_tBox(`Lv.${lvl} 技能機率M`, `Lv.${lvl} Skill Trigger M`));
+        if (specialty === '技能') highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_skill_m', { lv: lvl }) : undefined) ?? `Lv.${lvl} 技能機率M`);
       } else if (skName === '技能機率提升S') {
         skScore = specialty === '技能' ? 45 : 10;
       } else if (skName === '技能等級提升M') {
         skScore = specialty === '技能' ? 60 : 15;
-        if (specialty === '技能') highlights.push(_tBox(`Lv.${lvl} 技能等級M`, `Lv.${lvl} Skill Level M`));
+        if (specialty === '技能') highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_skill_lvl_m', { lv: lvl }) : undefined) ?? `Lv.${lvl} 技能等級M`);
       } else if (skName === '技能等級提升S') {
         skScore = specialty === '技能' ? 30 : 10;
       } else if (skName === '幫忙速度M') {
         skScore = 50;
-        highlights.push(_tBox(`Lv.${lvl} 幫忙速度M`, `Lv.${lvl} Speed M`));
+        highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_speed_m', { lv: lvl }) : undefined) ?? `Lv.${lvl} 幫忙速度M`);
       } else if (skName === '幫忙速度S') {
         skScore = 25;
       } else if (skName === '持有上限提升L') {
@@ -311,16 +311,17 @@
         : { carry: 8, speedDiscount: 0.12 };
       
       if (ribbonBonus.speedDiscount > 0) {
+        const pct = Math.round(ribbonBonus.speedDiscount * 100);
         score += Math.round(ribbonBonus.speedDiscount * 25);
-        highlights.push(_tBox(`獎章幫速 -${Math.round(ribbonBonus.speedDiscount * 100)}%`, `Ribbon -${Math.round(ribbonBonus.speedDiscount * 100)}% Speed`));
+        highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_ribbon_speed', { pct }) : undefined) ?? `獎章幫速 -${pct}%`);
       } else {
         score += ribbonBonus.carry * 0.8;
-        highlights.push(_tBox(`獎章持有 +${ribbonBonus.carry}`, `Ribbon +${ribbonBonus.carry} Carry`));
+        highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_ribbon_carry', { carry: ribbonBonus.carry }) : undefined) ?? `獎章持有 +${ribbonBonus.carry}`);
       }
     }
 
     if (isMint) {
-      highlights.push(_tBox('使用淨白薄荷消除個性效果', 'Cleanse Mint: Neutralized Nature Effects'));
+      highlights.push((typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_hl_cleanse_mint') : undefined) ?? '使用淨白薄荷消除個性效果');
     }
 
     // 3. 正規化至 PR 百分位數 [50 ~ 100] (及格線以上個體)
@@ -391,7 +392,7 @@
     } else if (highlights.length > 0) {
       summaryNote = highlights.slice(0, 3).join(' · ');
     } else {
-      summaryNote = _tBox('及格主力，基礎能力扎實', 'Solid baseline starter');
+      summaryNote = (typeof window !== 'undefined' ? window.I18N?.t?.('box.pr_solid_starter') : undefined) ?? '及格主力，基礎能力扎實';
     }
 
     const finalRes = {
@@ -559,7 +560,7 @@
         if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function') {
           return base ? window.I18N.getPokemonName(base) : window.I18N.getPokemonName(p.name || '');
         }
-        return _tBox(base ? (base.name_cn || base.name_en) : p.name, base ? (base.name_en || base.name_cn) : p.name) || '';
+        return (base ? (base.name_cn || base.name_en) : p.name) || '';
       };
 
       const getPkmSpecialty = (p) => {
@@ -618,37 +619,37 @@
       }
       if (sortBy === 'name-asc' || sortBy === 'name-desc') {
         const mul = sortBy === 'name-desc' ? -1 : 1;
-        const cmp = getPkmName(a).localeCompare(getPkmName(b), 'zh-Hant');
+        const cmp = getPkmName(a).localeCompare(getPkmName(b), (typeof window !== 'undefined' && window.I18N?.getDateLocale?.()) || 'zh-TW');
         if (cmp !== 0) return cmp * mul;
         return getPkmDexId(a) - getPkmDexId(b);
       }
       if (sortBy === 'specialty-asc' || sortBy === 'specialty-desc') {
         const mul = sortBy === 'specialty-desc' ? -1 : 1;
-        const cmp = getPkmSpecialty(a).localeCompare(getPkmSpecialty(b), 'zh-Hant');
+        const cmp = getPkmSpecialty(a).localeCompare(getPkmSpecialty(b), (typeof window !== 'undefined' && window.I18N?.getDateLocale?.()) || 'zh-TW');
         if (cmp !== 0) return cmp * mul;
         return getPkmDexId(a) - getPkmDexId(b);
       }
       if (sortBy === 'berry-asc' || sortBy === 'berry-desc') {
         const mul = sortBy === 'berry-desc' ? -1 : 1;
-        const cmp = getPkmBerry(a).localeCompare(getPkmBerry(b), 'zh-Hant');
+        const cmp = getPkmBerry(a).localeCompare(getPkmBerry(b), (typeof window !== 'undefined' && window.I18N?.getDateLocale?.()) || 'zh-TW');
         if (cmp !== 0) return cmp * mul;
         return getPkmDexId(a) - getPkmDexId(b);
       }
       if (sortBy === 'ing1-asc' || sortBy === 'ing1-desc') {
         const mul = sortBy === 'ing1-desc' ? -1 : 1;
-        const cmp = getPkmIng(a, 0).localeCompare(getPkmIng(b, 0), 'zh-Hant');
+        const cmp = getPkmIng(a, 0).localeCompare(getPkmIng(b, 0), (typeof window !== 'undefined' && window.I18N?.getDateLocale?.()) || 'zh-TW');
         if (cmp !== 0) return cmp * mul;
         return getPkmDexId(a) - getPkmDexId(b);
       }
       if (sortBy === 'ing2-asc' || sortBy === 'ing2-desc') {
         const mul = sortBy === 'ing2-desc' ? -1 : 1;
-        const cmp = getPkmIng(a, 1).localeCompare(getPkmIng(b, 1), 'zh-Hant');
+        const cmp = getPkmIng(a, 1).localeCompare(getPkmIng(b, 1), (typeof window !== 'undefined' && window.I18N?.getDateLocale?.()) || 'zh-TW');
         if (cmp !== 0) return cmp * mul;
         return getPkmDexId(a) - getPkmDexId(b);
       }
       if (sortBy === 'ing3-asc' || sortBy === 'ing3-desc') {
         const mul = sortBy === 'ing3-desc' ? -1 : 1;
-        const cmp = getPkmIng(a, 2).localeCompare(getPkmIng(b, 2), 'zh-Hant');
+        const cmp = getPkmIng(a, 2).localeCompare(getPkmIng(b, 2), (typeof window !== 'undefined' && window.I18N?.getDateLocale?.()) || 'zh-TW');
         if (cmp !== 0) return cmp * mul;
         return getPkmDexId(a) - getPkmDexId(b);
       }
@@ -693,8 +694,8 @@
       if (toggleGuideBtn) {
         toggleGuideBtn.style.display = '';
         toggleGuideBtn.textContent = showGuide
-          ? _tBox('收合指引', 'Hide Guide')
-          : _tBox('截圖拖曳與指引', 'Screenshot Guide');
+          ? ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_hide_guide') : undefined) ?? '收合指引')
+          : ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_show_guide') : undefined) ?? '截圖拖曳與指引');
       }
       if (searchFilterRow) searchFilterRow.style.display = '';
       if (toolbarControlRow) toolbarControlRow.style.display = '';

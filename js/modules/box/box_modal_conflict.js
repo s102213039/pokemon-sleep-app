@@ -4,9 +4,11 @@
     const isEdit = !!existingItem;
     const titleEl = document.getElementById('box-modal-title');
     if (titleEl) {
-      titleEl.textContent = isEdit 
-        ? _tBox('編輯寶可夢', 'Edit Pokémon') 
-        : (screenshotSrc ? _tBox('截圖辨識確認入庫', 'Confirm OCR Entry') : _tBox('手動新增寶可夢', 'Add Pokémon'));
+      titleEl.textContent = isEdit
+        ? ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_edit_modal_title') : undefined) ?? '編輯寶可夢')
+        : (screenshotSrc
+          ? ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_confirm_ocr_entry') : undefined) ?? '截圖辨識確認入庫')
+          : ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_add_pokemon') : undefined) ?? '手動新增寶可夢'));
     }
 
     // 填寫預設值
@@ -21,7 +23,7 @@
       if (screenshotSrc) {
         previewContainer.innerHTML = `
           <div class="box-screenshot-preview-wrap">
-            <span class="box-screenshot-preview-tag">${_tBox('原始截圖對照', 'Original Screenshot')}</span>
+            <span class="box-screenshot-preview-tag">${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_original_screenshot') : undefined) ?? '原始截圖對照'}</span>
             <img src="${screenshotSrc}" alt="Screenshot" class="box-screenshot-img">
           </div>
         `;
@@ -48,8 +50,8 @@
     if (natureSelect) {
       natureSelect.innerHTML = NATURE_DATA.map(n => {
         const natDisplayName = window.I18N ? window.I18N.getNatureName(n.name) : n.name;
-        const buffLabel = _tBox(n.buff, n.buff_en || n.buff);
-        const debuffLabel = _tBox(n.debuff, n.debuff_en || n.debuff);
+        const buffLabel = (typeof window !== 'undefined' ? window.I18N?.field?.(n, 'buff') : undefined) ?? n.buff;
+        const debuffLabel = (typeof window !== 'undefined' ? window.I18N?.field?.(n, 'debuff') : undefined) ?? n.debuff;
         return `
         <option value="${n.name}" ${existingItem && existingItem.nature === n.name ? 'selected' : (n.name === '固執' && !existingItem ? 'selected' : '')}>
           ${natDisplayName} (${buffLabel}${debuffLabel ? ' / ' + debuffLabel : ''})
@@ -150,7 +152,7 @@
     const pokeName = nameSelect ? nameSelect.value : '';
     if (!pokeName) {
       if (typeof showBoxToast === 'function') {
-        showBoxToast(_tBox('提示', 'Notice'), _tBox('請選擇寶可夢！', 'Please select a Pokémon.'), 'warning');
+        showBoxToast((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_notice') : undefined) ?? '提示', (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_select_pokemon') : undefined) ?? '請選擇寶可夢！', 'warning');
       }
       document.getElementById('modal-poke-search')?.focus();
       return;
@@ -159,7 +161,7 @@
     const parsedLevel = parseInt(levelInput ? levelInput.value : '', 10);
     if (isNaN(parsedLevel) || parsedLevel < 1 || parsedLevel > 100) {
       if (typeof showBoxToast === 'function') {
-        showBoxToast(_tBox('提示', 'Notice'), _tBox('請輸入有效的等級 (1 ~ 100)！', 'Please enter a valid level (1 ~ 100).'), 'warning');
+        showBoxToast((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_notice') : undefined) ?? '提示', (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_invalid_level') : undefined) ?? '請輸入有效的等級 (1 ~ 100)！', 'warning');
       }
       levelInput?.focus();
       return;
@@ -324,7 +326,7 @@
     const newLevel = Number(parsed.level) || oldLevel;
     comparisons.push({
       field: 'level',
-      label: _tBox('等級', 'Level'),
+      label: (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_level') : undefined) ?? '等級',
       isSame: oldLevel === newLevel,
       oldHtml: `Lv.${oldLevel}`,
       newHtml: `Lv.${newLevel}`
@@ -334,12 +336,13 @@
     const oldNick = existing.nickname ? existing.nickname.trim() : '';
     const newNick = parsed.nickname ? parsed.nickname.trim() : '';
     const isNickSame = !newNick || (oldNick === newNick);
+    const unsetText = (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_none_unset') : undefined) ?? '未設定';
     comparisons.push({
       field: 'nickname',
-      label: _tBox('自訂暱稱', 'Nickname'),
+      label: (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_nickname') : undefined) ?? '自訂暱稱',
       isSame: isNickSame,
-      oldHtml: oldNick ? escapeHtml(oldNick) : `<span style="color:var(--text-muted);">${_tBox('未設定', 'None')}</span>`,
-      newHtml: newNick ? escapeHtml(newNick) : (oldNick ? `<span style="color:var(--text-muted);">${_tBox('(維持原暱稱：' + escapeHtml(oldNick) + ')', '(Retain: ' + escapeHtml(oldNick) + ')')}</span>` : `<span style="color:var(--text-muted);">${_tBox('未設定', 'None')}</span>`)
+      oldHtml: oldNick ? escapeHtml(oldNick) : `<span style="color:var(--text-muted);">${unsetText}</span>`,
+      newHtml: newNick ? escapeHtml(newNick) : (oldNick ? `<span style="color:var(--text-muted);">${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_retain_nickname', { nickname: escapeHtml(oldNick) }) : undefined) ?? `(維持原暱稱：${escapeHtml(oldNick)})`}</span>` : `<span style="color:var(--text-muted);">${unsetText}</span>`)
     });
 
     // 3. 主技能等級
@@ -347,7 +350,7 @@
     const newSkillLvl = Number(parsed.skillLevel || parsed.mainSkillLevel) || oldSkillLvl;
     comparisons.push({
       field: 'skillLevel',
-      label: _tBox('主技能等級', 'Main Skill Level'),
+      label: (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_main_skill_level') : undefined) ?? '主技能等級',
       isSame: oldSkillLvl === newSkillLvl,
       oldHtml: `Lv.${oldSkillLvl}`,
       newHtml: `Lv.${newSkillLvl}`
@@ -360,7 +363,7 @@
     const newNatName = (window.I18N && typeof window.I18N.getNatureName === 'function') ? window.I18N.getNatureName(newNat) : newNat;
     comparisons.push({
       field: 'nature',
-      label: _tBox('性格', 'Nature'),
+      label: (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_nature') : undefined) ?? '性格',
       isSame: oldNat === newNat,
       oldHtml: escapeHtml(oldNatName),
       newHtml: escapeHtml(newNatName)
@@ -369,27 +372,29 @@
     // 5. 淨白薄荷
     const oldMint = !!(existing.cleanseMint || existing.mint);
     const newMint = !!(parsed.cleanseMint || parsed.useMint);
+    const mintUsedText = (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_mint_used') : undefined) ?? '已消除效果';
+    const mintNoneText = (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_mint_none') : undefined) ?? '未消除';
     comparisons.push({
       field: 'cleanseMint',
-      label: _tBox('淨白薄荷', 'Cleanse Mint'),
+      label: (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_cleanse_mint') : undefined) ?? '淨白薄荷',
       isSame: oldMint === newMint,
-      oldHtml: oldMint ? _tBox('已消除效果', 'Used') : _tBox('未消除', 'None'),
-      newHtml: newMint ? _tBox('已消除效果', 'Used') : _tBox('未消除', 'None')
+      oldHtml: oldMint ? mintUsedText : mintNoneText,
+      newHtml: newMint ? mintUsedText : mintNoneText
     });
 
     // 6. 睡飽飽獎章
     const oldRibbon = Number(existing.ribbon) || 0;
     const newRibbon = (parsed.ribbon !== undefined) ? (Number(parsed.ribbon) || 0) : oldRibbon;
     const getRibbonLabel = (val) => {
-      if (val === 1) return _tBox('200 小時 (+1 上限)', '200h (+1 Carry)');
-      if (val === 2) return _tBox('500 小時 (+3 上限 · 幫速)', '500h (+3 Carry · Speed)');
-      if (val === 3) return _tBox('1000 小時 (+6 上限)', '1000h (+6 Carry)');
-      if (val === 4) return _tBox('2000 小時 (+8 上限 · 最大幫速)', '2000h (+8 Carry · Max)');
-      return _tBox('未佩戴 (0h)', 'None (0h)');
+      if (val === 1) return (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_conflict_ribbon_1') : undefined) ?? '200 小時 (+1 上限)';
+      if (val === 2) return (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_conflict_ribbon_2') : undefined) ?? '500 小時 (+3 上限 · 幫速)';
+      if (val === 3) return (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_conflict_ribbon_3') : undefined) ?? '1000 小時 (+6 上限)';
+      if (val === 4) return (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_conflict_ribbon_4') : undefined) ?? '2000 小時 (+8 上限 · 最大幫速)';
+      return (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_conflict_ribbon_0') : undefined) ?? '未佩戴 (0h)';
     };
     comparisons.push({
       field: 'ribbon',
-      label: _tBox('睡飽飽獎章', 'Good-Night Ribbon'),
+      label: (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_ribbon') : undefined) ?? '睡飽飽獎章',
       isSame: oldRibbon === newRibbon,
       oldHtml: getRibbonLabel(oldRibbon),
       newHtml: getRibbonLabel(newRibbon)
@@ -397,14 +402,14 @@
 
     // 7. 食材組合
     const formatIngCombo = (item) => {
-      const getIng = (v) => v ? ((window.I18N && typeof window.I18N.getIngredientName === 'function') ? window.I18N.getIngredientName(v) : _tBox(v)) : '-';
+      const getIng = (v) => v ? ((typeof window !== 'undefined' ? window.I18N?.getIngredientName?.(v) : undefined) ?? v) : '-';
       return `${getIng(item.ing1)} / ${getIng(item.ing2)} / ${getIng(item.ing3)}`;
     };
     const oldIngs = formatIngCombo(existing);
     const newIngs = formatIngCombo(parsed);
     comparisons.push({
       field: 'ingredients',
-      label: _tBox('食材組合 (Lv1/30/60)', 'Ingredients (Lv1/30/60)'),
+      label: (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_ingredients_combo') : undefined) ?? '食材組合 (Lv1/30/60)',
       isSame: (existing.ing1 === parsed.ing1 && existing.ing2 === parsed.ing2 && existing.ing3 === parsed.ing3),
       oldHtml: escapeHtml(oldIngs),
       newHtml: escapeHtml(newIngs)
@@ -415,15 +420,16 @@
     const newSks = (parsed.subskills || []).slice(0, 5);
     const isSksSame = (oldSks.length === newSks.length) && oldSks.every((sk, i) => sk === newSks[i]);
     const formatSks = (sks) => {
-      if (!sks || sks.length === 0) return _tBox('無', 'None');
+      if (!sks || sks.length === 0) return (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_none') : undefined) ?? '無';
+      const sep = (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_list_sep') : undefined) ?? '、';
       return sks.map(s => {
-        const sName = (window.I18N && typeof window.I18N.getSubSkillName === 'function') ? window.I18N.getSubSkillName(s) : _tBox(s);
+        const sName = (typeof window !== 'undefined' ? window.I18N?.getSubSkillName?.(s) : undefined) ?? s;
         return escapeHtml(sName);
-      }).join(_tBox('、', ', '));
+      }).join(sep);
     };
     comparisons.push({
       field: 'subskills',
-      label: _tBox('副技能組合', 'Sub-Skills'),
+      label: (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_subskills') : undefined) ?? '副技能組合',
       isSame: isSksSame,
       oldHtml: formatSks(oldSks),
       newHtml: formatSks(newSks)
@@ -440,7 +446,7 @@
     const base = findPokemonBase(existingCandidate.pokemonId || existingCandidate.name);
     const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
       ? (base ? window.I18N.getPokemonName(base) : window.I18N.getPokemonName(existingCandidate.name || ''))
-      : _tBox(existingCandidate.name || (base ? base.name_cn : ''), ((base && base.name_en) || existingCandidate.name));
+      : (existingCandidate.name || (base ? (base.name_cn || base.name_en) : ''));
     const candidateDisplayName = existingCandidate.nickname ? `${pkmDisplayName} (${existingCandidate.nickname})` : pkmDisplayName;
     const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
 
@@ -456,12 +462,12 @@
           ${iconUrl ? `<img src="${iconUrl}" class="box-conflict-pkm-icon" alt="" loading="lazy">` : ''}
           <div class="box-conflict-pkm-names">
             <div class="box-conflict-pkm-main">${escapeHtml(candidateDisplayName)}</div>
-            <div class="box-conflict-pkm-sub">UID: ${existingCandidate.uid ? existingCandidate.uid.slice(-8) : ''} · ${_tBox('現有 Lv.' + (existingCandidate.level || 1), 'Lv.' + (existingCandidate.level || 1))}</div>
+            <div class="box-conflict-pkm-sub">UID: ${existingCandidate.uid ? existingCandidate.uid.slice(-8) : ''} · ${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_existing_lv', { level: existingCandidate.level || 1 }) : undefined) ?? ('現有 Lv.' + (existingCandidate.level || 1))}</div>
           </div>
         </div>
         <div class="box-conflict-pills">
-          <span class="conflict-badge-diff">${diffItems.length} ${_tBox('項更新', 'Updates')}</span>
-          <span class="conflict-badge-same">${sameItems.length} ${_tBox('項相同', 'Same')}</span>
+          <span class="conflict-badge-diff">${diffItems.length} ${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_conflict_updates') : undefined) ?? '項更新'}</span>
+          <span class="conflict-badge-same">${sameItems.length} ${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_conflict_same') : undefined) ?? '項相同'}</span>
         </div>
       `;
     }
@@ -469,20 +475,24 @@
     // Comparison rows list
     const listEl = document.getElementById('box-conflict-list');
     if (listEl) {
+      const sameTag = (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_tag_same') : undefined) ?? '相同';
+      const updatedTag = (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_tag_updated') : undefined) ?? '已更新';
+      const inBoxLabel = (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_in_box') : undefined) ?? '倉庫現有';
+      const newShotLabel = (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_new_screenshot') : undefined) ?? '截圖新值';
       listEl.innerHTML = comparisons.map(item => `
         <div class="box-conflict-row ${item.isSame ? 'is-same' : 'is-diff'}">
           <div class="conflict-row-field">
             <span class="conflict-field-name">${item.label}</span>
-            <span class="conflict-status-tag ${item.isSame ? 'tag-same' : 'tag-diff'}">${item.isSame ? _tBox('相同', 'Same') : _tBox('已更新', 'Updated')}</span>
+            <span class="conflict-status-tag ${item.isSame ? 'tag-same' : 'tag-diff'}">${item.isSame ? sameTag : updatedTag}</span>
           </div>
           <div class="conflict-values-grid">
             <div class="conflict-val-col col-existing">
-              <span class="conflict-val-label">${_tBox('倉庫現有', 'In Box')}</span>
+              <span class="conflict-val-label">${inBoxLabel}</span>
               <div class="conflict-val-content">${item.oldHtml}</div>
             </div>
             <div class="conflict-val-arrow">→</div>
             <div class="conflict-val-col col-parsed">
-              <span class="conflict-val-label">${_tBox('截圖新值', 'New Screenshot')}</span>
+              <span class="conflict-val-label">${newShotLabel}</span>
               <div class="conflict-val-content">${item.newHtml}</div>
             </div>
           </div>
@@ -579,12 +589,12 @@
     const pkmName = rawPkmName
       ? ((window.I18N && typeof window.I18N.getPokemonName === 'function')
           ? (base ? window.I18N.getPokemonName(base) : window.I18N.getPokemonName(rawPkmName))
-          : _tBox(rawPkmName, existingCandidate.name_en || (base && base.name_en) || rawPkmName))
-      : _tBox('寶可夢', 'Pokémon');
+          : (rawPkmName || existingCandidate.name_en || (base && base.name_en) || ''))
+      : ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_pokemon') : undefined) ?? '寶可夢');
     const displayName = userBox[idx].nickname ? `${pkmName} (${userBox[idx].nickname})` : pkmName;
     showBoxToast(
-      _tBox('寶可夢覆蓋更新成功！', 'Pokémon Overwritten & Updated'),
-      _tBox(`已成功將「${displayName}」覆蓋更新為最新截圖數據！`, `Successfully updated "${displayName}" with latest screenshot data.`),
+      (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_overwrite_success_title') : undefined) ?? '寶可夢覆蓋更新成功！',
+      (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_overwrite_success_desc', { name: displayName }) : undefined) ?? `已成功將「${displayName}」覆蓋更新為最新截圖數據！`,
       'success'
     );
   }
@@ -614,7 +624,7 @@
     const imageFiles = Array.from(files).filter(f => f && f.type && f.type.startsWith('image/'));
     if (imageFiles.length === 0) {
       if (typeof showBoxToast === 'function') {
-        showBoxToast(_tBox('提示', 'Notice'), _tBox('請上傳圖片檔案 (PNG, JPG, WebP)！', 'Please upload valid image files (PNG, JPG, WebP).'), 'warning');
+        showBoxToast((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_notice') : undefined) ?? '提示', (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_upload_valid_images') : undefined) ?? '請上傳圖片檔案 (PNG, JPG, WebP)！', 'warning');
       }
       return;
     }
@@ -626,7 +636,7 @@
       const file = imageFiles[0];
       if (scannerStatus) {
         scannerStatus.style.display = 'flex';
-        scannerStatus.innerHTML = `<span>${_tBox('正在智能解析截圖中，請稍候...', 'Analyzing screenshot with AI OCR, please wait...')}</span>`;
+        scannerStatus.innerHTML = `<span>${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ocr_analyzing') : undefined) ?? '正在智能解析截圖中，請稍候...'}</span>`;
       }
 
       const reader = new FileReader();
@@ -665,13 +675,13 @@
       scannerStatus.innerHTML = `
         <div class="batch-ocr-progress-card">
           <div class="batch-ocr-header">
-            <span class="batch-ocr-title">${_tBox('批次智能辨識入庫中...', 'Batch OCR Smart Ingestion...')}</span>
+            <span class="batch-ocr-title">${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ocr_batch_title') : undefined) ?? '批次智能辨識入庫中...'}</span>
             <span id="batch-ocr-counter" class="batch-ocr-counter">0 / ${total}</span>
           </div>
           <div class="batch-ocr-bar-bg">
             <div id="batch-ocr-bar-fill" class="batch-ocr-bar-fill" style="width: 0%;"></div>
           </div>
-          <div id="batch-ocr-status-text" class="batch-ocr-status-text">${_tBox('初始化 OCR 引擎中...', 'Initializing OCR engine...')}</div>
+          <div id="batch-ocr-status-text" class="batch-ocr-status-text">${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ocr_initializing') : undefined) ?? '初始化 OCR 引擎中...'}</div>
         </div>
       `;
     }
@@ -698,7 +708,7 @@
       const counterEl = document.getElementById('batch-ocr-counter');
       const barFill = document.getElementById('batch-ocr-bar-fill');
 
-      if (statusText) statusText.textContent = _tBox(`正在辨識：${file.name} (${i + 1}/${total})...`, `Recognizing: ${file.name} (${i + 1}/${total})...`);
+      if (statusText) statusText.textContent = (typeof window !== 'undefined' ? window.I18N?.t?.('box.ocr_recognizing_file', { name: file.name, current: i + 1, total }) : undefined) ?? `正在辨識：${file.name} (${i + 1}/${total})...`;
       if (counterEl) counterEl.textContent = `${i + 1} / ${total}`;
       if (barFill) barFill.style.width = `${Math.round(((i + 1) / total) * 100)}%`;
 
@@ -715,7 +725,7 @@
           const res = upsertFn(parsed, userBox);
           if (res.status === 'added') {
             addedCount++;
-            addedNames.push(parsed.name || _tBox('寶可夢', 'Pokémon'));
+            addedNames.push(parsed.name || ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_pokemon') : undefined) ?? '寶可夢'));
           } else if (res.status === 'upgraded') {
             upgradedCount++;
           } else if (res.status === 'skipped') {
@@ -749,19 +759,14 @@
     }
 
     // 彈出 Toast 通知 (全面統計：新增、升級、略過、失敗)
-    let summary = _tBox(
-      `成功入庫 ${addedCount} 隻，升級更新 ${upgradedCount} 隻，略過重複 ${skippedCount} 隻。`,
-      `Successfully added ${addedCount}, upgraded ${upgradedCount}, skipped ${skippedCount} duplicates.`
-    );
+    let summary = (typeof window !== 'undefined' ? window.I18N?.t?.('box.ocr_batch_summary', { added: addedCount, upgraded: upgradedCount, skipped: skippedCount }) : undefined) ?? `成功入庫 ${addedCount} 隻，升級更新 ${upgradedCount} 隻，略過重複 ${skippedCount} 隻。`;
     if (failedFiles.length > 0) {
-      summary += ' ' + _tBox(
-        `失敗 ${failedFiles.length} 張（${failedFiles.join(', ')}）。`,
-        `Failed ${failedFiles.length} images (${failedFiles.join(', ')}).`
-      );
+      const filesStr = failedFiles.join(', ');
+      summary += ' ' + ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ocr_batch_failed_part', { count: failedFiles.length, files: filesStr }) : undefined) ?? `失敗 ${failedFiles.length} 張（${filesStr}）。`);
     }
 
     showBoxToast(
-      _tBox('批次辨識入庫完成！', 'Batch OCR Import Complete!'),
+      (typeof window !== 'undefined' ? window.I18N?.t?.('box.ocr_batch_complete_title') : undefined) ?? '批次辨識入庫完成！',
       summary,
       (addedCount > 0 || upgradedCount > 0) ? 'success' : (failedFiles.length > 0 ? 'warning' : 'info')
     );

@@ -183,7 +183,6 @@
     const bookmarkHandle = getOverlayEl('ladder-sidebar-bookmark-handle');
     const ladderRecipeFab = document.getElementById('ladder-recipe-highlight-fab');
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     if (!sidebar) return;
 
     const isCurrentlyCollapsed = sidebar.classList.contains('collapsed');
@@ -199,7 +198,7 @@
         if (isIngActive) {
           bookmarkHandle.classList.remove('drawer-open');
           bookmarkHandle.setAttribute('aria-expanded', 'false');
-          bookmarkHandle.title = _tWiki('展開天梯篩選側邊欄', 'Expand Filter');
+          bookmarkHandle.title = window.I18N?.t?.('wiki.ldr_expand_ladder_sidebar') ?? '展開天梯篩選側邊欄';
           if (bookmarkHandle.style && typeof bookmarkHandle.style.removeProperty === 'function') bookmarkHandle.style.removeProperty('display');
           bookmarkHandle.style.opacity = '1';
           bookmarkHandle.style.pointerEvents = 'auto';
@@ -231,7 +230,7 @@
       if (bookmarkHandle) {
         bookmarkHandle.classList.add('drawer-open');
         bookmarkHandle.setAttribute('aria-expanded', 'true');
-        bookmarkHandle.title = _tWiki('收合天梯篩選側邊欄', 'Collapse Filter');
+        bookmarkHandle.title = window.I18N?.t?.('wiki.ldr_collapse_ladder_sidebar') ?? '收合天梯篩選側邊欄';
         bookmarkHandle.style.opacity = '0';
         bookmarkHandle.style.pointerEvents = 'none';
         bookmarkHandle.style.display = 'none';
@@ -256,15 +255,8 @@
     const ladderPanel = document.getElementById('wiki-subpanel-ladder') || document.getElementById('panel-wiki') || document;
     const btn = (event && (event.currentTarget || event.target))
       || (ladderPanel && typeof ladderPanel.querySelector === 'function' ? ladderPanel.querySelector('.ladder-formula-help-btn') : (typeof document.querySelector === 'function' ? document.querySelector('.ladder-formula-help-btn') : null));
-    const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
-    const isEN = lang === 'en-US';
-    const isCN = lang === 'zh-CN';
-    const title = isEN ? 'Baseline: Lv.60 Ideal Energy' : (isCN ? '天梯基准：Lv.60 满活力' : '天梯基準：Lv.60 滿活力');
-    const body = isEN
-      ? 'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daily yield.'
-      : (isCN
-        ? '以 Lv.60 满活力理想状态 (活力 ≥ 80%，间隔 0.45x) 试算单日产能。'
-        : '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。');
+    const title = window.I18N?.t?.('wiki.ldr_ing_help_title') ?? '天梯基準：Lv.60 滿活力';
+    const body = window.I18N?.t?.('wiki.ldr_ing_help_body') ?? '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。';
 
     if (window.PokemonApp && typeof window.PokemonApp.toggleGlobalTooltip === 'function') {
       window.PokemonApp.toggleGlobalTooltip(btn, title, body);

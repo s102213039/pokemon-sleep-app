@@ -565,7 +565,6 @@ function togglePokedexSubskillPalette() {
   pokedexSubskillPaletteExpanded = !pokedexSubskillPaletteExpanded;
   const palette = document.getElementById('pokedex-subskill-palette');
   const btn = document.getElementById('pokedex-subskill-toggle-btn');
-  const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
   if (palette) {
     if (pokedexSubskillPaletteExpanded) {
       palette.classList.add('palette-expanded');
@@ -575,7 +574,9 @@ function togglePokedexSubskillPalette() {
   }
   if (btn) {
     const textSpan = (typeof btn.querySelector === 'function') ? btn.querySelector('.pokedex-subskill-toggle-text') : null;
-    const label = pokedexSubskillPaletteExpanded ? _tDex('副技能收合', 'Collapse Subskills') : _tDex('副技能展開', 'Expand Subskills');
+    const label = pokedexSubskillPaletteExpanded
+      ? (window.I18N?.t?.('dex.ui_collapse_subskills') ?? 'dex.ui_collapse_subskills')
+      : (window.I18N?.t?.('dex.ui_expand_subskills') ?? 'dex.ui_expand_subskills');
     if (textSpan) textSpan.textContent = label;
     else btn.textContent = label;
     if (pokedexSubskillPaletteExpanded) {
@@ -649,7 +650,7 @@ function renderPokedexIngredientStrip() {
 }
 
 function updatePokedexSubskillUI() {
-  const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+  const tr = (k, params) => (window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t(k, params) : k;
   const subskills = pokedexModalState.subskills;
   const currentLevel = pokedexModalState.level;
   const caps = _getPokedexCtrlCaps();
@@ -670,16 +671,16 @@ function updatePokedexSubskillUI() {
       let badgeHtml = '';
       if (!skName) {
         if (isLevelReached) {
-          badgeHtml = `<span class="slot-val-badge slot-val-empty">${_tDex('-- 未配置 --', '-- Empty --')}</span>`;
+          badgeHtml = `<span class="slot-val-badge slot-val-empty">${tr('dex.ui_slot_empty')}</span>`;
         } else {
-          badgeHtml = `<span class="slot-val-badge slot-val-empty">${_tDex('-- 未解鎖 --', '-- Locked --')}</span>`;
+          badgeHtml = `<span class="slot-val-badge slot-val-empty">${tr('dex.ui_slot_locked')}</span>`;
         }
       } else {
         const skObj = POKEDEX_MODAL_SUBSKILLS.find(s => s.name === skName);
         const tier = skObj ? skObj.tier : 'white';
-        const skLabel = isEN
-          ? (skObj ? skObj.name_en : skName)
-          : _tDex((window.I18N && typeof window.I18N.getSubSkillName === 'function') ? window.I18N.getSubSkillName(skName) : skName, skObj ? skObj.name_en : skName);
+        const skLabel = (window.I18N && typeof window.I18N.getSubSkillName === 'function')
+          ? window.I18N.getSubSkillName(skName)
+          : (skObj ? (window.I18N?.pick?.({ 'zh-TW': skName, 'en-US': skObj.name_en }) ?? skName) : skName);
         const inactiveCls = !isEffectActive ? 'pill-inactive' : '';
         badgeHtml = `<span class="slot-val-badge box-subskill-pill subskill-${tier} ${inactiveCls}">${escapeHtml(skLabel)}</span>`;
       }
@@ -687,9 +688,9 @@ function updatePokedexSubskillUI() {
       let statusTagHtml = '';
       if (!isLevelReached) {
         if (skName) {
-          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-inactive">${_tDex('效果尚未生效', 'Inactive')}</span>`;
+          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-inactive">${tr('dex.ui_slot_inactive')}</span>`;
         } else {
-          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-under-lvl">${_tDex('等級不足', 'Level Low')}</span>`;
+          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-under-lvl">${tr('dex.ui_slot_level_low')}</span>`;
         }
       }
 
@@ -700,9 +701,9 @@ function updatePokedexSubskillUI() {
 
       let tooltipText = `Lv.${lvl}`;
       if (!isLevelReached) {
-        tooltipText = `Lv.${lvl} (${_tDex(`等級不足：需達 Lv.${lvl} 方可生效`, `Requires Lv.${lvl}`)})`;
+        tooltipText = `Lv.${lvl} (${tr('dex.ui_slot_requires_lv', { level: lvl })})`;
       } else if (isUnreleasedSlot) {
-        tooltipText = `Lv.${lvl} (${_tDex('模擬等級', 'Simulation Level')})`;
+        tooltipText = `Lv.${lvl} (${tr('dex.ui_slot_sim_lv')})`;
       }
 
       return `
@@ -725,12 +726,12 @@ function updatePokedexSubskillUI() {
 
     const skillsInTier = POKEDEX_MODAL_SUBSKILLS.filter(s => s.tier === tier);
     chipContainer.innerHTML = skillsInTier.map(sk => {
-      const skDisplayName = isEN
-        ? sk.name_en
-        : _tDex((window.I18N && typeof window.I18N.getSubSkillName === 'function') ? window.I18N.getSubSkillName(sk.name) : sk.name, sk.name_en);
+      const skDisplayName = (window.I18N && typeof window.I18N.getSubSkillName === 'function')
+        ? window.I18N.getSubSkillName(sk.name)
+        : (window.I18N?.pick?.({ 'zh-TW': sk.name, 'en-US': sk.name_en }) ?? sk.name);
       const isUsed = usedSkills.has(sk.name);
       return `
-        <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" onclick="window.PokemonApp.choosePokedexSubskill('${escapeHtml(sk.name)}')" title="${escapeHtml(skDisplayName)}${isUsed ? _tDex('（已選用）', ' (Selected)') : ''}">
+        <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" onclick="window.PokemonApp.choosePokedexSubskill('${escapeHtml(sk.name)}')" title="${escapeHtml(skDisplayName)}${isUsed ? tr('dex.ui_subskill_selected') : ''}">
           <span>${escapeHtml(skDisplayName)}</span>
           ${isUsed ? '<span style="font-size:10px;opacity:0.8;margin-left:2px;">[✓]</span>' : ''}
         </button>
@@ -742,7 +743,7 @@ function updatePokedexSubskillUI() {
   const toggleBtn = document.getElementById('pokedex-subskill-toggle-btn');
   if (toggleBtn) {
     const textSpan = (typeof toggleBtn.querySelector === 'function') ? toggleBtn.querySelector('.pokedex-subskill-toggle-text') : null;
-    const label = pokedexSubskillPaletteExpanded ? _tDex('副技能收合', 'Collapse Subskills') : _tDex('副技能展開', 'Expand Subskills');
+    const label = pokedexSubskillPaletteExpanded ? tr('dex.ui_collapse_subskills') : tr('dex.ui_expand_subskills');
     if (textSpan) textSpan.textContent = label;
     else toggleBtn.textContent = label;
     if (pokedexSubskillPaletteExpanded) {
@@ -753,31 +754,27 @@ function updatePokedexSubskillUI() {
   }
 }
 
-function formatPokemonEvoReq(evoReq, isEN, isCN) {
+function formatPokemonEvoReq(evoReq) {
   if (!evoReq || typeof evoReq !== 'string') return '';
-  let text = evoReq.trim();
-  if (isEN) {
-    const itemMap = [
-      ['雷之石', 'Thunder Stone'], ['火之石', 'Fire Stone'], ['水之石', 'Water Stone'],
-      ['葉之石', 'Leaf Stone'], ['月之石', 'Moon Stone'], ['太陽之石', 'Sun Stone'], ['日之石', 'Sun Stone'],
-      ['冰之石', 'Ice Stone'], ['光之石', 'Shiny Stone'], ['暗之石', 'Dusk Stone'],
-      ['覺醒之石', 'Dawn Stone'], ['渾圓之石', 'Oval Stone'], ['聯繫繩', 'Linking Cord'],
-      ['金屬膜', 'Metal Coat'], ['王者之證', "King's Rock"], ['銳利之爪', 'Razor Claw']
-    ];
-    itemMap.forEach(([zh, en]) => { text = text.split(zh).join(en); });
-    text = text.replace(/睡\s*(\d+)\s*小時/g, 'Sleep $1h')
-               .replace(/(\d+)\s*糖/g, '$1 Candies')
-               .replace(/，EXP\s*需求\s*([\d.]+)\s*倍/g, '')
-               .replace(/雄性/g, 'Male')
-               .replace(/指定性格/g, 'Nature')
-               .replace(/Lv(\d+)/g, 'Lv.$1');
-    return text;
-  }
-  text = text.replace(/，EXP\s*需求\s*([\d.]+)\s*倍/g, '').replace(/Lv(\d+)/g, 'Lv.$1');
-  if (isCN && typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function') {
-    return window.I18N.toSimplified(text);
-  }
-  return text;
+  const twText = evoReq.trim().replace(/，EXP\s*需求\s*([\d.]+)\s*倍/g, '').replace(/Lv(\d+)/g, 'Lv.$1');
+  const itemMap = [
+    ['雷之石', 'Thunder Stone'], ['火之石', 'Fire Stone'], ['水之石', 'Water Stone'],
+    ['葉之石', 'Leaf Stone'], ['月之石', 'Moon Stone'], ['太陽之石', 'Sun Stone'], ['日之石', 'Sun Stone'],
+    ['冰之石', 'Ice Stone'], ['光之石', 'Shiny Stone'], ['暗之石', 'Dusk Stone'],
+    ['覺醒之石', 'Dawn Stone'], ['渾圓之石', 'Oval Stone'], ['聯繫繩', 'Linking Cord'],
+    ['金屬膜', 'Metal Coat'], ['王者之證', "King's Rock"], ['銳利之爪', 'Razor Claw']
+  ];
+  let enText = evoReq.trim();
+  itemMap.forEach(([zh, en]) => { enText = enText.split(zh).join(en); });
+  enText = enText.replace(/睡\s*(\d+)\s*小時/g, 'Sleep $1h')
+                 .replace(/(\d+)\s*糖/g, '$1 Candies')
+                 .replace(/，EXP\s*需求\s*([\d.]+)\s*倍/g, '')
+                 .replace(/雄性/g, 'Male')
+                 .replace(/指定性格/g, 'Nature')
+                 .replace(/Lv(\d+)/g, 'Lv.$1');
+  return (typeof window !== 'undefined' && window.I18N && typeof window.I18N.pick === 'function')
+    ? window.I18N.pick({ 'zh-TW': twText, 'en-US': enText })
+    : twText;
 }
 
 function getPokemonEvolutionFamily(pkmOrId, allList) {
@@ -859,12 +856,7 @@ function getPokemonEvolutionFamily(pkmOrId, allList) {
 
 function renderPokedexEvolutionTreeHTML(pkm) {
   if (!pkm) return '';
-  const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function')
-    ? window.I18N.getLanguage()
-    : 'zh-TW';
-  const isEN = lang === 'en-US';
-  const isCN = lang === 'zh-CN';
-  const t = (k, def) => (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t(k, def) : def;
+  const tr = (k, params) => (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t(k, params) : k;
   const stages = getPokemonEvolutionFamily(pkm);
   if (!stages || stages.length === 0) return '';
 
@@ -872,11 +864,11 @@ function renderPokedexEvolutionTreeHTML(pkm) {
   const hasBranch = stages.some(s => s.length > 1);
   let stageBadgeText = '';
   if (stages.length === 1 && totalMembers === 1) {
-    stageBadgeText = t('pokedex.evo_single_stage', isEN ? 'Single Stage (No Evolution)' : (isCN ? '无进化形态（单一阶段）' : '無進化形態（單一階段）'));
+    stageBadgeText = tr('pokedex.evo_single_stage');
   } else if (hasBranch) {
-    stageBadgeText = t('pokedex.evo_branch_stage', isEN ? `${stages.length}-Stage Branching Evolution` : (isCN ? `${stages.length} 阶分支进化链` : `${stages.length} 階分支進化鏈`));
+    stageBadgeText = tr('dex.ui_evo_branch_stage', { count: stages.length });
   } else {
-    stageBadgeText = isEN ? `${stages.length}-Stage Evolution Chain` : (isCN ? `${stages.length} 阶进化链` : `${stages.length} 階進化鏈`);
+    stageBadgeText = tr('dex.ui_evo_chain_stage', { count: stages.length });
   }
 
   const stagesHtml = stages.map((stageNodes, sIdx) => {
@@ -884,20 +876,20 @@ function renderPokedexEvolutionTreeHTML(pkm) {
       const isCurrent = (node.name_cn && pkm.name_cn)
         ? (node.name_cn === pkm.name_cn && String(node.id) === String(pkm.id))
         : (String(node.id) === String(pkm.id));
-      const nodeName = isEN
-        ? (node.name_en || node.name_cn)
-        : (isCN && window.I18N && typeof window.I18N.toSimplified === 'function' ? window.I18N.toSimplified(node.name_cn || node.name_en) : (node.name_cn || node.name_en));
+      const nodeName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
+        ? window.I18N.getPokemonName(node)
+        : (node.name_cn || node.name_en || '');
       const rawIcon = (typeof getIconUrl === 'function') ? getIconUrl(node) : (node.icon_url || node.icon || '');
       const iconSrc = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
         ? (window.mapExternalToLocalAsset(rawIcon) || rawIcon)
         : rawIcon;
-      const reqStr = sIdx > 0 ? formatPokemonEvoReq(node.evo_req, isEN, isCN) : '';
+      const reqStr = sIdx > 0 ? formatPokemonEvoReq(node.evo_req) : '';
       const targetKey = (String(node.id) === '710' || String(node.id) === '711') ? (node.name_cn || node.id) : (node.id || node.name_cn);
       const safeKey = String(targetKey).replace(/'/g, "\\'");
       const clickAttr = isCurrent ? '' : `onclick="window.PokemonApp.openPokemonDetailModal('${safeKey}')"`;
       const tipText = isCurrent
-        ? (isEN ? `Current: ${nodeName}` : (isCN ? `当前检视：${nodeName}` : `當前檢視：${nodeName}`))
-        : (isEN ? `Click to switch to ${nodeName}` : (isCN ? `点击切换至 ${nodeName}` : `點擊切換至 ${nodeName}`));
+        ? tr('dex.ui_evo_current_tip', { name: nodeName })
+        : tr('dex.ui_evo_switch_tip', { name: nodeName });
 
       return `
         <button type="button" class="pokedex-evo-node-btn ${isCurrent ? 'is-current' : ''}" data-evo-pkm-id="${escapeHtml(String(node.id || ''))}" data-evo-pkm-name="${escapeHtml(node.name_cn || '')}" ${clickAttr} title="${escapeHtml(tipText)}">
@@ -928,7 +920,7 @@ function renderPokedexEvolutionTreeHTML(pkm) {
   return `
     <div class="pokedex-evo-tree-section" id="pokedex-evo-tree-section">
       <div class="pokedex-evo-tree-header">
-        <span class="box-form-label" style="margin-bottom:0;">${t('pokedex.evo_family_title', isEN ? 'Evolution Family & Conditions' : (isCN ? '进化家族与条件' : '進化家族與條件'))}</span>
+        <span class="box-form-label" style="margin-bottom:0;">${tr('pokedex.evo_family_title')}</span>
         <span class="pokedex-evo-stage-badge">${escapeHtml(stageBadgeText)}</span>
       </div>
       <div class="pokedex-evo-tree-track ${hasBranch ? 'has-branch' : ''}">

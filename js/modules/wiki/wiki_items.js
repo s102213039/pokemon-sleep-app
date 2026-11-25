@@ -1,11 +1,11 @@
   // --- 道具百科模組 (Items Encyclopedia) ---
 
   const ITEM_CATEGORIES = [
-    { key: 'all', label: '全部道具', labelEn: 'All Items', labelCn: '全部道具' },
-    { key: 'evolution', label: '進化道具', labelEn: 'Evolution', labelCn: '进化道具' },
-    { key: 'training', label: '培育與種子', labelEn: 'Training & Seeds', labelCn: '培育与种子' },
-    { key: 'biscuit', label: '捕捉沙布蕾', labelEn: 'Biscuits', labelCn: '捕捉沙布蕾' },
-    { key: 'supply', label: '探索與補給', labelEn: 'Supplies', labelCn: '探索与补给' }
+    { key: 'all', labelKey: 'wiki.ui_item_cat_all', labelFb: '全部道具' },
+    { key: 'evolution', labelKey: 'wiki.ui_item_cat_evolution', labelFb: '進化道具' },
+    { key: 'training', labelKey: 'wiki.ui_item_cat_training', labelFb: '培育與種子' },
+    { key: 'biscuit', labelKey: 'wiki.ui_item_cat_biscuit', labelFb: '捕捉沙布蕾' },
+    { key: 'supply', labelKey: 'wiki.ui_item_cat_supply', labelFb: '探索與補給' }
   ];
 
   const ITEM_POKEMON_FAMILY_MAP = {
@@ -213,123 +213,77 @@
     renderFilteredItemsGrid();
   }
 
-  function getItemCategoryBadgeName(category, isEN, isCN) {
-    switch (category) {
-      case 'evolution':
-        return isEN ? 'Evolution' : (isCN ? '进化道具' : '進化道具');
-      case 'training':
-        return isEN ? 'Training & Seeds' : (isCN ? '培育与种子' : '培育與種子');
-      case 'biscuit':
-        return isEN ? 'Biscuits' : (isCN ? '捕捉沙布蕾' : '捕捉沙布蕾');
-      case 'supply':
-        return isEN ? 'Supplies' : (isCN ? '探索与补给' : '探索與補給');
-      default:
-        return isEN ? 'Item' : (isCN ? '道具' : '道具');
-    }
+  const ITEM_CATEGORY_BADGE_MAP = {
+    evolution: ['wiki.ui_item_cat_evolution', '進化道具'],
+    training: ['wiki.ui_item_cat_training', '培育與種子'],
+    biscuit: ['wiki.ui_item_cat_biscuit', '捕捉沙布蕾'],
+    supply: ['wiki.ui_item_cat_supply', '探索與補給']
+  };
+
+  function getItemCategoryBadgeName(category) {
+    const entry = ITEM_CATEGORY_BADGE_MAP[category];
+    if (entry) return window.I18N?.t?.(entry[0]) ?? entry[1];
+    return window.I18N?.t?.('wiki.ui_item_cat_default') ?? '道具';
   }
 
-  function getItemHighlightStat(item, isEN, isCN) {
+  const ITEM_HIGHLIGHT_STATS = {
+    poke_biscuit: { val: '+1', unitKey: 'wiki.ui_unit_pt', unitFb: '格', lblKey: 'wiki.ui_lbl_friendship', lblFb: '友好度', type: 'biscuit' },
+    great_biscuit: { val: '+3', unitKey: 'wiki.ui_unit_pt', unitFb: '格', lblKey: 'wiki.ui_lbl_friendship', lblFb: '友好度', type: 'biscuit' },
+    ultra_biscuit: { val: '+5', unitKey: 'wiki.ui_unit_pt', unitFb: '格', lblKey: 'wiki.ui_lbl_friendship', lblFb: '友好度', type: 'biscuit' },
+    master_biscuit: { val: 'MAX', unit: '', lblKey: 'wiki.ui_lbl_max_catch', lblFb: '友好度滿格', type: 'biscuit-max' },
+    main_skill_seed: { val: '+1', unit: 'Lv', lblKey: 'wiki.ui_lbl_main_skill', lblFb: '主技能提升', type: 'seed' },
+    sub_skill_seed: { val: '+1', unitKey: 'wiki.ui_unit_tier', unitFb: '階', lblKey: 'wiki.ui_lbl_sub_skill', lblFb: '副技能升級', type: 'seed' },
+    cleanse_mint: { val: '1.00x', unit: '', lblKey: 'wiki.ui_lbl_neutral_nature', lblFb: '性格中性化', type: 'mint' },
+    handy_candy_s: { val: '+3', unitKey: 'wiki.ui_unit_candies', unitFb: '顆', lblKey: 'wiki.ui_lbl_uni_candy', lblFb: '萬能糖果', type: 'candy' },
+    handy_candy_m: { val: '+20', unitKey: 'wiki.ui_unit_candies', unitFb: '顆', lblKey: 'wiki.ui_lbl_uni_candy', lblFb: '萬能糖果', type: 'candy' },
+    handy_candy_l: { val: '+100', unitKey: 'wiki.ui_unit_candies', unitFb: '顆', lblKey: 'wiki.ui_lbl_uni_candy', lblFb: '萬能糖果', type: 'candy' },
+    dream_cluster_s: { val: 'S', unitKey: 'wiki.ui_unit_cluster', unitFb: '塊', lblKey: 'wiki.ui_lbl_dream_shards', lblFb: '夢之碎片', type: 'shard' },
+    dream_cluster_m: { val: 'M', unitKey: 'wiki.ui_unit_cluster', unitFb: '塊', lblKey: 'wiki.ui_lbl_dream_shards', lblFb: '夢之碎片', type: 'shard' },
+    dream_cluster_l: { val: 'L', unitKey: 'wiki.ui_unit_cluster', unitFb: '塊', lblKey: 'wiki.ui_lbl_dream_shards', lblFb: '夢之碎片', type: 'shard' },
+    energy_pillow: { val: '+50', unitKey: 'wiki.ui_unit_energy_lbl', unitFb: '活力', lblKey: 'wiki.ui_lbl_energy_restore', lblFb: '活力恢復', type: 'energy' },
+    helper_whistle: { val: '3 hrs', unit: '', lblKey: 'wiki.ui_lbl_help_yield', lblFb: '幫手即時產出', type: 'whistle' },
+    good_camp_ticket: { val: '+50%', unit: 'Pot', lblKey: 'wiki.ui_lbl_pot_speed', lblFb: '鍋容量與幫手速度', type: 'camp' },
+    ingredient_ticket_s: { val: '+10', unitKey: 'wiki.ui_unit_ings', unitFb: '個', lblKey: 'wiki.ui_lbl_random_ings', lblFb: '隨機食材', type: 'ticket' },
+    ingredient_ticket_m: { val: '+30', unitKey: 'wiki.ui_unit_ings', unitFb: '個', lblKey: 'wiki.ui_lbl_random_ings', lblFb: '隨機食材', type: 'ticket' },
+    e_zzz_travel_ticket: { valKey: 'wiki.ui_val_move', valFb: '轉移', unit: '', lblKey: 'wiki.ui_lbl_relocate', lblFb: '重新選點', type: 'ticket' }
+  };
+
+  function getItemHighlightStat(item) {
     if (!item) return null;
-    const id = item.id;
-
-    // Biscuits
-    if (id === 'poke_biscuit') {
-      return { val: '+1', unit: _tWiki('格', 'pt'), lbl: _tWiki('友好度', 'Friendship'), type: 'biscuit' };
-    }
-    if (id === 'great_biscuit') {
-      return { val: '+3', unit: _tWiki('格', 'pt'), lbl: _tWiki('友好度', 'Friendship'), type: 'biscuit' };
-    }
-    if (id === 'ultra_biscuit') {
-      return { val: '+5', unit: _tWiki('格', 'pt'), lbl: _tWiki('友好度', 'Friendship'), type: 'biscuit' };
-    }
-    if (id === 'master_biscuit') {
-      return { val: 'MAX', unit: '', lbl: _tWiki('友好度滿格', 'Max Catch'), type: 'biscuit-max' };
-    }
-
-    // Seeds & Mint
-    if (id === 'main_skill_seed') {
-      return { val: '+1', unit: 'Lv', lbl: _tWiki('主技能提升', 'Main Skill'), type: 'seed' };
-    }
-    if (id === 'sub_skill_seed') {
-      return { val: '+1', unit: _tWiki('階', 'Tier'), lbl: _tWiki('副技能升級', 'Sub Skill'), type: 'seed' };
-    }
-    if (id === 'cleanse_mint') {
-      return { val: '1.00x', unit: '', lbl: _tWiki('性格中性化', 'Neutral Nature'), type: 'mint' };
-    }
-
-    // Candies & Shards
-    if (id === 'handy_candy_s') {
-      return { val: '+3', unit: _tWiki('顆', 'candies'), lbl: _tWiki('萬能糖果', 'Universal Candy'), type: 'candy' };
-    }
-    if (id === 'handy_candy_m') {
-      return { val: '+20', unit: _tWiki('顆', 'candies'), lbl: _tWiki('萬能糖果', 'Universal Candy'), type: 'candy' };
-    }
-    if (id === 'handy_candy_l') {
-      return { val: '+100', unit: _tWiki('顆', 'candies'), lbl: _tWiki('萬能糖果', 'Universal Candy'), type: 'candy' };
-    }
-    if (id === 'dream_cluster_s') {
-      return { val: 'S', unit: _tWiki('塊', 'Cluster'), lbl: _tWiki('夢之碎片', 'Dream Shards'), type: 'shard' };
-    }
-    if (id === 'dream_cluster_m') {
-      return { val: 'M', unit: _tWiki('塊', 'Cluster'), lbl: _tWiki('夢之碎片', 'Dream Shards'), type: 'shard' };
-    }
-    if (id === 'dream_cluster_l') {
-      return { val: 'L', unit: _tWiki('塊', 'Cluster'), lbl: _tWiki('夢之碎片', 'Dream Shards'), type: 'shard' };
-    }
-
-    // Supplies
-    if (id === 'energy_pillow') {
-      return { val: '+50', unit: _tWiki('活力', 'Energy'), lbl: _tWiki('活力恢復', 'Energy Restore'), type: 'energy' };
-    }
-    if (id === 'helper_whistle') {
-      return { val: '3 hrs', unit: '', lbl: _tWiki('幫手即時產出', 'Help Yield'), type: 'whistle' };
-    }
-    if (id === 'good_camp_ticket') {
-      return { val: '+50%', unit: 'Pot', lbl: _tWiki('鍋容量與幫手速度', 'Pot & Help Speed'), type: 'camp' };
-    }
-    if (id === 'ingredient_ticket_s') {
-      return { val: '+10', unit: _tWiki('個', 'Ings'), lbl: _tWiki('隨機食材', 'Random Ings'), type: 'ticket' };
-    }
-    if (id === 'ingredient_ticket_m') {
-      return { val: '+30', unit: _tWiki('個', 'Ings'), lbl: _tWiki('隨機食材', 'Random Ings'), type: 'ticket' };
-    }
-    if (id === 'e_zzz_travel_ticket') {
-      return { val: _tWiki('轉移', 'MOVE'), unit: '', lbl: _tWiki('重新選點', 'Relocate Camp'), type: 'ticket' };
-    }
-
-    // Evolution items already have category badge and prominent target avatars; omit redundant static badge
-    if (item.category === 'evolution') {
-      return null;
-    }
-
-    return null;
+    const spec = ITEM_HIGHLIGHT_STATS[item.id];
+    if (!spec) return null;
+    return {
+      val: spec.valKey ? (window.I18N?.t?.(spec.valKey) ?? spec.valFb) : spec.val,
+      unit: spec.unitKey ? (window.I18N?.t?.(spec.unitKey) ?? spec.unitFb) : (spec.unit || ''),
+      lbl: window.I18N?.t?.(spec.lblKey) ?? spec.lblFb,
+      type: spec.type
+    };
   }
 
-  function getItemLocalizedName(item, isEN, isCN) {
-    if (!item || !item.name) return '';
-    if (isEN) return item.name['en-US'] || item.name['zh-TW'] || '';
-    if (isCN) return item.name['zh-CN'] || _tWiki(item.name['zh-TW'] || '', item.name['en-US'] || '');
-    return item.name['zh-TW'] || item.name['zh-CN'] || item.name['en-US'] || '';
-  }
-
-  function getItemLocalizedDescription(item, isEN, isCN) {
-    if (!item) return '';
-    const obj = item.effects || item.description;
+  function _pickLocalizedObj(obj) {
     if (!obj) return '';
-    if (isEN) return obj['en-US'] || obj['zh-TW'] || '';
-    if (isCN) return obj['zh-CN'] || _tWiki(obj['zh-TW'] || '', obj['en-US'] || '');
+    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.pick === 'function') {
+      return window.I18N.pick(obj);
+    }
     return obj['zh-TW'] || obj['zh-CN'] || obj['en-US'] || '';
   }
 
+  function getItemLocalizedName(item) {
+    if (!item || !item.name) return '';
+    return _pickLocalizedObj(item.name);
+  }
+
+  function getItemLocalizedDescription(item) {
+    if (!item) return '';
+    return _pickLocalizedObj(item.effects || item.description);
+  }
+
   function renderItemCardHTML(item) {
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage && window.I18N.getLanguage() === 'en-US';
-    const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage && window.I18N.getLanguage() === 'zh-CN';
-    const name = escapeHtml(getItemLocalizedName(item, isEN, isCN));
-    const desc = escapeHtml(getItemLocalizedDescription(item, isEN, isCN));
-    const catBadgeText = escapeHtml(getItemCategoryBadgeName(item.category, isEN, isCN));
+    const name = escapeHtml(getItemLocalizedName(item));
+    const catBadgeText = escapeHtml(getItemCategoryBadgeName(item.category));
 
     // Prominent numerical stat highlight
-    const stat = getItemHighlightStat(item, isEN, isCN);
+    const stat = getItemHighlightStat(item);
     let statRowHTML = '';
     if (stat) {
       statRowHTML = `
@@ -354,9 +308,7 @@
         const padId = idStr.padStart(3, '0');
         const p = idx['id:' + idStr] || idx['no:' + padId];
         const pkmName = p
-          ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
-              ? window.I18N.getPokemonName(p)
-              : _tWiki(p.name_cn || p.name, p.name_en || p.name_cn || p.name))
+          ? (window.I18N?.getPokemonName?.(p) ?? (p.name_cn || p.name || p.name_en || ''))
           : `Pokemon #${pkmId}`;
         const pkmNo = p ? (p.formatted_no || String(p.id).padStart(3, '0')) : padId;
         const iconUrl = (p && typeof window !== 'undefined' && typeof window.getItemIcon === 'function')
@@ -425,12 +377,10 @@
   }
 
   function renderItemsSubpanel() {
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage && window.I18N.getLanguage() === 'en-US';
-    const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage && window.I18N.getLanguage() === 'zh-CN';
     const allItems = getMasterItemsData();
     const totalCount = allItems.length;
     const filtered = filterItems(currentItemsCategory, currentItemsSearchQuery);
-    const searchPlaceholder = isEN ? 'Search items, effects, or Pokemon...' : (isCN ? '搜索道具名称、效果或对应宝可梦...' : '搜尋道具名稱、效果或對應寶可夢...');
+    const searchPlaceholder = window.I18N?.t?.('wiki.ui_items_search_ph') ?? '搜尋道具名稱、效果或對應寶可夢...';
 
     const categoryCounts = { all: totalCount };
     allItems.forEach(i => {
@@ -439,7 +389,7 @@
 
     const categoryPillsHTML = ITEM_CATEGORIES.map(cat => {
       const isActive = currentItemsCategory === cat.key;
-      const label = isEN ? cat.labelEn : (isCN ? cat.labelCn : cat.label);
+      const label = window.I18N?.t?.(cat.labelKey) ?? cat.labelFb;
       const count = categoryCounts[cat.key] || 0;
       return `<button type="button" class="wiki-pill-btn ${isActive ? 'active' : ''}" data-category="${cat.key}" onclick="window.WikiDB.filterItemsByCategory('${cat.key}')">${label} <span class="wiki-pill-count">(${count})</span></button>`;
     }).join('');
@@ -470,7 +420,7 @@
               <button type="button" id="wiki-items-search-clear" class="sidebar-section-clear-btn wiki-items-search-clear"
                 style="${currentItemsSearchQuery ? 'display:flex;' : 'display:none;'}"
                 onclick="window.WikiDB.clearItemsSearch()"
-                title="${isEN ? 'Clear' : (isCN ? '清空' : '清空')}">
+                title="${window.I18N?.t?.('wiki.ui_clear') ?? '清空'}">
                 [X]
               </button>
             </div>
@@ -489,8 +439,8 @@
         </div>
 
         <div id="wiki-items-empty-state" class="wiki-items-empty-state" style="display:${emptyDisplay};">
-          <p class="wiki-empty-text font-bold" style="margin-bottom: 8px;">${isEN ? 'No matching items found.' : (isCN ? '未找到符合条件的道具。' : '未找到符合條件的道具。')}</p>
-          <button type="button" class="sidebar-reset-btn" onclick="window.WikiDB.resetItemsFilters()">${isEN ? 'Reset' : (isCN ? '重设' : '重設')}</button>
+          <p class="wiki-empty-text font-bold" style="margin-bottom: 8px;">${window.I18N?.t?.('wiki.ui_items_empty') ?? '未找到符合條件的道具。'}</p>
+          <button type="button" class="sidebar-reset-btn" onclick="window.WikiDB.resetItemsFilters()">${window.I18N?.t?.('wiki.ui_reset') ?? '重設'}</button>
         </div>
       </div>
     `;
@@ -500,44 +450,33 @@
 
   let activeItemModalEscHandler = null;
 
-  function getItemLocalizedEffects(item, isEN, isCN) {
+  function getItemLocalizedEffects(item) {
     if (!item) return '';
-    const obj = item.effects || item.description;
-    if (!obj) return '';
-    if (isEN) return obj['en-US'] || obj['zh-TW'] || '';
-    if (isCN) return obj['zh-CN'] || _tWiki(obj['zh-TW'] || '', obj['en-US'] || '');
-    return obj['zh-TW'] || obj['zh-CN'] || obj['en-US'] || '';
+    return _pickLocalizedObj(item.effects || item.description);
   }
 
-  function getItemFlavorDescription(item, isEN, isCN) {
+  function getItemFlavorDescription(item) {
     if (!item || !item.description) return '';
-    const obj = item.description;
-    if (isEN) return obj['en-US'] || obj['zh-TW'] || '';
-    if (isCN) return obj['zh-CN'] || _tWiki(obj['zh-TW'] || '', obj['en-US'] || '');
-    return obj['zh-TW'] || obj['zh-CN'] || obj['en-US'] || '';
+    return _pickLocalizedObj(item.description);
   }
 
-  function getItemAcquisitionList(item, isEN, isCN) {
+  function getItemAcquisitionList(item) {
     if (!item || !item.acquisition) return [];
-    if (isEN && Array.isArray(item.acquisition['en-US'])) return item.acquisition['en-US'];
-    if (isCN) {
-      if (Array.isArray(item.acquisition['zh-CN'])) return item.acquisition['zh-CN'];
-      if (Array.isArray(item.acquisition['zh-TW'])) return item.acquisition['zh-TW'].map(s => _tWiki(s, s));
+    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.pick === 'function') {
+      const picked = window.I18N.pick(item.acquisition);
+      if (Array.isArray(picked)) return picked.map(s => window.I18N?.text?.(s) ?? s);
     }
     if (Array.isArray(item.acquisition['zh-TW'])) return item.acquisition['zh-TW'];
     return [];
   }
 
-  function formatItemExchangeLimit(limitStr, isEN) {
+  function formatItemExchangeLimit(limitStr) {
     if (!limitStr) return '';
-    if (isEN) {
-      const m = String(limitStr).match(/^每月\s*(\d+)\s*[個个]$/);
-      if (m) return `${m[1]}/month`;
-      return (typeof window !== 'undefined' && window.I18N && typeof window.I18N.translateDynamicText === 'function')
-        ? window.I18N.translateDynamicText(limitStr)
-        : limitStr;
+    const m = String(limitStr).match(/^每月\s*(\d+)\s*[個个]$/);
+    if (m) {
+      return window.I18N?.t?.('wiki.ui_item_monthly_limit', { n: m[1] }) ?? limitStr;
     }
-    return _tWiki(limitStr, limitStr);
+    return window.I18N?.text?.(limitStr) ?? limitStr;
   }
 
   function navigateToPokemonDex(pokemonId) {
@@ -555,27 +494,22 @@
   function renderItemDetailModalContent(modal, item) {
     if (!modal || !item) return;
 
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage && window.I18N.getLanguage() === 'en-US';
-    const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage && window.I18N.getLanguage() === 'zh-CN';
-
-    const name = getItemLocalizedName(item, isEN, isCN);
-    const subName = isEN ? '' : (item.name['en-US'] || '');
-    const catBadgeText = getItemCategoryBadgeName(item.category, isEN, isCN);
-    const effectsText = getItemLocalizedEffects(item, isEN, isCN);
-    const descText = getItemFlavorDescription(item, isEN, isCN);
-    const channels = getItemAcquisitionList(item, isEN, isCN);
+    const name = getItemLocalizedName(item);
+    const enName = (item.name && item.name['en-US']) || '';
+    const subName = (enName && enName !== name) ? enName : '';
+    const catBadgeText = getItemCategoryBadgeName(item.category);
+    const effectsText = getItemLocalizedEffects(item);
+    const descText = getItemFlavorDescription(item);
+    const channels = getItemAcquisitionList(item);
     const rawIcon = item.icon_url || '';
     const iconUrl = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
       ? (window.mapExternalToLocalAsset(rawIcon) || rawIcon)
       : rawIcon;
 
-    const _tModalKey = (key, tw, en) => (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
-      ? window.I18N.t(key, _tWiki(tw, en))
-      : _tWiki(tw, en);
-    const closeLabel = _tModalKey('common.close', '關閉', 'Close');
-    const effectTitle = _tModalKey('wiki.item_effect_title', '效果與說明', 'Effects & Description');
-    const acqTitle = _tModalKey('wiki.item_acquisition_title', '獲取管道與睡點兌換', 'Acquisition & Sleep Points');
-    const relatedTitle = _tModalKey('wiki.item_related_pokemon', '對應寶可夢', 'Related Pokémon');
+    const closeLabel = window.I18N?.t?.('common.close') ?? '關閉';
+    const effectTitle = window.I18N?.t?.('wiki.item_effect_title') ?? '效果與說明';
+    const acqTitle = window.I18N?.t?.('wiki.item_acquisition_title') ?? '獲取管道與睡點兌換';
+    const relatedTitle = window.I18N?.t?.('wiki.item_related_pokemon') ?? '對應寶可夢';
 
     // If modal inner elements are missing, generate full markup skeleton
     if (typeof modal.querySelector === 'function' && !modal.querySelector('#wiki-item-modal-body')) {
@@ -686,7 +620,7 @@
     }
 
     let statHeroEl = modal.querySelector('#wiki-item-modal-stat-hero');
-    const stat = getItemHighlightStat(item, isEN, isCN);
+    const stat = getItemHighlightStat(item);
     if (!statHeroEl && effectsEl && effectsEl.parentNode) {
       statHeroEl = document.createElement('div');
       statHeroEl.id = 'wiki-item-modal-stat-hero';
@@ -733,30 +667,30 @@
 
       const regularValText = hasRegular
         ? `${Number(sleepPoints.regular).toLocaleString()} pt`
-        : (hasPremium ? (isEN ? 'Premium Only' : (isCN ? '仅限高级交换所' : '僅限高級交換所')) : (isEN ? 'Not Sold' : (isCN ? '非交换所贩售' : '非交換所販售')));
-      const regularLimitText = hasRegular && sleepPoints.limit_regular ? formatItemExchangeLimit(sleepPoints.limit_regular, isEN) : '';
+        : (hasPremium ? (window.I18N?.t?.('wiki.ui_item_prem_only') ?? '僅限高級交換所') : (window.I18N?.t?.('wiki.ui_item_not_sold') ?? '非交換所販售'));
+      const regularLimitText = hasRegular && sleepPoints.limit_regular ? formatItemExchangeLimit(sleepPoints.limit_regular) : '';
 
       const premiumValText = hasPremium
         ? `${Number(sleepPoints.premium).toLocaleString()} pt`
-        : (isEN ? 'None' : (isCN ? '无' : '無'));
-      const premiumLimitText = hasPremium && sleepPoints.limit_premium ? formatItemExchangeLimit(sleepPoints.limit_premium, isEN) : '';
+        : (window.I18N?.t?.('wiki.ui_item_none') ?? '無');
+      const premiumLimitText = hasPremium && sleepPoints.limit_premium ? formatItemExchangeLimit(sleepPoints.limit_premium) : '';
 
       pricingEl.innerHTML = `
         <div class="wiki-item-price-pill ${hasRegular ? '' : 'is-empty'}">
-          <span class="price-label">${isEN ? 'Regular Exchange' : (isCN ? '一般睡眠点数' : '一般睡眠點數')}</span>
+          <span class="price-label">${window.I18N?.t?.('wiki.ui_item_reg_exchange') ?? '一般睡眠點數'}</span>
           <span class="price-value ${hasRegular ? 'text-highlight' : 'text-muted'}">${regularValText}</span>
           ${regularLimitText ? `<span class="price-limit font-mono">${escapeHtml(regularLimitText)}</span>` : ''}
         </div>
         <div class="wiki-item-price-pill ${hasPremium ? '' : 'is-empty'}">
-          <span class="price-label">${isEN ? 'Premium Exchange' : (isCN ? '高级睡眠点数' : '高級睡眠點數')}</span>
+          <span class="price-label">${window.I18N?.t?.('wiki.ui_item_prem_exchange') ?? '高級睡眠點數'}</span>
           <span class="price-value ${hasPremium ? 'text-highlight' : 'text-muted'}">${premiumValText}</span>
           ${premiumLimitText ? `<span class="price-limit font-mono">${escapeHtml(premiumLimitText)}</span>` : ''}
         </div>
         ${hasDiamonds ? `
         <div class="wiki-item-price-pill has-diamonds">
-          <span class="price-label">${isEN ? 'Diamond Shop' : (isCN ? '钻石商店' : '鑽石商店')}</span>
-          <span class="price-value text-diamonds">${item.diamonds} ${isEN ? 'Diamonds' : (isCN ? '钻石' : '鑽石')}</span>
-          <span class="price-limit">${isEN ? 'Direct Purchase' : (isCN ? '直接购买' : '直接購買')}</span>
+          <span class="price-label">${window.I18N?.t?.('wiki.ui_item_diamond_shop') ?? '鑽石商店'}</span>
+          <span class="price-value text-diamonds">${item.diamonds} ${window.I18N?.t?.('wiki.ui_item_diamonds_unit') ?? '鑽石'}</span>
+          <span class="price-limit">${window.I18N?.t?.('wiki.ui_item_direct_buy') ?? '直接購買'}</span>
         </div>
         ` : ''}
       `;
@@ -767,7 +701,7 @@
       if (channels.length > 0) {
         acqListEl.innerHTML = channels.map(ch => `<li class="wiki-item-acq-item">${escapeHtml(ch)}</li>`).join('');
       } else {
-        acqListEl.innerHTML = `<li class="wiki-item-acq-item text-muted">${isEN ? 'No standard channels recorded' : (isCN ? '暂无常规获取记录' : '暫無常規獲取紀錄')}</li>`;
+        acqListEl.innerHTML = `<li class="wiki-item-acq-item text-muted">${window.I18N?.t?.('wiki.ui_item_no_channels') ?? '暫無常規獲取紀錄'}</li>`;
       }
     }
 
@@ -790,8 +724,8 @@
 
         if (pkmSectionTitleEl) {
           const sectionTitle = item.category === 'evolution'
-            ? (isEN ? 'Evolvable Pokémon' : (isCN ? '对应可进化宝可梦' : '對應可進化寶可夢'))
-            : (isEN ? 'Associated Pokémon' : (isCN ? '对应宝可梦' : '對應寶可夢'));
+            ? (window.I18N?.t?.('wiki.ui_item_evo_pkm') ?? '對應可進化寶可夢')
+            : (window.I18N?.t?.('wiki.ui_item_assoc_pkm') ?? '對應寶可夢');
           pkmSectionTitleEl.textContent = sectionTitle;
         }
 
@@ -799,7 +733,7 @@
           if (pkmIds.length === 0) {
             pkmGridEl.innerHTML = `
               <div class="wiki-item-pkm-empty">
-                <p>${isEN ? 'Currently no Pokémon in the Pokédex requires this item.' : (isCN ? '当前图鉴中暂无需要此道具的宝可梦。' : '目前圖鑑中尚無需要此道具的寶可夢。')}</p>
+                <p>${window.I18N?.t?.('wiki.ui_item_pkm_empty') ?? '目前圖鑑中尚無需要此道具的寶可夢。'}</p>
               </div>
             `;
           } else {
@@ -810,20 +744,20 @@
               const padId = idStr.padStart(3, '0');
               const p = idx['id:' + idStr] || idx['no:' + padId];
               const pkmName = p
-                ? ((typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
-                    ? window.I18N.getPokemonName(p)
-                    : _tWiki(p.name_cn || p.name, p.name_en || p.name_cn || p.name))
+                ? (window.I18N?.getPokemonName?.(p) ?? (p.name_cn || p.name || p.name_en || ''))
                 : `Pokemon #${pkmId}`;
               const pkmNo = p ? (p.formatted_no || String(p.id).padStart(3, '0')) : padId;
               const pkmIcon = (p && typeof window !== 'undefined' && typeof window.getItemIcon === 'function')
                 ? window.getItemIcon(p)
                 : (p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`);
               const targetId = p ? p.id : pkmId;
+              const viewTitle = window.I18N?.t?.('wiki.ui_item_view_pkm', { name: escapeHtml(pkmName) })
+                ?? `查看 ${escapeHtml(pkmName)} 圖鑑評測`;
 
               return `
                 <button type="button" class="wiki-item-pkm-card"
                   onclick="window.WikiDB.navigateToPokemonDex('${targetId}'); if (window.PokemonApp && window.PokemonApp.openPokemonDetailModal) { window.PokemonApp.openPokemonDetailModal('${targetId}'); }"
-                  title="${_tWiki('查看 ' + escapeHtml(pkmName) + ' 圖鑑評測', 'View ' + escapeHtml(pkmName) + ' in Pokédex')}">
+                  title="${viewTitle}">
                   <img src="${pkmIcon}" class="wiki-item-pkm-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="if(typeof handlePokemonIconError==='function'){handlePokemonIconError(this);}else{this.style.opacity='0.5';}" />
                   <div class="wiki-item-pkm-info">
                     <span class="wiki-item-pkm-no font-mono">No.${pkmNo}</span>

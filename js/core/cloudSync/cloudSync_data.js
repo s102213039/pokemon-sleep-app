@@ -41,35 +41,6 @@
   let lastToastSignature = '';
   let lastToastTime = 0;
 
-  function _getCloudLang() {
-    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') {
-      return window.I18N.getLanguage();
-    }
-    try {
-      const saved = typeof localStorage !== 'undefined' && localStorage.getItem('user_lang');
-      if (saved === 'en-US' || saved === 'zh-CN' || saved === 'zh-TW') return saved;
-    } catch (e) {}
-    if (typeof document !== 'undefined' && document.documentElement) {
-      const dl = document.documentElement.getAttribute('data-lang');
-      if (dl === 'en' || dl === 'en-US') return 'en-US';
-      if (dl === 'zh-CN') return 'zh-CN';
-    }
-    return 'zh-TW';
-  }
-
-  function _tCloud(tw, en, cn) {
-    const lang = _getCloudLang();
-    if (lang === 'en-US') return en;
-    if (lang === 'zh-CN') {
-      if (cn !== undefined) return cn;
-      if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function') {
-        return window.I18N.toSimplified(tw);
-      }
-      return tw;
-    }
-    return tw;
-  }
-
   /* ─── 記住帳號與混合加密信封管理 (由 cloudSync_crypto.js 提供實作) ─── */
 
   /* ─── 雲端倉庫資料防護與無害化 (Sanitize Remote Box) ──────────── */
@@ -198,7 +169,7 @@
       supabaseClient = null;
       currentUser = null;
       syncStatus = 'error';
-      lastSyncError = err.message || _tCloud('初始化失敗', 'Initialization failed', '初始化失败');
+      lastSyncError = err.message || ((typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_init_failed') : undefined) ?? '初始化失敗');
       updateSyncUI();
       return false;
     }
@@ -208,7 +179,7 @@
   function parseAndValidateAccount(input) {
     const raw = (input || '').trim();
     if (!raw) {
-      return { valid: false, error: _tCloud('請輸入使用者帳號！', 'Please enter a username!', '请输入用户账号！') };
+      return { valid: false, error: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_username_required') : undefined) ?? '請輸入使用者帳號！' };
     }
 
     // 兼容可能輸入完整 Email 的情況
@@ -216,15 +187,15 @@
       if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw)) {
         return { valid: true, username: raw.split('@')[0], email: raw.toLowerCase() };
       }
-      return { valid: false, error: _tCloud('電子郵件格式不正確！', 'Invalid email format!', '电子邮件格式不正确！') };
+      return { valid: false, error: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_email_invalid') : undefined) ?? '電子郵件格式不正確！' };
     }
 
     // 純帳號校驗：3 ~ 20 個字元，僅限英文、數字、底線
     if (raw.length < 3 || raw.length > 20) {
-      return { valid: false, error: _tCloud('帳號長度需介於 3 到 20 個字元之間！', 'Username must be between 3 and 20 characters!', '账号长度需介于 3 到 20 个字符之间！') };
+      return { valid: false, error: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_username_length') : undefined) ?? '帳號長度需介於 3 到 20 個字元之間！' };
     }
     if (!/^[a-zA-Z0-9_]+$/.test(raw)) {
-      return { valid: false, error: _tCloud('帳號僅允許英文字母、數字與底線 (_)，不可包含空格或特殊符號！', 'Username may only contain letters, numbers, and underscores (_), with no spaces or special symbols!', '账号仅允许英文字母、数字与下划线 (_)，不可包含空格或特殊符号！') };
+      return { valid: false, error: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_username_chars') : undefined) ?? '帳號僅允許英文字母、數字與底線 (_)，不可包含空格或特殊符號！' };
     }
 
     const cleanUsername = raw.toLowerCase();
@@ -238,22 +209,22 @@
 
   function validatePassword(password) {
     if (!password) {
-      return { valid: false, error: _tCloud('請輸入密碼！', 'Please enter a password!', '请输入密码！') };
+      return { valid: false, error: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_password_required') : undefined) ?? '請輸入密碼！' };
     }
     if (password.length < 6 || password.length > 32) {
-      return { valid: false, error: _tCloud('密碼長度需介於 6 到 32 個字元之間！', 'Password must be between 6 and 32 characters!', '密码长度需介于 6 到 32 个字符之间！') };
+      return { valid: false, error: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_password_length') : undefined) ?? '密碼長度需介於 6 到 32 個字元之間！' };
     }
     if (/\s/.test(password)) {
-      return { valid: false, error: _tCloud('密碼不可包含空白字元！', 'Password cannot contain whitespace!', '密码不可包含空白字符！') };
+      return { valid: false, error: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_password_whitespace') : undefined) ?? '密碼不可包含空白字元！' };
     }
     // 避免全部為相同字元，例如 111111 或 aaaaaa
     if (/^(.)\1+$/.test(password)) {
-      return { valid: false, error: _tCloud('密碼過於簡單，請勿使用連續單一相同字元！', 'Password is too simple; do not use a single repeated character!', '密码过于简单，请勿使用连续单一相同字符！') };
+      return { valid: false, error: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_password_repeated') : undefined) ?? '密碼過於簡單，請勿使用連續單一相同字元！' };
     }
     // 常見極弱密碼黑名單
     const weakPasswords = ['123456', '12345678', 'password', 'abcdef', '654321', 'qwerty', '000000'];
     if (weakPasswords.includes(password.toLowerCase())) {
-      return { valid: false, error: _tCloud('密碼過於簡單，請更換較安全的組合！', 'Password is too weak; please choose a stronger combination!', '密码过于简单，请更换较安全的组合！') };
+      return { valid: false, error: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_password_weak') : undefined) ?? '密碼過於簡單，請更換較安全的組合！' };
     }
     return { valid: true };
   }
@@ -261,7 +232,7 @@
   /* ─── 帳號密碼註冊與登入 ───────────────────────────────────── */
   async function signUpWithPassword(accountInput, password) {
     if (!supabaseClient) {
-      return { success: false, error: _tCloud('雲端同步服務未初始化，請稍後再試！', 'Cloud sync service is not initialized; please try again later!', '云端同步服务未初始化，请稍后再试！') };
+      return { success: false, error: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_not_initialized') : undefined) ?? '雲端同步服務未初始化，請稍後再試！' };
     }
 
     const accResult = parseAndValidateAccount(accountInput);
@@ -286,11 +257,11 @@
       if (error) {
         syncStatus = currentUser ? 'synced' : 'guest';
         updateSyncUI();
-        let errMsg = error.message || _tCloud('註冊失敗', 'Registration failed', '注册失败');
+        let errMsg = error.message || ((typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_register_failed') : undefined) ?? '註冊失敗');
         if (errMsg.includes('User already registered')) {
-          errMsg = _tCloud('此帳號已被註冊，請直接點擊「登入帳號」！', 'This username is already registered; please click "Sign In" directly!', '此账号已被注册，请直接点击“登录账号”！');
+          errMsg = (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_user_exists') : undefined) ?? '此帳號已被註冊，請直接點擊「登入帳號」！';
         } else if (errMsg.includes('Password should be at least 6 characters')) {
-          errMsg = _tCloud('密碼長度至少需為 6 個字元！', 'Password must be at least 6 characters!', '密码长度至少需为 6 个字符！');
+          errMsg = (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_password_min6') : undefined) ?? '密碼長度至少需為 6 個字元！';
         }
         return { success: false, error: errMsg };
       }
@@ -307,17 +278,17 @@
         return { success: true, user: data.user, session: data.session };
       }
 
-      return { success: true, message: _tCloud('註冊成功！', 'Registration successful!', '注册成功！') };
+      return { success: true, message: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.msg_register_ok') : undefined) ?? '註冊成功！' };
     } catch (err) {
       syncStatus = currentUser ? 'synced' : 'guest';
       updateSyncUI();
-      return { success: false, error: err.message || _tCloud('註冊時發生未知錯誤', 'An unknown error occurred during registration', '注册时发生未知错误') };
+      return { success: false, error: err.message || ((typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_register_unknown') : undefined) ?? '註冊時發生未知錯誤') };
     }
   }
 
   async function signInWithPassword(accountInput, password) {
     if (!supabaseClient) {
-      return { success: false, error: _tCloud('雲端同步服務未初始化，請稍後再試！', 'Cloud sync service is not initialized; please try again later!', '云端同步服务未初始化，请稍后再试！') };
+      return { success: false, error: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_not_initialized') : undefined) ?? '雲端同步服務未初始化，請稍後再試！' };
     }
 
     const accResult = parseAndValidateAccount(accountInput);
@@ -326,7 +297,7 @@
     }
 
     if (!password) {
-      return { success: false, error: _tCloud('請輸入密碼！', 'Please enter a password!', '请输入密码！') };
+      return { success: false, error: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_password_required') : undefined) ?? '請輸入密碼！' };
     }
 
     try {
@@ -341,11 +312,11 @@
       if (error) {
         syncStatus = currentUser ? 'synced' : 'guest';
         updateSyncUI();
-        let errMsg = error.message || _tCloud('登入失敗', 'Sign in failed', '登录失败');
+        let errMsg = error.message || ((typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_signin_failed') : undefined) ?? '登入失敗');
         if (errMsg.includes('Invalid login credentials')) {
-          errMsg = _tCloud('帳號或密碼錯誤，請檢查後重新輸入！', 'Incorrect username or password; please check and try again!', '账号或密码错误，请检查后重新输入！');
+          errMsg = (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_invalid_credentials') : undefined) ?? '帳號或密碼錯誤，請檢查後重新輸入！';
         } else if (errMsg.includes('Email not confirmed')) {
-          errMsg = _tCloud('登入失敗：請管理員於 Supabase 後台關閉「Confirm email」驗證設定。', 'Sign in failed: please have the administrator disable "Confirm email" verification in the Supabase dashboard.', '登录失败：请管理员于 Supabase 后台关闭“Confirm email”验证设置。');
+          errMsg = (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_email_not_confirmed') : undefined) ?? '登入失敗：請管理員於 Supabase 後台關閉「Confirm email」驗證設定。';
         }
         return { success: false, error: errMsg };
       }
@@ -362,11 +333,11 @@
         return { success: true, user: data.user, session: data.session };
       }
 
-      return { success: false, error: _tCloud('登入失敗，查無使用者資訊', 'Sign in failed: user information not found', '登录失败，查无用户信息') };
+      return { success: false, error: (typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_user_not_found') : undefined) ?? '登入失敗，查無使用者資訊' };
     } catch (err) {
       syncStatus = currentUser ? 'synced' : 'guest';
       updateSyncUI();
-      return { success: false, error: err.message || _tCloud('登入時發生錯誤', 'An error occurred during sign in', '登录时发生错误') };
+      return { success: false, error: err.message || ((typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_signin_exception') : undefined) ?? '登入時發生錯誤') };
     }
   }
 
@@ -548,7 +519,7 @@
       console.error('[CloudSync] pushRemoteBox exception:', err);
       lastPushedBoxHash = '';
       syncStatus = 'error';
-      lastSyncError = err.message || _tCloud('同步推送失敗', 'Sync push failed', '同步推送失败');
+      lastSyncError = err.message || ((typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_sync_push_failed') : undefined) ?? '同步推送失敗');
       updateSyncUI();
       return false;
     }
@@ -644,7 +615,7 @@
         console.error('[CloudSync] Initial sync failed:', err);
         lastInitialSyncTimestamp = 0;
         syncStatus = 'error';
-        lastSyncError = err.message || _tCloud('首次同步失敗', 'Initial sync failed', '首次同步失败');
+        lastSyncError = err.message || ((typeof window !== 'undefined' ? window.I18N?.t?.('cloud.err_initial_sync_failed') : undefined) ?? '首次同步失敗');
         updateSyncUI();
       } finally {
         initialSyncPromise = null;

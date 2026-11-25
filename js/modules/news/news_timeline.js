@@ -6,16 +6,6 @@
 (function () {
   'use strict';
 
-  function _tNews(tw, en) {
-    if (typeof window !== 'undefined' && window.I18N) {
-      if (window.I18N.getLanguage() === 'en-US') return en;
-      if (window.I18N.getLanguage() === 'zh-CN' && typeof window.I18N.toSimplified === 'function') {
-        return window.I18N.toSimplified(tw);
-      }
-    }
-    return tw;
-  }
-
   let allNews = [];
   let currentCategory = 'ALL';
   let searchQuery = '';
@@ -228,15 +218,15 @@
     } catch (err) {
       console.error('Failed to load news.json:', err);
       if (typeof window.__renderInPlaceError === 'function') {
-        window.__renderInPlaceError('news-list-container', _tNews('最新新聞與公告載入失敗 (news.json)', 'Failed to load news and updates (news.json)'), err);
+        window.__renderInPlaceError('news-list-container', window.I18N?.t?.('news.ui_err_load_db') ?? '最新新聞與公告載入失敗 (news.json)', err);
       } else if (newsListContainer) {
         const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
           ? window.DOMUtils.escapeHtml(err.message)
           : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         newsListContainer.innerHTML = `
           <div class="empty-state" style="padding: 40px 20px; text-align: center;">
-            <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">${_tNews('新聞資料載入失敗：', 'Failed to load news data: ')}${safeMsg}</div>
-            <div style="font-size: 13px; color: var(--text-muted);">${_tNews('請稍後重整頁面，或點擊頂部「同步資料」更新最新官方新聞。', 'Please refresh the page later, or click "Sync Data" at the top to fetch the latest official news.')}</div>
+            <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">${window.I18N?.t?.('news.ui_err_load_prefix') ?? '新聞資料載入失敗：'}${safeMsg}</div>
+            <div style="font-size: 13px; color: var(--text-muted);">${window.I18N?.t?.('news.ui_err_load_hint') ?? '請稍後重整頁面，或點擊頂部「同步資料」更新最新官方新聞。'}</div>
           </div>
         `;
       }
@@ -328,8 +318,8 @@
       endCol = Math.max(startCol, Math.min(totalDays, endCol));
       const spanCols = Math.max(1, endCol - startCol + 1);
 
-      const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-      let rawTitle = (isEN && item.title_en) ? item.title_en : _tNews(item.title, item.title_en || item.title);
+      const i18nRef = typeof globalThis !== 'undefined' ? globalThis.I18N : null;
+      let rawTitle = i18nRef?.field?.(item, 'title') ?? (item.title || item.title_en || '');
       let cleanTitle = rawTitle
         .replace(/【[^】]+】|\[[^\]]+\]/g, '')
         .replace(/「|」|“|”/g, '')
@@ -337,94 +327,94 @@
         .trim();
 
       let eventCat = 'event';
-      let typeLabel = _tNews('活動企劃', 'Special Event');
+      let typeLabel = i18nRef?.t?.('news.ui_type_special_event') ?? '活動企劃';
       let typeClass = 'gantt-bar-event';
       let typeColor = '#f97316'; // 暖陽落日橘 (Warm Coral)
 
       const titleLower = (item.title + ' ' + (item.title_en || '')).toLowerCase();
       if (titleLower.includes('快照') || titleLower.includes('snapshot')) {
         eventCat = 'snapshot';
-        typeLabel = isPack ? _tNews('快照同樂包', 'Snapshot Pack') : _tNews('奇跡快照', 'Miracle Snapshot');
+        typeLabel = isPack ? (i18nRef?.t?.('news.ui_type_snapshot_pack') ?? '快照同樂包') : (i18nRef?.t?.('news.ui_type_miracle_snapshot') ?? '奇跡快照');
         typeClass = isPack ? 'gantt-bar-pack' : 'gantt-bar-event';
         typeColor = '#38bdf8'; // 亮天藍 (Sky Blue)
       } else if (titleLower.includes('超夢') || titleLower.includes('mewtwo') || titleLower.includes('秘境')) {
         eventCat = 'mewtwo';
-        typeLabel = _tNews('超夢秘境研究', 'Mewtwo Research');
+        typeLabel = i18nRef?.t?.('news.ui_type_mewtwo_research') ?? '超夢秘境研究';
         typeClass = 'gantt-bar-event';
         typeColor = '#a855f7'; // 霓虹亮紫
       } else if (titleLower.includes('好眠日限定包')) {
         eventCat = 'good-sleep';
-        typeLabel = _tNews('好眠限定包', 'Good Sleep Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_good_sleep_pack') ?? '好眠限定包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#f59e0b'; // 滿月曜石琥珀金
       } else if (titleLower.includes('好眠日') || titleLower.includes('good sleep')) {
         eventCat = 'good-sleep';
-        typeLabel = _tNews('好眠日', 'Good Sleep Day');
+        typeLabel = i18nRef?.t?.('news.ui_type_good_sleep_day') ?? '好眠日';
         typeClass = 'gantt-bar-event';
         typeColor = '#eab308'; // 陽光純金黃
       } else if (titleLower.includes('新月日限定包')) {
         eventCat = 'new-moon';
-        typeLabel = _tNews('新月限定包', 'New Moon Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_new_moon_pack') ?? '新月限定包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#a855f7'; // 霓虹亮紫
       } else if (titleLower.includes('新月日') || titleLower.includes('new moon')) {
         eventCat = 'new-moon';
-        typeLabel = _tNews('新月日', 'New Moon Day');
+        typeLabel = i18nRef?.t?.('news.ui_type_new_moon_day') ?? '新月日';
         typeClass = 'gantt-bar-event';
         typeColor = '#6366f1'; // 宇宙深靛藍
       } else if (titleLower.includes('30週年') || titleLower.includes('30th')) {
         eventCat = 'pack-bundle';
-        typeLabel = _tNews('30週年紀念包', '30th Anniv Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_30th_anniv_pack') ?? '30週年紀念包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#f43f5e'; // 慶典緋紅
       } else if (titleLower.includes('合作紀念包')) {
         eventCat = 'collab';
-        typeLabel = _tNews('合作紀念包', 'Collab Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_collab_pack') ?? '合作紀念包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#0284c7'; // 晴空海藍
       } else if (titleLower.includes('合作') || titleLower.includes('collab') || titleLower.includes('動畫')) {
         eventCat = 'collab';
-        typeLabel = _tNews('合作特企', 'Collab Event');
+        typeLabel = i18nRef?.t?.('news.ui_type_collab_event') ?? '合作特企';
         typeClass = 'gantt-bar-event';
         typeColor = '#ec4899'; // 洋紅亮粉
       } else if (titleLower.includes('小鍛匠')) {
         eventCat = 'pack-growth';
-        typeLabel = _tNews('小鍛匠培育包', 'Tinkatink Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_tinkatink_pack') ?? '小鍛匠培育包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#14b8a6'; // 薄荷青碧
       } else if (titleLower.includes('摔角鷹人')) {
         eventCat = 'pack-growth';
-        typeLabel = _tNews('摔角鷹人培育包', 'Hawlucha Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_hawlucha_pack') ?? '摔角鷹人培育包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#10b981'; // 翡翠翠綠
       } else if (titleLower.includes('培育包') || titleLower.includes('growth')) {
         eventCat = 'pack-growth';
-        typeLabel = _tNews('培育包', 'Growth Pack');
+        typeLabel = i18nRef?.t?.('news.ui_type_growth_pack') ?? '培育包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#10b981'; // 翡翠翠綠
       } else if (titleLower.includes('同樂包')) {
         eventCat = 'pack-bundle';
-        typeLabel = _tNews('同樂包', 'Festival Bundle');
+        typeLabel = i18nRef?.t?.('news.ui_type_festival_bundle') ?? '同樂包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#06b6d4'; // 加勒比天青
       } else if (titleLower.includes('嘉年華') || titleLower.includes('festival') || titleLower.includes('夏日') || titleLower.includes('慶典')) {
         eventCat = isPack ? 'pack-bundle' : 'festival';
-        typeLabel = isPack ? _tNews('活動禮包', 'Event Bundle') : _tNews('夏日嘉年華', 'Summer Carnival');
+        typeLabel = isPack ? (i18nRef?.t?.('news.ui_type_event_bundle') ?? '活動禮包') : (i18nRef?.t?.('news.ui_type_summer_carnival') ?? '夏日嘉年華');
         typeClass = isPack ? 'gantt-bar-pack' : 'gantt-bar-event';
         typeColor = isPack ? '#06b6d4' : '#f97316'; // 暖陽落日橘
       } else if (isPack || titleLower.includes('包') || titleLower.includes('bundle') || titleLower.includes('pack')) {
         eventCat = 'pack-bundle';
-        typeLabel = _tNews('活動禮包', 'Event Bundle');
+        typeLabel = i18nRef?.t?.('news.ui_type_event_bundle') ?? '活動禮包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#0284c7'; // 晴空海藍
       } else if (item.badge_key === 'update' || titleLower.includes('更新') || titleLower.includes('維護')) {
         eventCat = 'update';
-        typeLabel = _tNews('版本更新', 'Update');
+        typeLabel = i18nRef?.t?.('news.ui_type_update') ?? '版本更新';
         typeClass = 'gantt-bar-event';
         typeColor = '#f43f5e'; // 薔薇亮紅
       } else {
         eventCat = 'event';
-        typeLabel = _tNews('活動企劃', 'Special Event');
+        typeLabel = i18nRef?.t?.('news.ui_type_special_event') ?? '活動企劃';
         typeClass = 'gantt-bar-event';
         typeColor = '#d946ef'; // 炫彩紫羅蘭
       }
@@ -463,8 +453,6 @@
 
   function renderEventTimeline() {
     if (!newsTimelineContainer) return;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const ganttData = parseEventTimeline(allNews);
     if (ganttData.length === 0) {
       newsTimelineContainer.style.display = 'none';
@@ -499,11 +487,10 @@
       ev.trackIndex = assignedTrack;
     });
 
-    const monthNames = isEN
-      ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-      : ['1 月', '2 月', '3 月', '4 月', '5 月', '6 月', '7 月', '8 月', '9 月', '10 月', '11 月', '12 月'];
-    const monthTitle = isEN ? `${monthNames[calCurrentMonth]} ${calCurrentYear}` : `${calCurrentYear} 年 ${monthNames[calCurrentMonth]}`;
-    const weekdayLabels = isEN ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] : ['日', '一', '二', '三', '四', '五', '六'];
+    const defaultWeekdays = ['日', '一', '二', '三', '四', '五', '六'];
+    const monthName = window.I18N?.t?.(`news.ui_month_${calCurrentMonth + 1}`) ?? `${calCurrentMonth + 1} 月`;
+    const monthTitle = window.I18N?.t?.('news.ui_cal_header', { year: calCurrentYear, monthName }) ?? `${calCurrentYear} 年 ${monthName}`;
+    const weekdayLabels = defaultWeekdays.map((fallback, idx) => window.I18N?.t?.(`news.ui_weekday_${idx}`) ?? fallback);
 
     const firstDayWeekday = new Date(calCurrentYear, calCurrentMonth, 1).getDay();
     const daysInMonth = new Date(calCurrentYear, calCurrentMonth + 1, 0).getDate();
@@ -602,14 +589,14 @@
       selectedEventsHTML = selectedDateEvents.map(ev => {
         let evStatus = '';
         if (_today > ev.endDate) {
-          evStatus = `<span class="news-cal-status-tag status-expired">${_tNews('已結束', 'Ended')}</span>`;
+          evStatus = `<span class="news-cal-status-tag status-expired">${window.I18N?.t?.('news.ui_cal_status_ended') ?? '已結束'}</span>`;
         } else if (_today >= ev.startDate && _today <= ev.endDate) {
-          evStatus = `<span class="news-cal-status-tag status-ongoing">${_tNews('進行中', 'Ongoing')}</span>`;
+          evStatus = `<span class="news-cal-status-tag status-ongoing">${window.I18N?.t?.('news.ui_cal_status_ongoing') ?? '進行中'}</span>`;
         } else {
-          evStatus = `<span class="news-cal-status-tag status-upcoming">${_tNews('即將開始', 'Upcoming')}</span>`;
+          evStatus = `<span class="news-cal-status-tag status-upcoming">${window.I18N?.t?.('news.ui_cal_status_upcoming') ?? '即將開始'}</span>`;
         }
         return `
-        <div class="news-cal-event-item cat-${ev.eventCat} ${_today > ev.endDate ? 'is-expired' : ''}" data-event-id="${ev.id}" data-event-title="${escapeHtml(ev.title)}" title="${_tNews('點擊直接搜尋此活動', 'Click to search this event')}">
+        <div class="news-cal-event-item cat-${ev.eventCat} ${_today > ev.endDate ? 'is-expired' : ''}" data-event-id="${ev.id}" data-event-title="${escapeHtml(ev.title)}" title="${window.I18N?.t?.('news.ui_cal_click_search') ?? '點擊直接搜尋此活動'}">
           <div class="news-cal-event-left">
             <span class="news-cal-event-badge badge-${ev.eventCat}" style="border-left: 3px solid ${ev.typeColor};">${ev.typeLabel}</span>
             <span class="news-cal-event-name">${escapeHtml(ev.title)}</span>
@@ -621,28 +608,32 @@
     } else {
       selectedEventsHTML = `
         <div class="news-cal-empty-hint">
-          ${_tNews('當日暫無進行中的特殊活動或禮包', 'No active events or bundles on this date')}
+          ${window.I18N?.t?.('news.ui_cal_no_events') ?? '當日暫無進行中的特殊活動或禮包'}
         </div>
       `;
     }
 
     const isTodaySelected = (calCurrentYear === _today.getFullYear() && calCurrentMonth === _today.getMonth() && calSelectedDay === _today.getDate());
-    const selectedDateStr = isEN
-      ? `${monthNames[calCurrentMonth]} ${calSelectedDay}${isTodaySelected ? ' (Today)' : ''}`
-      : `${calCurrentMonth + 1}月${calSelectedDay}日${isTodaySelected ? _tNews(' (今日)', ' (Today)') : ''}`;
+    const baseDateStr = window.I18N?.t?.('news.ui_date_md', {
+      month: calCurrentMonth + 1,
+      day: calSelectedDay,
+      monthName
+    }) ?? `${calCurrentMonth + 1}月${calSelectedDay}日`;
+    const todaySuffix = isTodaySelected ? (window.I18N?.t?.('news.ui_today_suffix') ?? ' (今日)') : '';
+    const selectedDateStr = `${baseDateStr}${todaySuffix}`;
 
     newsTimelineContainer.innerHTML = `
       <div class="news-calendar-wrapper">
         <div class="news-calendar-cal-col">
           <div class="news-calendar-top-bar">
             <div class="news-calendar-title-group">
-              <span>${_tNews('活動日曆', 'Event Calendar')}</span>
+              <span>${window.I18N?.t?.('news.ui_cal_title') ?? '活動日曆'}</span>
               <span class="news-calendar-month-text">(${monthTitle})</span>
             </div>
             <div class="news-calendar-nav-group">
-              <button type="button" class="news-calendar-nav-btn prev-btn" title="${_tNews('上個月', 'Previous Month')}">◀</button>
-              <button type="button" class="news-calendar-nav-btn today-btn" title="${_tNews('今日', 'Return to Today')}">${_tNews('今日', 'Today')}</button>
-              <button type="button" class="news-calendar-nav-btn next-btn" title="${_tNews('下個月', 'Next Month')}">▶</button>
+              <button type="button" class="news-calendar-nav-btn prev-btn" title="${window.I18N?.t?.('news.ui_cal_prev') ?? '上個月'}">◀</button>
+              <button type="button" class="news-calendar-nav-btn today-btn" title="${window.I18N?.t?.('news.ui_cal_today_title') ?? '今日'}">${window.I18N?.t?.('news.ui_cal_today') ?? '今日'}</button>
+              <button type="button" class="news-calendar-nav-btn next-btn" title="${window.I18N?.t?.('news.ui_cal_next') ?? '下個月'}">▶</button>
             </div>
           </div>
 
@@ -658,11 +649,11 @@
         <div class="news-calendar-events-box">
           <div class="news-cal-box-title-row">
             <div class="news-cal-box-title-left">
-              <span class="news-cal-box-heading">${selectedDateStr} ${isEN ? 'Active Events' : (isCN ? '进行中的活动与礼包' : '進行中的活動與禮包')}</span>
-              <span class="news-cal-box-count">${selectedDateEvents.length} ${isEN ? 'items' : (isCN ? '项' : '項')}</span>
+              <span class="news-cal-box-heading">${selectedDateStr} ${window.I18N?.t?.('news.ui_cal_active_events') ?? '進行中的活動與禮包'}</span>
+              <span class="news-cal-box-count">${window.I18N?.t?.('news.ui_cal_items_count', { count: selectedDateEvents.length }) ?? `${selectedDateEvents.length} 項`}</span>
             </div>
-            <button type="button" class="news-cal-filter-ongoing-btn ${filterOnlyOngoing ? 'active' : ''}" title="${isEN ? 'Filter card list below to currently ongoing events' : (isCN ? '在下方卡片列表展示所有正在进行的活动' : '在下方卡片列表展示所有正在進行的活動')}">
-              ${filterOnlyOngoing ? (isEN ? '✕ Reset Cards' : (isCN ? '✕ 还原全部卡片' : '✕ 還原全部卡片')) : (isEN ? 'Show in Cards' : (isCN ? '在下方展示进行中活动' : '在下方展示進行中活動'))}
+            <button type="button" class="news-cal-filter-ongoing-btn ${filterOnlyOngoing ? 'active' : ''}" title="${window.I18N?.t?.('news.ui_cal_filter_ongoing_title') ?? '在下方卡片列表展示所有正在進行的活動'}">
+              ${filterOnlyOngoing ? (window.I18N?.t?.('news.ui_cal_reset_cards') ?? '× 還原全部卡片') : (window.I18N?.t?.('news.ui_cal_show_in_cards') ?? '在下方展示進行中活動')}
             </button>
           </div>
           <div class="news-cal-events-scroll-list">

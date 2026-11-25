@@ -1,16 +1,16 @@
     function renderTypeButtons() {
       if (!typeFilterContainer) return;
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       typeFilterContainer.innerHTML = types.map(t => {
         const isActive = t === 'ALL' ? selectedTypes.size === 0 : selectedTypes.has(t);
-        const label = t === 'ALL' ? _tDex('全部屬性', 'All Types') : (window.I18N ? window.I18N.getTypeName(t) : t);
+        const label = t === 'ALL'
+          ? (window.I18N?.t?.('dex.ui_all_types') ?? 'dex.ui_all_types')
+          : (window.I18N ? window.I18N.getTypeName(t) : t);
         return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-type="${t}">${label}</button>`;
       }).join('');
     }
 
     function renderSpecialtyButtons() {
       if (!specialtyFilterContainer) return;
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       specialtyFilterContainer.innerHTML = specialties.map(s => {
         const isActive = selectedSpecialties.has(s);
         const label = window.I18N ? window.I18N.getSpecialtyName(s) : s;
@@ -20,7 +20,6 @@
 
     function renderBerryButtons() {
       if (!berryFilterContainer) return;
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       const sortedBerries = _sortPokedexBerriesByEnergyAsc(BERRY_DATA);
       berryFilterContainer.innerHTML = sortedBerries.map(b => {
         const isActive = selectedBerries.has(b.name);
@@ -58,13 +57,10 @@
 
     function renderSkillButtons() {
       if (!skillFilterContainer) return;
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       skillFilterContainer.innerHTML = BASE_SKILLS.map(skillItem => {
         const isActive = selectedSkills.has(skillItem.key);
-        const rawLabel = window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label;
-        const label = isEN ? (skillItem.label_en || rawLabel) : _tDex(rawLabel, rawLabel);
-        const rawFull = window.I18N ? window.I18N.getMainSkillName(skillItem.key) : skillItem.label;
-        const fullTitle = isEN ? rawFull : _tDex(rawFull, rawFull);
+        const label = window.I18N?.pick?.({ 'zh-TW': skillItem.label, 'en-US': skillItem.label_en || skillItem.label }) ?? skillItem.label;
+        const fullTitle = window.I18N?.getMainSkillName?.(skillItem.key) ?? skillItem.label;
         return `
           <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${fullTitle}">
             <span class="subfilter-skill-name">${label}</span>
@@ -349,7 +345,7 @@
           if (bookmarkHandle) {
             bookmarkHandle.classList.remove('drawer-open');
             bookmarkHandle.setAttribute('aria-expanded', 'false');
-            bookmarkHandle.title = _tDex('展開篩選側邊欄', 'Expand Filter Sidebar');
+            bookmarkHandle.title = window.I18N?.t?.('dex.ui_expand_filter_sidebar') ?? 'dex.ui_expand_filter_sidebar';
             bookmarkHandle.style.opacity = '1';
             bookmarkHandle.style.pointerEvents = 'auto';
             bookmarkHandle.style.display = 'flex';
@@ -365,7 +361,7 @@
           if (bookmarkHandle) {
             bookmarkHandle.classList.add('drawer-open');
             bookmarkHandle.setAttribute('aria-expanded', 'true');
-            bookmarkHandle.title = _tDex('收合篩選側邊欄', 'Collapse Filter Sidebar');
+            bookmarkHandle.title = window.I18N?.t?.('dex.ui_collapse_filter_sidebar') ?? 'dex.ui_collapse_filter_sidebar';
             bookmarkHandle.style.opacity = '0';
             bookmarkHandle.style.pointerEvents = 'none';
             bookmarkHandle.style.display = 'none';

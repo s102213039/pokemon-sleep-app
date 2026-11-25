@@ -15,6 +15,8 @@ const {
   matchesSelector,
   createMockDocument,
   PokemonApp,
+  I18N,
+  i18nCode,
   getItemIcon,
   getItemId,
   getItemFormattedNo,
@@ -367,6 +369,7 @@ test('Tier 1 - Feature Coverage', 'Appraisal Lab & Six-Dimension Engine: Evaluat
   };
   ctx.window = ctx;
   vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
   vm.runInContext(boxCode, ctx);
   vm.runInContext(appraisalCode, ctx);
 
@@ -2528,8 +2531,8 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     assert(box.nextBoxSort('level-asc', 'level') === 'id-asc', 'nextBoxSort must reset level-asc to id-asc default (state 3)');
 
     // 4. Box Tab Table Markup: Only icon and level are sortable; name, specialty, berry, ings are non-sortable
-    assert(boxJs.includes("boxSortableTh('id', t('th.icon', '圖示'), 'th-icon')"), 'box.js renderBoxTable must make icon header sortable via boxSortableTh');
-    assert(boxJs.includes("boxSortableTh('level', t('th.level', '等級'))"), 'box.js renderBoxTable must make level header sortable');
+    assert(boxJs.includes("boxSortableTh('id',") && boxJs.includes("'th.icon'"), 'box.js renderBoxTable must make icon header sortable via boxSortableTh');
+    assert(boxJs.includes("boxSortableTh('level',") && boxJs.includes("'th.level'"), 'box.js renderBoxTable must make level header sortable');
     assert(!boxJs.includes("boxSortableTh('name'"), 'Box name column must NOT be sortable');
     assert(!boxJs.includes("boxSortableTh('specialty'"), 'Box specialty column must NOT be sortable');
     assert(!boxJs.includes("boxSortableTh('berry'"), 'Box berry column must NOT be sortable');

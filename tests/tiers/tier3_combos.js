@@ -15,6 +15,8 @@ const {
   matchesSelector,
   createMockDocument,
   PokemonApp,
+  I18N,
+  i18nCode,
   getItemIcon,
   getItemId,
   getItemFormattedNo,
@@ -228,6 +230,7 @@ test('Tier 3 - Cross-Feature Combinations', '6D Appraisal Lab Modal Lifecycle fr
   };
   ctx.window = ctx;
   vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
   vm.runInContext(boxCode, ctx);
   vm.runInContext(appraisalCode, ctx);
 
@@ -265,6 +268,7 @@ test('Tier 3 - Cross-Feature Combinations', 'Good-Night Ribbon Appraisal Lab Int
   };
   ctx.window = ctx;
   vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
   vm.runInContext(boxCode, ctx);
   vm.runInContext(appraisalCode, ctx);
 

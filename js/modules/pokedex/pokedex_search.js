@@ -84,35 +84,46 @@ function matchesPokemonSearch(p, query) {
     );
   }
 
-  // 2. 文字精確比對 (快取寶可夢名稱正規化與拼音)
+  // 2. 文字精確比對 (快取寶可夢名稱正規化、簡繁互通與拼音)
   const rawCN = String((p.name && p.name.cn) || p.name_cn || '');
   const rawEN = String((p.name && p.name.en) || p.name_en || '');
   const rawJP = String((p.name && p.name.jp) || p.name_jp || '');
+  const toSimp = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function')
+    ? window.I18N.toSimplified
+    : null;
+  const rawSimp = toSimp ? toSimp(rawCN) : rawCN;
+  const rawI18n = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
+    ? String(window.I18N.getPokemonName(p) || '')
+    : '';
   let meta = p._searchMeta;
-  if (!meta || meta.rawCN !== rawCN || meta.rawEN !== rawEN || meta.rawJP !== rawJP) {
+  if (!meta || meta.rawCN !== rawCN || meta.rawEN !== rawEN || meta.rawJP !== rawJP || meta.rawI18n !== rawI18n) {
     const nameCN = rawCN.toLowerCase();
+    const nameSimp = rawSimp.toLowerCase();
     const nameEN = rawEN.toLowerCase();
     const nameJP = rawJP.toLowerCase();
+    const nameI18n = rawI18n.toLowerCase();
     const nameCNClean = nameCN.replace(/[\s\-_（）\(\)\.\'’]/g, '');
+    const nameSimpClean = nameSimp.replace(/[\s\-_（）\(\)\.\'’]/g, '');
     const nameENClean = nameEN.replace(/[\s\-_（）\(\)\.\'’]/g, '');
     const nameJPClean = nameJP.replace(/[\s\-_（）\(\)\.\'’]/g, '');
+    const nameI18nClean = nameI18n.replace(/[\s\-_（）\(\)\.\'’]/g, '');
     const pinyin = p._pinyin || toPinyin(nameCNClean);
     p._pinyin = pinyin;
     meta = {
-      rawCN, rawEN, rawJP,
-      nameCN, nameEN, nameJP,
-      nameCNClean, nameENClean, nameJPClean,
+      rawCN, rawEN, rawJP, rawI18n,
+      nameCN, nameSimp, nameEN, nameJP, nameI18n,
+      nameCNClean, nameSimpClean, nameENClean, nameJPClean, nameI18nClean,
       pinyin,
       enWords: nameEN ? nameEN.split(/[\s\-_（）\(\)\.\'’]+/).filter(Boolean) : []
     };
     p._searchMeta = meta;
   }
 
-  const { nameCN, nameEN, nameJP, nameCNClean, nameENClean, nameJPClean, pinyin, enWords } = meta;
+  const { nameCN, nameSimp, nameEN, nameJP, nameI18n, nameCNClean, nameSimpClean, nameENClean, nameJPClean, nameI18nClean, pinyin, enWords } = meta;
 
   if (
-    nameCN.includes(q) || nameEN.includes(q) || nameJP.includes(q) ||
-    nameCNClean.includes(qClean) || nameENClean.includes(qClean) || nameJPClean.includes(qClean)
+    nameCN.includes(q) || nameSimp.includes(q) || nameEN.includes(q) || nameJP.includes(q) || nameI18n.includes(q) ||
+    nameCNClean.includes(qClean) || nameSimpClean.includes(qClean) || nameENClean.includes(qClean) || nameJPClean.includes(qClean) || nameI18nClean.includes(qClean)
   ) {
     return true;
   }
@@ -123,19 +134,23 @@ function matchesPokemonSearch(p, query) {
   }
 
   // 4. 中文子序列匹配 (例如「妙花」匹配「妙蛙花」、「南瓜人」匹配「南瓜怪人」)
-  if (qClean.length >= 2 && isSubsequence(qClean, nameCNClean)) {
+  if (qClean.length >= 2 && (isSubsequence(qClean, nameCNClean) || isSubsequence(qClean, nameSimpClean))) {
     return true;
   }
 
   // 5. 中文字元編輯距離 (單字打錯，長度 >= 3 容許 1 個錯字)
   if (qClean.length >= 3) {
-    if (Math.abs(qClean.length - nameCNClean.length) <= 1) {
-      if (levenshteinDistance(qClean, nameCNClean) <= 1) return true;
-    }
-    if (nameCNClean.length > qClean.length) {
-      for (let i = 0; i <= nameCNClean.length - qClean.length; i++) {
-        const sub = nameCNClean.slice(i, i + qClean.length);
-        if (levenshteinDistance(qClean, sub) <= 1) return true;
+    const zhTargets = nameSimpClean && nameSimpClean !== nameCNClean ? [nameCNClean, nameSimpClean] : [nameCNClean];
+    for (let z = 0; z < zhTargets.length; z++) {
+      const targetClean = zhTargets[z];
+      if (Math.abs(qClean.length - targetClean.length) <= 1) {
+        if (levenshteinDistance(qClean, targetClean) <= 1) return true;
+      }
+      if (targetClean.length > qClean.length) {
+        for (let i = 0; i <= targetClean.length - qClean.length; i++) {
+          const sub = targetClean.slice(i, i + qClean.length);
+          if (levenshteinDistance(qClean, sub) <= 1) return true;
+        }
       }
     }
   }
@@ -170,49 +185,28 @@ let hasAnyFloatingTooltipOpen = false;
 
 function getHelpButtonData(btn) {
   if (!btn || !btn.classList) return null;
-  const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
-  const isEN = lang === 'en-US';
-  const isCN = lang === 'zh-CN';
   if (btn.classList.contains('pot-expansion-help-btn')) {
-    const defaultTitle = isEN ? 'Pot Expansion Forecast' : (isCN ? '扩锅预测说明' : '擴鍋預測說明');
-    const defaultBody = isEN
-      ? 'Extra ingredients default to <span class="text-accent font-bold">100 base energy</span> each (standard average baseline for common fillers like Apple 90, Milk 98, Soybean 100, Honey 101, Sausage 103).<br>Pot Capacity Mechanics: Base pot maxes out at 81 slots in latest version; Good Camp Ticket multiplies base capacity by 1.5x (122 slots on weekdays, 243 on Sundays); Sunday cooking doubles base pot (2x; 81×2 = 162 slots). During "Cooking Week" events, Sunday pot capacity quadruples (4x), reaching 81×4×1.5 = 486 slots with Camp Ticket. Coupled with Cooking Power-Up S skill stacking (up to +200 ingredients), theoretical single-cook limit reaches 486 + 200 = 686 slots (slider supports up to 700).<br>Formula: (Recipe Lv. Energy + Extra Ingredients × 100) × Island Bonus × Event Bonus.<br>Extra ingredients do not receive recipe level bonus, but fully benefit from island bonus, event bonus, and extra tasty multipliers.'
-      : (isCN
-        ? '默认每个追加食材以 <span class="text-accent font-bold">100 基础能量</span> 计算（常用溢出填锅食材如苹果90、牛奶98、大豆100、蜂蜜101、香肠103之平均基准）。<br>锅子容量机制说明：常规扩锅上限最新为 81 格；好露营券加成×1.5倍（平日 122 格，周日 243 格）；周日料理×2倍（81×2 = 162 格）。在“料理周”活动时周日更享有4倍锅加成，搭配露营券锅子容量高达 81×4×1.5 = 486格！若再加上自爆磁怪等宝可梦的“料理强化S”技能（最高堆叠+200个食材），单次极限锅子容量可达 486 + 200 = 686 格（滑块支持至 700 格）。<br>计算公式：(食谱等级能量 + 追加食材数 × 100) × (1 + 岛屿加成) × 活动加成。<br>追加食材不享有食谱等级加成，但全额享有岛屿加成、活动加成与大成功倍率。'
-        : '預設每個追加食材以 <span class="text-accent font-bold">100 基礎能量</span> 計算（常用溢出填鍋食材如蘋果90、牛奶98、大豆100、蜂蜜101、香腸103之平均基準）。<br>鍋子容量機制說明：常規擴鍋上限最新為 81 格；好露營券加成×1.5倍（平日 122 格，週日 243 格）；週日料理×2倍（81×2 = 162 格）。在「料理週」活動時週日更享有4倍鍋加成，搭配露營券鍋子容量高達 81×4×1.5 = 486格！若再加上自爆磁怪等寶可夢的「料理強化S」技能（最高堆疊+200個食材），單次極限鍋子容量可達 486 + 200 = 686 格（滑桿支援至 700 格）。<br>計算公式：(食譜等級能量 + 追加食材數 × 100) × (1 + 島嶼加成) × 活動加成。<br>追加食材不享有食譜等級加成，但全額享有島嶼加成、活動加成與大成功倍率。');
     return {
-      title: (typeof window !== 'undefined' && window.I18N) ? window.I18N.t('recipe.slider_pot_expansion_help_title', defaultTitle) : defaultTitle,
-      body: (typeof window !== 'undefined' && window.I18N) ? window.I18N.t('recipe.slider_pot_expansion_help_body', defaultBody) : defaultBody
+      title: window.I18N?.t?.('recipe.slider_pot_expansion_help_title') ?? 'recipe.slider_pot_expansion_help_title',
+      body: window.I18N?.t?.('recipe.slider_pot_expansion_help_body') ?? 'recipe.slider_pot_expansion_help_body'
     };
   }
   if (btn.classList.contains('ladder-formula-help-btn')) {
     return {
-      title: isEN ? 'Baseline: Lv.60 Ideal Energy' : (isCN ? '天梯基准：Lv.60 满活力' : '天梯基準：Lv.60 滿活力'),
-      body: isEN
-        ? 'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daily yield.'
-        : (isCN
-          ? '以 Lv.60 满活力理想状态 (活力 ≥ 80%，间隔 0.45x) 试算单日产能。'
-          : '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。')
+      title: window.I18N?.t?.('dex.ui_ladder_formula_help_title') ?? 'dex.ui_ladder_formula_help_title',
+      body: window.I18N?.t?.('dex.ui_ladder_formula_help_body') ?? 'dex.ui_ladder_formula_help_body'
     };
   }
   if (btn.classList.contains('pokedex-formula-help-btn')) {
     return {
-      title: isEN ? 'Ideal Energy (0.45x) & 12h Daytime Baseline' : (isCN ? '理想活力 0.45x 与 12 小时基准说明' : '理想活力 0.45x 與 12 小時基準說明'),
-      body: isEN
-        ? 'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>).<br>Calculation adopts a <span class="text-accent font-bold">12 hours (43200s)</span> daytime active baseline: general players have 12-16 hours waking time, and Pokémon sleep requires ~8.5h, so 12h represents realistic daytime active output without non-active sleep downtime.'
-        : (isCN
-          ? '活力 ≥ 80% 理想状态下，帮忙间隔缩短为 <span class="text-accent font-bold">0.45 倍</span>（产能约 <span class="text-accent font-bold">2.22 倍</span>）。<br>此处算法采用 <span class="text-accent font-bold">12 小时 (43200秒)</span> 日间活跃基准：一般用户非睡眠时间约 12-16 小时，且宝可梦睡饱需 8.5 小时，扣除夜间睡眠，以 12 小时试算最符合日间实际产能期望。'
-          : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。<br>此處算法採用 <span class="text-accent font-bold">12 小時 (43200秒)</span> 日間活躍基準：一般用戶非睡眠時間約 12-16 小時，且寶可夢睡飽需 8.5 小時，扣除夜間睡眠，以 12 小時試算最符合日間實際產能期望。')
+      title: window.I18N?.t?.('dex.ui_energy_help_title') ?? 'dex.ui_energy_help_title',
+      body: window.I18N?.t?.('dex.ui_energy_help_body') ?? 'dex.ui_energy_help_body'
     };
   }
   if (btn.classList.contains('ladder-help-icon-btn')) {
     return {
-      title: isEN ? 'Specialty Trigger Multipliers' : (isCN ? '专长发动几率加成' : '專長發動機率加成'),
-      body: isEN
-        ? 'All specialties use a 1.0x trigger baseline.<br>Use Skill Trigger M/S and Skill Chance ▲ to simulate boosts.'
-        : (isCN
-          ? '所有专长皆以 1.0 倍发动几率作为基准。<br>请用技能几率M/S与技能几率▲模拟补正。'
-          : '所有專長皆以 1.0 倍發動機率為基準。<br>請用技能機率M/S與技能機率▲模擬補正。')
+      title: window.I18N?.t?.('dex.ui_ladder_trigger_help_title') ?? 'dex.ui_ladder_trigger_help_title',
+      body: window.I18N?.t?.('dex.ui_ladder_trigger_help_body') ?? 'dex.ui_ladder_trigger_help_body'
     };
   }
   return null;

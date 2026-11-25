@@ -5,6 +5,25 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-25 已完成（統一預解析字串資源架構重構：全面消除各模組內聯語言判斷與重複 `_t*` 包裝）
+
+- **調整內容（統一預解析 i18n 引擎 + 7 組異質多代理並行重構全站 48 個模組）**：
+  1. **建立預解析統一字串資源引擎 (`js/core/i18n/i18n_resources.js`, `js/core/i18n/i18n_core.js`, `scripts/build_i18n.js`)**：
+     - 導入 `RESOLVED_BUNDLES`（啟動時一次性預先建立 `zh-TW` / `zh-CN` / `en-US` 完整字典包，`zh-CN` 僅於啟動轉換一次）、`LOCALE_STRATEGIES`（三語預綁定策略物件）與單一切換點 `syncActiveLocale(lang)`（於 `initLanguage()` 與 `setLanguage(lang)` 預先鎖定 `activeStrategy` 與 `activeDict`）。
+     - 統一提供 `I18N.t(key, params)`（O(1) 讀取預解析資源並支援 `{var}` 參數插值）、響應式代理物件 `I18N.STR` / `window.STR` / `window.$t`、`I18N.field(obj, baseKey)`（支援多語 JSON 欄位與陣列自動解析）、`I18N.pick(map)`、`I18N.text(str)`、`I18N.getDateLocale()` 與 `registerResources(entries)`（結構性保證三語 `DICTIONARY` 100% 鍵值對齊）。
+     - 同步消除 `i18n_core.js` 內部的 `isEN` / `isCN` / `currentLang` 分支，並補齊自動同步新增資料之括號包覆主技能（如 `(幫手支援S)`）與全形 `謎擬Ｑ` 英文映射。
+  2. **抽取 7 份模組化預解析字串資源檔 (`js/core/i18n/res_*.js`，每檔皆 `<= 400` 行，共註冊 1,413 組新資源鍵，全站總計 1,828 組三語對齊資源鍵)**：
+     - `res_cloud_box.js`（219 鍵）、`res_recipes_news.js`（117 鍵）、`res_pokedex.js`（211 鍵）、`res_wiki_core.js`（312 鍵）、`res_wiki_ladder.js`（157 鍵）、`res_lab_core.js`（181 鍵）、`res_lab_team.js`（216 鍵）。
+  3. **全站 48 份業務／UI 模組 JS 全面移除內聯語言條件判斷與本地翻譯包裝 (`js/core/cloudSync/*`, `js/modules/box/*`, `js/modules/recipes/*`, `js/modules/news/*`, `js/modules/pokedex/*`, `js/modules/wiki/*`, `js/modules/lab/*`)**：
+     - 全面刪除 10 組重複本地包裝函式（`_getCloudLang`、`_tCloud`、`_tBox`、`_tRecipes`、`_tNews`、`_tDex`、`_tWiki`、`_tSkillLadder`、`_tModalKey`、`_tLab`、`_tLabStr`，原 1,556 處呼叫清零）與全部 758 處內聯 `isEN` / `isCN` / `isEnMode` / `getLanguage()` 語言條件判斷；UI 與業務層改為直接傳遞資源鍵 `I18N.t('key', params)` 或呼叫預綁定資料解析 `I18N.field(obj, prop)` / `I18N.pick(map)`。
+     - 同步補強 `tests/stress_i18n_consumer.js` Group 9 永久架構回歸斷言（鎖定 `I18N.STR` / `field` / `pick` / `text` / `{var}` 插值，並驗證全站非 i18n 模組維持 0 本地 `_t*` 包裝與 0 內聯語言判斷），更新相關單元測試改載入真實 `js/core/i18n.js` 並完成 `npm run build`（版本號 `20261125_0750`）。
+- **驗證結果**：
+  - 全站程式碼靜態審計：`remainingLangChecks=0`、`remainingLocalHelpers=0`、`oversizedFiles=[]`（所有模組 JS 與 CSS 嚴格 `<= 1,000` 行），`DICTIONARY` 三語對齊 `zh-TW=1828, zh-CN=1828, en-US=1828`。
+  - `npm test`：**296 / 296 PASS**（Tier 1: 74, Tier 2: 70, Tier 3: 28, Tier 4: 124）。
+  - `node tests/stress_i18n_consumer.js`：**21 / 21 PASS**（Verdict: APPROVE）。
+  - `node tests/test_r1_r5_theme_pwa_css.js`：**9 / 9 PASS**。
+  - `node tests/test_e2e_r1_r5_pwa_ui.js`（無頭 Chrome CDP 雙端實機驗證）：**11 / 11 PASS**（`E2E-M1-I18N-01` 全站 5 大分頁 + 百科 7 子分頁 + 道具彈窗 3 語系 0 繁體殘留與 0 漏譯中文字）。
+
 ## 交接：2026-11-25 已完成（全站三語深度清查：消除簡體繁體字殘留與英文漏譯、道具 Tab 與詳情浮窗全 8 主題深色修復）
 
 - **調整內容（Teamwork 多代理並行實作與全量實機驗證）**：
