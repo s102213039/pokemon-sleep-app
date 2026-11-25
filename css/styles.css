@@ -869,8 +869,8 @@ html[lang="en"] .appraisal-pokemon-title,
 }
 
 /* 英文模式彈窗標籤與文字排版適配 (English Mode Modal Layout Adaptation) */
-html[data-lang="en"] .box-modal-dialog,
-[data-lang="en"] .box-modal-dialog {
+html[data-lang="en"] #box-edit-modal .box-modal-dialog:not(.has-screenshot),
+[data-lang="en"] #box-edit-modal .box-modal-dialog:not(.has-screenshot) {
   max-width: 560px;
 }
 
@@ -30401,6 +30401,7 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 }
 
 /* 彈窗對話框本體 */
+#pokedex-detail-modal .pokedex-modal-dialog,
 .pokedex-modal-dialog {
   position: relative;
   z-index: 2;

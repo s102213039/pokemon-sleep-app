@@ -191,6 +191,7 @@
 }
 
 /* 彈窗對話框本體 */
+#pokedex-detail-modal .pokedex-modal-dialog,
 .pokedex-modal-dialog {
   position: relative;
   z-index: 2;

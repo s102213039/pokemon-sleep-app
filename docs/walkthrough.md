@@ -5,6 +5,18 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-25 已完成（修復英文模式桌面版圖鑑寶可夢詳情浮窗寬度被壓縮至 560px 破版問題）
+
+- **問題根因**：
+  - [tokens_inverted.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/tokens_inverted.css) 與 [styles.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/styles.css) 中存在全域英文適配規則 `html[data-lang="en"] .box-modal-dialog { max-width: 560px; }`（權重 `0,2,1`），其優先級高於 `.pokedex-modal-dialog { max-width: 1040px; }`（權重 `0,1,0`）。因圖鑑詳情浮窗同時掛載 `.box-modal-dialog.pokedex-modal-dialog`，切換為英文模式後整個雙欄浮窗被強制壓縮至 560px，造成右側欄位與副技能標籤橫向裁切溢出。
+- **修正內容**：
+  1. [tokens_inverted.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/tokens_inverted.css) 與 [styles.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/styles.css)：將英文 `max-width: 560px` 規則嚴格限定於 `#box-edit-modal .box-modal-dialog:not(.has-screenshot)`，避免影響圖鑑詳情浮窗、評測彈窗、截圖匯入彈窗與道具詳情彈窗。
+  2. [news_cards.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/news/news_cards.css) 與 [styles.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/styles.css)：為 `#pokedex-detail-modal .pokedex-modal-dialog` 補上 ID 級選擇器確保桌面版恆定維持 `max-width: 1040px`。
+  3. 同步補齊自動同步新增公告（技能週 Vol.4 與洗翠卡蒂狗／風速狗）之 `title_en`（`data/news.json`）並執行 `npm run build` 與 `npm run data:minify`。
+- **驗證結果**：
+  - 無頭 Chrome 實機驗證（桌面 `1440x900`、`en-US` 開啟 `#245` 水君詳情浮窗）：`dialogWidth: 998px`、`rightColWidth: 599px`、`dialogScrollOverflow: 0`、`rightColClipped: false`、`chipWidth: 116px`。
+  - `npm run test:fast`：**172 / 172 PASS**；`node tests/test_r1_r5_theme_pwa_css.js`：**9 / 9 PASS**。
+
 ## 交接：2026-11-25 已完成（圖鑑與倉庫表頭精簡：`Ing %` / `Skill %` / `Skill` 與無文字雙向排序箭頭 SVG）
 
 - **調整內容**：
