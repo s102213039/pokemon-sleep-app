@@ -52,26 +52,31 @@
       });
     }
 
+    function renderDualSortArrowSvg(state) {
+      const up = (state === 'asc' || state === 'newest') ? 'filled' : 'hollow';
+      const dn = (state === 'desc' || state === 'newest') ? 'filled' : 'hollow';
+      return `<svg class="sort-dual-svg" data-sort-state="${state}" viewBox="0 0 12 16" width="12" height="16" aria-hidden="true"><path class="sort-tri-up ${up}" d="M6 1.5L10.5 6.8H1.5Z"/><path class="sort-tri-down ${dn}" d="M6 14.5L10.5 9.2H1.5Z"/></svg>`;
+    }
+
     function sortableTh(col, label, cls) {
       const parsed = parseTableSort(currentSort);
       const on = parsed.col === col;
-      let arrow = '';
-      let aria = 'none';
-      let titleTip = '';
+      let arrow = '', aria = 'none', titleTip = '', sortState = 'none';
       if (on) {
         if (parsed.dir === 'newest') {
-          arrow = window.I18N?.t?.('dex.ui_sort_new_tag') ?? ' (新)';
-          aria = 'other';
+          sortState = 'newest'; arrow = window.I18N?.t?.('dex.ui_sort_new_tag') ?? ' (新)'; aria = 'other';
           titleTip = window.I18N?.t?.('dex.ui_sort_tip_newest') ?? 'dex.ui_sort_tip_newest';
         } else if (parsed.dir === 'desc') {
-          arrow = '▼';
-          aria = 'descending';
+          sortState = 'desc'; arrow = '▼'; aria = 'descending';
           titleTip = window.I18N?.t?.('dex.ui_sort_tip_desc') ?? 'dex.ui_sort_tip_desc';
         } else {
-          arrow = '▲';
-          aria = 'ascending';
+          sortState = 'asc'; arrow = '▲'; aria = 'ascending';
           titleTip = window.I18N?.t?.('dex.ui_sort_tip_asc') ?? 'dex.ui_sort_tip_asc';
         }
+      }
+      if (cls === 'th-icon') {
+        const iconAriaLabel = titleTip || (window.I18N?.t?.('th.icon') ?? 'Icon');
+        return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}" aria-label="${iconAriaLabel}" ${titleTip ? `title="${titleTip}"` : ''}><span class="sort-arrow sort-arrow-dual" aria-hidden="true">${renderDualSortArrowSvg(sortState)}</span></th>`;
       }
       return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}" ${titleTip ? `title="${titleTip}"` : ''}>${label}${arrow ? `<span class="sort-arrow" aria-hidden="true">${arrow}</span>` : ''}</th>`;
     }
@@ -200,7 +205,7 @@
             <thead>
               <tr>
                 ${isShowNo ? sortableTh('no', 'No.', 'th-no') : ''}
-                ${sortableTh('no', t('th.icon', '圖示'), 'th-icon')}
+                ${sortableTh('no', '', 'th-icon')}
                 <th class="th-name">${t('th.name', '寶可夢')}</th>
                 <th class="th-berry">${t('th.berry', '樹果')}</th>
                 <th class="th-spec">${t('th.specialty', '得意')}</th>

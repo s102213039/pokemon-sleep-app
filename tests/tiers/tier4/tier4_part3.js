@@ -2284,7 +2284,7 @@ SP 4,316
     assert(appraisalJs.includes('appraisal-calc-mobile-wrap'), 'appraisal.js mobile layout must include appraisal-calc-mobile-wrap');
     assert(appraisalJs.includes('appraisal-header-stats-dual'), 'appraisal.js must render dual stats row');
     assert(appraisalJs.includes('appraisal-stats-section'), 'appraisal.js must place dual stats in appraisal-stats-section');
-    assert(appraisalJs.includes("'lab.t_ing_rate'") && appraisalJs.includes("'lab.t_skill_rate'") && I18N.DICTIONARY['en-US']['lab.t_ing_rate'] === 'Ing Rate' && I18N.DICTIONARY['en-US']['lab.t_skill_rate'] === 'Skill Rate', 'appraisal.js must support concise EN labels (Ing Rate, Skill Rate)');
+    assert(appraisalJs.includes("'lab.t_ing_rate'") && appraisalJs.includes("'lab.t_skill_rate'") && I18N.DICTIONARY['en-US']['lab.t_ing_rate'] === 'Ing %' && I18N.DICTIONARY['en-US']['lab.t_skill_rate'] === 'Skill %', 'appraisal.js must support concise EN labels (Ing %, Skill %)');
 
     // 3. Strict check: No modification controls in appraisal calculation view
     assert(!appraisalJs.includes('pokedex-calc-slider'), 'appraisal.js must NOT contain pokedex-calc-slider (pure display)');

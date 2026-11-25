@@ -5,6 +5,24 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-25 已完成（圖鑑與倉庫表頭精簡：`Ing %` / `Skill %` / `Skill` 與無文字雙向排序箭頭 SVG）
+
+- **調整內容**：
+  1. **英文表頭與卡片標籤精簡 (`js/core/i18n/i18n_dict_en_us.js`, `js/core/i18n/res_lab_team.js`)**：
+     - 將 `Ing. Rate` 與 `Skill Rate`（含表格表頭、卡片標籤、排序下拉選項與評測彈窗 `lab.t_ing_rate` / `lab.t_skill_rate`）全面改為 `Ing %` 與 `Skill %`，大幅收窄欄寬並消除 `Ing1` 與 `Ing.` 標點不統一。
+     - 將 `Main Skill`（`th.main_skill`、`card.skill`）精簡為 `Skill`；`Carry` 維持不變。
+  2. **圖示欄（`th-icon`）移除文字改為純雙向排序箭頭 SVG (`js/modules/pokedex/pokedex_ui.js`, `js/modules/box/box_filter.js`, `js/modules/box/box_render.js`, `css/views/pokedex.css`, `css/styles.css`)**：
+     - 圖鑑 Tab 與倉庫 Tab 的 `th-icon` 表頭皆完全移除「圖示」與「Icon」文字（保留 `aria-label` 與 `title` 無障礙提示），改以 12x16 雙向三角箭頭 SVG（`.sort-dual-svg`）呈現四種排序狀態：
+       - **升冪 (`asc`)**：上方箭頭填實、下方箭頭中空。
+       - **降冪 (`desc`)**：上方箭頭中空、下方箭頭填實。
+       - **最新排前 (`newest`)**：上下箭頭同時填實。
+       - **未啟用此欄排序 (`none`)**：上下箭頭皆中空（hover 提亮）。
+  3. 同步更新 `tests/tiers/tier1_coverage.js`、`tests/tiers/tier4/tier4_part3.js` 並執行 `npm run build`（版本號 `20261125_1218`，`pokedex_ui.js` 為 996 行，全站模組皆 `<= 1,000` 行）。
+- **驗證結果**：
+  - `npm test`（含 Tier 1–4 全量）：**296 / 296 PASS**。
+  - `node tests/stress_i18n_consumer.js`：**21 / 21 PASS**（Verdict: APPROVE）。
+  - `node tests/test_r1_r5_theme_pwa_css.js`：**9 / 9 PASS**。
+
 ## 交接：2026-11-25 已完成（統一預解析字串資源架構重構：全面消除各模組內聯語言判斷與重複 `_t*` 包裝）
 
 - **調整內容（統一預解析 i18n 引擎 + 7 組異質多代理並行重構全站 48 個模組）**：

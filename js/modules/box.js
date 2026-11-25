@@ -125,14 +125,25 @@
     return currentSort;
   }
 
+  function renderBoxDualSortArrowSvg(state) {
+    const upFilled = state === 'asc' || state === 'newest';
+    const downFilled = state === 'desc' || state === 'newest';
+    return `<svg class="sort-dual-svg" data-sort-state="${state}" viewBox="0 0 12 16" width="12" height="16" aria-hidden="true"><path class="sort-tri-up ${upFilled ? 'filled' : 'hollow'}" d="M6 1.5L10.5 6.8H1.5Z"/><path class="sort-tri-down ${downFilled ? 'filled' : 'hollow'}" d="M6 14.5L10.5 9.2H1.5Z"/></svg>`;
+  }
+
   // Contract for Test 176: <th class="th-icon"
   function boxSortableTh(col, label, cls = '') {
     const targetCol = (col === 'dex' || col === 'no') ? 'id' : col;
     const parsed = parseBoxSort(sortBy);
     const on = parsed.col === targetCol;
+    const sortState = on ? (parsed.dir === 'desc' ? 'desc' : 'asc') : 'none';
     const arrow = on ? (parsed.dir === 'desc' ? '▼' : '▲') : '';
     const aria = on ? (parsed.dir === 'desc' ? 'descending' : 'ascending') : 'none';
     const classAttr = cls ? `${cls} th-sortable` : 'th-sortable';
+    if (cls === 'th-icon') {
+      const ariaLbl = (typeof window !== 'undefined' ? window.I18N?.t?.('th.icon') : undefined) ?? 'Icon';
+      return `<th class="${classAttr}" data-sort="${targetCol}" aria-sort="${aria}" aria-label="${ariaLbl}" style="text-align:center;"><span class="sort-arrow sort-arrow-dual" aria-hidden="true">${renderBoxDualSortArrowSvg(sortState)}</span></th>`;
+    }
     return `<th class="${classAttr}" data-sort="${targetCol}" aria-sort="${aria}" style="text-align:center;">${label}${arrow ? `<span class="sort-arrow" aria-hidden="true">${arrow}</span>` : ''}</th>`;
   }
 
@@ -1820,7 +1831,7 @@
         <table class="pokemon-table box-table">
           <thead>
             <tr>
-              ${boxSortableTh('id', (typeof window !== 'undefined' ? window.I18N?.t?.('th.icon') : undefined) ?? '圖示', 'th-icon')}
+              ${boxSortableTh('id', '', 'th-icon')}
               ${boxSortableTh('level', (typeof window !== 'undefined' ? window.I18N?.t?.('th.level') : undefined) ?? '等級')}
               <th style="text-align:center;">${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_th_name_nickname') : undefined) ?? '寶可夢 / 暱稱'}</th>
               <th style="text-align:center;">${(typeof window !== 'undefined' ? window.I18N?.t?.('th.berry') : undefined) ?? '樹果'}</th>

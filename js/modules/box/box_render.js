@@ -294,7 +294,7 @@
         <table class="pokemon-table box-table">
           <thead>
             <tr>
-              ${boxSortableTh('id', (typeof window !== 'undefined' ? window.I18N?.t?.('th.icon') : undefined) ?? '圖示', 'th-icon')}
+              ${boxSortableTh('id', '', 'th-icon')}
               ${boxSortableTh('level', (typeof window !== 'undefined' ? window.I18N?.t?.('th.level') : undefined) ?? '等級')}
               <th style="text-align:center;">${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_th_name_nickname') : undefined) ?? '寶可夢 / 暱稱'}</th>
               <th style="text-align:center;">${(typeof window !== 'undefined' ? window.I18N?.t?.('th.berry') : undefined) ?? '樹果'}</th>

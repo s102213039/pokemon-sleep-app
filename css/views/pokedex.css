@@ -64,10 +64,39 @@
 }
 
 .pokemon-table th.th-icon .sort-arrow {
-  margin-left: 1px;
+  margin-left: 0;
   font-size: 8.5px;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   vertical-align: middle;
+}
+
+.pokemon-table .sort-dual-svg {
+  display: block;
+  width: 12px;
+  height: 16px;
+  overflow: visible;
+}
+
+.pokemon-table .sort-dual-svg .filled {
+  fill: var(--accent-color);
+  stroke: var(--accent-color);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+.pokemon-table .sort-dual-svg .hollow {
+  fill: none;
+  stroke: var(--text-muted, #94a3b8);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  opacity: 0.72;
+}
+
+.pokemon-table th.th-icon:hover .sort-dual-svg .hollow {
+  stroke: var(--text-primary);
+  opacity: 0.95;
 }
 
 .pokemon-table td {

@@ -2509,8 +2509,9 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     const sortedDesc = app.sortPokemonList([sampleP1, sampleP2], 'no-desc');
     assert(sortedDesc[0].id === 25, 'sortPokemonList no-desc must place higher Dex number first');
 
-    // 2. Pokédex Table Markup: Icon header is clickable sortableTh('no', ...), Name/Berry/Specialty are non-clickable plain th
-    assert(appJs.includes("sortableTh('no', t('th.icon', '圖示'), 'th-icon')"), 'app.js renderTable must make icon header sortable via sortableTh');
+    // 2. Pokédex Table Markup: Icon header is clickable sortableTh('no', '', 'th-icon') with dual-arrow SVG (no text label), Name/Berry/Specialty are non-clickable plain th
+    assert(appJs.includes("sortableTh('no', '', 'th-icon')"), 'app.js renderTable must make icon header sortable arrow-only via sortableTh');
+    assert(appJs.includes('sort-dual-svg') && appJs.includes('sort-tri-up') && appJs.includes('sort-tri-down'), 'app.js must render dual-arrow SVG for th-icon sort states');
     assert(!appJs.includes("sortableTh('name'"), 'Pokédex name column must NOT be sortable');
     assert(!appJs.includes("sortableTh('berry'"), 'Pokédex berry column must NOT be sortable');
     assert(!appJs.includes("sortableTh('specialty'"), 'Pokédex specialty column must NOT be sortable');
@@ -2531,7 +2532,7 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     assert(box.nextBoxSort('level-asc', 'level') === 'id-asc', 'nextBoxSort must reset level-asc to id-asc default (state 3)');
 
     // 4. Box Tab Table Markup: Only icon and level are sortable; name, specialty, berry, ings are non-sortable
-    assert(boxJs.includes("boxSortableTh('id',") && boxJs.includes("'th.icon'"), 'box.js renderBoxTable must make icon header sortable via boxSortableTh');
+    assert(boxJs.includes("boxSortableTh('id', '', 'th-icon')") && boxJs.includes('sort-dual-svg'), 'box.js renderBoxTable must make icon header sortable arrow-only via boxSortableTh');
     assert(boxJs.includes("boxSortableTh('level',") && boxJs.includes("'th.level'"), 'box.js renderBoxTable must make level header sortable');
     assert(!boxJs.includes("boxSortableTh('name'"), 'Box name column must NOT be sortable');
     assert(!boxJs.includes("boxSortableTh('specialty'"), 'Box specialty column must NOT be sortable');
