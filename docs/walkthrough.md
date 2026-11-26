@@ -5,6 +5,18 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-26 已完成（修復道具詳情圖示灰暗遮罩、移除外框並放大圖示）
+
+- **問題根因**：
+  - [index.html](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/index.html) 與 [app/index.html](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/app/index.html) 中的 `<img id="wiki-item-modal-icon" src="">` 因初始 `src=""` 在頁面載入瞬間即觸發 `onerror` 並寫入行內 `style="opacity: 0.3"`，開啟道具詳情後未重置 `opacity`，導致所有道具圖示在深色主題下呈現灰暗半透明遮罩。
+  - [styles.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/styles.css) 仍殘留舊版 `.wiki-item-modal-icon-wrap` 方形外框與底色規則（`48px`、`border: 1px solid var(--border-color)`、`background: var(--bg-card-inner)`）。
+- **修正內容**：
+  1. [index.html](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/index.html)、[app/index.html](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/app/index.html) 與 [wiki_items.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/wiki/wiki_items.js)：移除初始空 `src=""`，並於 `openItemDetailModal()` 載入圖示前重置 `iconEl.style.opacity = ''` 與 `delete iconEl.dataset.fallbackStep`。
+  2. [wiki_subskills.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/wiki/wiki_subskills.css) 與 [styles.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/styles.css)：移除 `.wiki-item-modal-icon-wrap` 外框、內距與背景底色（`border: none; background: transparent; padding: 0; width: 56px; height: 56px;`），將 `.wiki-item-modal-icon` 放大至 `52px x 52px` 並鎖定 `opacity: 1; filter: none;`。
+- **驗證結果**：
+  - 無頭 Chrome 實機驗證（Mobile H5 `390x844`、Onyx 深色主題開啟葉之石詳情）：`wrap: 56px, border: none, bg: transparent`、`icon: 52px x 52px, opacity: 1, filter: none`。
+  - `npm run test:fast`：**172 / 172 PASS**；`node tests/test_r1_r5_theme_pwa_css.js`：**10 / 10 PASS**。
+
 ## 交接：2026-11-26 已完成（寶可夢詳情頂部圖示移至編號列防重疊，並全面移除全站上方拖曳橫桿）
 
 - **調整內容**：

@@ -520,7 +520,7 @@
           <div class="box-modal-header wiki-item-modal-header">
             <div class="wiki-item-modal-title-group">
               <div class="wiki-item-modal-icon-wrap" id="wiki-item-modal-icon-wrap">
-                <img id="wiki-item-modal-icon" class="wiki-item-modal-icon" src="" alt="Item" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}else{this.style.opacity='0.3';}">
+                <img id="wiki-item-modal-icon" class="wiki-item-modal-icon" alt="Item" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
               </div>
               <div class="wiki-item-modal-heading">
                 <div class="wiki-item-modal-title-row">
@@ -584,13 +584,13 @@
     // 1. Header populate
     const iconEl = modal.querySelector('#wiki-item-modal-icon');
     if (iconEl) {
+      if (iconEl.style) iconEl.style.opacity = '';
+      if (iconEl.dataset) delete iconEl.dataset.fallbackStep;
       iconEl.src = iconUrl;
       iconEl.alt = name;
       iconEl.onerror = function() {
         if (typeof handleAssetImageError === 'function') {
           handleAssetImageError(this);
-        } else {
-          this.style.opacity = '0.3';
         }
       };
     }

@@ -36862,23 +36862,25 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .wiki-item-modal-icon-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
+  width: 56px;
+  height: 56px;
+  border-radius: 0;
+  border: none;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 4px;
+  padding: 0;
   box-sizing: border-box;
 }
 
 .wiki-item-modal-icon {
-  width: 100%;
-  height: 100%;
+  width: 52px;
+  height: 52px;
   object-fit: contain;
+  opacity: 1;
+  filter: none;
 }
 
 .wiki-item-modal-heading {
