@@ -416,12 +416,73 @@
     }
   }
 
+  // Official Pokemon Sleep National Dex + Form Sub-Order mapping (baseDex * 100 + formSubOrder)
+  // Ensures regional forms, costume variants, and alternate forms sort right beside their base species
+  // in both ascending and descending order, matching the official in-game Sleep Style Dex & Pokemon Box.
+  const OFFICIAL_DEX_FORM_OVERRIDES = Object.freeze({
+    9001: 2501,  // Pikachu (Halloween)
+    9002: 2502,  // Pikachu (Holiday)
+    9003: 2503,  // Pikachu (Captain legacy alias)
+    9007: 2503,  // Pikachu (Captain)
+    7006: 3701,  // Vulpix (Alola)
+    7007: 3801,  // Ninetales (Alola)
+    7013: 5801,  // Growlithe (Hisui)
+    7014: 5901,  // Arcanine (Hisui)
+    9004: 13301, // Eevee (Holiday)
+    9005: 13302, // Eevee (Halloween)
+    7054: 19401, // Wooper (Paldea)
+    9006: 36301, // Spheal (Holiday)
+    8001: 84901  // Toxtricity (Low Key)
+  });
+
+  function getOfficialPokemonDexOrder(p) {
+    if (!p) return 9999999;
+    const rawId = parseInt(p.id != null ? p.id : (p.formatted_no != null ? p.formatted_no : p.pokedex_id), 10);
+    const rawNo = parseInt(p.formatted_no != null ? p.formatted_no : p.id, 10);
+    const keyId = Number.isFinite(rawId) ? rawId : (Number.isFinite(rawNo) ? rawNo : NaN);
+
+    if (Number.isFinite(keyId) && Object.prototype.hasOwnProperty.call(OFFICIAL_DEX_FORM_OVERRIDES, keyId)) {
+      return OFFICIAL_DEX_FORM_OVERRIDES[keyId];
+    }
+    if (Number.isFinite(rawNo) && Object.prototype.hasOwnProperty.call(OFFICIAL_DEX_FORM_OVERRIDES, rawNo)) {
+      return OFFICIAL_DEX_FORM_OVERRIDES[rawNo];
+    }
+
+    const cn = String(p.name_cn || p.name || '');
+    const en = String(p.name_en || '');
+    // Handle multi-variety species sharing the same National Dex ID (e.g. #710 Pumpkaboo / #711 Gourgeist)
+    if (keyId === 710 || keyId === 711) {
+      let sub = 0;
+      if (cn.includes('中顆') || cn.includes('中颗') || /\bMedium\b/i.test(en)) sub = 1;
+      else if (cn.includes('大顆') || cn.includes('大颗') || /\bLarge\b/i.test(en)) sub = 2;
+      else if (cn.includes('巨顆') || cn.includes('巨颗') || /\bJumbo\b/i.test(en)) sub = 3;
+      return keyId * 100 + sub;
+    }
+
+    // Fallback for future regional/costume forms with synthetic IDs > 1025: parse base dex from icon_url (e.g. 59-h.png)
+    if (Number.isFinite(keyId) && keyId > 1025) {
+      const iconStr = String(p.icon_url || p.icon || '');
+      const m = iconStr.match(/\/icon\/(\d+)-/);
+      if (m) {
+        const baseDex = parseInt(m[1], 10);
+        if (Number.isFinite(baseDex) && baseDex > 0 && baseDex <= 1025) {
+          return baseDex * 100 + 50 + (keyId % 50);
+        }
+      }
+    }
+
+    if (Number.isFinite(keyId)) return keyId * 100;
+    return 9999999;
+  }
+
   return {
     CAPS,
     RECIPE_LEVEL_BONUS_TABLE,
     CANONICAL_INGREDIENTS,
     CANONICAL_BERRIES,
+    OFFICIAL_DEX_FORM_OVERRIDES,
     getCaps: getActiveCaps,
+    getOfficialPokemonDexOrder,
     getPokemonLevelCap,
     getRecipeLevelCap,
     getTheoreticalMaxLevel,

@@ -2525,6 +2525,27 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     const sortedDesc = app.sortPokemonList([sampleP1, sampleP2], 'no-desc');
     assert(sortedDesc[0].id === 25, 'sortPokemonList no-desc must place higher Dex number first');
 
+    // Official regional / costume / alternate form order (asc & exact mirror desc)
+    const variantSamples = [
+      { id: 980, formatted_no: '980', name_cn: '土王' },
+      { id: 9007, formatted_no: '9007', name_cn: '皮卡丘（船長）' },
+      { id: 26, formatted_no: '026', name_cn: '雷丘' },
+      { id: 9001, formatted_no: '9001', name_cn: '皮卡丘（萬聖節）' },
+      { id: 25, formatted_no: '025', name_cn: '皮卡丘' },
+      { id: 9002, formatted_no: '9002', name_cn: '皮卡丘（佳節）' },
+      { id: 7006, formatted_no: '7006', name_cn: '六尾（阿羅拉的樣子）' },
+      { id: 37, formatted_no: '037', name_cn: '六尾' },
+      { id: 7014, formatted_no: '7014', name_cn: '風速狗（洗翠的樣子）' },
+      { id: 59, formatted_no: '059', name_cn: '風速狗' },
+      { id: 8001, formatted_no: '8001', name_cn: '顫弦蠑螈（低調的樣子）' },
+      { id: 849, formatted_no: '849', name_cn: '顫弦蠑螈（高調的樣子）' }
+    ];
+    const vAscIds = app.sortPokemonList(variantSamples, 'no-asc').map(p => p.id);
+    const expectedAscIds = [25, 9001, 9002, 9007, 26, 37, 7006, 59, 7014, 849, 8001, 980];
+    assert(JSON.stringify(vAscIds) === JSON.stringify(expectedAscIds), `Official no-asc variant order mismatch: ${JSON.stringify(vAscIds)}`);
+    const vDescIds = app.sortPokemonList(variantSamples, 'no-desc').map(p => p.id);
+    assert(JSON.stringify(vDescIds) === JSON.stringify(expectedAscIds.slice().reverse()), `Official no-desc variant order must be exact mirror: ${JSON.stringify(vDescIds)}`);
+
     // 2. Pokédex Table Markup: Icon header is clickable sortableTh('no', '', 'th-icon') with dual-arrow SVG (no text label), Name/Berry/Specialty are non-clickable plain th
     assert(appJs.includes("sortableTh('no', '', 'th-icon')"), 'app.js renderTable must make icon header sortable arrow-only via sortableTh');
     assert(appJs.includes('sort-dual-svg') && appJs.includes('sort-tri-up') && appJs.includes('sort-tri-down'), 'app.js must render dual-arrow SVG for th-icon sort states');

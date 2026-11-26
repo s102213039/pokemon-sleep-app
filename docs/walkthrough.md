@@ -5,6 +5,28 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-26 已完成（全站寶可夢排序對齊官方圖鑑順序：佳節／地區／異色形態不再排到最後）
+
+- **問題根因**：
+  - 佳節型態（`9001`–`9007`）、地區形態（`7006`/`7007`/`7013`/`7014`/`7054`）與低調顫弦蠑螈（`8001`）因內部合成編號大於 `1025`，先前在圖鑑表、倉庫列表與下拉搜尋中依數值排序時會全部被擠到 `#0980 土王` 之後，與官方遊戲圖鑑及倉庫「依編號排序」不符。
+- **修正內容**：
+  1. **單一權威排序引擎**（[gameConfig.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/core/gameConfig.js)）：新增 `GAME_CONFIG.getOfficialPokemonDexOrder(p)`（`baseNationalDex * 100 + formSubOrder`），將所有佳節／地區／多尺寸／異態寶可夢精準歸位至對應全國圖鑑原種之後：
+     - `#0025` 皮卡丘 -> 萬聖節(`2501`) -> 佳節(`2502`) -> 船長(`2503`) -> `#0026` 雷丘
+     - `#0037` 六尾 -> 阿羅拉(`3701`)；`#0038` 九尾 -> 阿羅拉(`3801`)
+     - `#0058` 卡蒂狗 -> 洗翠(`5801`)；`#0059` 風速狗 -> 洗翠(`5901`)
+     - `#0133` 伊布 -> 佳節(`13301`) -> 萬聖節(`13302`)
+     - `#0194` 烏波 -> 帕底亞(`19401`)；`#0363` 海豹球 -> 佳節(`36301`)
+     - `#0710/#0711` 南瓜精／南瓜怪人依小／中／大／巨顆種遞增；`#0849` 顫弦蠑螈高調(`84900`) -> 低調(`84901`)
+     - 升冪與降冪（完全鏡像反轉）皆與官方遊戲一致，並內建 `icon_url` 回退機制支援未來新增形態。
+  2. **全站所有寶可夢排序入口統一接入**：
+     - 圖鑑主表／卡片排序：[pokedex_base.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/pokedex/pokedex_base.js)（`no-asc`、`no-desc`、`no-newest` 與所有欄位次排序）。
+     - 倉庫列表排序：[box_storage_crud.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/box/box_storage_crud.js)（預設 `id-asc`/`dex-asc`、`id-desc`/`dex-desc` 與所有欄位次排序）。
+     - 倉庫手動新增下拉搜尋：[box_modal_form.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/box/box_modal_form.js)。
+     - 百科島嶼出沒清單排序：[wiki_camps_island.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/wiki/wiki_camps_island.js)。
+- **驗證結果**：
+  - [tier1_coverage.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/tests/tiers/tier1_coverage.js) 新增官方形態升冪／降冪鏡像回歸測試。
+  - `npm test`：**296 / 296 PASS**；`node tests/stress_i18n_consumer.js`：**21 / 21 PASS**；`node tests/test_r1_r5_theme_pwa_css.js`：**10 / 10 PASS**。
+
 ## 交接：2026-11-26 已完成（修復倉庫詳情淺色主題性格卡與六邊形雷達圖對比度，並全面精簡全站寶可夢地區形態名稱）
 
 - **調整內容**：

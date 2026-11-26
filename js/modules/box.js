@@ -1355,20 +1355,27 @@
       return true;
     }).sort((a, b) => {
       const getPkmDexId = (p) => {
-        if (!p) return 99999;
+        if (!p) return 9999999;
         const base = findPokemonBase(p.pokemonId || p.name);
-        if (base) {
-          if (base.formatted_no && !isNaN(parseInt(base.formatted_no, 10))) {
-            return parseInt(base.formatted_no, 10);
-          }
-          if (base.id && !isNaN(parseInt(base.id, 10))) {
-            return parseInt(base.id, 10);
-          }
+        const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+                   (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+        if (gc && typeof gc.getOfficialPokemonDexOrder === 'function') {
+          if (base) return gc.getOfficialPokemonDexOrder(base);
+          return gc.getOfficialPokemonDexOrder({ id: p.pokemonId, formatted_no: p.pokemonId, name_cn: p.name });
         }
-        if (p.pokemonId && !isNaN(parseInt(p.pokemonId, 10))) {
-          return parseInt(p.pokemonId, 10);
+        const fallbackMap = {
+          9001: 2501, 9002: 2502, 9003: 2503, 9007: 2503,
+          7006: 3701, 7007: 3801, 7013: 5801, 7014: 5901,
+          9004: 13301, 9005: 13302, 7054: 19401, 9006: 36301, 8001: 84901
+        };
+        const raw = base
+          ? parseInt(base.formatted_no || base.id, 10)
+          : parseInt(p.pokemonId, 10);
+        if (!isNaN(raw)) {
+          if (Object.prototype.hasOwnProperty.call(fallbackMap, raw)) return fallbackMap[raw];
+          return raw * 100;
         }
-        return 99999;
+        return 9999999;
       };
 
       const getPkmName = (p) => {
@@ -2437,6 +2444,11 @@
 
         matchedItems.sort((a, b) => {
           if (a.rank !== b.rank) return a.rank - b.rank;
+          const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+                     (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+          if (gc && typeof gc.getOfficialPokemonDexOrder === 'function') {
+            return gc.getOfficialPokemonDexOrder(a.p) - gc.getOfficialPokemonDexOrder(b.p);
+          }
           const noA = parseInt(a.p.id || a.p.formatted_no, 10) || 0;
           const noB = parseInt(b.p.id || b.p.formatted_no, 10) || 0;
           return noA - noB;

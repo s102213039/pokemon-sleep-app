@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "manifestHash": "16c42c1f9b56dcda",
-  "updatedAt": "2026-11-26T12:00:47Z",
+  "manifestHash": "40b95cf4ba2dcf0d",
+  "updatedAt": "2026-11-26T15:07:53.322Z",
   "files": {
     "data.json": {
       "hash": "dd11148346701d5e",
@@ -9,13 +9,13 @@
       "count": 255
     },
     "recipes.json": {
-      "hash": "8ae75128f7d96761",
-      "size": 59015,
+      "hash": "4aa529fed73fd3cb",
+      "size": 43851,
       "count": 81
     },
     "news.json": {
-      "hash": "5340af077ed520f4",
-      "size": 174798,
+      "hash": "4fc7b6de1df32efe",
+      "size": 163651,
       "count": 25
     },
     "sleep_styles.json": {

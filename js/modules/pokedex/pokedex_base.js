@@ -418,6 +418,35 @@ function getItemNo(p) {
   return isNaN(num) ? 99999 : num;
 }
 
+const _POKEDEX_FALLBACK_FORM_ORDER = {
+  9001: 2501, 9002: 2502, 9003: 2503, 9007: 2503,
+  7006: 3701, 7007: 3801, 7013: 5801, 7014: 5901,
+  9004: 13301, 9005: 13302, 7054: 19401, 9006: 36301, 8001: 84901
+};
+
+function getOfficialDexOrder(p) {
+  const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+             (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+  if (gc && typeof gc.getOfficialPokemonDexOrder === 'function') {
+    return gc.getOfficialPokemonDexOrder(p);
+  }
+  if (!p) return 9999999;
+  const num = getItemNo(p);
+  if (Object.prototype.hasOwnProperty.call(_POKEDEX_FALLBACK_FORM_ORDER, num)) {
+    return _POKEDEX_FALLBACK_FORM_ORDER[num];
+  }
+  if (num === 710 || num === 711) {
+    const cn = String(p.name_cn || p.name || '');
+    const en = String(p.name_en || '');
+    let sub = 0;
+    if (cn.includes('中顆') || cn.includes('中颗') || /\bMedium\b/i.test(en)) sub = 1;
+    else if (cn.includes('大顆') || cn.includes('大颗') || /\bLarge\b/i.test(en)) sub = 2;
+    else if (cn.includes('巨顆') || cn.includes('巨颗') || /\bJumbo\b/i.test(en)) sub = 3;
+    return num * 100 + sub;
+  }
+  return num * 100;
+}
+
 function getItemName(p) {
   if (!p) return '';
   if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function') {
@@ -438,8 +467,8 @@ function getItemBerry(p) {
 }
 
 const SORT_GETTERS = {
-  no: getItemNo,
-  id: getItemNo,
+  no: getOfficialDexOrder,
+  id: getOfficialDexOrder,
   name: getItemName,
   specialty: getItemSpecialty,
   berry: getItemBerry,
@@ -504,7 +533,7 @@ function sortPokemonList(list, sortKey) {
       if (dateA !== dateB) {
         return dateB.localeCompare(dateA); // Newest release date first
       }
-      return getItemNo(b) - getItemNo(a); // Newer/higher ID first
+      return getOfficialDexOrder(b) - getOfficialDexOrder(a); // Newer/higher official Dex order first
     });
     return out;
   }
@@ -520,12 +549,12 @@ function sortPokemonList(list, sortKey) {
     if (typeof valA === 'string' && typeof valB === 'string') {
       const cmp = valA.localeCompare(valB, dateLocale);
       if (cmp !== 0) return cmp * mul;
-      return getItemNo(a) - getItemNo(b);
+      return getOfficialDexOrder(a) - getOfficialDexOrder(b);
     }
     const numA = typeof valA === 'number' ? valA : 0;
     const numB = typeof valB === 'number' ? valB : 0;
     if (numA !== numB) return (numA - numB) * mul;
-    return getItemNo(a) - getItemNo(b);
+    return getOfficialDexOrder(a) - getOfficialDexOrder(b);
   });
   return out;
 }

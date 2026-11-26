@@ -420,6 +420,11 @@
 
         matchedItems.sort((a, b) => {
           if (a.rank !== b.rank) return a.rank - b.rank;
+          const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+                     (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+          if (gc && typeof gc.getOfficialPokemonDexOrder === 'function') {
+            return gc.getOfficialPokemonDexOrder(a.p) - gc.getOfficialPokemonDexOrder(b.p);
+          }
           const noA = parseInt(a.p.id || a.p.formatted_no, 10) || 0;
           const noB = parseInt(b.p.id || b.p.formatted_no, 10) || 0;
           return noA - noB;

@@ -5817,12 +5817,24 @@
   }
 
   function getIslandPokemonDexOrder(p) {
-    if (!p) return 999999;
+    if (!p) return 9999999;
+    const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+               (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+    if (gc && typeof gc.getOfficialPokemonDexOrder === 'function' && typeof window !== 'undefined' && Array.isArray(window.allPokemons) && window.allPokemons.length > 0) {
+      const name = p.name_cn || p.name || '';
+      const normFull = name ? String(name).replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）') : '';
+      const normHalf = name ? String(name).replace(/（/g, ' (').replace(/）/g, ')') : '';
+      const nEn = p.name_en || '';
+      const nEnLower = nEn ? String(nEn).toLowerCase() : '';
+      const idx = _getWikiPkmIndex(window.allPokemons);
+      const found = (name && idx['cn:' + name]) || (normFull && idx['cn:' + normFull]) || (normHalf && idx['cn:' + normHalf]) || (nEn && (idx['en:' + nEn] || idx['en:' + nEnLower]));
+      if (found) return gc.getOfficialPokemonDexOrder(found);
+    }
     const rawDex = getIslandPokemonDexCode(p);
     const num = parseInt(rawDex, 10);
     const base = isNaN(num) ? 9999 : num;
-    const isForm = String(rawDex).includes('-') || (p.name && (p.name.includes('樣子') || p.name.includes('低調')));
-    return base * 10 + (isForm ? 1 : 0);
+    const isForm = String(rawDex).includes('-') || (p.name && (p.name.includes('樣子') || p.name.includes('低調') || p.name.includes('萬聖節') || p.name.includes('佳節') || p.name.includes('船長')));
+    return base * 100 + (isForm ? 1 : 0);
   }
 
   function filterIslandSleepType(sleepType) {
