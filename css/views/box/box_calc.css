@@ -482,12 +482,6 @@
   color: #f8fafc !important;
 }
 
-[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-row-formula,
-[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .calc-row-formula,
-[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-row-formula,
-[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .calc-row-formula,
-}
-
 .box-auth-prompt-card {
   position: sticky;
   top: 140px;

@@ -514,7 +514,10 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   animation: sleepTooltipIn 0.12s ease-out;
 }
 
-[data-theme="light"] .island-sleep-hover-tooltip {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .island-sleep-hover-tooltip,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .island-sleep-hover-tooltip,
+[data-theme="midnight"][data-theme-inverted="true"] .island-sleep-hover-tooltip,
+[data-theme="onyx"][data-theme-inverted="true"] .island-sleep-hover-tooltip {
   background: #ffffff !important;
   opacity: 1 !important;
   border: 1px solid #cbd5e1 !important;

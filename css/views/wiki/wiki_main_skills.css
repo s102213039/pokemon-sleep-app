@@ -360,7 +360,7 @@
 
 .mobile-h5-app #pokedex-detail-modal .pokedex-subskill-toggle-btn.is-expanded {
   color: var(--text-secondary, #64748b) !important;
-  background: var(--bg-muted, #f1f5f9) !important;
+  background: var(--bg-card-inner) !important;
   border-color: var(--border-color-subtle, #e2e8f0) !important;
 }
 

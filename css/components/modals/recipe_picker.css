@@ -106,7 +106,7 @@
 
 .settings-modal-close-btn:hover {
   color: var(--text-main);
-  background: var(--bg-secondary);
+  background: var(--bg-card-hover);
 }
 
 .settings-modal-body {

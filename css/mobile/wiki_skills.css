@@ -433,7 +433,9 @@
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-node-tooltip .tooltip-note,
-[data-theme="midnight"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-note {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-node-tooltip .tooltip-note,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-note,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-note {
   color: #0369a1;
 }
 

@@ -781,6 +781,78 @@ check('M2 Items Tab & Item Detail Modal 8-Theme CSS Sync & WCAG AA Contrast', ()
   assert(contrastRgb(hexToRgb('#0369a1'), hexToRgb('#f1f5f9')) >= 4.5, 'Light .wiki-item-price-pill .price-value.text-diamonds < 4.5');
 });
 
+check('8-Theme Dropdown, Modal, Tooltip & Popover Isolation Guard (Zero Bare/Bogus Selectors & Zero Undefined Vars)', () => {
+  const readCss = (rel) => fs.readFileSync(path.join(ROOT_DIR, rel), 'utf8');
+  const settingsModalCss = readCss('css/components/modals/settings_modal.css');
+  const wikiSubskillsCss = readCss('css/views/wiki/wiki_subskills.css');
+  const recipesPantryCss = readCss('css/views/recipes_pantry.css');
+  const wikiLadderMobileCss = readCss('css/mobile/wiki_ladder.css');
+  const wikiItemsCss = readCss('css/views/wiki/wiki_items.css');
+  const boxDetailCss = readCss('css/views/box/box_detail.css');
+
+  for (const [label, css] of [
+    ['css/components/modals/settings_modal.css', settingsModalCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    assert(!/\[data-theme="(?:dawn|emerald)"\]\s+\.custom-select-calc\s+\.custom-select-menu/.test(css),
+      `${label} must not have bare [data-theme="dawn|emerald"] on .custom-select-calc .custom-select-menu`);
+    assert(!/\[data-theme="(?:dawn|emerald)"\]\s+\.calc-select\s+option/.test(css),
+      `${label} must not have bare [data-theme="dawn|emerald"] on .calc-select option`);
+    assert(css.includes('[data-theme="midnight"][data-theme-inverted="true"] .custom-select-calc .custom-select-menu') &&
+      css.includes('[data-theme="onyx"][data-theme-inverted="true"] .custom-select-calc .custom-select-menu'),
+      `${label} must cover all 4 light themes on .custom-select-calc .custom-select-menu`);
+  }
+
+  for (const [label, css] of [
+    ['css/views/wiki/wiki_subskills.css', wikiSubskillsCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    assert(!/\[data-theme="(?:dawn|emerald)"\]\s+\.box-conflict-dialog/.test(css),
+      `${label} must not have bare [data-theme="dawn|emerald"] on .box-conflict-dialog`);
+    assert(css.includes('[data-theme="midnight"][data-theme-inverted="true"] .box-conflict-dialog') &&
+      css.includes('[data-theme="onyx"][data-theme-inverted="true"] .box-conflict-dialog'),
+      `${label} must cover all 4 light themes on .box-conflict-dialog`);
+  }
+
+  for (const [label, css] of [
+    ['css/views/recipes_pantry.css', recipesPantryCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    assert(!/\.recipe-pot-filler-dialog\s*\{[^}]*var\(--bg-primary\b/.test(css),
+      `${label} must not use undefined --bg-primary on .recipe-pot-filler-dialog`);
+    assert(!/\.filler-dialog-header\s*\{[^}]*var\(--bg-secondary\b/.test(css),
+      `${label} must not use undefined --bg-secondary on .filler-dialog-header`);
+  }
+
+  for (const [label, css] of [
+    ['css/mobile/wiki_ladder.css', wikiLadderMobileCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    assert(!/\[data-theme="light"\]\s+\.island-sleep-hover-tooltip/.test(css),
+      `${label} must not use non-existent [data-theme="light"] on .island-sleep-hover-tooltip`);
+    assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .island-sleep-hover-tooltip') &&
+      css.includes('[data-theme="onyx"][data-theme-inverted="true"] .island-sleep-hover-tooltip'),
+      `${label} must cover all 4 light themes on .island-sleep-hover-tooltip`);
+  }
+
+  for (const [label, css] of [
+    ['css/views/wiki/wiki_items.css', wikiItemsCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    assert(css.includes('[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-menu') &&
+      css.includes('[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-menu'),
+      `${label} must cover all 4 light themes on H5 box toolbar .custom-select-menu`);
+  }
+
+  for (const [label, css] of [
+    ['css/views/box/box_detail.css', boxDetailCss],
+    ['css/styles.css', stylesCss]
+  ]) {
+    assert(!/\[data-theme="(?:midnight|onyx)"\]\s+#pokedex-detail-modal\s+\.calc-color-/.test(css),
+      `${label} must guard [data-theme="midnight|onyx"] with :not([data-theme-inverted="true"]) on #pokedex-detail-modal .calc-color-*`);
+  }
+});
+
 check('Zero Emoji & Zero Decorative Glyphs compliance in all modified R1-R5 & M2 files', () => {
   const emojiRe = /[\u{1F300}-\u{1FAFF}\u23F1\u2605\u2606\u2B50\u2728\u2764\uFE0F\u20E3]/u;
   const glyphRe = /[★☆]|\[★\]|\[☆\]|\[\*\]|\[\+\]|\[#\]/;

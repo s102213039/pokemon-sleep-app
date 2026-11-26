@@ -5,6 +5,24 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-26 已完成（全站 8 主題下拉選單、彈窗、浮窗與提示框深淺色隔離全面盤點與修復）
+
+- **問題根因**：
+  - 專案支援 8 種主題變體（4 種深色：`midnight`、`onyx`、`dawn+inverted`、`emerald+inverted`；4 種淺色：`dawn`、`emerald`、`midnight+inverted`、`onyx+inverted`）。
+  - 全站 CSS 盤點發現三類主題滲漏缺陷：
+    1. **裸選擇器未加反色隔離守衛**：[settings_modal.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/components/modals/settings_modal.css) 的 `[data-theme="dawn"] .custom-select-calc .custom-select-menu` 與 `[data-theme="emerald"] .custom-select-calc .custom-select-menu`（及 `.calc-select option`）未加 `:not([data-theme-inverted="true"])`，導致在深色反色主題（如 `emerald+inverted`／`dawn+inverted`）展開睡眠 EXP 計算機下拉選單時，背景強制變成純白 `#ffffff` 而文字維持淺灰 `#e2e8f0`；同類裸選擇器亦出現在 `#box-conflict-modal`（[wiki_subskills.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/wiki/wiki_subskills.css)）、`#pokedex-detail-modal` 計算數值與策略卡（[box_detail.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/box/box_detail.css)）與行動端詳情拖曳條（[wiki_layout.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/wiki/wiki_layout.css)）。
+    2. **未定義 CSS Token 與無效主題名稱**：鍋子容量填充最佳化彈窗 `.recipe-pot-filler-dialog`（[recipes_pantry.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/recipes_pantry.css)）誤用未定義變數 `--bg-primary`／`--bg-secondary`／`--bg-tertiary`／`--text-accent` 並回退至深色 `#0f172a`，導致全 4 種淺色主題均為深底黑字；島嶼睡姿提示框 `.island-sleep-hover-tooltip`（[wiki_ladder.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/mobile/wiki_ladder.css)）誤用不存在的 `[data-theme="light"]`；`.settings-modal-close-btn:hover`（[recipe_picker.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/components/modals/recipe_picker.css)）與 `.pokedex-subskill-toggle-btn.is-expanded`（[wiki_layout.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/wiki/wiki_layout.css)／[wiki_main_skills.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/wiki/wiki_main_skills.css)）誤用未定義的 `--bg-secondary`／`--bg-muted`。
+    3. **4 淺色／4 深色主題覆蓋缺漏**：行動端倉庫下拉選單（[wiki_items.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/wiki/wiki_items.css)／[pokedex_tooltips.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/components/modals/pokedex_tooltips.css)）、全域技能提示框 `.global-skill-tooltip`（[pokedex_filters.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/pokedex_filters.css)）、評測報告彈窗 `#modal-appraisal-report`（[wiki_calcs.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/mobile/wiki_calcs.css)）及階梯節點提示（[wiki_skills.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/mobile/wiki_skills.css)／[wiki_skill_ladder.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/wiki/wiki_skill_ladder.css)）缺少反色主題對應規則；另清除 [box_calc.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/box/box_calc.css) 殘留尾隨逗號語法錯誤。
+- **修正與回歸防護**：
+  1. 同步修正上述全部 11 個模組 CSS 與 [styles.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/styles.css)，並執行 `npm run build` 重新編譯 `css/styles.min.css` 與版本戳（`20261126_0443`）。
+  2. 新增永久靜態守衛測試於 [test_r1_r5_theme_pwa_css.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/tests/test_r1_r5_theme_pwa_css.js)，禁止下拉選單、彈窗與提示框再出現裸主題選擇器、`[data-theme="light"]` 或未定義背景 Token。
+  3. 新增永久無頭 Chrome CDP E2E 測試 `E2E-THEME-OVERLAYS-01` 於 [test_e2e_r1_r5_pwa_ui.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/tests/test_e2e_r1_r5_pwa_ui.js)，實機遍歷桌面版（`1280x800`）與行動版 H5（`390x844`）全部 8 種主題變體，驗證背景亮度（深色 `L <= 0.25`、淺色 `L >= 0.60`）與 WCAG 2.1 AA 對比度（`>= 4.5:1`）。
+- **驗證結果**：
+  - `npm test`（Tier 1–4 全量）：**296 / 296 PASS**。
+  - `node tests/stress_i18n_consumer.js`：**21 / 21 PASS**。
+  - `node tests/test_r1_r5_theme_pwa_css.js`：**10 / 10 PASS**。
+  - `node tests/test_e2e_r1_r5_pwa_ui.js`（無頭 Chrome 實機 E2E）：**12 / 12 PASS**（含 `E2E-THEME-OVERLAYS-01` 全 8 主題桌面＋行動雙端驗證）。
+
 ## 交接：2026-11-25 已完成（修復英文模式桌面版圖鑑寶可夢詳情浮窗寬度被壓縮至 560px 破版問題）
 
 - **問題根因**：

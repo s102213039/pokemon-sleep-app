@@ -50,11 +50,11 @@
   color: #b45309 !important;
 }
 
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-helps,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-helps,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-helps,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-helps,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-helps,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-helps,
-[data-theme="midnight"] .calc-color-helps {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-helps {
   color: #38bdf8 !important;
 }
 
@@ -63,64 +63,64 @@
 [data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-helps {
   color: #e2e8f0 !important;
 }
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-ing,
-[data-theme="onyx"] #pokedex-detail-modal .calc-color-ing,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-ing,
-[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-ing,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-ing,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-ing,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-ing,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-ing,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-ing,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-ing,
-[data-theme="midnight"] .calc-color-ing,
-[data-theme="onyx"] .calc-color-ing {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-ing,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-ing {
   color: #34d399 !important;
 }
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-skill,
-[data-theme="onyx"] #pokedex-detail-modal .calc-color-skill,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-skill,
-[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-skill,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-skill,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-skill,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-skill,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-skill,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-skill,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-skill,
-[data-theme="midnight"] .calc-color-skill,
-[data-theme="onyx"] .calc-color-skill {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-skill,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-skill {
   color: #c084fc !important;
 }
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-yield,
-[data-theme="onyx"] #pokedex-detail-modal .calc-color-yield,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-yield,
-[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-yield,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-yield,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-yield,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-yield,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-yield,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-yield,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-yield,
-[data-theme="midnight"] .calc-color-yield,
-[data-theme="onyx"] .calc-color-yield {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-yield,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-yield {
   color: #fbbf24 !important;
 }
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-triggers,
-[data-theme="onyx"] #pokedex-detail-modal .calc-color-triggers,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-triggers,
-[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-triggers,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-triggers,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-triggers,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-triggers,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-triggers,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-triggers,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-triggers,
-[data-theme="midnight"] .calc-color-triggers,
-[data-theme="onyx"] .calc-color-triggers {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-triggers,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-triggers {
   color: #f472b6 !important;
 }
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-berry,
-[data-theme="onyx"] #pokedex-detail-modal .calc-color-berry,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-berry,
-[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-berry,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-berry,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-berry,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-berry,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-berry,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-berry,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-berry,
-[data-theme="midnight"] .calc-color-berry,
-[data-theme="onyx"] .calc-color-berry {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-berry,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-berry {
   color: #fbbf24 !important;
 }
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-berry-fav,
-[data-theme="onyx"] #pokedex-detail-modal .calc-color-berry-fav,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-berry-fav,
-[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-berry-fav,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-berry-fav,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-berry-fav,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-berry-fav,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-berry-fav,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-berry-fav,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-berry-fav,
-[data-theme="midnight"] .calc-color-berry-fav,
-[data-theme="onyx"] .calc-color-berry-fav {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-berry-fav,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-berry-fav {
   color: #f59e0b !important;
 }
 
@@ -507,23 +507,23 @@
   gap: 4px !important;
 }
 
-[data-theme="emerald"] .strategy-card-title,
-[data-theme="emerald"] .strategy-card-title.pokedex-formula-badge {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-card-title,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-card-title.pokedex-formula-badge {
   background: #059669 !important;
 }
 
-[data-theme="emerald"] .pokedex-strategy-card,
-[data-theme="emerald"] .pokedex-calc-unified-box .pokedex-strategy-card,
-[data-theme="emerald"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
-[data-theme="emerald"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-strategy-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
   border-color: rgba(16, 185, 129, 0.35) !important;
   background: rgba(16, 185, 129, 0.05) !important;
 }
 
-[data-theme="onyx"] .pokedex-strategy-card,
-[data-theme="onyx"] .pokedex-calc-unified-box .pokedex-strategy-card,
-[data-theme="onyx"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
-[data-theme="onyx"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-strategy-card,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
   border-color: rgba(255, 255, 255, 0.15) !important;
   background: rgba(255, 255, 255, 0.03) !important;
 }

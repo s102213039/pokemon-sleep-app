@@ -2082,6 +2082,169 @@ addTest('E2E-M1-I18N-01', '3-Language Live DOM audit (zh-TW, zh-CN, en-US) acros
   assert.strictEqual(allFailures.length, 0, `Detected i18n leaks across viewports/languages: ${JSON.stringify(allFailures, null, 2)}`);
 });
 
+addTest('E2E-THEME-OVERLAYS-01', 'All 8 themes render matching dark/light surfaces and >= 4.5:1 WCAG AA contrast across dropdowns, modals, and tooltips on Desktop + Mobile H5', async ({ cdp, baseUrl }) => {
+  const viewports = [
+    { label: 'Desktop', url: '/index.html?view=desktop', pref: 'desktop', width: 1280, height: 800, dpr: 1, mobile: false },
+    { label: 'MobileH5', url: '/app/index.html?view=mobile', pref: 'mobile', width: 390, height: 844, dpr: 2, mobile: true }
+  ];
+
+  for (const vp of viewports) {
+    await cdp.send('Emulation.setDeviceMetricsOverride', { width: vp.width, height: vp.height, deviceScaleFactor: vp.dpr, mobile: vp.mobile });
+    await cdp.send('Page.navigate', { url: `${baseUrl}/manifest.webmanifest` });
+    await sleep(50);
+    await cdp.evalJs(`(() => { localStorage.clear(); localStorage.setItem('user_lang', 'en'); localStorage.setItem('pksleep_view_pref', '${vp.pref}'); })()`);
+    await cdp.send('Page.navigate', { url: `${baseUrl}${vp.url}` });
+    await waitForAppReady(cdp, `8-Theme Overlays (${vp.label})`);
+
+    const failures = await cdp.evalJs(`(async () => {
+      const sleepMs = (ms) => new Promise(r => setTimeout(r, ms));
+      function parseRgba(str) {
+        const m = String(str || '').match(/rgba?\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)(?:\\s*,\\s*([\\d.]+))?\\s*\\)/);
+        if (!m) return null;
+        return { r: Number(m[1]), g: Number(m[2]), b: Number(m[3]), a: m[4] !== undefined ? Number(m[4]) : 1 };
+      }
+      function blendOver(fg, bg) {
+        const a = fg.a;
+        return { r: fg.r * a + bg.r * (1 - a), g: fg.g * a + bg.g * (1 - a), b: fg.b * a + bg.b * (1 - a), a: 1 };
+      }
+      function getEffectiveBg(el, fallbackBg) {
+        const chain = [];
+        let cur = el;
+        while (cur && cur.nodeType === 1) {
+          const bg = parseRgba(window.getComputedStyle(cur).backgroundColor);
+          if (bg && bg.a > 0) chain.push(bg);
+          cur = cur.parentElement;
+        }
+        let acc = fallbackBg || { r: 10, g: 15, b: 29, a: 1 };
+        for (let i = chain.length - 1; i >= 0; i--) acc = blendOver(chain[i], acc);
+        return acc;
+      }
+      function relLum(rgb) {
+        const lin = (c) => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); };
+        return 0.2126 * lin(rgb.r) + 0.7152 * lin(rgb.g) + 0.0722 * lin(rgb.b);
+      }
+      function contrast(fg, bg) {
+        const f = fg.a < 1 ? blendOver(fg, bg) : fg;
+        const l1 = relLum(f), l2 = relLum(bg);
+        return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+      }
+
+      const themes = [
+        ['midnight', false, false],
+        ['onyx', false, false],
+        ['dawn', false, true],
+        ['emerald', false, true],
+        ['midnight', true, true],
+        ['onyx', true, true],
+        ['dawn', true, false],
+        ['emerald', true, false]
+      ];
+
+      // Navigate to Wiki -> Guide to initialize Sleep EXP Calculator custom selects
+      if (window.switchMainTab) window.switchMainTab('wiki');
+      await sleepMs(100);
+      if (window.WikiDB && window.WikiDB.switchWikiSubTab) window.WikiDB.switchWikiSubTab('guide');
+      await sleepMs(120);
+
+      // Prepare probe elements for modals/tooltips that are lazily created or conditionally shown
+      const probeHost = document.createElement('div');
+      probeHost.id = '__e2e_theme_overlay_probes__';
+      probeHost.innerHTML =
+        '<div class="box-conflict-dialog" style="position:fixed;top:10px;left:10px;width:280px;padding:12px;"><div class="box-conflict-row"><span style="color:var(--text-primary)">Conflict</span></div><button class="conflict-btn-secondary">Keep</button></div>' +
+        '<div class="recipe-pot-filler-dialog" style="position:fixed;top:10px;left:10px;width:280px;"><div class="filler-dialog-header"><h3 class="filler-dialog-title">Pot Filler</h3></div></div>' +
+        '<div class="island-sleep-hover-tooltip" style="position:fixed;top:10px;left:10px;"><div class="island-sleep-tip-line">Sleep Style</div></div>' +
+        '<div class="global-skill-tooltip" style="position:fixed;top:10px;left:10px;"><div class="tooltip-header"><span class="tooltip-title">Skill</span></div><div class="tooltip-body">Body text</div></div>';
+      document.body.appendChild(probeHost);
+
+      const errs = [];
+      function checkSurfaceAndText(tag, bgEl, textEl, isLight, rootBg) {
+        if (!bgEl || !textEl) { errs.push(tag + ': missing element'); return; }
+        const effBg = getEffectiveBg(bgEl, rootBg);
+        const lum = relLum(effBg);
+        if (isLight && lum < 0.6) errs.push(tag + ': expected LIGHT bg (lum>=0.6), got lum=' + lum.toFixed(3));
+        if (!isLight && lum > 0.25) errs.push(tag + ': expected DARK bg (lum<=0.25), got lum=' + lum.toFixed(3));
+        const fg = parseRgba(window.getComputedStyle(textEl).color);
+        if (!fg) { errs.push(tag + ': missing fg color'); return; }
+        const cr = contrast(fg, effBg);
+        if (cr < 4.5) errs.push(tag + ': WCAG AA contrast ' + cr.toFixed(2) + ' < 4.5 (lum=' + lum.toFixed(3) + ')');
+      }
+
+      for (const [theme, inv, isLight] of themes) {
+        const tLabel = theme + (inv ? '+inv' : '') + (isLight ? '(L)' : '(D)');
+        window.PokemonApp.applyTheme(theme, inv);
+        await sleepMs(40);
+        const rootBg = parseRgba(window.getComputedStyle(document.documentElement).backgroundColor);
+
+        // 1. Wiki Guide Sleep EXP Calculator CustomSelect (.custom-select-calc) — primary screenshot bug
+        const calcWrap = document.querySelector('#calc-sleep-exp-type + .custom-select-container');
+        if (!calcWrap) {
+          errs.push(tLabel + ' calc-select: missing .custom-select-container');
+        } else {
+          const trig = calcWrap.querySelector('.custom-select-trigger');
+          trig.click();
+          await sleepMs(30);
+          const menu = calcWrap.querySelector('.custom-select-menu');
+          const activeItem = menu.querySelector('.custom-select-item.active');
+          const inactiveItem = menu.querySelector('.custom-select-item:not(.active)');
+          checkSurfaceAndText(tLabel + ' calc-trigger', trig, trig.querySelector('.custom-select-label'), isLight, rootBg);
+          checkSurfaceAndText(tLabel + ' calc-menu-active', activeItem, activeItem, isLight, rootBg);
+          checkSurfaceAndText(tLabel + ' calc-menu-item', menu, inactiveItem, isLight, rootBg);
+          if (window.CustomSelect && window.CustomSelect.closeAll) window.CustomSelect.closeAll();
+        }
+
+        // 2. Settings Modal (#settings-modal)
+        const settingsBtn = document.querySelector('#open-settings-btn, #mobile-settings-btn, .mobile-settings-btn');
+        if (settingsBtn) {
+          settingsBtn.click();
+          await sleepMs(30);
+          const sm = document.querySelector('#settings-modal .settings-modal-container');
+          const smTitle = document.querySelector('#settings-modal .settings-modal-title');
+          checkSurfaceAndText(tLabel + ' settings-modal', sm, smTitle, isLight, rootBg);
+          const smClose = document.getElementById('settings-modal-close-btn');
+          if (smClose) smClose.click();
+          await sleepMs(20);
+        }
+
+        // 3. Pokedex Detail Modal (#pokedex-detail-modal) + its custom-select-menu
+        if (window.openPokedexDetailModal) {
+          window.openPokedexDetailModal(25);
+          await sleepMs(60);
+          const dlg = document.querySelector('#pokedex-detail-modal .pokedex-modal-dialog');
+          const ttl = document.querySelector('#pokedex-detail-modal .pokedex-modal-name, #pokedex-detail-modal .pokedex-modal-title, #pokedex-detail-modal h2');
+          checkSurfaceAndText(tLabel + ' pokedex-modal', dlg, ttl, isLight, rootBg);
+          const natureWrap = document.querySelector('#pokedex-detail-modal #pokedex-poke-nature + .custom-select-container');
+          if (natureWrap) {
+            const nTrig = natureWrap.querySelector('.custom-select-trigger');
+            nTrig.click();
+            await sleepMs(20);
+            const nMenu = natureWrap.querySelector('.custom-select-menu');
+            const nItem = nMenu.querySelector('.custom-select-item:not(.active)') || nMenu.querySelector('.custom-select-item');
+            checkSurfaceAndText(tLabel + ' pokedex-nature-menu', nMenu, nItem, isLight, rootBg);
+            if (window.CustomSelect && window.CustomSelect.closeAll) window.CustomSelect.closeAll();
+          }
+          if (window.closePokedexDetailModal) window.closePokedexDetailModal();
+          await sleepMs(20);
+        }
+
+        // 4. Probe overlays: Box Conflict Modal, Pot Filler Optimizer Modal, Island Sleep Tooltip, Global Skill Tooltip
+        const conflictDlg = probeHost.querySelector('.box-conflict-dialog');
+        checkSurfaceAndText(tLabel + ' box-conflict-dialog', conflictDlg, conflictDlg.querySelector('.conflict-btn-secondary'), isLight, rootBg);
+        const fillerDlg = probeHost.querySelector('.recipe-pot-filler-dialog');
+        checkSurfaceAndText(tLabel + ' pot-filler-dialog', fillerDlg, fillerDlg.querySelector('.filler-dialog-title'), isLight, rootBg);
+        const islandTip = probeHost.querySelector('.island-sleep-hover-tooltip');
+        checkSurfaceAndText(tLabel + ' island-sleep-tooltip', islandTip, islandTip.querySelector('.island-sleep-tip-line'), isLight, rootBg);
+        const skillTip = probeHost.querySelector('.global-skill-tooltip');
+        checkSurfaceAndText(tLabel + ' global-skill-tooltip', skillTip, skillTip.querySelector('.tooltip-body'), isLight, rootBg);
+      }
+
+      probeHost.remove();
+      return errs;
+    })()`);
+
+    assert.strictEqual(failures.length, 0, `${vp.label} 8-theme overlay failures:\n  - ${failures.join('\n  - ')}`);
+  }
+});
+
 async function main() {
   let httpCtx = null;
   let chrome = null;

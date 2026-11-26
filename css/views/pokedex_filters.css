@@ -14,9 +14,10 @@
   line-height: 1.5;
 }
 
-/* 淺色主題適配 (Dawn, Inverted) */
+/* 淺色主題適配 (Dawn, Midnight Inverted, Onyx Inverted) */
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip,
-[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip {
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip,
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip {
   background: rgba(255, 255, 255, 0.96) !important;
   border: 1px solid #cbd5e1 !important;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
@@ -24,27 +25,32 @@
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-header,
-[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-header {
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-header,
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-title,
-[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-title {
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-title,
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-title {
   color: #0369a1 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body,
-[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body {
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body,
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body {
   color: #475569 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body .text-accent,
-[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body .text-accent {
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body .text-accent,
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body .text-accent {
   color: #0369a1 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-tag,
-[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-tag {
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-tag,
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-tag {
   background: rgba(3, 105, 161, 0.1) !important;
   color: #0369a1 !important;
   border: 1px solid rgba(3, 105, 161, 0.28) !important;

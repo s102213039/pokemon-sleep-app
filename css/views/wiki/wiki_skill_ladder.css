@@ -258,7 +258,9 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node-tooltip .breakdown-val.text-accent,
-[data-theme="midnight"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node-tooltip .breakdown-val.text-accent {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node-tooltip .breakdown-val.text-accent,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node-tooltip .breakdown-val.text-accent,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node-tooltip .breakdown-val.text-accent {
   color: #0369a1 !important;
 }
 

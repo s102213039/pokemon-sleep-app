@@ -161,7 +161,7 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   left: 0 !important;
   width: 100% !important;
   min-width: 180px !important;
-  background: var(--bg-card, #131b2e) !important;
+  background: var(--bg-dropdown, var(--bg-card-solid, #131b2e)) !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 12px !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
@@ -463,7 +463,7 @@ body.box-lab-active #box-subpanel-lab {
 
 /* 6. 原生 App 寶可夢卡片 (App Box Card) */
 .mobile-h5-app .box-card {
-  background: var(--bg-card, #131b2e) !important;
+  background: var(--bg-dropdown, var(--bg-card-solid, #131b2e)) !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 14px !important;
   padding: 10px 12px !important;

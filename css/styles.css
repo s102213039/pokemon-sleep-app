@@ -3276,9 +3276,10 @@ body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-cont
   line-height: 1.5;
 }
 
-/* 淺色主題適配 (Dawn, Inverted) */
+/* 淺色主題適配 (Dawn, Midnight Inverted, Onyx Inverted) */
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip,
-[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip {
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip,
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip {
   background: rgba(255, 255, 255, 0.96) !important;
   border: 1px solid #cbd5e1 !important;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
@@ -3286,27 +3287,32 @@ body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-cont
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-header,
-[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-header {
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-header,
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-title,
-[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-title {
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-title,
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-title {
   color: #0369a1 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body,
-[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body {
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body,
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body {
   color: #475569 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body .text-accent,
-[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body .text-accent {
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body .text-accent,
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body .text-accent {
   color: #0369a1 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-tag,
-[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-tag {
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-tag,
+[data-theme="onyx"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-tag {
   background: rgba(3, 105, 161, 0.1) !important;
   color: #0369a1 !important;
   border: 1px solid rgba(3, 105, 161, 0.28) !important;
@@ -10256,12 +10262,14 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 }
 
 .calc-select option {
-  background-color: var(--bg-card, #1e293b);
+  background-color: var(--bg-dropdown, var(--bg-card-solid, #1e293b));
   color: var(--text-primary, #f8fafc);
 }
 
-[data-theme="dawn"] .calc-select option,
-[data-theme="emerald"] .calc-select option {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .calc-select option,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .calc-select option,
+[data-theme="midnight"][data-theme-inverted="true"] .calc-select option,
+[data-theme="onyx"][data-theme-inverted="true"] .calc-select option {
   background-color: #ffffff;
   color: #0f172a;
 }
@@ -10343,15 +10351,17 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   min-width: 100%;
   width: max-content;
   max-width: 260px;
-  background: var(--bg-card-solid, #1e293b);
+  background: var(--bg-dropdown, var(--bg-card-solid, #1e293b));
   border: 1px solid var(--border-color);
   border-radius: 8px;
   box-shadow: var(--shadow-lg);
   z-index: 1050;
 }
 
-[data-theme="dawn"] .custom-select-calc .custom-select-menu,
-[data-theme="emerald"] .custom-select-calc .custom-select-menu {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .custom-select-calc .custom-select-menu,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .custom-select-calc .custom-select-menu,
+[data-theme="midnight"][data-theme-inverted="true"] .custom-select-calc .custom-select-menu,
+[data-theme="onyx"][data-theme-inverted="true"] .custom-select-calc .custom-select-menu {
   background: #ffffff;
   border-color: #cbd5e1;
 }
@@ -12438,7 +12448,9 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node-tooltip .breakdown-val.text-accent,
-[data-theme="midnight"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node-tooltip .breakdown-val.text-accent {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node-tooltip .breakdown-val.text-accent,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node-tooltip .breakdown-val.text-accent,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node-tooltip .breakdown-val.text-accent {
   color: #0369a1 !important;
 }
 
@@ -13623,12 +13635,16 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) #modal-appraisal-report .unified-calc-row,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) #modal-appraisal-report .unified-calc-row {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #modal-appraisal-report .unified-calc-row,
+[data-theme="midnight"][data-theme-inverted="true"] #modal-appraisal-report .unified-calc-row,
+[data-theme="onyx"][data-theme-inverted="true"] #modal-appraisal-report .unified-calc-row {
   border-bottom-color: rgba(0, 0, 0, 0.07) !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .unified-calc-row,
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .unified-calc-row {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .unified-calc-row,
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .unified-calc-row,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .unified-calc-row {
   border-bottom-color: rgba(255, 255, 255, 0.08) !important;
 }
 
@@ -13727,7 +13743,9 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
   gap: 4px !important;
 }
 
-[data-theme="dawn"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="midnight"][data-theme-inverted="true"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="onyx"][data-theme-inverted="true"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
   border-color: rgba(2, 132, 199, 0.35) !important;
   background: rgba(2, 132, 199, 0.04) !important;
 }
@@ -19065,7 +19083,7 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
 
 .settings-modal-close-btn:hover {
   color: var(--text-main);
-  background: var(--bg-secondary);
+  background: var(--bg-card-hover);
 }
 
 .settings-modal-body {
@@ -25907,7 +25925,7 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   left: 0 !important;
   width: 100% !important;
   min-width: 180px !important;
-  background: var(--bg-card, #131b2e) !important;
+  background: var(--bg-dropdown, var(--bg-card-solid, #131b2e)) !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 12px !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
@@ -26704,27 +26722,45 @@ body.box-lab-active #box-subpanel-lab {
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row select,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row select,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row select,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row select,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-trigger,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-trigger,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-trigger,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-trigger,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-view-toggle-chips,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-view-toggle-chips,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-view-toggle-chips,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-view-toggle-chips,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-card-img-wrap,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-card-img-wrap,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-card-img-wrap,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-card-img-wrap,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-action-btn,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-action-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-action-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-action-btn,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-pr-summary-bar,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-pr-summary-bar,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-pr-summary-bar,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-pr-summary-bar,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-ing-slot,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-ing-slot,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-ing-slot,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-ing-slot,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .app-backup-card,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .app-backup-card {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .app-backup-card,
+[data-theme="midnight"][data-theme-inverted="true"] .app-backup-card,
+[data-theme="onyx"][data-theme-inverted="true"] .app-backup-card {
   background: #f8fafc !important;
   border-color: #e2e8f0 !important;
   color: #0f172a !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-menu,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-menu {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-menu,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-menu,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-menu {
   background: #ffffff !important;
   border-color: #e2e8f0 !important;
   color: #0f172a !important;
@@ -26733,10 +26769,18 @@ body.box-lab-active #box-subpanel-lab {
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item:hover,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-item:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-item:hover,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item.selected,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item.selected {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item.selected,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-item.selected,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-item.selected,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item.active,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item.active,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-item.active,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-item.active {
   background: #f1f5f9 !important;
-  color: #6366f1 !important;
+  color: #4f46e5 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-card,
@@ -28779,7 +28823,10 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   animation: sleepTooltipIn 0.12s ease-out;
 }
 
-[data-theme="light"] .island-sleep-hover-tooltip {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .island-sleep-hover-tooltip,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .island-sleep-hover-tooltip,
+[data-theme="midnight"][data-theme-inverted="true"] .island-sleep-hover-tooltip,
+[data-theme="onyx"][data-theme-inverted="true"] .island-sleep-hover-tooltip {
   background: #ffffff !important;
   opacity: 1 !important;
   border: 1px solid #cbd5e1 !important;
@@ -30307,7 +30354,9 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-node-tooltip .tooltip-note,
-[data-theme="midnight"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-note {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-node-tooltip .tooltip-note,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-note,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-note {
   color: #0369a1;
 }
 
@@ -32114,11 +32163,11 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   color: #b45309 !important;
 }
 
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-helps,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-helps,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-helps,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-helps,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-helps,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-helps,
-[data-theme="midnight"] .calc-color-helps {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-helps {
   color: #38bdf8 !important;
 }
 
@@ -32127,64 +32176,64 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 [data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-helps {
   color: #e2e8f0 !important;
 }
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-ing,
-[data-theme="onyx"] #pokedex-detail-modal .calc-color-ing,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-ing,
-[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-ing,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-ing,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-ing,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-ing,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-ing,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-ing,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-ing,
-[data-theme="midnight"] .calc-color-ing,
-[data-theme="onyx"] .calc-color-ing {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-ing,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-ing {
   color: #34d399 !important;
 }
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-skill,
-[data-theme="onyx"] #pokedex-detail-modal .calc-color-skill,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-skill,
-[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-skill,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-skill,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-skill,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-skill,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-skill,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-skill,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-skill,
-[data-theme="midnight"] .calc-color-skill,
-[data-theme="onyx"] .calc-color-skill {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-skill,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-skill {
   color: #c084fc !important;
 }
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-yield,
-[data-theme="onyx"] #pokedex-detail-modal .calc-color-yield,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-yield,
-[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-yield,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-yield,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-yield,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-yield,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-yield,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-yield,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-yield,
-[data-theme="midnight"] .calc-color-yield,
-[data-theme="onyx"] .calc-color-yield {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-yield,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-yield {
   color: #fbbf24 !important;
 }
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-triggers,
-[data-theme="onyx"] #pokedex-detail-modal .calc-color-triggers,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-triggers,
-[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-triggers,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-triggers,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-triggers,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-triggers,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-triggers,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-triggers,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-triggers,
-[data-theme="midnight"] .calc-color-triggers,
-[data-theme="onyx"] .calc-color-triggers {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-triggers,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-triggers {
   color: #f472b6 !important;
 }
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-berry,
-[data-theme="onyx"] #pokedex-detail-modal .calc-color-berry,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-berry,
-[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-berry,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-berry,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-berry,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-berry,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-berry,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-berry,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-berry,
-[data-theme="midnight"] .calc-color-berry,
-[data-theme="onyx"] .calc-color-berry {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-berry,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-berry {
   color: #fbbf24 !important;
 }
-[data-theme="midnight"] #pokedex-detail-modal .calc-color-berry-fav,
-[data-theme="onyx"] #pokedex-detail-modal .calc-color-berry-fav,
-[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-berry-fav,
-[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-berry-fav,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-berry-fav,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-berry-fav,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-berry-fav,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-berry-fav,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-berry-fav,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-berry-fav,
-[data-theme="midnight"] .calc-color-berry-fav,
-[data-theme="onyx"] .calc-color-berry-fav {
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .calc-color-berry-fav,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-berry-fav {
   color: #f59e0b !important;
 }
 
@@ -32571,23 +32620,23 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   gap: 4px !important;
 }
 
-[data-theme="emerald"] .strategy-card-title,
-[data-theme="emerald"] .strategy-card-title.pokedex-formula-badge {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-card-title,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-card-title.pokedex-formula-badge {
   background: #059669 !important;
 }
 
-[data-theme="emerald"] .pokedex-strategy-card,
-[data-theme="emerald"] .pokedex-calc-unified-box .pokedex-strategy-card,
-[data-theme="emerald"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
-[data-theme="emerald"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-strategy-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
   border-color: rgba(16, 185, 129, 0.35) !important;
   background: rgba(16, 185, 129, 0.05) !important;
 }
 
-[data-theme="onyx"] .pokedex-strategy-card,
-[data-theme="onyx"] .pokedex-calc-unified-box .pokedex-strategy-card,
-[data-theme="onyx"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
-[data-theme="onyx"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-strategy-card,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
   border-color: rgba(255, 255, 255, 0.15) !important;
   background: rgba(255, 255, 255, 0.03) !important;
 }
@@ -34317,7 +34366,7 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 
   #pokedex-detail-modal .pokedex-subskill-toggle-btn.is-expanded {
     color: var(--text-secondary, #64748b) !important;
-    background: var(--bg-muted, #f1f5f9) !important;
+    background: var(--bg-card-inner) !important;
     border-color: var(--border-color-subtle, #e2e8f0) !important;
   }
 
@@ -34420,8 +34469,10 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   flex-shrink: 0 !important;
 }
 
-[data-theme="dawn"] .mobile-h5-app #pokedex-detail-modal .sheet-drag-handle,
-[data-theme="emerald"] .mobile-h5-app #pokedex-detail-modal .sheet-drag-handle {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app #pokedex-detail-modal .sheet-drag-handle,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app #pokedex-detail-modal .sheet-drag-handle,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app #pokedex-detail-modal .sheet-drag-handle,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app #pokedex-detail-modal .sheet-drag-handle {
   background: rgba(0, 0, 0, 0.2) !important;
 }
 
@@ -34981,7 +35032,7 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 
 .mobile-h5-app #pokedex-detail-modal .pokedex-subskill-toggle-btn.is-expanded {
   color: var(--text-secondary, #64748b) !important;
-  background: var(--bg-muted, #f1f5f9) !important;
+  background: var(--bg-card-inner) !important;
   border-color: var(--border-color-subtle, #e2e8f0) !important;
 }
 
@@ -35571,36 +35622,48 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
   padding: 16px 16px 20px 16px !important;
 }
 
-[data-theme="dawn"] .box-conflict-dialog,
-[data-theme="emerald"] .box-conflict-dialog {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .box-conflict-dialog,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .box-conflict-dialog,
+[data-theme="midnight"][data-theme-inverted="true"] .box-conflict-dialog,
+[data-theme="onyx"][data-theme-inverted="true"] .box-conflict-dialog {
   background: #ffffff !important;
   border-color: #e2e8f0 !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
 }
 
-[data-theme="dawn"] .box-conflict-row,
-[data-theme="emerald"] .box-conflict-row {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .box-conflict-row,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .box-conflict-row,
+[data-theme="midnight"][data-theme-inverted="true"] .box-conflict-row,
+[data-theme="onyx"][data-theme-inverted="true"] .box-conflict-row {
   background: #f8fafc !important;
   border-color: #e2e8f0 !important;
 }
 
-[data-theme="dawn"] .box-conflict-row.is-diff,
-[data-theme="emerald"] .box-conflict-row.is-diff {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .box-conflict-row.is-diff,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .box-conflict-row.is-diff,
+[data-theme="midnight"][data-theme-inverted="true"] .box-conflict-row.is-diff,
+[data-theme="onyx"][data-theme-inverted="true"] .box-conflict-row.is-diff {
   background: #fefce8 !important;
   border-color: #fde047 !important;
 }
 
-[data-theme="dawn"] .conflict-badge-diff,
-[data-theme="emerald"] .conflict-badge-diff,
-[data-theme="dawn"] .conflict-status-tag.tag-diff,
-[data-theme="emerald"] .conflict-status-tag.tag-diff {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .conflict-badge-diff,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .conflict-badge-diff,
+[data-theme="midnight"][data-theme-inverted="true"] .conflict-badge-diff,
+[data-theme="onyx"][data-theme-inverted="true"] .conflict-badge-diff,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .conflict-status-tag.tag-diff,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .conflict-status-tag.tag-diff,
+[data-theme="midnight"][data-theme-inverted="true"] .conflict-status-tag.tag-diff,
+[data-theme="onyx"][data-theme-inverted="true"] .conflict-status-tag.tag-diff {
   background: #fef08a !important;
   color: #854d0e !important;
   border-color: #eab308 !important;
 }
 
-[data-theme="dawn"] .conflict-btn-secondary,
-[data-theme="emerald"] .conflict-btn-secondary {
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .conflict-btn-secondary,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .conflict-btn-secondary,
+[data-theme="midnight"][data-theme-inverted="true"] .conflict-btn-secondary,
+[data-theme="onyx"][data-theme-inverted="true"] .conflict-btn-secondary {
   background: #f1f5f9 !important;
   border-color: #cbd5e1 !important;
   color: #0f172a !important;
@@ -38409,7 +38472,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   font-weight: 600;
   border: 1px solid var(--border-color, #334155);
   border-radius: 4px;
-  background: var(--bg-tertiary, #334155);
+  background: var(--bg-sidebar-btn, #334155);
   color: var(--text-secondary, #cbd5e1);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -38446,7 +38509,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg-primary, #0f172a);
+  background: var(--bg-card-solid, #0f172a);
   border: 1px solid var(--border-color, #334155);
   border-radius: 12px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
@@ -38459,7 +38522,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   align-items: flex-start;
   padding: 16px 20px;
   border-bottom: 1px solid var(--border-color, #334155);
-  background: var(--bg-secondary, #1e293b);
+  background: var(--bg-card-inner, #1e293b);
 }
 
 .filler-header-title-group {
@@ -38494,7 +38557,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 .filler-dialog-close-btn:hover {
   color: var(--text-primary, #f8fafc);
-  background: var(--bg-tertiary, #334155);
+  background: var(--bg-card-hover, #334155);
 }
 
 .filler-dialog-body {
@@ -38525,7 +38588,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: var(--bg-secondary, #1e293b);
+  background: var(--bg-card-inner, #1e293b);
   padding: 12px;
   border-radius: 8px;
 }
@@ -38558,7 +38621,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   font-weight: 500;
   border: 1px solid var(--border-color, #334155);
   border-radius: 12px;
-  background: var(--bg-tertiary, #334155);
+  background: var(--bg-sidebar-btn, #334155);
   color: var(--text-secondary, #cbd5e1);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -38571,7 +38634,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 .filler-preset-pill.active {
   background: var(--accent-color, #3b82f6);
-  color: #fff;
+  color: var(--accent-btn-text, #fff);
   border-color: var(--accent-color, #3b82f6);
   font-weight: 600;
 }
@@ -38581,7 +38644,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   gap: 16px;
   flex-wrap: wrap;
   padding-top: 4px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.06));
 }
 
 .filler-toggle-label {
@@ -38598,7 +38661,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: var(--bg-secondary, #1e293b);
+  background: var(--bg-card-inner, #1e293b);
   border-radius: 6px;
   font-size: 12px;
   color: var(--text-secondary, #cbd5e1);
@@ -38623,7 +38686,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .filler-mode-selector {
   display: flex;
   gap: 2px;
-  background: var(--bg-secondary, #1e293b);
+  background: var(--bg-card-inner, #1e293b);
   padding: 2px;
   border-radius: 6px;
   border: 1px solid var(--border-color, #334155);
@@ -38645,7 +38708,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .filler-mode-btn.active {
-  background: var(--bg-tertiary, #334155);
+  background: var(--bg-sidebar-btn, #334155);
   color: var(--text-primary, #f8fafc);
   font-weight: 600;
 }
@@ -38664,7 +38727,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 .filler-recommend-table th {
   padding: 8px 10px;
-  background: var(--bg-secondary, #1e293b);
+  background: var(--bg-card-inner, #1e293b);
   color: var(--text-secondary, #cbd5e1);
   font-weight: 600;
   border-bottom: 1px solid var(--border-color, #334155);
@@ -38672,7 +38735,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 .filler-recommend-table td {
   padding: 7px 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.05));
   color: var(--text-primary, #f8fafc);
 }
 
@@ -38692,7 +38755,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: var(--bg-secondary, #1e293b);
+  background: var(--bg-card-inner, #1e293b);
   border-radius: 8px;
   gap: 12px;
 }
@@ -38719,7 +38782,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .filler-summary-value {
   font-size: 20px;
   font-weight: 800;
-  color: var(--text-accent, #10b981);
+  color: var(--accent-color, #10b981);
 }
 
 .filler-summary-sub {
@@ -38733,7 +38796,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   font-weight: 600;
   border-radius: 6px;
   border: 1px solid var(--border-color, #334155);
-  background: var(--bg-tertiary, #334155);
+  background: var(--bg-sidebar-btn, #334155);
   color: var(--text-primary, #f8fafc);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -38743,7 +38806,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .filler-action-btn:hover {
   background: var(--accent-color, #3b82f6);
   border-color: var(--accent-color, #3b82f6);
-  color: #fff;
+  color: var(--accent-btn-text, #fff);
 }
 
 /* 食材基礎庫：Web 桌面版維持單行展示，不換行 (食材數量變動時自動延展欄數；窄螢幕橫向捲動) */
