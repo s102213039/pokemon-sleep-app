@@ -1954,14 +1954,15 @@ const TARGET_TOP_RECIPES = [
         const y = cy + (r * level) * Math.sin(a);
         return x.toFixed(1) + ',' + y.toFixed(1);
       }).join(' ');
-      return '<polygon points="' + pts + '" fill="' + (level === 1.0 ? 'rgba(255,255,255,0.02)' : 'none') + '" stroke="rgba(255,255,255,0.09)" stroke-width="' + (level === 1.0 ? '1.5' : '1') + '" stroke-dasharray="' + (level === 1.0 ? 'none' : '2,2') + '" />';
+      const cls = level === 1.0 ? 'radar-grid-poly radar-grid-outer' : 'radar-grid-poly';
+      return '<polygon class="' + cls + '" points="' + pts + '" fill="' + (level === 1.0 ? 'rgba(255,255,255,0.02)' : 'none') + '" stroke="rgba(255,255,255,0.09)" stroke-width="' + (level === 1.0 ? '1.5' : '1') + '" stroke-dasharray="' + (level === 1.0 ? 'none' : '2,2') + '" />';
     }).join('');
 
     // 生成 6 條徑向軸線
     const radialAxes = angles.map(function (a) {
       const x2 = cx + r * Math.cos(a);
       const y2 = cy + r * Math.sin(a);
-      return '<line x1="' + cx + '" y1="' + cy + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="rgba(255,255,255,0.12)" stroke-width="1" />';
+      return '<line class="radar-axis-line" x1="' + cx + '" y1="' + cy + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="rgba(255,255,255,0.12)" stroke-width="1" />';
     }).join('');
 
     // 計算資料多邊形座標
@@ -2013,10 +2014,10 @@ const TARGET_TOP_RECIPES = [
       const scoreFontSize = isCompact ? '9.5' : '12';
       const scoreDy = isCompact ? '11.5' : '14';
 
-      return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + dotR + '" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5" />' +
+      return '<circle class="radar-data-dot" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + dotR + '" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5" />' +
              '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="' + textAnchor + '" class="radar-label">' +
-             '<tspan x="' + lx.toFixed(1) + '" dy="' + (i === 0 ? '-2' : '0') + '" fill="var(--text-primary)" font-size="' + labelFontSize + '" font-weight="700">' + p.meta.label + '</tspan>' +
-             '<tspan x="' + lx.toFixed(1) + '" dy="' + scoreDy + '" fill="#38bdf8" font-size="' + scoreFontSize + '" font-weight="800">' + p.score + (window.I18N?.t?.('lab.t_pts_unit') ?? 'lab.t_pts_unit') + '</tspan>' +
+             '<tspan class="radar-label-text" x="' + lx.toFixed(1) + '" dy="' + (i === 0 ? '-2' : '0') + '" fill="var(--text-primary)" font-size="' + labelFontSize + '" font-weight="700">' + p.meta.label + '</tspan>' +
+             '<tspan class="radar-score-tspan" x="' + lx.toFixed(1) + '" dy="' + scoreDy + '" fill="#38bdf8" font-size="' + scoreFontSize + '" font-weight="800">' + p.score + (window.I18N?.t?.('lab.t_pts_unit') ?? 'lab.t_pts_unit') + '</tspan>' +
              '</text>';
     }).join('');
 
@@ -2026,7 +2027,7 @@ const TARGET_TOP_RECIPES = [
            '<stop offset="100%" stop-color="rgba(234, 179, 8, 0.35)" />' +
            '</linearGradient></defs>' +
            gridPolygons + radialAxes +
-           '<polygon points="' + dataPolygonPoints + '" fill="url(#radarFillGradient)" stroke="#38bdf8" stroke-width="2.5" />' +
+           '<polygon class="radar-data-poly" points="' + dataPolygonPoints + '" fill="url(#radarFillGradient)" stroke="#38bdf8" stroke-width="2.5" />' +
            labelsAndDots +
            '</svg>';
   }
@@ -3407,14 +3408,15 @@ const TARGET_TOP_RECIPES = [
         const y = cy + (r * level) * Math.sin(a);
         return x.toFixed(1) + ',' + y.toFixed(1);
       }).join(' ');
-      return '<polygon points="' + pts + '" fill="' + (level === 1.0 ? 'rgba(255,255,255,0.02)' : 'none') + '" stroke="rgba(255,255,255,0.09)" stroke-width="' + (level === 1.0 ? '1.5' : '1') + '" stroke-dasharray="' + (level === 1.0 ? 'none' : '2,2') + '" />';
+      const cls = level === 1.0 ? 'radar-grid-poly radar-grid-outer' : 'radar-grid-poly';
+      return '<polygon class="' + cls + '" points="' + pts + '" fill="' + (level === 1.0 ? 'rgba(255,255,255,0.02)' : 'none') + '" stroke="rgba(255,255,255,0.09)" stroke-width="' + (level === 1.0 ? '1.5' : '1') + '" stroke-dasharray="' + (level === 1.0 ? 'none' : '2,2') + '" />';
     }).join('');
 
     // 6 條徑向軸線
     const radialAxes = angles.map(function (a) {
       const x2 = cx + r * Math.cos(a);
       const y2 = cy + r * Math.sin(a);
-      return '<line x1="' + cx + '" y1="' + cy + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="rgba(255,255,255,0.12)" stroke-width="1" />';
+      return '<line class="radar-axis-line" x1="' + cx + '" y1="' + cy + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="rgba(255,255,255,0.12)" stroke-width="1" />';
     }).join('');
 
     // 多邊形 A (Cyan)
@@ -3437,8 +3439,8 @@ const TARGET_TOP_RECIPES = [
     });
     const polygonBPts = ptsB.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
 
-    const dotsA = ptsA.map(p => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1" />`).join('');
-    const dotsB = ptsB.map(p => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="#c084fc" stroke="#0f172a" stroke-width="1" />`).join('');
+    const dotsA = ptsA.map(p => `<circle class="radar-data-dot radar-dot-a" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1" />`).join('');
+    const dotsB = ptsB.map(p => `<circle class="radar-data-dot radar-dot-b" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="#c084fc" stroke="#0f172a" stroke-width="1" />`).join('');
 
     const labelsSvg = SIX_DIM_META.map(function (m, i) {
       const labelR = r + 24;
@@ -3451,19 +3453,19 @@ const TARGET_TOP_RECIPES = [
       else if (Math.cos(m.angle) < -0.3) textAnchor = 'end';
 
       return `
-        <text x="${lx.toFixed(1)}" y="${(ly - 6).toFixed(1)}" text-anchor="${textAnchor}" fill="#cbd5e1" font-size="11" font-weight="700">${m.label}</text>
+        <text class="radar-label-text" x="${lx.toFixed(1)}" y="${(ly - 6).toFixed(1)}" text-anchor="${textAnchor}" fill="var(--text-primary, #cbd5e1)" font-size="11" font-weight="700">${m.label}</text>
         <text x="${lx.toFixed(1)}" y="${(ly + 8).toFixed(1)}" text-anchor="${textAnchor}" font-size="10" font-weight="800">
-          <tspan fill="#38bdf8">${scoreA}</tspan> <tspan fill="#64748b">/</tspan> <tspan fill="#c084fc">${scoreB}</tspan>
+          <tspan class="radar-score-a" fill="#38bdf8">${scoreA}</tspan> <tspan fill="var(--text-muted, #64748b)">/</tspan> <tspan class="radar-score-b" fill="#c084fc">${scoreB}</tspan>
         </text>
       `;
     }).join('');
 
     const legendSvg = `
       <g transform="translate(14, 18)">
-        <rect x="0" y="0" width="10" height="10" rx="2" fill="#38bdf8" />
-        <text x="14" y="9" fill="#38bdf8" font-size="11" font-weight="700">${escapeHtml(nameA || (window.I18N?.t?.('lab.c_pokemon_a') ?? 'Pokémon A'))}</text>
-        <rect x="150" y="0" width="10" height="10" rx="2" fill="#c084fc" />
-        <text x="164" y="9" fill="#c084fc" font-size="11" font-weight="700">${escapeHtml(nameB || (window.I18N?.t?.('lab.c_pokemon_b') ?? 'Pokémon B'))}</text>
+        <rect class="radar-legend-a" x="0" y="0" width="10" height="10" rx="2" fill="#38bdf8" />
+        <text class="radar-legend-a" x="14" y="9" fill="#38bdf8" font-size="11" font-weight="700">${escapeHtml(nameA || (window.I18N?.t?.('lab.c_pokemon_a') ?? 'Pokémon A'))}</text>
+        <rect class="radar-legend-b" x="150" y="0" width="10" height="10" rx="2" fill="#c084fc" />
+        <text class="radar-legend-b" x="164" y="9" fill="#c084fc" font-size="11" font-weight="700">${escapeHtml(nameB || (window.I18N?.t?.('lab.c_pokemon_b') ?? 'Pokémon B'))}</text>
       </g>
     `;
 
@@ -3472,8 +3474,8 @@ const TARGET_TOP_RECIPES = [
         ${legendSvg}
         ${gridPolygons}
         ${radialAxes}
-        <polygon points="${polygonAPts}" fill="rgba(56, 189, 248, 0.22)" stroke="#38bdf8" stroke-width="2.2" />
-        <polygon points="${polygonBPts}" fill="rgba(168, 85, 247, 0.22)" stroke="#c084fc" stroke-width="2.2" />
+        <polygon class="radar-data-poly radar-data-poly-a" points="${polygonAPts}" fill="rgba(56, 189, 248, 0.22)" stroke="#38bdf8" stroke-width="2.2" />
+        <polygon class="radar-data-poly radar-data-poly-b" points="${polygonBPts}" fill="rgba(168, 85, 247, 0.22)" stroke="#c084fc" stroke-width="2.2" />
         ${dotsA}
         ${dotsB}
         ${labelsSvg}

@@ -4848,13 +4848,33 @@ registerResources({
     return str;
   }
 
+  function formatCompactRegionalName(displayName) {
+    if (!displayName || typeof displayName !== 'string') return displayName || '';
+    let out = displayName.replace(
+      /([（(])\s*(阿羅拉|阿罗拉|伽勒爾|伽勒尔|洗翠|帕底亞|帕底亚)的(?:樣子|样子)\s*([）)])/g,
+      '$1$2$3'
+    );
+    out = out.replace(
+      /(\()\s*(Alola|Alolan|Galar|Galarian|Hisui|Hisuian|Paldea|Paldean)(?:\s+Form)?\s*(\))/gi,
+      function (_m, open, region, close) {
+        const lower = region.toLowerCase();
+        if (lower.startsWith('alola')) return open + 'Alola' + close;
+        if (lower.startsWith('galar')) return open + 'Galar' + close;
+        if (lower.startsWith('hisui')) return open + 'Hisui' + close;
+        if (lower.startsWith('paldea')) return open + 'Paldea' + close;
+        return _m;
+      }
+    );
+    return out;
+  }
+
   function getPokemonName(name, lang) {
     if (!name) return '';
     const strategy = _getStrategy(lang);
-    if (typeof name === 'object') {
-      return strategy.pokemonFromObj(name);
-    }
-    return strategy.pokemonFromStr(String(name).trim());
+    const resolved = (typeof name === 'object')
+      ? strategy.pokemonFromObj(name)
+      : strategy.pokemonFromStr(String(name).trim());
+    return formatCompactRegionalName(resolved);
   }
 
   function getSubSkillName(subskill, lang) {

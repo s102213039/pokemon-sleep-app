@@ -713,7 +713,9 @@ body:not(.mobile-h5-app) .box-content-container .pokemon-table-container {
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-mint-tag,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-mint-tag {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-mint-tag,
+[data-theme="midnight"][data-theme-inverted="true"] .nature-mint-tag,
+[data-theme="onyx"][data-theme-inverted="true"] .nature-mint-tag {
   color: #047857;
   background: rgba(5, 150, 105, 0.12);
   border-color: rgba(5, 150, 105, 0.3);
@@ -725,7 +727,9 @@ body:not(.mobile-h5-app) .box-content-container .pokemon-table-container {
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-effect-mint,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-effect-mint {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-effect-mint,
+[data-theme="midnight"][data-theme-inverted="true"] .nature-effect-mint,
+[data-theme="onyx"][data-theme-inverted="true"] .nature-effect-mint {
   color: #047857 !important;
 }
 

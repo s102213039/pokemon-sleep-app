@@ -563,14 +563,15 @@
         const y = cy + (r * level) * Math.sin(a);
         return x.toFixed(1) + ',' + y.toFixed(1);
       }).join(' ');
-      return '<polygon points="' + pts + '" fill="' + (level === 1.0 ? 'rgba(255,255,255,0.02)' : 'none') + '" stroke="rgba(255,255,255,0.09)" stroke-width="' + (level === 1.0 ? '1.5' : '1') + '" stroke-dasharray="' + (level === 1.0 ? 'none' : '2,2') + '" />';
+      const cls = level === 1.0 ? 'radar-grid-poly radar-grid-outer' : 'radar-grid-poly';
+      return '<polygon class="' + cls + '" points="' + pts + '" fill="' + (level === 1.0 ? 'rgba(255,255,255,0.02)' : 'none') + '" stroke="rgba(255,255,255,0.09)" stroke-width="' + (level === 1.0 ? '1.5' : '1') + '" stroke-dasharray="' + (level === 1.0 ? 'none' : '2,2') + '" />';
     }).join('');
 
     // 生成 6 條徑向軸線
     const radialAxes = angles.map(function (a) {
       const x2 = cx + r * Math.cos(a);
       const y2 = cy + r * Math.sin(a);
-      return '<line x1="' + cx + '" y1="' + cy + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="rgba(255,255,255,0.12)" stroke-width="1" />';
+      return '<line class="radar-axis-line" x1="' + cx + '" y1="' + cy + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="rgba(255,255,255,0.12)" stroke-width="1" />';
     }).join('');
 
     // 計算資料多邊形座標
@@ -622,10 +623,10 @@
       const scoreFontSize = isCompact ? '9.5' : '12';
       const scoreDy = isCompact ? '11.5' : '14';
 
-      return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + dotR + '" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5" />' +
+      return '<circle class="radar-data-dot" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + dotR + '" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5" />' +
              '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="' + textAnchor + '" class="radar-label">' +
-             '<tspan x="' + lx.toFixed(1) + '" dy="' + (i === 0 ? '-2' : '0') + '" fill="var(--text-primary)" font-size="' + labelFontSize + '" font-weight="700">' + p.meta.label + '</tspan>' +
-             '<tspan x="' + lx.toFixed(1) + '" dy="' + scoreDy + '" fill="#38bdf8" font-size="' + scoreFontSize + '" font-weight="800">' + p.score + (window.I18N?.t?.('lab.t_pts_unit') ?? 'lab.t_pts_unit') + '</tspan>' +
+             '<tspan class="radar-label-text" x="' + lx.toFixed(1) + '" dy="' + (i === 0 ? '-2' : '0') + '" fill="var(--text-primary)" font-size="' + labelFontSize + '" font-weight="700">' + p.meta.label + '</tspan>' +
+             '<tspan class="radar-score-tspan" x="' + lx.toFixed(1) + '" dy="' + scoreDy + '" fill="#38bdf8" font-size="' + scoreFontSize + '" font-weight="800">' + p.score + (window.I18N?.t?.('lab.t_pts_unit') ?? 'lab.t_pts_unit') + '</tspan>' +
              '</text>';
     }).join('');
 
@@ -635,7 +636,7 @@
            '<stop offset="100%" stop-color="rgba(234, 179, 8, 0.35)" />' +
            '</linearGradient></defs>' +
            gridPolygons + radialAxes +
-           '<polygon points="' + dataPolygonPoints + '" fill="url(#radarFillGradient)" stroke="#38bdf8" stroke-width="2.5" />' +
+           '<polygon class="radar-data-poly" points="' + dataPolygonPoints + '" fill="url(#radarFillGradient)" stroke="#38bdf8" stroke-width="2.5" />' +
            labelsAndDots +
            '</svg>';
   }

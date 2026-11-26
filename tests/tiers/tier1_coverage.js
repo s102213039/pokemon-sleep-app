@@ -631,16 +631,32 @@ test('Tier 1 - Feature Coverage', 'I18N.getPokemonName API & Coverage across all
   assert(ctx.window.I18N.getPokemonName('巨鍛匠') === 'Tinkaton', '巨鍛匠 -> Tinkaton');
   assert(ctx.window.I18N.getPokemonName({ name_cn: '耿鬼', name_en: 'Gengar' }) === 'Gengar', 'Object input -> Gengar');
 
+  const normalizeExpectedEn = (nameEn) => nameEn.replace(
+    /\(\s*(Alola|Alolan|Galar|Galarian|Hisui|Hisuian|Paldea|Paldean)(?:\s+Form)?\s*\)/gi,
+    (_m, r) => {
+      const l = r.toLowerCase();
+      if (l.startsWith('alola')) return '(Alola)';
+      if (l.startsWith('galar')) return '(Galar)';
+      if (l.startsWith('hisui')) return '(Hisui)';
+      if (l.startsWith('paldea')) return '(Paldea)';
+      return _m;
+    }
+  );
   data.forEach(p => {
     if (p.name_cn && p.name_en) {
       const translated = ctx.window.I18N.getPokemonName(p.name_cn);
-      assert(translated === p.name_en, `Expected ${p.name_cn} -> ${p.name_en}, got ${translated}`);
+      const expected = normalizeExpectedEn(p.name_en);
+      assert(translated === expected, `Expected ${p.name_cn} -> ${expected}, got ${translated}`);
     }
   });
 
   ctx.window.I18N.setLanguage('zh-TW');
   assert(ctx.window.I18N.getPokemonName('妙蛙種子') === '妙蛙種子', 'zh-TW mode should return CN name');
   assert(ctx.window.I18N.getPokemonName({ name_cn: '耿鬼', name_en: 'Gengar' }) === '耿鬼', 'Object in zh-TW -> 耿鬼');
+  assert(ctx.window.I18N.getPokemonName('六尾（阿羅拉的樣子）') === '六尾（阿羅拉）', 'zh-TW regional form should be compact');
+  assert(ctx.window.I18N.getPokemonName('風速狗（洗翠的樣子）') === '風速狗（洗翠）', 'zh-TW Hisui regional form should be compact');
+  ctx.window.I18N.setLanguage('zh-CN');
+  assert(ctx.window.I18N.getPokemonName('六尾（阿羅拉的樣子）') === '六尾（阿罗拉）', 'zh-CN regional form should be compact');
 });
 
 

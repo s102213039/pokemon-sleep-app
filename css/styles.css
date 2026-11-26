@@ -7268,7 +7268,9 @@ body:not(.mobile-h5-app) .box-content-container .pokemon-table-container {
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-mint-tag,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-mint-tag {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-mint-tag,
+[data-theme="midnight"][data-theme-inverted="true"] .nature-mint-tag,
+[data-theme="onyx"][data-theme-inverted="true"] .nature-mint-tag {
   color: #047857;
   background: rgba(5, 150, 105, 0.12);
   border-color: rgba(5, 150, 105, 0.3);
@@ -7280,7 +7282,9 @@ body:not(.mobile-h5-app) .box-content-container .pokemon-table-container {
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-effect-mint,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-effect-mint {
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-effect-mint,
+[data-theme="midnight"][data-theme-inverted="true"] .nature-effect-mint,
+[data-theme="onyx"][data-theme-inverted="true"] .nature-effect-mint {
   color: #047857 !important;
 }
 
@@ -14155,7 +14159,7 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
 .nature-capsule-name {
   font-size: 13.5px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary, #ffffff);
   letter-spacing: 0.5px;
   line-height: 1.2;
 }
@@ -14178,7 +14182,7 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
 }
 
 .nature-buff-row .nature-effect-label {
-  color: #f1f5f9;
+  color: var(--text-primary, #f1f5f9);
 }
 
 .nature-arrows-up {
@@ -14189,7 +14193,7 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
 }
 
 .nature-debuff-row .nature-effect-label {
-  color: #cbd5e1;
+  color: var(--text-secondary, #cbd5e1);
 }
 
 .nature-arrows-down {
@@ -14200,11 +14204,35 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
 }
 
 .nature-effect-neutral {
-  color: #94a3b8;
+  color: var(--text-secondary, #94a3b8);
   font-size: 12px;
   font-weight: 500;
   line-height: 1.3;
 }
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-pill-capsule,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-pill-capsule,
+[data-theme="midnight"][data-theme-inverted="true"] .nature-pill-capsule,
+[data-theme="onyx"][data-theme-inverted="true"] .nature-pill-capsule {
+  border-color: #16a34a;
+  background: rgba(22, 163, 74, 0.1);
+}
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-capsule-tag,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-capsule-tag,
+[data-theme="midnight"][data-theme-inverted="true"] .nature-capsule-tag,
+[data-theme="onyx"][data-theme-inverted="true"] .nature-capsule-tag {
+  background: #16a34a;
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-arrows-up,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-arrows-up,
+[data-theme="midnight"][data-theme-inverted="true"] .nature-arrows-up,
+[data-theme="onyx"][data-theme-inverted="true"] .nature-arrows-up { color: #ea580c; }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-arrows-down,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-arrows-down,
+[data-theme="midnight"][data-theme-inverted="true"] .nature-arrows-down,
+[data-theme="onyx"][data-theme-inverted="true"] .nature-arrows-down { color: #0284c7; }
 
 .appraisal-subskills-grid {
   display: grid;
@@ -14343,6 +14371,60 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   overflow: visible;
   display: block;
 }
+
+/* 8-Theme Radar Chart SVG Contrast (Light Themes) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-grid-poly,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-grid-poly,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-grid-poly,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-grid-poly { stroke: rgba(15, 23, 42, 0.22); }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-grid-outer,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-grid-outer,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-grid-outer,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-grid-outer { fill: rgba(15, 23, 42, 0.03); stroke: rgba(15, 23, 42, 0.36); }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-axis-line,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-axis-line,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-axis-line,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-axis-line { stroke: rgba(15, 23, 42, 0.22); }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-poly,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-poly,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-data-poly,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-data-poly { stroke: #0284c7; }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-poly-b,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-poly-b,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-data-poly-b,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-data-poly-b { stroke: #7c3aed; }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-dot,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-dot,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-data-dot,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-data-dot { fill: #0284c7; stroke: #ffffff; }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-dot-b,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-dot-b,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-dot-b,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-dot-b { fill: #7c3aed; stroke: #ffffff; }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-label-text,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-label-text,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-label-text,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-label-text { fill: #0f172a; }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-tspan,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-tspan,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-score-tspan,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-score-tspan,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-a,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-a,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-score-a,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-score-a,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-legend-a,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-legend-a,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-legend-a,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-legend-a { fill: #0369a1; }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-b,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-b,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-score-b,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-score-b,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-legend-b,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-legend-b,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-legend-b,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-legend-b { fill: #7c3aed; }
 
 .appraisal-section-heading {
   margin: 0 0 8px 0;

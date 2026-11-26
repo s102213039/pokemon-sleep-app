@@ -5,6 +5,19 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-26 已完成（修復倉庫詳情淺色主題性格卡與六邊形雷達圖對比度，並全面精簡全站寶可夢地區形態名稱）
+
+- **調整內容**：
+  1. **倉庫詳情與深度研究室性格卡淺色主題修正**（[box_list.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/mobile/box_list.css)、[lab_report.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/lab/lab_report.css)、[styles.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/styles.css)）：
+     - 將 `.nature-capsule-name`、`.nature-buff-row .nature-effect-label`、`.nature-debuff-row .nature-effect-label`、`.nature-effect-neutral` 由寫死白色改為語意化 `var(--text-primary)`／`var(--text-secondary)`，並為全 4 種淺色主題（`dawn`、`emerald`、`midnight+inv`、`onyx+inv`）補齊膠囊邊框、標籤與箭頭高對比色（及 `.nature-mint-tag`／`.nature-effect-mint` 4 淺色對齊）。
+  2. **六邊形雷達圖（詳情單圖＋研究室雙人對比圖）全 8 主題適配**（[lab_summary.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/lab/lab_summary.js)、[lab_editor.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/lab/lab_editor.js)、[box_edit.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/mobile/box_edit.css)、[styles.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/styles.css)）：
+     - 為單人與雙人 SVG 雷達圖網格、軸線、多邊形、節點、標籤與分數補上語意類別，並於全 4 種淺色主題自動切換為深色格線（`rgba(15, 23, 42, 0.22 / 0.36)`）與深藍／深紫分數標註（`#0369a1`／`#7c3aed`），徹底解決白底看不清問題。
+  3. **全站寶可夢地區形態名稱統一精簡**（[i18n_core.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/core/i18n/i18n_core.js)）：
+     - 於 `I18N.getPokemonName` 統一加入 `formatCompactRegionalName()`，將地區形態精簡為純地區名：`六尾（阿羅拉）`／`六尾（阿罗拉）`／`Vulpix (Alola)`、`卡蒂狗（洗翠）`／`風速狗（洗翠）`／`Arcanine (Hisui)`、`烏波（帕底亞）`／`Wooper (Paldea)`，不更動 `data/data.json` 原始鍵值以維持 OCR 與倉庫資料 100% 相容。
+- **驗證結果**：
+  - 無頭 Chrome 實機驗證（Mobile H5 `390x844`，涵蓋 4 淺色與深色主題）：性格卡文字、雷達圖外框與分數皆具高對比度，且三語地區形態名稱全站一致精簡。
+  - `npm test`：**296 / 296 PASS**；`node tests/stress_i18n_consumer.js`：**21 / 21 PASS**；`node tests/test_r1_r5_theme_pwa_css.js`：**10 / 10 PASS**。
+
 ## 交接：2026-11-26 已完成（修復道具詳情圖示灰暗遮罩、移除外框並放大圖示）
 
 - **問題根因**：

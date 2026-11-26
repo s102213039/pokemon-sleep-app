@@ -368,6 +368,60 @@
   height: auto;
 }
 
+/* 8-Theme Radar Chart SVG Contrast (Light Themes) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-grid-poly,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-grid-poly,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-grid-poly,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-grid-poly { stroke: rgba(15, 23, 42, 0.22); }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-grid-outer,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-grid-outer,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-grid-outer,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-grid-outer { fill: rgba(15, 23, 42, 0.03); stroke: rgba(15, 23, 42, 0.36); }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-axis-line,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-axis-line,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-axis-line,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-axis-line { stroke: rgba(15, 23, 42, 0.22); }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-poly,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-poly,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-data-poly,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-data-poly { stroke: #0284c7; }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-poly-b,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-poly-b,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-data-poly-b,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-data-poly-b { stroke: #7c3aed; }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-dot,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-dot,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-data-dot,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-data-dot { fill: #0284c7; stroke: #ffffff; }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-dot-b,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-dot-b,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-dot-b,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-dot-b { fill: #7c3aed; stroke: #ffffff; }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-label-text,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-label-text,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-label-text,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-label-text { fill: #0f172a; }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-tspan,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-tspan,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-score-tspan,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-score-tspan,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-a,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-a,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-score-a,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-score-a,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-legend-a,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-legend-a,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-legend-a,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-legend-a { fill: #0369a1; }
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-b,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-b,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-score-b,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-score-b,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-legend-b,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-legend-b,
+[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-legend-b,
+[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-legend-b { fill: #7c3aed; }
+
 .lab-pros-box {
   display: flex;
   flex-direction: column;
