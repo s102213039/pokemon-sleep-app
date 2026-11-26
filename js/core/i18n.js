@@ -3441,10 +3441,10 @@ registerResources({
     'wiki.ui_default_days': ['120 天', '120 Days', '120 天'],
     'wiki.ui_default_exp': ['約需 11,992 EXP', 'Approx. 11,992 EXP', '约需 11,992 EXP'],
     'wiki.ui_default_candies': ['約需 480 顆糖果 (每顆 25 EXP)', 'Approx. 480 Candies (25 EXP/ea)', '约需 480 颗糖果 (每颗 25 EXP)'],
-    'wiki.ui_target_lv_th': ['目標等級', 'Target Level', '目标等级'],
-    'wiki.ui_req_exp_th': ['所需EXP', 'Required EXP', '所需EXP'],
-    'wiki.ui_daily_sleep_th': ['每天滿睡', 'Daily Full Sleep', '每天满睡'],
-    'wiki.ui_milestone_th': ['里程碑', 'Milestone', '里程碑'],
+    'wiki.ui_target_lv_th': ['目標', 'Target', '目标'],
+    'wiki.ui_req_exp_th': ['EXP', 'EXP', 'EXP'],
+    'wiki.ui_daily_sleep_th': ['天數', 'Days', '天数'],
+    'wiki.ui_milestone_th': ['解鎖', 'Unlock', '解锁'],
     'wiki.ui_days_unit': ['天', 'Days', '天']
   });
   // ─── Wiki 天梯模組字串資源 (Wiki Ladder Module Resources) ───

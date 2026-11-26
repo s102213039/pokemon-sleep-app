@@ -453,13 +453,13 @@
 
   // 睡眠天數成長基準表 (Image 2)
   const SLEEP_DAYS_BASELINE = [
-    { level: 10, totalExp: 1560, days: 16, note: "解鎖第1個副技能", note_en: "Unlocks 1st sub-skill" },
-    { level: 25, totalExp: 8668, days: 87, note: "解鎖第2個副技能", note_en: "Unlocks 2nd sub-skill" },
-    { level: 30, totalExp: 11992, days: 120, note: "解鎖第2種食材", note_en: "Unlocks 2nd ingredient slot" },
-    { level: 50, totalExp: 29993, days: 300, note: "解鎖第3個副技能", note_en: "Unlocks 3rd sub-skill" },
-    { level: 60, totalExp: 51493, days: 515, note: "解鎖第3種食材", note_en: "Unlocks 3rd ingredient slot" },
-    { level: 70, totalExp: 82162, days: 822, note: "解鎖第4個副技能", note_en: "Unlocks 4th sub-skill" },
-    { level: 80, totalExp: 120262, days: 1203, note: "解鎖第5個副技能", note_en: "Unlocks 5th sub-skill" }
+    { level: 10, totalExp: 1560, days: 16, note: "第1副技能", note_en: "1st Sub-skill" },
+    { level: 25, totalExp: 8668, days: 87, note: "第2副技能", note_en: "2nd Sub-skill" },
+    { level: 30, totalExp: 11992, days: 120, note: "第2食材", note_en: "2nd Ing." },
+    { level: 50, totalExp: 29993, days: 300, note: "第3副技能", note_en: "3rd Sub-skill" },
+    { level: 60, totalExp: 51493, days: 515, note: "第3食材", note_en: "3rd Ing." },
+    { level: 70, totalExp: 82162, days: 822, note: "第4副技能", note_en: "4th Sub-skill" },
+    { level: 80, totalExp: 120262, days: 1203, note: "第5副技能", note_en: "5th Sub-skill" }
   ];
 
   // --- 4. 樹果與食材基礎能量資料庫 (Image 1 實體化 - Berry & Ingredient Values) ---

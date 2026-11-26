@@ -5,6 +5,18 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-26 已完成（睡眠 EXP 計算機自動選取下一個最近目標等級與里程碑表格中英文精簡）
+
+- **調整內容**：
+  1. **輸入目前等級自動選取下一個最近可達成目標等級**（[wiki_calculators.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/wiki/wiki_calculators.js)、[wiki_main.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/wiki/wiki_main.js)）：
+     - 新增 `autoSelectNextSleepTarget` 與 `handleSleepCurLvInput`（掛載 `window.WikiDB.onSleepCurLvInput`），當使用者輸入或修改 `#calc-sleep-cur-lv` 時，自動從 `#calc-sleep-target-lv` 選項清單中選取第一個大於目前等級的最近目標等級（如 `1->30`、`30->50`、`54->60`、`60->70`、`70->80`、`80->100`），同步派發 `sync-ui` 更新自訂下拉選單並即時重算天數／EXP／糖果數。
+  2. **里程碑表格表頭與內容中英文精簡防截斷**（[res_wiki_core.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/core/i18n/res_wiki_core.js)、[wiki_skills_matrix.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/wiki/wiki_skills_matrix.js)、[wiki_main.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/wiki/wiki_main.js)）：
+     - 表頭精簡為：繁中 `目標 | EXP | 天數 | 解鎖`、簡中 `目标 | EXP | 天数 | 解锁`、英文 `Target | EXP | Days | Unlock`。
+     - 里程碑內容精簡為：`第1~5副技能`／`第2~3食材` 與 `1st~5th Sub-skill`／`2nd~3rd Ing.`，徹底消除行動端 390px 寬度右側截斷。
+- **驗證結果**：
+  - 無頭 Chrome 實機驗證（Mobile H5 `390x844`，`en-US` 與 `zh-TW`）：輸入 `54` 自動切換為 `Lv.60`（`149 Days`／`149 天`），輸入 `72` 自動切換為 `Lv.80`；`.milestone-table` 寬度 `346px / 346px`，`clipped: false`。
+  - `npm test`：**296 / 296 PASS**；`node tests/stress_i18n_consumer.js`：**21 / 21 PASS**；`node tests/test_r1_r5_theme_pwa_css.js`：**10 / 10 PASS**。
+
 ## 交接：2026-11-26 已完成（全站 8 主題下拉選單、彈窗、浮窗與提示框深淺色隔離全面盤點與修復）
 
 - **問題根因**：

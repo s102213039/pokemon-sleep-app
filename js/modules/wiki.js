@@ -1253,13 +1253,13 @@
 
   // 睡眠天數成長基準表 (Image 2)
   const SLEEP_DAYS_BASELINE = [
-    { level: 10, totalExp: 1560, days: 16, note: "解鎖第1個副技能", note_en: "Unlocks 1st sub-skill" },
-    { level: 25, totalExp: 8668, days: 87, note: "解鎖第2個副技能", note_en: "Unlocks 2nd sub-skill" },
-    { level: 30, totalExp: 11992, days: 120, note: "解鎖第2種食材", note_en: "Unlocks 2nd ingredient slot" },
-    { level: 50, totalExp: 29993, days: 300, note: "解鎖第3個副技能", note_en: "Unlocks 3rd sub-skill" },
-    { level: 60, totalExp: 51493, days: 515, note: "解鎖第3種食材", note_en: "Unlocks 3rd ingredient slot" },
-    { level: 70, totalExp: 82162, days: 822, note: "解鎖第4個副技能", note_en: "Unlocks 4th sub-skill" },
-    { level: 80, totalExp: 120262, days: 1203, note: "解鎖第5個副技能", note_en: "Unlocks 5th sub-skill" }
+    { level: 10, totalExp: 1560, days: 16, note: "第1副技能", note_en: "1st Sub-skill" },
+    { level: 25, totalExp: 8668, days: 87, note: "第2副技能", note_en: "2nd Sub-skill" },
+    { level: 30, totalExp: 11992, days: 120, note: "第2食材", note_en: "2nd Ing." },
+    { level: 50, totalExp: 29993, days: 300, note: "第3副技能", note_en: "3rd Sub-skill" },
+    { level: 60, totalExp: 51493, days: 515, note: "第3食材", note_en: "3rd Ing." },
+    { level: 70, totalExp: 82162, days: 822, note: "第4副技能", note_en: "4th Sub-skill" },
+    { level: 80, totalExp: 120262, days: 1203, note: "第5副技能", note_en: "5th Sub-skill" }
   ];
 
   // --- 4. 樹果與食材基礎能量資料庫 (Image 1 實體化 - Berry & Ingredient Values) ---
@@ -4168,6 +4168,50 @@
     resultBadge.textContent = grade;
   }
 
+  // 8a. 依目前等級自動選取下一個最近可達成的目標等級
+  function autoSelectNextSleepTarget(curLv, targetLvInput) {
+    if (!targetLvInput) return;
+    let optionLevels = [];
+    if (targetLvInput.options && targetLvInput.options.length > 0) {
+      optionLevels = Array.from(targetLvInput.options)
+        .map(opt => parseInt(opt.value, 10))
+        .filter(n => Number.isFinite(n))
+        .sort((a, b) => a - b);
+    }
+    if (optionLevels.length === 0) {
+      const caps = _getWikiCaps();
+      const fallback = (caps && Array.isArray(caps.SLEEP_EXP_TARGET_LEVELS) && caps.SLEEP_EXP_TARGET_LEVELS.length > 0)
+        ? caps.SLEEP_EXP_TARGET_LEVELS
+        : [30, 50, 60, 70, 80, 100];
+      optionLevels = fallback.map(n => parseInt(n, 10)).filter(n => Number.isFinite(n)).sort((a, b) => a - b);
+    }
+    if (optionLevels.length === 0) return;
+    const nextLv = optionLevels.find(lv => lv > curLv) || optionLevels[optionLevels.length - 1];
+    const nextVal = String(nextLv);
+    if (targetLvInput.value !== nextVal) {
+      targetLvInput.value = nextVal;
+      if (typeof targetLvInput.dispatchEvent === 'function' && typeof Event === 'function') {
+        targetLvInput.dispatchEvent(new Event('sync-ui'));
+      }
+    }
+  }
+
+  function handleSleepCurLvInput() {
+    const curLvInput = document.getElementById('calc-sleep-cur-lv');
+    const targetLvInput = document.getElementById('calc-sleep-target-lv');
+    if (curLvInput && targetLvInput) {
+      const raw = String(curLvInput.value || '').trim();
+      const parsed = parseInt(raw, 10);
+      if (raw !== '' && Number.isFinite(parsed) && parsed >= 1) {
+        const caps = _getWikiCaps();
+        const maxCurLv = Math.max(1, (caps.THEORETICAL_MAX_LEVEL || 100) - 1);
+        const clamped = Math.min(maxCurLv, Math.max(1, parsed));
+        autoSelectNextSleepTarget(clamped, targetLvInput);
+      }
+    }
+    recalcSleepDays();
+  }
+
   // 8. 升級睡眠天數計算機重新計算 (Official Pokemon Sleep EXP Table Lv.1~80)
   function recalcSleepDays() {
     const curLvInput    = document.getElementById('calc-sleep-cur-lv');
@@ -4343,8 +4387,8 @@
     // 8. 綁定睡眠天數升級計算器表單
     const curLvInput = document.getElementById('calc-sleep-cur-lv');
     if (curLvInput) {
-      curLvInput.oninput = recalcSleepDays;
-      curLvInput.onchange = recalcSleepDays;
+      curLvInput.oninput = handleSleepCurLvInput;
+      curLvInput.onchange = handleSleepCurLvInput;
       curLvInput.addEventListener('focus', function () {
         if (typeof this.select === 'function') this.select();
       });
@@ -4486,7 +4530,9 @@
     });
 
     document.addEventListener('input', (e) => {
-      if (e.target && (e.target.id === 'calc-sleep-cur-lv' || e.target.id === 'calc-sleep-target-lv')) {
+      if (e.target && e.target.id === 'calc-sleep-cur-lv') {
+        handleSleepCurLvInput();
+      } else if (e.target && e.target.id === 'calc-sleep-target-lv') {
         recalcSleepDays();
       }
       if (e.target && e.target.id === 'berry-level-slider') {
@@ -11757,7 +11803,7 @@
                 <div class="calc-form-row calc-form-row-levels">
                   <div class="calc-field-group calc-field-cur">
                     <label class="calc-label" for="calc-sleep-cur-lv">${window.I18N?.t?.('wiki.ui_cur_lv_lbl') ?? '目前等級:'}</label>
-                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="${caps.THEORETICAL_MAX_LEVEL - 1}" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
+                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="${caps.THEORETICAL_MAX_LEVEL - 1}" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.onSleepCurLvInput()" onchange="window.WikiDB.onSleepCurLvInput()">
                   </div>
 
                   <div class="calc-field-group calc-field-target">
@@ -11809,10 +11855,10 @@
               <table class="wiki-data-table milestone-table">
                 <thead>
                   <tr>
-                    <th class="col-milestone-lv">${window.I18N?.t?.('wiki.ui_target_lv_th') ?? '目標等級'}</th>
-                    <th class="col-milestone-exp">${window.I18N?.t?.('wiki.ui_req_exp_th') ?? '所需EXP'}</th>
-                    <th class="col-milestone-days">${window.I18N?.t?.('wiki.ui_daily_sleep_th') ?? '每天滿睡'}</th>
-                    <th class="col-milestone-note">${window.I18N?.t?.('wiki.ui_milestone_th') ?? '里程碑'}</th>
+                    <th class="col-milestone-lv">${window.I18N?.t?.('wiki.ui_target_lv_th') ?? '目標'}</th>
+                    <th class="col-milestone-exp">${window.I18N?.t?.('wiki.ui_req_exp_th') ?? 'EXP'}</th>
+                    <th class="col-milestone-days">${window.I18N?.t?.('wiki.ui_daily_sleep_th') ?? '天數'}</th>
+                    <th class="col-milestone-note">${window.I18N?.t?.('wiki.ui_milestone_th') ?? '解鎖'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -11826,7 +11872,7 @@
                       : 'milestone-cyan';
                     const rawNote = window.I18N?.field?.(row, 'note') ?? row.note;
                     const formattedNote = rawNote
-                      .replace(/(第[一二三四五12345][個个]副技能|第[一二三123][種种]食材|1st sub-skill|2nd sub-skill|3rd sub-skill|4th sub-skill|5th sub-skill|2nd ingredient slot|3rd ingredient slot)/g, '<span class="text-accent font-bold">$1</span>');
+                      .replace(/(第[一二三四五12345][個个]?副技能|第[一二三123][種种]?食材|1st Sub-skill|2nd Sub-skill|3rd Sub-skill|4th Sub-skill|5th Sub-skill|2nd Ing\.|3rd Ing\.)/g, '<span class="text-accent font-bold">$1</span>');
                     return `
                     <tr>
                       <td class="col-milestone-lv" style="vertical-align: middle;"><span class="milestone-badge ${milestoneColor}">Lv.${row.level}</span></td>
@@ -12049,7 +12095,8 @@
     getItemsSearchQuery: () => currentItemsSearchQuery,
     openItemDetailModal: openItemDetailModal,
     closeItemDetailModal: closeItemDetailModal,
-    navigateToPokemonDex: navigateToPokemonDex
+    navigateToPokemonDex: navigateToPokemonDex,
+    onSleepCurLvInput: handleSleepCurLvInput
   };
 
   if (typeof attachSkillLadderExports === 'function') {
@@ -12087,7 +12134,7 @@
     setLadderRecipeFilter, setLadderSpecialtyFilter, toggleLadderSkillDrawExpected, getLadderSkillDrawExpected,
     getPokemonSkillDrawBonus, hasPokemonIngSelectSkill, INGREDIENT_DRAW_SKILL_EXPECTATIONS, setLadderSortOrder, getLadderSortOrder,
     resetLadderFilters, refreshCoordinateLadder, renderCoordinateLadder, handleLadderGroupHover,
-    handleLadderGroupHoverOut, recalcTriggerChance, recalcSleepDays, initCalcCustomSelects,
+    handleLadderGroupHoverOut, recalcTriggerChance, recalcSleepDays, onSleepCurLvInput: handleSleepCurLvInput, initCalcCustomSelects,
     openLadderSidebar, closeLadderSidebar, openIngredientRankingModal, closeIngredientRankingModal,
     updateLadderActiveFilterBadge, HELPING_SPEED_MATRIX, selectIsland, toggleIslandExpertMode,
     filterIslandSleepType, renderIslandsSubpanel, TOP_7_RECIPES_HIGHLIGHT, TOP_10_RECIPES_HIGHLIGHT: TOP_7_RECIPES_HIGHLIGHT, TOP_RECIPES_BY_CATEGORY, recomputeTopRecipesByCategory,

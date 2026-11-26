@@ -495,6 +495,50 @@
     resultBadge.textContent = grade;
   }
 
+  // 8a. 依目前等級自動選取下一個最近可達成的目標等級
+  function autoSelectNextSleepTarget(curLv, targetLvInput) {
+    if (!targetLvInput) return;
+    let optionLevels = [];
+    if (targetLvInput.options && targetLvInput.options.length > 0) {
+      optionLevels = Array.from(targetLvInput.options)
+        .map(opt => parseInt(opt.value, 10))
+        .filter(n => Number.isFinite(n))
+        .sort((a, b) => a - b);
+    }
+    if (optionLevels.length === 0) {
+      const caps = _getWikiCaps();
+      const fallback = (caps && Array.isArray(caps.SLEEP_EXP_TARGET_LEVELS) && caps.SLEEP_EXP_TARGET_LEVELS.length > 0)
+        ? caps.SLEEP_EXP_TARGET_LEVELS
+        : [30, 50, 60, 70, 80, 100];
+      optionLevels = fallback.map(n => parseInt(n, 10)).filter(n => Number.isFinite(n)).sort((a, b) => a - b);
+    }
+    if (optionLevels.length === 0) return;
+    const nextLv = optionLevels.find(lv => lv > curLv) || optionLevels[optionLevels.length - 1];
+    const nextVal = String(nextLv);
+    if (targetLvInput.value !== nextVal) {
+      targetLvInput.value = nextVal;
+      if (typeof targetLvInput.dispatchEvent === 'function' && typeof Event === 'function') {
+        targetLvInput.dispatchEvent(new Event('sync-ui'));
+      }
+    }
+  }
+
+  function handleSleepCurLvInput() {
+    const curLvInput = document.getElementById('calc-sleep-cur-lv');
+    const targetLvInput = document.getElementById('calc-sleep-target-lv');
+    if (curLvInput && targetLvInput) {
+      const raw = String(curLvInput.value || '').trim();
+      const parsed = parseInt(raw, 10);
+      if (raw !== '' && Number.isFinite(parsed) && parsed >= 1) {
+        const caps = _getWikiCaps();
+        const maxCurLv = Math.max(1, (caps.THEORETICAL_MAX_LEVEL || 100) - 1);
+        const clamped = Math.min(maxCurLv, Math.max(1, parsed));
+        autoSelectNextSleepTarget(clamped, targetLvInput);
+      }
+    }
+    recalcSleepDays();
+  }
+
   // 8. 升級睡眠天數計算機重新計算 (Official Pokemon Sleep EXP Table Lv.1~80)
   function recalcSleepDays() {
     const curLvInput    = document.getElementById('calc-sleep-cur-lv');
@@ -670,8 +714,8 @@
     // 8. 綁定睡眠天數升級計算器表單
     const curLvInput = document.getElementById('calc-sleep-cur-lv');
     if (curLvInput) {
-      curLvInput.oninput = recalcSleepDays;
-      curLvInput.onchange = recalcSleepDays;
+      curLvInput.oninput = handleSleepCurLvInput;
+      curLvInput.onchange = handleSleepCurLvInput;
       curLvInput.addEventListener('focus', function () {
         if (typeof this.select === 'function') this.select();
       });
@@ -813,7 +857,9 @@
     });
 
     document.addEventListener('input', (e) => {
-      if (e.target && (e.target.id === 'calc-sleep-cur-lv' || e.target.id === 'calc-sleep-target-lv')) {
+      if (e.target && e.target.id === 'calc-sleep-cur-lv') {
+        handleSleepCurLvInput();
+      } else if (e.target && e.target.id === 'calc-sleep-target-lv') {
         recalcSleepDays();
       }
       if (e.target && e.target.id === 'berry-level-slider') {

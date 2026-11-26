@@ -635,7 +635,7 @@
                 <div class="calc-form-row calc-form-row-levels">
                   <div class="calc-field-group calc-field-cur">
                     <label class="calc-label" for="calc-sleep-cur-lv">${window.I18N?.t?.('wiki.ui_cur_lv_lbl') ?? '目前等級:'}</label>
-                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="${caps.THEORETICAL_MAX_LEVEL - 1}" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
+                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="${caps.THEORETICAL_MAX_LEVEL - 1}" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.onSleepCurLvInput()" onchange="window.WikiDB.onSleepCurLvInput()">
                   </div>
 
                   <div class="calc-field-group calc-field-target">
@@ -687,10 +687,10 @@
               <table class="wiki-data-table milestone-table">
                 <thead>
                   <tr>
-                    <th class="col-milestone-lv">${window.I18N?.t?.('wiki.ui_target_lv_th') ?? '目標等級'}</th>
-                    <th class="col-milestone-exp">${window.I18N?.t?.('wiki.ui_req_exp_th') ?? '所需EXP'}</th>
-                    <th class="col-milestone-days">${window.I18N?.t?.('wiki.ui_daily_sleep_th') ?? '每天滿睡'}</th>
-                    <th class="col-milestone-note">${window.I18N?.t?.('wiki.ui_milestone_th') ?? '里程碑'}</th>
+                    <th class="col-milestone-lv">${window.I18N?.t?.('wiki.ui_target_lv_th') ?? '目標'}</th>
+                    <th class="col-milestone-exp">${window.I18N?.t?.('wiki.ui_req_exp_th') ?? 'EXP'}</th>
+                    <th class="col-milestone-days">${window.I18N?.t?.('wiki.ui_daily_sleep_th') ?? '天數'}</th>
+                    <th class="col-milestone-note">${window.I18N?.t?.('wiki.ui_milestone_th') ?? '解鎖'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -704,7 +704,7 @@
                       : 'milestone-cyan';
                     const rawNote = window.I18N?.field?.(row, 'note') ?? row.note;
                     const formattedNote = rawNote
-                      .replace(/(第[一二三四五12345][個个]副技能|第[一二三123][種种]食材|1st sub-skill|2nd sub-skill|3rd sub-skill|4th sub-skill|5th sub-skill|2nd ingredient slot|3rd ingredient slot)/g, '<span class="text-accent font-bold">$1</span>');
+                      .replace(/(第[一二三四五12345][個个]?副技能|第[一二三123][種种]?食材|1st Sub-skill|2nd Sub-skill|3rd Sub-skill|4th Sub-skill|5th Sub-skill|2nd Ing\.|3rd Ing\.)/g, '<span class="text-accent font-bold">$1</span>');
                     return `
                     <tr>
                       <td class="col-milestone-lv" style="vertical-align: middle;"><span class="milestone-badge ${milestoneColor}">Lv.${row.level}</span></td>
@@ -927,7 +927,8 @@
     getItemsSearchQuery: () => currentItemsSearchQuery,
     openItemDetailModal: openItemDetailModal,
     closeItemDetailModal: closeItemDetailModal,
-    navigateToPokemonDex: navigateToPokemonDex
+    navigateToPokemonDex: navigateToPokemonDex,
+    onSleepCurLvInput: handleSleepCurLvInput
   };
 
   if (typeof attachSkillLadderExports === 'function') {
@@ -965,7 +966,7 @@
     setLadderRecipeFilter, setLadderSpecialtyFilter, toggleLadderSkillDrawExpected, getLadderSkillDrawExpected,
     getPokemonSkillDrawBonus, hasPokemonIngSelectSkill, INGREDIENT_DRAW_SKILL_EXPECTATIONS, setLadderSortOrder, getLadderSortOrder,
     resetLadderFilters, refreshCoordinateLadder, renderCoordinateLadder, handleLadderGroupHover,
-    handleLadderGroupHoverOut, recalcTriggerChance, recalcSleepDays, initCalcCustomSelects,
+    handleLadderGroupHoverOut, recalcTriggerChance, recalcSleepDays, onSleepCurLvInput: handleSleepCurLvInput, initCalcCustomSelects,
     openLadderSidebar, closeLadderSidebar, openIngredientRankingModal, closeIngredientRankingModal,
     updateLadderActiveFilterBadge, HELPING_SPEED_MATRIX, selectIsland, toggleIslandExpertMode,
     filterIslandSleepType, renderIslandsSubpanel, TOP_7_RECIPES_HIGHLIGHT, TOP_10_RECIPES_HIGHLIGHT: TOP_7_RECIPES_HIGHLIGHT, TOP_RECIPES_BY_CATEGORY, recomputeTopRecipesByCategory,

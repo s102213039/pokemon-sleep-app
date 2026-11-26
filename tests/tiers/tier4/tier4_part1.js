@@ -867,17 +867,18 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless
   assert(stylesCss.includes('.mobile-h5-app .strategy-item {\n  background: transparent !important;\n  border: none !important;'), 'Mobile strategy-item must have transparent background and no borders');
 
   // 5. Verify milestone table simplification and single-line column control (via pre-resolved I18N resources)
-  assert(wikiJs.includes("col-milestone-days") && wikiJs.includes("'wiki.ui_daily_sleep_th'") && I18N.DICTIONARY['zh-TW']['wiki.ui_daily_sleep_th'] === '每天滿睡', 'Milestone table header must be 每天滿睡');
-  assert(wikiJs.includes("col-milestone-exp") && wikiJs.includes("'wiki.ui_req_exp_th'") && I18N.DICTIONARY['zh-TW']['wiki.ui_req_exp_th'] === '所需EXP', 'Milestone table header must be 所需EXP');
-  assert(wikiJs.includes("col-milestone-note") && wikiJs.includes("'wiki.ui_milestone_th'") && I18N.DICTIONARY['zh-TW']['wiki.ui_milestone_th'] === '里程碑', 'Milestone table header must be 里程碑');
+  assert(wikiJs.includes("col-milestone-days") && wikiJs.includes("'wiki.ui_daily_sleep_th'") && I18N.DICTIONARY['zh-TW']['wiki.ui_daily_sleep_th'] === '天數', 'Milestone table header must be 天數');
+  assert(wikiJs.includes("col-milestone-exp") && wikiJs.includes("'wiki.ui_req_exp_th'") && I18N.DICTIONARY['zh-TW']['wiki.ui_req_exp_th'] === 'EXP', 'Milestone table header must be EXP');
+  assert(wikiJs.includes("col-milestone-note") && wikiJs.includes("'wiki.ui_milestone_th'") && I18N.DICTIONARY['zh-TW']['wiki.ui_milestone_th'] === '解鎖', 'Milestone table header must be 解鎖');
+  assert(I18N.DICTIONARY['en-US']['wiki.ui_target_lv_th'] === 'Target' && I18N.DICTIONARY['en-US']['wiki.ui_daily_sleep_th'] === 'Days' && I18N.DICTIONARY['en-US']['wiki.ui_milestone_th'] === 'Unlock', 'Milestone table EN headers must be compact');
   assert(wikiJs.includes('Lv.${row.level}'), 'Milestone level must not have spaces');
   assert(wikiJs.includes('${row.totalExp.toLocaleString()}</td>'), 'Milestone EXP value must not have EXP suffix text');
   assert(wikiJs.includes("${row.days} ") && !wikiJs.includes("(${row.days}"), 'Milestone days must not have parentheses');
-  assert(wikiJs.includes('note: "解鎖第1個副技能"'), 'Milestone note Lv.10 must remove extra comma content');
-  assert(wikiJs.includes('note: "解鎖第2個副技能"'), 'Milestone note Lv.25 must remove extra comma content');
-  assert(wikiJs.includes('note: "解鎖第2種食材"'), 'Milestone note Lv.30 must remove extra comma content');
-  assert(wikiJs.includes('note: "解鎖第3個副技能"'), 'Milestone note Lv.50 must remove extra comma content');
-  assert(wikiJs.includes('note: "解鎖第3種食材"'), 'Milestone note Lv.60 must remove extra comma content');
+  assert(wikiJs.includes('note: "第1副技能"'), 'Milestone note Lv.10 must be concise');
+  assert(wikiJs.includes('note: "第2副技能"'), 'Milestone note Lv.25 must be concise');
+  assert(wikiJs.includes('note: "第2食材"'), 'Milestone note Lv.30 must be concise');
+  assert(wikiJs.includes('note: "第3副技能"'), 'Milestone note Lv.50 must be concise');
+  assert(wikiJs.includes('note: "第3食材"'), 'Milestone note Lv.60 must be concise');
   assert(stylesCss.includes('.milestone-table th.col-milestone-lv'), 'Milestone table must have column lv styling');
   assert(stylesCss.includes('.milestone-table th.col-milestone-exp'), 'Milestone table must have column exp styling');
   assert(stylesCss.includes('.milestone-table th.col-milestone-days'), 'Milestone table must have column days styling');
@@ -1775,6 +1776,15 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
   assert(expRes.textContent.includes('11,992'), `Lv.1 to 30 must be 11,992 EXP, got: ${expRes.textContent}`);
   assert(!expRes.textContent.includes('每日約') && !expRes.textContent.includes('EXP/Day'), `expRes must not contain (每日約 100 EXP) or (~100 EXP/Day), got: ${expRes.textContent}`);
   assert(candiesRes.textContent.includes('480') && candiesRes.textContent.includes('25 EXP'), `Lv.1 to 30 must be 480 candies (25 EXP/ea), got: ${candiesRes.textContent}`);
+
+  // Case A2: Auto-select next nearest achievable target level on Current Level input
+  for (const [inLv, expectedTarget] of [['1', '30'], ['29', '30'], ['30', '50'], ['54', '60'], ['60', '70'], ['70', '80'], ['80', '100'], ['99', '100']]) {
+    curLv.value = inLv;
+    ctx.window.WikiDB.onSleepCurLvInput();
+    assert(String(targetLv.value) === expectedTarget, `Current Lv.${inLv} should auto-select Target Lv.${expectedTarget}, got Lv.${targetLv.value}`);
+  }
+  curLv.value = '1';
+  targetLv.value = '30';
 
   // Case B: Level 1 to 50 default -> 29,993 EXP, 300 Days, 1,200 Candies
   targetLv.value = '50';
