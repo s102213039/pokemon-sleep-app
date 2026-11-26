@@ -10773,7 +10773,6 @@
       modal.innerHTML = `
         <div class="wiki-item-modal-backdrop-dismiss" onclick="window.WikiDB.closeItemDetailModal()"></div>
         <div class="box-modal-dialog wiki-item-modal-dialog ${isMobileH5 ? 'mobile-box-sheet bottom-sheet mobile-modal-sheet' : ''}" role="document">
-          ${isMobileH5 ? '<div class="sheet-drag-handle"></div>' : ''}
           <div class="box-modal-header wiki-item-modal-header">
             <div class="wiki-item-modal-title-group">
               <div class="wiki-item-modal-icon-wrap" id="wiki-item-modal-icon-wrap">

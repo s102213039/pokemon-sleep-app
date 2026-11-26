@@ -1341,9 +1341,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     // 2. Mobile H5 app/index.html has box-subtab-list and box-subtab-lab
     assert(appIndexHtml.includes('id="box-subtab-list"') && appIndexHtml.includes('id="box-subtab-lab"'), 'app/index.html must have box subnav tabs');
 
-    // 3. Mobile modal bottom-sheet layout in appraisal.js
+    // 3. Mobile modal bottom-sheet layout in appraisal.js (top drag handle bar removed)
     assert(appraisalJs.includes('box-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet'), 'Mobile appraisal modal must use mobile-box-sheet bottom-sheet');
-    assert(appraisalJs.includes('sheet-drag-handle'), 'Mobile appraisal modal must include sheet-drag-handle');
+    assert(!appraisalJs.includes('sheet-drag-handle'), 'Mobile appraisal modal must not include sheet-drag-handle');
     assert(appraisalJs.includes('box-modal-header'), 'Mobile appraisal modal must include box-modal-header');
     assert(appraisalJs.includes('box-modal-header-cancel'), 'Mobile appraisal modal must have cancel/close button on left');
     assert(appraisalJs.includes('appraisal-dual-verdict-column') && !appraisalJs.includes('<h3 class="box-modal-title">'), 'Mobile appraisal modal header must have dual-verdict column in place of box-modal-title');
@@ -1397,7 +1397,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     });
 
     assert(modalCreated.className.includes('mobile-box-sheet') || modalCreated.innerHTML.includes('mobile-box-sheet'), 'Mobile openModal must render mobile-box-sheet');
-    assert(modalCreated.innerHTML.includes('sheet-drag-handle'), 'Mobile openModal must render sheet drag handle');
+    assert(!modalCreated.innerHTML.includes('sheet-drag-handle'), 'Mobile openModal must not render sheet drag handle');
     assert(modalCreated.innerHTML.includes('box-modal-header'), 'Mobile openModal must render box modal header');
     assert(modalCreated.innerHTML.includes('小花'), 'Mobile openModal must render nickname');
   });

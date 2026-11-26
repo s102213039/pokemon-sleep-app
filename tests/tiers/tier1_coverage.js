@@ -2200,9 +2200,9 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     assert(appraisalJs.includes('appraisal-subskills-grid'), 'Appraisal modal must render subskills in grid');
     assert(appraisalJs.includes('appraisal-radar-wrapper') || appraisalJs.includes('renderRadarChartSVG'), 'Appraisal modal must render radar chart');
 
-    // 3. Mobile H5 bottom sheet structure
+    // 3. Mobile H5 bottom sheet structure (top drag handle bar removed)
     assert(appraisalJs.includes('box-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet'), 'Mobile modal must render mobile-box-sheet dialog');
-    assert(appraisalJs.includes('sheet-drag-handle'), 'Mobile modal must render sheet drag handle');
+    assert(!appraisalJs.includes('sheet-drag-handle'), 'Mobile modal must not render sheet drag handle');
     assert(appraisalJs.includes('box-modal-header'), 'Mobile modal must render box-modal-header');
 
     // 4. CSS classes present

@@ -2252,7 +2252,6 @@ const TARGET_TOP_RECIPES = [
       modal.className = 'box-modal-backdrop modal-overlay appraisal-modal-backdrop mobile-modal-backdrop';
       modal.innerHTML = `
         <div class="box-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet" role="dialog" aria-modal="true">
-          <div class="sheet-drag-handle"></div>
           <div class="box-modal-header">
             <button type="button" class="box-modal-header-cancel" onclick="window.AppraisalLab.closeModal()">${window.I18N?.t?.('lab.t_close') ?? 'lab.t_close'}</button>
             <!-- 雙軌綜合評級徽章 (居中置於標題原位) -->

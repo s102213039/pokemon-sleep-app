@@ -7350,24 +7350,25 @@ function renderPokedexDetailModalContent() {
   modalEl.innerHTML = `
     <div class="pokedex-modal-backdrop-dismiss" onclick="window.PokemonApp.closePokemonDetailModal()"></div>
     <div class="box-modal-dialog pokedex-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet" role="dialog" aria-modal="true">
-      <div class="sheet-drag-handle"></div>
-      <!-- 頂部標題列 (樹果與類型上下展示、單行水平基礎數值、右上角重置預設) -->
+      <!-- 頂部標題列 (編號與進化石/樹果/專長並列於首行、名稱獨佔次行防重疊、單行水平基礎數值) -->
       <div class="box-modal-header pokedex-modal-header">
         <div class="pokedex-modal-header-main">
           <div class="box-modal-title pokedex-modal-title">
             ${iconUrl ? `<img src="${iconUrl}" class="pokedex-header-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="handlePokemonIconError(this)">` : ''}
             <div class="pokedex-header-info">
-              <div class="pokedex-header-no">No.${pkm.formatted_no || ''}</div>
+              <div class="pokedex-header-top-row">
+                <span class="pokedex-header-no">No.${pkm.formatted_no || ''}</span>
+                <div class="pokedex-header-tags pokedex-header-berry-spec-group">
+                  ${renderPokedexEvoItemChipsHTML(pkm)}
+                  <span class="pokedex-tag pokedex-tag-berry" title="${escapeHtml(berryName)}">
+                    ${berry.icon ? `<img src="${berry.icon}" class="pokedex-berry-icon-img" alt="${escapeHtml(berryName)}" title="${escapeHtml(berryName)}" loading="lazy">` : ''}
+                  </span>
+                  ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkm.specialty, 20, 'pokedex-tag pokedex-tag-spec') : `<span class="pokedex-tag pokedex-tag-spec ${specClass}">${escapeHtml(specName)}</span>`}
+                </div>
+              </div>
               <div class="pokedex-header-name-row">
                 <span class="pokedex-header-pkm-name font-bold">${escapeHtml(pkmName)}</span>
               </div>
-            </div>
-            <div class="pokedex-header-tags pokedex-header-berry-spec-group">
-              ${renderPokedexEvoItemChipsHTML(pkm)}
-              <span class="pokedex-tag pokedex-tag-berry" title="${escapeHtml(berryName)}">
-                ${berry.icon ? `<img src="${berry.icon}" class="pokedex-berry-icon-img" alt="${escapeHtml(berryName)}" title="${escapeHtml(berryName)}" loading="lazy">` : ''}
-              </span>
-              ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkm.specialty, 20, 'pokedex-tag pokedex-tag-spec') : `<span class="pokedex-tag pokedex-tag-spec ${specClass}">${escapeHtml(specName)}</span>`}
             </div>
           </div>
 

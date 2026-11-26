@@ -5,6 +5,17 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-26 已完成（寶可夢詳情頂部圖示移至編號列防重疊，並全面移除全站上方拖曳橫桿）
+
+- **調整內容**：
+  1. **寶可夢詳情標頭防重疊重排**（[pokedex_modal.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/pokedex/pokedex_modal.js)、[news_cards.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/news/news_cards.css)、[wiki_layout.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/wiki/wiki_layout.css)、[styles.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/styles.css)）：
+     - 將進化石、樹果圖示與專長圖示（`.pokedex-header-tags` / `.pokedex-header-berry-spec-group`）縮小為精巧尺寸（桌面 `16px`、行動端 `15px`）並移至上方 `.pokedex-header-top-row` 與 `No.XXXX` 編號並列，下方 `.pokedex-header-name-row` 獨立完整展示寶可夢名稱與地區形態（如 `風速狗（洗翠的樣子）`），徹底消除名稱與圖示重疊。
+  2. **全面移除全站所有上方拖曳橫桿 (`.sheet-drag-handle`)**（[app/index.html](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/app/index.html)、[pokedex_modal.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/pokedex/pokedex_modal.js)、[lab_modal.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/lab/lab_modal.js)、[wiki_items.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/wiki/wiki_items.js)、[pokedex_modal_hero.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/components/modals/pokedex_modal_hero.css)、[wiki_layout.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/wiki/wiki_layout.css)、[styles.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/styles.css)）：
+     - 刪除圖鑑詳情、倉庫編輯、道具詳情與評測報告底板之 `<div class="sheet-drag-handle"></div>` DOM，並於 CSS 全域設為 `display: none !important` 與調整詳情標頭上方留白。
+- **驗證結果**：
+  - 無頭 Chrome 實機驗證（Mobile H5 `390x844` 與 Desktop `1440x900` 開啟洗翠形態詳情）：`tagsOnNoRow: true`、`nameBelowTags: true`、`overlapNameTags: false`、`overlapNameVerdict: false`、`dragHandles: 0`。
+  - `npm test`：**296 / 296 PASS**；`node tests/stress_i18n_consumer.js`：**21 / 21 PASS**；`node tests/test_r1_r5_theme_pwa_css.js`：**10 / 10 PASS**。
+
 ## 交接：2026-11-26 已完成（睡眠 EXP 計算機自動選取下一個最近目標等級與里程碑表格中英文精簡）
 
 - **調整內容**：

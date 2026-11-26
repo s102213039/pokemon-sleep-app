@@ -269,6 +269,15 @@
   flex-direction: column;
   gap: 2px;
   min-width: 0;
+  flex: 1 1 auto;
+}
+
+.pokedex-header-top-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 
 .pokedex-header-no {
@@ -276,6 +285,7 @@
   font-weight: 700;
   color: var(--text-muted, #94a3b8);
   letter-spacing: 0.5px;
+  flex-shrink: 0;
 }
 
 .pokedex-header-pkm-name {
@@ -283,14 +293,19 @@
   font-weight: 800;
   color: var(--text-primary, #f8fafc);
   margin: 0;
-  display: inline-block;
+  display: block;
+  max-width: 100%;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pokedex-header-name-row {
   display: flex;
   align-items: baseline;
   gap: 6px;
+  width: 100%;
+  min-width: 0;
 }
 
 .pokedex-header-title-en {
@@ -302,12 +317,30 @@
 .pokedex-header-tags,
 .pokedex-header-berry-spec-group {
   display: inline-flex !important;
-  flex-direction: column !important;
+  flex-direction: row !important;
   align-items: center !important;
-  justify-content: center !important;
-  gap: 3px !important;
+  justify-content: flex-start !important;
+  gap: 4px !important;
   margin: 0 !important;
   flex-shrink: 0;
+}
+
+.pokedex-header-top-row .pokedex-header-tags img,
+.pokedex-header-top-row .pokedex-header-tags .pokedex-berry-icon-img {
+  width: 16px !important;
+  height: 16px !important;
+  object-fit: contain;
+}
+
+.pokedex-header-top-row .pokedex-header-tags svg {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+.pokedex-header-top-row .pokedex-header-tags .pokedex-tag {
+  height: 18px !important;
+  padding: 0 2px !important;
+  line-height: 1 !important;
 }
 
 .pokedex-tag {

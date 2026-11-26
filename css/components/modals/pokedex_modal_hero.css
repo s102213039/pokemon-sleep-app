@@ -673,12 +673,7 @@
 }
 
 .sheet-drag-handle {
-  width: 40px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 999px;
-  margin: 8px auto 12px auto;
-  flex-shrink: 0;
+  display: none !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .sheet-drag-handle,
