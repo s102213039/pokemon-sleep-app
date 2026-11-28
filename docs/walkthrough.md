@@ -13,7 +13,9 @@
      - [pokedex_ui.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/pokedex/pokedex_ui.js) 與 [box_render.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/box/box_render.js)：同步更新列表 `<img>` 與 `.table-icon-wrapper` 尺寸屬性為 `34x34`；[base.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/base.css) 同步更新 `contain-intrinsic-size: auto 35px`。
   2. **隱藏列表「得意」欄位**：
      - 於 [pokedex_table.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/pokedex_table.css) 設定 `.pokemon-table .th-spec, .pokemon-table .td-spec`（桌機與行動版 H5 同步）為 `display: none !important;`，徹底隱藏圖鑑與共用列表表格中的得意欄位。
-  3. **新聞雙語自動翻譯補齊**：
+  3. **圖鑑列表隨機主技能簡短命名**：
+     - 於 [pokedex_skills.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/pokedex/pokedex_skills.js) 新增 `formatCompactTableSkillName()`，並僅在 [pokedex_ui.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/pokedex/pokedex_ui.js) `renderTable` 傳入 `{ compactTable: true }`：將圖鑑列表的 `能量填充S(隨機)` 顯示為 `隨機能量S`（英文 `Rand. Charge S`）、`夢碎獲取S(隨機)` 顯示為 `隨機夢碎S`（英文 `Rand. Shard S`）；卡片檢視、詳情浮窗、盒子、百科與研究室等處維持完整名稱不變。
+  4. **新聞雙語自動翻譯補齊**：
      - 修復 `data/news.json` 內自動同步帶入之 2 筆中文 `title_en`，並於 [build_news.py](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/scripts/build_news.py) `ITEM_DICT_EN` 補齊「強化發動！技能週」、「卡蒂狗」、「風速狗」與地區形態英譯詞條，防止未來自動同步回歸。
 - **驗證結果**：
   - [tier1_coverage.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/tests/tiers/tier1_coverage.js) 同步更新 Test 176 斷言（`34px` 正方形零內距圖示欄與 `.td-spec` 隱藏檢查）。

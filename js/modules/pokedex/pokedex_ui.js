@@ -252,7 +252,7 @@
                   <td class="td-rate">${p.ingredient_rate || '--'}</td>
                   <td class="td-rate">${p.skill_rate || '--'}</td>
                   <td class="td-interval">${formatHelpInterval(p.interval)}</td>
-                  <td class="td-skill">${renderSkillWithTooltip(p.main_skill, p)}</td>
+                  <td class="td-skill">${renderSkillWithTooltip(p.main_skill, p, { compactTable: true })}</td>
                 </tr>
               `}).join('')}
             </tbody>

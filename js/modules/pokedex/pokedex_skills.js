@@ -273,11 +273,22 @@ const HYPER_CUTTER_INGS = [
   { name: '好眠番茄', name_en: 'Snoozy Tomato', icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }
 ];
 
-function renderSkillWithTooltip(skillName, pkm) {
+function formatCompactTableSkillName(name) {
+  if (!name) return '';
+  return String(name)
+    .replace(/能量填充S\s*[\(（]\s*(?:隨機(?:\/變動值)?|随机(?:\/变动值)?)\s*[\)）]/g, '隨機能量S')
+    .replace(/(?:夢之碎片獲取S|夢碎獲取S|梦之碎片获取S|梦碎获取S)\s*[\(（]\s*(?:隨機(?:\/變動值)?|随机(?:\/变动值)?)\s*[\)）]/g, '隨機夢碎S')
+    .replace(/Charge\s+(?:Strength|Str\.)\s+S\s*\(Random\)/gi, 'Rand. Charge S')
+    .replace(/Dream\s+Shard\s+Magnet\s+S\s*\(Random\)/gi, 'Rand. Shard S');
+}
+
+function renderSkillWithTooltip(skillName, pkm, opts) {
   if (!skillName) return '--';
+  const compactTable = !!(opts && opts.compactTable);
   const i18n = (typeof window !== 'undefined' && window.I18N) ? window.I18N : null;
   const rawDisplayName = i18n ? i18n.getMainSkillName(skillName) : skillName;
-  const displayName = stripSpecialSkillParens(rawDisplayName);
+  const baseDisplayName = stripSpecialSkillParens(rawDisplayName);
+  const displayName = compactTable ? formatCompactTableSkillName(baseDisplayName) : baseDisplayName;
   const strippedKey = stripSpecialSkillParens(skillName);
   const rawDetail = SPECIAL_SKILL_DETAILS[skillName] ||
                     SPECIAL_SKILL_DETAILS[strippedKey] ||

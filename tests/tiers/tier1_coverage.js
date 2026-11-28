@@ -352,6 +352,11 @@ test('Tier 1 - Feature Coverage', 'JS Logic: app.js contains state management, m
   const shardRender = PokemonApp.renderSkillWithTooltip('夢之碎片獲取S');
   assertEquals(shardRender, '夢碎獲取S', 'renderSkillWithTooltip should format 夢之碎片獲取S as 夢碎獲取S');
 
+  assertEquals(PokemonApp.renderSkillWithTooltip('能量填充S（隨機）', null, { compactTable: true }), '隨機能量S', 'Pokédex table compact mode should render 能量填充S（隨機） as 隨機能量S');
+  assertEquals(PokemonApp.renderSkillWithTooltip('夢之碎片獲取S（隨機）', null, { compactTable: true }), '隨機夢碎S', 'Pokédex table compact mode should render 夢之碎片獲取S（隨機） as 隨機夢碎S');
+  assertEquals(PokemonApp.renderSkillWithTooltip('能量填充S（隨機）'), '能量填充S(隨機)', 'Non-table mode must preserve full 能量填充S(隨機) label');
+  assertEquals(PokemonApp.renderSkillWithTooltip('夢之碎片獲取S（隨機）'), '夢碎獲取S(隨機)', 'Non-table mode must preserve full 夢碎獲取S(隨機) label');
+
   const lucarioRender = PokemonApp.renderSkillWithTooltip('波導彈');
   assert(lucarioRender.includes('<span class="skill-single-line">波導彈</span>'), 'renderSkillWithTooltip should display clean special skill name 波導彈 without parentheses');
 });
