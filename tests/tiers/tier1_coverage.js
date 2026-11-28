@@ -356,6 +356,11 @@ test('Tier 1 - Feature Coverage', 'JS Logic: app.js contains state management, m
   assertEquals(PokemonApp.renderSkillWithTooltip('夢之碎片獲取S（隨機）', null, { compactTable: true }), '隨機夢碎S', 'Pokédex table compact mode should render 夢之碎片獲取S（隨機） as 隨機夢碎S');
   assertEquals(PokemonApp.renderSkillWithTooltip('能量填充S（隨機）'), '能量填充S(隨機)', 'Non-table mode must preserve full 能量填充S(隨機) label');
   assertEquals(PokemonApp.renderSkillWithTooltip('夢之碎片獲取S（隨機）'), '夢碎獲取S(隨機)', 'Non-table mode must preserve full 夢碎獲取S(隨機) label');
+  assert(PokemonApp.renderSkillWithTooltip('Dream Shard Magnet S (Random)', null, { compactTable: true }).includes('>Rnd Shard S<'), 'Compact EN table must shorten Dream Shard Magnet S (Random) to Rnd Shard S');
+  assert(PokemonApp.renderSkillWithTooltip('Charge Strength S (Random)', null, { compactTable: true }).includes('>Rnd Charge S<'), 'Compact EN table must shorten Charge Strength S (Random) to Rnd Charge S');
+  assert(PokemonApp.renderSkillWithTooltip('Cooking Power-Up S', null, { compactTable: true }).includes('>Cook Up S<'), 'Compact EN table must shorten Cooking Power-Up S to Cook Up S');
+  assert(PokemonApp.renderSkillWithTooltip('Energy for Everyone S', null, { compactTable: true }).includes('>Energy All S<'), 'Compact EN table must shorten Energy for Everyone S to Energy All S');
+  assert(PokemonApp.renderSkillWithTooltip('Helper Boost (Electric)', null, { compactTable: true }).includes('>Boost: Elec<'), 'Compact EN table must shorten Helper Boost (Electric) to Boost: Elec');
 
   const lucarioRender = PokemonApp.renderSkillWithTooltip('波導彈');
   assert(lucarioRender.includes('<span class="skill-single-line">波導彈</span>'), 'renderSkillWithTooltip should display clean special skill name 波導彈 without parentheses');

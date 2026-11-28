@@ -223,7 +223,7 @@ function shortenSkillName(name) {
     .replace(/\[Customizable\]/g, '[Custom]');
 }
 
-function formatSkillNameHtml(displayName) {
+function formatSkillNameHtml(displayName, compactTable) {
   if (!displayName) return '';
   // 先將特殊主技能的括號去除，再處理基礎技能格式
   let cleaned = stripSpecialSkillParens(displayName)
@@ -245,14 +245,16 @@ function formatSkillNameHtml(displayName) {
   }
 
   // 縮短英文主技能名稱（例如 Ingredient -> Ingr., Strength -> Str., Everyone -> All 等）
-  const shortName = shortenSkillName(cleaned);
+  const shortName = compactTable ? cleaned : shortenSkillName(cleaned);
 
-  // 1. 如果有括號或括弧拆為兩行
-  const parenMatch = shortName.match(/^(.+?)\s*([(\[].+[)\]])$/);
-  if (parenMatch) {
-    const mainPart = parenMatch[1].trim();
-    const subPart = parenMatch[2].trim();
-    return `<span class="skill-line-1">${escapeHtml(mainPart)}</span><span class="skill-line-2">${escapeHtml(subPart)}</span>`;
+  // 1. 列表精簡模式一律單行展示，非精簡模式若有括號或括弧則拆為兩行
+  if (!compactTable) {
+    const parenMatch = shortName.match(/^(.+?)\s*([(\[].+[)\]])$/);
+    if (parenMatch) {
+      const mainPart = parenMatch[1].trim();
+      const subPart = parenMatch[2].trim();
+      return `<span class="skill-line-1">${escapeHtml(mainPart)}</span><span class="skill-line-2">${escapeHtml(subPart)}</span>`;
+    }
   }
 
   // 2. 標準主技能單行完整展示
@@ -276,10 +278,30 @@ const HYPER_CUTTER_INGS = [
 function formatCompactTableSkillName(name) {
   if (!name) return '';
   return String(name)
+    // 中文隨機型主技能精簡命名（僅用於圖鑑列表）
     .replace(/能量填充S\s*[\(（]\s*(?:隨機(?:\/變動值)?|随机(?:\/变动值)?)\s*[\)）]/g, '隨機能量S')
     .replace(/(?:夢之碎片獲取S|夢碎獲取S|梦之碎片获取S|梦碎获取S)\s*[\(（]\s*(?:隨機(?:\/變動值)?|随机(?:\/变动值)?)\s*[\)）]/g, '隨機夢碎S')
-    .replace(/Charge\s+(?:Strength|Str\.)\s+S\s*\(Random\)/gi, 'Rand. Charge S')
-    .replace(/Dream\s+Shard\s+Magnet\s+S\s*\(Random\)/gi, 'Rand. Shard S');
+    // 英文主技能精簡命名（全部壓縮至 <= 12 字元單行，僅用於圖鑑列表）
+    .replace(/Charge\s+(?:Strength|Str\.)\s+S\s*\(Random\)/gi, 'Rnd Charge S')
+    .replace(/Charge\s+(?:Strength|Str\.)\s+S\s*\(Fixed\)/gi, 'Charge S')
+    .replace(/Charge\s+(?:Strength|Str\.)\s+S\b/gi, 'Charge S')
+    .replace(/Charge\s+(?:Strength|Str\.)\s+M\b/gi, 'Charge M')
+    .replace(/Dream\s+Shard\s+Magnet\s+S\s*\(Random\)/gi, 'Rnd Shard S')
+    .replace(/Dream\s+Shard\s+Magnet\s+S\s*\(Fixed\)/gi, 'Shard S')
+    .replace(/Dream\s+Shard\s+Magnet\s+S\b/gi, 'Shard S')
+    .replace(/(?:Ingredient|Ingr\.)\s+Magnet\s+S\b/gi, 'Ing. Mag. S')
+    .replace(/(?:Ingredient|Ingr\.)\s+Selection\s+S\b/gi, 'Ing. Sel. S')
+    .replace(/Energy\s+for\s+(?:Everyone|All)\s+S\b/gi, 'Energy All S')
+    .replace(/Energizing\s+Cheer\s+S\b/gi, 'Cheer S')
+    .replace(/Charge\s+Energy\s+S\b/gi, 'Chg Energy S')
+    .replace(/\(Extra\s+Helpful\s+S\)/gi, '(Extra Help)')
+    .replace(/Extra\s+Helpful\s+S\b/gi, 'Extra Help S')
+    .replace(/Cooking\s+Power-Up\s+S\b/gi, 'Cook Up S')
+    .replace(/Tasty\s+Chance\s+S\b/gi, 'Tasty S')
+    .replace(/Helper\s+Boost\s*\(Electric\)/gi, 'Boost: Elec')
+    .replace(/Helper\s+Boost\s*\(Water\)/gi, 'Boost: Water')
+    .replace(/Helper\s+Boost\s*\(Fire\)/gi, 'Boost: Fire')
+    .replace(/Mystical\s+Fire\b/gi, 'Mystic Fire');
 }
 
 function renderSkillWithTooltip(skillName, pkm, opts) {
@@ -351,7 +373,7 @@ function renderSkillWithTooltip(skillName, pkm, opts) {
     }
   }
 
-  const contentHtml = formatSkillNameHtml(displayName);
+  const contentHtml = formatSkillNameHtml(displayName, compactTable);
   const cleanSkillKey = stripSpecialSkillParens(skillName || '')
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
     .replace(/活力全體療癒S/g, '全體療癒S')
