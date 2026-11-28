@@ -531,6 +531,12 @@ ITEM_DICT_EN = {
     "皮皮": "Clefairy",
     "皮可西": "Clefable",
     "皮寶寶": "Cleffa",
+    "強化發動！技能週": "Skill Trigger Boost! Skill Week ",
+    "（洗翠的樣子）": " (Hisuian Form)",
+    "（阿羅拉的樣子）": " (Alolan Form)",
+    "（帕底亞的樣子）": " (Paldean Form)",
+    "卡蒂狗": "Growlithe",
+    "風速狗": "Arcanine",
     "本商品裡裝有": "Contains ",
     "歡迎選購": "available in shop"
 }

@@ -364,14 +364,14 @@
               return `
                 <tr data-uid="${p.uid}" title="${escapeHtml(stripHtml(prInfo.summaryNote || ''))}">
                   <td class="td-icon" style="text-align:center;">
-                    <div class="table-icon-wrapper" style="margin:0 auto;width:38px;height:38px;">
-                      ${iconUrl ? `<img src="${iconUrl}" width="38" height="38" alt="${pkmDisplayName}" class="table-icon" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
+                    <div class="table-icon-wrapper" style="margin:0 auto;width:34px;height:34px;">
+                      ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" alt="${pkmDisplayName}" class="table-icon" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
                     </div>
                   </td>
                   <td style="text-align:center;">
-                    <div style="display:flex;align-items:center;justify-content:center;gap:3px;flex-direction:column;">
-                      <span class="box-table-lvl" style="font-weight:700;">Lv.${p.level || 1}</span>
-                      <span class="box-pr-badge ${prInfo.tierBadgeClass || 'pr-tier-b'}" style="font-size:10px;padding:1px 5px;line-height:1.2;">PR ${prInfo.pr || prInfo.score}</span>
+                    <div style="display:flex;align-items:center;justify-content:center;gap:1px;flex-direction:column;line-height:1.1;">
+                      <span class="box-table-lvl" style="font-weight:700;font-size:12px;">Lv.${p.level || 1}</span>
+                      <span class="box-pr-badge ${prInfo.tierBadgeClass || 'pr-tier-b'}" style="font-size:9.5px;padding:0 4px;line-height:1.2;">PR ${prInfo.pr || prInfo.score}</span>
                     </div>
                   </td>
                   <td style="text-align:center;">

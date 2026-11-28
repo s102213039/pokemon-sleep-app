@@ -1281,7 +1281,7 @@ body::-webkit-scrollbar,
 .island-spawns-compact-table tbody tr,
 .island-spawns-table tbody tr {
   content-visibility: auto;
-  contain-intrinsic-size: auto 44px;
+  contain-intrinsic-size: auto 35px;
 }
 
 .ladder-track-row {
@@ -3020,10 +3020,10 @@ body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-cont
   background-color: var(--table-th-solid, #0a0f1d) !important;
   color: var(--text-th) !important;
   font-weight: 700 !important;
-  min-width: 50px !important;
-  max-width: 50px !important;
-  width: 50px !important;
-  padding: 8px 2px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  width: 34px !important;
+  padding: 8px 0 !important;
   box-sizing: border-box !important;
   text-align: center !important;
   border-right: 1px solid var(--border-color) !important;
@@ -3031,16 +3031,17 @@ body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-cont
   font-size: 11px !important;
 }
 
+/* 圖示欄位寬高完全貼合 34px 正方形圖示，不保留左右邊距 */
 .pokemon-table .td-icon,
 .mobile-h5-app .pokemon-table .td-icon {
   position: sticky !important;
   left: 44px !important;
   z-index: 20 !important;
-  min-width: 50px !important;
-  max-width: 50px !important;
-  width: 50px !important;
-  height: 38px !important;
-  padding: 0 5px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
   line-height: 0 !important;
   box-sizing: border-box !important;
   text-align: center !important;
@@ -3072,10 +3073,11 @@ body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-cont
 }
 
 .table-icon {
-  width: 38px !important;
-  height: 38px !important;
-  min-width: 38px !important;
-  max-width: 38px !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  aspect-ratio: 1 / 1;
   border-radius: 0;
   object-fit: contain;
   background: transparent;
@@ -3155,6 +3157,14 @@ body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-cont
   font-size: 12px;
   padding: 4px 2px !important;
   white-space: nowrap !important;
+}
+
+/* 列表「得意」欄位隱藏（圖鑑與所有共用 pokemon-table 之列表） */
+.pokemon-table .th-spec,
+.pokemon-table .td-spec,
+.mobile-h5-app .pokemon-table .th-spec,
+.mobile-h5-app .pokemon-table .td-spec {
+  display: none !important;
 }
 
 .th-carry, .td-carry {
@@ -5016,11 +5026,11 @@ input[type=range].rf-slider.pot-slider {
     position: sticky !important;
     left: 44px !important;
     z-index: 20 !important;
-    min-width: 50px !important;
-    max-width: 50px !important;
-    width: 50px !important;
-    height: 38px !important;
-    padding: 0 5px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+    width: 34px !important;
+    height: 34px !important;
+    padding: 0 !important;
     line-height: 0 !important;
     border-right: 1px solid var(--border-color) !important;
     box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
@@ -5032,7 +5042,7 @@ input[type=range].rf-slider.pot-slider {
     z-index: 35 !important;
     height: auto !important;
     line-height: normal !important;
-    padding: 8px 2px !important;
+    padding: 8px 0 !important;
     background-color: var(--table-th-solid, #0a0f1d) !important;
     border-right: 1px solid var(--border-color) !important;
     box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
@@ -25506,6 +25516,10 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   top: 0 !important;
   left: 0 !important;
   z-index: 35 !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  width: 34px !important;
+  padding: 8px 0 !important;
   background-color: var(--table-th-solid, #0a0f1d) !important;
 }
 
@@ -25514,7 +25528,18 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   position: sticky !important;
   left: 0 !important;
   z-index: 15 !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  line-height: 0 !important;
   background-color: inherit !important;
+}
+
+.mobile-h5-app #panel-box .pokemon-table.box-table tbody td:not(.td-icon),
+.pokemon-table.box-table tbody td:not(.td-icon) {
+  padding: 2px 4px !important;
 }
 
 .pokemon-table.box-table tbody tr:nth-child(odd) td.td-icon {

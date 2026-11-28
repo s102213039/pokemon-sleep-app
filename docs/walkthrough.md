@@ -5,6 +5,20 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-29 已完成（圖鑑與盒子列表圖示欄位 100% 貼合 34px 正方形圖示，隱藏列表「得意」欄位）
+
+- **變更摘要**：
+  1. **圖示欄位寬高完全對標正方形圖示（34px x 34px，零額外邊距）**：
+     - [pokedex_table.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/pokedex_table.css)、[responsive_panels.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/mobile/responsive_panels.css) 與 [box_list.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/mobile/box_list.css)：將 `.pokemon-table`（圖鑑）與 `.pokemon-table.box-table`（盒子）的 `.th-icon` / `.td-icon` 寬高與 `.table-icon` 統一微調為 `34px x 34px` 正方形（`aspect-ratio: 1 / 1`），移除 `.td-icon` 左右與上下內距（`padding: 0 !important; line-height: 0 !important;`），並收緊盒子列表其餘儲存格上下內距與 `Lv. / PR` 堆疊間距，使列高與欄寬完全對標圖示。
+     - [pokedex_ui.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/pokedex/pokedex_ui.js) 與 [box_render.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/modules/box/box_render.js)：同步更新列表 `<img>` 與 `.table-icon-wrapper` 尺寸屬性為 `34x34`；[base.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/base.css) 同步更新 `contain-intrinsic-size: auto 35px`。
+  2. **隱藏列表「得意」欄位**：
+     - 於 [pokedex_table.css](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/css/views/pokedex_table.css) 設定 `.pokemon-table .th-spec, .pokemon-table .td-spec`（桌機與行動版 H5 同步）為 `display: none !important;`，徹底隱藏圖鑑與共用列表表格中的得意欄位。
+  3. **新聞雙語自動翻譯補齊**：
+     - 修復 `data/news.json` 內自動同步帶入之 2 筆中文 `title_en`，並於 [build_news.py](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/scripts/build_news.py) `ITEM_DICT_EN` 補齊「強化發動！技能週」、「卡蒂狗」、「風速狗」與地區形態英譯詞條，防止未來自動同步回歸。
+- **驗證結果**：
+  - [tier1_coverage.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/tests/tiers/tier1_coverage.js) 同步更新 Test 176 斷言（`34px` 正方形零內距圖示欄與 `.td-spec` 隱藏檢查）。
+  - `npm run data:minify && npm run build` 通過、`npm run test:fast`（**172 / 172 PASS**）、`npm test`（**296 / 296 PASS**）、`node tests/test_r1_r5_theme_pwa_css.js`（**10 / 10 PASS**）。
+
 ## 交接：2026-11-28 已完成（Carbon R1 計畫審查修正、R1 過大檔案拆分與 CSS 管線修復、R2 S1 死碼清理、R3 效能與無損圖檔優化）
 
 - **Carbon R1 Plan-Review 審查結論與 6 項實際調整**（由 Argon 規劃審查、Neon 主導實作與 Gemini 3.8 Flash 協同執行）：
