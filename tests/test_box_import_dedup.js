@@ -42,10 +42,7 @@ runTest('Zero active alert, confirm, prompt calls in js/modules/box/*.js', () =>
 });
 
 // Setup environment and load box modules into sandbox
-const BOX_MODULES = [
-  'box_filter.js', 'box_storage_crud.js', 'box_render.js', 'box_modal_form.js',
-  'box_modal_conflict.js', 'box_ocr_canvas.js', 'box_ocr_parse.js', 'box_main.js'
-];
+const BOX_MODULES = require('../scripts/build_box').BOX_MODULES;
 const concatenatedCode = BOX_MODULES.map(m => fs.readFileSync(path.join(BOX_DIR, m), 'utf8')).join('\n');
 
 const sandbox = {

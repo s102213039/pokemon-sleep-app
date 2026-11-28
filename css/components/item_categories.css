@@ -1,0 +1,185 @@
+/* ==========================================================================
+   Multi-Theme Category Badges Styling
+   ========================================================================== */
+
+/* 1. Midnight (Default), Dawn Inverted, Emerald Inverted (Dark Themes) */
+:root:not([data-theme-inverted="true"]) .wiki-item-cat-evolution,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-cat-evolution,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-cat-evolution,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-evolution {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: none !important;
+  box-shadow: none !important;
+}
+:root:not([data-theme-inverted="true"]) .wiki-item-cat-pokemon_incense,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-cat-pokemon_incense,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-cat-pokemon_incense,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-pokemon_incense {
+  background: rgba(168, 85, 247, 0.2);
+  color: #d8b4fe;
+  border: none !important;
+  box-shadow: none !important;
+}
+:root:not([data-theme-inverted="true"]) .wiki-item-cat-functional_incense,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-cat-functional_incense,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-cat-functional_incense,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-functional_incense {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border: none !important;
+  box-shadow: none !important;
+}
+:root:not([data-theme-inverted="true"]) .wiki-item-cat-training,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-cat-training,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-cat-training,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-training {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: none !important;
+  box-shadow: none !important;
+}
+:root:not([data-theme-inverted="true"]) .wiki-item-cat-biscuit,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-cat-biscuit,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-cat-biscuit,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-biscuit {
+  background: rgba(244, 114, 182, 0.2);
+  color: #f9a8d4;
+  border: none !important;
+  box-shadow: none !important;
+}
+:root:not([data-theme-inverted="true"]) .wiki-item-cat-supply,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .wiki-item-cat-supply,
+[data-theme="dawn"][data-theme-inverted="true"] .wiki-item-cat-supply,
+[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-supply {
+  background: rgba(20, 184, 166, 0.2);
+  color: #2dd4bf;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 2. Onyx Theme (Pure Black OLED) */
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-evolution {
+  background: rgba(245, 158, 11, 0.22);
+  color: #fbbf24;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-pokemon_incense {
+  background: rgba(168, 85, 247, 0.22);
+  color: #d8b4fe;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-functional_incense {
+  background: rgba(203, 213, 225, 0.15);
+  color: #e2e8f0;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-training {
+  background: rgba(16, 185, 129, 0.22);
+  color: #34d399;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-biscuit {
+  background: rgba(244, 114, 182, 0.22);
+  color: #f9a8d4;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-supply {
+  background: rgba(20, 184, 166, 0.22);
+  color: #2dd4bf;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 3. Dawn, Midnight Inverted, Onyx Inverted (Light Themes) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-evolution,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-evolution,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-evolution {
+  background: #fef3c7;
+  color: #92400e;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-pokemon_incense,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-pokemon_incense,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-pokemon_incense {
+  background: #f3e8ff;
+  color: #6b21a8;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-functional_incense,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-functional_incense,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-functional_incense {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-training,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-training,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-training {
+  background: #dcfce7;
+  color: #166534;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-biscuit,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-biscuit,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-biscuit {
+  background: #fce7f3;
+  color: #9d174d;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-supply,
+[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-supply,
+[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-supply {
+  background: #ccfbf1;
+  color: #0f766e;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 4. Emerald Theme (Subtle Grey Stone Light) */
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-evolution {
+  background: #fef9c3;
+  color: #854d0e;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-pokemon_incense {
+  background: #ede9fe;
+  color: #5b21b6;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-functional_incense {
+  background: #e0f2fe;
+  color: #075985;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-training {
+  background: #dcfce7;
+  color: #15803d;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-biscuit {
+  background: #fce7f3;
+  color: #9d174d;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-supply {
+  background: #ccfbf1;
+  color: #115e59;
+  border: none !important;
+  box-shadow: none !important;
+}

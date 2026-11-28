@@ -1158,9 +1158,8 @@ addTest('T1-R1-06', 1, 'R1', 'sw.js bumps IMG_CACHE_NAME beyond pre-R1 baseline 
 addTest('T1-R2-01', 1, 'R2', 'Modular CSS, css/styles.css, and css/styles.min.css enforce single-line nowrap on Clear-All button', false, () => {
   const stylesCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'styles.css'), 'utf8');
   const stylesMin = fs.readFileSync(path.join(ROOT_DIR, 'css', 'styles.min.css'), 'utf8');
-  const modCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'lab', 'lab_editor.css'), 'utf8') + '\n' +
-                 fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'box', 'box_detail.css'), 'utf8') + '\n' +
-                 fs.readFileSync(path.join(ROOT_DIR, 'css', 'mobile', 'items.css'), 'utf8');
+  const modCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'box', 'box_subskills.css'), 'utf8') + '\n' +
+                 fs.readFileSync(path.join(ROOT_DIR, 'css', 'mobile', 'box_edit.css'), 'utf8');
 
   const checkClearBtnRule = (cssText, label) => {
     const blocks = cssText.match(/[^\n{}]*(?:box-subskill-clear-btn|pokedex-subskill-clear-all-btn)[^}]*\{[^}]*\}/g) || [];
@@ -1568,9 +1567,9 @@ addTest('T1-R7-03', 1, 'R7', 'Project docs (README.md, PROJECT.md, docs/walkthro
 });
 
 addTest('T1-R7-04', 1, 'R7', 'Single-Frame CSS invariant preserved for .lab-team-view-container and .lab-compare-view-container', false, () => {
-  const boxEditCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'mobile', 'box_edit.css'), 'utf8');
+  const labTeamNavCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'lab', 'lab_team_nav.css'), 'utf8');
   const stylesCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'styles.css'), 'utf8');
-  for (const [label, css] of [['css/mobile/box_edit.css', boxEditCss], ['css/styles.css', stylesCss]]) {
+  for (const [label, css] of [['css/views/lab/lab_team_nav.css', labTeamNavCss], ['css/styles.css', stylesCss]]) {
     const m = css.match(/\.lab-team-view-container[\s\S]*?\{([^}]*)\}/);
     assert(m, `${label} missing .lab-team-view-container rule`);
     assert(/border\s*:\s*none/i.test(m[1]), `${label} .lab-team-view-container must keep border: none`);

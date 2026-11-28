@@ -77,20 +77,6 @@ SPECIAL_ICON_MAP = {
 }
 
 
-def get_icon_url(pid: int, formatted_no: str) -> str:
-    """依據寶可夢 ID 回傳正確的 Serebii 圖示 URL。
-    特殊 ID（7xxx/8xxx/9xxx）需存在於 SPECIAL_ICON_MAP 方可回傳網址，
-    若未在對應表中（尚未找到正確認可圖片），則回傳空字串 `""` 以避免顯示錯誤圖片。
-    一般 ID (<1000) 則依照 formatted_no 直接拼接。
-    """
-    pid_str = str(pid)
-    if pid_str in SPECIAL_ICON_MAP:
-        return SPECIAL_ICON_MAP[pid_str]
-    if pid >= 1000:
-        return ''
-    return SEREBII_ICON_BASE + formatted_no + '.png'
-
-
 def load_json(path: Path) -> list:
     """讀取現有 JSON 檔案"""
     if not path.exists():

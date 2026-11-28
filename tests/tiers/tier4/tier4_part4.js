@@ -872,8 +872,8 @@ function registerTier4Part4() {
     // Part 4: Item Detail Modal & Bidirectional Dex Linkage
     // ---------------------------------------------------------------------------
     // 16. Modal markup #wiki-item-detail-modal exists in desktop and mobile index.html
-    const hasDesktopModal = desktopHtml.includes('id="wiki-item-detail-modal"') || wikiCode.includes('id="wiki-item-detail-modal"');
-    const hasMobileModal = h5Html.includes('id="wiki-item-detail-modal"') || wikiCode.includes('id="wiki-item-detail-modal"');
+    const hasDesktopModal = desktopHtml.includes('id="wiki-item-detail-modal"') || wikiCode.includes('id="wiki-item-detail-modal"') || wikiCode.includes("modal.id = 'wiki-item-detail-modal'");
+    const hasMobileModal = h5Html.includes('id="wiki-item-detail-modal"') || wikiCode.includes('id="wiki-item-detail-modal"') || wikiCode.includes("modal.id = 'wiki-item-detail-modal'");
     assert(hasDesktopModal, 'index.html or wiki.js must provide #wiki-item-detail-modal');
     assert(hasMobileModal, 'app/index.html or wiki.js must provide #wiki-item-detail-modal for mobile H5');
 
@@ -1700,9 +1700,8 @@ function registerTier4Part4() {
     });
 
     // 3. Verify elimination of alien pokedex-sv domain fallback in wiki_camps
-    const wikiCampsJs = fs.readFileSync(path.resolve(__dirname, '../../../js/modules/wiki/wiki_camps_data.js'), 'utf8') +
-      fs.readFileSync(path.resolve(__dirname, '../../../js/modules/wiki/wiki_camps_island.js'), 'utf8') +
-      fs.readFileSync(path.resolve(__dirname, '../../../js/modules/wiki/wiki_camps_render.js'), 'utf8');
+    const wikiCampsJs = ['wiki_camps_islands_ex.js', 'wiki_camps_islands_std.js', 'wiki_camps_config.js', 'wiki_camps_island.js', 'wiki_camps_render.js']
+      .map(f => fs.readFileSync(path.resolve(__dirname, '../../../js/modules/wiki', f), 'utf8')).join('\n');
     assert(!wikiCampsJs.includes('pokedex-sv/icon'), 'wiki_camps must not contain alien pokedex-sv/icon fallback');
 
     // 4. Verify all island spawn entries in wiki_camps resolve to official pokemonsleep icon URLs
@@ -2108,24 +2107,22 @@ function registerTier4Part4() {
     assert(calcCode.includes('effectiveMatchCount'), 'lab_team_calc.js must check effectiveMatchCount against threshold');
 
     // 5. CSS enlargement & berry chips styling
-    const ladderCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'views', 'wiki', 'wiki_ladder.css'), 'utf8');
-    assert(ladderCss.includes('width: 26px') && ladderCss.includes('height: 26px'), 'wiki_ladder.css must enlarge .lab-picker-ing-chip to 26px');
-    assert(ladderCss.includes('width: 20px') && ladderCss.includes('height: 20px'), 'wiki_ladder.css must enlarge .lab-picker-ing-icon to 20px');
-
-    const recipeModalCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'components', 'modals', 'recipe_picker.css'), 'utf8');
-    assert(recipeModalCss.includes('.lab-picker-berry-chips-scroll'), 'recipe_picker.css must define .lab-picker-berry-chips-scroll');
-    assert(recipeModalCss.includes('.lab-picker-berry-chip-btn'), 'recipe_picker.css must define .lab-picker-berry-chip-btn');
+    const pickerCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'views', 'lab', 'lab_pokemon_picker.css'), 'utf8');
+    assert(pickerCss.includes('width: 26px') && pickerCss.includes('height: 26px'), 'lab_pokemon_picker.css must enlarge .lab-picker-ing-chip to 26px');
+    assert(pickerCss.includes('width: 20px') && pickerCss.includes('height: 20px'), 'lab_pokemon_picker.css must enlarge .lab-picker-ing-icon to 20px');
+    assert(pickerCss.includes('.lab-picker-berry-chips-scroll'), 'lab_pokemon_picker.css must define .lab-picker-berry-chips-scroll');
+    assert(pickerCss.includes('.lab-picker-berry-chip-btn'), 'lab_pokemon_picker.css must define .lab-picker-berry-chip-btn');
   });
 
   // Test 236: Amber Canyon 7th Island, Box Desktop Block Flow, Recipe Name Elimination, Merged Rows Layout & Zero Leading Glyphs
   test('Tier 4 - Real-World Application Scenarios', 'Amber Canyon 7th Island, Box Desktop Block Flow, Recipe Name Elimination, Merged Rows Layout & Zero Leading Glyphs', () => {
     // 1. Amber Canyon in LAB_ISLANDS
-    const labModalPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'lab', 'lab_modal.js');
-    assert(fs.existsSync(labModalPath), 'lab_modal.js must exist');
-    const labModalCode = fs.readFileSync(labModalPath, 'utf8');
-    assert(labModalCode.includes("id: 'amber'"), 'lab_modal.js must define amber island');
-    assert(labModalCode.includes("name: '琥褐溪谷'"), 'lab_modal.js must define 琥褐溪谷 in LAB_ISLANDS');
-    assert(labModalCode.includes('assets/islands/hd/amber.jpg'), 'lab_modal.js must reference assets/islands/hd/amber.jpg');
+    const labStatePath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'lab', 'lab_state.js');
+    assert(fs.existsSync(labStatePath), 'lab_state.js must exist');
+    const labStateCode = fs.readFileSync(labStatePath, 'utf8');
+    assert(labStateCode.includes("id: 'amber'"), 'lab_state.js must define amber island');
+    assert(labStateCode.includes("name: '琥褐溪谷'"), 'lab_state.js must define 琥褐溪谷 in LAB_ISLANDS');
+    assert(labStateCode.includes('assets/islands/hd/amber.jpg'), 'lab_state.js must reference assets/islands/hd/amber.jpg');
 
     // 2. Box desktop display block
     const boxMainPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'box', 'box_main.js');
@@ -2483,7 +2480,8 @@ function registerTier4Part4() {
     const sleepStylesJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'sleep_styles.json'), 'utf8'));
     const buildWebappDataPy = fs.readFileSync(path.join(WORKSPACE_ROOT, 'scripts', 'build_webapp_data.py'), 'utf8');
     const buildNewsPy = fs.readFileSync(path.join(WORKSPACE_ROOT, 'scripts', 'build_news.py'), 'utf8');
-    const wikiCampsDataJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_camps_data.js'), 'utf8');
+    const wikiCampsDataJs = ['wiki_camps_islands_ex.js', 'wiki_camps_islands_std.js', 'wiki_camps_config.js']
+      .map(f => fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', f), 'utf8')).join('\n');
     const newsRenderJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'news', 'news_render.js'), 'utf8');
     const domUtilsJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'domUtils.js'), 'utf8');
     const pokedexNavJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'pokedex', 'pokedex_nav.js'), 'utf8');
@@ -2539,7 +2537,7 @@ function registerTier4Part4() {
     assert(mismagiusStyles && Object.keys(mismagiusStyles).length >= 3, 'Mismagius must have sleep styles defined');
 
     assert(wikiCampsDataJs.includes('夢妖') && wikiCampsDataJs.includes('夢妖魔'),
-      'wiki_camps_data.js must include 夢妖 and 夢妖魔 in camp spawn data');
+      'wiki_camps split modules must include 夢妖 and 夢妖魔 in camp spawn data');
 
     // 2. Verify Official News Reader Universal Expandable Drawer
     assert(buildNewsPy.includes('full_content') && buildNewsPy.includes('full_content_en'),
@@ -2589,6 +2587,7 @@ function registerTier4Part4() {
   test('Tier 4 - Real-World Application Scenarios', 'Island Tab Desktop & Mobile H5 DOM Rendering, EX Mode Spawns/Rules, 35-Rank Lookup & Async Hydration', () => {
     const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
     const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+    const sleepStylesRaw = fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'sleep_styles.json'), 'utf8');
     const emojiRegex = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F000}-\u{1F02F}\u{1F0A0}-\u{1F0FF}]/u;
     const glyphRegex = /(\[\u2605\]|\[\u2606\]|\u2605|\u2606|\[\*\]|\[\+\]|\[\#\])/;
 
@@ -2603,7 +2602,10 @@ function registerTier4Part4() {
       const ctx = {
         window: {
           location: { hash: '#wiki/islands' },
-          localStorage: { getItem: () => null, setItem: () => {} },
+          localStorage: {
+            getItem: (k) => (k === 'pksleep_cache_sleep_styles_json' ? sleepStylesRaw : null),
+            setItem: () => {}
+          },
           addEventListener: (ev, fn) => {
             if (!listeners[ev]) listeners[ev] = [];
             listeners[ev].push(fn);
@@ -2781,8 +2783,7 @@ function registerTier4Part4() {
     const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
     const stylesMinCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.min.css'), 'utf8');
     const wikiCampsCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'views', 'wiki', 'wiki_camps.css'), 'utf8');
-    const wikiNavCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'mobile', 'wiki_nav.css'), 'utf8');
-    [stylesCss, wikiCampsCss, wikiNavCss].forEach(cssText => {
+    [stylesCss, wikiCampsCss].forEach(cssText => {
       assert(cssText.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .island-ex-berry-rule'), 'CSS must define light-theme .island-ex-berry-rule override');
       assert(cssText.includes('color: #92400e'), 'Light-theme .island-ex-berry-rule must use high-contrast #92400e');
       assert(cssText.includes('color: #0369a1'), 'Light-theme .island-chip-accent must use high-contrast #0369a1');

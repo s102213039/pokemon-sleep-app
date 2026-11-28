@@ -41,11 +41,56 @@
     }
   }
 
+  const _boxIngMapCache = typeof WeakMap === 'function' ? new WeakMap() : null;
+  let _boxNatureMapCache = null;
+  let _boxNatureMapLen = -1;
+  let _boxSubskillMapCache = null;
+  let _boxSubskillMapLen = -1;
+
+  function _getBoxNature(name) {
+    if (!name || !Array.isArray(NATURE_DATA)) return null;
+    if (!_boxNatureMapCache || _boxNatureMapLen !== NATURE_DATA.length) {
+      _boxNatureMapCache = new Map();
+      for (let i = 0; i < NATURE_DATA.length; i++) {
+        if (NATURE_DATA[i]) _boxNatureMapCache.set(NATURE_DATA[i].name, NATURE_DATA[i]);
+      }
+      _boxNatureMapLen = NATURE_DATA.length;
+    }
+    return _boxNatureMapCache.get(name) || null;
+  }
+
+  function _getBoxSubskill(name) {
+    if (!name || !Array.isArray(SUBSKILLS_DATA)) return null;
+    if (!_boxSubskillMapCache || _boxSubskillMapLen !== SUBSKILLS_DATA.length) {
+      _boxSubskillMapCache = new Map();
+      for (let i = 0; i < SUBSKILLS_DATA.length; i++) {
+        if (SUBSKILLS_DATA[i]) _boxSubskillMapCache.set(SUBSKILLS_DATA[i].name, SUBSKILLS_DATA[i]);
+      }
+      _boxSubskillMapLen = SUBSKILLS_DATA.length;
+    }
+    return _boxSubskillMapCache.get(name) || null;
+  }
+
   function getIngCountFromBase(basePkm, slotIdx, ingName) {
     if (!basePkm || !basePkm.ingredients) {
       return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
     }
-    const found = basePkm.ingredients.find(ig => ig.name === ingName);
+    let found = null;
+    if (_boxIngMapCache && Array.isArray(basePkm.ingredients)) {
+      let cached = _boxIngMapCache.get(basePkm.ingredients);
+      if (!cached || cached.len !== basePkm.ingredients.length) {
+        const map = new Map();
+        for (let i = 0; i < basePkm.ingredients.length; i++) {
+          const ig = basePkm.ingredients[i];
+          if (ig && ig.name && !map.has(ig.name)) map.set(ig.name, ig);
+        }
+        cached = { len: basePkm.ingredients.length, map };
+        _boxIngMapCache.set(basePkm.ingredients, cached);
+      }
+      found = cached.map.get(ingName) || null;
+    } else {
+      found = basePkm.ingredients.find(ig => ig.name === ingName);
+    }
     if (found) {
       if (slotIdx === 0 && found.l1 !== undefined) return parseInt(found.l1, 10);
       if (slotIdx === 1 && found.l30 !== undefined) return parseInt(found.l30, 10);
@@ -100,7 +145,7 @@
 
     return `
       <div class="box-ing-chip${lockClass}" title="${escapeHtml(displayName)}${lockTitleSuffix}">
-        ${iconUrl ? `<img src="${iconUrl}" class="box-ing-chip-icon" alt="${escapeHtml(displayName)}">` : ''}
+        ${iconUrl ? `<img src="${iconUrl}" class="box-ing-chip-icon" width="20" height="20" alt="${escapeHtml(displayName)}" loading="lazy" decoding="async">` : ''}
       </div>
     `;
   }
@@ -123,7 +168,7 @@
     return `
       <td class="td-ing" title="${escapeHtml(displayName)}${lockTitleSuffix}">
         <div class="ing-cell${lockClass}">
-          ${iconUrl ? `<img src="${iconUrl}" class="ing-icon" alt="${escapeHtml(displayName)}">` : ''}
+          ${iconUrl ? `<img src="${iconUrl}" class="ing-icon" width="22" height="22" alt="${escapeHtml(displayName)}" loading="lazy" decoding="async">` : ''}
         </div>
       </td>
     `;
@@ -140,7 +185,7 @@
         ${list.map(p => {
           const base = findPokemonBase(p.pokemonId || p.name);
           const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
-          const natureObj = NATURE_DATA.find(n => n.name === p.nature);
+          const natureObj = _getBoxNature(p.nature);
           const prInfo = calculatePokemonPR(p, base);
           const unknownLabel = (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_unknown') : undefined) ?? '未知';
           const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
@@ -164,7 +209,7 @@
             <div class="box-card" data-uid="${p.uid}" title="${escapeHtml(stripHtml(prInfo.summaryNote || ''))}">
               <div class="box-card-header">
                 <div class="box-card-img-wrap">
-                  ${iconUrl ? `<img src="${iconUrl}" alt="${escapeHtml(pkmDisplayName)}" class="box-card-icon" onerror="this.style.display='none';">` : ''}
+                  ${iconUrl ? `<img src="${iconUrl}" width="40" height="40" alt="${escapeHtml(pkmDisplayName)}" class="box-card-icon" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
                 </div>
                 <div class="box-card-info">
                   <div class="box-card-name-row">
@@ -201,12 +246,12 @@
                     ` : ''}
                     ${berry && berry.icon ? `
                     <span class="pkm-berry-icon-wrapper" title="${berryName}">
-                      <img src="${berry.icon}" alt="${berryName}" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;">
+                      <img src="${berry.icon}" width="18" height="18" alt="${berryName}" loading="lazy" decoding="async" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;">
                     </span>` : ''}
                     ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(base ? base.specialty : p.specialty, 18) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}
                     ${p.ribbon ? `
                       <span class="box-ribbon-tag" title="${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_ribbon_tier_title', { tier: p.ribbon }) : undefined) ?? '睡飽飽獎章'}">
-                        <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" alt="Ribbon" />
+                        <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" width="20" height="20" loading="lazy" decoding="async" alt="Ribbon" />
                       </span>
                     ` : ''}
                   </div>
@@ -231,7 +276,7 @@
                 <div class="box-subskills-grid">
                   ${[10, 25, 50, 70, 80].map((lv, i) => {
                     const skName = (p.subskills || [])[i];
-                    const sk = SUBSKILLS_DATA.find(s => s.name === skName);
+                    const sk = _getBoxSubskill(skName);
                     const tier = sk ? sk.tier : 'empty';
                     const displaySkName = skName ? ((typeof window !== 'undefined' ? window.I18N?.getSubSkillName?.(skName) : undefined) ?? skName) : '--';
                     const isUnlocked = (p.level || 1) >= lv;
@@ -320,7 +365,7 @@
                 <tr data-uid="${p.uid}" title="${escapeHtml(stripHtml(prInfo.summaryNote || ''))}">
                   <td class="td-icon" style="text-align:center;">
                     <div class="table-icon-wrapper" style="margin:0 auto;width:38px;height:38px;">
-                      ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="table-icon" onerror="this.style.display='none';">` : ''}
+                      ${iconUrl ? `<img src="${iconUrl}" width="38" height="38" alt="${pkmDisplayName}" class="table-icon" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
                     </div>
                   </td>
                   <td style="text-align:center;">
@@ -337,7 +382,7 @@
                     ${p.nickname ? `<div style="font-size:11px;color:var(--accent-color);text-align:center;">${escapeHtml(p.nickname)}</div>` : ''}
                   </td>
                   <td style="text-align:center;">
-                    ${berry && berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}">` : `<span class="berry-name-text">${berryName || '--'}</span>`}
+                    ${berry && berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}" loading="lazy" decoding="async">` : `<span class="berry-name-text">${berryName || '--'}</span>`}
                   </td>
                   ${renderBoxTableIngCell(p.ing1, base, 0, p.level || 1)}
                   ${renderBoxTableIngCell(p.ing2, base, 1, p.level || 1)}
@@ -413,7 +458,7 @@
           ${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_delete_modal_title') : undefined) ?? '確認刪除寶可夢？'}
         </div>
         <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0 12px;padding:2px 0;background:transparent;border:none;">
-          ${iconUrl ? `<img src="${iconUrl}" width="40" height="40" style="object-fit:contain;" alt="">` : ''}
+          ${iconUrl ? `<img src="${iconUrl}" width="40" height="40" loading="lazy" decoding="async" style="object-fit:contain;" alt="">` : ''}
           <div style="text-align:left;">
             <div style="font-size:13px;font-weight:700;color:var(--text-primary);">${escapeHtml(displayName)}</div>
             <div style="font-size:11px;color:var(--text-muted);font-weight:600;">Lv.${item.level || 1}</div>

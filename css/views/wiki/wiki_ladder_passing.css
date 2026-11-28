@@ -1,0 +1,231 @@
+.ladder-recipe-banner-clear-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.7);
+  color: #fca5a5;
+  transform: scale(1.05);
+}
+
+/* Banner Ingredients List (Inline next to recipe) */
+.ladder-recipe-banner-ings {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-left: auto;
+  margin-right: 6px;
+  border-top: none;
+  padding-top: 0;
+}
+
+.ladder-recipe-banner-ing-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0 3px 0 0;
+  font-size: 11.5px;
+  color: var(--text-title, #f8fafc);
+  flex-shrink: 0;
+}
+
+.ladder-banner-ing-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.recipe-card-ing-icon {
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.ladder-banner-ing-name {
+  font-weight: 500;
+}
+
+.ladder-banner-ing-count {
+  color: var(--accent-color, #38bdf8);
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.ladder-track-row.ladder-track-highlighted,
+.ladder-tail-track-row.ladder-track-highlighted {
+  background: transparent !important;
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+.ladder-highlight-req-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(56, 189, 248, 0.22);
+  color: var(--accent-color, #38bdf8);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  font-size: 9.5px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 1px 4px;
+  white-space: nowrap;
+  margin-top: 2px;
+  letter-spacing: -0.2px;
+}
+
+.ladder-track-row.ladder-track-dimmed {
+  opacity: 0.28 !important;
+  filter: grayscale(40%) !important;
+  pointer-events: none !important;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.ladder-track-row.ladder-track-dimmed:hover {
+  opacity: 0.28 !important;
+  filter: grayscale(40%) !important;
+}
+
+.ladder-tail-standalone-container.ladder-track-dimmed {
+  opacity: 0.28 !important;
+  filter: grayscale(40%) !important;
+  pointer-events: none !important;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.ladder-track-disabled-header {
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  opacity: 0.35 !important;
+}
+
+/* ==========================================================================
+   Ladder 3-Meal Passing Line Component (三餐及格線)
+   ========================================================================== */
+.ladder-passing-line-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 500 !important;
+  transform: translateX(-50%);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: left 0.25s ease, opacity 0.2s ease;
+}
+
+.ladder-passing-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--ladder-passing-line-color, #f59e0b);
+  box-shadow: 0 0 6px var(--ladder-passing-line-glow, rgba(245, 158, 11, 0.55));
+}
+
+.ladder-passing-badge {
+  position: relative;
+  top: 2px;
+  z-index: 501;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 5px;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.15;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: auto;
+  background: var(--ladder-passing-badge-bg, rgba(26, 21, 12, 0.94));
+  border: 1px solid var(--ladder-passing-color-dark, var(--ladder-passing-badge-border, rgba(245, 158, 11, 0.85)));
+  color: var(--ladder-passing-color-dark, var(--ladder-passing-badge-text, #fbbf24));
+  box-shadow: var(--ladder-passing-badge-shadow, 0 2px 6px rgba(0, 0, 0, 0.5));
+}
+
+.ladder-passing-line-container.passing-edge-right .ladder-passing-badge {
+  transform: translateX(-50%);
+}
+
+.ladder-passing-line-container.passing-edge-left .ladder-passing-badge {
+  transform: translateX(50%);
+}
+
+.ladder-passing-label {
+  font-size: 8.5px;
+  opacity: 0.9;
+  letter-spacing: -0.2px;
+}
+
+.ladder-passing-num {
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+/* ==========================================================================
+   Light Theme Explicit Overrides for Ladder Recipe Components
+   Covers Dawn, Emerald & Light Inverted Theme Surfaces
+   ========================================================================== */
+
+/* 1. Recipe Banner in Light Theme */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(51, 65, 85, 0.06);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-title,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-title,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-title {
+  color: #0369a1;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-title {
+  color: #1e293b;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-sub,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-sub,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-sub,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-sub {
+  color: #475569;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-clear-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-clear-btn {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  border-radius: 50%;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-clear-btn:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-clear-btn:hover {
+  background: #fecaca;
+  color: #991b1b;
+  border-color: #f87171;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ings,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-ings,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ings,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ings {
+  border-top: none;
+}

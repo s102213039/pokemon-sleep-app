@@ -83,7 +83,7 @@
 
     return `
       <div class="lab-greengrass-berry-item">
-        ${bObj && bObj.icon ? `<img src="${bObj.icon}" class="lab-berry-mini-icon" alt="Berry">` : ''}
+        ${bObj && bObj.icon ? `<img src="${bObj.icon}" class="lab-berry-mini-icon" width="18" height="18" loading="lazy" decoding="async" alt="Berry">` : ''}
         <select class="lab-select lab-berry-select" onchange="window.AppraisalLab.setGreengrassBerry(${idx}, this.value)">
           ${optionsHtml}
         </select>
@@ -122,7 +122,7 @@
       const bDisplayName = window.I18N?.getBerryName?.(canonicalName) ?? canonicalName;
       return `
         <span class="lab-favored-berry-icon-wrap" title="${escapeHtml(bDisplayName)}">
-          ${bObj.icon ? `<img src="${bObj.icon}" class="lab-favored-berry-img" alt="${escapeHtml(bDisplayName)}">` : ''}
+          ${bObj.icon ? `<img src="${bObj.icon}" class="lab-favored-berry-img" width="22" height="22" loading="lazy" decoding="async" alt="${escapeHtml(bDisplayName)}">` : ''}
         </span>
       `;
     }).join('');
@@ -222,7 +222,7 @@
           <div class="lab-team-config-group lab-target-recipe-config-group">
             <span class="lab-team-config-label">${window.I18N?.t?.('lab.t_target_dish_label') ?? 'lab.t_target_dish_label'}</span>
             <div class="lab-target-recipe-chip" onclick="window.AppraisalLab.openPicker({ type: 'recipe' })" title="${escapeHtml(targetRecipeDisplayName)} (${window.I18N?.t?.('lab.t_click_to_change') ?? 'lab.t_click_to_change'})">
-              ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-target-recipe-chip-icon" alt="${escapeHtml(targetRecipeDisplayName)}">` : ''}
+              ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-target-recipe-chip-icon" width="26" height="26" loading="lazy" decoding="async" alt="${escapeHtml(targetRecipeDisplayName)}">` : ''}
               <span class="lab-target-recipe-chip-badge">${escapeHtml(targetRecipeCategory)}</span>
               <span class="lab-target-recipe-chip-btn">${window.I18N?.t?.('lab.t_change') ?? 'lab.t_change'}</span>
             </div>
@@ -337,7 +337,7 @@
             const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
             return `
               <div class="lab-slot-ing-chip ${!s.unlocked ? 'is-locked' : ''}" title="Lv.${s.req}: ${escapeHtml(iDisp)}${!s.unlocked ? (window.I18N?.t?.('lab.t_locked_paren') ?? 'lab.t_locked_paren') : ''}">
-                ${icon ? `<img src="${icon}" class="lab-slot-ing-icon" alt="${escapeHtml(iDisp)}">` : `<span style="font-size:9px;color:var(--text-muted);">-</span>`}
+                ${icon ? `<img src="${icon}" class="lab-slot-ing-icon" width="20" height="20" loading="lazy" decoding="async" alt="${escapeHtml(iDisp)}">` : `<span style="font-size:9px;color:var(--text-muted);">-</span>`}
               </div>
             `;
           }).join('')}
@@ -405,7 +405,7 @@
           <div class="lab-slot-main-row">
             <div class="lab-slot-identity-group">
               <div class="lab-slot-avatar-wrap">
-                <img src="${avatarUrl}" class="lab-slot-avatar-img" alt="${escapeHtml(displayName)}" loading="lazy">
+                <img src="${avatarUrl}" class="lab-slot-avatar-img" width="36" height="36" alt="${escapeHtml(displayName)}" loading="lazy" decoding="async">
                 <span class="lab-slot-lv-badge">Lv.${item.level || 1}</span>
               </div>
               <div class="lab-slot-name-col">
@@ -416,7 +416,7 @@
                 <div class="lab-slot-spec-left">
                   ${specialtyIconHtml}
                   <div class="lab-slot-berry-wrap ${isFav ? 'favored' : ''}" title="${escapeHtml(berryDisp)}${isFav ? ' (2x)' : ''}">
-                    ${berry.icon ? `<img src="${berry.icon}" class="lab-slot-berry-icon" alt="Berry">` : ''}
+                    ${berry.icon ? `<img src="${berry.icon}" class="lab-slot-berry-icon" width="15" height="15" loading="lazy" decoding="async" alt="Berry">` : ''}
                     ${isFav ? `<span class="lab-slot-fav-badge">2x</span>` : ''}
                   </div>
                   <span class="lab-slot-nature-name">${escapeHtml(natureDisplayName)}${(item.cleanseMint || item.mint) ? ` (${window.I18N?.t?.('lab.t_mint_short') ?? 'lab.t_mint_short'})` : ''}</span>
@@ -476,7 +476,7 @@
 
       return `
         <div style="display:inline-flex;align-items:center;gap:3px;background:${chipBg};border:${chipBorder};border-radius:4px;padding:${chipPadding};font-size:10.5px;" title="${escapeHtml(iDisplayName)}${isSurplusDaily ? (window.I18N?.t?.('lab.t_ing_surplus_paren') ?? 'lab.t_ing_surplus_paren') : (isCookMatch ? (window.I18N?.t?.('lab.t_ing_synergy_paren') ?? 'lab.t_ing_synergy_paren') : '')}">
-          ${iconUrl ? `<img src="${iconUrl}" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(iDisplayName)}">` : ''}
+          ${iconUrl ? `<img src="${iconUrl}" width="16" height="16" loading="lazy" decoding="async" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(iDisplayName)}">` : ''}
           <span style="color:${numColor};font-weight:700;">x${count}</span>
         </div>
       `;
@@ -500,7 +500,7 @@
           <div class="lab-supply-row">
             <div class="lab-supply-row-top">
               <div class="lab-supply-col-ing">
-                ${iconUrl ? `<img src="${iconUrl}" class="lab-supply-ing-icon" alt="${escapeHtml(iDisplayName)}">` : ''}
+                ${iconUrl ? `<img src="${iconUrl}" class="lab-supply-ing-icon" width="18" height="18" loading="lazy" decoding="async" alt="${escapeHtml(iDisplayName)}">` : ''}
                 <span class="lab-supply-ing-name">${escapeHtml(iDisplayName)}</span>
               </div>
               <div class="lab-supply-col-diff">
@@ -532,7 +532,7 @@
         <div class="lab-recipe-supply-board" id="lab-team-recipe-supply-demand">
           <div class="lab-supply-board-header">
             <div class="lab-supply-board-title-group">
-              ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-supply-dish-icon" alt="${escapeHtml(targetRecipeDisplayName)}" title="${escapeHtml(targetRecipeDisplayName)}">` : ''}
+              ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-supply-dish-icon" width="44" height="44" loading="lazy" decoding="async" alt="${escapeHtml(targetRecipeDisplayName)}" title="${escapeHtml(targetRecipeDisplayName)}">` : ''}
               <div>
                 <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
                   <span class="sr-only">${escapeHtml(targetRecipeDisplayName)}</span>

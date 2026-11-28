@@ -994,7 +994,7 @@ console.log('\n[Suite 15] Filter Visibility, H5 FAB Isolation, Box Lab Cleanup &
   const skillLadderRenderSrc = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_skill_ladder_render.js'), 'utf8');
   const wikiSkillsMatrixSrc = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_skills_matrix.js'), 'utf8');
   const wikiRenderRatingsSrc = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_render_ratings.js'), 'utf8');
-  const ladderMealsCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'views', 'wiki', 'wiki_ladder_meals.css'), 'utf8');
+  const h5FabDrawerCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'mobile', 'h5_fab_drawer.css'), 'utf8');
   const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
 
   // 1. Leaving box tab clears body.box-lab-active so Skill Ladder filter handle is never hidden
@@ -1005,7 +1005,7 @@ console.log('\n[Suite 15] Filter Visibility, H5 FAB Isolation, Box Lab Cleanup &
     'pokedex_nav.js removes panelBox.box-lab-active when switching away from box tab');
 
   // 2. CSS drawer-open hide & active FAB show rules include skill-ladder and isolate ing vs skill FABs
-  for (const [label, css] of [['wiki_ladder_meals.css', ladderMealsCss], ['styles.css', stylesCss]]) {
+  for (const [label, css] of [['h5_fab_drawer.css', h5FabDrawerCss], ['styles.css', stylesCss]]) {
     assert(css.includes('#panel-wiki:has(#skill-ladder-filter-sidebar:not(.collapsed)) #skill-ladder-sidebar-bookmark-handle'),
       `${label} hides skill-ladder FAB when #skill-ladder-filter-sidebar is open`);
     assert(css.includes('.mobile-h5-app.skill-ladder-active #skill-ladder-sidebar-bookmark-handle:not(.drawer-open)'),

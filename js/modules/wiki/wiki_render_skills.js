@@ -32,7 +32,7 @@
                 <label for="berry-level-slider" class="berry-control-label">
                   ${window.I18N?.t?.('wiki.ui_level_colon') ?? '等級：'}<span id="berry-level-display" class="berry-level-tag">Lv. ${currentBerryLevel}</span>
                 </label>
-                <input type="range" id="berry-level-slider" min="1" max="${pokeCap}" value="${currentBerryLevel}" step="1" class="berry-slider" oninput="window.WikiDB.updateBerryLevel(this.value)">
+                <input type="range" id="berry-level-slider" min="1" max="${pokeCap}" value="${currentBerryLevel}" step="1" class="berry-slider">
               </div>
 
               <!-- 島嶼加成滑桿 (0% ~ ${islandCap}%) -->
@@ -40,7 +40,7 @@
                 <label for="berry-island-slider" class="berry-control-label">
                   ${window.I18N?.t?.('wiki.ui_island_bonus_colon') ?? '島嶼加成：'}<span id="berry-island-display" class="berry-island-tag">+${currentIslandBonus}%</span>
                 </label>
-                <input type="range" id="berry-island-slider" min="0" max="${islandCap}" value="${currentIslandBonus}" step="${islandStep}" class="berry-slider island-slider" oninput="window.WikiDB.updateBerryIsland(this.value)">
+                <input type="range" id="berry-island-slider" min="0" max="${islandCap}" value="${currentIslandBonus}" step="${islandStep}" class="berry-slider island-slider">
               </div>
             </div>
           </div>
@@ -54,7 +54,7 @@
               const bonusStr = currentIslandBonus > 0 ? (window.I18N?.t?.('wiki.ui_island_bonus_inline', { bonus: currentIslandBonus }) ?? ` +${currentIslandBonus}%島嶼`) : '';
               return `
                 <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr} | ${window.I18N?.t?.('wiki.ui_base_label') ?? '基礎'}: ${energy1x} / ${window.I18N?.t?.('wiki.ui_fav_2x') ?? '順果 2x'}: ${energy2x}">
-                  <img src="${b.icon}" class="value-compact-icon" alt="${bName}">
+                  <img src="${b.icon}" class="value-compact-icon" alt="${bName}" width="32" height="32" loading="lazy" decoding="async">
                   <span class="value-compact-energy berry-val" title="${window.I18N?.t?.('wiki.ui_base_energy_1x') ?? '基礎能量 (1x)'}"><span class="energy-multiplier-prefix">1x</span> ${energy1x}</span>
                   <span class="value-compact-energy berry-val-fav" title="${window.I18N?.t?.('wiki.ui_fav_energy_2x') ?? '順果 2x 能量'}"><span class="energy-multiplier-prefix">2x</span> ${energy2x}</span>
                 </div>
@@ -79,7 +79,7 @@
                 : ing.icon;
               return `
               <div class="value-compact-node ${ing.id === 'tail' ? 'value-tail-highlight' : ''}" title="${ingName} - ${window.I18N?.t?.('wiki.ui_base_energy') ?? '基礎能量'} ${ing.energy}">
-                <img src="${ingIcon}" class="value-compact-icon" alt="${ingName}">
+                <img src="${ingIcon}" class="value-compact-icon" alt="${ingName}" width="32" height="32" loading="lazy" decoding="async">
                 <span class="value-compact-energy ing-val">${ing.energy}</span>
               </div>
             `;}).join('')}
@@ -87,90 +87,6 @@
         </div>
       </div>
     `;
-  }
-
-  // 渲染食材天梯榜卡片 (舊版清單檢視)
-  function renderIngredientLadders(ladders) {
-    const mult = getLadderMultiplier();
-    const perDayText = window.I18N?.t?.('wiki.ui_per_day') ?? '顆/天';
-    return ladders.map(ing => {
-      const ingName = window.I18N?.getIngredientName?.(ing.name) || (window.I18N?.text?.(ing.name) ?? ing.name);
-      const dishInfo = (typeof getDynamicTopRecipeForIngredient === 'function')
-        ? getDynamicTopRecipeForIngredient(ing.id, ing.name)
-        : (TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { need: 20 });
-      
-      let filteredTiers = ing.tiers.filter((t, tIdx) => {
-        const pkmSpec = getPokemonLadderSpecialty(t.name);
-        if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return false;
-        if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return false;
-        if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return false;
-
-        if (!matchesLadderRecipeFilter(t, ladderRecipeFilter)) return false;
-
-        if (ladderSearchQuery) {
-          if (!matchesLadderSearch(t.name, t.name_en, ladderSearchQuery)) return false;
-        }
-
-        const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
-        const skillBonus = getPokemonSkillDrawBonus(t.name, ing.id, ing.name);
-        const scaledCount = Math.round(rawCountNum * mult) + skillBonus;
-        if (ladderSupplyFilter === 'TOP' && tIdx >= 5) return false;
-        if (ladderSupplyFilter === 'MEALS_3' && scaledCount < dishInfo.need * 3) return false;
-        if (ladderSupplyFilter === 'MEALS_2' && scaledCount < dishInfo.need * 2) return false;
-
-        return true;
-      });
-
-      if (ladderTop15Only && filteredTiers.length > 15) {
-        filteredTiers = filteredTiers.slice(0, 15);
-      }
-
-      const maxDailyBase = filteredTiers.length > 0 ? Math.max(...filteredTiers.map(t => {
-        const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
-        const skillBonus = getPokemonSkillDrawBonus(t.name, ing.id, ing.name);
-        return rawCountNum * mult + skillBonus;
-      })) : 0;
-      const scaledMax = maxDailyBase.toFixed(1);
-
-      return `
-      <div class="ladder-card ${filteredTiers.length === 0 ? 'ladder-track-empty' : ''}" data-ladder-ing="${ing.id}">
-        <div class="ladder-header">
-          <div class="ladder-title-group">
-            <img src="${(typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon}" class="ladder-icon" alt="${ingName}">
-            <h4 class="ladder-name">${ingName}</h4>
-          </div>
-          <span class="ladder-max-badge">${filteredTiers.length > 0 ? (window.I18N?.t?.('wiki.ui_max_daily_prefix') ?? '最高日產 ~ ') + scaledMax + perDayText : (window.I18N?.t?.('wiki.ui_no_match') ?? '無符合')}</span>
-        </div>
-
-        <div class="ladder-tiers-list">
-          ${filteredTiers.length === 0 ? `<div class="text-muted" style="padding: 12px; text-align: center; font-size: 12px;">${window.I18N?.t?.('wiki.ui_no_matching_pkm') ?? '無符合篩選條件之寶可夢'}</div>` : filteredTiers.map(t => {
-            const rawName = t.name || '';
-            const translatedPkm = window.I18N?.getPokemonName?.(rawName) || (window.I18N?.field?.(t, 'name') ?? rawName);
-            const pkmDisplayName = `${translatedPkm} (${t.recipe || 'AAA'})`;
-            const noteText = formatLadderNote(t.note || '');
-            const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
-            const skillBonus = getPokemonSkillDrawBonus(t.name, ing.id, ing.name);
-            const dropCount = (rawCountNum * mult).toFixed(1);
-            const totalCount = (parseFloat(dropCount) + skillBonus).toFixed(1);
-            const displayCount = skillBonus > 0
-              ? `${totalCount} ${perDayText} <span class="ladder-split-text" style="font-size: 11px; color: #f59e0b; font-weight: normal; margin-left: 4px;">(${dropCount} + ${skillBonus})</span>`
-              : `${dropCount} ${perDayText}`;
-
-            return `
-            <div class="ladder-tier-row">
-              <div class="ladder-tier-info">
-                <span class="ladder-pkm-name font-bold">${pkmDisplayName}</span>
-                <span class="ladder-count text-accent font-bold">${displayCount}</span>
-              </div>
-              <div class="ladder-progress-bar">
-                <div class="ladder-progress-fill" style="width: ${t.rate}%"></div>
-              </div>
-              <div class="ladder-note text-muted">${noteText}</div>
-            </div>
-          `;}).join('')}
-        </div>
-      </div>
-    `;}).join('');
   }
 
   // 方案 C: 渲染技能「精華單行速查 (Lv.1 -> Lv.Max)」與「縱向階梯清單（隨卡片點擊展開/收合）」
@@ -396,7 +312,7 @@
                   return `
                   <tr>
                     <td style="text-align: center; padding: 5px 4px;">
-                      <img src="${p.icon}" width="34" height="34" style="object-fit: contain; vertical-align: middle;" alt="${pName}" title="${pTitle}">
+                      <img src="${p.icon}" width="34" height="34" loading="lazy" decoding="async" style="object-fit: contain; vertical-align: middle;" alt="${pName}" title="${pTitle}">
                     </td>
                     <td style="text-align: center; padding: 5px 6px;">
                       <span class="wiki-skill-badge skill-badge-blue">${pSkill}</span>
@@ -408,7 +324,7 @@
                           const igName = window.I18N?.getIngredientName?.(ig.name) || (window.I18N?.field?.(ig, 'name') ?? ig.name);
                           return `
                           <div class="wiki-ing-badge" title="${igName}" style="display: inline-flex; align-items: center; justify-content: center; background: transparent; border: none; padding: 0; cursor: help;">
-                            <img src="${ig.icon}" width="24" height="24" alt="${igName}" style="object-fit: contain; vertical-align: middle;">
+                            <img src="${ig.icon}" width="24" height="24" loading="lazy" decoding="async" alt="${igName}" style="object-fit: contain; vertical-align: middle;">
                           </div>
                         `;}).join('')}
                       </div>

@@ -1,0 +1,669 @@
+.mobile-h5-app .island-pkm-icon-only .island-pkm-avatar {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.mobile-h5-app .rank-badge {
+  padding: 2px 4.5px !important;
+  font-size: 11px !important;
+  gap: 3px !important;
+  border-radius: 9px !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .rank-num {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .pokeball-svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.mobile-h5-app .rank-dash {
+  font-size: 12px !important;
+  padding: 1px 3px !important;
+}
+
+.mobile-h5-app .wiki-two-col-grid .wiki-data-table th,
+.mobile-h5-app .wiki-two-col-grid .wiki-data-table td {
+  font-size: 13px !important;
+  padding: 8px 8px !important;
+}
+
+/* H5 App 最新公告專屬原生排版 (Mobile News & Updates Layout) */
+.mobile-h5-app #panel-news {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  padding: 0 0 28px 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #panel-news .controls-container {
+  position: relative !important;
+  top: auto !important;
+  z-index: 10 !important;
+  margin: 10px 12px 6px !important;
+  padding: 0 !important;
+  width: calc(100% - 24px) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+/*  1. 頂部搜尋列 App 風格 (與所有 Tab 保持 100% 統一元件規範) */
+.mobile-h5-app .search-box,
+.mobile-h5-app .news-search-box {
+  position: relative !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  flex: 0 0 auto !important;
+  height: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 0 !important;
+  margin: 0 0 6px 0 !important;
+  box-sizing: border-box !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .search-input,
+.mobile-h5-app .news-search-input {
+  width: 100% !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  padding: 0 32px 0 36px !important;
+  background: var(--bg-card-inner, #1e293b) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  color: var(--text-primary) !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  font-family: inherit !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
+}
+
+.mobile-h5-app .search-input:focus,
+.mobile-h5-app .news-search-input:focus {
+  border-color: var(--color-primary, #6366f1) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+}
+
+.mobile-h5-app .search-input::placeholder,
+.mobile-h5-app .news-search-input::placeholder {
+  color: var(--text-muted, #94a3b8) !important;
+  opacity: 0.85 !important;
+  font-size: 13.5px !important;
+  font-weight: 400 !important;
+}
+
+.mobile-h5-app .search-icon,
+.mobile-h5-app .news-search-box .search-icon {
+  position: absolute !important;
+  left: 11px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 16px !important;
+  height: 16px !important;
+  color: var(--text-muted, #94a3b8) !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+}
+
+.mobile-h5-app .search-icon svg,
+.mobile-h5-app .news-search-box .search-icon svg {
+  display: block !important;
+  width: 15px !important;
+  height: 15px !important;
+}
+
+/*  2. 等寬填滿四格分類標籤 (4 Equal-Width Pill Chips - Full Row) */
+.mobile-h5-app .news-category-tags {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+  padding: 1px 0 2px 0 !important;
+  width: 100% !important;
+  overflow-x: visible !important;
+}
+
+.mobile-h5-app .news-tag-btn {
+  flex: 1 1 0 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  padding: 5px 4px !important;
+  border-radius: 18px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .news-tag-btn.active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #fff !important;
+  border-color: var(--color-primary, #6366f1) !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35) !important;
+}
+
+.mobile-h5-app .news-tag-count {
+  font-size: 10px !important;
+  opacity: 0.85 !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+  padding: 1px 4px !important;
+  border-radius: 8px !important;
+}
+
+/*  3. 壓縮無框版活動日曆 (Borderless Ultra-Compact Activity Calendar) ─── */
+/* 網頁桌面版：日曆與進行中活動左右並行 (Side-by-Side Parallel Layout) */
+.news-calendar-wrapper {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 4px 0 !important;
+  box-shadow: none !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 16px !important;
+  align-items: stretch !important;
+  margin: 0 !important;
+}
+
+.news-calendar-cal-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+}
+
+@media (max-width: 880px) {
+  .news-calendar-wrapper {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* 行動版 H5 專屬：嚴格維持原樣上下垂直堆疊 (Mobile Keeps Vertical Stacking Unchanged) */
+.mobile-h5-app .news-calendar-wrapper {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 4px 0 !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  margin: 0 !important;
+  grid-template-columns: none !important;
+}
+
+.mobile-h5-app .news-calendar-cal-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+/* 行動端 H5 專屬：精確鎖定原本緊湊規格 (Mobile H5 Exact Compact Preservations) */
+.mobile-h5-app .news-calendar-top-bar {
+  height: 22px !important;
+}
+
+.mobile-h5-app .news-calendar-title-group {
+  gap: 4px !important;
+  font-size: 12.5px !important;
+}
+
+.mobile-h5-app .news-calendar-month-text {
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .news-calendar-nav-btn {
+  padding: 2px 6px !important;
+  font-size: 10.5px !important;
+}
+
+.mobile-h5-app .news-calendar-weekdays {
+  font-size: 10.5px !important;
+  padding-bottom: 2px !important;
+}
+
+.mobile-h5-app .news-cal-day-cell {
+  height: 28px !important;
+}
+
+.mobile-h5-app .news-cal-day-num {
+  font-size: 11px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 0 4px rgba(0, 0, 0, 0.6) !important;
+}
+
+.mobile-h5-app .news-cal-day-cell.is-today .news-cal-day-num,
+.mobile-h5-app .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num {
+  color: #d4a338 !important;
+  font-size: 12px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  line-height: 18px !important;
+  text-shadow: none !important;
+}
+
+.mobile-h5-app .news-cal-day-cell.is-today::after {
+  bottom: 2px !important;
+  width: 4px !important;
+  height: 4px !important;
+  background: #d4a338 !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .news-cal-day-cell.is-selected:not(.is-today) .news-cal-day-num {
+  font-size: 11.5px !important;
+}
+
+.news-calendar-top-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  height: 26px !important;
+}
+
+.news-calendar-title-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+}
+
+.news-calendar-month-text {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--text-muted) !important;
+}
+
+.news-calendar-nav-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.news-calendar-nav-btn {
+  background: var(--bg-card, rgba(255, 255, 255, 0.08)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  border-radius: 6px !important;
+  padding: 3px 8px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease !important;
+}
+
+.news-calendar-nav-btn:hover,
+.news-calendar-nav-btn:active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #fff !important;
+  border-color: var(--color-primary, #6366f1) !important;
+}
+
+/* 7 欄日曆星期標題 */
+.news-calendar-weekdays {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 1px !important;
+  text-align: center !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  padding-bottom: 4px !important;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important;
+}
+
+.news-calendar-weekday.sun,
+.news-calendar-weekday.sat {
+  color: var(--text-muted) !important;
+  opacity: 0.75 !important;
+}
+
+/* 7 欄日曆網格 (貫穿日期的全格背景色塊 + 高對比色塊反色) */
+.news-calendar-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 2px 0 !important;
+}
+
+.news-cal-day-cell {
+  aspect-ratio: auto !important;
+  height: 34px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  cursor: pointer !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+  user-select: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.news-cal-day-cell.empty {
+  cursor: default !important;
+  background: transparent !important;
+}
+
+.news-cal-day-cell:not(.empty):not(.has-events):hover {
+  background: rgba(99, 102, 241, 0.08) !important;
+}
+
+/*  貫穿整格的背景多層色塊 (Continuous Full-Cell Background Bands per Event) */
+.news-cal-bg-bands {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 1.5px !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  padding: 1.5px 0 !important;
+  box-sizing: border-box !important;
+}
+
+.news-cal-bg-band {
+  width: 100% !important;
+  flex: 1 1 0 !important;
+  min-height: 4px !important;
+  opacity: 0.85 !important;
+  transition: opacity 0.15s ease !important;
+  box-sizing: border-box !important;
+}
+
+.news-cal-day-cell:hover .news-cal-bg-band {
+  opacity: 1 !important;
+}
+
+/* 邊界圓角與直角填滿規則：
+   head (左上左下圓角、右側直角 100% 填滿)
+   body (全部直角、左右兩側 100% 填滿)
+   foot (右上右下圓角、左側直角 100% 填滿)
+   single (單日活動：四角圓角)
+*/
+.news-cal-bg-band.band-head,
+.news-cal-bg-band.band-cap-start {
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  margin-left: 2px !important;
+  margin-right: 0 !important;
+  width: calc(100% - 2px) !important;
+}
+
+.news-cal-bg-band.band-body,
+.news-cal-bg-band.band-mid {
+  border-radius: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+
+.news-cal-bg-band.band-foot,
+.news-cal-bg-band.band-cap-end {
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 2px !important;
+  width: calc(100% - 2px) !important;
+}
+
+.news-cal-bg-band.band-single,
+.news-cal-bg-band.band-cap-both {
+  border-radius: 4px !important;
+  margin: 0 2px !important;
+  width: calc(100% - 4px) !important;
+}
+
+.news-cal-bg-band.band-empty {
+  opacity: 0 !important;
+  background: transparent !important;
+  pointer-events: none !important;
+}
+
+/*  日期數字：浮在背景色塊之上，字型放大至 13.5px，柔和陰影確保清晰 */
+.news-cal-day-num {
+  position: relative !important;
+  z-index: 5 !important;
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  color: #ffffff !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 22px !important;
+  height: 22px !important;
+  border-radius: 4px !important;
+  transition: transform 0.15s ease, background-color 0.15s ease, color 0.15s ease !important;
+  pointer-events: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45) !important;
+}
+
+.news-cal-day-cell:not(.has-events) .news-cal-day-num {
+  color: var(--text-primary) !important;
+  text-shadow: none !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell:not(.has-events) .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell:not(.has-events) .news-cal-day-num {
+  color: #1e293b !important;
+}
+
+/*  今日日期黃色圓點心跳動態 (Today Dot Heartbeat Pulse Animation) */
+@keyframes todayHeartbeat {
+  0% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 0 3px rgba(250, 204, 21, 0.7);
+  }
+  14% {
+    transform: translateX(-50%) scale(1.45);
+    box-shadow: 0 0 8px rgba(250, 204, 21, 0.95), 0 0 0 2px rgba(250, 204, 21, 0.4);
+  }
+  28% {
+    transform: translateX(-50%) scale(1.1);
+    box-shadow: 0 0 4px rgba(250, 204, 21, 0.7);
+  }
+  42% {
+    transform: translateX(-50%) scale(1.5);
+    box-shadow: 0 0 10px rgba(250, 204, 21, 1), 0 0 0 3px rgba(250, 204, 21, 0.25);
+  }
+  70% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 0 3px rgba(250, 204, 21, 0.7);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 0 3px rgba(250, 204, 21, 0.7);
+  }
+}
+
+/*  今日（非選取狀態）：文字白色，下方保留黃色圓點心跳動態 (White Text with Heartbeat Yellow Dot) */
+.news-cal-day-cell.is-today {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  z-index: 8 !important;
+}
+
+.news-cal-day-cell.is-today .news-cal-day-num,
+.news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num {
+  background: transparent !important;
+  color: #ffffff !important; /* 今日文字使用白色 */
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  min-width: 22px !important;
+  height: 22px !important;
+  line-height: 22px !important;
+  padding: 0 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease !important;
+}
+
+.news-cal-day-cell.is-today:hover .news-cal-day-num {
+  transform: scale(1.08) !important;
+}
+
+/* 今日底端黃色圓點：帶心跳效果 (Heartbeat Pulse) */
+.news-cal-day-cell.is-today::after {
+  content: '' !important;
+  display: block !important;
+  position: absolute !important;
+  bottom: 2.5px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  transform-origin: center center !important;
+  width: 4.5px !important;
+  height: 4.5px !important;
+  border-radius: 50% !important;
+  background: #facc15 !important;
+  box-shadow: 0 0 4px rgba(250, 204, 21, 0.8) !important;
+  z-index: 6 !important;
+  animation: todayHeartbeat 1.6s ease-in-out infinite !important;
+}
+
+/* 明亮主題今日文字與心跳黃點 */
+[data-theme="dawn"] .news-cal-day-cell.is-today .news-cal-day-num,
+[data-theme="dawn"] .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-today .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num {
+  background: transparent !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65) !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-today:not(.has-events) .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-today:not(.has-events) .news-cal-day-num {
+  color: #1e293b !important;
+  text-shadow: none !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-today::after,
+[data-theme="emerald"] .news-cal-day-cell.is-today::after {
+  display: block !important;
+  background: #f59e0b !important;
+  animation: todayHeartbeat 1.6s ease-in-out infinite !important;
+}
+
+/*  選取日期：半透明灰色背景，無光暈，不遮擋活動進度條 (Selected Cell Translucent Gray - No Glow) */
+.news-cal-day-cell.is-selected {
+  outline: none !important;
+  border: none !important;
+  background: rgba(148, 163, 184, 0.22) !important; /* 半透明灰色 */
+  border-radius: 6px !important;
+  box-shadow: none !important; /* 無光暈 */
+  z-index: 10 !important;
+}
+
+/* 確保活動進度條在選中時完全正常展示，絕不遮擋 */
+.news-cal-day-cell.is-selected .news-cal-bg-bands {
+  display: flex !important;
+  z-index: 2 !important;
+  opacity: 1 !important;
+}
+
+.news-cal-day-cell.is-selected:not(.is-today) .news-cal-day-num {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 13.5px !important;
+  text-shadow: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-selected,
+[data-theme="emerald"] .news-cal-day-cell.is-selected {
+  background: rgba(100, 116, 139, 0.16) !important; /* 明亮主題半透明灰色 */
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-selected:not(.is-today) .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-selected:not(.is-today) .news-cal-day-num {
+  color: #0f172a !important;
+}
+
+/* 當日活動列表 (Selected Day Event List) */
+.news-calendar-events-box {
+  background: var(--bg-card, #18181b) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  padding: 10px 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  max-height: 280px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .news-calendar-events-box {
+  padding: 6px 8px !important;
+  gap: 4px !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+.news-cal-box-title-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  padding-bottom: 6px !important;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.06)) !important;
+  gap: 8px !important;
+}

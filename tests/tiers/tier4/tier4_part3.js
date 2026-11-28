@@ -288,16 +288,18 @@ function registerTier4Part3() {
     const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
     const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
 
-    // Both desktop & mobile modal slots must contain Lv.70 & Lv.80 and NO Lv.75 / Lv.100
-    assert(indexHtml.includes('<span class="slot-lvl-header">Lv.70</span>'), 'index.html must have Lv.70 slot header');
-    assert(indexHtml.includes('<span class="slot-lvl-header">Lv.80</span>'), 'index.html must have Lv.80 slot header');
-    assert(!indexHtml.includes('<span class="slot-lvl-header">Lv.75</span>'), 'index.html must not have Lv.75 slot header');
-    assert(!indexHtml.includes('<span class="slot-lvl-header">Lv.100</span>'), 'index.html must not have Lv.100 slot header');
+    // Both desktop & mobile modal slots (or hydrated i18n shell) must contain Lv.70 & Lv.80 and NO Lv.75 / Lv.100
+    const desktopBoxShell = indexHtml + '\n' + i18nJs;
+    const mobileBoxShell = appIndexHtml + '\n' + i18nJs;
+    assert(desktopBoxShell.includes('<span class="slot-lvl-header">Lv.70</span>'), 'index.html or i18n.js must have Lv.70 slot header');
+    assert(desktopBoxShell.includes('<span class="slot-lvl-header">Lv.80</span>'), 'index.html or i18n.js must have Lv.80 slot header');
+    assert(!desktopBoxShell.includes('<span class="slot-lvl-header">Lv.75</span>'), 'index.html and i18n.js must not have Lv.75 slot header');
+    assert(!desktopBoxShell.includes('<span class="slot-lvl-header">Lv.100</span>'), 'index.html and i18n.js must not have Lv.100 slot header');
 
-    assert(appIndexHtml.includes('<span class="slot-lvl-header">Lv.70</span>'), 'app/index.html must have Lv.70 slot header');
-    assert(appIndexHtml.includes('<span class="slot-lvl-header">Lv.80</span>'), 'app/index.html must have Lv.80 slot header');
-    assert(!appIndexHtml.includes('<span class="slot-lvl-header">Lv.75</span>'), 'app/index.html must not have Lv.75 slot header');
-    assert(!appIndexHtml.includes('<span class="slot-lvl-header">Lv.100</span>'), 'app/index.html must not have Lv.100 slot header');
+    assert(mobileBoxShell.includes('<span class="slot-lvl-header">Lv.70</span>'), 'app/index.html or i18n.js must have Lv.70 slot header');
+    assert(mobileBoxShell.includes('<span class="slot-lvl-header">Lv.80</span>'), 'app/index.html or i18n.js must have Lv.80 slot header');
+    assert(!mobileBoxShell.includes('<span class="slot-lvl-header">Lv.75</span>'), 'app/index.html and i18n.js must not have Lv.75 slot header');
+    assert(!mobileBoxShell.includes('<span class="slot-lvl-header">Lv.100</span>'), 'app/index.html and i18n.js must not have Lv.100 slot header');
 
     // Box subskills must adhere to Lv.10 ~ 80 standard and not legacy Lv.100
     assert(boxJs.includes("[10, 25, 50, 70, 80]"), 'box.js subskills array must include standard levels up to 80');
@@ -773,11 +775,13 @@ function registerTier4Part3() {
     const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
 
     // 1. Responsive Auto-Switch resize listeners registered before early returns
-    assert(indexHtml.includes("window.addEventListener('resize'"), 'index.html must register resize listener');
-    assert(appIndexHtml.includes("window.addEventListener('resize'"), 'app/index.html must register resize listener');
-    const indexResizeIdx = indexHtml.indexOf("window.addEventListener('resize'");
-    const indexEarlyReturnIdx = indexHtml.indexOf("return; // Stay on index.html");
-    assert(indexResizeIdx < indexEarlyReturnIdx, 'index.html resize listener must be attached before early return');
+    const indexResizeIdx = Math.max(indexHtml.indexOf("window.addEventListener('resize'"), indexHtml.indexOf('window.addEventListener("resize"'));
+    const appResizeIdx = Math.max(appIndexHtml.indexOf("window.addEventListener('resize'"), appIndexHtml.indexOf('window.addEventListener("resize"'));
+    assert(indexResizeIdx !== -1, 'index.html must register resize listener');
+    assert(appResizeIdx !== -1, 'app/index.html must register resize listener');
+    let indexEarlyReturnIdx = indexHtml.indexOf("return; // Stay on index.html");
+    if (indexEarlyReturnIdx === -1) indexEarlyReturnIdx = indexHtml.indexOf('if(viewQuery==="desktop"){return}');
+    assert(indexEarlyReturnIdx !== -1 && indexResizeIdx < indexEarlyReturnIdx, 'index.html resize listener must be attached before early return');
 
     // 2. Mobile H5 Box tab: No cards/table toggle chips, forced table mode
     assert(!appIndexHtml.includes('id="box-toggle-grid"'), 'app/index.html must not contain box-toggle-grid');
@@ -2449,9 +2453,9 @@ SP 4,316
     assert(recipesJs.includes('updateSliderFill(eventSlider, 1.0, 1.5)'), 'recipes.js updateSliderFill must use 1.0 to 1.5 range');
     assert(recipesJs.includes('Math.min(1.5, Math.max(1.0'), 'recipes.js loadPrefs must clamp eventBonus to 1.5');
 
-    // 2. Simplified Chinese (zh-CN) Language Switcher UI
-    assert(desktopHtml.includes('id="lang-btn-zh-cn"') && desktopHtml.includes('data-lang-val="zh-CN"'), 'index.html must contain #lang-btn-zh-cn with data-lang-val="zh-CN"');
-    assert(mobileHtml.includes('id="lang-btn-zh-cn"') && mobileHtml.includes('data-lang-val="zh-CN"'), 'app/index.html must contain #lang-btn-zh-cn with data-lang-val="zh-CN"');
+    // 2. Simplified Chinese (zh-CN) Language Switcher UI (HTML or hydrated i18n shell)
+    assert((desktopHtml.includes('id="lang-btn-zh-cn"') && desktopHtml.includes('data-lang-val="zh-CN"')) || (i18nJs.includes('id="lang-btn-zh-cn"') && i18nJs.includes('data-lang-val="zh-CN"')), 'index.html or i18n.js must contain #lang-btn-zh-cn with data-lang-val="zh-CN"');
+    assert((mobileHtml.includes('id="lang-btn-zh-cn"') && mobileHtml.includes('data-lang-val="zh-CN"')) || (i18nJs.includes('id="lang-btn-zh-cn"') && i18nJs.includes('data-lang-val="zh-CN"')), 'app/index.html or i18n.js must contain #lang-btn-zh-cn with data-lang-val="zh-CN"');
 
     // 3. i18n Engine & zh-CN Localization Completeness
     assert(i18nJs.includes("'zh-CN': {"), 'i18n.js must define complete zh-CN dictionary');

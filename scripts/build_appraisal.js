@@ -17,11 +17,15 @@ const OUTPUT_FILE = path.join(ROOT_DIR, 'js', 'modules', 'appraisal.js');
 
 const LAB_MODULES = [
   'lab_specialists.js',
+  'lab_diagnostics.js',
   'lab_engine.js',
   'lab_milestone.js',
   'lab_summary.js',
+  'lab_state.js',
+  'lab_modal_render.js',
   'lab_modal.js',
   'lab_editor.js',
+  'lab_team_sim.js',
   'lab_team_calc.js',
   'lab_team_picker.js',
   'lab_team_ui.js',

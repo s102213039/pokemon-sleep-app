@@ -62,6 +62,39 @@ const SPECIAL_ICON_MAP = {
   'Mismagius': 'https://www.serebii.net/pokemonsleep/pokemon/icon/429.png'
 };
 
+const _pkmIndexCache = typeof WeakMap === 'function' ? new WeakMap() : null;
+function _getPkmIndex(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  let entry = _pkmIndexCache ? _pkmIndexCache.get(arr) : null;
+  if (!entry || entry.len !== arr.length) {
+    const byId = new Map();
+    const byNo = new Map();
+    const byCn = new Map();
+    const byEn = new Map();
+    for (let i = 0; i < arr.length; i++) {
+      const item = arr[i];
+      if (!item) continue;
+      if (item.id !== undefined && item.id !== null) {
+        const idKey = String(item.id);
+        if (!byId.has(idKey)) byId.set(idKey, item);
+      }
+      if (item.formatted_no !== undefined && item.formatted_no !== null) {
+        const noKey = String(item.formatted_no);
+        if (!byNo.has(noKey)) byNo.set(noKey, item);
+      }
+      if (item.name_cn && !byCn.has(item.name_cn)) byCn.set(item.name_cn, item);
+      if (item.name && typeof item.name === 'string' && !byCn.has(item.name)) byCn.set(item.name, item);
+      if (item.name_en) {
+        const enLow = item.name_en.toLowerCase();
+        if (!byEn.has(enLow)) byEn.set(enLow, item);
+      }
+    }
+    entry = { len: arr.length, byId, byNo, byCn, byEn };
+    if (_pkmIndexCache) _pkmIndexCache.set(arr, entry);
+  }
+  return entry;
+}
+
 function getIconUrl(p) {
   if (!p) return DEFAULT_SVG_ICON;
 
@@ -82,15 +115,11 @@ function getIconUrl(p) {
       ? window.allPokemons
       : ((typeof PokemonApp !== 'undefined' && Array.isArray(PokemonApp.allPokemons)) ? PokemonApp.allPokemons : []);
     if (allPkm.length > 0) {
+      const idx = _getPkmIndex(allPkm);
       const lower = trimmed.toLowerCase();
-      const match = allPkm.find(x => x && (
-        x.name_cn === trimmed ||
-        x.name_cn === norm ||
-        x.name_cn === half ||
-        (x.name_en && x.name_en.toLowerCase() === lower) ||
-        (x.formatted_no && x.formatted_no === trimmed) ||
-        (x.id && String(x.id) === trimmed)
-      ));
+      const match = idx
+        ? (idx.byCn.get(trimmed) || idx.byCn.get(norm) || idx.byCn.get(half) || idx.byEn.get(lower) || idx.byNo.get(trimmed) || idx.byId.get(trimmed))
+        : null;
       if (match) return getIconUrl(match);
     }
     return DEFAULT_SVG_ICON;
@@ -126,13 +155,12 @@ function getIconUrl(p) {
         ? window.allPokemons
         : ((typeof PokemonApp !== 'undefined' && Array.isArray(PokemonApp.allPokemons)) ? PokemonApp.allPokemons : []);
       if (allPkm.length > 0) {
+        const idx = _getPkmIndex(allPkm);
         const lowerEn = (nameEn || '').toLowerCase();
         const normCn = String(nameCn).replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）');
-        const match = allPkm.find(x => x && (
-          (nameCn && x.name_cn === nameCn) ||
-          (normCn && x.name_cn === normCn) ||
-          (lowerEn && x.name_en && x.name_en.toLowerCase() === lowerEn)
-        ));
+        const match = idx
+          ? ((nameCn && idx.byCn.get(nameCn)) || (normCn && idx.byCn.get(normCn)) || (lowerEn && idx.byEn.get(lowerEn)))
+          : null;
         if (match && match !== p) return getIconUrl(match);
       }
     }
@@ -163,11 +191,10 @@ function isFinalEvolution(p) {
     ? (window.POKEMON_DB || window.allPokemons)
     : ((typeof PokemonApp !== 'undefined' && PokemonApp.allPokemons) ? PokemonApp.allPokemons : null);
   if (db && Array.isArray(db)) {
-    const match = db.find(item => item && (
-      (idStr && (String(item.id) === idStr || String(item.formatted_no) === idStr)) ||
-      (name && (item.name_cn === name || item.name === name)) ||
-      (nameEn && item.name_en && item.name_en.toLowerCase() === nameEn)
-    ));
+    const idx = _getPkmIndex(db);
+    const match = idx
+      ? ((idStr && (idx.byId.get(idStr) || idx.byNo.get(idStr))) || (name && idx.byCn.get(name)) || (nameEn && idx.byEn.get(nameEn)))
+      : null;
     if (match && match !== p) {
       const dRaw = match.is_final !== undefined && match.is_final !== null ? match.is_final : match.isFinal;
       if (dRaw === '〇' || dRaw === 'O' || dRaw === 'o' || dRaw === true || dRaw === '1' || dRaw === 1) return true;
@@ -179,11 +206,10 @@ function isFinalEvolution(p) {
     ? window.POKEMON_SKILLS_BASELINE_DATA
     : ((typeof POKEMON_SKILLS_BASELINE_DATA !== 'undefined' && Array.isArray(POKEMON_SKILLS_BASELINE_DATA)) ? POKEMON_SKILLS_BASELINE_DATA : null);
   if (baseline) {
-    const match = baseline.find(item => item && (
-      (idStr && (String(item.id) === idStr || String(item.formatted_no) === idStr)) ||
-      (name && (item.name_cn === name || item.name === name)) ||
-      (nameEn && item.name_en && item.name_en.toLowerCase() === nameEn)
-    ));
+    const idx = _getPkmIndex(baseline);
+    const match = idx
+      ? ((idStr && (idx.byId.get(idStr) || idx.byNo.get(idStr))) || (name && idx.byCn.get(name)) || (nameEn && idx.byEn.get(nameEn)))
+      : null;
     if (match) {
       const bRaw = match.is_final !== undefined && match.is_final !== null ? match.is_final : match.isFinal;
       if (bRaw === '〇' || bRaw === 'O' || bRaw === 'o' || bRaw === true || bRaw === '1' || bRaw === 1) return true;

@@ -1,0 +1,164 @@
+.h5-recipe-name {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.2 !important;
+}
+
+.h5-recipe-tags-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.h5-recipe-tags-row .recipe-cat-badge {
+  font-size: 10px !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+.h5-recipe-pot {
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  color: var(--accent-blue, #38bdf8) !important;
+  background: rgba(56, 189, 248, 0.1) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  white-space: nowrap !important;
+}
+
+/*  食材展示 (Enlarged comfortable ingredients row) */
+.h5-recipe-ing-section {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding-top: 2px !important;
+}
+
+.h5-recipe-ing-section::-webkit-scrollbar {
+  display: none !important;
+}
+
+.h5-recipe-ing-section .recipe-ing-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  flex-wrap: nowrap !important;
+}
+
+.h5-recipe-ing-section .recipe-ing-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 3px 0 0 !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-secondary) !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.h5-recipe-ing-section .recipe-ing-icon {
+  width: 22px !important;
+  height: 22px !important;
+  object-fit: contain !important;
+}
+
+.h5-recipe-ing-section .recipe-ing-count {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+/*  右側上下等分/置中能量列 (Energy Column spanning full height with dynamic fit-content width) */
+.h5-recipe-energy-col {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  flex-shrink: 0 !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* 3 個分數時：上下等分高度 (Space evenly across full card height) */
+.h5-recipe-energy-col.has-tasty {
+  justify-content: space-between !important;
+  padding: 1px 0 !important;
+}
+
+/* 僅 1 個分數時：垂直置中 (Centered when single score) */
+.h5-recipe-energy-col.single-energy {
+  justify-content: center !important;
+}
+
+.h5-energy-score {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  gap: 3px !important;
+  line-height: 1.2 !important;
+}
+
+.h5-energy-score .energy-multiplier {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  width: 17px !important;
+  flex-shrink: 0 !important;
+  text-align: left !important;
+  opacity: 0.85 !important;
+  font-family: monospace, -apple-system !important;
+}
+
+.h5-energy-score .energy-number {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  font-family: monospace, -apple-system !important;
+  white-space: nowrap !important;
+  text-align: right !important;
+  flex: 1 !important;
+}
+
+/* 1x: 白/主文字色；2x: 亮藍；3x: 金橘色 (3 階完全獨立區隔色彩) */
+.h5-energy-score.energy-1x {
+  color: var(--text-primary, #f1f5f9) !important;
+}
+
+.h5-energy-score.energy-2x {
+  color: var(--accent-blue, #38bdf8) !important;
+}
+
+.h5-energy-score.energy-3x {
+  color: var(--color-accent-gold, #f59e0b) !important;
+}
+
+.h5-recipe-tasty-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px dashed var(--border-color);
+}
+
+.tasty-mini-badge {
+  font-size: 11px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace, -apple-system;
+}
+
+.tasty-mini-badge.tasty-3x {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}

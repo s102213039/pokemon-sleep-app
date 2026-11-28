@@ -165,15 +165,15 @@ runTest('Unreleased Pokemon (#546, #547) null-safety', () => {
   assert.strictEqual(filterPass547, true);
 });
 
-// 5. Mobile H5 FAB Reference in pokedex_ui.js and pokedex_filters.js
-runTest('Mobile H5 FAB references in pokedex_ui.js and pokedex_filters.js', () => {
-  const uiFile = fs.readFileSync(path.join(ROOT_DIR, 'js', 'modules', 'pokedex', 'pokedex_ui.js'), 'utf8');
+// 5. Mobile H5 FAB Reference in pokedex_gestures.js and pokedex_filters.js
+runTest('Mobile H5 FAB references in pokedex_gestures.js and pokedex_filters.js', () => {
+  const gesturesFile = fs.readFileSync(path.join(ROOT_DIR, 'js', 'modules', 'pokedex', 'pokedex_gestures.js'), 'utf8');
   const filtersFile = fs.readFileSync(path.join(ROOT_DIR, 'js', 'modules', 'pokedex', 'pokedex_filters.js'), 'utf8');
 
-  // Check UI module includes skill-ladder handle in Back-to-Top FAB avoidance
-  assert(uiFile.includes('skill-ladder-sidebar-bookmark-handle'), 'pokedex_ui.js references skill-ladder handle');
-  assert(uiFile.includes('f5'), 'pokedex_ui.js binds f5 handle');
-  assert(uiFile.includes('has-filter-fab'), 'pokedex_ui.js toggles has-filter-fab class');
+  // Check Gestures module includes skill-ladder handle in Back-to-Top FAB avoidance
+  assert(gesturesFile.includes('skill-ladder-sidebar-bookmark-handle'), 'pokedex_gestures.js references skill-ladder handle');
+  assert(gesturesFile.includes('f5'), 'pokedex_gestures.js binds f5 handle');
+  assert(gesturesFile.includes('has-filter-fab'), 'pokedex_gestures.js toggles has-filter-fab class');
 
   // Check Filters module includes closeMobileDrawer and resize listener with f5
   assert(filtersFile.includes('skill-ladder-sidebar-bookmark-handle'), 'pokedex_filters.js references skill-ladder handle');

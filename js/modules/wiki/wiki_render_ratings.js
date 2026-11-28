@@ -16,8 +16,11 @@
     }
   }
 
+  let _wikiModuleInitialized = false;
+
   // --- 初始化 Wiki 模組 ---
   function initWikiModule() {
+    _wikiModuleInitialized = true;
     loadPersistedBerrySettings();
     currentWikiSubTab = getSavedWikiSubTab();
     currentSkillsCategory = getSavedSkillsCategory();
@@ -29,21 +32,27 @@
     const wikiContainer = document.getElementById('panel-wiki');
     if (!wikiContainer) return;
 
-    try {
-      renderWikiLayout(wikiContainer);
-      bindWikiFloatingFabs();
-    } catch (e) {
-      console.error('Error rendering Wiki layout:', e);
-      if (typeof window.__renderInPlaceError === 'function') {
-        window.__renderInPlaceError('panel-wiki', window.I18N?.t?.('wiki.ui_layout_error') ?? '數據百科佈局渲染異常', e);
+    const alreadyRendered = !!(wikiContainer.dataset && wikiContainer.dataset.wikiInitDone === '1' && document.getElementById('wiki-subpanel-skills'));
+    if (!alreadyRendered) {
+      if (wikiContainer.dataset) wikiContainer.dataset.wikiInitDone = '1';
+      try {
+        renderWikiLayout(wikiContainer);
+        bindWikiFloatingFabs();
+      } catch (e) {
+        console.error('Error rendering Wiki layout:', e);
+        if (typeof window.__renderInPlaceError === 'function') {
+          window.__renderInPlaceError('panel-wiki', window.I18N?.t?.('wiki.ui_layout_error') ?? '數據百科佈局渲染異常', e);
+        }
       }
-    }
 
-    try {
-      bindAllEvents();
-      bindGlobalDelegationFallback();
-    } catch (e) {
-      console.error('Error binding Wiki events:', e);
+      try {
+        bindAllEvents();
+        bindGlobalDelegationFallback();
+      } catch (e) {
+        console.error('Error binding Wiki events:', e);
+      }
+    } else {
+      bindWikiFloatingFabs();
     }
 
     try { switchWikiSubTab(currentWikiSubTab); } catch (e) {}
@@ -60,11 +69,11 @@
     try { recalcSleepDays(); } catch (e) {}
     try {
       const ladderCanvas = document.getElementById('wiki-ingredient-ladder-coordinate') || document.getElementById('ladder-coordinate-canvas');
-      if (!ladderCanvas || !ladderCanvas.innerHTML) refreshCoordinateLadder();
+      if (ladderCanvas && !ladderCanvas.innerHTML) refreshCoordinateLadder();
     } catch (e) {}
     try {
       const berryCanvas = document.getElementById('berry-energy-grid') || document.getElementById('berry-ladder-canvas');
-      if (!berryCanvas || !berryCanvas.innerHTML) refreshBerryNodes();
+      if (berryCanvas && !berryCanvas.innerHTML) refreshBerryNodes();
     } catch (e) {}
   }
 
@@ -230,7 +239,7 @@
           const icon = window.I18N.getIngredientIcon(ingName);
           if (icon) {
             const displayName = window.I18N?.getIngredientName?.(ingName) ?? ingName;
-            const tag = `<img src="${icon}" class="ladder-note-ing-icon" alt="${displayName}" title="${displayName}">`;
+            const tag = `<img src="${icon}" class="ladder-note-ing-icon" alt="${displayName}" title="${displayName}" width="16" height="16" loading="lazy" decoding="async">`;
             translated = translated.split(matchToken).join(tag);
           }
         }
@@ -264,4 +273,151 @@
   };
 
   let _coordLadderRenderCache = { key: '', html: '' };
+
+  function _renderWikiRatingsBody(caps, sleepExpTargetLevels) {
+    return `
+          <!-- 區塊 1: 核心養成週期指引 -->
+          <div class="wiki-section-heading">
+            <h3 class="wiki-section-title">${window.I18N?.t?.('wiki.ui_growth_title') ?? '新手與進階養成核心週期指引'}</h3>
+            <p class="wiki-section-subtitle">${window.I18N?.t?.('wiki.ui_growth_sub') ?? '掌握前期突破門檻,活力常駐加成與種子珍稀資源的養成核心思維.'}</p>
+          </div>
+          <div class="wiki-card wiki-strategy-card">
+            <div class="wiki-strategy-grid">
+              <div class="strategy-item strategy-early">
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-early">${window.I18N?.t?.('wiki.ui_early_badge') ?? '前期目標'}</span>
+                  <span class="strategy-title">${window.I18N?.t?.('wiki.ui_early_title') ?? '優先放置在 <span class="text-accent font-bold">Lv.30</span>'}</span>
+                </div>
+                <div class="strategy-desc">${window.I18N?.t?.('wiki.ui_early_desc') ?? '先看性格與 <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> 副技能,無課/微課約養成 <span class="text-warning font-bold">2~4個月</span>即可解鎖<span class="text-accent font-bold">第2種食材</span>,成為中流砥柱.'}</div>
+              </div>
+              <div class="strategy-item strategy-late">
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-late">${window.I18N?.t?.('wiki.ui_late_badge') ?? '後期投資'}</span>
+                  <span class="strategy-title">${window.I18N?.t?.('wiki.ui_late_title') ?? '慎選投入 <span class="text-accent font-bold">Lv.50~60</span>'}</span>
+                </div>
+                <div class="strategy-desc">${window.I18N?.t?.('wiki.ui_late_desc') ?? '確認副技能與性格皆達畢業級再投入大量糖果與<span class="text-warning font-bold">金種子</span>(約需 <span class="text-warning font-bold">5~10個月</span>養成時間).'}</div>
+              </div>
+              <div class="strategy-item strategy-energy">
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-energy">${window.I18N?.t?.('wiki.ui_energy_badge') ?? '活力核心'}</span>
+                  <span class="strategy-title">${window.I18N?.t?.('wiki.ui_energy_title') ?? '優先養成一隻主力補師'}</span>
+                </div>
+                <div class="strategy-desc">${window.I18N?.t?.('wiki.ui_energy_desc') ?? '全體活力維持在 <span class="text-success font-bold">80%以上</span>可享受 <span class="text-accent font-bold">約2.22倍 (間隔 0.45x)</span> 幫忙速度!建議先練:<span class="text-warning font-bold">胖可丁</span>,<span class="text-warning font-bold">仙子伊布</span>,<span class="text-warning font-bold">沙奈朵</span>,<span class="text-warning font-bold">巴布土撥</span>或<span class="text-warning font-bold">土台龜</span>.'}</div>
+              </div>
+              <div class="strategy-item strategy-seeds">
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-seeds">${window.I18N?.t?.('wiki.ui_seeds_badge') ?? '種子機制'}</span>
+                  <span class="strategy-title">${window.I18N?.t?.('wiki.ui_seeds_title') ?? '主技能與副技能種子規則'}</span>
+                </div>
+                <div class="strategy-desc">${window.I18N?.t?.('wiki.ui_seeds_desc') ?? '每次進化<span class="text-success font-bold">主技能+1</span>.副技能不能同時存在相同名稱技能(如已有S與M,則S無法再升階為M).'}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 區塊 2: 三大專長畢業評級榜 -->
+          <div class="wiki-section-heading" style="margin-top: 24px;">
+            <h3 class="wiki-section-title">${window.I18N?.t?.('wiki.ui_grad_title') ?? '三大專長畢業評級指南'}</h3>
+            <p class="wiki-section-subtitle">${window.I18N?.t?.('wiki.ui_grad_sub') ?? '樹果,食材,技能三大專長的頂級副技能與黃金性格搭配方向.'}</p>
+          </div>
+          <div class="wiki-ratings-container">
+            ${renderRatingCard(RATINGS_GUIDE_DATA.berry)}
+            ${renderRatingCard(RATINGS_GUIDE_DATA.ingredient)}
+            ${renderRatingCard(RATINGS_GUIDE_DATA.skill)}
+          </div>
+
+          <!-- 區塊 3: 睡眠天數升級試算器 -->
+          <div class="wiki-section-heading" style="margin-top: 24px;">
+            <h3 class="wiki-section-title">${window.I18N?.t?.('wiki.ui_sleep_calc_title') ?? '寶可夢睡眠升級天數計算器'}</h3>
+            <p class="wiki-section-subtitle">${window.I18N?.t?.('wiki.ui_sleep_calc_sub') ?? '依據每日睡滿100分(100 EXP基礎),計算從目前等級升至目標等級所需睡眠天數與經驗值.'}</p>
+          </div>
+          <div class="wiki-card wiki-calc-card">
+            <div class="calc-inputs-row">
+              <div class="calc-form-col">
+                <div class="calc-form-row calc-form-row-levels">
+                  <div class="calc-field-group calc-field-cur">
+                    <label class="calc-label" for="calc-sleep-cur-lv">${window.I18N?.t?.('wiki.ui_cur_lv_lbl') ?? '目前等級:'}</label>
+                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="${caps.THEORETICAL_MAX_LEVEL - 1}" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.onSleepCurLvInput()" onchange="window.WikiDB.onSleepCurLvInput()">
+                  </div>
+
+                  <div class="calc-field-group calc-field-target">
+                    <label class="calc-label" for="calc-sleep-target-lv">${window.I18N?.t?.('wiki.ui_target_lv_lbl') ?? '目標等級:'}</label>
+                    <select id="calc-sleep-target-lv" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
+                      ${sleepExpTargetLevels.map(lv => `<option value="${lv}">Lv.${lv}</option>`).join('')}
+                    </select>
+                  </div>
+                </div>
+
+                <div class="calc-form-row calc-form-row-boosts">
+                  <div class="calc-field-group calc-field-switch">
+                    <label class="calc-switch-label">
+                      <input type="checkbox" id="calc-sleep-exp-subskill" class="switch-checkbox" onchange="window.WikiDB.recalcSleepDays()">
+                      <span class="switch-slider"></span>
+                      <span class="switch-text">${window.I18N?.t?.('wiki.ui_sleep_exp_sub') ?? '睡眠EXP獎勵 (+14%)'}</span>
+                    </label>
+                  </div>
+
+                  <div class="calc-field-group calc-field-nature">
+                    <select id="calc-sleep-nature-select" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
+                      <option value="1.0">${window.I18N?.t?.('wiki.ui_exp_neutral') ?? '性格無EXP修正'}</option>
+                      <option value="1.18">${window.I18N?.t?.('wiki.ui_exp_up') ?? '性格EXP▲ (+18%)'}</option>
+                      <option value="0.82">${window.I18N?.t?.('wiki.ui_exp_down') ?? '性格EXP▼ (-18%)'}</option>
+                    </select>
+                  </div>
+
+                  <div class="calc-field-group calc-field-exptype">
+                    <select id="calc-sleep-exp-type" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
+                      <option value="1.0">${window.I18N?.t?.('wiki.ui_exp_type_10') ?? '一般 (1.0倍)'}</option>
+                      <option value="1.5">${window.I18N?.t?.('wiki.ui_exp_type_15') ?? '準神 (1.5倍)'}</option>
+                      <option value="1.8">${window.I18N?.t?.('wiki.ui_exp_type_18') ?? '神獸 (1.8倍)'}</option>
+                      <option value="2.2">${window.I18N?.t?.('wiki.ui_exp_type_22') ?? '幻之寶可夢 (2.2倍)'}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="calc-result-box">
+                <div class="calc-result-label">${window.I18N?.t?.('wiki.ui_est_days_lbl') ?? '預估所需睡眠天數'}</div>
+                <div id="calc-sleep-days-result" class="calc-result-val">${window.I18N?.t?.('wiki.ui_default_days') ?? '120 天'}</div>
+                <div id="calc-sleep-exp-result" class="calc-result-badge">${window.I18N?.t?.('wiki.ui_default_exp') ?? '約需 11,992 EXP'}</div>
+                <div id="calc-sleep-candies-result" class="calc-result-candies">${window.I18N?.t?.('wiki.ui_default_candies') ?? '約需 480 顆糖果 (每顆 25 EXP)'}</div>
+              </div>
+            </div>
+
+            <!-- 基準天數對照表 -->
+            <div class="wiki-table-wrapper" style="margin-top: 14px;">
+              <table class="wiki-data-table milestone-table">
+                <thead>
+                  <tr>
+                    <th class="col-milestone-lv">${window.I18N?.t?.('wiki.ui_target_lv_th') ?? '目標'}</th>
+                    <th class="col-milestone-exp">${window.I18N?.t?.('wiki.ui_req_exp_th') ?? 'EXP'}</th>
+                    <th class="col-milestone-days">${window.I18N?.t?.('wiki.ui_daily_sleep_th') ?? '天數'}</th>
+                    <th class="col-milestone-note">${window.I18N?.t?.('wiki.ui_milestone_th') ?? '解鎖'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${SLEEP_DAYS_BASELINE.map(row => {
+                    const milestoneColor = row.level === 10 ? 'milestone-cyan'
+                      : row.level === 25 ? 'milestone-purple'
+                      : row.level === 30 ? 'milestone-green'
+                      : row.level === 50 ? 'milestone-amber'
+                      : row.level === 60 ? 'milestone-pink'
+                      : row.level === caps.POKEMON_LEVEL_CAP ? 'milestone-purple'
+                      : 'milestone-cyan';
+                    const rawNote = window.I18N?.field?.(row, 'note') ?? row.note;
+                    const formattedNote = rawNote
+                      .replace(/(第[一二三四五12345][個个]?副技能|第[一二三123][種种]?食材|1st Sub-skill|2nd Sub-skill|3rd Sub-skill|4th Sub-skill|5th Sub-skill|2nd Ing\.|3rd Ing\.)/g, '<span class="text-accent font-bold">$1</span>');
+                    return `
+                    <tr>
+                      <td class="col-milestone-lv" style="vertical-align: middle;"><span class="milestone-badge ${milestoneColor}">Lv.${row.level}</span></td>
+                      <td class="col-milestone-exp font-bold" style="vertical-align: middle;">${row.totalExp.toLocaleString()}</td>
+                      <td class="col-milestone-days text-success font-bold" style="vertical-align: middle;">${row.days} ${window.I18N?.t?.('wiki.ui_days_unit') ?? '天'}</td>
+                      <td class="col-milestone-note text-secondary" style="vertical-align: middle;">${formattedNote}</td>
+                    </tr>
+                  `;}).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+    `;
+  }
 

@@ -588,7 +588,7 @@
 
         for (const url of uniqueUrls) {
           try {
-            const res = await fetch(url, { cache: attempt === 1 ? 'no-cache' : 'no-store' });
+            const res = await fetch(url, { cache: attempt === 1 ? 'default' : 'no-store' });
             if (res && res.ok) {
               const text = await res.text();
               const parsed = JSON.parse(text);
@@ -715,15 +715,40 @@
             }
           }
 
-          const currentLen = Array.isArray(allPokemons) ? allPokemons.length : 0;
-          let isDifferent = true;
-          if (currentLen === freshData.length && currentLen > 0) {
-            try {
-              isDifferent = JSON.stringify(freshData) !== JSON.stringify(allPokemons);
-            } catch (e) {
-              isDifferent = true;
+          function isContentDifferent(freshList, curList) {
+            if (!Array.isArray(freshList) || !Array.isArray(curList) || freshList.length !== curList.length) return true;
+            for (let i = 0; i < freshList.length; i++) {
+              const a = freshList[i], b = curList[i];
+              if (a === b) continue;
+              if (!a || !b) return true;
+              const keysA = Object.keys(a), keysB = Object.keys(b);
+              if (keysA.length !== keysB.length) return true;
+              for (let k = 0; k < keysA.length; k++) {
+                const key = keysA[k];
+                const va = a[key], vb = b[key];
+                if (va === vb) continue;
+                if (Array.isArray(va) && Array.isArray(vb)) {
+                  if (va.length !== vb.length) return true;
+                  for (let j = 0; j < va.length; j++) {
+                    const ea = va[j], eb = vb[j];
+                    if (ea === eb) continue;
+                    if (!ea || !eb || typeof ea !== 'object' || typeof eb !== 'object') return true;
+                    const ekA = Object.keys(ea), ekB = Object.keys(eb);
+                    if (ekA.length !== ekB.length) return true;
+                    for (let m = 0; m < ekA.length; m++) {
+                      if (ea[ekA[m]] !== eb[ekA[m]]) return true;
+                    }
+                  }
+                } else {
+                  return true;
+                }
+              }
             }
+            return false;
           }
+
+          const currentLen = Array.isArray(allPokemons) ? allPokemons.length : 0;
+          const isDifferent = currentLen > 0 ? isContentDifferent(freshData, allPokemons) : true;
 
           if (isDifferent || !currentLen) {
             console.log(`[Data Engine] 動態連線取得最新寶可夢資料庫 (${freshData.length} 筆)，正在原地更新...`);

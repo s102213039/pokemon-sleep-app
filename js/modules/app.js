@@ -62,6 +62,39 @@ const SPECIAL_ICON_MAP = {
   'Mismagius': 'https://www.serebii.net/pokemonsleep/pokemon/icon/429.png'
 };
 
+const _pkmIndexCache = typeof WeakMap === 'function' ? new WeakMap() : null;
+function _getPkmIndex(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  let entry = _pkmIndexCache ? _pkmIndexCache.get(arr) : null;
+  if (!entry || entry.len !== arr.length) {
+    const byId = new Map();
+    const byNo = new Map();
+    const byCn = new Map();
+    const byEn = new Map();
+    for (let i = 0; i < arr.length; i++) {
+      const item = arr[i];
+      if (!item) continue;
+      if (item.id !== undefined && item.id !== null) {
+        const idKey = String(item.id);
+        if (!byId.has(idKey)) byId.set(idKey, item);
+      }
+      if (item.formatted_no !== undefined && item.formatted_no !== null) {
+        const noKey = String(item.formatted_no);
+        if (!byNo.has(noKey)) byNo.set(noKey, item);
+      }
+      if (item.name_cn && !byCn.has(item.name_cn)) byCn.set(item.name_cn, item);
+      if (item.name && typeof item.name === 'string' && !byCn.has(item.name)) byCn.set(item.name, item);
+      if (item.name_en) {
+        const enLow = item.name_en.toLowerCase();
+        if (!byEn.has(enLow)) byEn.set(enLow, item);
+      }
+    }
+    entry = { len: arr.length, byId, byNo, byCn, byEn };
+    if (_pkmIndexCache) _pkmIndexCache.set(arr, entry);
+  }
+  return entry;
+}
+
 function getIconUrl(p) {
   if (!p) return DEFAULT_SVG_ICON;
 
@@ -82,15 +115,11 @@ function getIconUrl(p) {
       ? window.allPokemons
       : ((typeof PokemonApp !== 'undefined' && Array.isArray(PokemonApp.allPokemons)) ? PokemonApp.allPokemons : []);
     if (allPkm.length > 0) {
+      const idx = _getPkmIndex(allPkm);
       const lower = trimmed.toLowerCase();
-      const match = allPkm.find(x => x && (
-        x.name_cn === trimmed ||
-        x.name_cn === norm ||
-        x.name_cn === half ||
-        (x.name_en && x.name_en.toLowerCase() === lower) ||
-        (x.formatted_no && x.formatted_no === trimmed) ||
-        (x.id && String(x.id) === trimmed)
-      ));
+      const match = idx
+        ? (idx.byCn.get(trimmed) || idx.byCn.get(norm) || idx.byCn.get(half) || idx.byEn.get(lower) || idx.byNo.get(trimmed) || idx.byId.get(trimmed))
+        : null;
       if (match) return getIconUrl(match);
     }
     return DEFAULT_SVG_ICON;
@@ -126,13 +155,12 @@ function getIconUrl(p) {
         ? window.allPokemons
         : ((typeof PokemonApp !== 'undefined' && Array.isArray(PokemonApp.allPokemons)) ? PokemonApp.allPokemons : []);
       if (allPkm.length > 0) {
+        const idx = _getPkmIndex(allPkm);
         const lowerEn = (nameEn || '').toLowerCase();
         const normCn = String(nameCn).replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）');
-        const match = allPkm.find(x => x && (
-          (nameCn && x.name_cn === nameCn) ||
-          (normCn && x.name_cn === normCn) ||
-          (lowerEn && x.name_en && x.name_en.toLowerCase() === lowerEn)
-        ));
+        const match = idx
+          ? ((nameCn && idx.byCn.get(nameCn)) || (normCn && idx.byCn.get(normCn)) || (lowerEn && idx.byEn.get(lowerEn)))
+          : null;
         if (match && match !== p) return getIconUrl(match);
       }
     }
@@ -163,11 +191,10 @@ function isFinalEvolution(p) {
     ? (window.POKEMON_DB || window.allPokemons)
     : ((typeof PokemonApp !== 'undefined' && PokemonApp.allPokemons) ? PokemonApp.allPokemons : null);
   if (db && Array.isArray(db)) {
-    const match = db.find(item => item && (
-      (idStr && (String(item.id) === idStr || String(item.formatted_no) === idStr)) ||
-      (name && (item.name_cn === name || item.name === name)) ||
-      (nameEn && item.name_en && item.name_en.toLowerCase() === nameEn)
-    ));
+    const idx = _getPkmIndex(db);
+    const match = idx
+      ? ((idStr && (idx.byId.get(idStr) || idx.byNo.get(idStr))) || (name && idx.byCn.get(name)) || (nameEn && idx.byEn.get(nameEn)))
+      : null;
     if (match && match !== p) {
       const dRaw = match.is_final !== undefined && match.is_final !== null ? match.is_final : match.isFinal;
       if (dRaw === '〇' || dRaw === 'O' || dRaw === 'o' || dRaw === true || dRaw === '1' || dRaw === 1) return true;
@@ -179,11 +206,10 @@ function isFinalEvolution(p) {
     ? window.POKEMON_SKILLS_BASELINE_DATA
     : ((typeof POKEMON_SKILLS_BASELINE_DATA !== 'undefined' && Array.isArray(POKEMON_SKILLS_BASELINE_DATA)) ? POKEMON_SKILLS_BASELINE_DATA : null);
   if (baseline) {
-    const match = baseline.find(item => item && (
-      (idStr && (String(item.id) === idStr || String(item.formatted_no) === idStr)) ||
-      (name && (item.name_cn === name || item.name === name)) ||
-      (nameEn && item.name_en && item.name_en.toLowerCase() === nameEn)
-    ));
+    const idx = _getPkmIndex(baseline);
+    const match = idx
+      ? ((idStr && (idx.byId.get(idStr) || idx.byNo.get(idStr))) || (name && idx.byCn.get(name)) || (nameEn && idx.byEn.get(nameEn)))
+      : null;
     if (match) {
       const bRaw = match.is_final !== undefined && match.is_final !== null ? match.is_final : match.isFinal;
       if (bRaw === '〇' || bRaw === 'O' || bRaw === 'o' || bRaw === true || bRaw === '1' || bRaw === 1) return true;
@@ -846,210 +872,6 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 
-/* --- 樹果基礎能量對照表與單顆能量成長公式 --- */
-const BERRY_BASE_ENERGY_MAP = {
-  // 飛行: 椰木果 / Pamtre (24)
-  '椰木果': 24, 'Pamtre': 24, 'pamtre': 24,
-  // 蟲: 木子果 / 芭亞果 / Lum (24)
-  '木子果': 24, '芭亞果': 24, 'Lum': 24, 'lum': 24,
-  // 電: 異奇果 / Grepa (25)
-  '異奇果': 25, 'Grepa': 25, 'grepa': 25,
-  // 幽靈: 檬果 / Bluk (26)
-  '檬果': 26, 'Bluk': 26, 'bluk': 26,
-  // 妖精: 桃桃果 / Pecha (26)
-  '桃桃果': 26, 'Pecha': 26, 'pecha': 26,
-  // 超能力: 芒念果 / Mago (26)
-  '芒念果': 26, 'Mago': 26, 'mago': 26,
-  // 火: 蘋野果 / Leppa (27)
-  '蘋野果': 27, 'Leppa': 27, 'leppa': 27,
-  // 格鬥: 櫻子果 / Cheri (27)
-  '櫻子果': 27, 'Cheri': 27, 'cheri': 27,
-  // 一般: 柿仔果 / Persim (28)
-  '柿仔果': 28, 'Persim': 28, 'persim': 28,
-  // 地面: 勿花果 / Figy (29)
-  '勿花果': 29, 'Figy': 29, 'figy': 29,
-  // 岩石: 文柚果 / Sitrus (30)
-  '文柚果': 30, 'Sitrus': 30, 'sitrus': 30,
-  // 草: 榴石果 / 墨莓果 / Durin (30)
-  '榴石果': 30, '墨莓果': 30, 'Durin': 30, 'durin': 30,
-  // 水: 橙橙果 / Oran (31)
-  '橙橙果': 31, 'Oran': 31, 'oran': 31,
-  // 惡: 芭拉果 / 威嘻果 / Wiki (31)
-  '芭拉果': 31, '威嘻果': 31, 'Wiki': 31, 'wiki': 31,
-  // 毒: 零餘果 / Chesto (32)
-  '零餘果': 32, 'Chesto': 32, 'chesto': 32,
-  // 冰: 生薑果 / 羅子果 / Rawst (32)
-  '生薑果': 32, '羅子果': 32, 'Rawst': 32, 'rawst': 32,
-  // 鋼: 靛莓果 / 刺角果 / Belue (33)
-  '靛莓果': 33, '刺角果': 33, 'Belue': 33, 'belue': 33,
-  // 龍: 巧可果 / 亞雪果 / Yache (35)
-  '巧可果': 35, '亞雪果': 35, 'Yache': 35, 'yache': 35
-};
-
-function getBerryBaseEnergy(nameOrType) {
-  if (!nameOrType) return 26;
-  const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
-             (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
-  if (gc && typeof gc.getBerryBaseEnergy === 'function') {
-    const e = gc.getBerryBaseEnergy(nameOrType);
-    if (typeof e === 'number' && Number.isFinite(e)) return e;
-  }
-  if (BERRY_BASE_ENERGY_MAP[nameOrType]) return BERRY_BASE_ENERGY_MAP[nameOrType];
-  const bName = TYPE_TO_BERRY[nameOrType];
-  if (bName && BERRY_BASE_ENERGY_MAP[bName]) return BERRY_BASE_ENERGY_MAP[bName];
-  return 26;
-}
-
-function calculateSingleBerryEnergy(baseEnergy, level) {
-  const lv = Math.max(1, parseInt(level, 10) || 1);
-  const base = Math.max(20, parseInt(baseEnergy, 10) || 26);
-  return Math.round(Math.max(base + (lv - 1), base * Math.pow(1.025, lv - 1)));
-}
-
-if (typeof window !== 'undefined') {
-  window.getBerryBaseEnergy = getBerryBaseEnergy;
-  window.calculateSingleBerryEnergy = calculateSingleBerryEnergy;
-}
-
-/* ─── 基礎主技能與複合/專屬技能映射系統 ─────────── */
-const BASE_SKILLS = [
-  { key: '食材獲取S', label: '食材獲取S', label_en: 'Ingr. Mag. S' },
-  { key: '食材精選S', label: '食材精選S', label_en: 'Ingr. Select S' },
-  { key: '活力全體療癒S', label: '全體療癒S', label_en: 'Energy All S' },
-  { key: '活力療癒S', label: '活力療癒S', label_en: 'Energy Cheer S' },
-  { key: '活力填充S', label: '活力填充S', label_en: 'Charge Ene. S' },
-  { key: '能量填充M', label: '能量填充M', label_en: 'Charge Str. M' },
-  { key: '能量填充S', label: '能量填充S', label_en: 'Charge Str. S' },
-  { key: '料理強化S', label: '料理強化S', label_en: 'Cook Power S' },
-  { key: '料理成功S', label: '料理成功S', label_en: 'Tasty Chance S' },
-  { key: '幫手支援S', label: '幫手支援S', label_en: 'Extra Help S' },
-  { key: '幫手加速', label: '幫手加速', label_en: 'Helper Boost' },
-  { key: '樹果遽增', label: '樹果遽增', label_en: 'Berry Burst' },
-  { key: '夢之碎片獲取S', label: '夢碎獲取S', label_en: 'Dream Shard S' },
-  { key: '揮指', label: '揮指', label_en: 'Metronome' },
-  { key: '技能複製', label: '技能複製', label_en: 'Skill Copy' }
-];
-
-const SPECIAL_SKILL_PREFIXES_ZH = [
-  '魔法火焰', '健美', '怪力鉗', '怪力钳', '超幸運', '新月祈禱', '月光', '樹果汁',
-  '正電', '負電', '禮物', '治癒波動', '蹭蹭臉頰', '蓄力', '夢魘',
-  '精神擊破', '流星群', '畫皮', '波導彈', '十項全能', '模仿', '變身'
-];
-
-const SPECIAL_SKILL_PREFIXES_EN = [
-  'Mystical Fire', 'Bulk Up', 'Hyper Cutter', 'Super Luck', 'Lunar Prayer', 'Moonlight', 'Berry Juice',
-  'Plus', 'Minus', 'Present', 'Heal Pulse', 'Nuzzle', 'Stockpile', 'Bad Dreams',
-  'Psystrike', 'Draco Meteor', 'Disguise', 'Aura Sphere', 'All-Rounder', 'Mimic', 'Transform'
-];
-
-function stripSpecialSkillParens(skillStr) {
-  if (!skillStr) return '';
-  const s = String(skillStr).trim().replace('怪力钳', '怪力鉗');
-  for (let i = 0; i < SPECIAL_SKILL_PREFIXES_ZH.length; i++) {
-    const pre = SPECIAL_SKILL_PREFIXES_ZH[i];
-    if (s === pre || s.startsWith(pre + '（') || s.startsWith(pre + ' (') || s.startsWith(pre + '(') || s.startsWith(pre + '[')) {
-      return pre === '怪力钳' ? '怪力鉗' : pre;
-    }
-  }
-  for (let i = 0; i < SPECIAL_SKILL_PREFIXES_EN.length; i++) {
-    const pre = SPECIAL_SKILL_PREFIXES_EN[i];
-    if (s.toLowerCase() === pre.toLowerCase() || s.toLowerCase().startsWith(pre.toLowerCase() + ' (') || s.toLowerCase().startsWith(pre.toLowerCase() + '(') || s.toLowerCase().startsWith(pre.toLowerCase() + ' [')) {
-      return pre;
-    }
-  }
-  return s;
-}
-
-if (typeof window !== 'undefined') {
-  window.stripSpecialSkillParens = stripSpecialSkillParens;
-}
-
-const COMPOSITE_SKILL_MAP = {
-  // === 真正複合主技能 (True Composite Skills) ===
-  // 健美：料理成功S (大成功機率提升) + 食材獲取S (隨機獲得食材) (赫拉克羅斯)
-  '健美': ['料理成功S', '食材獲取S'],
-  '健美（料理輔助S）': ['料理成功S', '食材獲取S'],
-  '健美 (料理輔助S)': ['料理成功S', '食材獲取S'],
-  
-  // 魔法火焰：料理強化S (擴大鍋容量) + 料理成功S (大成功機率提升) (夢妖魔)
-  '魔法火焰': ['料理強化S', '料理成功S'],
-  '魔法火焰（料理躍進S）': ['料理強化S', '料理成功S'],
-  '魔法火焰 (料理躍進S)': ['料理強化S', '料理成功S'],
-  
-  // 月光：活力填充S (自身活力) + 大成功時活力療癒S (隊友活力) (月亮伊布)
-  '月光': ['活力填充S', '活力療癒S'],
-  '月光（活力填充S）': ['活力填充S', '活力療癒S'],
-  '月光（活力充填S）': ['活力填充S', '活力療癒S'],
-  
-  // 樹果汁：活力全體療癒S (全員活力) + 樹果汁道具活力療癒S (單隻活力) (壺壺)
-  '樹果汁': ['活力全體療癒S', '活力療癒S'],
-  '樹果汁（活力全體療癒S）': ['活力全體療癒S', '活力療癒S'],
-  
-  // === 專屬命名與變體主技能 (Named Variant Skills) ===
-  // 食材獲取系列
-  '正電': ['食材獲取S'],
-  '正電（食材獲取S）': ['食材獲取S'],
-  '禮物': ['食材獲取S'],
-  '禮物（食材獲取S）': ['食材獲取S'],
-  
-  // 料理強化系列
-  '負電': ['料理強化S'],
-  '負電（料理強化S）': ['料理強化S'],
-  
-  // 食材精選系列
-  '超幸運': ['食材精選S'],
-  '超幸運（食材精選S）': ['食材精選S'],
-  '超幸運 (食材精選S)': ['食材精選S'],
-  '怪力鉗': ['食材精選S'],
-  '怪力钳': ['食材精選S'],
-  '怪力鉗（食材精選S）': ['食材精選S'],
-  '怪力鉗 (食材精選S)': ['食材精選S'],
-  '怪力钳（食材精選S）': ['食材精選S'],
-  '怪力钳 (食材精選S)': ['食材精選S'],
-  
-  // 活力療癒系列
-  '新月祈禱': ['活力全體療癒S'],
-  '新月祈禱（活力全體療癒S）': ['活力全體療癒S'],
-  '治癒波動': ['活力療癒S'],
-  '治癒波動（活力療癒S）': ['活力療癒S'],
-  '蹭蹭臉頰': ['活力療癒S'],
-  '蹭蹭臉頰（活力療癒S）': ['活力療癒S'],
-  
-  // 能量填充系列
-  '蓄力': ['能量填充S'],
-  '蓄力（能量填充S）': ['能量填充S'],
-  '能量填充S（隨機）': ['能量填充S'],
-  '夢魘': ['能量填充M'],
-  '夢魘（能量填充M）': ['能量填充M'],
-  
-  // 樹果遽增系列
-  '精神擊破': ['樹果遽增'],
-  '精神擊破（樹果領域）': ['樹果遽增'],
-  '流星群': ['樹果遽增'],
-  '流星群（樹果遽增）': ['樹果遽增'],
-  '畫皮': ['樹果遽增'],
-  '畫皮（樹果遽增）': ['樹果遽增'],
-  '樹果遽增?': ['樹果遽增'],
-  
-  // 夢之碎片系列
-  '波導彈': ['夢之碎片獲取S'],
-  '波導彈（夢之碎片獲取S）': ['夢之碎片獲取S'],
-  '夢之碎片獲取S（隨機）': ['夢之碎片獲取S'],
-  
-  // 幫手加速系列
-  '幫手加速（電）': ['幫手加速'],
-  '幫手加速（火）': ['幫手加速'],
-  '幫手加速（水）': ['幫手加速'],
-  
-  // 揮指 / 技能複製系列
-  '十項全能': ['揮指'],
-  '十項全能（揮指）[可替換]': ['揮指'],
-  '模仿': ['技能複製'],
-  '模仿（技能複製）': ['技能複製'],
-  '變身': ['技能複製'],
-  '變身（技能複製）': ['技能複製']
-};
-
 /* ─── 特殊主技能官方詳細說明字典 (Special Main Skill Official In-Game Descriptions) ─ */
 const SPECIAL_SKILL_DETAILS = {
   // === 真正複合主技能 (True Composite Skills) ===
@@ -1457,6 +1279,210 @@ function getSkillDescription(skillName) {
     : raw;
 }
 
+/* --- 樹果基礎能量對照表與單顆能量成長公式 --- */
+const BERRY_BASE_ENERGY_MAP = {
+  // 飛行: 椰木果 / Pamtre (24)
+  '椰木果': 24, 'Pamtre': 24, 'pamtre': 24,
+  // 蟲: 木子果 / 芭亞果 / Lum (24)
+  '木子果': 24, '芭亞果': 24, 'Lum': 24, 'lum': 24,
+  // 電: 異奇果 / Grepa (25)
+  '異奇果': 25, 'Grepa': 25, 'grepa': 25,
+  // 幽靈: 檬果 / Bluk (26)
+  '檬果': 26, 'Bluk': 26, 'bluk': 26,
+  // 妖精: 桃桃果 / Pecha (26)
+  '桃桃果': 26, 'Pecha': 26, 'pecha': 26,
+  // 超能力: 芒念果 / Mago (26)
+  '芒念果': 26, 'Mago': 26, 'mago': 26,
+  // 火: 蘋野果 / Leppa (27)
+  '蘋野果': 27, 'Leppa': 27, 'leppa': 27,
+  // 格鬥: 櫻子果 / Cheri (27)
+  '櫻子果': 27, 'Cheri': 27, 'cheri': 27,
+  // 一般: 柿仔果 / Persim (28)
+  '柿仔果': 28, 'Persim': 28, 'persim': 28,
+  // 地面: 勿花果 / Figy (29)
+  '勿花果': 29, 'Figy': 29, 'figy': 29,
+  // 岩石: 文柚果 / Sitrus (30)
+  '文柚果': 30, 'Sitrus': 30, 'sitrus': 30,
+  // 草: 榴石果 / 墨莓果 / Durin (30)
+  '榴石果': 30, '墨莓果': 30, 'Durin': 30, 'durin': 30,
+  // 水: 橙橙果 / Oran (31)
+  '橙橙果': 31, 'Oran': 31, 'oran': 31,
+  // 惡: 芭拉果 / 威嘻果 / Wiki (31)
+  '芭拉果': 31, '威嘻果': 31, 'Wiki': 31, 'wiki': 31,
+  // 毒: 零餘果 / Chesto (32)
+  '零餘果': 32, 'Chesto': 32, 'chesto': 32,
+  // 冰: 生薑果 / 羅子果 / Rawst (32)
+  '生薑果': 32, '羅子果': 32, 'Rawst': 32, 'rawst': 32,
+  // 鋼: 靛莓果 / 刺角果 / Belue (33)
+  '靛莓果': 33, '刺角果': 33, 'Belue': 33, 'belue': 33,
+  // 龍: 巧可果 / 亞雪果 / Yache (35)
+  '巧可果': 35, '亞雪果': 35, 'Yache': 35, 'yache': 35
+};
+
+function getBerryBaseEnergy(nameOrType) {
+  if (!nameOrType) return 26;
+  const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+             (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+  if (gc && typeof gc.getBerryBaseEnergy === 'function') {
+    const e = gc.getBerryBaseEnergy(nameOrType);
+    if (typeof e === 'number' && Number.isFinite(e)) return e;
+  }
+  if (BERRY_BASE_ENERGY_MAP[nameOrType]) return BERRY_BASE_ENERGY_MAP[nameOrType];
+  const bName = TYPE_TO_BERRY[nameOrType];
+  if (bName && BERRY_BASE_ENERGY_MAP[bName]) return BERRY_BASE_ENERGY_MAP[bName];
+  return 26;
+}
+
+function calculateSingleBerryEnergy(baseEnergy, level) {
+  const lv = Math.max(1, parseInt(level, 10) || 1);
+  const base = Math.max(20, parseInt(baseEnergy, 10) || 26);
+  return Math.round(Math.max(base + (lv - 1), base * Math.pow(1.025, lv - 1)));
+}
+
+if (typeof window !== 'undefined') {
+  window.getBerryBaseEnergy = getBerryBaseEnergy;
+  window.calculateSingleBerryEnergy = calculateSingleBerryEnergy;
+}
+
+/* ─── 基礎主技能與複合/專屬技能映射系統 ─────────── */
+const BASE_SKILLS = [
+  { key: '食材獲取S', label: '食材獲取S', label_en: 'Ingr. Mag. S' },
+  { key: '食材精選S', label: '食材精選S', label_en: 'Ingr. Select S' },
+  { key: '活力全體療癒S', label: '全體療癒S', label_en: 'Energy All S' },
+  { key: '活力療癒S', label: '活力療癒S', label_en: 'Energy Cheer S' },
+  { key: '活力填充S', label: '活力填充S', label_en: 'Charge Ene. S' },
+  { key: '能量填充M', label: '能量填充M', label_en: 'Charge Str. M' },
+  { key: '能量填充S', label: '能量填充S', label_en: 'Charge Str. S' },
+  { key: '料理強化S', label: '料理強化S', label_en: 'Cook Power S' },
+  { key: '料理成功S', label: '料理成功S', label_en: 'Tasty Chance S' },
+  { key: '幫手支援S', label: '幫手支援S', label_en: 'Extra Help S' },
+  { key: '幫手加速', label: '幫手加速', label_en: 'Helper Boost' },
+  { key: '樹果遽增', label: '樹果遽增', label_en: 'Berry Burst' },
+  { key: '夢之碎片獲取S', label: '夢碎獲取S', label_en: 'Dream Shard S' },
+  { key: '揮指', label: '揮指', label_en: 'Metronome' },
+  { key: '技能複製', label: '技能複製', label_en: 'Skill Copy' }
+];
+
+const SPECIAL_SKILL_PREFIXES_ZH = [
+  '魔法火焰', '健美', '怪力鉗', '怪力钳', '超幸運', '新月祈禱', '月光', '樹果汁',
+  '正電', '負電', '禮物', '治癒波動', '蹭蹭臉頰', '蓄力', '夢魘',
+  '精神擊破', '流星群', '畫皮', '波導彈', '十項全能', '模仿', '變身'
+];
+
+const SPECIAL_SKILL_PREFIXES_EN = [
+  'Mystical Fire', 'Bulk Up', 'Hyper Cutter', 'Super Luck', 'Lunar Prayer', 'Moonlight', 'Berry Juice',
+  'Plus', 'Minus', 'Present', 'Heal Pulse', 'Nuzzle', 'Stockpile', 'Bad Dreams',
+  'Psystrike', 'Draco Meteor', 'Disguise', 'Aura Sphere', 'All-Rounder', 'Mimic', 'Transform'
+];
+
+function stripSpecialSkillParens(skillStr) {
+  if (!skillStr) return '';
+  const s = String(skillStr).trim().replace('怪力钳', '怪力鉗');
+  for (let i = 0; i < SPECIAL_SKILL_PREFIXES_ZH.length; i++) {
+    const pre = SPECIAL_SKILL_PREFIXES_ZH[i];
+    if (s === pre || s.startsWith(pre + '（') || s.startsWith(pre + ' (') || s.startsWith(pre + '(') || s.startsWith(pre + '[')) {
+      return pre === '怪力钳' ? '怪力鉗' : pre;
+    }
+  }
+  for (let i = 0; i < SPECIAL_SKILL_PREFIXES_EN.length; i++) {
+    const pre = SPECIAL_SKILL_PREFIXES_EN[i];
+    if (s.toLowerCase() === pre.toLowerCase() || s.toLowerCase().startsWith(pre.toLowerCase() + ' (') || s.toLowerCase().startsWith(pre.toLowerCase() + '(') || s.toLowerCase().startsWith(pre.toLowerCase() + ' [')) {
+      return pre;
+    }
+  }
+  return s;
+}
+
+if (typeof window !== 'undefined') {
+  window.stripSpecialSkillParens = stripSpecialSkillParens;
+}
+
+const COMPOSITE_SKILL_MAP = {
+  // === 真正複合主技能 (True Composite Skills) ===
+  // 健美：料理成功S (大成功機率提升) + 食材獲取S (隨機獲得食材) (赫拉克羅斯)
+  '健美': ['料理成功S', '食材獲取S'],
+  '健美（料理輔助S）': ['料理成功S', '食材獲取S'],
+  '健美 (料理輔助S)': ['料理成功S', '食材獲取S'],
+  
+  // 魔法火焰：料理強化S (擴大鍋容量) + 料理成功S (大成功機率提升) (夢妖魔)
+  '魔法火焰': ['料理強化S', '料理成功S'],
+  '魔法火焰（料理躍進S）': ['料理強化S', '料理成功S'],
+  '魔法火焰 (料理躍進S)': ['料理強化S', '料理成功S'],
+  
+  // 月光：活力填充S (自身活力) + 大成功時活力療癒S (隊友活力) (月亮伊布)
+  '月光': ['活力填充S', '活力療癒S'],
+  '月光（活力填充S）': ['活力填充S', '活力療癒S'],
+  '月光（活力充填S）': ['活力填充S', '活力療癒S'],
+  
+  // 樹果汁：活力全體療癒S (全員活力) + 樹果汁道具活力療癒S (單隻活力) (壺壺)
+  '樹果汁': ['活力全體療癒S', '活力療癒S'],
+  '樹果汁（活力全體療癒S）': ['活力全體療癒S', '活力療癒S'],
+  
+  // === 專屬命名與變體主技能 (Named Variant Skills) ===
+  // 食材獲取系列
+  '正電': ['食材獲取S'],
+  '正電（食材獲取S）': ['食材獲取S'],
+  '禮物': ['食材獲取S'],
+  '禮物（食材獲取S）': ['食材獲取S'],
+  
+  // 料理強化系列
+  '負電': ['料理強化S'],
+  '負電（料理強化S）': ['料理強化S'],
+  
+  // 食材精選系列
+  '超幸運': ['食材精選S'],
+  '超幸運（食材精選S）': ['食材精選S'],
+  '超幸運 (食材精選S)': ['食材精選S'],
+  '怪力鉗': ['食材精選S'],
+  '怪力钳': ['食材精選S'],
+  '怪力鉗（食材精選S）': ['食材精選S'],
+  '怪力鉗 (食材精選S)': ['食材精選S'],
+  '怪力钳（食材精選S）': ['食材精選S'],
+  '怪力钳 (食材精選S)': ['食材精選S'],
+  
+  // 活力療癒系列
+  '新月祈禱': ['活力全體療癒S'],
+  '新月祈禱（活力全體療癒S）': ['活力全體療癒S'],
+  '治癒波動': ['活力療癒S'],
+  '治癒波動（活力療癒S）': ['活力療癒S'],
+  '蹭蹭臉頰': ['活力療癒S'],
+  '蹭蹭臉頰（活力療癒S）': ['活力療癒S'],
+  
+  // 能量填充系列
+  '蓄力': ['能量填充S'],
+  '蓄力（能量填充S）': ['能量填充S'],
+  '能量填充S（隨機）': ['能量填充S'],
+  '夢魘': ['能量填充M'],
+  '夢魘（能量填充M）': ['能量填充M'],
+  
+  // 樹果遽增系列
+  '精神擊破': ['樹果遽增'],
+  '精神擊破（樹果領域）': ['樹果遽增'],
+  '流星群': ['樹果遽增'],
+  '流星群（樹果遽增）': ['樹果遽增'],
+  '畫皮': ['樹果遽增'],
+  '畫皮（樹果遽增）': ['樹果遽增'],
+  '樹果遽增?': ['樹果遽增'],
+  
+  // 夢之碎片系列
+  '波導彈': ['夢之碎片獲取S'],
+  '波導彈（夢之碎片獲取S）': ['夢之碎片獲取S'],
+  '夢之碎片獲取S（隨機）': ['夢之碎片獲取S'],
+  
+  // 幫手加速系列
+  '幫手加速（電）': ['幫手加速'],
+  '幫手加速（火）': ['幫手加速'],
+  '幫手加速（水）': ['幫手加速'],
+  
+  // 揮指 / 技能複製系列
+  '十項全能': ['揮指'],
+  '十項全能（揮指）[可替換]': ['揮指'],
+  '模仿': ['技能複製'],
+  '模仿（技能複製）': ['技能複製'],
+  '變身': ['技能複製'],
+  '變身（技能複製）': ['技能複製']
+};
+
 function escapeHtml(str) {
   if (str === null || str === undefined) return '';
   return String(str)
@@ -1573,7 +1599,7 @@ function renderSkillWithTooltip(skillName, pkm) {
       const ingIconsHtml = targetIngs.map(ig => {
         const ingName = i18n ? (i18n.getIngredientName(ig.name) || ig.name) : ig.name;
         const icon = ig.icon || (i18n && i18n.getIngredientIcon(ig.name)) || '';
-        return icon ? `<img src="${icon}" class="skill-tooltip-inline-ing" alt="${ingName}" title="${ingName}">` : '';
+        return icon ? `<img src="${icon}" class="skill-tooltip-inline-ing" width="24" height="24" loading="lazy" decoding="async" alt="${ingName}" title="${ingName}">` : '';
       }).filter(Boolean).join(separator);
 
       const plainSep = i18n?.t?.('dex.ui_list_sep') ?? '、';
@@ -3548,7 +3574,7 @@ if (typeof document !== 'undefined') {
 
         for (const url of uniqueUrls) {
           try {
-            const res = await fetch(url, { cache: attempt === 1 ? 'no-cache' : 'no-store' });
+            const res = await fetch(url, { cache: attempt === 1 ? 'default' : 'no-store' });
             if (res && res.ok) {
               const text = await res.text();
               const parsed = JSON.parse(text);
@@ -3675,15 +3701,40 @@ if (typeof document !== 'undefined') {
             }
           }
 
-          const currentLen = Array.isArray(allPokemons) ? allPokemons.length : 0;
-          let isDifferent = true;
-          if (currentLen === freshData.length && currentLen > 0) {
-            try {
-              isDifferent = JSON.stringify(freshData) !== JSON.stringify(allPokemons);
-            } catch (e) {
-              isDifferent = true;
+          function isContentDifferent(freshList, curList) {
+            if (!Array.isArray(freshList) || !Array.isArray(curList) || freshList.length !== curList.length) return true;
+            for (let i = 0; i < freshList.length; i++) {
+              const a = freshList[i], b = curList[i];
+              if (a === b) continue;
+              if (!a || !b) return true;
+              const keysA = Object.keys(a), keysB = Object.keys(b);
+              if (keysA.length !== keysB.length) return true;
+              for (let k = 0; k < keysA.length; k++) {
+                const key = keysA[k];
+                const va = a[key], vb = b[key];
+                if (va === vb) continue;
+                if (Array.isArray(va) && Array.isArray(vb)) {
+                  if (va.length !== vb.length) return true;
+                  for (let j = 0; j < va.length; j++) {
+                    const ea = va[j], eb = vb[j];
+                    if (ea === eb) continue;
+                    if (!ea || !eb || typeof ea !== 'object' || typeof eb !== 'object') return true;
+                    const ekA = Object.keys(ea), ekB = Object.keys(eb);
+                    if (ekA.length !== ekB.length) return true;
+                    for (let m = 0; m < ekA.length; m++) {
+                      if (ea[ekA[m]] !== eb[ekA[m]]) return true;
+                    }
+                  }
+                } else {
+                  return true;
+                }
+              }
             }
+            return false;
           }
+
+          const currentLen = Array.isArray(allPokemons) ? allPokemons.length : 0;
+          const isDifferent = currentLen > 0 ? isContentDifferent(freshData, allPokemons) : true;
 
           if (isDifferent || !currentLen) {
             console.log(`[Data Engine] 動態連線取得最新寶可夢資料庫 (${freshData.length} 筆)，正在原地更新...`);
@@ -3793,7 +3844,7 @@ if (typeof document !== 'undefined') {
         const typeName = window.I18N ? window.I18N.getTypeName(b.type) : b.type;
         return `
           <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${berryName} (${typeName})" aria-label="${berryName}">
-            ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" alt="${berryName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+            ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" width="22" height="22" alt="${berryName}" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
           </button>
         `;
       }).join('');
@@ -3811,7 +3862,7 @@ if (typeof document !== 'undefined') {
         const ingName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
         return `
           <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-ing="${ing.name}" title="${ingName}" aria-label="${ingName}">
-            ${ing.icon ? `<img src="${ing.icon}" class="subfilter-icon-img" alt="${ingName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+            ${ing.icon ? `<img src="${ing.icon}" class="subfilter-icon-img" width="22" height="22" alt="${ingName}" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
           </button>
         `;
       }).join('');
@@ -4014,14 +4065,20 @@ if (typeof document !== 'undefined') {
           }
         };
 
+        let pkmSearchTimer = null;
         searchInput.addEventListener('input', (e) => {
           currentSearch = e.target.value.trim().toLowerCase();
           updatePkmClear();
-          renderUI();
+          if (pkmSearchTimer) clearTimeout(pkmSearchTimer);
+          pkmSearchTimer = setTimeout(() => {
+            pkmSearchTimer = null;
+            renderUI();
+          }, 90);
         });
 
         if (pokemonSearchClear) {
           pokemonSearchClear.addEventListener('click', () => {
+            if (pkmSearchTimer) { clearTimeout(pkmSearchTimer); pkmSearchTimer = null; }
             searchInput.value = '';
             currentSearch = '';
             updatePkmClear();
@@ -4409,279 +4466,6 @@ if (typeof document !== 'undefined') {
       window.updateActiveFilterBadge = updateActiveFilterBadge;
     }
 
-
-    function filterData() {
-      return allPokemons.filter(p => {
-        if (selectedTypes.size > 0 && !selectedTypes.has(p.type)) return false;
-
-        // 類型篩選 (樹果、食材、技能；若都沒選則展示全部；夢幻 specialty === '全部' 在任何選取下均展示)
-        if (selectedSpecialties.size > 0) {
-          const isMewAll = p.specialty === '全部' || p.specialty === 'ALL';
-          if (!isMewAll && !selectedSpecialties.has(p.specialty)) return false;
-        }
-
-        // 僅最終進化篩選 (Only Final Evolution)
-        if (onlyFinal) {
-          const isFinal = (typeof isFinalEvolution === 'function')
-            ? isFinalEvolution(p)
-            : (p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1');
-          if (!isFinal) return false;
-        }
-
-        // 樹果細節篩選 (多選)
-        if (selectedBerries.size > 0) {
-          const berryName = TYPE_TO_BERRY[p.type];
-          if (!berryName || !selectedBerries.has(berryName)) return false;
-        }
-
-        // 食材細節篩選 (若開啟「僅初始食材」則只比對 Lv.1 初始食材 p.ingredients[0]，否則比對任意食材)
-        if (selectedIngredients.size > 0) {
-          if (onlyInitialIng) {
-            const initialIng = p.ingredients && p.ingredients[0] && p.ingredients[0].name ? p.ingredients[0].name : '';
-            if (!initialIng || !selectedIngredients.has(initialIng)) return false;
-          } else {
-            const hasIng = p.ingredients && p.ingredients.some(ing => ing.name && selectedIngredients.has(ing.name));
-            if (!hasIng) return false;
-          }
-        }
-
-        // 技能細節篩選 (多選，支援基礎技能與複合技能自動關聯)
-        if (selectedSkills.size > 0) {
-          let hasMatchedSkill = false;
-          for (const targetSkill of selectedSkills) {
-            if (matchesSkill(p.main_skill, targetSkill)) {
-              hasMatchedSkill = true;
-              break;
-            }
-          }
-          if (!hasMatchedSkill) return false;
-        }
-
-        if (currentSearch) {
-          if (!matchesPokemonSearch(p, currentSearch)) return false;
-        }
-        return true;
-      });
-    }
-
-    function renderDualSortArrowSvg(state) {
-      const up = (state === 'asc' || state === 'newest') ? 'filled' : 'hollow';
-      const dn = (state === 'desc' || state === 'newest') ? 'filled' : 'hollow';
-      return `<svg class="sort-dual-svg" data-sort-state="${state}" viewBox="0 0 12 16" width="12" height="16" aria-hidden="true"><path class="sort-tri-up ${up}" d="M6 1.5L10.5 6.8H1.5Z"/><path class="sort-tri-down ${dn}" d="M6 14.5L10.5 9.2H1.5Z"/></svg>`;
-    }
-
-    function sortableTh(col, label, cls) {
-      const parsed = parseTableSort(currentSort);
-      const on = parsed.col === col;
-      let arrow = '', aria = 'none', titleTip = '', sortState = 'none';
-      if (on) {
-        if (parsed.dir === 'newest') {
-          sortState = 'newest'; arrow = window.I18N?.t?.('dex.ui_sort_new_tag') ?? ' (新)'; aria = 'other';
-          titleTip = window.I18N?.t?.('dex.ui_sort_tip_newest') ?? 'dex.ui_sort_tip_newest';
-        } else if (parsed.dir === 'desc') {
-          sortState = 'desc'; arrow = '▼'; aria = 'descending';
-          titleTip = window.I18N?.t?.('dex.ui_sort_tip_desc') ?? 'dex.ui_sort_tip_desc';
-        } else {
-          sortState = 'asc'; arrow = '▲'; aria = 'ascending';
-          titleTip = window.I18N?.t?.('dex.ui_sort_tip_asc') ?? 'dex.ui_sort_tip_asc';
-        }
-      }
-      if (cls === 'th-icon') {
-        const iconAriaLabel = titleTip || (window.I18N?.t?.('th.icon') ?? 'Icon');
-        return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}" aria-label="${iconAriaLabel}" ${titleTip ? `title="${titleTip}"` : ''}><span class="sort-arrow sort-arrow-dual" aria-hidden="true">${renderDualSortArrowSvg(sortState)}</span></th>`;
-      }
-      return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}" ${titleTip ? `title="${titleTip}"` : ''}>${label}${arrow ? `<span class="sort-arrow" aria-hidden="true">${arrow}</span>` : ''}</th>`;
-    }
-
-    function renderUI() {
-      if (!contentArea) return;
-      try {
-        if (typeof updateActiveFilterBadge === 'function') updateActiveFilterBadge();
-        const filtered = sortPokemonList(filterData(), currentSort);
-        const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-        if (countBadge) countBadge.textContent = window.I18N?.t?.('dex.ui_count_fmt', { count: filtered.length }) ?? String(filtered.length);
-
-        if (filtered.length === 0) {
-          contentArea.innerHTML = `<div style="text-align:center; padding: 60px; color: var(--text-muted); font-size: 16px;">${t('pokedex.no_results', '查無符合條件的寶可夢')}</div>`;
-          return;
-        }
-
-        const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
-        if (isMobileH5) {
-          viewMode = 'table';
-        }
-
-        if (viewMode === 'grid') renderGrid(filtered);
-        else renderTable(filtered);
-      } catch (err) {
-        console.error('Error in renderUI:', err);
-        if (typeof window.__renderInPlaceError === 'function') {
-          window.__renderInPlaceError('content-area', window.I18N?.t?.('dex.ui_render_error') ?? 'dex.ui_render_error', err);
-        }
-      }
-    }
-
-    function renderGrid(data) {
-      const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-
-      contentArea.innerHTML = `
-        <div class="pokemon-grid">
-          ${data.map(p => {
-            const iconUrl = getIconUrl(p);
-            const pkmName = window.I18N?.getPokemonName?.(p) ?? (p.name_cn || p.name_en || '');
-            const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
-            let specClass = 'spec-ingredient';
-            const rawSpec = p.specialty || '';
-            if (rawSpec.includes('樹果') || rawSpec === 'Berries') {
-              specClass = 'spec-berry';
-            } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
-              specClass = 'spec-skill';
-            } else if (rawSpec.includes('全能') || rawSpec.includes('全部') || rawSpec === 'All-Rounder' || rawSpec.toLowerCase() === 'all') {
-              specClass = 'spec-all';
-            }
-            const berry = getPokemonBerry(p);
-            const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
-
-            return `
-            <div class="pokemon-card">
-              <div class="card-header">
-                ${iconUrl ? `<img class="pokemon-icon" src="${iconUrl}" alt="${pkmName}" loading="lazy" onerror="handlePokemonIconError(this)" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">` : ''}
-                <div class="card-title-group" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">
-                  <div class="pokemon-no">No.${p.formatted_no}</div>
-                  <div class="pokemon-name" style="white-space:nowrap;">${pkmName}</div>
-                  ${p.name_en && pkmName !== p.name_en ? `<div class="pokemon-name-en" style="white-space:nowrap;">${p.name_en}</div>` : ''}
-                </div>
-                <div class="card-header-ingredients">
-                  ${p.ingredients ? p.ingredients.map((ing, i) => {
-                    const ingName = (ing.name && window.I18N) ? window.I18N.getIngredientName(ing.name) : (ing.name || '');
-                    return ing.name ? `
-                    <div class="card-header-ing-row" title="${ingName}">
-                      ${ing.icon ? `<img class="card-header-ing-icon" src="${ing.icon}" alt="${ingName}" loading="lazy" onerror="this.style.display='none';">` : ''}
-                      ${ingQtyBadges(ing, i)}
-                    </div>
-                  ` : '';
-                  }).join('') : ''}
-                </div>
-              </div>
-              <div class="card-stats">
-                <div class="stat-item">
-                  <span class="stat-label">${t('th.berry', '樹果')}</span>
-                  <span class="stat-value" title="${berryName}">
-                    ${berry && berry.icon ? `<img src="${berry.icon}" alt="${berryName}" class="card-berry-icon" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;" loading="lazy" onerror="this.style.display='none';">` : `<span class="berry-name-text">${berryName}</span>`}
-                  </span>
-                </div>
-                <div class="stat-item">
-                  <span class="stat-label">${t('th.specialty', '得意')}</span>
-                  <span class="stat-value" style="white-space:nowrap;">${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(p.specialty, 20) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}</span>
-                </div>
-                <div class="stat-item">
-                  <span class="stat-label">${t('th.carry', '持有')}</span>
-                  <span class="stat-value" style="white-space:nowrap;">${p.carry || '--'}</span>
-                </div>
-                <div class="stat-item">
-                  <span class="stat-label">${t('th.ingredient_rate', '食材率')}</span>
-                  <span class="stat-value" style="white-space:nowrap;">${p.ingredient_rate || '--'}</span>
-                </div>
-                <div class="stat-item">
-                  <span class="stat-label">${t('th.skill_rate', '技能率')}</span>
-                  <span class="stat-value" style="white-space:nowrap;">${p.skill_rate || '--'}</span>
-                </div>
-                <div class="stat-item">
-                  <span class="stat-label">${t('th.interval', '幫忙間隔')}</span>
-                  <span class="stat-value" style="white-space:nowrap;">${formatHelpInterval(p.interval)}</span>
-                </div>
-              </div>
-              <div class="card-skill-footer">
-                <span class="card-skill-label">${t('th.main_skill', '主技能')}</span>
-                <span class="card-skill-value">${renderSkillWithTooltip(p.main_skill, p)}</span>
-              </div>
-            </div>
-          `}).join('')}
-          <div class="table-bottom-spacer" aria-hidden="true"></div>
-        </div>
-      `;
-    }
-
-    function renderTable(data) {
-      const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
-      const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-      const isShowNo = (typeof PokemonApp !== 'undefined' && PokemonApp.showNo) || (typeof showNo !== 'undefined' && showNo) || false;
-
-      const ing1Label = isMobileH5 ? t('th.ing1_mobile', '食1') : t('th.ing1', '食材1');
-      const ing2Label = isMobileH5 ? t('th.ing2_mobile', '食2') : t('th.ing2', '食材2');
-      const ing3Label = isMobileH5 ? t('th.ing3_mobile', '食3') : t('th.ing3', '食材3');
-
-      contentArea.innerHTML = `
-        <div class="table-container">
-          <table class="pokemon-table ${isShowNo ? '' : 'hide-no'}">
-            <thead>
-              <tr>
-                ${isShowNo ? sortableTh('no', 'No.', 'th-no') : ''}
-                ${sortableTh('no', '', 'th-icon')}
-                <th class="th-name">${t('th.name', '寶可夢')}</th>
-                <th class="th-berry">${t('th.berry', '樹果')}</th>
-                <th class="th-spec">${t('th.specialty', '得意')}</th>
-                ${sortableTh('carry', t('th.carry', '持有'), 'th-carry')}
-                <th class="th-ing">${ing1Label}</th>
-                <th class="th-ing">${ing2Label}</th>
-                <th class="th-ing">${ing3Label}</th>
-                ${sortableTh('ingredientRate', t('th.ingredient_rate', '食材率'), 'th-rate')}
-                ${sortableTh('skillRate', t('th.skill_rate', '技能率'), 'th-rate')}
-                ${sortableTh('interval', t('th.interval', '幫忙間隔'), 'th-interval')}
-                <th class="th-skill">${t('th.main_skill', '主技能')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${data.map(p => {
-                const iconUrl = getIconUrl(p);
-                const pkmName = window.I18N?.getPokemonName?.(p) ?? (p.name_cn || p.name_en || '');
-                const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
-                let specClass = 'spec-ingredient';
-                const rawSpec = p.specialty || '';
-                if (rawSpec.includes('樹果') || rawSpec === 'Berries') {
-                  specClass = 'spec-berry';
-                } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
-                  specClass = 'spec-skill';
-                } else if (rawSpec.includes('全能') || rawSpec.includes('全部') || rawSpec === 'All-Rounder' || rawSpec.toLowerCase() === 'all') {
-                  specClass = 'spec-all';
-                }
-                const berry = getPokemonBerry(p);
-                const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
-
-                return `
-                <tr>
-                  ${isShowNo ? `<td class="td-no">${p.formatted_no}</td>` : ''}
-                  <td class="td-icon">
-                    ${iconUrl ? `<img src="${iconUrl}" width="38" height="38" class="table-icon" alt="${pkmName}" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}" loading="lazy" onerror="handlePokemonIconError(this)" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;">` : ''}
-                  </td>
-                  <td class="td-name pokemon-name-cell" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">${pkmName}</td>
-                  <td class="td-berry">${berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}" loading="lazy" onerror="this.style.display='none';">` : `<span class="berry-name-text">${berryName}</span>`}</td>
-                  <td class="td-spec" style="text-align:center;">${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(p.specialty, 20) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}</td>
-                  <td class="td-carry">${p.carry || '--'}</td>
-                  <td class="td-ing">${p.ingredients && p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${window.I18N ? window.I18N.getIngredientName(p.ingredients[0].name) : p.ingredients[0].name}" loading="lazy" title="${window.I18N ? window.I18N.getIngredientName(p.ingredients[0].name) : p.ingredients[0].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
-                  <td class="td-ing">${p.ingredients && p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${window.I18N ? window.I18N.getIngredientName(p.ingredients[1].name) : p.ingredients[1].name}" loading="lazy" title="${window.I18N ? window.I18N.getIngredientName(p.ingredients[1].name) : p.ingredients[1].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[1],1)}</div>` : '--'}</td>
-                  <td class="td-ing">${p.ingredients && p.ingredients[2] ? `<div class="ing-cell">${p.ingredients[2].icon ? `<img class="ing-icon" src="${p.ingredients[2].icon}" alt="${window.I18N ? window.I18N.getIngredientName(p.ingredients[2].name) : p.ingredients[2].name}" loading="lazy" title="${window.I18N ? window.I18N.getIngredientName(p.ingredients[2].name) : p.ingredients[2].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[2],2)}</div>` : '--'}</td>
-                  <td class="td-rate">${p.ingredient_rate || '--'}</td>
-                  <td class="td-rate">${p.skill_rate || '--'}</td>
-                  <td class="td-interval">${formatHelpInterval(p.interval)}</td>
-                  <td class="td-skill">${renderSkillWithTooltip(p.main_skill, p)}</td>
-                </tr>
-              `}).join('')}
-            </tbody>
-          </table>
-          <div class="table-bottom-spacer" aria-hidden="true"></div>
-        </div>
-      `;
-    }
-
-    PokemonApp.render = function() {
-      if (typeof renderTypeButtons === 'function') renderTypeButtons();
-      if (typeof renderSpecialtyButtons === 'function') renderSpecialtyButtons();
-      if (typeof renderBerryButtons === 'function') renderBerryButtons();
-      if (typeof renderIngredientButtons === 'function') renderIngredientButtons();
-      if (typeof renderSkillButtons === 'function') renderSkillButtons();
-      if (typeof renderUI === 'function') renderUI();
-    };
 
     function initSkillTooltips() {
       let isRecentTouch = false;
@@ -5088,11 +4872,25 @@ if (typeof document !== 'undefined') {
 
       let lastScrollTime = 0;
       let maxTouchY = 0;
+      let ptrMoveAttached = false;
+
+      function attachPtrTouchMove() {
+        if (ptrMoveAttached || typeof document.addEventListener !== 'function') return;
+        document.addEventListener('touchmove', onPtrTouchMove, { passive: false });
+        ptrMoveAttached = true;
+      }
+
+      function detachPtrTouchMove() {
+        if (!ptrMoveAttached || typeof document.removeEventListener !== 'function') return;
+        document.removeEventListener('touchmove', onPtrTouchMove, { passive: false });
+        ptrMoveAttached = false;
+      }
 
       function cancelPullToRefresh() {
         isTracking = false;
         activeTouchTarget = null;
         currentPull = 0;
+        detachPtrTouchMove();
         updatePtrUI(0);
       }
       PokemonApp.cancelPullToRefresh = cancelPullToRefresh;
@@ -5136,23 +4934,11 @@ if (typeof document !== 'undefined') {
           }
         }
 
-        // 2. 檢測全域所有已知可滾動面板與容器（包含倉庫、深度研究室、培育精算、圖鑑、食譜、百科等）
-        const candidateContainers = document.querySelectorAll(
-          '#box-subpanel-lab, #box-subpanel-list, .box-lab-content-container, #appraisal-lab-container, .appraisal-lab-standalone-panel, .box-subpanel-view, .box-content-container, #box-content-area, .box-main-content, .box-cards-grid, .box-grid, ' +
-          '.lab-growth-container, #panel-box .table-container, .pokemon-table-container, .table-container, ' +
-          '.wiki-table-wrapper, #wiki-content-area, .wiki-layout-main, ' +
-          '#recipe-content-area, .recipe-cards-grid, #content-area, ' +
-          '#panel-box, #panel-pokemon, #panel-recipes, #panel-wiki, #panel-news, ' +
-          '.mobile-h5-app .view-panel:not([style*="display: none"]):not([style*="display:none"])'
-        );
-        for (let i = 0; i < candidateContainers.length; i++) {
-          const el = candidateContainers[i];
-          if (el && el.scrollTop && el.scrollTop > 0) {
-            if (el.offsetParent !== null || (typeof window.getComputedStyle === 'function' && window.getComputedStyle(el).display !== 'none')) {
-              return el.scrollTop;
-            }
-          }
+        const labEl = typeof document !== 'undefined' && document.getElementById ? document.getElementById('box-subpanel-lab') : null;
+        if (labEl && labEl.scrollTop && labEl.scrollTop > 0 && (!labEl.style || labEl.style.display !== 'none')) {
+          return labEl.scrollTop;
         }
+
         return 0;
       }
 
@@ -5229,9 +5015,10 @@ if (typeof document !== 'undefined') {
           ptrEl.classList.remove('ptr-refreshing');
           ptrEl.style.transition = 'none';
         }
+        attachPtrTouchMove();
       }, { passive: true });
 
-      document.addEventListener('touchmove', (e) => {
+      function onPtrTouchMove(e) {
         if (!isTracking || isRefreshing || !e.touches || !e.touches[0]) return;
         const rawTargetEl = e.target;
         const targetEl = (rawTargetEl && rawTargetEl.nodeType === 3) ? rawTargetEl.parentElement : rawTargetEl;
@@ -5284,7 +5071,7 @@ if (typeof document !== 'undefined') {
         // 阻尼係數計算下拉位移
         currentPull = Math.min(MAX_PULL, Math.pow(deltaY, 0.8) * 1.8);
         updatePtrUI(currentPull);
-      }, { passive: false });
+      }
 
       document.addEventListener('touchcancel', () => {
         cancelPullToRefresh();
@@ -5320,6 +5107,7 @@ if (typeof document !== 'undefined') {
         }
         currentPull = 0;
         activeTouchTarget = null;
+        detachPtrTouchMove();
       }, { passive: true });
 
       window.cancelPullToRefresh = cancelPullToRefresh;
@@ -5327,6 +5115,279 @@ if (typeof document !== 'undefined') {
       window.initPullToRefresh = initPullToRefresh;
       PokemonApp.initPullToRefresh = initPullToRefresh;
     }
+
+    function filterData() {
+      return allPokemons.filter(p => {
+        if (selectedTypes.size > 0 && !selectedTypes.has(p.type)) return false;
+
+        // 類型篩選 (樹果、食材、技能；若都沒選則展示全部；夢幻 specialty === '全部' 在任何選取下均展示)
+        if (selectedSpecialties.size > 0) {
+          const isMewAll = p.specialty === '全部' || p.specialty === 'ALL';
+          if (!isMewAll && !selectedSpecialties.has(p.specialty)) return false;
+        }
+
+        // 僅最終進化篩選 (Only Final Evolution)
+        if (onlyFinal) {
+          const isFinal = (typeof isFinalEvolution === 'function')
+            ? isFinalEvolution(p)
+            : (p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1');
+          if (!isFinal) return false;
+        }
+
+        // 樹果細節篩選 (多選)
+        if (selectedBerries.size > 0) {
+          const berryName = TYPE_TO_BERRY[p.type];
+          if (!berryName || !selectedBerries.has(berryName)) return false;
+        }
+
+        // 食材細節篩選 (若開啟「僅初始食材」則只比對 Lv.1 初始食材 p.ingredients[0]，否則比對任意食材)
+        if (selectedIngredients.size > 0) {
+          if (onlyInitialIng) {
+            const initialIng = p.ingredients && p.ingredients[0] && p.ingredients[0].name ? p.ingredients[0].name : '';
+            if (!initialIng || !selectedIngredients.has(initialIng)) return false;
+          } else {
+            const hasIng = p.ingredients && p.ingredients.some(ing => ing.name && selectedIngredients.has(ing.name));
+            if (!hasIng) return false;
+          }
+        }
+
+        // 技能細節篩選 (多選，支援基礎技能與複合技能自動關聯)
+        if (selectedSkills.size > 0) {
+          let hasMatchedSkill = false;
+          for (const targetSkill of selectedSkills) {
+            if (matchesSkill(p.main_skill, targetSkill)) {
+              hasMatchedSkill = true;
+              break;
+            }
+          }
+          if (!hasMatchedSkill) return false;
+        }
+
+        if (currentSearch) {
+          if (!matchesPokemonSearch(p, currentSearch)) return false;
+        }
+        return true;
+      });
+    }
+
+    function renderDualSortArrowSvg(state) {
+      const up = (state === 'asc' || state === 'newest') ? 'filled' : 'hollow';
+      const dn = (state === 'desc' || state === 'newest') ? 'filled' : 'hollow';
+      return `<svg class="sort-dual-svg" data-sort-state="${state}" viewBox="0 0 12 16" width="12" height="16" aria-hidden="true"><path class="sort-tri-up ${up}" d="M6 1.5L10.5 6.8H1.5Z"/><path class="sort-tri-down ${dn}" d="M6 14.5L10.5 9.2H1.5Z"/></svg>`;
+    }
+
+    function sortableTh(col, label, cls) {
+      const parsed = parseTableSort(currentSort);
+      const on = parsed.col === col;
+      let arrow = '', aria = 'none', titleTip = '', sortState = 'none';
+      if (on) {
+        if (parsed.dir === 'newest') {
+          sortState = 'newest'; arrow = window.I18N?.t?.('dex.ui_sort_new_tag') ?? ' (新)'; aria = 'other';
+          titleTip = window.I18N?.t?.('dex.ui_sort_tip_newest') ?? 'dex.ui_sort_tip_newest';
+        } else if (parsed.dir === 'desc') {
+          sortState = 'desc'; arrow = '▼'; aria = 'descending';
+          titleTip = window.I18N?.t?.('dex.ui_sort_tip_desc') ?? 'dex.ui_sort_tip_desc';
+        } else {
+          sortState = 'asc'; arrow = '▲'; aria = 'ascending';
+          titleTip = window.I18N?.t?.('dex.ui_sort_tip_asc') ?? 'dex.ui_sort_tip_asc';
+        }
+      }
+      if (cls === 'th-icon') {
+        const iconAriaLabel = titleTip || (window.I18N?.t?.('th.icon') ?? 'Icon');
+        return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}" aria-label="${iconAriaLabel}" ${titleTip ? `title="${titleTip}"` : ''}><span class="sort-arrow sort-arrow-dual" aria-hidden="true">${renderDualSortArrowSvg(sortState)}</span></th>`;
+      }
+      return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}" ${titleTip ? `title="${titleTip}"` : ''}>${label}${arrow ? `<span class="sort-arrow" aria-hidden="true">${arrow}</span>` : ''}</th>`;
+    }
+
+    function renderUI() {
+      if (!contentArea) return;
+      try {
+        if (typeof updateActiveFilterBadge === 'function') updateActiveFilterBadge();
+        const filtered = sortPokemonList(filterData(), currentSort);
+        const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+        if (countBadge) countBadge.textContent = window.I18N?.t?.('dex.ui_count_fmt', { count: filtered.length }) ?? String(filtered.length);
+
+        if (filtered.length === 0) {
+          contentArea.innerHTML = `<div style="text-align:center; padding: 60px; color: var(--text-muted); font-size: 16px;">${t('pokedex.no_results', '查無符合條件的寶可夢')}</div>`;
+          return;
+        }
+
+        const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+        if (isMobileH5) {
+          viewMode = 'table';
+        }
+
+        if (viewMode === 'grid') renderGrid(filtered);
+        else renderTable(filtered);
+      } catch (err) {
+        console.error('Error in renderUI:', err);
+        if (typeof window.__renderInPlaceError === 'function') {
+          window.__renderInPlaceError('content-area', window.I18N?.t?.('dex.ui_render_error') ?? 'dex.ui_render_error', err);
+        }
+      }
+    }
+
+    function renderGrid(data) {
+      const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+
+      contentArea.innerHTML = `
+        <div class="pokemon-grid">
+          ${data.map(p => {
+            const iconUrl = getIconUrl(p);
+            const pkmName = window.I18N?.getPokemonName?.(p) ?? (p.name_cn || p.name_en || '');
+            const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
+            let specClass = 'spec-ingredient';
+            const rawSpec = p.specialty || '';
+            if (rawSpec.includes('樹果') || rawSpec === 'Berries') {
+              specClass = 'spec-berry';
+            } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
+              specClass = 'spec-skill';
+            } else if (rawSpec.includes('全能') || rawSpec.includes('全部') || rawSpec === 'All-Rounder' || rawSpec.toLowerCase() === 'all') {
+              specClass = 'spec-all';
+            }
+            const berry = getPokemonBerry(p);
+            const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
+
+            return `
+            <div class="pokemon-card">
+              <div class="card-header">
+                ${iconUrl ? `<img class="pokemon-icon" src="${iconUrl}" width="44" height="44" alt="${pkmName}" loading="lazy" decoding="async" onerror="handlePokemonIconError(this)" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">` : ''}
+                <div class="card-title-group" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">
+                  <div class="pokemon-no">No.${p.formatted_no}</div>
+                  <div class="pokemon-name" style="white-space:nowrap;">${pkmName}</div>
+                  ${p.name_en && pkmName !== p.name_en ? `<div class="pokemon-name-en" style="white-space:nowrap;">${p.name_en}</div>` : ''}
+                </div>
+                <div class="card-header-ingredients">
+                  ${p.ingredients ? p.ingredients.map((ing, i) => {
+                    const ingName = (ing.name && window.I18N) ? window.I18N.getIngredientName(ing.name) : (ing.name || '');
+                    return ing.name ? `
+                    <div class="card-header-ing-row" title="${ingName}">
+                      ${ing.icon ? `<img class="card-header-ing-icon" src="${ing.icon}" width="15" height="15" alt="${ingName}" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
+                      ${ingQtyBadges(ing, i)}
+                    </div>
+                  ` : '';
+                  }).join('') : ''}
+                </div>
+              </div>
+              <div class="card-stats">
+                <div class="stat-item">
+                  <span class="stat-label">${t('th.berry', '樹果')}</span>
+                  <span class="stat-value" title="${berryName}">
+                    ${berry && berry.icon ? `<img src="${berry.icon}" width="20" height="20" alt="${berryName}" class="card-berry-icon" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;" loading="lazy" decoding="async" onerror="this.style.display='none';">` : `<span class="berry-name-text">${berryName}</span>`}
+                  </span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">${t('th.specialty', '得意')}</span>
+                  <span class="stat-value" style="white-space:nowrap;">${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(p.specialty, 20) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">${t('th.carry', '持有')}</span>
+                  <span class="stat-value" style="white-space:nowrap;">${p.carry || '--'}</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">${t('th.ingredient_rate', '食材率')}</span>
+                  <span class="stat-value" style="white-space:nowrap;">${p.ingredient_rate || '--'}</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">${t('th.skill_rate', '技能率')}</span>
+                  <span class="stat-value" style="white-space:nowrap;">${p.skill_rate || '--'}</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">${t('th.interval', '幫忙間隔')}</span>
+                  <span class="stat-value" style="white-space:nowrap;">${formatHelpInterval(p.interval)}</span>
+                </div>
+              </div>
+              <div class="card-skill-footer">
+                <span class="card-skill-label">${t('th.main_skill', '主技能')}</span>
+                <span class="card-skill-value">${renderSkillWithTooltip(p.main_skill, p)}</span>
+              </div>
+            </div>
+          `}).join('')}
+          <div class="table-bottom-spacer" aria-hidden="true"></div>
+        </div>
+      `;
+    }
+
+    function renderTable(data) {
+      const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+      const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+      const isShowNo = (typeof PokemonApp !== 'undefined' && PokemonApp.showNo) || (typeof showNo !== 'undefined' && showNo) || false;
+
+      const ing1Label = isMobileH5 ? t('th.ing1_mobile', '食1') : t('th.ing1', '食材1');
+      const ing2Label = isMobileH5 ? t('th.ing2_mobile', '食2') : t('th.ing2', '食材2');
+      const ing3Label = isMobileH5 ? t('th.ing3_mobile', '食3') : t('th.ing3', '食材3');
+
+      contentArea.innerHTML = `
+        <div class="table-container">
+          <table class="pokemon-table ${isShowNo ? '' : 'hide-no'}">
+            <thead>
+              <tr>
+                ${isShowNo ? sortableTh('no', 'No.', 'th-no') : ''}
+                ${sortableTh('no', '', 'th-icon')}
+                <th class="th-name">${t('th.name', '寶可夢')}</th>
+                <th class="th-berry">${t('th.berry', '樹果')}</th>
+                <th class="th-spec">${t('th.specialty', '得意')}</th>
+                ${sortableTh('carry', t('th.carry', '持有'), 'th-carry')}
+                <th class="th-ing">${ing1Label}</th>
+                <th class="th-ing">${ing2Label}</th>
+                <th class="th-ing">${ing3Label}</th>
+                ${sortableTh('ingredientRate', t('th.ingredient_rate', '食材率'), 'th-rate')}
+                ${sortableTh('skillRate', t('th.skill_rate', '技能率'), 'th-rate')}
+                ${sortableTh('interval', t('th.interval', '幫忙間隔'), 'th-interval')}
+                <th class="th-skill">${t('th.main_skill', '主技能')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.map(p => {
+                const iconUrl = getIconUrl(p);
+                const pkmName = window.I18N?.getPokemonName?.(p) ?? (p.name_cn || p.name_en || '');
+                const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
+                let specClass = 'spec-ingredient';
+                const rawSpec = p.specialty || '';
+                if (rawSpec.includes('樹果') || rawSpec === 'Berries') {
+                  specClass = 'spec-berry';
+                } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
+                  specClass = 'spec-skill';
+                } else if (rawSpec.includes('全能') || rawSpec.includes('全部') || rawSpec === 'All-Rounder' || rawSpec.toLowerCase() === 'all') {
+                  specClass = 'spec-all';
+                }
+                const berry = getPokemonBerry(p);
+                const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
+
+                return `
+                <tr>
+                  ${isShowNo ? `<td class="td-no">${p.formatted_no}</td>` : ''}
+                  <td class="td-icon">
+                    ${iconUrl ? `<img src="${iconUrl}" width="38" height="38" class="table-icon" alt="${pkmName}" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}" loading="lazy" decoding="async" onerror="handlePokemonIconError(this)" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;">` : ''}
+                  </td>
+                  <td class="td-name pokemon-name-cell" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">${pkmName}</td>
+                  <td class="td-berry">${berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}" loading="lazy" decoding="async" onerror="this.style.display='none';">` : `<span class="berry-name-text">${berryName}</span>`}</td>
+                  <td class="td-spec" style="text-align:center;">${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(p.specialty, 20) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}</td>
+                  <td class="td-carry">${p.carry || '--'}</td>
+                  <td class="td-ing">${p.ingredients && p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" width="22" height="22" src="${p.ingredients[0].icon}" alt="${window.I18N ? window.I18N.getIngredientName(p.ingredients[0].name) : p.ingredients[0].name}" loading="lazy" decoding="async" title="${window.I18N ? window.I18N.getIngredientName(p.ingredients[0].name) : p.ingredients[0].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
+                  <td class="td-ing">${p.ingredients && p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" width="22" height="22" src="${p.ingredients[1].icon}" alt="${window.I18N ? window.I18N.getIngredientName(p.ingredients[1].name) : p.ingredients[1].name}" loading="lazy" decoding="async" title="${window.I18N ? window.I18N.getIngredientName(p.ingredients[1].name) : p.ingredients[1].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[1],1)}</div>` : '--'}</td>
+                  <td class="td-ing">${p.ingredients && p.ingredients[2] ? `<div class="ing-cell">${p.ingredients[2].icon ? `<img class="ing-icon" width="22" height="22" src="${p.ingredients[2].icon}" alt="${window.I18N ? window.I18N.getIngredientName(p.ingredients[2].name) : p.ingredients[2].name}" loading="lazy" decoding="async" title="${window.I18N ? window.I18N.getIngredientName(p.ingredients[2].name) : p.ingredients[2].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[2],2)}</div>` : '--'}</td>
+                  <td class="td-rate">${p.ingredient_rate || '--'}</td>
+                  <td class="td-rate">${p.skill_rate || '--'}</td>
+                  <td class="td-interval">${formatHelpInterval(p.interval)}</td>
+                  <td class="td-skill">${renderSkillWithTooltip(p.main_skill, p)}</td>
+                </tr>
+              `}).join('')}
+            </tbody>
+          </table>
+          <div class="table-bottom-spacer" aria-hidden="true"></div>
+        </div>
+      `;
+    }
+
+    PokemonApp.render = function() {
+      if (typeof renderTypeButtons === 'function') renderTypeButtons();
+      if (typeof renderSpecialtyButtons === 'function') renderSpecialtyButtons();
+      if (typeof renderBerryButtons === 'function') renderBerryButtons();
+      if (typeof renderIngredientButtons === 'function') renderIngredientButtons();
+      if (typeof renderSkillButtons === 'function') renderSkillButtons();
+      if (typeof renderUI === 'function') renderUI();
+    };
 
     initSkillTooltips();
     initBackToTop();
@@ -5406,6 +5467,303 @@ let pokedexModalState = {
 let pokedexActiveSubskillSlot = 1;
 let pokedexSubskillPaletteExpanded = false;
 
+// 1. 樹果遽增型 (Berry Burst Specialists): 主技能為樹果遽增/畫皮/流星群，天然以產果為核心
+function isBerryBurstSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('樹果遽增') || skill.includes('Berry Burst') || skill.includes('畫皮') || skill.includes('流星群')) return true;
+  const burstNames = ['木守宮', '森林蜥蜴', '蜥蜴王', '小火焰猴', '猛火猴', '烈焰猴', '毛頭小鷹', '勇士雄鷹', '謎擬Q', '拉帝歐斯',
+                      'Treecko', 'Grovyle', 'Sceptile', 'Chimchar', 'Monferno', 'Infernape', 'Rufflet', 'Braviary', 'Mimikyu', 'Latios'];
+  return burstNames.some(b => name.includes(b));
+}
+
+function isBfsSkillSpecialist(pkm) {
+  return isBerryBurstSkillSpecialist(pkm);
+}
+
+function isHealerSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('活力全體療癒') || skill.includes('Energy for Everyone') || skill.includes('新月祈禱') || skill.includes('樹果汁') || skill.includes('治癒波動') || skill.includes('蹭蹭臉頰') || skill.includes('活力療癒') || skill.includes('活力氣場') || skill.includes('Energizing Cheer')) return true;
+  const healerNames = ['沙奈朵', '仙子伊布', '胖可丁', '巴布土撥', '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥', '克雷色利亞', '壺壺', '拉帝亞斯', '托戈德瑪爾', '帕奇利茲',
+                       'Gardevoir', 'Sylveon', 'Wigglytuff', 'Pawmot', 'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo', 'Cresselia', 'Shuckle', 'Latias', 'Togedemaru', 'Pachirisu'];
+  return healerNames.some(h => name.includes(h));
+}
+
+function isHelperBoostSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('幫手加速') || skill.includes('幫手支援') || skill.includes('Helper Boost') || skill.includes('Extra Helpful')) return true;
+  const beastNames = ['雷公', '炎帝', '水君', '風速狗', '卡蒂狗', '雷伊布', '艾路雷朵',
+                      'Raikou', 'Entei', 'Suicune', 'Arcanine', 'Growlithe', 'Jolteon', 'Gallade'];
+  return beastNames.some(b => name.includes(b));
+}
+
+function isChargeStrengthSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('能量填充') || skill.includes('Charge Strength') || skill.includes('蓄力') || skill.includes('夢魘')) return true;
+  const chargeNames = ['電龍', '咩利羊', '茸茸羊', '太陽伊布', '可達鴨', '哥達鴨', '樹才怪', '盆才怪', '隨風球', '飄飄球', '音波龍', '嗡蝠', '達克萊伊',
+                       'Ampharos', 'Mareep', 'Flaaffy', 'Espeon', 'Psyduck', 'Golduck', 'Sudowoodo', 'Bonsly', 'Drifblim', 'Drifloon', 'Noivern', 'Noibat', 'Darkrai'];
+  return chargeNames.some(c => name.includes(c));
+}
+
+function isPotExpanderSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('料理強化') || skill.includes('Cooking Power') || skill.includes('負電') || skill.includes('魔法火焰') || skill.includes('Mystical Fire')) return true;
+  const potNames = ['小磁怪', '三合一磁怪', '自爆磁怪', '火伊布', '冰伊布', '負電拍拍', '顫弦蠑螈', '夢妖魔',
+                    'Magnemite', 'Magneton', 'Magnezone', 'Flareon', 'Glaceon', 'Minun', 'Toxtricity', 'Mismagius'];
+  return potNames.some(p => name.includes(p));
+}
+
+function isExtraTastySkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('料理成功') || skill.includes('美味大成功') || skill.includes('Extra Tasty') || skill.includes('Tasty Chance') || skill.includes('魔法火焰') || skill.includes('Mystical Fire') || skill.includes('健美') || skill.includes('Bulk Up')) return true;
+  const tastyNames = ['咚咚鼠', '海豹球（佳節）', '古月鳥', '夢妖魔', '赫拉克羅斯', 'Dedenne', 'Spheal (Holiday)', 'Cramorant', 'Mismagius', 'Heracross'];
+  return tastyNames.some(t => name.includes(t));
+}
+
+function isDreamShardSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('夢之碎片') || skill.includes('Dream Shard') || skill.includes('波導彈')) return true;
+  const shardNames = ['利歐路', '路卡利歐', '喵喵', '貓老大', '勾魂眼', '溶食獸', '吞食獸',
+                      'Riolu', 'Lucario', 'Meowth', 'Persian', 'Sableye', 'Gulpin', 'Swalot'];
+  return shardNames.some(s => name.includes(s));
+}
+
+function isIngredientSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('食材獲取') || skill.includes('食材精選') || skill.includes('正電') || skill.includes('怪力鉗') || skill.includes('超幸運') || skill.includes('健美') || skill.includes('禮物')) return true;
+  const ingNames = ['水伊布', '伊布', '毒電嬰', '正電拍拍', '穿山鼠', '穿山王', '石居蟹', '岩殿居蟹', '摔角鷹人', '赫拉克羅斯', '黑暗鴉', '烏鴉頭頭',
+                    'Vaporeon', 'Eevee', 'Toxel', 'Plusle', 'Sandshrew', 'Sandslash', 'Dwebble', 'Crustle', 'Hawlucha', 'Heracross', 'Murkrow', 'Honchkrow'];
+  return ingNames.some(i => name.includes(i));
+}
+
+function isMetronomeSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('揮指') || skill.includes('十項全能') || skill.includes('Metronome')) return true;
+  const metronomeNames = ['波克比', '波克基古', '波克基斯', '夢幻', '皮寶寶', 'Togepi', 'Togetic', 'Togekiss', 'Mew', 'Cleffa'];
+  return metronomeNames.some(m => name.includes(m));
+}
+
+function isLegendaryPokemon(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('精神擊破') || skill.includes('十項全能') || skill.includes('新月祈禱') || skill.includes('流星群') || skill.includes('夢魘')) return true;
+  const legendaryNames = ['雷公', '炎帝', '水君', '超夢', '夢幻', '克雷色利亞', '達克萊伊', '拉帝歐斯', '拉帝亞斯',
+                          'Raikou', 'Entei', 'Suicune', 'Mewtwo', 'Mew', 'Cresselia', 'Darkrai', 'Latios', 'Latias'];
+  return legendaryNames.some(l => name.includes(l));
+}
+
+function isSlowpokeFamily(pkm) {
+  if (!pkm) return false;
+  const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+  return ['呆呆獸', '呆殼獸', '呆呆王', 'Slowpoke', 'Slowbro', 'Slowking'].some(s => name.includes(s));
+}
+
+function isSlakingFamily(pkm) {
+  if (!pkm) return false;
+  const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+  return ['請假王', '過動猿', '懶人獺', 'Slaking', 'Vigoroth', 'Slakoth'].some(s => name.includes(s));
+}
+
+function formatPokemonEvoReq(evoReq) {
+  if (!evoReq || typeof evoReq !== 'string') return '';
+  const twText = evoReq.trim().replace(/，EXP\s*需求\s*([\d.]+)\s*倍/g, '').replace(/Lv(\d+)/g, 'Lv.$1');
+  const itemMap = [
+    ['雷之石', 'Thunder Stone'], ['火之石', 'Fire Stone'], ['水之石', 'Water Stone'],
+    ['葉之石', 'Leaf Stone'], ['月之石', 'Moon Stone'], ['太陽之石', 'Sun Stone'], ['日之石', 'Sun Stone'],
+    ['冰之石', 'Ice Stone'], ['光之石', 'Shiny Stone'], ['暗之石', 'Dusk Stone'],
+    ['覺醒之石', 'Dawn Stone'], ['渾圓之石', 'Oval Stone'], ['聯繫繩', 'Linking Cord'],
+    ['金屬膜', 'Metal Coat'], ['王者之證', "King's Rock"], ['銳利之爪', 'Razor Claw']
+  ];
+  let enText = evoReq.trim();
+  itemMap.forEach(([zh, en]) => { enText = enText.split(zh).join(en); });
+  enText = enText.replace(/睡\s*(\d+)\s*小時/g, 'Sleep $1h')
+                 .replace(/(\d+)\s*糖/g, '$1 Candies')
+                 .replace(/，EXP\s*需求\s*([\d.]+)\s*倍/g, '')
+                 .replace(/雄性/g, 'Male')
+                 .replace(/指定性格/g, 'Nature')
+                 .replace(/Lv(\d+)/g, 'Lv.$1');
+  return (typeof window !== 'undefined' && window.I18N && typeof window.I18N.pick === 'function')
+    ? window.I18N.pick({ 'zh-TW': twText, 'en-US': enText })
+    : twText;
+}
+
+function getPokemonEvolutionFamily(pkmOrId, allList) {
+  const all = Array.isArray(allList) && allList.length > 0
+    ? allList
+    : ((typeof PokemonApp !== 'undefined' && Array.isArray(PokemonApp.allPokemons) && PokemonApp.allPokemons.length > 0)
+      ? PokemonApp.allPokemons
+      : ((typeof window !== 'undefined' && Array.isArray(window.allPokemons)) ? window.allPokemons : []));
+  if (!pkmOrId) return [];
+  const pkm = (typeof pkmOrId === 'object' && pkmOrId.id)
+    ? pkmOrId
+    : (all.find(p => p.name_cn === pkmOrId || p.name_en === pkmOrId) ||
+       all.find(p => String(p.id) === String(pkmOrId) || p.formatted_no === pkmOrId));
+  if (!pkm) return [];
+  if (!all || all.length === 0) return [[pkm]];
+
+  const byCn = (cn) => all.find(x => x && x.name_cn === cn);
+  const byId = (id) => all.find(x => x && String(x.id) === String(id));
+  const idStr = String(pkm.id || '');
+  const cn = pkm.name_cn || '';
+
+  if (['9001', '9002', '9004', '9005', '9006', '9007'].includes(idStr)) return [[pkm]];
+  if (['37', '38'].includes(idStr)) return [[byId('37')], [byId('38')]].filter(s => s[0]);
+  if (['7006', '7007'].includes(idStr)) return [[byId('7006')], [byId('7007')]].filter(s => s[0]);
+  if (['58', '59'].includes(idStr)) return [[byId('58')], [byId('59')]].filter(s => s[0]);
+  if (['7013', '7014'].includes(idStr)) return [[byId('7013')], [byId('7014')]].filter(s => s[0]);
+  if (['194', '195'].includes(idStr)) return [[byId('194')], [byId('195')]].filter(s => s[0]);
+  if (['7054', '980'].includes(idStr)) {
+    const s1 = byId('7054');
+    const s2Raw = byId('980');
+    const s2 = s2Raw ? Object.assign({}, s2Raw, { evo_req: s2Raw.evo_req || 'Lv.15 + 40 糖' }) : null;
+    return [s1 ? [s1] : [], s2 ? [s2] : []].filter(s => s.length > 0);
+  }
+  if (['133', '134', '135', '136', '196', '197', '470', '471', '700'].includes(idStr)) {
+    const s1 = byId('133');
+    const s2 = ['134', '135', '136', '196', '197', '470', '471', '700'].map(byId).filter(Boolean);
+    return [s1 ? [s1] : [], s2].filter(s => s.length > 0);
+  }
+  if (['79', '80', '199'].includes(idStr)) {
+    const s1 = byId('79');
+    const s2 = ['80', '199'].map(byId).filter(Boolean);
+    return [s1 ? [s1] : [], s2].filter(s => s.length > 0);
+  }
+  if (['280', '281', '282', '475'].includes(idStr)) {
+    const s1 = byId('280');
+    const s2 = byId('281');
+    const s3 = ['282', '475'].map(byId).filter(Boolean);
+    return [s1 ? [s1] : [], s2 ? [s2] : [], s3].filter(s => s.length > 0);
+  }
+  if (['848', '849', '8001'].includes(idStr)) {
+    const s1 = byId('848');
+    const s2 = ['849', '8001'].map(byId).filter(Boolean);
+    return [s1 ? [s1] : [], s2].filter(s => s.length > 0);
+  }
+  if (cn.startsWith('南瓜精') || cn.startsWith('南瓜怪人')) {
+    const m = cn.match(/\((.+?)\)/);
+    const suffix = m ? ' (' + m[1] + ')' : '';
+    const s1 = byCn('南瓜精' + suffix);
+    const s2 = byCn('南瓜怪人' + suffix);
+    return (s1 && s2) ? [[s1], [s2]] : [[pkm]];
+  }
+
+  const clean = all.filter(x => x && !['9001', '9002', '9004', '9005', '9006', '9007'].includes(String(x.id)));
+  const idx = clean.findIndex(x => x.name_cn === pkm.name_cn && String(x.id) === idStr);
+  if (idx === -1) return [[pkm]];
+  if (!pkm.evo_req && pkm.is_final === '〇') return [[pkm]];
+
+  let start = idx;
+  while (start > 0 && clean[start].evo_req) start--;
+  const stages = [[clean[start]]];
+  let cur = start + 1;
+  while (cur < clean.length && clean[cur].evo_req) {
+    stages.push([clean[cur]]);
+    if (clean[cur].is_final === '〇') break;
+    cur++;
+  }
+  return stages;
+}
+
+function renderPokedexEvolutionTreeHTML(pkm) {
+  if (!pkm) return '';
+  const tr = (k, params) => (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t(k, params) : k;
+  const stages = getPokemonEvolutionFamily(pkm);
+  if (!stages || stages.length === 0) return '';
+
+  const totalMembers = stages.reduce((acc, s) => acc + s.length, 0);
+  const hasBranch = stages.some(s => s.length > 1);
+  let stageBadgeText = '';
+  if (stages.length === 1 && totalMembers === 1) {
+    stageBadgeText = tr('pokedex.evo_single_stage');
+  } else if (hasBranch) {
+    stageBadgeText = tr('dex.ui_evo_branch_stage', { count: stages.length });
+  } else {
+    stageBadgeText = tr('dex.ui_evo_chain_stage', { count: stages.length });
+  }
+
+  const stagesHtml = stages.map((stageNodes, sIdx) => {
+    const nodesHtml = stageNodes.map(node => {
+      const isCurrent = (node.name_cn && pkm.name_cn)
+        ? (node.name_cn === pkm.name_cn && String(node.id) === String(pkm.id))
+        : (String(node.id) === String(pkm.id));
+      const nodeName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
+        ? window.I18N.getPokemonName(node)
+        : (node.name_cn || node.name_en || '');
+      const rawIcon = (typeof getIconUrl === 'function') ? getIconUrl(node) : (node.icon_url || node.icon || '');
+      const iconSrc = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
+        ? (window.mapExternalToLocalAsset(rawIcon) || rawIcon)
+        : rawIcon;
+      const reqStr = sIdx > 0 ? formatPokemonEvoReq(node.evo_req) : '';
+      const targetKey = (String(node.id) === '710' || String(node.id) === '711') ? (node.name_cn || node.id) : (node.id || node.name_cn);
+      const safeKey = String(targetKey).replace(/'/g, "\\'");
+      const clickAttr = isCurrent ? '' : `onclick="window.PokemonApp.openPokemonDetailModal('${safeKey}')"`;
+      const tipText = isCurrent
+        ? tr('dex.ui_evo_current_tip', { name: nodeName })
+        : tr('dex.ui_evo_switch_tip', { name: nodeName });
+
+      return `
+        <button type="button" class="pokedex-evo-node-btn ${isCurrent ? 'is-current' : ''}" data-evo-pkm-id="${escapeHtml(String(node.id || ''))}" data-evo-pkm-name="${escapeHtml(node.name_cn || '')}" ${clickAttr} title="${escapeHtml(tipText)}">
+          ${reqStr ? `<span class="pokedex-evo-req-pill">${escapeHtml(reqStr)}</span>` : ''}
+          <div class="pokedex-evo-node-main">
+            ${iconSrc ? `<img src="${iconSrc}" class="pokedex-evo-node-icon" width="30" height="30" alt="${escapeHtml(nodeName)}" loading="lazy" decoding="async" onerror="handlePokemonIconError(this)">` : ''}
+            <div class="pokedex-evo-node-meta">
+              <span class="pokedex-evo-node-no">#${escapeHtml(String(node.formatted_no || node.id || ''))}</span>
+              <span class="pokedex-evo-node-name font-bold">${escapeHtml(nodeName)}</span>
+            </div>
+          </div>
+        </button>
+      `;
+    }).join('');
+
+    const arrowHtml = sIdx > 0
+      ? `<div class="pokedex-evo-stage-arrow" aria-hidden="true">-&gt;</div>`
+      : '';
+
+    return `
+      ${arrowHtml}
+      <div class="pokedex-evo-stage-col ${stageNodes.length > 1 ? 'is-branch-col' : ''}" data-stage-idx="${sIdx + 1}">
+        ${nodesHtml}
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="pokedex-evo-tree-section" id="pokedex-evo-tree-section">
+      <div class="pokedex-evo-tree-header">
+        <span class="box-form-label" style="margin-bottom:0;">${tr('pokedex.evo_family_title')}</span>
+        <span class="pokedex-evo-stage-badge">${escapeHtml(stageBadgeText)}</span>
+      </div>
+      <div class="pokedex-evo-tree-track ${hasBranch ? 'has-branch' : ''}">
+        ${stagesHtml}
+      </div>
+    </div>
+  `;
+}
+
+if (typeof window !== 'undefined') {
+  window.getPokemonEvolutionFamily = getPokemonEvolutionFamily;
+  window.formatPokemonEvoReq = formatPokemonEvoReq;
+  window.renderPokedexEvolutionTreeHTML = renderPokedexEvolutionTreeHTML;
+}
+
 const _FALLBACK_POKEDEX_CTRL_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
 
 function _getPokedexCtrlCaps() {
@@ -5463,17 +5821,6 @@ function parsePokedexIntervalToSec(intervalStr) {
   if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
   if (parts.length === 2) return parts[0] * 60 + parts[1];
   return parseInt(intervalStr, 10) || 3600;
-}
-
-function formatPokedexIntervalSec(totalSec) {
-  if (!totalSec || totalSec <= 0) return '00:00';
-  const hrs = Math.floor(totalSec / 3600);
-  const mins = Math.floor((totalSec % 3600) / 60);
-  const secs = totalSec % 60;
-  if (hrs > 0) {
-    return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-  }
-  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 }
 
 function openPokemonDetailModal(pokemonIdOrObject) {
@@ -5600,121 +5947,6 @@ function updateSliderProgressFill(lvl) {
     const percent = Math.min(100, Math.max(0, ((lvl - 1) / (maxLv - 1)) * 100));
     fillBar.style.width = `${percent.toFixed(2)}%`;
   }
-}
-
-// 1. 樹果遽增型 (Berry Burst Specialists): 主技能為樹果遽增/畫皮/流星群，天然以產果為核心
-function isBerryBurstSkillSpecialist(pkm) {
-  if (!pkm) return false;
-  const skill = pkm.main_skill || '';
-  const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('樹果遽增') || skill.includes('Berry Burst') || skill.includes('畫皮') || skill.includes('流星群')) return true;
-  const burstNames = ['木守宮', '森林蜥蜴', '蜥蜴王', '小火焰猴', '猛火猴', '烈焰猴', '毛頭小鷹', '勇士雄鷹', '謎擬Q', '拉帝歐斯',
-                      'Treecko', 'Grovyle', 'Sceptile', 'Chimchar', 'Monferno', 'Infernape', 'Rufflet', 'Braviary', 'Mimikyu', 'Latios'];
-  return burstNames.some(b => name.includes(b));
-}
-
-function isBfsSkillSpecialist(pkm) {
-  return isBerryBurstSkillSpecialist(pkm);
-}
-
-function isHealerSkillSpecialist(pkm) {
-  if (!pkm) return false;
-  const skill = pkm.main_skill || '';
-  const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('活力全體療癒') || skill.includes('Energy for Everyone') || skill.includes('新月祈禱') || skill.includes('樹果汁') || skill.includes('治癒波動') || skill.includes('蹭蹭臉頰') || skill.includes('活力療癒') || skill.includes('活力氣場') || skill.includes('Energizing Cheer')) return true;
-  const healerNames = ['沙奈朵', '仙子伊布', '胖可丁', '巴布土撥', '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥', '克雷色利亞', '壺壺', '拉帝亞斯', '托戈德瑪爾', '帕奇利茲',
-                       'Gardevoir', 'Sylveon', 'Wigglytuff', 'Pawmot', 'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo', 'Cresselia', 'Shuckle', 'Latias', 'Togedemaru', 'Pachirisu'];
-  return healerNames.some(h => name.includes(h));
-}
-
-function isHelperBoostSkillSpecialist(pkm) {
-  if (!pkm) return false;
-  const skill = pkm.main_skill || '';
-  const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('幫手加速') || skill.includes('幫手支援') || skill.includes('Helper Boost') || skill.includes('Extra Helpful')) return true;
-  const beastNames = ['雷公', '炎帝', '水君', '風速狗', '卡蒂狗', '雷伊布', '艾路雷朵',
-                      'Raikou', 'Entei', 'Suicune', 'Arcanine', 'Growlithe', 'Jolteon', 'Gallade'];
-  return beastNames.some(b => name.includes(b));
-}
-
-function isChargeStrengthSkillSpecialist(pkm) {
-  if (!pkm) return false;
-  const skill = pkm.main_skill || '';
-  const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('能量填充') || skill.includes('Charge Strength') || skill.includes('蓄力') || skill.includes('夢魘')) return true;
-  const chargeNames = ['電龍', '咩利羊', '茸茸羊', '太陽伊布', '可達鴨', '哥達鴨', '樹才怪', '盆才怪', '隨風球', '飄飄球', '音波龍', '嗡蝠', '達克萊伊',
-                       'Ampharos', 'Mareep', 'Flaaffy', 'Espeon', 'Psyduck', 'Golduck', 'Sudowoodo', 'Bonsly', 'Drifblim', 'Drifloon', 'Noivern', 'Noibat', 'Darkrai'];
-  return chargeNames.some(c => name.includes(c));
-}
-
-function isPotExpanderSkillSpecialist(pkm) {
-  if (!pkm) return false;
-  const skill = pkm.main_skill || '';
-  const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('料理強化') || skill.includes('Cooking Power') || skill.includes('負電') || skill.includes('魔法火焰') || skill.includes('Mystical Fire')) return true;
-  const potNames = ['小磁怪', '三合一磁怪', '自爆磁怪', '火伊布', '冰伊布', '負電拍拍', '顫弦蠑螈', '夢妖魔',
-                    'Magnemite', 'Magneton', 'Magnezone', 'Flareon', 'Glaceon', 'Minun', 'Toxtricity', 'Mismagius'];
-  return potNames.some(p => name.includes(p));
-}
-
-function isExtraTastySkillSpecialist(pkm) {
-  if (!pkm) return false;
-  const skill = pkm.main_skill || '';
-  const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('料理成功') || skill.includes('美味大成功') || skill.includes('Extra Tasty') || skill.includes('Tasty Chance') || skill.includes('魔法火焰') || skill.includes('Mystical Fire') || skill.includes('健美') || skill.includes('Bulk Up')) return true;
-  const tastyNames = ['咚咚鼠', '海豹球（佳節）', '古月鳥', '夢妖魔', '赫拉克羅斯', 'Dedenne', 'Spheal (Holiday)', 'Cramorant', 'Mismagius', 'Heracross'];
-  return tastyNames.some(t => name.includes(t));
-}
-
-function isDreamShardSkillSpecialist(pkm) {
-  if (!pkm) return false;
-  const skill = pkm.main_skill || '';
-  const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('夢之碎片') || skill.includes('Dream Shard') || skill.includes('波導彈')) return true;
-  const shardNames = ['利歐路', '路卡利歐', '喵喵', '貓老大', '勾魂眼', '溶食獸', '吞食獸',
-                      'Riolu', 'Lucario', 'Meowth', 'Persian', 'Sableye', 'Gulpin', 'Swalot'];
-  return shardNames.some(s => name.includes(s));
-}
-
-function isIngredientSkillSpecialist(pkm) {
-  if (!pkm) return false;
-  const skill = pkm.main_skill || '';
-  const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('食材獲取') || skill.includes('食材精選') || skill.includes('正電') || skill.includes('怪力鉗') || skill.includes('超幸運') || skill.includes('健美') || skill.includes('禮物')) return true;
-  const ingNames = ['水伊布', '伊布', '毒電嬰', '正電拍拍', '穿山鼠', '穿山王', '石居蟹', '岩殿居蟹', '摔角鷹人', '赫拉克羅斯', '黑暗鴉', '烏鴉頭頭',
-                    'Vaporeon', 'Eevee', 'Toxel', 'Plusle', 'Sandshrew', 'Sandslash', 'Dwebble', 'Crustle', 'Hawlucha', 'Heracross', 'Murkrow', 'Honchkrow'];
-  return ingNames.some(i => name.includes(i));
-}
-
-function isMetronomeSkillSpecialist(pkm) {
-  if (!pkm) return false;
-  const skill = pkm.main_skill || '';
-  const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('揮指') || skill.includes('十項全能') || skill.includes('Metronome')) return true;
-  const metronomeNames = ['波克比', '波克基古', '波克基斯', '夢幻', '皮寶寶', 'Togepi', 'Togetic', 'Togekiss', 'Mew', 'Cleffa'];
-  return metronomeNames.some(m => name.includes(m));
-}
-
-function isLegendaryPokemon(pkm) {
-  if (!pkm) return false;
-  const skill = pkm.main_skill || '';
-  const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('精神擊破') || skill.includes('十項全能') || skill.includes('新月祈禱') || skill.includes('流星群') || skill.includes('夢魘')) return true;
-  const legendaryNames = ['雷公', '炎帝', '水君', '超夢', '夢幻', '克雷色利亞', '達克萊伊', '拉帝歐斯', '拉帝亞斯',
-                          'Raikou', 'Entei', 'Suicune', 'Mewtwo', 'Mew', 'Cresselia', 'Darkrai', 'Latios', 'Latias'];
-  return legendaryNames.some(l => name.includes(l));
-}
-
-function isSlowpokeFamily(pkm) {
-  if (!pkm) return false;
-  const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
-  return ['呆呆獸', '呆殼獸', '呆呆王', 'Slowpoke', 'Slowbro', 'Slowking'].some(s => name.includes(s));
-}
-
-function isSlakingFamily(pkm) {
-  if (!pkm) return false;
-  const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
-  return ['請假王', '過動猿', '懶人獺', 'Slaking', 'Vigoroth', 'Slakoth'].some(s => name.includes(s));
 }
 
 function applyPokedexGodPreset() {
@@ -6042,7 +6274,7 @@ function renderPokedexIngredientStrip() {
       const iconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(rawIconUrl) : rawIconUrl) || rawIconUrl;
       return `
         <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" data-slot-idx="${slot.slotIdx}" data-opt-idx="${optIdx}" title="${escapeHtml(ingDisplayName)}" aria-label="${escapeHtml(ingDisplayName)}" onclick="window.PokemonApp.setPokedexModalIng(${slot.slotIdx}, ${optIdx})">
-          <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}" loading="lazy">
+          <img src="${iconUrl}" class="box-ing-opt-icon" width="20" height="20" alt="${escapeHtml(ingDisplayName)}" loading="lazy" decoding="async">
         </button>
       `;
     }).join('');
@@ -6162,198 +6394,15 @@ function updatePokedexSubskillUI() {
   }
 }
 
-function formatPokemonEvoReq(evoReq) {
-  if (!evoReq || typeof evoReq !== 'string') return '';
-  const twText = evoReq.trim().replace(/，EXP\s*需求\s*([\d.]+)\s*倍/g, '').replace(/Lv(\d+)/g, 'Lv.$1');
-  const itemMap = [
-    ['雷之石', 'Thunder Stone'], ['火之石', 'Fire Stone'], ['水之石', 'Water Stone'],
-    ['葉之石', 'Leaf Stone'], ['月之石', 'Moon Stone'], ['太陽之石', 'Sun Stone'], ['日之石', 'Sun Stone'],
-    ['冰之石', 'Ice Stone'], ['光之石', 'Shiny Stone'], ['暗之石', 'Dusk Stone'],
-    ['覺醒之石', 'Dawn Stone'], ['渾圓之石', 'Oval Stone'], ['聯繫繩', 'Linking Cord'],
-    ['金屬膜', 'Metal Coat'], ['王者之證', "King's Rock"], ['銳利之爪', 'Razor Claw']
-  ];
-  let enText = evoReq.trim();
-  itemMap.forEach(([zh, en]) => { enText = enText.split(zh).join(en); });
-  enText = enText.replace(/睡\s*(\d+)\s*小時/g, 'Sleep $1h')
-                 .replace(/(\d+)\s*糖/g, '$1 Candies')
-                 .replace(/，EXP\s*需求\s*([\d.]+)\s*倍/g, '')
-                 .replace(/雄性/g, 'Male')
-                 .replace(/指定性格/g, 'Nature')
-                 .replace(/Lv(\d+)/g, 'Lv.$1');
-  return (typeof window !== 'undefined' && window.I18N && typeof window.I18N.pick === 'function')
-    ? window.I18N.pick({ 'zh-TW': twText, 'en-US': enText })
-    : twText;
-}
-
-function getPokemonEvolutionFamily(pkmOrId, allList) {
-  const all = Array.isArray(allList) && allList.length > 0
-    ? allList
-    : ((typeof PokemonApp !== 'undefined' && Array.isArray(PokemonApp.allPokemons) && PokemonApp.allPokemons.length > 0)
-      ? PokemonApp.allPokemons
-      : ((typeof window !== 'undefined' && Array.isArray(window.allPokemons)) ? window.allPokemons : []));
-  if (!pkmOrId) return [];
-  const pkm = (typeof pkmOrId === 'object' && pkmOrId.id)
-    ? pkmOrId
-    : (all.find(p => p.name_cn === pkmOrId || p.name_en === pkmOrId) ||
-       all.find(p => String(p.id) === String(pkmOrId) || p.formatted_no === pkmOrId));
-  if (!pkm) return [];
-  if (!all || all.length === 0) return [[pkm]];
-
-  const byCn = (cn) => all.find(x => x && x.name_cn === cn);
-  const byId = (id) => all.find(x => x && String(x.id) === String(id));
-  const idStr = String(pkm.id || '');
-  const cn = pkm.name_cn || '';
-
-  if (['9001', '9002', '9004', '9005', '9006', '9007'].includes(idStr)) return [[pkm]];
-  if (['37', '38'].includes(idStr)) return [[byId('37')], [byId('38')]].filter(s => s[0]);
-  if (['7006', '7007'].includes(idStr)) return [[byId('7006')], [byId('7007')]].filter(s => s[0]);
-  if (['58', '59'].includes(idStr)) return [[byId('58')], [byId('59')]].filter(s => s[0]);
-  if (['7013', '7014'].includes(idStr)) return [[byId('7013')], [byId('7014')]].filter(s => s[0]);
-  if (['194', '195'].includes(idStr)) return [[byId('194')], [byId('195')]].filter(s => s[0]);
-  if (['7054', '980'].includes(idStr)) {
-    const s1 = byId('7054');
-    const s2Raw = byId('980');
-    const s2 = s2Raw ? Object.assign({}, s2Raw, { evo_req: s2Raw.evo_req || 'Lv.15 + 40 糖' }) : null;
-    return [s1 ? [s1] : [], s2 ? [s2] : []].filter(s => s.length > 0);
-  }
-  if (['133', '134', '135', '136', '196', '197', '470', '471', '700'].includes(idStr)) {
-    const s1 = byId('133');
-    const s2 = ['134', '135', '136', '196', '197', '470', '471', '700'].map(byId).filter(Boolean);
-    return [s1 ? [s1] : [], s2].filter(s => s.length > 0);
-  }
-  if (['79', '80', '199'].includes(idStr)) {
-    const s1 = byId('79');
-    const s2 = ['80', '199'].map(byId).filter(Boolean);
-    return [s1 ? [s1] : [], s2].filter(s => s.length > 0);
-  }
-  if (['280', '281', '282', '475'].includes(idStr)) {
-    const s1 = byId('280');
-    const s2 = byId('281');
-    const s3 = ['282', '475'].map(byId).filter(Boolean);
-    return [s1 ? [s1] : [], s2 ? [s2] : [], s3].filter(s => s.length > 0);
-  }
-  if (['848', '849', '8001'].includes(idStr)) {
-    const s1 = byId('848');
-    const s2 = ['849', '8001'].map(byId).filter(Boolean);
-    return [s1 ? [s1] : [], s2].filter(s => s.length > 0);
-  }
-  if (cn.startsWith('南瓜精') || cn.startsWith('南瓜怪人')) {
-    const m = cn.match(/\((.+?)\)/);
-    const suffix = m ? ' (' + m[1] + ')' : '';
-    const s1 = byCn('南瓜精' + suffix);
-    const s2 = byCn('南瓜怪人' + suffix);
-    return (s1 && s2) ? [[s1], [s2]] : [[pkm]];
-  }
-
-  const clean = all.filter(x => x && !['9001', '9002', '9004', '9005', '9006', '9007'].includes(String(x.id)));
-  const idx = clean.findIndex(x => x.name_cn === pkm.name_cn && String(x.id) === idStr);
-  if (idx === -1) return [[pkm]];
-  if (!pkm.evo_req && pkm.is_final === '〇') return [[pkm]];
-
-  let start = idx;
-  while (start > 0 && clean[start].evo_req) start--;
-  const stages = [[clean[start]]];
-  let cur = start + 1;
-  while (cur < clean.length && clean[cur].evo_req) {
-    stages.push([clean[cur]]);
-    if (clean[cur].is_final === '〇') break;
-    cur++;
-  }
-  return stages;
-}
-
-function renderPokedexEvolutionTreeHTML(pkm) {
-  if (!pkm) return '';
-  const tr = (k, params) => (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t(k, params) : k;
-  const stages = getPokemonEvolutionFamily(pkm);
-  if (!stages || stages.length === 0) return '';
-
-  const totalMembers = stages.reduce((acc, s) => acc + s.length, 0);
-  const hasBranch = stages.some(s => s.length > 1);
-  let stageBadgeText = '';
-  if (stages.length === 1 && totalMembers === 1) {
-    stageBadgeText = tr('pokedex.evo_single_stage');
-  } else if (hasBranch) {
-    stageBadgeText = tr('dex.ui_evo_branch_stage', { count: stages.length });
-  } else {
-    stageBadgeText = tr('dex.ui_evo_chain_stage', { count: stages.length });
-  }
-
-  const stagesHtml = stages.map((stageNodes, sIdx) => {
-    const nodesHtml = stageNodes.map(node => {
-      const isCurrent = (node.name_cn && pkm.name_cn)
-        ? (node.name_cn === pkm.name_cn && String(node.id) === String(pkm.id))
-        : (String(node.id) === String(pkm.id));
-      const nodeName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
-        ? window.I18N.getPokemonName(node)
-        : (node.name_cn || node.name_en || '');
-      const rawIcon = (typeof getIconUrl === 'function') ? getIconUrl(node) : (node.icon_url || node.icon || '');
-      const iconSrc = (typeof window !== 'undefined' && typeof window.mapExternalToLocalAsset === 'function')
-        ? (window.mapExternalToLocalAsset(rawIcon) || rawIcon)
-        : rawIcon;
-      const reqStr = sIdx > 0 ? formatPokemonEvoReq(node.evo_req) : '';
-      const targetKey = (String(node.id) === '710' || String(node.id) === '711') ? (node.name_cn || node.id) : (node.id || node.name_cn);
-      const safeKey = String(targetKey).replace(/'/g, "\\'");
-      const clickAttr = isCurrent ? '' : `onclick="window.PokemonApp.openPokemonDetailModal('${safeKey}')"`;
-      const tipText = isCurrent
-        ? tr('dex.ui_evo_current_tip', { name: nodeName })
-        : tr('dex.ui_evo_switch_tip', { name: nodeName });
-
-      return `
-        <button type="button" class="pokedex-evo-node-btn ${isCurrent ? 'is-current' : ''}" data-evo-pkm-id="${escapeHtml(String(node.id || ''))}" data-evo-pkm-name="${escapeHtml(node.name_cn || '')}" ${clickAttr} title="${escapeHtml(tipText)}">
-          ${reqStr ? `<span class="pokedex-evo-req-pill">${escapeHtml(reqStr)}</span>` : ''}
-          <div class="pokedex-evo-node-main">
-            ${iconSrc ? `<img src="${iconSrc}" class="pokedex-evo-node-icon" alt="${escapeHtml(nodeName)}" loading="lazy" onerror="handlePokemonIconError(this)">` : ''}
-            <div class="pokedex-evo-node-meta">
-              <span class="pokedex-evo-node-no">#${escapeHtml(String(node.formatted_no || node.id || ''))}</span>
-              <span class="pokedex-evo-node-name font-bold">${escapeHtml(nodeName)}</span>
-            </div>
-          </div>
-        </button>
-      `;
-    }).join('');
-
-    const arrowHtml = sIdx > 0
-      ? `<div class="pokedex-evo-stage-arrow" aria-hidden="true">-&gt;</div>`
-      : '';
-
-    return `
-      ${arrowHtml}
-      <div class="pokedex-evo-stage-col ${stageNodes.length > 1 ? 'is-branch-col' : ''}" data-stage-idx="${sIdx + 1}">
-        ${nodesHtml}
-      </div>
-    `;
-  }).join('');
-
-  return `
-    <div class="pokedex-evo-tree-section" id="pokedex-evo-tree-section">
-      <div class="pokedex-evo-tree-header">
-        <span class="box-form-label" style="margin-bottom:0;">${tr('pokedex.evo_family_title')}</span>
-        <span class="pokedex-evo-stage-badge">${escapeHtml(stageBadgeText)}</span>
-      </div>
-      <div class="pokedex-evo-tree-track ${hasBranch ? 'has-branch' : ''}">
-        ${stagesHtml}
-      </div>
-    </div>
-  `;
-}
-
-if (typeof window !== 'undefined') {
-  window.getPokemonEvolutionFamily = getPokemonEvolutionFamily;
-  window.formatPokemonEvoReq = formatPokemonEvoReq;
-  window.renderPokedexEvolutionTreeHTML = renderPokedexEvolutionTreeHTML;
-}
-
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     getMainSkillMaxLevel,
     getPokedexMainSkillMaxLvl,
-    getPokemonEvolutionFamily,
-    formatPokemonEvoReq,
-    renderPokedexEvolutionTreeHTML
+    getPokemonEvolutionFamily: typeof getPokemonEvolutionFamily !== 'undefined' ? getPokemonEvolutionFamily : undefined,
+    formatPokemonEvoReq: typeof formatPokemonEvoReq !== 'undefined' ? formatPokemonEvoReq : undefined,
+    renderPokedexEvolutionTreeHTML: typeof renderPokedexEvolutionTreeHTML !== 'undefined' ? renderPokedexEvolutionTreeHTML : undefined
   };
 }
-
 
 function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers) {
   const s = mainSkillName || '';
@@ -6977,91 +7026,6 @@ function calculatePokedexIngredientFormulas(customState) {
   return resultObj;
 }
 
-function formatPokedexIntervalDiff(diffSec) {
-  if (diffSec === 0) return { text: '(+0s)', cls: 'diff-zero' };
-  const absSec = Math.abs(diffSec);
-  const m = Math.floor(absSec / 60);
-  const s = absSec % 60;
-  const timeStr = m > 0 ? `${m}:${s < 10 ? '0' : ''}${s}` : `${s}s`;
-  if (diffSec < 0) {
-    return { text: `(-${timeStr})`, cls: 'diff-pos' };
-  } else {
-    return { text: `(+${timeStr})`, cls: 'diff-neg' };
-  }
-}
-
-function renderPokedexIntervalValue(f, pkm) {
-  if (!f) return formatHelpInterval(pkm ? pkm.interval : 0);
-  const mainVal = formatHelpInterval(f.effectiveIntervalSec);
-  const diff = formatPokedexIntervalDiff(f.diffSec);
-  return `${mainVal}<span class="header-stat-diff ${diff.cls}">${diff.text}</span>`;
-}
-
-function renderPokedexCarryValue(f, pkm) {
-  if (!f) {
-    const baseC = pkm ? (pkm.carry || pkm.carryCapacity || '--') : '--';
-    return `${baseC}`;
-  }
-  const diffVal = f.diffCarry;
-  let diffCls = 'diff-zero';
-  let diffSign = '+';
-  if (diffVal > 0) {
-    diffCls = 'diff-pos';
-    diffSign = '+';
-  } else if (diffVal < 0) {
-    diffCls = 'diff-neg';
-    diffSign = '';
-  }
-  return `${f.effectiveCarry}<span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal})</span>`;
-}
-
-function formatRateWithTens(val) {
-  if (typeof val !== 'number' || isNaN(val)) return '--';
-  const parts = val.toFixed(2).split('.');
-  // When integer part is single-digit (e.g. 2.10%), pad with a figure space (\u2007)
-  // instead of '0', leaving a visual empty space of exact digit width for vertical % alignment.
-  const intPart = parts[0].length < 2 ? '\u2007' + parts[0] : parts[0];
-  return `${intPart}.${parts[1]}%`;
-}
-
-function renderPokedexIngRateValue(f, pkm) {
-  if (!f || typeof f.finalIngRate !== 'number') {
-    if (!pkm || !pkm.ingredient_rate) return '--';
-    const num = parseFloat(pkm.ingredient_rate);
-    return isNaN(num) ? pkm.ingredient_rate : formatRateWithTens(num);
-  }
-  const diffVal = f.diffIngRate;
-  let diffCls = 'diff-zero';
-  let diffSign = '+';
-  if (diffVal > 0.001) {
-    diffCls = 'diff-pos';
-    diffSign = '+';
-  } else if (diffVal < -0.001) {
-    diffCls = 'diff-neg';
-    diffSign = '';
-  }
-  return `${formatRateWithTens(f.finalIngRate)}<span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal.toFixed(2)}%)</span>`;
-}
-
-function renderPokedexSkillRateValue(f, pkm) {
-  if (!f || typeof f.finalSkillRate !== 'number') {
-    if (!pkm || !pkm.skill_rate) return '--';
-    const num = parseFloat(pkm.skill_rate);
-    return isNaN(num) ? pkm.skill_rate : formatRateWithTens(num);
-  }
-  const diffVal = f.diffSkillRate;
-  let diffCls = 'diff-zero';
-  let diffSign = '+';
-  if (diffVal > 0.001) {
-    diffCls = 'diff-pos';
-    diffSign = '+';
-  } else if (diffVal < -0.001) {
-    diffCls = 'diff-neg';
-    diffSign = '';
-  }
-  return `${formatRateWithTens(f.finalSkillRate)}<span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal.toFixed(2)}%)</span>`;
-}
-
 const STAGE3_INHERITED_MIN_LEVELS = {
   '土王': 15, 'Clodsire': 15,
   '大食花': 16, 'Victreebel': 16,
@@ -7145,7 +7109,7 @@ function renderPokedexEvoItemChipsHTML(pkm) {
 
   return items.map(item => {
     const tip = window.I18N?.t?.('dex.ui_evo_item_tip', { name: item.name }) ?? 'dex.ui_evo_item_tip';
-    return `<button type="button" class="pokedex-evo-item-btn pokedex-evo-item-icon-only" data-evo-item-id="${item.id}" onclick="window.WikiDB && typeof window.WikiDB.openItemDetailModal === 'function' ? window.WikiDB.openItemDetailModal('${item.id}') : (window.openItemDetailModal && window.openItemDetailModal('${item.id}'))" title="${escapeHtml(tip)}" aria-label="${escapeHtml(tip)}">${item.icon_url ? `<img src="${item.icon_url}" class="pokedex-evo-item-icon" alt="${escapeHtml(item.name)}" loading="lazy">` : ''}</button>`;
+    return `<button type="button" class="pokedex-evo-item-btn pokedex-evo-item-icon-only" data-evo-item-id="${item.id}" onclick="window.WikiDB && typeof window.WikiDB.openItemDetailModal === 'function' ? window.WikiDB.openItemDetailModal('${item.id}') : (window.openItemDetailModal && window.openItemDetailModal('${item.id}'))" title="${escapeHtml(tip)}" aria-label="${escapeHtml(tip)}">${item.icon_url ? `<img src="${item.icon_url}" class="pokedex-evo-item-icon" width="20" height="20" alt="${escapeHtml(item.name)}" loading="lazy" decoding="async">` : ''}</button>`;
   }).join('');
 }
 
@@ -7166,6 +7130,91 @@ function renderPokedexEvoGuardBadgeHTML(pkm, level) {
     const label = t('pokedex.evo_guard_met', '已達門檻 Lv.');
     return `<span class="pokedex-evo-guard-badge evo-passed" title="${tip}">[✓] ${label}${minLv}+</span>`;
   }
+}
+
+function formatPokedexIntervalDiff(diffSec) {
+  if (diffSec === 0) return { text: '(+0s)', cls: 'diff-zero' };
+  const absSec = Math.abs(diffSec);
+  const m = Math.floor(absSec / 60);
+  const s = absSec % 60;
+  const timeStr = m > 0 ? `${m}:${s < 10 ? '0' : ''}${s}` : `${s}s`;
+  if (diffSec < 0) {
+    return { text: `(-${timeStr})`, cls: 'diff-pos' };
+  } else {
+    return { text: `(+${timeStr})`, cls: 'diff-neg' };
+  }
+}
+
+function renderPokedexIntervalValue(f, pkm) {
+  if (!f) return formatHelpInterval(pkm ? pkm.interval : 0);
+  const mainVal = formatHelpInterval(f.effectiveIntervalSec);
+  const diff = formatPokedexIntervalDiff(f.diffSec);
+  return `${mainVal}<span class="header-stat-diff ${diff.cls}">${diff.text}</span>`;
+}
+
+function renderPokedexCarryValue(f, pkm) {
+  if (!f) {
+    const baseC = pkm ? (pkm.carry || pkm.carryCapacity || '--') : '--';
+    return `${baseC}`;
+  }
+  const diffVal = f.diffCarry;
+  let diffCls = 'diff-zero';
+  let diffSign = '+';
+  if (diffVal > 0) {
+    diffCls = 'diff-pos';
+    diffSign = '+';
+  } else if (diffVal < 0) {
+    diffCls = 'diff-neg';
+    diffSign = '';
+  }
+  return `${f.effectiveCarry}<span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal})</span>`;
+}
+
+function formatRateWithTens(val) {
+  if (typeof val !== 'number' || isNaN(val)) return '--';
+  const parts = val.toFixed(2).split('.');
+  // When integer part is single-digit (e.g. 2.10%), pad with a figure space (\u2007)
+  // instead of '0', leaving a visual empty space of exact digit width for vertical % alignment.
+  const intPart = parts[0].length < 2 ? '\u2007' + parts[0] : parts[0];
+  return `${intPart}.${parts[1]}%`;
+}
+
+function renderPokedexIngRateValue(f, pkm) {
+  if (!f || typeof f.finalIngRate !== 'number') {
+    if (!pkm || !pkm.ingredient_rate) return '--';
+    const num = parseFloat(pkm.ingredient_rate);
+    return isNaN(num) ? pkm.ingredient_rate : formatRateWithTens(num);
+  }
+  const diffVal = f.diffIngRate;
+  let diffCls = 'diff-zero';
+  let diffSign = '+';
+  if (diffVal > 0.001) {
+    diffCls = 'diff-pos';
+    diffSign = '+';
+  } else if (diffVal < -0.001) {
+    diffCls = 'diff-neg';
+    diffSign = '';
+  }
+  return `${formatRateWithTens(f.finalIngRate)}<span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal.toFixed(2)}%)</span>`;
+}
+
+function renderPokedexSkillRateValue(f, pkm) {
+  if (!f || typeof f.finalSkillRate !== 'number') {
+    if (!pkm || !pkm.skill_rate) return '--';
+    const num = parseFloat(pkm.skill_rate);
+    return isNaN(num) ? pkm.skill_rate : formatRateWithTens(num);
+  }
+  const diffVal = f.diffSkillRate;
+  let diffCls = 'diff-zero';
+  let diffSign = '+';
+  if (diffVal > 0.001) {
+    diffCls = 'diff-pos';
+    diffSign = '+';
+  } else if (diffVal < -0.001) {
+    diffCls = 'diff-neg';
+    diffSign = '';
+  }
+  return `${formatRateWithTens(f.finalSkillRate)}<span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal.toFixed(2)}%)</span>`;
 }
 
 function renderPokedexRibbonOptionsHTML(pkm, currentRibbon) {
@@ -7314,6 +7363,329 @@ function renderPokedexStrategyCardHTML(pkm) {
   `;
 }
 
+function renderPokedexFormulaBreakdownHTML(f, pkm) {
+  if (!f) return '';
+  const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+  const tr = (k, params) => (window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t(k, params) : k;
+
+  const natureIngMultStr = f.cleanseMint
+    ? tr('dex.ui_mint_mult', { val: f.natureIngMult.toFixed(2) })
+    : f.natureIngMult.toFixed(2);
+  const natureSkillMultStr = f.cleanseMint
+    ? tr('dex.ui_mint_mult', { val: f.natureSkillMult.toFixed(2) })
+    : f.natureSkillMult.toFixed(2);
+  const subskillIngMultStr = (1 + f.subskillIngBonus / 100).toFixed(2);
+  const subskillSkillMultStr = (1 + f.subskillSkillBonus / 100).toFixed(2);
+
+  return `
+    <div class="pokedex-formula-inner">
+      <div class="pokedex-formula-header">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="pokedex-formula-badge font-bold">${t('pokedex.formula_title', '產能算法精算拆解')}</span>
+          <button type="button" class="pokedex-formula-help-btn" onclick="window.PokemonApp.togglePokedexEnergyHelp(event)" title="${tr('dex.ui_energy_help_btn_tip')}" aria-label="Energy Info">?</button>
+        </div>
+        <div id="pokedex-energy-help-popover" class="pokedex-energy-help-popover" style="display:none;" role="tooltip">
+          <div class="pokedex-energy-help-backdrop" onclick="window.PokemonApp.closePokedexEnergyHelp(event)"></div>
+          <div class="pokedex-energy-help-bubble">
+            <div class="energy-help-title font-bold">${tr('dex.ui_energy_help_title')}</div>
+            <div class="energy-help-body">${tr('dex.ui_energy_help_body')}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 單一整合精算卡片 (無冗餘外框，邏輯由間隔頻率 -> 樹果能量 -> 食材產量 -> 技能期望，清晰順暢) -->
+      <div class="pokedex-calc-unified-box">
+        <!-- 步驟 1：實質幫忙間隔與日間次數基準 -->
+        <div class="unified-calc-row">
+          <div class="calc-row-header">
+            <span class="calc-row-label font-bold">${tr('dex.ui_step_helps_title')}</span>
+            <div class="calc-row-header-values">
+              <span class="calc-val-main font-bold calc-color-helps">${f.dailyHelps.toFixed(1)} ${tr('dex.ui_unit_helps')}</span>
+            </div>
+          </div>
+          <div class="calc-row-formula">
+            <span class="formula-derive font-mono">${tr('dex.ui_helps_formula_prefix')}${f.effectiveIntervalSec}s × 0.45) = <strong class="calc-color-helps">${f.dailyHelps.toFixed(1)} ${tr('dex.ui_unit_helps')}</strong></span>
+          </div>
+        </div>
+
+        <!-- 步驟 2：樹果產量與單日能量 -->
+        <div class="unified-calc-row">
+          <div class="calc-row-header">
+            <span class="calc-row-label font-bold">${tr('dex.ui_step_berry_title')}</span>
+            <div class="calc-row-header-values">
+              <span class="calc-val-main font-bold calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${tr('dex.ui_unit_strength')}</span>
+            </div>
+          </div>
+          <div class="calc-row-formula">
+            <span class="formula-derive font-mono"><span class="formula-var font-bold">${f.dailyBerryHelps.toFixed(1)}${tr('dex.ui_unit_helps_compact')}</span> × <span class="calc-color-berry font-bold">${f.berriesPerHelp}${tr('dex.ui_unit_berries_compact')}</span> × <span class="formula-var" title="${tr('dex.ui_single_berry_tip')}">${f.singleBerryEnergy}</span> = <strong class="calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${tr('dex.ui_unit_strength')}</strong></span>
+          </div>
+          <div class="berry-row-detail font-mono">
+            <span class="berry-detail-left">${f.berryIcon ? `<img src="${f.berryIcon}" class="yield-pill-img" width="17" height="17" alt="${escapeHtml(f.berryName)}" loading="lazy" decoding="async" style="vertical-align:middle;margin-right:2px;">` : ''}<span class="yield-pill-name">${escapeHtml(f.berryName)}</span> <span class="calc-color-berry font-bold">${f.singleBerryEnergy} ${tr('dex.ui_energy_per_berry')}</span></span>
+            <span class="calc-color-berry-fav font-bold" title="${tr('dex.ui_fav_berry_tip')}">${tr('dex.ui_fav_berry_prefix')}${f.dailyBerryEnergyFav.toLocaleString()} ${tr('dex.ui_unit_strength')}</span>
+          </div>
+        </div>
+
+        <!-- 步驟 3：最終食材發動率與單日掉落產量 -->
+        <div class="unified-calc-row">
+          <div class="calc-row-header">
+            <span class="calc-row-label font-bold">${t('pokedex.final_ing_rate', '最終食材發動率')}</span>
+            <div class="calc-row-header-values">
+              <span class="calc-val-main font-bold calc-color-ing">${f.finalIngRate.toFixed(2)}%</span>
+            </div>
+          </div>
+          <div class="calc-row-formula">
+            <span class="formula-var" title="${tr('dex.ui_base_ing_rate_tip')}">${f.baseIngRate.toFixed(1)}%</span>
+            <span class="formula-op">×</span>
+            <span class="formula-var" title="${tr('dex.ui_subskill_mult_tip')}">${subskillIngMultStr}</span>
+            <span class="formula-op">×</span>
+            <span class="formula-var" title="${f.cleanseMint ? tr('dex.ui_nature_mint_tip') : tr('dex.ui_nature_tip')}">${natureIngMultStr}</span>
+            <span class="formula-op">=</span>
+            <span class="formula-res font-bold calc-color-ing">${f.finalIngRate.toFixed(2)}%</span>
+            <span class="formula-op">-&gt;</span>
+            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${tr('dex.ui_unit_helps_compact')}</span> × <span class="calc-color-ing font-bold">${f.finalIngRate.toFixed(2)}%</span> = <strong class="calc-color-yield">${f.dailyIngDrops.toFixed(1)} ${tr('dex.ui_unit_drops')}</strong></span>
+          </div>
+          <div class="pokedex-yield-items-grid">
+            ${f.summaryYieldList.map(item => `
+              <div class="pokedex-yield-pill">
+                ${item.icon ? `<img src="${item.icon}" class="yield-pill-img" width="17" height="17" alt="${escapeHtml(item.name)}" loading="lazy" decoding="async">` : ''}
+                <span class="yield-pill-name">${escapeHtml(item.name)}</span>
+                <span class="yield-pill-count font-bold calc-color-yield">${item.daily.toFixed(1)}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- 步驟 4：最終技能發動率與單日發動次數 -->
+        <div class="unified-calc-row">
+          <div class="calc-row-header">
+            <span class="calc-row-label font-bold">${tr('dex.ui_step_skill_title')}</span>
+            <div class="calc-row-header-values">
+              <span class="calc-val-main font-bold calc-color-skill">${f.finalSkillRate.toFixed(2)}%</span>
+            </div>
+          </div>
+          <div class="calc-row-formula">
+            <span class="formula-var" title="${tr('dex.ui_base_skill_rate_tip')}">${f.baseSkillRate.toFixed(1)}%</span>
+            <span class="formula-op">×</span>
+            <span class="formula-var" title="${tr('dex.ui_subskill_mult_tip')}">${subskillSkillMultStr}</span>
+            <span class="formula-op">×</span>
+            <span class="formula-var" title="${f.cleanseMint ? tr('dex.ui_nature_mint_tip') : tr('dex.ui_nature_tip')}">${natureSkillMultStr}</span>
+            <span class="formula-op">=</span>
+            <span class="formula-res font-bold calc-color-skill">${f.finalSkillRate.toFixed(2)}%</span>
+            <span class="formula-op">-&gt;</span>
+            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${tr('dex.ui_unit_helps_compact')}</span> × <span class="calc-color-skill font-bold">${f.finalSkillRate.toFixed(2)}%</span> = <strong class="calc-color-triggers">${f.dailyTriggers.toFixed(2)} ${tr('dex.ui_unit_triggers')}</strong></span>
+          </div>
+          ${f.mainSkillLabel ? `
+            <div class="calc-row-subskill-extra">
+              <span class="badge-skill-extra">${escapeHtml(f.mainSkillLabel)}</span>
+              <span class="text-skill-extra font-bold text-success">${escapeHtml(f.mainSkillValueText || `+${f.mainSkillExtraDaily.toFixed(1)}`)}</span>
+              ${f.mainSkillSingleText ? `<span class="text-skill-single font-mono text-muted">(${escapeHtml(f.mainSkillSingleText)})</span>` : ''}
+            </div>
+            ${f.mainSkillDesc ? `
+              <div class="calc-row-skill-desc text-muted" style="margin-top: 4px; font-size: 11.5px; line-height: 1.4;">${escapeHtml(f.mainSkillDesc)}</div>
+            ` : ''}
+          ` : ''}
+        </div>
+
+        <!-- 桌面端專屬：最佳配置指南 (收納於同一個外框內，增加到下一行) -->
+        <div class="pokedex-strategy-desktop-wrap" id="pokedex-strategy-desktop-container">
+          ${renderPokedexStrategyCardHTML(pkm)}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function togglePokedexEnergyHelp(event) {
+  if (event) {
+    if (typeof event.stopPropagation === 'function') event.stopPropagation();
+    if (typeof event.preventDefault === 'function') event.preventDefault();
+  }
+  const popover = document.getElementById('pokedex-energy-help-popover');
+  if (popover) popover.style.display = 'none';
+  const modalEl = document.getElementById('pokedex-detail-modal');
+  const btn = (event && (event.currentTarget || event.target)) || (modalEl ? modalEl.querySelector('.pokedex-formula-help-btn') : (typeof document.querySelector === 'function' ? document.querySelector('.pokedex-formula-help-btn') : null));
+  const title = window.I18N?.t?.('dex.ui_energy_help_title') ?? 'dex.ui_energy_help_title';
+  const body = window.I18N?.t?.('dex.ui_energy_help_body') ?? 'dex.ui_energy_help_body';
+
+  if (PokemonApp && typeof PokemonApp.toggleGlobalTooltip === 'function') {
+    PokemonApp.toggleGlobalTooltip(btn, title, body);
+  }
+}
+
+function closePokedexEnergyHelp(event) {
+  if (event && typeof event.stopPropagation === 'function') {
+    event.stopPropagation();
+  }
+  const popover = document.getElementById('pokedex-energy-help-popover');
+  if (popover) popover.style.display = 'none';
+  if (PokemonApp && typeof PokemonApp.hideGlobalTooltip === 'function') {
+    PokemonApp.hideGlobalTooltip();
+  }
+}
+
+function updatePokedexModalAppraisalLive() {
+  const pkm = pokedexModalState.pkm;
+  if (!pkm) return;
+
+  const tr = (k, params) => (window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t(k, params) : k;
+
+  // 1. 重新計算評估
+  const chosenIngs = (pkm.ingredients || []).map((ing, i) => {
+    const selIdx = pokedexModalState.ingSlots[i] || 0;
+    return (pkm.ingredients && pkm.ingredients[selIdx]) ? pkm.ingredients[selIdx].name : (ing.name || '');
+  });
+
+  let evaluation = null;
+  if (window.AppraisalLab && typeof window.AppraisalLab.evaluatePokemon === 'function') {
+    evaluation = window.AppraisalLab.evaluatePokemon(pkm, pokedexModalState.level, pokedexModalState.nature, pokedexModalState.subskills, chosenIngs, pokedexModalState.ribbon, pokedexModalState.skillLevel);
+  }
+  if (!evaluation) {
+    evaluation = {
+      compositeScore: 75,
+      grade: 'A',
+      gradeTitle: tr('dex.ui_solid_pick'),
+      gradeColor: '#10b981',
+      scores: { berry: 60, ingredient: 70, skill: 65, speed: 65, growth: 60, roi: 65 }
+    };
+  }
+
+  // 2. 更新評估 UI (頂部右側雙軌徽章)
+  const curBadge = document.getElementById('pokedex-header-verdict-badge');
+  const potBadge = document.getElementById('pokedex-header-potential-badge');
+  const curGradeEl = document.getElementById('pokedex-header-verdict-grade') || (curBadge && curBadge.querySelector('.verdict-grade'));
+  const curNumEl = document.getElementById('pokedex-header-verdict-num') || (curBadge && curBadge.querySelector('.verdict-num'));
+  const potGradeEl = document.getElementById('pokedex-header-potential-grade') || (potBadge && potBadge.querySelector('.verdict-potential-grade'));
+  const potNumEl = document.getElementById('pokedex-header-potential-num') || (potBadge && potBadge.querySelector('.verdict-potential-num'));
+
+  const curEval = evaluation.current || evaluation;
+  const potEval = evaluation.potential || evaluation;
+
+  if (curGradeEl) {
+    curGradeEl.textContent = curEval.grade;
+    curGradeEl.style.color = curEval.gradeColor;
+  }
+  if (curNumEl) curNumEl.textContent = curEval.compositeScore;
+  if (curBadge) {
+    curBadge.style.borderColor = curEval.gradeColor;
+    curBadge.setAttribute('title', tr('dex.ui_cur_rating_tip', { level: pokedexModalState.level }));
+    if (typeof curBadge.querySelector === 'function') {
+      const curLvLabel = curBadge.querySelector('.pokedex-verdict-track-lbl') || curBadge.querySelector('span:first-child');
+      if (curLvLabel) curLvLabel.textContent = tr('dex.ui_cur_lv_badge', { level: pokedexModalState.level });
+    }
+  }
+
+  if (potGradeEl) {
+    potGradeEl.textContent = potEval.grade;
+    potGradeEl.style.color = '#94a3b8';
+  }
+  if (potNumEl) potNumEl.textContent = potEval.compositeScore;
+  if (potBadge) {
+    potBadge.style.borderColor = 'rgba(148, 163, 184, 0.25)';
+    potBadge.setAttribute('title', tr('dex.ui_pot_rating_tip'));
+  }
+
+  // 3. 更新食材產能算法拆解卡片與動態數值 (幫忙間隔、持有、食材率、技能率)
+  const formulaData = calculatePokedexIngredientFormulas();
+  const formulaContainer = document.getElementById('pokedex-calc-formula-container');
+  if (formulaContainer && formulaData) {
+    formulaContainer.innerHTML = renderPokedexFormulaBreakdownHTML(formulaData, pkm);
+  }
+
+  // 更新最佳配置指南卡片 (同時支援桌面端與移動端容器)
+  const deskStrategyContainer = document.getElementById('pokedex-strategy-desktop-container');
+  if (deskStrategyContainer) {
+    deskStrategyContainer.innerHTML = renderPokedexStrategyCardHTML(pkm);
+  }
+  const mobStrategyContainer = document.getElementById('pokedex-strategy-mobile-container');
+  if (mobStrategyContainer) {
+    mobStrategyContainer.innerHTML = renderPokedexStrategyCardHTML(pkm);
+  }
+
+  const intervalEl = document.getElementById('pokedex-stat-interval');
+  if (intervalEl && formulaData) {
+    intervalEl.innerHTML = renderPokedexIntervalValue(formulaData, pkm);
+  }
+
+  const carryEl = document.getElementById('pokedex-stat-carry');
+  if (carryEl && formulaData) {
+    carryEl.innerHTML = renderPokedexCarryValue(formulaData, pkm);
+  }
+
+  const ingRateEl = document.getElementById('pokedex-stat-ingredient-rate');
+  if (ingRateEl && formulaData && typeof formulaData.finalIngRate === 'number') {
+    ingRateEl.innerHTML = renderPokedexIngRateValue(formulaData, pkm);
+  }
+
+  const skillRateEl = document.getElementById('pokedex-stat-skill-rate');
+  if (skillRateEl && formulaData && typeof formulaData.finalSkillRate === 'number') {
+    skillRateEl.innerHTML = renderPokedexSkillRateValue(formulaData, pkm);
+  }
+
+  // 5. 更新等級數值標籤與重點圖釘狀態
+  const pokedexModalEl = document.getElementById('pokedex-detail-modal');
+  const valText = document.getElementById('pokedex-level-val-text');
+  if (valText) {
+    valText.textContent = pokedexModalState.level;
+  } else {
+    const levelBadge = (pokedexModalEl && typeof pokedexModalEl.querySelector === 'function')
+      ? pokedexModalEl.querySelector('.pokedex-val-badge')
+      : (typeof document.querySelector === 'function' ? document.querySelector('.pokedex-val-badge') : null);
+    if (levelBadge) levelBadge.textContent = `Lv. ${pokedexModalState.level}`;
+  }
+  const unreleasedTag = document.getElementById('pokedex-level-unreleased-tag');
+  if (unreleasedTag) {
+    const caps = _getPokedexModalCaps();
+    const capLv = caps.POKEMON_LEVEL_CAP || 70;
+    if (pokedexModalState.level > capLv) { // default: pokedexModalState.level > 70
+      unreleasedTag.classList.remove('hidden');
+    } else {
+      unreleasedTag.classList.add('hidden');
+    }
+  }
+
+  const evoGuardContainer = document.getElementById('pokedex-evo-guard-container');
+  if (evoGuardContainer) {
+    evoGuardContainer.innerHTML = '';
+  }
+
+  const levelCtrlGroup = (pokedexModalEl && typeof pokedexModalEl.querySelector === 'function')
+    ? pokedexModalEl.querySelector('.pokedex-level-ctrl-group')
+    : (typeof document.querySelector === 'function' ? document.querySelector('.pokedex-level-ctrl-group') : null);
+  if (levelCtrlGroup) {
+    levelCtrlGroup.classList.remove('has-evo-warning');
+  }
+
+  const trackPinBtns = (pokedexModalEl && typeof pokedexModalEl.querySelectorAll === 'function')
+    ? pokedexModalEl.querySelectorAll('.pokedex-track-pin-btn')
+    : (typeof document.querySelectorAll === 'function' ? document.querySelectorAll('.pokedex-track-pin-btn') : []);
+  trackPinBtns.forEach(btn => {
+    const titleVal = btn.getAttribute('title') || '';
+    const pinLv = parseInt(btn.getAttribute('data-pin-lv') || titleVal.replace(/[^0-9]/g, ''), 10);
+    btn.classList.toggle('active', pinLv === pokedexModalState.level);
+  });
+  const levelPinBtns = (pokedexModalEl && typeof pokedexModalEl.querySelectorAll === 'function')
+    ? pokedexModalEl.querySelectorAll('.pokedex-level-pin-btn')
+    : (typeof document.querySelectorAll === 'function' ? document.querySelectorAll('.pokedex-level-pin-btn') : []);
+  levelPinBtns.forEach(btn => {
+    const pinLv = parseInt(btn.textContent, 10);
+    btn.classList.toggle('active', pinLv === pokedexModalState.level);
+  });
+
+  // 動態同步更新副技能狀態標籤與未生效標記
+  updatePokedexSubskillUI();
+
+  // 更新食材插槽解鎖標籤
+  const ingSlotBoxes = (pokedexModalEl && typeof pokedexModalEl.querySelectorAll === 'function')
+    ? pokedexModalEl.querySelectorAll('.pokedex-ing-slot-box')
+    : (typeof document.querySelectorAll === 'function' ? document.querySelectorAll('.pokedex-ing-slot-box') : []);
+  ingSlotBoxes.forEach((boxEl, sIdx) => {
+    const reqLv = sIdx === 0 ? 1 : (sIdx === 1 ? 30 : 60);
+    const isUnlocked = pokedexModalState.level >= reqLv;
+    boxEl.classList.toggle('slot-active', isUnlocked);
+    boxEl.classList.toggle('slot-locked', !isUnlocked);
+  });
+}
+
 const _FALLBACK_POKEDEX_MODAL_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
 
 function _getPokedexModalCaps() {
@@ -7383,14 +7755,14 @@ function renderPokedexDetailModalContent() {
       <div class="box-modal-header pokedex-modal-header">
         <div class="pokedex-modal-header-main">
           <div class="box-modal-title pokedex-modal-title">
-            ${iconUrl ? `<img src="${iconUrl}" class="pokedex-header-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="handlePokemonIconError(this)">` : ''}
+            ${iconUrl ? `<img src="${iconUrl}" class="pokedex-header-avatar" width="50" height="50" alt="${escapeHtml(pkmName)}" loading="lazy" decoding="async" onerror="handlePokemonIconError(this)">` : ''}
             <div class="pokedex-header-info">
               <div class="pokedex-header-top-row">
                 <span class="pokedex-header-no">No.${pkm.formatted_no || ''}</span>
                 <div class="pokedex-header-tags pokedex-header-berry-spec-group">
                   ${renderPokedexEvoItemChipsHTML(pkm)}
                   <span class="pokedex-tag pokedex-tag-berry" title="${escapeHtml(berryName)}">
-                    ${berry.icon ? `<img src="${berry.icon}" class="pokedex-berry-icon-img" alt="${escapeHtml(berryName)}" title="${escapeHtml(berryName)}" loading="lazy">` : ''}
+                    ${berry.icon ? `<img src="${berry.icon}" class="pokedex-berry-icon-img" width="22" height="22" alt="${escapeHtml(berryName)}" title="${escapeHtml(berryName)}" loading="lazy" decoding="async">` : ''}
                   </span>
                   ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkm.specialty, 20, 'pokedex-tag pokedex-tag-spec') : `<span class="pokedex-tag pokedex-tag-spec ${specClass}">${escapeHtml(specName)}</span>`}
                 </div>
@@ -7638,329 +8010,6 @@ function renderPokedexDetailModalContent() {
     if (el && typeof window.setupCustomSelect === 'function' && !el._customized) {
       window.setupCustomSelect(el);
     }
-  });
-}
-
-function renderPokedexFormulaBreakdownHTML(f, pkm) {
-  if (!f) return '';
-  const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-  const tr = (k, params) => (window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t(k, params) : k;
-
-  const natureIngMultStr = f.cleanseMint
-    ? tr('dex.ui_mint_mult', { val: f.natureIngMult.toFixed(2) })
-    : f.natureIngMult.toFixed(2);
-  const natureSkillMultStr = f.cleanseMint
-    ? tr('dex.ui_mint_mult', { val: f.natureSkillMult.toFixed(2) })
-    : f.natureSkillMult.toFixed(2);
-  const subskillIngMultStr = (1 + f.subskillIngBonus / 100).toFixed(2);
-  const subskillSkillMultStr = (1 + f.subskillSkillBonus / 100).toFixed(2);
-
-  return `
-    <div class="pokedex-formula-inner">
-      <div class="pokedex-formula-header">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="pokedex-formula-badge font-bold">${t('pokedex.formula_title', '產能算法精算拆解')}</span>
-          <button type="button" class="pokedex-formula-help-btn" onclick="window.PokemonApp.togglePokedexEnergyHelp(event)" title="${tr('dex.ui_energy_help_btn_tip')}" aria-label="Energy Info">?</button>
-        </div>
-        <div id="pokedex-energy-help-popover" class="pokedex-energy-help-popover" style="display:none;" role="tooltip">
-          <div class="pokedex-energy-help-backdrop" onclick="window.PokemonApp.closePokedexEnergyHelp(event)"></div>
-          <div class="pokedex-energy-help-bubble">
-            <div class="energy-help-title font-bold">${tr('dex.ui_energy_help_title')}</div>
-            <div class="energy-help-body">${tr('dex.ui_energy_help_body')}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 單一整合精算卡片 (無冗餘外框，邏輯由間隔頻率 -> 樹果能量 -> 食材產量 -> 技能期望，清晰順暢) -->
-      <div class="pokedex-calc-unified-box">
-        <!-- 步驟 1：實質幫忙間隔與日間次數基準 -->
-        <div class="unified-calc-row">
-          <div class="calc-row-header">
-            <span class="calc-row-label font-bold">${tr('dex.ui_step_helps_title')}</span>
-            <div class="calc-row-header-values">
-              <span class="calc-val-main font-bold calc-color-helps">${f.dailyHelps.toFixed(1)} ${tr('dex.ui_unit_helps')}</span>
-            </div>
-          </div>
-          <div class="calc-row-formula">
-            <span class="formula-derive font-mono">${tr('dex.ui_helps_formula_prefix')}${f.effectiveIntervalSec}s × 0.45) = <strong class="calc-color-helps">${f.dailyHelps.toFixed(1)} ${tr('dex.ui_unit_helps')}</strong></span>
-          </div>
-        </div>
-
-        <!-- 步驟 2：樹果產量與單日能量 -->
-        <div class="unified-calc-row">
-          <div class="calc-row-header">
-            <span class="calc-row-label font-bold">${tr('dex.ui_step_berry_title')}</span>
-            <div class="calc-row-header-values">
-              <span class="calc-val-main font-bold calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${tr('dex.ui_unit_strength')}</span>
-            </div>
-          </div>
-          <div class="calc-row-formula">
-            <span class="formula-derive font-mono"><span class="formula-var font-bold">${f.dailyBerryHelps.toFixed(1)}${tr('dex.ui_unit_helps_compact')}</span> × <span class="calc-color-berry font-bold">${f.berriesPerHelp}${tr('dex.ui_unit_berries_compact')}</span> × <span class="formula-var" title="${tr('dex.ui_single_berry_tip')}">${f.singleBerryEnergy}</span> = <strong class="calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${tr('dex.ui_unit_strength')}</strong></span>
-          </div>
-          <div class="berry-row-detail font-mono">
-            <span class="berry-detail-left">${f.berryIcon ? `<img src="${f.berryIcon}" class="yield-pill-img" alt="${escapeHtml(f.berryName)}" loading="lazy" style="vertical-align:middle;margin-right:2px;">` : ''}<span class="yield-pill-name">${escapeHtml(f.berryName)}</span> <span class="calc-color-berry font-bold">${f.singleBerryEnergy} ${tr('dex.ui_energy_per_berry')}</span></span>
-            <span class="calc-color-berry-fav font-bold" title="${tr('dex.ui_fav_berry_tip')}">${tr('dex.ui_fav_berry_prefix')}${f.dailyBerryEnergyFav.toLocaleString()} ${tr('dex.ui_unit_strength')}</span>
-          </div>
-        </div>
-
-        <!-- 步驟 3：最終食材發動率與單日掉落產量 -->
-        <div class="unified-calc-row">
-          <div class="calc-row-header">
-            <span class="calc-row-label font-bold">${t('pokedex.final_ing_rate', '最終食材發動率')}</span>
-            <div class="calc-row-header-values">
-              <span class="calc-val-main font-bold calc-color-ing">${f.finalIngRate.toFixed(2)}%</span>
-            </div>
-          </div>
-          <div class="calc-row-formula">
-            <span class="formula-var" title="${tr('dex.ui_base_ing_rate_tip')}">${f.baseIngRate.toFixed(1)}%</span>
-            <span class="formula-op">×</span>
-            <span class="formula-var" title="${tr('dex.ui_subskill_mult_tip')}">${subskillIngMultStr}</span>
-            <span class="formula-op">×</span>
-            <span class="formula-var" title="${f.cleanseMint ? tr('dex.ui_nature_mint_tip') : tr('dex.ui_nature_tip')}">${natureIngMultStr}</span>
-            <span class="formula-op">=</span>
-            <span class="formula-res font-bold calc-color-ing">${f.finalIngRate.toFixed(2)}%</span>
-            <span class="formula-op">-&gt;</span>
-            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${tr('dex.ui_unit_helps_compact')}</span> × <span class="calc-color-ing font-bold">${f.finalIngRate.toFixed(2)}%</span> = <strong class="calc-color-yield">${f.dailyIngDrops.toFixed(1)} ${tr('dex.ui_unit_drops')}</strong></span>
-          </div>
-          <div class="pokedex-yield-items-grid">
-            ${f.summaryYieldList.map(item => `
-              <div class="pokedex-yield-pill">
-                ${item.icon ? `<img src="${item.icon}" class="yield-pill-img" alt="${escapeHtml(item.name)}" loading="lazy">` : ''}
-                <span class="yield-pill-name">${escapeHtml(item.name)}</span>
-                <span class="yield-pill-count font-bold calc-color-yield">${item.daily.toFixed(1)}</span>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-
-        <!-- 步驟 4：最終技能發動率與單日發動次數 -->
-        <div class="unified-calc-row">
-          <div class="calc-row-header">
-            <span class="calc-row-label font-bold">${tr('dex.ui_step_skill_title')}</span>
-            <div class="calc-row-header-values">
-              <span class="calc-val-main font-bold calc-color-skill">${f.finalSkillRate.toFixed(2)}%</span>
-            </div>
-          </div>
-          <div class="calc-row-formula">
-            <span class="formula-var" title="${tr('dex.ui_base_skill_rate_tip')}">${f.baseSkillRate.toFixed(1)}%</span>
-            <span class="formula-op">×</span>
-            <span class="formula-var" title="${tr('dex.ui_subskill_mult_tip')}">${subskillSkillMultStr}</span>
-            <span class="formula-op">×</span>
-            <span class="formula-var" title="${f.cleanseMint ? tr('dex.ui_nature_mint_tip') : tr('dex.ui_nature_tip')}">${natureSkillMultStr}</span>
-            <span class="formula-op">=</span>
-            <span class="formula-res font-bold calc-color-skill">${f.finalSkillRate.toFixed(2)}%</span>
-            <span class="formula-op">-&gt;</span>
-            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${tr('dex.ui_unit_helps_compact')}</span> × <span class="calc-color-skill font-bold">${f.finalSkillRate.toFixed(2)}%</span> = <strong class="calc-color-triggers">${f.dailyTriggers.toFixed(2)} ${tr('dex.ui_unit_triggers')}</strong></span>
-          </div>
-          ${f.mainSkillLabel ? `
-            <div class="calc-row-subskill-extra">
-              <span class="badge-skill-extra">${escapeHtml(f.mainSkillLabel)}</span>
-              <span class="text-skill-extra font-bold text-success">${escapeHtml(f.mainSkillValueText || `+${f.mainSkillExtraDaily.toFixed(1)}`)}</span>
-              ${f.mainSkillSingleText ? `<span class="text-skill-single font-mono text-muted">(${escapeHtml(f.mainSkillSingleText)})</span>` : ''}
-            </div>
-            ${f.mainSkillDesc ? `
-              <div class="calc-row-skill-desc text-muted" style="margin-top: 4px; font-size: 11.5px; line-height: 1.4;">${escapeHtml(f.mainSkillDesc)}</div>
-            ` : ''}
-          ` : ''}
-        </div>
-
-        <!-- 桌面端專屬：最佳配置指南 (收納於同一個外框內，增加到下一行) -->
-        <div class="pokedex-strategy-desktop-wrap" id="pokedex-strategy-desktop-container">
-          ${renderPokedexStrategyCardHTML(pkm)}
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function togglePokedexEnergyHelp(event) {
-  if (event) {
-    if (typeof event.stopPropagation === 'function') event.stopPropagation();
-    if (typeof event.preventDefault === 'function') event.preventDefault();
-  }
-  const popover = document.getElementById('pokedex-energy-help-popover');
-  if (popover) popover.style.display = 'none';
-  const modalEl = document.getElementById('pokedex-detail-modal');
-  const btn = (event && (event.currentTarget || event.target)) || (modalEl ? modalEl.querySelector('.pokedex-formula-help-btn') : (typeof document.querySelector === 'function' ? document.querySelector('.pokedex-formula-help-btn') : null));
-  const title = window.I18N?.t?.('dex.ui_energy_help_title') ?? 'dex.ui_energy_help_title';
-  const body = window.I18N?.t?.('dex.ui_energy_help_body') ?? 'dex.ui_energy_help_body';
-
-  if (PokemonApp && typeof PokemonApp.toggleGlobalTooltip === 'function') {
-    PokemonApp.toggleGlobalTooltip(btn, title, body);
-  }
-}
-
-function closePokedexEnergyHelp(event) {
-  if (event && typeof event.stopPropagation === 'function') {
-    event.stopPropagation();
-  }
-  const popover = document.getElementById('pokedex-energy-help-popover');
-  if (popover) popover.style.display = 'none';
-  if (PokemonApp && typeof PokemonApp.hideGlobalTooltip === 'function') {
-    PokemonApp.hideGlobalTooltip();
-  }
-}
-
-function updatePokedexModalAppraisalLive() {
-  const pkm = pokedexModalState.pkm;
-  if (!pkm) return;
-
-  const tr = (k, params) => (window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t(k, params) : k;
-
-  // 1. 重新計算評估
-  const chosenIngs = (pkm.ingredients || []).map((ing, i) => {
-    const selIdx = pokedexModalState.ingSlots[i] || 0;
-    return (pkm.ingredients && pkm.ingredients[selIdx]) ? pkm.ingredients[selIdx].name : (ing.name || '');
-  });
-
-  let evaluation = null;
-  if (window.AppraisalLab && typeof window.AppraisalLab.evaluatePokemon === 'function') {
-    evaluation = window.AppraisalLab.evaluatePokemon(pkm, pokedexModalState.level, pokedexModalState.nature, pokedexModalState.subskills, chosenIngs, pokedexModalState.ribbon, pokedexModalState.skillLevel);
-  }
-  if (!evaluation) {
-    evaluation = {
-      compositeScore: 75,
-      grade: 'A',
-      gradeTitle: tr('dex.ui_solid_pick'),
-      gradeColor: '#10b981',
-      scores: { berry: 60, ingredient: 70, skill: 65, speed: 65, growth: 60, roi: 65 }
-    };
-  }
-
-  // 2. 更新評估 UI (頂部右側雙軌徽章)
-  const curBadge = document.getElementById('pokedex-header-verdict-badge');
-  const potBadge = document.getElementById('pokedex-header-potential-badge');
-  const curGradeEl = document.getElementById('pokedex-header-verdict-grade') || (curBadge && curBadge.querySelector('.verdict-grade'));
-  const curNumEl = document.getElementById('pokedex-header-verdict-num') || (curBadge && curBadge.querySelector('.verdict-num'));
-  const potGradeEl = document.getElementById('pokedex-header-potential-grade') || (potBadge && potBadge.querySelector('.verdict-potential-grade'));
-  const potNumEl = document.getElementById('pokedex-header-potential-num') || (potBadge && potBadge.querySelector('.verdict-potential-num'));
-
-  const curEval = evaluation.current || evaluation;
-  const potEval = evaluation.potential || evaluation;
-
-  if (curGradeEl) {
-    curGradeEl.textContent = curEval.grade;
-    curGradeEl.style.color = curEval.gradeColor;
-  }
-  if (curNumEl) curNumEl.textContent = curEval.compositeScore;
-  if (curBadge) {
-    curBadge.style.borderColor = curEval.gradeColor;
-    curBadge.setAttribute('title', tr('dex.ui_cur_rating_tip', { level: pokedexModalState.level }));
-    if (typeof curBadge.querySelector === 'function') {
-      const curLvLabel = curBadge.querySelector('.pokedex-verdict-track-lbl') || curBadge.querySelector('span:first-child');
-      if (curLvLabel) curLvLabel.textContent = tr('dex.ui_cur_lv_badge', { level: pokedexModalState.level });
-    }
-  }
-
-  if (potGradeEl) {
-    potGradeEl.textContent = potEval.grade;
-    potGradeEl.style.color = '#94a3b8';
-  }
-  if (potNumEl) potNumEl.textContent = potEval.compositeScore;
-  if (potBadge) {
-    potBadge.style.borderColor = 'rgba(148, 163, 184, 0.25)';
-    potBadge.setAttribute('title', tr('dex.ui_pot_rating_tip'));
-  }
-
-  // 3. 更新食材產能算法拆解卡片與動態數值 (幫忙間隔、持有、食材率、技能率)
-  const formulaData = calculatePokedexIngredientFormulas();
-  const formulaContainer = document.getElementById('pokedex-calc-formula-container');
-  if (formulaContainer && formulaData) {
-    formulaContainer.innerHTML = renderPokedexFormulaBreakdownHTML(formulaData, pkm);
-  }
-
-  // 更新最佳配置指南卡片 (同時支援桌面端與移動端容器)
-  const deskStrategyContainer = document.getElementById('pokedex-strategy-desktop-container');
-  if (deskStrategyContainer) {
-    deskStrategyContainer.innerHTML = renderPokedexStrategyCardHTML(pkm);
-  }
-  const mobStrategyContainer = document.getElementById('pokedex-strategy-mobile-container');
-  if (mobStrategyContainer) {
-    mobStrategyContainer.innerHTML = renderPokedexStrategyCardHTML(pkm);
-  }
-
-  const intervalEl = document.getElementById('pokedex-stat-interval');
-  if (intervalEl && formulaData) {
-    intervalEl.innerHTML = renderPokedexIntervalValue(formulaData, pkm);
-  }
-
-  const carryEl = document.getElementById('pokedex-stat-carry');
-  if (carryEl && formulaData) {
-    carryEl.innerHTML = renderPokedexCarryValue(formulaData, pkm);
-  }
-
-  const ingRateEl = document.getElementById('pokedex-stat-ingredient-rate');
-  if (ingRateEl && formulaData && typeof formulaData.finalIngRate === 'number') {
-    ingRateEl.innerHTML = renderPokedexIngRateValue(formulaData, pkm);
-  }
-
-  const skillRateEl = document.getElementById('pokedex-stat-skill-rate');
-  if (skillRateEl && formulaData && typeof formulaData.finalSkillRate === 'number') {
-    skillRateEl.innerHTML = renderPokedexSkillRateValue(formulaData, pkm);
-  }
-
-  // 5. 更新等級數值標籤與重點圖釘狀態
-  const pokedexModalEl = document.getElementById('pokedex-detail-modal');
-  const valText = document.getElementById('pokedex-level-val-text');
-  if (valText) {
-    valText.textContent = pokedexModalState.level;
-  } else {
-    const levelBadge = (pokedexModalEl && typeof pokedexModalEl.querySelector === 'function')
-      ? pokedexModalEl.querySelector('.pokedex-val-badge')
-      : (typeof document.querySelector === 'function' ? document.querySelector('.pokedex-val-badge') : null);
-    if (levelBadge) levelBadge.textContent = `Lv. ${pokedexModalState.level}`;
-  }
-  const unreleasedTag = document.getElementById('pokedex-level-unreleased-tag');
-  if (unreleasedTag) {
-    const caps = _getPokedexModalCaps();
-    const capLv = caps.POKEMON_LEVEL_CAP || 70;
-    if (pokedexModalState.level > capLv) { // default: pokedexModalState.level > 70
-      unreleasedTag.classList.remove('hidden');
-    } else {
-      unreleasedTag.classList.add('hidden');
-    }
-  }
-
-  const evoGuardContainer = document.getElementById('pokedex-evo-guard-container');
-  if (evoGuardContainer) {
-    evoGuardContainer.innerHTML = '';
-  }
-
-  const levelCtrlGroup = (pokedexModalEl && typeof pokedexModalEl.querySelector === 'function')
-    ? pokedexModalEl.querySelector('.pokedex-level-ctrl-group')
-    : (typeof document.querySelector === 'function' ? document.querySelector('.pokedex-level-ctrl-group') : null);
-  if (levelCtrlGroup) {
-    levelCtrlGroup.classList.remove('has-evo-warning');
-  }
-
-  const trackPinBtns = (pokedexModalEl && typeof pokedexModalEl.querySelectorAll === 'function')
-    ? pokedexModalEl.querySelectorAll('.pokedex-track-pin-btn')
-    : (typeof document.querySelectorAll === 'function' ? document.querySelectorAll('.pokedex-track-pin-btn') : []);
-  trackPinBtns.forEach(btn => {
-    const titleVal = btn.getAttribute('title') || '';
-    const pinLv = parseInt(btn.getAttribute('data-pin-lv') || titleVal.replace(/[^0-9]/g, ''), 10);
-    btn.classList.toggle('active', pinLv === pokedexModalState.level);
-  });
-  const levelPinBtns = (pokedexModalEl && typeof pokedexModalEl.querySelectorAll === 'function')
-    ? pokedexModalEl.querySelectorAll('.pokedex-level-pin-btn')
-    : (typeof document.querySelectorAll === 'function' ? document.querySelectorAll('.pokedex-level-pin-btn') : []);
-  levelPinBtns.forEach(btn => {
-    const pinLv = parseInt(btn.textContent, 10);
-    btn.classList.toggle('active', pinLv === pokedexModalState.level);
-  });
-
-  // 動態同步更新副技能狀態標籤與未生效標記
-  updatePokedexSubskillUI();
-
-  // 更新食材插槽解鎖標籤
-  const ingSlotBoxes = (pokedexModalEl && typeof pokedexModalEl.querySelectorAll === 'function')
-    ? pokedexModalEl.querySelectorAll('.pokedex-ing-slot-box')
-    : (typeof document.querySelectorAll === 'function' ? document.querySelectorAll('.pokedex-ing-slot-box') : []);
-  ingSlotBoxes.forEach((boxEl, sIdx) => {
-    const reqLv = sIdx === 0 ? 1 : (sIdx === 1 ? 30 : 60);
-    const isUnlocked = pokedexModalState.level >= reqLv;
-    boxEl.classList.toggle('slot-active', isUnlocked);
-    boxEl.classList.toggle('slot-locked', !isUnlocked);
   });
 }
 

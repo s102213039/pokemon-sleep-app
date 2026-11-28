@@ -420,6 +420,259 @@
   }
 
 
+  /* ─── 評測引擎性格兜底表與優缺點診斷輔助函式 ───────────────── */
+const _FALLBACK_LAB_NATURE_DICT = {
+    // 幫忙速度▲
+    '固執': { buffType: 'speed', debuffType: 'ingredient' },
+    'Adamant': { buffType: 'speed', debuffType: 'ingredient' },
+    '勇敢': { buffType: 'speed', debuffType: 'exp' },
+    'Brave': { buffType: 'speed', debuffType: 'exp' },
+    '怕寂寞': { buffType: 'speed', debuffType: 'energy' },
+    'Lonely': { buffType: 'speed', debuffType: 'energy' },
+    '頑皮': { buffType: 'speed', debuffType: 'skill' },
+    'Naughty': { buffType: 'speed', debuffType: 'skill' },
+    // 食材機率▲
+    '內斂': { buffType: 'ingredient', debuffType: 'speed' },
+    'Modest': { buffType: 'ingredient', debuffType: 'speed' },
+    '冷靜': { buffType: 'ingredient', debuffType: 'exp' },
+    'Quiet': { buffType: 'ingredient', debuffType: 'exp' },
+    '慢吞吞': { buffType: 'ingredient', debuffType: 'energy' },
+    'Mild': { buffType: 'ingredient', debuffType: 'energy' },
+    '馬虎': { buffType: 'ingredient', debuffType: 'skill' },
+    'Rash': { buffType: 'ingredient', debuffType: 'skill' },
+    // 主技能發動機率▲
+    '溫和': { buffType: 'skill', debuffType: 'speed' },
+    'Calm': { buffType: 'skill', debuffType: 'speed' },
+    '慎重': { buffType: 'skill', debuffType: 'ingredient' },
+    'Careful': { buffType: 'skill', debuffType: 'ingredient' },
+    '自大': { buffType: 'skill', debuffType: 'exp' },
+    'Sassy': { buffType: 'skill', debuffType: 'exp' },
+    '溫順': { buffType: 'skill', debuffType: 'energy' },
+    'Gentle': { buffType: 'skill', debuffType: 'energy' },
+    // 活力回復量▲
+    '大膽': { buffType: 'energy', debuffType: 'speed' },
+    'Bold': { buffType: 'energy', debuffType: 'speed' },
+    '淘氣': { buffType: 'energy', debuffType: 'ingredient' },
+    'Impish': { buffType: 'energy', debuffType: 'ingredient' },
+    '悠閒': { buffType: 'energy', debuffType: 'exp' },
+    'Relaxed': { buffType: 'energy', debuffType: 'exp' },
+    '樂天': { buffType: 'energy', debuffType: 'skill' },
+    'Lax': { buffType: 'energy', debuffType: 'skill' },
+    // EXP獲得量▲
+    '膽小': { buffType: 'exp', debuffType: 'speed' },
+    'Timid': { buffType: 'exp', debuffType: 'speed' },
+    '爽朗': { buffType: 'exp', debuffType: 'ingredient' },
+    'Jolly': { buffType: 'exp', debuffType: 'ingredient' },
+    '急躁': { buffType: 'exp', debuffType: 'energy' },
+    'Hasty': { buffType: 'exp', debuffType: 'energy' },
+    '天真': { buffType: 'exp', debuffType: 'skill' },
+    'Naive': { buffType: 'exp', debuffType: 'skill' },
+    // 無增減
+    '坦率': { buffType: 'none', debuffType: 'none' },
+    'Hardy': { buffType: 'none', debuffType: 'none' },
+    '害羞': { buffType: 'none', debuffType: 'none' },
+    'Bashful': { buffType: 'none', debuffType: 'none' },
+    '認真': { buffType: 'none', debuffType: 'none' },
+    'Docile': { buffType: 'none', debuffType: 'none' },
+    '勤奮': { buffType: 'none', debuffType: 'none' },
+    'Serious': { buffType: 'none', debuffType: 'none' },
+    '浮躁': { buffType: 'none', debuffType: 'none' },
+    'Quirky': { buffType: 'none', debuffType: 'none' }
+  };
+
+  function _buildLabDiagnostics(ctx) {
+    const {
+      activeSubskills, isBerryBurst, isHelper, isHealer, isCharge, isSlaking,
+      isExtraTasty, isPotExpander, isDreamShard, pkmName, specialty, nature,
+      isSlowpoke, ingredients, hasSkillM, hasSkillS, pkmData, skillLevel,
+      natureName, natDisplayName, isMint, ribbonBonus, remainingEvos,
+      currentLv, isLegendary, isIngSkill, isMetronome
+    } = ctx;
+  const pros = [];
+  const cons = [];
+
+  const hasBFSInTotal = activeSubskills.indexOf('樹果數量S') !== -1 || activeSubskills.indexOf('Berry Finding S') !== -1;
+
+  if (hasBFSInTotal) {
+    if (isBerryBurst) {
+      pros.push(window.I18N?.t?.('lab.c_pro_bfs_berry_burst') ?? 'lab.c_pro_bfs_berry_burst');
+    } else if (isHelper) {
+      cons.push(window.I18N?.t?.('lab.c_con_bfs_helper_boost') ?? 'lab.c_con_bfs_helper_boost');
+    } else if (isHealer) {
+      cons.push(window.I18N?.t?.('lab.c_con_bfs_healer') ?? 'lab.c_con_bfs_healer');
+    } else if (isCharge || isSlaking) {
+      pros.push(window.I18N?.t?.('lab.c_pro_bfs_charge_slaking') ?? 'lab.c_pro_bfs_charge_slaking');
+    } else if (isExtraTasty || isPotExpander || isDreamShard || pkmName.includes('咚咚鼠') || pkmName.includes('Dedenne') || pkmName.includes('磁怪') || pkmName.includes('Magne') || pkmName.includes('喵喵') || pkmName.includes('Meowth')) {
+      cons.push(window.I18N?.t?.('lab.c_con_bfs_tactical_skill') ?? 'lab.c_con_bfs_tactical_skill');
+    } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
+      const hasCarryBuff = activeSubskills.some(s => s.includes('持有上限') || s.includes('Inventory Up'));
+      if (hasCarryBuff) {
+        pros.push(window.I18N?.t?.('lab.c_pro_bfs_ing_with_carry') ?? 'lab.c_pro_bfs_ing_with_carry');
+      } else {
+        cons.push(window.I18N?.t?.('lab.c_con_bfs_ing_no_carry') ?? 'lab.c_con_bfs_ing_no_carry');
+      }
+    } else {
+      pros.push(window.I18N?.t?.('lab.c_pro_bfs_generic') ?? 'lab.c_pro_bfs_generic');
+    }
+  } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
+    const hasHB = activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1;
+    const hasSpeedM = activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1;
+    if (hasHB && hasSpeedM && nature.buffType === 'speed') {
+      pros.push(window.I18N?.t?.('lab.c_pro_berry_extreme_speed') ?? 'lab.c_pro_berry_extreme_speed');
+    } else {
+      cons.push(window.I18N?.t?.('lab.c_con_berry_no_bfs') ?? 'lab.c_con_berry_no_bfs');
+    }
+  }
+
+  if (isSlowpoke) {
+    const hasTailLv30 = ingredients.length >= 2 && (ingredients[1] === '美味尾巴' || (ingredients[1] && ingredients[1].includes('尾巴')) || (ingredients[1] && ingredients[1].includes('Tail')));
+    if (hasTailLv30) {
+      pros.push(window.I18N?.t?.('lab.c_pro_slowpoke_tail') ?? 'lab.c_pro_slowpoke_tail');
+    } else {
+      cons.push(window.I18N?.t?.('lab.c_con_slowpoke_no_tail') ?? 'lab.c_con_slowpoke_no_tail');
+    }
+  }
+
+  if (isHealer) {
+    if (nature.debuffType === 'skill') {
+      cons.push(window.I18N?.t?.('lab.c_con_healer_skill_down') ?? 'lab.c_con_healer_skill_down');
+    } else if (!hasSkillM && !hasSkillS && nature.buffType !== 'skill') {
+      cons.push(window.I18N?.t?.('lab.c_con_healer_no_trigger') ?? 'lab.c_con_healer_no_trigger');
+    }
+  }
+
+  const hasIngMInTotal = activeSubskills.indexOf('食材機率提升M') !== -1 || activeSubskills.indexOf('Ingredient Finder M') !== -1;
+  if (hasIngMInTotal && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
+    pros.push(window.I18N?.t?.('lab.c_pro_ing_m') ?? 'lab.c_pro_ing_m');
+  }
+
+  const hasSkillMInTotal = activeSubskills.indexOf('技能機率提升M') !== -1 || activeSubskills.indexOf('Skill Trigger M') !== -1;
+  if (hasSkillMInTotal) {
+    if (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') {
+      pros.push(window.I18N?.t?.('lab.c_pro_skill_m_spec') ?? 'lab.c_pro_skill_m_spec');
+    } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
+      if (pkmData.main_skill && (pkmData.main_skill.includes('食材') || pkmData.main_skill.includes('Ingredient') || pkmData.main_skill.includes('怪力鉗') || pkmData.main_skill.includes('超幸運') || pkmData.main_skill.includes('禮物') || pkmData.main_skill.includes('正電') || pkmData.main_skill.includes('健美'))) {
+        pros.push(window.I18N?.t?.('lab.c_pro_skill_m_ing') ?? 'lab.c_pro_skill_m_ing');
+      }
+    }
+  }
+
+  if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) {
+    pros.push(window.I18N?.t?.('lab.c_pro_helping_bonus') ?? 'lab.c_pro_helping_bonus');
+  }
+
+  if (activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1) {
+    pros.push(window.I18N?.t?.('lab.c_pro_helping_speed_m') ?? 'lab.c_pro_helping_speed_m');
+  }
+
+  if (skillLevel >= 6 && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
+    pros.push(window.I18N?.t?.('lab.c_pro_high_skill_lv', { lv: skillLevel }) ?? 'lab.c_pro_high_skill_lv');
+  }
+
+  if (nature.buffType === 'speed') {
+    if ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') && natureName === '固執') {
+      pros.push(window.I18N?.t?.('lab.c_pro_adamant_berry') ?? 'lab.c_pro_adamant_berry');
+    } else {
+      pros.push(window.I18N?.t?.('lab.c_pro_nature_speed_up', { nature: natDisplayName }) ?? 'lab.c_pro_nature_speed_up');
+    }
+  } else if (nature.debuffType === 'speed') {
+    cons.push(window.I18N?.t?.('lab.c_con_nature_speed_down', { nature: natDisplayName }) ?? 'lab.c_con_nature_speed_down');
+  }
+
+  if (nature.buffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
+    pros.push(window.I18N?.t?.('lab.c_pro_nature_ing_up', { nature: natDisplayName }) ?? 'lab.c_pro_nature_ing_up');
+  } else if (nature.debuffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
+    cons.push(window.I18N?.t?.('lab.c_con_nature_ing_down', { nature: natDisplayName }) ?? 'lab.c_con_nature_ing_down');
+  }
+
+  if (nature.buffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
+    pros.push(window.I18N?.t?.('lab.c_pro_nature_skill_up', { nature: natDisplayName }) ?? 'lab.c_pro_nature_skill_up');
+  } else if (nature.debuffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
+    cons.push(window.I18N?.t?.('lab.c_con_nature_skill_down', { nature: natDisplayName }) ?? 'lab.c_con_nature_skill_down');
+  }
+
+  if (isMint) {
+    pros.push(window.I18N?.t?.('lab.c_pro_cleanse_mint', { nature: natDisplayName }) ?? 'lab.c_pro_cleanse_mint');
+  }
+
+  if (ribbonBonus.level > 0) {
+    const carryText = `+${ribbonBonus.carry}`;
+    if (ribbonBonus.speedDiscount > 0) {
+      const pctText = `${Math.round(ribbonBonus.speedDiscount * 100)}%`;
+      pros.push(window.I18N?.t?.('lab.c_pro_ribbon_speed', { lv: ribbonBonus.level, pct: pctText, carry: carryText }) ?? 'lab.c_pro_ribbon_speed');
+    } else {
+      const ribbonKey = remainingEvos === 0 ? 'lab.c_pro_ribbon_carry_final' : 'lab.c_pro_ribbon_carry';
+      pros.push(window.I18N?.t?.(ribbonKey, { lv: ribbonBonus.level, carry: carryText }) ?? ribbonKey);
+    }
+  }
+
+  // 食材組合深度診斷 (AAA, ABB, ABC)
+  if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
+    if (ingredients.length >= 3 && currentLv >= 60) {
+      const i0 = ingredients[0], i1 = ingredients[1], i2 = ingredients[2];
+      if (i0 && i1 && i2) {
+        if (i0 === i1 && i1 === i2) {
+          pros.push(window.I18N?.t?.('lab.c_pro_ing_aaa') ?? 'lab.c_pro_ing_aaa');
+        } else if (i0 !== i1 && i1 === i2) {
+          pros.push(window.I18N?.t?.('lab.c_pro_ing_abb') ?? 'lab.c_pro_ing_abb');
+        } else if (i0 !== i1 && i1 !== i2 && i0 !== i2) {
+          cons.push(window.I18N?.t?.('lab.c_con_ing_abc') ?? 'lab.c_con_ing_abc');
+        }
+      }
+    }
+  }
+
+  // 持有上限防溢滿診斷
+  if (activeSubskills.indexOf('持有上限提升L') !== -1 || activeSubskills.indexOf('持有上限提升M') !== -1) {
+    pros.push(window.I18N?.t?.('lab.c_pro_inventory_up') ?? 'lab.c_pro_inventory_up');
+  }
+
+  // 樹果遽增型特殊診斷 (未帶 BFS 時)
+  if (isBerryBurst && !hasBFSInTotal) {
+    pros.push(window.I18N?.t?.('lab.c_pro_berry_burst_no_bfs') ?? 'lab.c_pro_berry_burst_no_bfs');
+  }
+
+  // 充能直傷型特殊診斷 (未帶 BFS 時)
+  if (isCharge && !hasBFSInTotal) {
+    pros.push(window.I18N?.t?.('lab.c_pro_charge_no_bfs') ?? 'lab.c_pro_charge_no_bfs');
+  }
+
+  // 傳說神獸特殊診斷
+  if (isLegendary) {
+    pros.push(window.I18N?.t?.('lab.c_pro_legendary') ?? 'lab.c_pro_legendary');
+  }
+
+  // 料理大成功 (咚咚鼠)
+  if (isExtraTasty) {
+    pros.push(window.I18N?.t?.('lab.c_pro_extra_tasty') ?? 'lab.c_pro_extra_tasty');
+  }
+
+  // 料理擴鍋 (自爆磁怪)
+  if (isPotExpander) {
+    pros.push(window.I18N?.t?.('lab.c_pro_pot_expander') ?? 'lab.c_pro_pot_expander');
+  }
+
+  // 夢之碎片 (路卡利歐)
+  if (isDreamShard) {
+    pros.push(window.I18N?.t?.('lab.c_pro_dream_shard') ?? 'lab.c_pro_dream_shard');
+  }
+
+  // 食材獲取 (水伊布)
+  if (isIngSkill) {
+    pros.push(window.I18N?.t?.('lab.c_pro_ing_skill') ?? 'lab.c_pro_ing_skill');
+  }
+
+  // 揮指隨機戰術 (波克基斯)
+  if (isMetronome) {
+    pros.push(window.I18N?.t?.('lab.c_pro_metronome') ?? 'lab.c_pro_metronome');
+  }
+
+  if (pros.length === 0) {
+    pros.push(window.I18N?.t?.('lab.c_pro_basic_fallback') ?? 'lab.c_pro_basic_fallback');
+  }
+    return { pros, cons };
+  }
+
   const _FALLBACK_LAB_ENGINE_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
 
   function _getLabEngineCaps() {
@@ -459,68 +712,10 @@
     });
 
     // 性格修正
-    const fallbackNatureDict = {
-      // 幫忙速度▲
-      '固執': { buffType: 'speed', debuffType: 'ingredient' },
-      'Adamant': { buffType: 'speed', debuffType: 'ingredient' },
-      '勇敢': { buffType: 'speed', debuffType: 'exp' },
-      'Brave': { buffType: 'speed', debuffType: 'exp' },
-      '怕寂寞': { buffType: 'speed', debuffType: 'energy' },
-      'Lonely': { buffType: 'speed', debuffType: 'energy' },
-      '頑皮': { buffType: 'speed', debuffType: 'skill' },
-      'Naughty': { buffType: 'speed', debuffType: 'skill' },
-      // 食材機率▲
-      '內斂': { buffType: 'ingredient', debuffType: 'speed' },
-      'Modest': { buffType: 'ingredient', debuffType: 'speed' },
-      '冷靜': { buffType: 'ingredient', debuffType: 'exp' },
-      'Quiet': { buffType: 'ingredient', debuffType: 'exp' },
-      '慢吞吞': { buffType: 'ingredient', debuffType: 'energy' },
-      'Mild': { buffType: 'ingredient', debuffType: 'energy' },
-      '馬虎': { buffType: 'ingredient', debuffType: 'skill' },
-      'Rash': { buffType: 'ingredient', debuffType: 'skill' },
-      // 主技能發動機率▲
-      '溫和': { buffType: 'skill', debuffType: 'speed' },
-      'Calm': { buffType: 'skill', debuffType: 'speed' },
-      '慎重': { buffType: 'skill', debuffType: 'ingredient' },
-      'Careful': { buffType: 'skill', debuffType: 'ingredient' },
-      '自大': { buffType: 'skill', debuffType: 'exp' },
-      'Sassy': { buffType: 'skill', debuffType: 'exp' },
-      '溫順': { buffType: 'skill', debuffType: 'energy' },
-      'Gentle': { buffType: 'skill', debuffType: 'energy' },
-      // 活力回復量▲
-      '大膽': { buffType: 'energy', debuffType: 'speed' },
-      'Bold': { buffType: 'energy', debuffType: 'speed' },
-      '淘氣': { buffType: 'energy', debuffType: 'ingredient' },
-      'Impish': { buffType: 'energy', debuffType: 'ingredient' },
-      '悠閒': { buffType: 'energy', debuffType: 'exp' },
-      'Relaxed': { buffType: 'energy', debuffType: 'exp' },
-      '樂天': { buffType: 'energy', debuffType: 'skill' },
-      'Lax': { buffType: 'energy', debuffType: 'skill' },
-      // EXP獲得量▲
-      '膽小': { buffType: 'exp', debuffType: 'speed' },
-      'Timid': { buffType: 'exp', debuffType: 'speed' },
-      '爽朗': { buffType: 'exp', debuffType: 'ingredient' },
-      'Jolly': { buffType: 'exp', debuffType: 'ingredient' },
-      '急躁': { buffType: 'exp', debuffType: 'energy' },
-      'Hasty': { buffType: 'exp', debuffType: 'energy' },
-      '天真': { buffType: 'exp', debuffType: 'skill' },
-      'Naive': { buffType: 'exp', debuffType: 'skill' },
-      // 無增減
-      '坦率': { buffType: 'none', debuffType: 'none' },
-      'Hardy': { buffType: 'none', debuffType: 'none' },
-      '害羞': { buffType: 'none', debuffType: 'none' },
-      'Bashful': { buffType: 'none', debuffType: 'none' },
-      '認真': { buffType: 'none', debuffType: 'none' },
-      'Docile': { buffType: 'none', debuffType: 'none' },
-      '勤奮': { buffType: 'none', debuffType: 'none' },
-      'Serious': { buffType: 'none', debuffType: 'none' },
-      '浮躁': { buffType: 'none', debuffType: 'none' },
-      'Quirky': { buffType: 'none', debuffType: 'none' }
-    };
     const isMint = !!(cleanseMint || (pkmData && (pkmData.cleanseMint || pkmData.mint)));
     let nature = (window.UserBox && window.UserBox.NATURE_DICT && window.UserBox.NATURE_DICT[natureName]) ||
       (window.PokemonApp && window.PokemonApp.NATURE_DICT && window.PokemonApp.NATURE_DICT[natureName]) ||
-      fallbackNatureDict[natureName] || { buffType: 'none', debuffType: 'none' };
+      _FALLBACK_LAB_NATURE_DICT[natureName] || { buffType: 'none', debuffType: 'none' };
     if (isMint) {
       nature = { buffType: 'none', debuffType: 'none' };
     }
@@ -967,190 +1162,13 @@
       gradeColor = '#ef4444';
     }
 
-    // 深度優點與缺點分析 (Pros & Cons)
-    const pros = [];
-    const cons = [];
-
-    const hasBFSInTotal = activeSubskills.indexOf('樹果數量S') !== -1 || activeSubskills.indexOf('Berry Finding S') !== -1;
-
-    if (hasBFSInTotal) {
-      if (isBerryBurst) {
-        pros.push(window.I18N?.t?.('lab.c_pro_bfs_berry_burst') ?? 'lab.c_pro_bfs_berry_burst');
-      } else if (isHelper) {
-        cons.push(window.I18N?.t?.('lab.c_con_bfs_helper_boost') ?? 'lab.c_con_bfs_helper_boost');
-      } else if (isHealer) {
-        cons.push(window.I18N?.t?.('lab.c_con_bfs_healer') ?? 'lab.c_con_bfs_healer');
-      } else if (isCharge || isSlaking) {
-        pros.push(window.I18N?.t?.('lab.c_pro_bfs_charge_slaking') ?? 'lab.c_pro_bfs_charge_slaking');
-      } else if (isExtraTasty || isPotExpander || isDreamShard || pkmName.includes('咚咚鼠') || pkmName.includes('Dedenne') || pkmName.includes('磁怪') || pkmName.includes('Magne') || pkmName.includes('喵喵') || pkmName.includes('Meowth')) {
-        cons.push(window.I18N?.t?.('lab.c_con_bfs_tactical_skill') ?? 'lab.c_con_bfs_tactical_skill');
-      } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
-        const hasCarryBuff = activeSubskills.some(s => s.includes('持有上限') || s.includes('Inventory Up'));
-        if (hasCarryBuff) {
-          pros.push(window.I18N?.t?.('lab.c_pro_bfs_ing_with_carry') ?? 'lab.c_pro_bfs_ing_with_carry');
-        } else {
-          cons.push(window.I18N?.t?.('lab.c_con_bfs_ing_no_carry') ?? 'lab.c_con_bfs_ing_no_carry');
-        }
-      } else {
-        pros.push(window.I18N?.t?.('lab.c_pro_bfs_generic') ?? 'lab.c_pro_bfs_generic');
-      }
-    } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
-      const hasHB = activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1;
-      const hasSpeedM = activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1;
-      if (hasHB && hasSpeedM && nature.buffType === 'speed') {
-        pros.push(window.I18N?.t?.('lab.c_pro_berry_extreme_speed') ?? 'lab.c_pro_berry_extreme_speed');
-      } else {
-        cons.push(window.I18N?.t?.('lab.c_con_berry_no_bfs') ?? 'lab.c_con_berry_no_bfs');
-      }
-    }
-
-    if (isSlowpoke) {
-      const hasTailLv30 = ingredients.length >= 2 && (ingredients[1] === '美味尾巴' || (ingredients[1] && ingredients[1].includes('尾巴')) || (ingredients[1] && ingredients[1].includes('Tail')));
-      if (hasTailLv30) {
-        pros.push(window.I18N?.t?.('lab.c_pro_slowpoke_tail') ?? 'lab.c_pro_slowpoke_tail');
-      } else {
-        cons.push(window.I18N?.t?.('lab.c_con_slowpoke_no_tail') ?? 'lab.c_con_slowpoke_no_tail');
-      }
-    }
-
-    if (isHealer) {
-      if (nature.debuffType === 'skill') {
-        cons.push(window.I18N?.t?.('lab.c_con_healer_skill_down') ?? 'lab.c_con_healer_skill_down');
-      } else if (!hasSkillM && !hasSkillS && nature.buffType !== 'skill') {
-        cons.push(window.I18N?.t?.('lab.c_con_healer_no_trigger') ?? 'lab.c_con_healer_no_trigger');
-      }
-    }
-
-    const hasIngMInTotal = activeSubskills.indexOf('食材機率提升M') !== -1 || activeSubskills.indexOf('Ingredient Finder M') !== -1;
-    if (hasIngMInTotal && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
-      pros.push(window.I18N?.t?.('lab.c_pro_ing_m') ?? 'lab.c_pro_ing_m');
-    }
-
-    const hasSkillMInTotal = activeSubskills.indexOf('技能機率提升M') !== -1 || activeSubskills.indexOf('Skill Trigger M') !== -1;
-    if (hasSkillMInTotal) {
-      if (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') {
-        pros.push(window.I18N?.t?.('lab.c_pro_skill_m_spec') ?? 'lab.c_pro_skill_m_spec');
-      } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
-        if (pkmData.main_skill && (pkmData.main_skill.includes('食材') || pkmData.main_skill.includes('Ingredient') || pkmData.main_skill.includes('怪力鉗') || pkmData.main_skill.includes('超幸運') || pkmData.main_skill.includes('禮物') || pkmData.main_skill.includes('正電') || pkmData.main_skill.includes('健美'))) {
-          pros.push(window.I18N?.t?.('lab.c_pro_skill_m_ing') ?? 'lab.c_pro_skill_m_ing');
-        }
-      }
-    }
-
-    if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) {
-      pros.push(window.I18N?.t?.('lab.c_pro_helping_bonus') ?? 'lab.c_pro_helping_bonus');
-    }
-
-    if (activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1) {
-      pros.push(window.I18N?.t?.('lab.c_pro_helping_speed_m') ?? 'lab.c_pro_helping_speed_m');
-    }
-
-    if (skillLevel >= 6 && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
-      pros.push(window.I18N?.t?.('lab.c_pro_high_skill_lv', { lv: skillLevel }) ?? 'lab.c_pro_high_skill_lv');
-    }
-
-    if (nature.buffType === 'speed') {
-      if ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') && natureName === '固執') {
-        pros.push(window.I18N?.t?.('lab.c_pro_adamant_berry') ?? 'lab.c_pro_adamant_berry');
-      } else {
-        pros.push(window.I18N?.t?.('lab.c_pro_nature_speed_up', { nature: natDisplayName }) ?? 'lab.c_pro_nature_speed_up');
-      }
-    } else if (nature.debuffType === 'speed') {
-      cons.push(window.I18N?.t?.('lab.c_con_nature_speed_down', { nature: natDisplayName }) ?? 'lab.c_con_nature_speed_down');
-    }
-
-    if (nature.buffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
-      pros.push(window.I18N?.t?.('lab.c_pro_nature_ing_up', { nature: natDisplayName }) ?? 'lab.c_pro_nature_ing_up');
-    } else if (nature.debuffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
-      cons.push(window.I18N?.t?.('lab.c_con_nature_ing_down', { nature: natDisplayName }) ?? 'lab.c_con_nature_ing_down');
-    }
-
-    if (nature.buffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
-      pros.push(window.I18N?.t?.('lab.c_pro_nature_skill_up', { nature: natDisplayName }) ?? 'lab.c_pro_nature_skill_up');
-    } else if (nature.debuffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
-      cons.push(window.I18N?.t?.('lab.c_con_nature_skill_down', { nature: natDisplayName }) ?? 'lab.c_con_nature_skill_down');
-    }
-
-    if (isMint) {
-      pros.push(window.I18N?.t?.('lab.c_pro_cleanse_mint', { nature: natDisplayName }) ?? 'lab.c_pro_cleanse_mint');
-    }
-
-    if (ribbonBonus.level > 0) {
-      const carryText = `+${ribbonBonus.carry}`;
-      if (ribbonBonus.speedDiscount > 0) {
-        const pctText = `${Math.round(ribbonBonus.speedDiscount * 100)}%`;
-        pros.push(window.I18N?.t?.('lab.c_pro_ribbon_speed', { lv: ribbonBonus.level, pct: pctText, carry: carryText }) ?? 'lab.c_pro_ribbon_speed');
-      } else {
-        const ribbonKey = remainingEvos === 0 ? 'lab.c_pro_ribbon_carry_final' : 'lab.c_pro_ribbon_carry';
-        pros.push(window.I18N?.t?.(ribbonKey, { lv: ribbonBonus.level, carry: carryText }) ?? ribbonKey);
-      }
-    }
-
-    // 食材組合深度診斷 (AAA, ABB, ABC)
-    if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
-      if (ingredients.length >= 3 && currentLv >= 60) {
-        const i0 = ingredients[0], i1 = ingredients[1], i2 = ingredients[2];
-        if (i0 && i1 && i2) {
-          if (i0 === i1 && i1 === i2) {
-            pros.push(window.I18N?.t?.('lab.c_pro_ing_aaa') ?? 'lab.c_pro_ing_aaa');
-          } else if (i0 !== i1 && i1 === i2) {
-            pros.push(window.I18N?.t?.('lab.c_pro_ing_abb') ?? 'lab.c_pro_ing_abb');
-          } else if (i0 !== i1 && i1 !== i2 && i0 !== i2) {
-            cons.push(window.I18N?.t?.('lab.c_con_ing_abc') ?? 'lab.c_con_ing_abc');
-          }
-        }
-      }
-    }
-
-    // 持有上限防溢滿診斷
-    if (activeSubskills.indexOf('持有上限提升L') !== -1 || activeSubskills.indexOf('持有上限提升M') !== -1) {
-      pros.push(window.I18N?.t?.('lab.c_pro_inventory_up') ?? 'lab.c_pro_inventory_up');
-    }
-
-    // 樹果遽增型特殊診斷 (未帶 BFS 時)
-    if (isBerryBurst && !hasBFSInTotal) {
-      pros.push(window.I18N?.t?.('lab.c_pro_berry_burst_no_bfs') ?? 'lab.c_pro_berry_burst_no_bfs');
-    }
-
-    // 充能直傷型特殊診斷 (未帶 BFS 時)
-    if (isCharge && !hasBFSInTotal) {
-      pros.push(window.I18N?.t?.('lab.c_pro_charge_no_bfs') ?? 'lab.c_pro_charge_no_bfs');
-    }
-
-    // 傳說神獸特殊診斷
-    if (isLegendary) {
-      pros.push(window.I18N?.t?.('lab.c_pro_legendary') ?? 'lab.c_pro_legendary');
-    }
-
-    // 料理大成功 (咚咚鼠)
-    if (isExtraTasty) {
-      pros.push(window.I18N?.t?.('lab.c_pro_extra_tasty') ?? 'lab.c_pro_extra_tasty');
-    }
-
-    // 料理擴鍋 (自爆磁怪)
-    if (isPotExpander) {
-      pros.push(window.I18N?.t?.('lab.c_pro_pot_expander') ?? 'lab.c_pro_pot_expander');
-    }
-
-    // 夢之碎片 (路卡利歐)
-    if (isDreamShard) {
-      pros.push(window.I18N?.t?.('lab.c_pro_dream_shard') ?? 'lab.c_pro_dream_shard');
-    }
-
-    // 食材獲取 (水伊布)
-    if (isIngSkill) {
-      pros.push(window.I18N?.t?.('lab.c_pro_ing_skill') ?? 'lab.c_pro_ing_skill');
-    }
-
-    // 揮指隨機戰術 (波克基斯)
-    if (isMetronome) {
-      pros.push(window.I18N?.t?.('lab.c_pro_metronome') ?? 'lab.c_pro_metronome');
-    }
-
-    if (pros.length === 0) {
-      pros.push(window.I18N?.t?.('lab.c_pro_basic_fallback') ?? 'lab.c_pro_basic_fallback');
-    }
-
+    const { pros, cons } = _buildLabDiagnostics({
+      activeSubskills, isBerryBurst, isHelper, isHealer, isCharge, isSlaking,
+      isExtraTasty, isPotExpander, isDreamShard, pkmName, specialty, nature,
+      isSlowpoke, ingredients, hasSkillM, hasSkillS, pkmData, skillLevel,
+      natureName, natDisplayName, isMint, ribbonBonus, remainingEvos,
+      currentLv, isLegendary, isIngSkill, isMetronome
+    });
     // 升級消耗計算
     const caps = _getLabEngineCaps();
     const capLv = caps.POKEMON_LEVEL_CAP || 70;
@@ -1195,7 +1213,6 @@
       costs: costsObj
     };
   }
-
 
   /* ─── 升級里程碑質變預測 (Specialty-Aware Milestone Leap Projections) ─── */
   function calculateMilestoneProjections(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, currentEval) {
@@ -1448,7 +1465,7 @@ const TARGET_TOP_RECIPES = [
     const name = window.I18N?.getRecipeName?.(rec) ?? (rec.name_cn || rec.name_en || '');
     const icon = rec.icon || rec.icon_url || '';
     if (!icon) return window.I18N?.t?.('lab.t_recipe_quote', { name }) ?? 'lab.t_recipe_quote';
-    return `<span class="appraisal-summary-recipe-chip" title="${name}"><img src="${icon}" class="appraisal-summary-recipe-icon" alt="${name}" loading="lazy" onerror="this.style.display='none'; if (this.nextElementSibling) { this.nextElementSibling.style.position='static'; this.nextElementSibling.style.clip='auto'; this.nextElementSibling.style.width='auto'; this.nextElementSibling.style.height='auto'; }"><span class="sr-only">${name}</span></span>`;
+    return `<span class="appraisal-summary-recipe-chip" title="${name}"><img src="${icon}" class="appraisal-summary-recipe-icon" width="22" height="22" alt="${name}" loading="lazy" decoding="async" onerror="this.style.display='none'; if (this.nextElementSibling) { this.nextElementSibling.style.position='static'; this.nextElementSibling.style.clip='auto'; this.nextElementSibling.style.width='auto'; this.nextElementSibling.style.height='auto'; }"><span class="sr-only">${name}</span></span>`;
   }
 
   function getSignatureRecipeRecommendations(ingredients) {
@@ -2033,679 +2050,6 @@ const TARGET_TOP_RECIPES = [
   }
 
 
-  function getIngCountFromBase(basePkm, slotIdx, ingName) {
-    if (!basePkm || !basePkm.ingredients) {
-      return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
-    }
-    const found = basePkm.ingredients.find(function(ig) { return ig.name === ingName; });
-    if (found) {
-      if (slotIdx === 0 && found.l1 !== undefined) return parseInt(found.l1, 10);
-      if (slotIdx === 1 && found.l30 !== undefined) return parseInt(found.l30, 10);
-      if (slotIdx === 2 && found.l60 !== undefined) return parseInt(found.l60, 10);
-      if (typeof found.count === 'number') return found.count;
-    }
-    const slotIng = basePkm.ingredients[slotIdx];
-    if (slotIng) {
-      if (slotIdx === 0 && slotIng.l1 !== undefined) return parseInt(slotIng.l1, 10);
-      if (slotIdx === 1 && slotIng.l30 !== undefined) return parseInt(slotIng.l30, 10);
-      if (slotIdx === 2 && slotIng.l60 !== undefined) return parseInt(slotIng.l60, 10);
-      if (typeof slotIng.count === 'number') return slotIng.count;
-    }
-    return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
-  }
-
-  /* ─── 副技能分級判斷 ───────────────────────────────────── */
-  const GOLD_SUBSKILLS = new Set(['幫手獎勵', '樹果數量S', '技能等級提升M', '夢之碎片獎勵', '睡眠EXP獎勵', '研究EXP獎勵', '活力回復獎勵']);
-  const BLUE_SUBSKILLS = new Set(['幫忙速度M', '食材機率提升M', '技能機率提升M', '技能等級提升S', '持有上限提升L', '持有上限提升M']);
-
-  const DEFAULT_SUBSKILLS_DATA = [
-    { name: '樹果數量S', tier: 'gold' },
-    { name: '幫手獎勵', tier: 'gold' },
-    { name: '睡眠EXP獎勵', tier: 'gold' },
-    { name: '活力回復獎勵', tier: 'gold' },
-    { name: '夢之碎片獎勵', tier: 'gold' },
-    { name: '研究EXP獎勵', tier: 'gold' },
-    { name: '技能等級提升M', tier: 'gold' },
-    { name: '幫忙速度M', tier: 'blue' },
-    { name: '食材機率提升M', tier: 'blue' },
-    { name: '技能機率提升M', tier: 'blue' },
-    { name: '技能等級提升S', tier: 'blue' },
-    { name: '持有上限提升L', tier: 'blue' },
-    { name: '持有上限提升M', tier: 'blue' },
-    { name: '幫忙速度S', tier: 'white' },
-    { name: '食材機率提升S', tier: 'white' },
-    { name: '技能機率提升S', tier: 'white' },
-    { name: '持有上限提升S', tier: 'white' },
-    { name: '活力回復提升S', tier: 'white' }
-  ];
-
-  function getSkillTier(sName) {
-    if (!sName) return 'white';
-    if (GOLD_SUBSKILLS.has(sName)) return 'gold';
-    if (BLUE_SUBSKILLS.has(sName)) return 'blue';
-    const subskillPool = (typeof window !== 'undefined' && ((window.UserBox && window.UserBox.SUBSKILLS_DATA) || (window.PokemonBoxApp && window.PokemonBoxApp.SUBSKILLS_DATA))) || DEFAULT_SUBSKILLS_DATA;
-    const found = subskillPool.find(function (s) { return s.name === sName; });
-    if (found && found.tier) return found.tier;
-    return 'white';
-  }
-
-  /* ─── 診斷報告書彈窗管理 ───────────────────────────────── */
-  function openAppraisalModal(pkmOrBoxItem) {
-    if (!pkmOrBoxItem) return;
-    if (window.AppraisalLab) {
-      window.AppraisalLab._currentBoxItem = (pkmOrBoxItem && pkmOrBoxItem.rawItem) ? pkmOrBoxItem.rawItem : (pkmOrBoxItem && pkmOrBoxItem.uid ? pkmOrBoxItem : null);
-    }
-
-    let pkmData = null;
-    let currentLv = pkmOrBoxItem.level || 30;
-    let natureName = pkmOrBoxItem.nature || '坦率';
-    let subskills = pkmOrBoxItem.subskills || [];
-    let ingredients = pkmOrBoxItem.ingredients || [];
-    let ribbonLevel = parseInt(pkmOrBoxItem.ribbon, 10) || 0;
-
-    if (pkmOrBoxItem.pkm) {
-      pkmData = pkmOrBoxItem.pkm;
-    } else if (pkmOrBoxItem.name_cn) {
-      pkmData = pkmOrBoxItem;
-    } else if (window.allPokemons) {
-      pkmData = window.allPokemons.find(function(p) { return p.name_cn === pkmOrBoxItem.name || p.id === pkmOrBoxItem.pkmId; });
-    }
-
-    let skillLevel = getEffectiveSkillLevel(pkmOrBoxItem, pkmData);
-    const nickname = (pkmOrBoxItem.nickname || '').trim();
-    const isMint = !!(pkmOrBoxItem.cleanseMint || pkmOrBoxItem.mint || (pkmOrBoxItem.rawItem && (pkmOrBoxItem.rawItem.cleanseMint || pkmOrBoxItem.rawItem.mint)) || (pkmData && (pkmData.cleanseMint || pkmData.mint)));
-    const targetPkmData = Object.assign({}, pkmData, { cleanseMint: isMint });
-
-    const evaluation = evaluatePokemon(targetPkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, isMint);
-    if (!evaluation) return;
-
-    let modal = document.getElementById('modal-appraisal-report');
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.id = 'modal-appraisal-report';
-      modal.className = 'appraisal-modal-backdrop';
-      document.body.appendChild(modal);
-    }
-
-    const radarSVG = renderRadarChartSVG(evaluation.scores, 360, 270);
-    const SIX_DIM_META = getSixDimMeta();
-    const displayName = window.I18N?.getPokemonName?.(pkmData) ?? (pkmData.name_cn || pkmData.name_en || '');
-    const natDisplayName = window.I18N?.getNatureName?.(natureName) ?? natureName;
-
-    // 遊戲同款性格展示排版 (In-Game Style Nature Display)
-    const natureObj = NATURE_DATA.find(function(n) { return n.name === natureName || n.name_en === natureName; });
-    let natureEffectHtml = '';
-    if (isMint) {
-      natureEffectHtml = `
-        <div class="nature-effects-group">
-          <div class="nature-effect-neutral nature-effect-mint">
-            ${window.I18N?.t?.('lab.t_nature_mint_neutral') ?? 'lab.t_nature_mint_neutral'}
-          </div>
-        </div>
-      `;
-    } else if (natureObj && natureObj.buff && natureObj.buff !== '無增減') {
-      const buffLabel = (window.I18N?.field?.(natureObj, 'buff') ?? (natureObj.buff || '')).replace(/[▲▼]/g, '').trim();
-      const debuffLabel = (window.I18N?.field?.(natureObj, 'debuff') ?? (natureObj.debuff || '')).replace(/[▲▼]/g, '').trim();
-      natureEffectHtml = `
-        <div class="nature-effects-group">
-          <div class="nature-effect-row nature-buff-row">
-            <span class="nature-effect-label">${escapeHtml(buffLabel)}</span>
-            <span class="nature-arrows-up">▲▲</span>
-          </div>
-          <div class="nature-effect-row nature-debuff-row">
-            <span class="nature-effect-label">${escapeHtml(debuffLabel)}</span>
-            <span class="nature-arrows-down">▼▼</span>
-          </div>
-        </div>
-      `;
-    } else {
-      natureEffectHtml = `
-        <div class="nature-effects-group">
-          <div class="nature-effect-neutral">
-            ${window.I18N?.t?.('lab.t_nature_neutral') ?? 'lab.t_nature_neutral'}
-          </div>
-        </div>
-      `;
-    }
-
-    const berry = (typeof window.getPokemonBerry === 'function') 
-      ? window.getPokemonBerry(pkmData) 
-      : (pkmData.berry || { name: '', icon: '' });
-    const berryName = window.I18N?.getBerryName?.(berry.name) ?? (berry.name || '--');
-
-    // 專長型態 (不展示「專長」二字，僅展示 食材型 / 技能型 / 樹果型，無外框)
-    let specTypeLabel = window.I18N?.t?.('lab.t_spec_ing') ?? 'lab.t_spec_ing';
-    let specClass = 'spec-ingredient';
-    if (pkmData.specialty && (pkmData.specialty.includes('樹果') || pkmData.specialty === 'Berries')) {
-      specClass = 'spec-berry';
-      specTypeLabel = window.I18N?.t?.('lab.t_spec_berry') ?? 'lab.t_spec_berry';
-    } else if (pkmData.specialty && (pkmData.specialty.includes('技能') || pkmData.specialty === 'Skills')) {
-      specClass = 'spec-skill';
-      specTypeLabel = window.I18N?.t?.('lab.t_spec_skill') ?? 'lab.t_spec_skill';
-    } else if (pkmData.specialty && (pkmData.specialty.includes('全能') || pkmData.specialty.includes('全部') || pkmData.specialty === 'All-Rounder' || pkmData.specialty.toLowerCase() === 'all')) {
-      specClass = 'spec-all';
-      specTypeLabel = window.I18N?.t?.('lab.t_spec_all') ?? 'lab.t_spec_all';
-    }
-
-    let summaryNote = pkmOrBoxItem.summaryNote || '';
-    if (!summaryNote || summaryNote.includes('質變躍升') || summaryNote.includes('建議優先升至') || summaryNote.includes('未達')) {
-      summaryNote = generateIntelligentSummary(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, evaluation);
-    }
-
-    // 主技能資訊 (Main Skill & Level)
-    const rawMainSkill = (pkmData && pkmData.main_skill) || (pkmData && pkmData.skill && pkmData.skill.name) || pkmOrBoxItem.main_skill || '';
-    const mainSkillName = rawMainSkill ? (window.I18N?.getMainSkillName?.(rawMainSkill) ?? rawMainSkill) : (window.I18N?.t?.('lab.t_main_skill') ?? 'lab.t_main_skill');
-    const skillLvl = skillLevel || 1;
-
-    // 食材組合資訊 (Ingredients & Quantity, 3 Slots with Level Unlock)
-    const ingSlotNames = [
-      (ingredients && ingredients[0]) ? (typeof ingredients[0] === 'string' ? ingredients[0] : ingredients[0].name) : (pkmOrBoxItem.ing1 || (pkmData && pkmData.ingredients && pkmData.ingredients[0] ? pkmData.ingredients[0].name : '')),
-      (ingredients && ingredients[1]) ? (typeof ingredients[1] === 'string' ? ingredients[1] : ingredients[1].name) : (pkmOrBoxItem.ing2 || (pkmData && pkmData.ingredients && pkmData.ingredients[1] ? pkmData.ingredients[1].name : '')),
-      (ingredients && ingredients[2]) ? (typeof ingredients[2] === 'string' ? ingredients[2] : ingredients[2].name) : (pkmOrBoxItem.ing3 || (pkmData && pkmData.ingredients && pkmData.ingredients[2] ? pkmData.ingredients[2].name : ''))
-    ];
-
-    const ingChipsHtml = [0, 1, 2].map(function(idx) {
-      const unlockLv = idx === 0 ? 1 : (idx === 1 ? 30 : 60);
-      const isUnlocked = currentLv >= unlockLv;
-      const lockClass = !isUnlocked ? ' ing-locked' : '';
-      const ingName = ingSlotNames[idx];
-      const lockTitleSuffix = !isUnlocked ? (window.I18N?.t?.('lab.t_ing_locked') ?? 'lab.t_ing_locked') : '';
-
-      if (!ingName || ingName === '--') {
-        return `
-          <div class="appraisal-ing-chip is-empty${lockClass}">
-            <span class="appraisal-ing-chip-empty">--</span>
-          </div>
-        `;
-      }
-      const displayName = window.I18N?.getIngredientName?.(ingName) ?? ingName;
-      const iconUrl = (window.I18N && typeof window.I18N.getIngredientIcon === 'function')
-        ? window.I18N.getIngredientIcon(ingName)
-        : '';
-      const count = getIngCountFromBase(pkmData, idx, ingName);
-      return `
-        <div class="appraisal-ing-chip${lockClass}" title="${escapeHtml(displayName)}${lockTitleSuffix}">
-          ${iconUrl ? `<img src="${iconUrl}" class="appraisal-ing-chip-icon" alt="${escapeHtml(displayName)}">` : ''}
-        </div>
-      `;
-    }).join('');
-
-    const formulaData = (window.PokemonApp && typeof window.PokemonApp.calculatePokedexIngredientFormulas === 'function')
-      ? window.PokemonApp.calculatePokedexIngredientFormulas({
-          pkm: pkmData,
-          level: currentLv,
-          nature: natureName,
-          subskills: subskills,
-          ingredients: ingSlotNames,
-          ribbon: ribbonLevel,
-          skillLevel: skillLevel,
-          cleanseMint: isMint
-        })
-      : null;
-
-    const isMobileH5 = typeof document !== 'undefined' && (
-      (document.body && document.body.classList && document.body.classList.contains('mobile-h5-app')) ||
-      (typeof document.querySelector === 'function' && !!document.querySelector('.mobile-h5-app')) ||
-      (typeof window !== 'undefined' && (window.IS_MOBILE_H5 || (window.location && window.location.pathname && window.location.pathname.includes('/app/'))))
-    );
-
-    if (isMobileH5) {
-      modal.className = 'box-modal-backdrop modal-overlay appraisal-modal-backdrop mobile-modal-backdrop';
-      modal.innerHTML = `
-        <div class="box-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet" role="dialog" aria-modal="true">
-          <div class="box-modal-header">
-            <button type="button" class="box-modal-header-cancel" onclick="window.AppraisalLab.closeModal()">${window.I18N?.t?.('lab.t_close') ?? 'lab.t_close'}</button>
-            <!-- 雙軌綜合評級徽章 (居中置於標題原位) -->
-            <div class="appraisal-dual-verdict-column">
-              <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};">
-                <span class="pokedex-verdict-track-lbl" style="font-size:9.5px;color:#94a3b8;line-height:1;">${window.I18N?.t?.('lab.t_track_current') ?? 'lab.t_track_current'}</span>
-                <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:13px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
-                <span class="pokedex-header-score-text" style="font-size:10px;"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
-              </div>
-              <div class="pokedex-header-verdict-badge potential-track">
-                <span class="pokedex-verdict-track-lbl" style="font-size:8.5px;color:#64748b;line-height:1;">${window.I18N?.t?.('lab.t_track_max_lv') ?? 'lab.t_track_max_lv'}</span>
-                <span class="verdict-potential-grade pokedex-header-grade-text" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
-                <span class="pokedex-header-score-text" style="font-size:9.5px;color:#94a3b8;"><span class="verdict-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
-              </div>
-            </div>
-            ${pkmOrBoxItem && (pkmOrBoxItem.rawItem || pkmOrBoxItem.uid) ? `
-              <button type="button" class="box-modal-header-confirm" onclick="window.AppraisalLab.openCurrentEditModal()">${window.I18N?.t?.('lab.t_edit') ?? 'lab.t_edit'}</button>
-            ` : `<span style="width:36px;"></span>`}
-          </div>
-
-          <div class="box-modal-body appraisal-modal-sheet-body">
-            <!-- 寶可夢核心建構資訊 (純淨無外框容器，依據 Single Frame 原則) -->
-            <div class="appraisal-h5-header-summary">
-              <div class="appraisal-h5-profile-row" style="display:flex;align-items:center;gap:10px;">
-                <div class="appraisal-h5-avatar-wrap">
-                  <img src="${pkmData.icon_url}" class="appraisal-avatar-img" alt="${displayName}">
-                  <span class="appraisal-level-badge">Lv. ${currentLv}</span>
-                </div>
-                <div class="appraisal-h5-info-col">
-                  <!-- Row 1: 寶可夢名稱 + 稱號 + 樹果 + 專長 + 睡飽飽獎章 -->
-                  <div class="appraisal-h5-name-row" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-                    <span class="appraisal-h5-pkm-name font-bold">${displayName}</span>
-                    ${nickname ? `<span class="appraisal-h5-nick">(${escapeHtml(nickname)})</span>` : ''}
-                    <span class="appraisal-berry-tag" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;" title="${escapeHtml(berryName)}">
-                      ${berry.icon ? `<img src="${berry.icon}" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(berryName)}">` : ''}
-                    </span>
-                    ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkmData.specialty, 18, 'appraisal-spec-icon-wrap') : `<span class="appraisal-spec-tag ${specClass}">${specTypeLabel}</span>`}
-                    ${ribbonLevel > 0 ? `
-                      <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border-radius:6px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:10.5px;font-weight:700;">
-                        <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:14px;height:14px;object-fit:contain;" alt="Ribbon" />
-                        <span>+${evaluation.ribbonBonus.carry} ${window.I18N?.t?.('lab.t_carry') ?? 'lab.t_carry'}${evaluation.ribbonBonus.speedDiscount > 0 ? ` · ${window.I18N?.t?.('lab.t_ribbon_spd', { pct: Math.round(evaluation.ribbonBonus.speedDiscount * 100) }) ?? 'lab.t_ribbon_spd'}` : ''}</span>
-                      </div>
-                    ` : ''}
-                  </div>
-                  <!-- Row 2: 主技能與三階段食材插槽整合成同一行 (位於頭像旁第二行) -->
-                  <div class="appraisal-h5-subinfo-row" style="display:flex;align-items:center;gap:8px;margin-top:3px;flex-wrap:wrap;">
-                    <div class="appraisal-mainskill-row" style="display:inline-flex;align-items:center;gap:4px;padding:0;margin:0;">
-                      <span class="appraisal-mainskill-name" style="font-size:12px;font-weight:700;color:var(--text-primary);">${escapeHtml(mainSkillName)}</span>
-                      <span class="appraisal-mainskill-level" style="font-size:11px;font-weight:700;color:var(--accent-blue, #38bdf8);background:rgba(56,189,248,0.12);padding:1px 5px;border-radius:4px;border:1px solid rgba(56,189,248,0.25);">Lv.${skillLvl}</span>
-                    </div>
-                    <div class="appraisal-ing-parallel-row" style="display:inline-flex;align-items:center;gap:4px;padding:0;margin:0;">
-                      <div class="appraisal-ing-chips-grid" style="display:inline-flex;gap:4px;align-items:center;">
-                        ${ingChipsHtml}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 性格展示 (遊戲同款卡片) -->
-              <div class="appraisal-config-section" style="margin-top:2px;display:flex;justify-content:center;width:100%;">
-                <div class="appraisal-nature-game-card">
-                  <div class="nature-pill-capsule">
-                    <span class="nature-capsule-tag">${window.I18N?.t?.('lab.t_nature') ?? 'lab.t_nature'}</span>
-                    <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
-                  </div>
-                  ${natureEffectHtml}
-                </div>
-              </div>
-
-              <!-- 基礎數值雙欄縱向列 (幫忙間隔/持有/食材率/技能率，佔位寬度契合副技能網格) -->
-              <div class="appraisal-config-section appraisal-stats-section" style="margin-top:4px;width:100%;">
-                <div class="pokedex-header-stats-row pokedex-header-stats-dual appraisal-header-stats-dual">
-                  <div class="pokedex-header-stat-col">
-                    <div class="pokedex-header-stat-item">
-                      <span class="header-stat-k">${window.I18N?.t?.('lab.t_frequency') ?? 'lab.t_frequency'}</span>
-                      <span class="header-stat-v font-bold" id="appraisal-stat-interval-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIntervalValue === 'function') ? window.PokemonApp.renderPokedexIntervalValue(formulaData, pkmData) : '--'}</span>
-                    </div>
-                    <div class="pokedex-header-stat-item">
-                      <span class="header-stat-k">${window.I18N?.t?.('lab.t_carry') ?? 'lab.t_carry'}</span>
-                      <span class="header-stat-v font-bold" id="appraisal-stat-carry-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexCarryValue === 'function') ? window.PokemonApp.renderPokedexCarryValue(formulaData, pkmData) : '--'}</span>
-                    </div>
-                  </div>
-                  <div class="pokedex-header-stat-col">
-                    <div class="pokedex-header-stat-item">
-                      <span class="header-stat-k">${window.I18N?.t?.('lab.t_ing_rate') ?? 'lab.t_ing_rate'}</span>
-                      <span class="header-stat-v font-bold" id="appraisal-stat-ingredient-rate-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIngRateValue === 'function') ? window.PokemonApp.renderPokedexIngRateValue(formulaData, pkmData) : '--'}</span>
-                    </div>
-                    <div class="pokedex-header-stat-item">
-                      <span class="header-stat-k">${window.I18N?.t?.('lab.t_skill_rate') ?? 'lab.t_skill_rate'}</span>
-                      <span class="header-stat-v font-bold" id="appraisal-stat-skill-rate-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexSkillRateValue === 'function') ? window.PokemonApp.renderPokedexSkillRateValue(formulaData, pkmData) : '--'}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 副技能清單 (2+2+1 排列) -->
-              <div class="appraisal-config-section" style="margin-top:6px;width:100%;">
-                <div class="appraisal-subskills-grid">
-                  ${[10, 25, 50, 70, 80].map(function(lv, idx) {
-                    const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
-                    const sName = rawName ? (window.I18N?.getSubSkillName?.(rawName) ?? rawName) : '--';
-                    const tier = getSkillTier(rawName);
-                    const isUnlocked = currentLv >= lv;
-                    const lockClass = !isUnlocked ? 'subskill-locked' : '';
-                    const titleText = rawName
-                      ? (window.I18N?.t?.(isUnlocked ? 'lab.t_subskill_title_unlocked' : 'lab.t_subskill_title_locked', { name: sName, lv }) ?? 'lab.t_subskill_title_unlocked')
-                      : (window.I18N?.t?.('lab.t_subskill_slot', { lv }) ?? 'lab.t_subskill_slot');
-                    return `
-                      <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
-                        <span class="subskill-name">${escapeHtml(sName)}</span>
-                      </div>
-                    `;
-                  }).join('')}
-                </div>
-              </div>
-            </div>
-
-            <!-- 食材與技能產能算法精算拆解 (純展示無調整組件) -->
-            ${(formulaData && window.PokemonApp && typeof window.PokemonApp.renderPokedexFormulaBreakdownHTML === 'function') ? `
-              <div class="appraisal-calc-mobile-wrap" style="margin-top:8px;width:100%;">
-                <div class="pokedex-calc-formula-card">
-                  ${window.PokemonApp.renderPokedexFormulaBreakdownHTML(formulaData, pkmData)}
-                </div>
-              </div>
-            ` : ''}
-
-            <!-- 雷達圖與六維能量條 -->
-            <div class="appraisal-chart-flex" style="margin-top:4px;">
-              <div class="appraisal-radar-wrapper" style="width:100%;max-width:340px;height:255px;margin:0 auto;">
-                ${renderRadarChartSVG(evaluation.scores, 340, 255)}
-              </div>
-            </div>
-
-            <!-- 專長深度點評與優缺點 -->
-            <div class="appraisal-analysis-card" style="margin-top:6px;">
-              <h4 class="appraisal-section-heading">${window.I18N?.t?.('lab.t_synergy_heading_mobile') ?? 'lab.t_synergy_heading_mobile'}</h4>
-              <div class="appraisal-pros-list">
-                ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
-              </div>
-              ${evaluation.cons.length > 0 ? `
-                <div class="appraisal-cons-list">
-                  ${evaluation.cons.map(function(c) { return `<div class="appraisal-con-item">${c}</div>`; }).join('')}
-                </div>
-              ` : ''}
-            </div>
-
-            <!-- 智能簡評欄 (嵌入式膠囊標籤) -->
-            <div class="appraisal-summary-bar">
-              <span class="appraisal-summary-label">${window.I18N?.t?.('lab.t_summary_label') ?? 'lab.t_summary_label'}</span>
-              <span class="appraisal-summary-text">${summaryNote}</span>
-            </div>
-          </div>
-        </div>
-      `;
-    } else {
-      modal.className = 'appraisal-modal-backdrop';
-      modal.innerHTML = `
-        <div class="appraisal-modal-container">
-          <!-- 頂部標題列 (高度加寬，垂直置中，整合雙軌評級與極簡關閉鈕) -->
-          <div class="appraisal-modal-header">
-            <div class="appraisal-header-title-group">
-              <span class="appraisal-modal-badge">${window.I18N?.t?.('lab.t_modal_badge') ?? 'lab.t_modal_badge'}</span>
-              <h2 class="appraisal-pokemon-title">
-                ${nickname ? `<span class="appraisal-pokemon-nickname">${escapeHtml(nickname)}</span> <span class="appraisal-pokemon-base-name" style="font-size:0.85em;color:var(--text-secondary);font-weight:normal;">(${displayName})</span>` : displayName}
-              </h2>
-            </div>
-
-            <div class="appraisal-header-actions">
-              <!-- 雙軌綜合評級徽章 (對齊圖鑑彈窗風格，垂直置中，當前亮眼 + 滿級低調) -->
-              <div class="appraisal-dual-verdict-column">
-                <!-- 當前實力 (Current Level Rating) -->
-                <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${window.I18N?.t?.('lab.t_current_rating_title', { lv: currentLv }) ?? 'lab.t_current_rating_title'}">
-                  <span class="pokedex-verdict-track-lbl" style="font-size:10px;color:#94a3b8;line-height:1;">${window.I18N?.t?.('lab.t_track_current') ?? 'lab.t_track_current'}</span>
-                  <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:14px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
-                  <span class="pokedex-header-score-text" style="font-size:11px;"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
-                </div>
-                <!-- 滿級潛力 (Max Potential Rating) -->
-                <div class="pokedex-header-verdict-badge potential-track" title="${window.I18N?.t?.('lab.t_max_rating_title') ?? 'lab.t_max_rating_title'}">
-                  <span class="pokedex-verdict-track-lbl" style="font-size:9px;color:#64748b;line-height:1;">${window.I18N?.t?.('lab.t_track_max_lv') ?? 'lab.t_track_max_lv'}</span>
-                  <span class="verdict-potential-grade pokedex-header-grade-text" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
-                  <span class="pokedex-header-score-text" style="font-size:10px;color:#94a3b8;"><span class="verdict-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
-                </div>
-              </div>
-
-              <!-- 編輯按鈕 (若來自倉庫) -->
-              ${pkmOrBoxItem && (pkmOrBoxItem.rawItem || pkmOrBoxItem.uid) ? `
-                <button type="button" class="appraisal-edit-btn" onclick="window.AppraisalLab.openCurrentEditModal()" title="${window.I18N?.t?.('lab.t_edit_stats_title') ?? 'lab.t_edit_stats_title'}">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                  <span>${window.I18N?.t?.('lab.t_edit_stats') ?? 'lab.t_edit_stats'}</span>
-                </button>
-              ` : ''}
-
-              <!-- 極簡關閉按鈕 -->
-              <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closeModal()" title="${window.I18N?.t?.('lab.t_close') ?? 'lab.t_close'}" aria-label="${window.I18N?.t?.('lab.t_close') ?? 'lab.t_close'}">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- 報告核心主體 (精簡三欄排版，徹底去除多餘巢狀容器外框) -->
-          <div class="appraisal-modal-body">
-            <!-- 左欄：寶可夢基本卡片與配置 (純淨無外框容器) -->
-            <div class="appraisal-left-col">
-              <div class="appraisal-profile-card">
-                <div class="appraisal-avatar-wrapper">
-                  <img src="${pkmData.icon_url}" class="appraisal-avatar-img" alt="${displayName}">
-                  <span class="appraisal-level-badge">Lv. ${currentLv}</span>
-                </div>
-                
-                <!-- 樹果與專長 + 睡飽飽獎章 (與 H5 版本同排並行) -->
-                <div class="appraisal-specialty-row" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;flex-wrap:wrap;">
-                  <span class="appraisal-berry-tag" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;" title="${escapeHtml(berryName)}">
-                    ${berry.icon ? `<img src="${berry.icon}" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(berryName)}">` : ''}
-                  </span>
-                  ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkmData.specialty, 22, 'appraisal-spec-icon-wrap') : `<span class="appraisal-spec-tag ${specClass}">${specTypeLabel}</span>`}
-                  ${ribbonLevel > 0 ? `
-                    <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:11.5px;font-weight:700;">
-                      <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:16px;height:16px;object-fit:contain;" alt="Ribbon" />
-                      <span>+${evaluation.ribbonBonus.carry} ${window.I18N?.t?.('lab.t_carry') ?? 'lab.t_carry'}${evaluation.ribbonBonus.speedDiscount > 0 ? ` · ${window.I18N?.t?.('lab.t_ribbon_spd', { pct: Math.round(evaluation.ribbonBonus.speedDiscount * 100) }) ?? 'lab.t_ribbon_spd'}` : ''}</span>
-                    </div>
-                  ` : ''}
-                </div>
-
-                <!-- 主技能名稱與等級 (Appraisal Main Skill) -->
-                <div class="appraisal-mainskill-row">
-                  <span class="appraisal-mainskill-label">${window.I18N?.t?.('lab.t_main_skill_colon') ?? 'lab.t_main_skill_colon'}</span>
-                  <span class="appraisal-mainskill-name">${escapeHtml(mainSkillName)}</span>
-                  <span class="appraisal-mainskill-level">Lv.${skillLvl}</span>
-                </div>
-
-                <!-- 食材三階插槽組合 (Appraisal Ingredients, 尚未開放插槽半透明) -->
-                <div class="appraisal-ing-parallel-row">
-                  <span class="appraisal-ing-row-label">${window.I18N?.t?.('lab.t_ingredients_colon') ?? 'lab.t_ingredients_colon'}</span>
-                  <div class="appraisal-ing-chips-grid">
-                    ${ingChipsHtml}
-                  </div>
-                </div>
-
-                <!-- 遊戲同款性格展示 (膠囊外框 + 性格標籤 + 右側上下條目，純淨無外框容器) -->
-                <div class="appraisal-config-section" style="margin-top:12px;display:flex;justify-content:center;">
-                  <div class="appraisal-nature-game-card">
-                    <div class="nature-pill-capsule">
-                      <span class="nature-capsule-tag">${window.I18N?.t?.('lab.t_nature') ?? 'lab.t_nature'}</span>
-                      <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
-                    </div>
-                    ${natureEffectHtml}
-                  </div>
-                </div>
-
-                <!-- 副技能清單 (2+2+1 遊戲同款外框顏色與排列，無多餘標題) -->
-                <div class="appraisal-config-section" style="margin-top:10px;">
-                  <div class="appraisal-subskills-grid">
-                    ${[10, 25, 50, 70, 80].map(function(lv, idx) {
-                      const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
-                      const sName = rawName ? (window.I18N?.getSubSkillName?.(rawName) ?? rawName) : '--';
-                      const tier = getSkillTier(rawName);
-                      const isUnlocked = currentLv >= lv;
-                      const lockClass = !isUnlocked ? 'subskill-locked' : '';
-                      const titleText = rawName
-                        ? (window.I18N?.t?.(isUnlocked ? 'lab.t_subskill_title_unlocked' : 'lab.t_subskill_title_locked', { name: sName, lv }) ?? 'lab.t_subskill_title_unlocked')
-                        : (window.I18N?.t?.('lab.t_subskill_slot', { lv }) ?? 'lab.t_subskill_slot');
-                      return `
-                        <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
-                          <span class="subskill-name">${escapeHtml(sName)}</span>
-                        </div>
-                      `;
-                    }).join('')}
-                  </div>
-                </div>
-
-                <!-- 基礎數值雙欄縱向列 (移動至副技能網格下方，緊湊整潔無溢出) -->
-                <div class="appraisal-config-section appraisal-stats-section" style="margin-top:12px;width:100%;">
-                  <div class="pokedex-header-stats-row pokedex-header-stats-dual appraisal-header-stats-dual">
-                    <div class="pokedex-header-stat-col">
-                      <div class="pokedex-header-stat-item">
-                        <span class="header-stat-k">${window.I18N?.t?.('lab.t_frequency') ?? 'lab.t_frequency'}</span>
-                        <span class="header-stat-v font-bold" id="appraisal-stat-interval">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIntervalValue === 'function') ? window.PokemonApp.renderPokedexIntervalValue(formulaData, pkmData) : '--'}</span>
-                      </div>
-                      <div class="pokedex-header-stat-item">
-                        <span class="header-stat-k">${window.I18N?.t?.('lab.t_carry') ?? 'lab.t_carry'}</span>
-                        <span class="header-stat-v font-bold" id="appraisal-stat-carry">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexCarryValue === 'function') ? window.PokemonApp.renderPokedexCarryValue(formulaData, pkmData) : '--'}</span>
-                      </div>
-                    </div>
-                    <div class="pokedex-header-stat-col">
-                      <div class="pokedex-header-stat-item">
-                        <span class="header-stat-k">${window.I18N?.t?.('lab.t_ing_rate') ?? 'lab.t_ing_rate'}</span>
-                        <span class="header-stat-v font-bold" id="appraisal-stat-ingredient-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIngRateValue === 'function') ? window.PokemonApp.renderPokedexIngRateValue(formulaData, pkmData) : '--'}</span>
-                      </div>
-                      <div class="pokedex-header-stat-item">
-                        <span class="header-stat-k">${window.I18N?.t?.('lab.t_skill_rate') ?? 'lab.t_skill_rate'}</span>
-                        <span class="header-stat-v font-bold" id="appraisal-stat-skill-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexSkillRateValue === 'function') ? window.PokemonApp.renderPokedexSkillRateValue(formulaData, pkmData) : '--'}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 中欄：食材與技能產能算法精算拆解 (純展示無調整組件，空間最大化單一整合外框) -->
-            <div class="appraisal-calc-col">
-              <div class="pokedex-calc-formula-card" id="appraisal-calc-formula-container">
-                ${(formulaData && window.PokemonApp && typeof window.PokemonApp.renderPokedexFormulaBreakdownHTML === 'function')
-                  ? window.PokemonApp.renderPokedexFormulaBreakdownHTML(formulaData, pkmData)
-                  : ''}
-              </div>
-            </div>
-
-          <!-- 右欄：雷達圖 + 智能簡評 + 專長深度點評 (純淨無外框容器) -->
-          <div class="appraisal-right-col">
-            <div class="appraisal-desktop-content-grid">
-              <!-- 頂部：雷達圖區塊 (自適應置中，無冗餘標題) -->
-              <div class="appraisal-radar-block">
-                <div class="appraisal-radar-wrapper">
-                  ${radarSVG}
-                </div>
-              </div>
-
-              <!-- 中部：PR 智能簡評欄 (嵌入式膠囊標籤，不佔用內容展示空間) -->
-              <div class="appraisal-summary-bar">
-                <span class="appraisal-summary-label">${window.I18N?.t?.('lab.t_summary_label') ?? 'lab.t_summary_label'}</span>
-                <span class="appraisal-summary-text">${summaryNote}</span>
-              </div>
-
-              <!-- 下方：專長深度點評與優缺點 (在智能簡評下方，同樣長度) -->
-              <div class="appraisal-analysis-card">
-                <h4 class="appraisal-section-heading">${window.I18N?.t?.('lab.t_synergy_heading') ?? 'lab.t_synergy_heading'}</h4>
-                <div class="appraisal-pros-list">
-                  ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
-                </div>
-                ${evaluation.cons.length > 0 ? `
-                  <div class="appraisal-cons-list">
-                    ${evaluation.cons.map(function(c) { return `<div class="appraisal-con-item">${c}</div>`; }).join('')}
-                  </div>
-                ` : ''}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-    }
-
-    if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
-    if (modal.style && typeof modal.style.removeProperty === 'function') {
-      modal.style.removeProperty('display');
-    }
-    modal.style.display = 'flex';
-    if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(modal);
-    document.body.style.overflow = 'hidden';
-
-    // 點選遮罩外部關閉與 Escape 鍵關閉
-    modal.onclick = function(e) {
-      if (e.target === modal) {
-        closeAppraisalModal();
-      }
-    };
-    if (modal._onKeydown && typeof window.removeEventListener === 'function') {
-      window.removeEventListener('keydown', modal._onKeydown);
-    }
-    modal._onKeydown = function(e) {
-      if (e.key === 'Escape') {
-        closeAppraisalModal();
-      }
-    };
-    if (typeof window.addEventListener === 'function') {
-      window.addEventListener('keydown', modal._onKeydown);
-    }
-  }
-
-  function openCurrentEditModal() {
-    const item = window.AppraisalLab ? window.AppraisalLab._currentBoxItem : null;
-    const modal = document.getElementById('modal-appraisal-report');
-    if (modal) {
-      if (modal._onKeydown && typeof window.removeEventListener === 'function') {
-        window.removeEventListener('keydown', modal._onKeydown);
-      }
-      modal._onKeydown = null;
-      if (modal.classList) modal.classList.remove('overlay-closing');
-      if (modal.style) {
-        if (typeof modal.style.setProperty === 'function') modal.style.setProperty('display', 'none', 'important');
-        else modal.style.display = 'none';
-      }
-    }
-    if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
-    document.body.style.overflow = '';
-    if (!item) return;
-    if (window.UserBox && typeof window.UserBox.openBoxEditModal === 'function') {
-      const fresh = (typeof window.UserBox.getUserBox === 'function' && window.UserBox.getUserBox().find(p => p.uid === item.uid)) || item;
-      if (window.AppraisalLab) window.AppraisalLab._reopenUid = item.uid;
-      window.UserBox.openBoxEditModal(fresh);
-    }
-  }
-
-  function reopenAfterEdit() {
-    const lab = window.AppraisalLab;
-    if (!lab || !lab._reopenUid) return;
-    const uid = lab._reopenUid;
-    lab._reopenUid = null;
-    const box = (window.UserBox && typeof window.UserBox.getUserBox === 'function') ? window.UserBox.getUserBox() : [];
-    const item = box.find(p => p.uid === uid);
-    if (!item) return;
-    const pokemons = window.allPokemons || [];
-    const base = findBasePkm(item.pokemonId || item.name) || pokemons.find(p => p.name_cn === item.name);
-    openAppraisalModal({
-      pkm: base,
-      level: item.level || 30,
-      nature: item.nature || '坦率',
-      subskills: item.subskills || [],
-      ingredients: [item.ing1, item.ing2, item.ing3],
-      ribbon: item.ribbon || 0,
-      nickname: item.nickname || '',
-      skillLevel: item.skillLevel || 1,
-      rawItem: item
-    });
-  }
-
-  function closeAppraisalModal() {
-    const modal = document.getElementById('modal-appraisal-report');
-    if (!modal) return;
-    if (modal._onKeydown) {
-      if (typeof window.removeEventListener === 'function') {
-        window.removeEventListener('keydown', modal._onKeydown);
-      }
-      modal._onKeydown = null;
-    }
-    const done = () => {
-      if (modal && modal.style) {
-        if (typeof modal.style.setProperty === 'function') modal.style.setProperty('display', 'none', 'important');
-        else modal.style.display = 'none';
-      }
-      if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
-      document.body.style.overflow = '';
-    };
-    if (typeof window.animateOverlayClose === 'function') {
-      window.animateOverlayClose(modal, done);
-    } else {
-      done();
-    }
-  }
-
-  function escapeHtml(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
   /* ─── 獨立模擬評測實驗室 (Appraisal Lab & Box Linkage) ───────────────── */
   function _getLabGameConfig() {
     return (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
@@ -2977,6 +2321,696 @@ const TARGET_TOP_RECIPES = [
   };
 
 
+  /* ─── 診斷報告書彈窗模板渲染 (H5 & Desktop HTML Templates) ─── */
+  function renderAppraisalMobileSheetHtml(ctx) {
+    const { pkmOrBoxItem, pkmData, currentLv, nickname, displayName, natDisplayName, natureEffectHtml, berry, berryName, specClass, specTypeLabel, summaryNote, mainSkillName, skillLvl, ingChipsHtml, formulaData, evaluation, radarSVG, subskills, ribbonLevel } = ctx;
+    return `
+        <div class="box-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet" role="dialog" aria-modal="true">
+          <div class="box-modal-header">
+            <button type="button" class="box-modal-header-cancel" onclick="window.AppraisalLab.closeModal()">${window.I18N?.t?.('lab.t_close') ?? 'lab.t_close'}</button>
+            <!-- 雙軌綜合評級徽章 (居中置於標題原位) -->
+            <div class="appraisal-dual-verdict-column">
+              <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};">
+                <span class="pokedex-verdict-track-lbl" style="font-size:9.5px;color:#94a3b8;line-height:1;">${window.I18N?.t?.('lab.t_track_current') ?? 'lab.t_track_current'}</span>
+                <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:13px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
+                <span class="pokedex-header-score-text" style="font-size:10px;"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
+              </div>
+              <div class="pokedex-header-verdict-badge potential-track">
+                <span class="pokedex-verdict-track-lbl" style="font-size:8.5px;color:#64748b;line-height:1;">${window.I18N?.t?.('lab.t_track_max_lv') ?? 'lab.t_track_max_lv'}</span>
+                <span class="verdict-potential-grade pokedex-header-grade-text" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
+                <span class="pokedex-header-score-text" style="font-size:9.5px;color:#94a3b8;"><span class="verdict-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
+              </div>
+            </div>
+            ${pkmOrBoxItem && (pkmOrBoxItem.rawItem || pkmOrBoxItem.uid) ? `
+              <button type="button" class="box-modal-header-confirm" onclick="window.AppraisalLab.openCurrentEditModal()">${window.I18N?.t?.('lab.t_edit') ?? 'lab.t_edit'}</button>
+            ` : `<span style="width:36px;"></span>`}
+          </div>
+
+          <div class="box-modal-body appraisal-modal-sheet-body">
+            <!-- 寶可夢核心建構資訊 (純淨無外框容器，依據 Single Frame 原則) -->
+            <div class="appraisal-h5-header-summary">
+              <div class="appraisal-h5-profile-row" style="display:flex;align-items:center;gap:10px;">
+                <div class="appraisal-h5-avatar-wrap">
+                  <img src="${pkmData.icon_url}" class="appraisal-avatar-img" width="88" height="88" decoding="async" alt="${displayName}">
+                  <span class="appraisal-level-badge">Lv. ${currentLv}</span>
+                </div>
+                <div class="appraisal-h5-info-col">
+                  <!-- Row 1: 寶可夢名稱 + 稱號 + 樹果 + 專長 + 睡飽飽獎章 -->
+                  <div class="appraisal-h5-name-row" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                    <span class="appraisal-h5-pkm-name font-bold">${displayName}</span>
+                    ${nickname ? `<span class="appraisal-h5-nick">(${escapeHtml(nickname)})</span>` : ''}
+                    <span class="appraisal-berry-tag" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;" title="${escapeHtml(berryName)}">
+                      ${berry.icon ? `<img src="${berry.icon}" width="18" height="18" decoding="async" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(berryName)}">` : ''}
+                    </span>
+                    ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkmData.specialty, 18, 'appraisal-spec-icon-wrap') : `<span class="appraisal-spec-tag ${specClass}">${specTypeLabel}</span>`}
+                    ${ribbonLevel > 0 ? `
+                      <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border-radius:6px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:10.5px;font-weight:700;">
+                        <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" width="14" height="14" decoding="async" style="width:14px;height:14px;object-fit:contain;" alt="Ribbon" />
+                        <span>+${evaluation.ribbonBonus.carry} ${window.I18N?.t?.('lab.t_carry') ?? 'lab.t_carry'}${evaluation.ribbonBonus.speedDiscount > 0 ? ` · ${window.I18N?.t?.('lab.t_ribbon_spd', { pct: Math.round(evaluation.ribbonBonus.speedDiscount * 100) }) ?? 'lab.t_ribbon_spd'}` : ''}</span>
+                      </div>
+                    ` : ''}
+                  </div>
+                  <!-- Row 2: 主技能與三階段食材插槽整合成同一行 (位於頭像旁第二行) -->
+                  <div class="appraisal-h5-subinfo-row" style="display:flex;align-items:center;gap:8px;margin-top:3px;flex-wrap:wrap;">
+                    <div class="appraisal-mainskill-row" style="display:inline-flex;align-items:center;gap:4px;padding:0;margin:0;">
+                      <span class="appraisal-mainskill-name" style="font-size:12px;font-weight:700;color:var(--text-primary);">${escapeHtml(mainSkillName)}</span>
+                      <span class="appraisal-mainskill-level" style="font-size:11px;font-weight:700;color:var(--accent-blue, #38bdf8);background:rgba(56,189,248,0.12);padding:1px 5px;border-radius:4px;border:1px solid rgba(56,189,248,0.25);">Lv.${skillLvl}</span>
+                    </div>
+                    <div class="appraisal-ing-parallel-row" style="display:inline-flex;align-items:center;gap:4px;padding:0;margin:0;">
+                      <div class="appraisal-ing-chips-grid" style="display:inline-flex;gap:4px;align-items:center;">
+                        ${ingChipsHtml}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 性格展示 (遊戲同款卡片) -->
+              <div class="appraisal-config-section" style="margin-top:2px;display:flex;justify-content:center;width:100%;">
+                <div class="appraisal-nature-game-card">
+                  <div class="nature-pill-capsule">
+                    <span class="nature-capsule-tag">${window.I18N?.t?.('lab.t_nature') ?? 'lab.t_nature'}</span>
+                    <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
+                  </div>
+                  ${natureEffectHtml}
+                </div>
+              </div>
+
+              <!-- 基礎數值雙欄縱向列 (幫忙間隔/持有/食材率/技能率，佔位寬度契合副技能網格) -->
+              <div class="appraisal-config-section appraisal-stats-section" style="margin-top:4px;width:100%;">
+                <div class="pokedex-header-stats-row pokedex-header-stats-dual appraisal-header-stats-dual">
+                  <div class="pokedex-header-stat-col">
+                    <div class="pokedex-header-stat-item">
+                      <span class="header-stat-k">${window.I18N?.t?.('lab.t_frequency') ?? 'lab.t_frequency'}</span>
+                      <span class="header-stat-v font-bold" id="appraisal-stat-interval-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIntervalValue === 'function') ? window.PokemonApp.renderPokedexIntervalValue(formulaData, pkmData) : '--'}</span>
+                    </div>
+                    <div class="pokedex-header-stat-item">
+                      <span class="header-stat-k">${window.I18N?.t?.('lab.t_carry') ?? 'lab.t_carry'}</span>
+                      <span class="header-stat-v font-bold" id="appraisal-stat-carry-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexCarryValue === 'function') ? window.PokemonApp.renderPokedexCarryValue(formulaData, pkmData) : '--'}</span>
+                    </div>
+                  </div>
+                  <div class="pokedex-header-stat-col">
+                    <div class="pokedex-header-stat-item">
+                      <span class="header-stat-k">${window.I18N?.t?.('lab.t_ing_rate') ?? 'lab.t_ing_rate'}</span>
+                      <span class="header-stat-v font-bold" id="appraisal-stat-ingredient-rate-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIngRateValue === 'function') ? window.PokemonApp.renderPokedexIngRateValue(formulaData, pkmData) : '--'}</span>
+                    </div>
+                    <div class="pokedex-header-stat-item">
+                      <span class="header-stat-k">${window.I18N?.t?.('lab.t_skill_rate') ?? 'lab.t_skill_rate'}</span>
+                      <span class="header-stat-v font-bold" id="appraisal-stat-skill-rate-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexSkillRateValue === 'function') ? window.PokemonApp.renderPokedexSkillRateValue(formulaData, pkmData) : '--'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 副技能清單 (2+2+1 排列) -->
+              <div class="appraisal-config-section" style="margin-top:6px;width:100%;">
+                <div class="appraisal-subskills-grid">
+                  ${[10, 25, 50, 70, 80].map(function(lv, idx) {
+                    const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
+                    const sName = rawName ? (window.I18N?.getSubSkillName?.(rawName) ?? rawName) : '--';
+                    const tier = getSkillTier(rawName);
+                    const isUnlocked = currentLv >= lv;
+                    const lockClass = !isUnlocked ? 'subskill-locked' : '';
+                    const titleText = rawName
+                      ? (window.I18N?.t?.(isUnlocked ? 'lab.t_subskill_title_unlocked' : 'lab.t_subskill_title_locked', { name: sName, lv }) ?? 'lab.t_subskill_title_unlocked')
+                      : (window.I18N?.t?.('lab.t_subskill_slot', { lv }) ?? 'lab.t_subskill_slot');
+                    return `
+                      <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
+                        <span class="subskill-name">${escapeHtml(sName)}</span>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            </div>
+
+            <!-- 食材與技能產能算法精算拆解 (純展示無調整組件) -->
+            ${(formulaData && window.PokemonApp && typeof window.PokemonApp.renderPokedexFormulaBreakdownHTML === 'function') ? `
+              <div class="appraisal-calc-mobile-wrap" style="margin-top:8px;width:100%;">
+                <div class="pokedex-calc-formula-card">
+                  ${window.PokemonApp.renderPokedexFormulaBreakdownHTML(formulaData, pkmData)}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- 雷達圖與六維能量條 -->
+            <div class="appraisal-chart-flex" style="margin-top:4px;">
+              <div class="appraisal-radar-wrapper" style="width:100%;max-width:340px;height:255px;margin:0 auto;">
+                ${renderRadarChartSVG(evaluation.scores, 340, 255)}
+              </div>
+            </div>
+
+            <!-- 專長深度點評與優缺點 -->
+            <div class="appraisal-analysis-card" style="margin-top:6px;">
+              <h4 class="appraisal-section-heading">${window.I18N?.t?.('lab.t_synergy_heading_mobile') ?? 'lab.t_synergy_heading_mobile'}</h4>
+              <div class="appraisal-pros-list">
+                ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
+              </div>
+              ${evaluation.cons.length > 0 ? `
+                <div class="appraisal-cons-list">
+                  ${evaluation.cons.map(function(c) { return `<div class="appraisal-con-item">${c}</div>`; }).join('')}
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- 智能簡評欄 (嵌入式膠囊標籤) -->
+            <div class="appraisal-summary-bar">
+              <span class="appraisal-summary-label">${window.I18N?.t?.('lab.t_summary_label') ?? 'lab.t_summary_label'}</span>
+              <span class="appraisal-summary-text">${summaryNote}</span>
+            </div>
+          </div>
+        </div>
+      `;
+  }
+
+  function renderAppraisalDesktopModalHtml(ctx) {
+    const { pkmOrBoxItem, pkmData, currentLv, nickname, displayName, natDisplayName, natureEffectHtml, berry, berryName, specClass, specTypeLabel, summaryNote, mainSkillName, skillLvl, ingChipsHtml, formulaData, evaluation, radarSVG, subskills, ribbonLevel } = ctx;
+    return `
+        <div class="appraisal-modal-container">
+          <!-- 頂部標題列 (高度加寬，垂直置中，整合雙軌評級與極簡關閉鈕) -->
+          <div class="appraisal-modal-header">
+            <div class="appraisal-header-title-group">
+              <span class="appraisal-modal-badge">${window.I18N?.t?.('lab.t_modal_badge') ?? 'lab.t_modal_badge'}</span>
+              <h2 class="appraisal-pokemon-title">
+                ${nickname ? `<span class="appraisal-pokemon-nickname">${escapeHtml(nickname)}</span> <span class="appraisal-pokemon-base-name" style="font-size:0.85em;color:var(--text-secondary);font-weight:normal;">(${displayName})</span>` : displayName}
+              </h2>
+            </div>
+
+            <div class="appraisal-header-actions">
+              <!-- 雙軌綜合評級徽章 (對齊圖鑑彈窗風格，垂直置中，當前亮眼 + 滿級低調) -->
+              <div class="appraisal-dual-verdict-column">
+                <!-- 當前實力 (Current Level Rating) -->
+                <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${window.I18N?.t?.('lab.t_current_rating_title', { lv: currentLv }) ?? 'lab.t_current_rating_title'}">
+                  <span class="pokedex-verdict-track-lbl" style="font-size:10px;color:#94a3b8;line-height:1;">${window.I18N?.t?.('lab.t_track_current') ?? 'lab.t_track_current'}</span>
+                  <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:14px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
+                  <span class="pokedex-header-score-text" style="font-size:11px;"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
+                </div>
+                <!-- 滿級潛力 (Max Potential Rating) -->
+                <div class="pokedex-header-verdict-badge potential-track" title="${window.I18N?.t?.('lab.t_max_rating_title') ?? 'lab.t_max_rating_title'}">
+                  <span class="pokedex-verdict-track-lbl" style="font-size:9px;color:#64748b;line-height:1;">${window.I18N?.t?.('lab.t_track_max_lv') ?? 'lab.t_track_max_lv'}</span>
+                  <span class="verdict-potential-grade pokedex-header-grade-text" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
+                  <span class="pokedex-header-score-text" style="font-size:10px;color:#94a3b8;"><span class="verdict-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
+                </div>
+              </div>
+
+              <!-- 編輯按鈕 (若來自倉庫) -->
+              ${pkmOrBoxItem && (pkmOrBoxItem.rawItem || pkmOrBoxItem.uid) ? `
+                <button type="button" class="appraisal-edit-btn" onclick="window.AppraisalLab.openCurrentEditModal()" title="${window.I18N?.t?.('lab.t_edit_stats_title') ?? 'lab.t_edit_stats_title'}">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                  <span>${window.I18N?.t?.('lab.t_edit_stats') ?? 'lab.t_edit_stats'}</span>
+                </button>
+              ` : ''}
+
+              <!-- 極簡關閉按鈕 -->
+              <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closeModal()" title="${window.I18N?.t?.('lab.t_close') ?? 'lab.t_close'}" aria-label="${window.I18N?.t?.('lab.t_close') ?? 'lab.t_close'}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- 報告核心主體 (精簡三欄排版，徹底去除多餘巢狀容器外框) -->
+          <div class="appraisal-modal-body">
+            <!-- 左欄：寶可夢基本卡片與配置 (純淨無外框容器) -->
+            <div class="appraisal-left-col">
+              <div class="appraisal-profile-card">
+                <div class="appraisal-avatar-wrapper">
+                  <img src="${pkmData.icon_url}" class="appraisal-avatar-img" width="88" height="88" decoding="async" alt="${displayName}">
+                  <span class="appraisal-level-badge">Lv. ${currentLv}</span>
+                </div>
+                
+                <!-- 樹果與專長 + 睡飽飽獎章 (與 H5 版本同排並行) -->
+                <div class="appraisal-specialty-row" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;flex-wrap:wrap;">
+                  <span class="appraisal-berry-tag" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;" title="${escapeHtml(berryName)}">
+                    ${berry.icon ? `<img src="${berry.icon}" width="22" height="22" decoding="async" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(berryName)}">` : ''}
+                  </span>
+                  ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkmData.specialty, 22, 'appraisal-spec-icon-wrap') : `<span class="appraisal-spec-tag ${specClass}">${specTypeLabel}</span>`}
+                  ${ribbonLevel > 0 ? `
+                    <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:11.5px;font-weight:700;">
+                      <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" width="16" height="16" decoding="async" style="width:16px;height:16px;object-fit:contain;" alt="Ribbon" />
+                      <span>+${evaluation.ribbonBonus.carry} ${window.I18N?.t?.('lab.t_carry') ?? 'lab.t_carry'}${evaluation.ribbonBonus.speedDiscount > 0 ? ` · ${window.I18N?.t?.('lab.t_ribbon_spd', { pct: Math.round(evaluation.ribbonBonus.speedDiscount * 100) }) ?? 'lab.t_ribbon_spd'}` : ''}</span>
+                    </div>
+                  ` : ''}
+                </div>
+
+                <!-- 主技能名稱與等級 (Appraisal Main Skill) -->
+                <div class="appraisal-mainskill-row">
+                  <span class="appraisal-mainskill-label">${window.I18N?.t?.('lab.t_main_skill_colon') ?? 'lab.t_main_skill_colon'}</span>
+                  <span class="appraisal-mainskill-name">${escapeHtml(mainSkillName)}</span>
+                  <span class="appraisal-mainskill-level">Lv.${skillLvl}</span>
+                </div>
+
+                <!-- 食材三階插槽組合 (Appraisal Ingredients, 尚未開放插槽半透明) -->
+                <div class="appraisal-ing-parallel-row">
+                  <span class="appraisal-ing-row-label">${window.I18N?.t?.('lab.t_ingredients_colon') ?? 'lab.t_ingredients_colon'}</span>
+                  <div class="appraisal-ing-chips-grid">
+                    ${ingChipsHtml}
+                  </div>
+                </div>
+
+                <!-- 遊戲同款性格展示 (膠囊外框 + 性格標籤 + 右側上下條目，純淨無外框容器) -->
+                <div class="appraisal-config-section" style="margin-top:12px;display:flex;justify-content:center;">
+                  <div class="appraisal-nature-game-card">
+                    <div class="nature-pill-capsule">
+                      <span class="nature-capsule-tag">${window.I18N?.t?.('lab.t_nature') ?? 'lab.t_nature'}</span>
+                      <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
+                    </div>
+                    ${natureEffectHtml}
+                  </div>
+                </div>
+
+                <!-- 副技能清單 (2+2+1 遊戲同款外框顏色與排列，無多餘標題) -->
+                <div class="appraisal-config-section" style="margin-top:10px;">
+                  <div class="appraisal-subskills-grid">
+                    ${[10, 25, 50, 70, 80].map(function(lv, idx) {
+                      const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
+                      const sName = rawName ? (window.I18N?.getSubSkillName?.(rawName) ?? rawName) : '--';
+                      const tier = getSkillTier(rawName);
+                      const isUnlocked = currentLv >= lv;
+                      const lockClass = !isUnlocked ? 'subskill-locked' : '';
+                      const titleText = rawName
+                        ? (window.I18N?.t?.(isUnlocked ? 'lab.t_subskill_title_unlocked' : 'lab.t_subskill_title_locked', { name: sName, lv }) ?? 'lab.t_subskill_title_unlocked')
+                        : (window.I18N?.t?.('lab.t_subskill_slot', { lv }) ?? 'lab.t_subskill_slot');
+                      return `
+                        <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
+                          <span class="subskill-name">${escapeHtml(sName)}</span>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+
+                <!-- 基礎數值雙欄縱向列 (移動至副技能網格下方，緊湊整潔無溢出) -->
+                <div class="appraisal-config-section appraisal-stats-section" style="margin-top:12px;width:100%;">
+                  <div class="pokedex-header-stats-row pokedex-header-stats-dual appraisal-header-stats-dual">
+                    <div class="pokedex-header-stat-col">
+                      <div class="pokedex-header-stat-item">
+                        <span class="header-stat-k">${window.I18N?.t?.('lab.t_frequency') ?? 'lab.t_frequency'}</span>
+                        <span class="header-stat-v font-bold" id="appraisal-stat-interval">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIntervalValue === 'function') ? window.PokemonApp.renderPokedexIntervalValue(formulaData, pkmData) : '--'}</span>
+                      </div>
+                      <div class="pokedex-header-stat-item">
+                        <span class="header-stat-k">${window.I18N?.t?.('lab.t_carry') ?? 'lab.t_carry'}</span>
+                        <span class="header-stat-v font-bold" id="appraisal-stat-carry">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexCarryValue === 'function') ? window.PokemonApp.renderPokedexCarryValue(formulaData, pkmData) : '--'}</span>
+                      </div>
+                    </div>
+                    <div class="pokedex-header-stat-col">
+                      <div class="pokedex-header-stat-item">
+                        <span class="header-stat-k">${window.I18N?.t?.('lab.t_ing_rate') ?? 'lab.t_ing_rate'}</span>
+                        <span class="header-stat-v font-bold" id="appraisal-stat-ingredient-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIngRateValue === 'function') ? window.PokemonApp.renderPokedexIngRateValue(formulaData, pkmData) : '--'}</span>
+                      </div>
+                      <div class="pokedex-header-stat-item">
+                        <span class="header-stat-k">${window.I18N?.t?.('lab.t_skill_rate') ?? 'lab.t_skill_rate'}</span>
+                        <span class="header-stat-v font-bold" id="appraisal-stat-skill-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexSkillRateValue === 'function') ? window.PokemonApp.renderPokedexSkillRateValue(formulaData, pkmData) : '--'}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 中欄：食材與技能產能算法精算拆解 (純展示無調整組件，空間最大化單一整合外框) -->
+            <div class="appraisal-calc-col">
+              <div class="pokedex-calc-formula-card" id="appraisal-calc-formula-container">
+                ${(formulaData && window.PokemonApp && typeof window.PokemonApp.renderPokedexFormulaBreakdownHTML === 'function')
+                  ? window.PokemonApp.renderPokedexFormulaBreakdownHTML(formulaData, pkmData)
+                  : ''}
+              </div>
+            </div>
+
+          <!-- 右欄：雷達圖 + 智能簡評 + 專長深度點評 (純淨無外框容器) -->
+          <div class="appraisal-right-col">
+            <div class="appraisal-desktop-content-grid">
+              <!-- 頂部：雷達圖區塊 (自適應置中，無冗餘標題) -->
+              <div class="appraisal-radar-block">
+                <div class="appraisal-radar-wrapper">
+                  ${radarSVG}
+                </div>
+              </div>
+
+              <!-- 中部：PR 智能簡評欄 (嵌入式膠囊標籤，不佔用內容展示空間) -->
+              <div class="appraisal-summary-bar">
+                <span class="appraisal-summary-label">${window.I18N?.t?.('lab.t_summary_label') ?? 'lab.t_summary_label'}</span>
+                <span class="appraisal-summary-text">${summaryNote}</span>
+              </div>
+
+              <!-- 下方：專長深度點評與優缺點 (在智能簡評下方，同樣長度) -->
+              <div class="appraisal-analysis-card">
+                <h4 class="appraisal-section-heading">${window.I18N?.t?.('lab.t_synergy_heading') ?? 'lab.t_synergy_heading'}</h4>
+                <div class="appraisal-pros-list">
+                  ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
+                </div>
+                ${evaluation.cons.length > 0 ? `
+                  <div class="appraisal-cons-list">
+                    ${evaluation.cons.map(function(c) { return `<div class="appraisal-con-item">${c}</div>`; }).join('')}
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function getIngCountFromBase(basePkm, slotIdx, ingName) {
+    if (!basePkm || !basePkm.ingredients) {
+      return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
+    }
+    const found = basePkm.ingredients.find(function(ig) { return ig.name === ingName; });
+    if (found) {
+      if (slotIdx === 0 && found.l1 !== undefined) return parseInt(found.l1, 10);
+      if (slotIdx === 1 && found.l30 !== undefined) return parseInt(found.l30, 10);
+      if (slotIdx === 2 && found.l60 !== undefined) return parseInt(found.l60, 10);
+      if (typeof found.count === 'number') return found.count;
+    }
+    const slotIng = basePkm.ingredients[slotIdx];
+    if (slotIng) {
+      if (slotIdx === 0 && slotIng.l1 !== undefined) return parseInt(slotIng.l1, 10);
+      if (slotIdx === 1 && slotIng.l30 !== undefined) return parseInt(slotIng.l30, 10);
+      if (slotIdx === 2 && slotIng.l60 !== undefined) return parseInt(slotIng.l60, 10);
+      if (typeof slotIng.count === 'number') return slotIng.count;
+    }
+    return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
+  }
+
+  /* ─── 副技能分級判斷 ───────────────────────────────────── */
+  const GOLD_SUBSKILLS = new Set(['幫手獎勵', '樹果數量S', '技能等級提升M', '夢之碎片獎勵', '睡眠EXP獎勵', '研究EXP獎勵', '活力回復獎勵']);
+  const BLUE_SUBSKILLS = new Set(['幫忙速度M', '食材機率提升M', '技能機率提升M', '技能等級提升S', '持有上限提升L', '持有上限提升M']);
+
+  const DEFAULT_SUBSKILLS_DATA = [
+    { name: '樹果數量S', tier: 'gold' },
+    { name: '幫手獎勵', tier: 'gold' },
+    { name: '睡眠EXP獎勵', tier: 'gold' },
+    { name: '活力回復獎勵', tier: 'gold' },
+    { name: '夢之碎片獎勵', tier: 'gold' },
+    { name: '研究EXP獎勵', tier: 'gold' },
+    { name: '技能等級提升M', tier: 'gold' },
+    { name: '幫忙速度M', tier: 'blue' },
+    { name: '食材機率提升M', tier: 'blue' },
+    { name: '技能機率提升M', tier: 'blue' },
+    { name: '技能等級提升S', tier: 'blue' },
+    { name: '持有上限提升L', tier: 'blue' },
+    { name: '持有上限提升M', tier: 'blue' },
+    { name: '幫忙速度S', tier: 'white' },
+    { name: '食材機率提升S', tier: 'white' },
+    { name: '技能機率提升S', tier: 'white' },
+    { name: '持有上限提升S', tier: 'white' },
+    { name: '活力回復提升S', tier: 'white' }
+  ];
+
+  function getSkillTier(sName) {
+    if (!sName) return 'white';
+    if (GOLD_SUBSKILLS.has(sName)) return 'gold';
+    if (BLUE_SUBSKILLS.has(sName)) return 'blue';
+    const subskillPool = (typeof window !== 'undefined' && ((window.UserBox && window.UserBox.SUBSKILLS_DATA) || (window.PokemonBoxApp && window.PokemonBoxApp.SUBSKILLS_DATA))) || DEFAULT_SUBSKILLS_DATA;
+    const found = subskillPool.find(function (s) { return s.name === sName; });
+    if (found && found.tier) return found.tier;
+    return 'white';
+  }
+
+  /* ─── 診斷報告書彈窗管理 ───────────────────────────────── */
+  function openAppraisalModal(pkmOrBoxItem) {
+    if (!pkmOrBoxItem) return;
+    if (window.AppraisalLab) {
+      window.AppraisalLab._currentBoxItem = (pkmOrBoxItem && pkmOrBoxItem.rawItem) ? pkmOrBoxItem.rawItem : (pkmOrBoxItem && pkmOrBoxItem.uid ? pkmOrBoxItem : null);
+    }
+
+    let pkmData = null;
+    let currentLv = pkmOrBoxItem.level || 30;
+    let natureName = pkmOrBoxItem.nature || '坦率';
+    let subskills = pkmOrBoxItem.subskills || [];
+    let ingredients = pkmOrBoxItem.ingredients || [];
+    let ribbonLevel = parseInt(pkmOrBoxItem.ribbon, 10) || 0;
+
+    if (pkmOrBoxItem.pkm) {
+      pkmData = pkmOrBoxItem.pkm;
+    } else if (pkmOrBoxItem.name_cn) {
+      pkmData = pkmOrBoxItem;
+    } else if (window.allPokemons) {
+      pkmData = window.allPokemons.find(function(p) { return p.name_cn === pkmOrBoxItem.name || p.id === pkmOrBoxItem.pkmId; });
+    }
+
+    let skillLevel = getEffectiveSkillLevel(pkmOrBoxItem, pkmData);
+    const nickname = (pkmOrBoxItem.nickname || '').trim();
+    const isMint = !!(pkmOrBoxItem.cleanseMint || pkmOrBoxItem.mint || (pkmOrBoxItem.rawItem && (pkmOrBoxItem.rawItem.cleanseMint || pkmOrBoxItem.rawItem.mint)) || (pkmData && (pkmData.cleanseMint || pkmData.mint)));
+    const targetPkmData = Object.assign({}, pkmData, { cleanseMint: isMint });
+
+    const evaluation = evaluatePokemon(targetPkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, isMint);
+    if (!evaluation) return;
+
+    let modal = document.getElementById('modal-appraisal-report');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'modal-appraisal-report';
+      modal.className = 'appraisal-modal-backdrop';
+      document.body.appendChild(modal);
+    }
+
+    const radarSVG = renderRadarChartSVG(evaluation.scores, 360, 270);
+    const SIX_DIM_META = getSixDimMeta();
+    const displayName = window.I18N?.getPokemonName?.(pkmData) ?? (pkmData.name_cn || pkmData.name_en || '');
+    const natDisplayName = window.I18N?.getNatureName?.(natureName) ?? natureName;
+
+    // 遊戲同款性格展示排版 (In-Game Style Nature Display)
+    const natureObj = NATURE_DATA.find(function(n) { return n.name === natureName || n.name_en === natureName; });
+    let natureEffectHtml = '';
+    if (isMint) {
+      natureEffectHtml = `
+        <div class="nature-effects-group">
+          <div class="nature-effect-neutral nature-effect-mint">
+            ${window.I18N?.t?.('lab.t_nature_mint_neutral') ?? 'lab.t_nature_mint_neutral'}
+          </div>
+        </div>
+      `;
+    } else if (natureObj && natureObj.buff && natureObj.buff !== '無增減') {
+      const buffLabel = (window.I18N?.field?.(natureObj, 'buff') ?? (natureObj.buff || '')).replace(/[▲▼]/g, '').trim();
+      const debuffLabel = (window.I18N?.field?.(natureObj, 'debuff') ?? (natureObj.debuff || '')).replace(/[▲▼]/g, '').trim();
+      natureEffectHtml = `
+        <div class="nature-effects-group">
+          <div class="nature-effect-row nature-buff-row">
+            <span class="nature-effect-label">${escapeHtml(buffLabel)}</span>
+            <span class="nature-arrows-up">▲▲</span>
+          </div>
+          <div class="nature-effect-row nature-debuff-row">
+            <span class="nature-effect-label">${escapeHtml(debuffLabel)}</span>
+            <span class="nature-arrows-down">▼▼</span>
+          </div>
+        </div>
+      `;
+    } else {
+      natureEffectHtml = `
+        <div class="nature-effects-group">
+          <div class="nature-effect-neutral">
+            ${window.I18N?.t?.('lab.t_nature_neutral') ?? 'lab.t_nature_neutral'}
+          </div>
+        </div>
+      `;
+    }
+
+    const berry = (typeof window.getPokemonBerry === 'function') 
+      ? window.getPokemonBerry(pkmData) 
+      : (pkmData.berry || { name: '', icon: '' });
+    const berryName = window.I18N?.getBerryName?.(berry.name) ?? (berry.name || '--');
+
+    // 專長型態 (不展示「專長」二字，僅展示 食材型 / 技能型 / 樹果型，無外框)
+    let specTypeLabel = window.I18N?.t?.('lab.t_spec_ing') ?? 'lab.t_spec_ing';
+    let specClass = 'spec-ingredient';
+    if (pkmData.specialty && (pkmData.specialty.includes('樹果') || pkmData.specialty === 'Berries')) {
+      specClass = 'spec-berry';
+      specTypeLabel = window.I18N?.t?.('lab.t_spec_berry') ?? 'lab.t_spec_berry';
+    } else if (pkmData.specialty && (pkmData.specialty.includes('技能') || pkmData.specialty === 'Skills')) {
+      specClass = 'spec-skill';
+      specTypeLabel = window.I18N?.t?.('lab.t_spec_skill') ?? 'lab.t_spec_skill';
+    } else if (pkmData.specialty && (pkmData.specialty.includes('全能') || pkmData.specialty.includes('全部') || pkmData.specialty === 'All-Rounder' || pkmData.specialty.toLowerCase() === 'all')) {
+      specClass = 'spec-all';
+      specTypeLabel = window.I18N?.t?.('lab.t_spec_all') ?? 'lab.t_spec_all';
+    }
+
+    let summaryNote = pkmOrBoxItem.summaryNote || '';
+    if (!summaryNote || summaryNote.includes('質變躍升') || summaryNote.includes('建議優先升至') || summaryNote.includes('未達')) {
+      summaryNote = generateIntelligentSummary(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, evaluation);
+    }
+
+    // 主技能資訊 (Main Skill & Level)
+    const rawMainSkill = (pkmData && pkmData.main_skill) || (pkmData && pkmData.skill && pkmData.skill.name) || pkmOrBoxItem.main_skill || '';
+    const mainSkillName = rawMainSkill ? (window.I18N?.getMainSkillName?.(rawMainSkill) ?? rawMainSkill) : (window.I18N?.t?.('lab.t_main_skill') ?? 'lab.t_main_skill');
+    const skillLvl = skillLevel || 1;
+
+    // 食材組合資訊 (Ingredients & Quantity, 3 Slots with Level Unlock)
+    const ingSlotNames = [
+      (ingredients && ingredients[0]) ? (typeof ingredients[0] === 'string' ? ingredients[0] : ingredients[0].name) : (pkmOrBoxItem.ing1 || (pkmData && pkmData.ingredients && pkmData.ingredients[0] ? pkmData.ingredients[0].name : '')),
+      (ingredients && ingredients[1]) ? (typeof ingredients[1] === 'string' ? ingredients[1] : ingredients[1].name) : (pkmOrBoxItem.ing2 || (pkmData && pkmData.ingredients && pkmData.ingredients[1] ? pkmData.ingredients[1].name : '')),
+      (ingredients && ingredients[2]) ? (typeof ingredients[2] === 'string' ? ingredients[2] : ingredients[2].name) : (pkmOrBoxItem.ing3 || (pkmData && pkmData.ingredients && pkmData.ingredients[2] ? pkmData.ingredients[2].name : ''))
+    ];
+
+    const ingChipsHtml = [0, 1, 2].map(function(idx) {
+      const unlockLv = idx === 0 ? 1 : (idx === 1 ? 30 : 60);
+      const isUnlocked = currentLv >= unlockLv;
+      const lockClass = !isUnlocked ? ' ing-locked' : '';
+      const ingName = ingSlotNames[idx];
+      const lockTitleSuffix = !isUnlocked ? (window.I18N?.t?.('lab.t_ing_locked') ?? 'lab.t_ing_locked') : '';
+
+      if (!ingName || ingName === '--') {
+        return `
+          <div class="appraisal-ing-chip is-empty${lockClass}">
+            <span class="appraisal-ing-chip-empty">--</span>
+          </div>
+        `;
+      }
+      const displayName = window.I18N?.getIngredientName?.(ingName) ?? ingName;
+      const iconUrl = (window.I18N && typeof window.I18N.getIngredientIcon === 'function')
+        ? window.I18N.getIngredientIcon(ingName)
+        : '';
+      const count = getIngCountFromBase(pkmData, idx, ingName);
+      return `
+        <div class="appraisal-ing-chip${lockClass}" title="${escapeHtml(displayName)}${lockTitleSuffix}">
+          ${iconUrl ? `<img src="${iconUrl}" class="appraisal-ing-chip-icon" width="20" height="20" loading="lazy" decoding="async" alt="${escapeHtml(displayName)}">` : ''}
+        </div>
+      `;
+    }).join('');
+
+    const formulaData = (window.PokemonApp && typeof window.PokemonApp.calculatePokedexIngredientFormulas === 'function')
+      ? window.PokemonApp.calculatePokedexIngredientFormulas({
+          pkm: pkmData,
+          level: currentLv,
+          nature: natureName,
+          subskills: subskills,
+          ingredients: ingSlotNames,
+          ribbon: ribbonLevel,
+          skillLevel: skillLevel,
+          cleanseMint: isMint
+        })
+      : null;
+
+    const isMobileH5 = typeof document !== 'undefined' && (
+      (document.body && document.body.classList && document.body.classList.contains('mobile-h5-app')) ||
+      (typeof document.querySelector === 'function' && !!document.querySelector('.mobile-h5-app')) ||
+      (typeof window !== 'undefined' && (window.IS_MOBILE_H5 || (window.location && window.location.pathname && window.location.pathname.includes('/app/'))))
+    );
+
+    const modalRenderCtx = {
+      pkmOrBoxItem, pkmData, currentLv, nickname, displayName, natDisplayName,
+      natureEffectHtml, berry, berryName, specClass, specTypeLabel, summaryNote,
+      mainSkillName, skillLvl, ingChipsHtml, formulaData, evaluation, radarSVG,
+      subskills, ribbonLevel
+    };
+    if (isMobileH5) {
+      modal.className = 'box-modal-backdrop modal-overlay appraisal-modal-backdrop mobile-modal-backdrop';
+      modal.innerHTML = renderAppraisalMobileSheetHtml(modalRenderCtx);
+    } else {
+      modal.className = 'appraisal-modal-backdrop';
+      modal.innerHTML = renderAppraisalDesktopModalHtml(modalRenderCtx);
+    }
+
+    if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
+    if (modal.style && typeof modal.style.removeProperty === 'function') {
+      modal.style.removeProperty('display');
+    }
+    modal.style.display = 'flex';
+    if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(modal);
+    document.body.style.overflow = 'hidden';
+
+    // 點選遮罩外部關閉與 Escape 鍵關閉
+    modal.onclick = function(e) {
+      if (e.target === modal) {
+        closeAppraisalModal();
+      }
+    };
+    if (modal._onKeydown && typeof window.removeEventListener === 'function') {
+      window.removeEventListener('keydown', modal._onKeydown);
+    }
+    modal._onKeydown = function(e) {
+      if (e.key === 'Escape') {
+        closeAppraisalModal();
+      }
+    };
+    if (typeof window.addEventListener === 'function') {
+      window.addEventListener('keydown', modal._onKeydown);
+    }
+  }
+
+  function openCurrentEditModal() {
+    const item = window.AppraisalLab ? window.AppraisalLab._currentBoxItem : null;
+    const modal = document.getElementById('modal-appraisal-report');
+    if (modal) {
+      if (modal._onKeydown && typeof window.removeEventListener === 'function') {
+        window.removeEventListener('keydown', modal._onKeydown);
+      }
+      modal._onKeydown = null;
+      if (modal.classList) modal.classList.remove('overlay-closing');
+      if (modal.style) {
+        if (typeof modal.style.setProperty === 'function') modal.style.setProperty('display', 'none', 'important');
+        else modal.style.display = 'none';
+      }
+    }
+    if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+    document.body.style.overflow = '';
+    if (!item) return;
+    if (window.UserBox && typeof window.UserBox.openBoxEditModal === 'function') {
+      const fresh = (typeof window.UserBox.getUserBox === 'function' && window.UserBox.getUserBox().find(p => p.uid === item.uid)) || item;
+      if (window.AppraisalLab) window.AppraisalLab._reopenUid = item.uid;
+      window.UserBox.openBoxEditModal(fresh);
+    }
+  }
+
+  function reopenAfterEdit() {
+    const lab = window.AppraisalLab;
+    if (!lab || !lab._reopenUid) return;
+    const uid = lab._reopenUid;
+    lab._reopenUid = null;
+    const box = (window.UserBox && typeof window.UserBox.getUserBox === 'function') ? window.UserBox.getUserBox() : [];
+    const item = box.find(p => p.uid === uid);
+    if (!item) return;
+    const pokemons = window.allPokemons || [];
+    const base = findBasePkm(item.pokemonId || item.name) || pokemons.find(p => p.name_cn === item.name);
+    openAppraisalModal({
+      pkm: base,
+      level: item.level || 30,
+      nature: item.nature || '坦率',
+      subskills: item.subskills || [],
+      ingredients: [item.ing1, item.ing2, item.ing3],
+      ribbon: item.ribbon || 0,
+      nickname: item.nickname || '',
+      skillLevel: item.skillLevel || 1,
+      rawItem: item
+    });
+  }
+
+  function closeAppraisalModal() {
+    const modal = document.getElementById('modal-appraisal-report');
+    if (!modal) return;
+    if (modal._onKeydown) {
+      if (typeof window.removeEventListener === 'function') {
+        window.removeEventListener('keydown', modal._onKeydown);
+      }
+      modal._onKeydown = null;
+    }
+    const done = () => {
+      if (modal && modal.style) {
+        if (typeof modal.style.setProperty === 'function') modal.style.setProperty('display', 'none', 'important');
+        else modal.style.display = 'none';
+      }
+      if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+      document.body.style.overflow = '';
+    };
+    if (typeof window.animateOverlayClose === 'function') {
+      window.animateOverlayClose(modal, done);
+    } else {
+      done();
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   function getIslandFavoredBerries(islandId) {
     const island = LAB_ISLANDS.find(i => i.id === islandId) || LAB_ISLANDS[0];
     if (island.id === 'greengrass' && Array.isArray(labState.greengrassBerries) && labState.greengrassBerries.length === 3) {
@@ -3057,16 +3091,6 @@ const TARGET_TOP_RECIPES = [
       }
     }
     return _basePkmIndex[idOrName] || list.find(p => p.id === idOrName || p.name_cn === idOrName || p.name_en === idOrName) || list[0] || null;
-  }
-
-  function getMainSkillMaxLvl(skillName) {
-    if (!skillName) return 6;
-    if (skillName.includes('能量充填') || skillName.includes('Charge Strength')) return 7;
-    if (skillName.includes('食材獲取') || skillName.includes('Ingredient Magnet')) return 7;
-    if (skillName.includes('食材精選') || skillName.includes('Ingredient Draw')) return 7;
-    if (skillName.includes('夢之碎片') || skillName.includes('Dream Shard')) return 7;
-    if (skillName.includes('料理等級') || skillName.includes('Cooking Power')) return 7;
-    return 6;
   }
 
   function loadBoxItem(item) {
@@ -3348,7 +3372,7 @@ const TARGET_TOP_RECIPES = [
         const avatarUrl = p.icon_url || p.icon || (p.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png` : '') || 'assets/placeholder.svg';
         return `
           <div class="box-pkm-dropdown-item ${isSelected ? 'active' : ''}" data-id="${p.id}" data-name="${escapeHtml(p.name_cn)}" style="display:flex;align-items:center;gap:8px;padding:6px 10px;cursor:pointer;">
-            <img src="${avatarUrl}" class="box-pkm-dropdown-avatar" style="width:28px;height:28px;object-fit:contain;" alt="${escapeHtml(pkmDisplayName)}" loading="lazy">
+            <img src="${avatarUrl}" class="box-pkm-dropdown-avatar" width="28" height="28" style="width:28px;height:28px;object-fit:contain;" alt="${escapeHtml(pkmDisplayName)}" loading="lazy" decoding="async">
             <div class="box-pkm-dropdown-info" style="display:flex;flex-direction:column;">
               <span style="font-size:12px;font-weight:700;color:var(--text-primary);">No.${p.formatted_no || p.id} ${pkmDisplayName}</span>
             </div>
@@ -3386,101 +3410,6 @@ const TARGET_TOP_RECIPES = [
         }
       });
     }
-  }
-
-  /* ─── 雙重雷達圖渲染 (Dual Radar Chart SVG for Comparison) ─────────────── */
-  function renderDualRadarChartSVG(scoresA, scoresB, nameA, nameB, width, height) {
-    width = width || 360;
-    height = height || 310;
-    const SIX_DIM_META = getSixDimMeta();
-    const cx = width / 2;
-    const cy = (height / 2) + 8;
-    const r = Math.min(width * 0.34, height * 0.34);
-
-    const scoreKeys = ['berry', 'ingredient', 'skill', 'speed', 'growth', 'roi'];
-    const angles = SIX_DIM_META.map(function (m) { return m.angle; });
-
-    // 5 圈同心正六角形網格
-    const gridLevels = [0.2, 0.4, 0.6, 0.8, 1.0];
-    const gridPolygons = gridLevels.map(function (level) {
-      const pts = angles.map(function (a) {
-        const x = cx + (r * level) * Math.cos(a);
-        const y = cy + (r * level) * Math.sin(a);
-        return x.toFixed(1) + ',' + y.toFixed(1);
-      }).join(' ');
-      const cls = level === 1.0 ? 'radar-grid-poly radar-grid-outer' : 'radar-grid-poly';
-      return '<polygon class="' + cls + '" points="' + pts + '" fill="' + (level === 1.0 ? 'rgba(255,255,255,0.02)' : 'none') + '" stroke="rgba(255,255,255,0.09)" stroke-width="' + (level === 1.0 ? '1.5' : '1') + '" stroke-dasharray="' + (level === 1.0 ? 'none' : '2,2') + '" />';
-    }).join('');
-
-    // 6 條徑向軸線
-    const radialAxes = angles.map(function (a) {
-      const x2 = cx + r * Math.cos(a);
-      const y2 = cy + r * Math.sin(a);
-      return '<line class="radar-axis-line" x1="' + cx + '" y1="' + cy + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="rgba(255,255,255,0.12)" stroke-width="1" />';
-    }).join('');
-
-    // 多邊形 A (Cyan)
-    const ptsA = scoreKeys.map(function (k, i) {
-      const s = Math.max(scoresA[k] || 20, 10);
-      const ratio = Math.min(Math.max(s / 100, 0.1), 1.0);
-      const x = cx + (r * ratio) * Math.cos(angles[i]);
-      const y = cy + (r * ratio) * Math.sin(angles[i]);
-      return { x, y, score: s };
-    });
-    const polygonAPts = ptsA.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
-
-    // 多邊形 B (Purple)
-    const ptsB = scoreKeys.map(function (k, i) {
-      const s = Math.max(scoresB[k] || 20, 10);
-      const ratio = Math.min(Math.max(s / 100, 0.1), 1.0);
-      const x = cx + (r * ratio) * Math.cos(angles[i]);
-      const y = cy + (r * ratio) * Math.sin(angles[i]);
-      return { x, y, score: s };
-    });
-    const polygonBPts = ptsB.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
-
-    const dotsA = ptsA.map(p => `<circle class="radar-data-dot radar-dot-a" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1" />`).join('');
-    const dotsB = ptsB.map(p => `<circle class="radar-data-dot radar-dot-b" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="#c084fc" stroke="#0f172a" stroke-width="1" />`).join('');
-
-    const labelsSvg = SIX_DIM_META.map(function (m, i) {
-      const labelR = r + 24;
-      const lx = cx + labelR * Math.cos(m.angle);
-      const ly = cy + labelR * Math.sin(m.angle);
-      const scoreA = scoresA[m.key] || 0;
-      const scoreB = scoresB[m.key] || 0;
-      let textAnchor = 'middle';
-      if (Math.cos(m.angle) > 0.3) textAnchor = 'start';
-      else if (Math.cos(m.angle) < -0.3) textAnchor = 'end';
-
-      return `
-        <text class="radar-label-text" x="${lx.toFixed(1)}" y="${(ly - 6).toFixed(1)}" text-anchor="${textAnchor}" fill="var(--text-primary, #cbd5e1)" font-size="11" font-weight="700">${m.label}</text>
-        <text x="${lx.toFixed(1)}" y="${(ly + 8).toFixed(1)}" text-anchor="${textAnchor}" font-size="10" font-weight="800">
-          <tspan class="radar-score-a" fill="#38bdf8">${scoreA}</tspan> <tspan fill="var(--text-muted, #64748b)">/</tspan> <tspan class="radar-score-b" fill="#c084fc">${scoreB}</tspan>
-        </text>
-      `;
-    }).join('');
-
-    const legendSvg = `
-      <g transform="translate(14, 18)">
-        <rect class="radar-legend-a" x="0" y="0" width="10" height="10" rx="2" fill="#38bdf8" />
-        <text class="radar-legend-a" x="14" y="9" fill="#38bdf8" font-size="11" font-weight="700">${escapeHtml(nameA || (window.I18N?.t?.('lab.c_pokemon_a') ?? 'Pokémon A'))}</text>
-        <rect class="radar-legend-b" x="150" y="0" width="10" height="10" rx="2" fill="#c084fc" />
-        <text class="radar-legend-b" x="164" y="9" fill="#c084fc" font-size="11" font-weight="700">${escapeHtml(nameB || (window.I18N?.t?.('lab.c_pokemon_b') ?? 'Pokémon B'))}</text>
-      </g>
-    `;
-
-    return `
-      <svg viewBox="0 0 ${width} ${height}" class="radar-svg-chart radar-dual-svg-chart" style="width:100%;max-width:${width}px;aspect-ratio:${width}/${height};overflow:visible;" xmlns="http://www.w3.org/2000/svg">
-        ${legendSvg}
-        ${gridPolygons}
-        ${radialAxes}
-        <polygon class="radar-data-poly radar-data-poly-a" points="${polygonAPts}" fill="rgba(56, 189, 248, 0.22)" stroke="#38bdf8" stroke-width="2.2" />
-        <polygon class="radar-data-poly radar-data-poly-b" points="${polygonBPts}" fill="rgba(168, 85, 247, 0.22)" stroke="#c084fc" stroke-width="2.2" />
-        ${dotsA}
-        ${dotsB}
-        ${labelsSvg}
-      </svg>
-    `;
   }
 
   /* ─── 卡比獸島嶼週日階級評級標準 (Snorlax Island Master Rank Energy Tiers) ─── */
@@ -3577,17 +3506,45 @@ const TARGET_TOP_RECIPES = [
     ]
   };
 
+  const _snorlaxTierMapCache = new Map();
+  function _getSnorlaxTierMap(tiers) {
+    let m = _snorlaxTierMapCache.get(tiers);
+    if (!m) {
+      m = new Map();
+      for (let i = 0; i < tiers.length; i++) {
+        if (tiers[i] && tiers[i].rank) m.set(tiers[i].rank, tiers[i]);
+      }
+      _snorlaxTierMapCache.set(tiers, m);
+    }
+    return m;
+  }
+
+  let _labNatureMapCache = null;
+  let _labNatureMapLen = -1;
+  function _getLabNature(name) {
+    if (!name || !Array.isArray(NATURE_DATA)) return null;
+    if (!_labNatureMapCache || _labNatureMapLen !== NATURE_DATA.length) {
+      _labNatureMapCache = new Map();
+      for (let i = 0; i < NATURE_DATA.length; i++) {
+        if (NATURE_DATA[i]) _labNatureMapCache.set(NATURE_DATA[i].name, NATURE_DATA[i]);
+      }
+      _labNatureMapLen = NATURE_DATA.length;
+    }
+    return _labNatureMapCache.get(name) || null;
+  }
+
   function calculateProjectedSnorlaxRank(weeklyEnergy, islandId) {
     if (typeof weeklyEnergy !== 'number' || isNaN(weeklyEnergy) || !isFinite(weeklyEnergy) || weeklyEnergy <= 0) {
       return window.I18N?.t?.('lab.t_rank_basic', { n: 1 }) ?? 'lab.t_rank_basic';
     }
     const key = (islandId || 'greengrass').toLowerCase();
     const tiers = ISLAND_SNORLAX_THRESHOLDS[key] || ISLAND_SNORLAX_THRESHOLDS.greengrass;
-    const m1 = tiers.find(t => t.rank === 'Master 1') || { energy: 187832 };
-    const m5 = tiers.find(t => t.rank === 'Master 5') || { energy: 321146 };
-    const m10 = tiers.find(t => t.rank === 'Master 10') || { energy: 532707 };
-    const m15 = tiers.find(t => t.rank === 'Master 15') || { energy: 1199506 };
-    const m20 = tiers.find(t => t.rank === 'Master 20') || { energy: 3245795 };
+    const tierMap = _getSnorlaxTierMap(tiers);
+    const m1 = tierMap.get('Master 1') || { energy: 187832 };
+    const m5 = tierMap.get('Master 5') || { energy: 321146 };
+    const m10 = tierMap.get('Master 10') || { energy: 532707 };
+    const m15 = tierMap.get('Master 15') || { energy: 1199506 };
+    const m20 = tierMap.get('Master 20') || { energy: 3245795 };
 
     if (weeklyEnergy >= m20.energy) {
       return window.I18N?.t?.('lab.t_rank_master', { n: 20 }) ?? 'lab.t_rank_master';
@@ -3612,19 +3569,19 @@ const TARGET_TOP_RECIPES = [
       const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - m1.energy) / Math.max(1, step))));
       return window.I18N?.t?.('lab.t_rank_master', { n: rankNum }) ?? 'lab.t_rank_master';
     }
-    const u1 = tiers.find(t => t.rank === 'Ultra 1') || { energy: 79197 };
+    const u1 = tierMap.get('Ultra 1') || { energy: 79197 };
     if (weeklyEnergy >= u1.energy) {
       const step = (m1.energy - u1.energy) / 5;
       const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - u1.energy) / Math.max(1, step))));
       return window.I18N?.t?.('lab.t_rank_ultra', { n: rankNum }) ?? 'lab.t_rank_ultra';
     }
-    const g1 = tiers.find(t => t.rank === 'Great 1') || { energy: 23385 };
+    const g1 = tierMap.get('Great 1') || { energy: 23385 };
     if (weeklyEnergy >= g1.energy) {
       const step = (u1.energy - g1.energy) / 5;
       const rankNum = Math.max(1, Math.min(5, 1 + Math.floor((weeklyEnergy - g1.energy) / Math.max(1, step))));
       return window.I18N?.t?.('lab.t_rank_great', { n: rankNum }) ?? 'lab.t_rank_great';
     }
-    const b1 = tiers.find(t => t.rank === 'Basic 1') || { energy: 0 };
+    const b1 = tierMap.get('Basic 1') || { energy: 0 };
     const step = (g1.energy - b1.energy) / 5;
     const rankNum = Math.max(1, Math.min(5, 1 + Math.floor(weeklyEnergy / Math.max(1, step))));
     return window.I18N?.t?.('lab.t_rank_basic', { n: rankNum }) ?? 'lab.t_rank_basic';
@@ -3728,7 +3685,7 @@ const TARGET_TOP_RECIPES = [
       }
 
       const isMint = !!(item.cleanseMint || item.mint);
-      const nat = isMint ? null : NATURE_DATA.find(n => n.name === nature);
+      const nat = isMint ? null : _getLabNature(nature);
       if (nat) {
         if (nat.buff && nat.buff.includes('幫忙速度')) freq *= 0.90;
         if (nat.debuff && nat.debuff.includes('幫忙速度')) freq *= 1.075;
@@ -3951,7 +3908,7 @@ const TARGET_TOP_RECIPES = [
 
       const subs = Array.isArray(item.subskills) ? item.subskills : [];
       const isMint = !!(item.cleanseMint || item.mint);
-      const nat = isMint ? null : NATURE_DATA.find(n => n.name === item.nature);
+      const nat = isMint ? null : _getLabNature(item.nature);
 
       const spec = base.specialty || '';
       const isBerrySpec = spec.includes('樹果') || spec === 'Berries';
@@ -4116,7 +4073,7 @@ const TARGET_TOP_RECIPES = [
         freq = freq * (1 - Math.min(0.35, subSpeedDiscount));
 
         const isMint = !!(p.cleanseMint || p.mint);
-        const nat = isMint ? null : NATURE_DATA.find(n => n.name === p.nature);
+        const nat = isMint ? null : _getLabNature(p.nature);
         if (nat) {
           if (nat.buff && nat.buff.includes('幫忙速度')) freq *= 0.90;
           if (nat.debuff && nat.debuff.includes('幫忙速度')) freq *= 1.075;
@@ -4147,6 +4104,16 @@ const TARGET_TOP_RECIPES = [
         return Math.round(totalYield);
       }
 
+      const yieldCache = new Map();
+      function getCachedIngDailyYield(p, ingName) {
+        const cacheKey = (p.uid || p.pokemonId || p.name || '') + ':' + (p.level || '') + ':' + ingName;
+        if (yieldCache.has(cacheKey)) return yieldCache.get(cacheKey);
+        const val = estimatePkmIngDailyYield(p, ingName);
+        yieldCache.set(cacheKey, val);
+        return val;
+      }
+
+      const healerUidSet = new Set(healers.map(h => h.uid));
       const teamSpeciesMap = {};
 
       while (selected.length < 5) {
@@ -4187,7 +4154,7 @@ const TARGET_TOP_RECIPES = [
             if (subs.includes('幫忙速度S')) subMultiplier *= 1.08;
 
             const isMint = !!(p.cleanseMint || p.mint);
-            const nat = isMint ? null : NATURE_DATA.find(n => n.name === p.nature);
+            const nat = isMint ? null : _getLabNature(p.nature);
             let natMultiplier = 1.0;
             if (nat && nat.buff && nat.buff.includes('食材')) natMultiplier *= 1.20;
             if (nat && nat.debuff && nat.debuff.includes('食材')) natMultiplier *= 0.80;
@@ -4201,7 +4168,7 @@ const TARGET_TOP_RECIPES = [
 
             reqIngredients.forEach(ing => {
               const def = remainingDeficits[ing.name] || 0;
-              const y = estimatePkmIngDailyYield(p, ing.name);
+              const y = getCachedIngDailyYield(p, ing.name);
               if (y > 0) {
                 if (def > 0 && y >= 8) {
                   effectiveMatchCount++;
@@ -4242,12 +4209,12 @@ const TARGET_TOP_RECIPES = [
           teamSpeciesMap[cKey] = (teamSpeciesMap[cKey] || 0) + 1;
 
           reqIngredients.forEach(ing => {
-            const y = estimatePkmIngDailyYield(bestCandidate, ing.name);
+            const y = getCachedIngDailyYield(bestCandidate, ing.name);
             remainingDeficits[ing.name] = Math.max(0, (remainingDeficits[ing.name] || 0) - y);
           });
         } else {
           // 所有缺口已 100% 覆蓋（或倉庫無對應食材怪）時：食材隊優先補入最佳奶媽維持全隊活力，其次補最強食材／綜合怪
-          const hasTeamHealer = selected.some(uid => healers.some(h => h.uid === uid));
+          const hasTeamHealer = selected.some(uid => healerUidSet.has(uid));
           const fallback = (strategy === 'ingredients' && !hasTeamHealer && healers.length > 0 ? pickBest(healers, 'healer') : null)
             || pickBest(userBox, 'ingredient')
             || pickBest(userBox, 'general');
@@ -4668,7 +4635,7 @@ const TARGET_TOP_RECIPES = [
             const iconUrl = ing.icon || (window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(ing.name) : '');
             return `
               <span class="lab-recipe-ing-chip" title="${escapeHtml(iDisp)} x${ing.count}">
-                ${iconUrl ? `<img src="${iconUrl}" class="lab-recipe-ing-icon" alt="${escapeHtml(iDisp)}">` : ''}
+                ${iconUrl ? `<img src="${iconUrl}" class="lab-recipe-ing-icon" alt="${escapeHtml(iDisp)}" width="18" height="18" loading="lazy" decoding="async">` : ''}
                 <span class="lab-recipe-ing-count">x${ing.count}</span>
               </span>
             `;
@@ -4680,7 +4647,7 @@ const TARGET_TOP_RECIPES = [
           return `
             <div class="lab-recipe-card ${catClass} ${isSelected ? 'selected' : ''}" onclick="window.AppraisalLab.onRecipePickerSelect('${escapeHtml(rNameCn)}')">
               <div class="lab-recipe-card-left">
-                ${r.icon ? `<img src="${r.icon}" class="lab-recipe-card-icon" alt="" loading="lazy">` : ''}
+                ${r.icon ? `<img src="${r.icon}" class="lab-recipe-card-icon" alt="" width="38" height="38" loading="lazy" decoding="async">` : ''}
                 <div class="lab-recipe-card-info">
                   <div class="lab-recipe-card-title-row">
                     <span class="lab-recipe-card-title">${escapeHtml(rNameDisplay)}</span>
@@ -4727,7 +4694,7 @@ const TARGET_TOP_RECIPES = [
           const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
           return `
             <button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === iName ? 'active' : ''}" data-recipe-ing="${escapeHtml(iName)}" title="${escapeHtml(iDisp)}">
-              ${icon ? `<img src="${icon}" class="lab-picker-filter-ing-img" alt="${escapeHtml(iDisp)}">` : `<span>${escapeHtml(iDisp)}</span>`}
+              ${icon ? `<img src="${icon}" class="lab-picker-filter-ing-img" alt="${escapeHtml(iDisp)}" width="18" height="18" loading="lazy" decoding="async">` : `<span>${escapeHtml(iDisp)}</span>`}
             </button>
           `;
         })
@@ -4944,7 +4911,7 @@ const TARGET_TOP_RECIPES = [
           const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
           return `
             <span class="lab-picker-ing-chip ${!s.unlocked ? 'is-locked' : ''}" title="Lv.${s.req}: ${escapeHtml(iDisp)}${!s.unlocked ? (window.I18N?.t?.('lab.t_locked_paren') ?? 'lab.t_locked_paren') : ''}">
-              ${icon ? `<img src="${icon}" class="lab-picker-ing-icon" alt="${escapeHtml(iDisp)}">` : `<span style="font-size:9px;color:var(--text-muted);">-</span>`}
+              ${icon ? `<img src="${icon}" class="lab-picker-ing-icon" alt="${escapeHtml(iDisp)}" width="20" height="20" loading="lazy" decoding="async">` : `<span style="font-size:9px;color:var(--text-muted);">-</span>`}
             </span>
           `;
         }).join('');
@@ -4954,12 +4921,12 @@ const TARGET_TOP_RECIPES = [
             ${isOccupied ? `<span class="lab-picker-occupied-badge">${window.I18N?.t?.('lab.t_in_compare_badge') ?? 'lab.t_in_compare_badge'}</span>` : ''}
             <div class="lab-picker-main">
               <div class="lab-picker-avatar">
-                <img src="${avatarUrl}" alt="${escapeHtml(pDisplayName)}" loading="lazy">
+                <img src="${avatarUrl}" alt="${escapeHtml(pDisplayName)}" width="44" height="44" loading="lazy" decoding="async">
                 <span class="lab-picker-lv">Lv.${item.level || 1}</span>
               </div>
               <div class="lab-picker-meta">
                 <div class="lab-picker-sub">
-                  ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berryDisp)}">` : ''}
+                  ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berryDisp)}" width="15" height="15" loading="lazy" decoding="async">` : ''}
                   ${specHtml}
                 </div>
                 <div class="lab-picker-ings">
@@ -4989,7 +4956,7 @@ const TARGET_TOP_RECIPES = [
         const bIcon = b.icon || '';
         return `
           <button type="button" class="lab-picker-berry-chip-btn ${currentBerryFilter === b.name ? 'active' : ''}" data-berry="${escapeHtml(b.name)}" title="${escapeHtml(bDisp)} (${escapeHtml(tDisp)})">
-            ${bIcon ? `<img src="${bIcon}" class="lab-picker-filter-berry-img" alt="${escapeHtml(bDisp)}">` : `<span>${escapeHtml(bDisp)}</span>`}
+            ${bIcon ? `<img src="${bIcon}" class="lab-picker-filter-berry-img" alt="${escapeHtml(bDisp)}" width="18" height="18" loading="lazy" decoding="async">` : `<span>${escapeHtml(bDisp)}</span>`}
           </button>
         `;
       })
@@ -5002,7 +4969,7 @@ const TARGET_TOP_RECIPES = [
         const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
         return `
           <button type="button" class="lab-picker-ing-chip-btn ${currentIngFilter === iName ? 'active' : ''}" data-ing="${escapeHtml(iName)}" title="${escapeHtml(iDisp)}">
-            ${icon ? `<img src="${icon}" class="lab-picker-filter-ing-img" alt="${escapeHtml(iDisp)}">` : `<span>${escapeHtml(iDisp)}</span>`}
+            ${icon ? `<img src="${icon}" class="lab-picker-filter-ing-img" alt="${escapeHtml(iDisp)}" width="18" height="18" loading="lazy" decoding="async">` : `<span>${escapeHtml(iDisp)}</span>`}
           </button>
         `;
       })
@@ -5228,7 +5195,7 @@ const TARGET_TOP_RECIPES = [
 
     return `
       <div class="lab-greengrass-berry-item">
-        ${bObj && bObj.icon ? `<img src="${bObj.icon}" class="lab-berry-mini-icon" alt="Berry">` : ''}
+        ${bObj && bObj.icon ? `<img src="${bObj.icon}" class="lab-berry-mini-icon" width="18" height="18" loading="lazy" decoding="async" alt="Berry">` : ''}
         <select class="lab-select lab-berry-select" onchange="window.AppraisalLab.setGreengrassBerry(${idx}, this.value)">
           ${optionsHtml}
         </select>
@@ -5267,7 +5234,7 @@ const TARGET_TOP_RECIPES = [
       const bDisplayName = window.I18N?.getBerryName?.(canonicalName) ?? canonicalName;
       return `
         <span class="lab-favored-berry-icon-wrap" title="${escapeHtml(bDisplayName)}">
-          ${bObj.icon ? `<img src="${bObj.icon}" class="lab-favored-berry-img" alt="${escapeHtml(bDisplayName)}">` : ''}
+          ${bObj.icon ? `<img src="${bObj.icon}" class="lab-favored-berry-img" width="22" height="22" loading="lazy" decoding="async" alt="${escapeHtml(bDisplayName)}">` : ''}
         </span>
       `;
     }).join('');
@@ -5367,7 +5334,7 @@ const TARGET_TOP_RECIPES = [
           <div class="lab-team-config-group lab-target-recipe-config-group">
             <span class="lab-team-config-label">${window.I18N?.t?.('lab.t_target_dish_label') ?? 'lab.t_target_dish_label'}</span>
             <div class="lab-target-recipe-chip" onclick="window.AppraisalLab.openPicker({ type: 'recipe' })" title="${escapeHtml(targetRecipeDisplayName)} (${window.I18N?.t?.('lab.t_click_to_change') ?? 'lab.t_click_to_change'})">
-              ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-target-recipe-chip-icon" alt="${escapeHtml(targetRecipeDisplayName)}">` : ''}
+              ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-target-recipe-chip-icon" width="26" height="26" loading="lazy" decoding="async" alt="${escapeHtml(targetRecipeDisplayName)}">` : ''}
               <span class="lab-target-recipe-chip-badge">${escapeHtml(targetRecipeCategory)}</span>
               <span class="lab-target-recipe-chip-btn">${window.I18N?.t?.('lab.t_change') ?? 'lab.t_change'}</span>
             </div>
@@ -5482,7 +5449,7 @@ const TARGET_TOP_RECIPES = [
             const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
             return `
               <div class="lab-slot-ing-chip ${!s.unlocked ? 'is-locked' : ''}" title="Lv.${s.req}: ${escapeHtml(iDisp)}${!s.unlocked ? (window.I18N?.t?.('lab.t_locked_paren') ?? 'lab.t_locked_paren') : ''}">
-                ${icon ? `<img src="${icon}" class="lab-slot-ing-icon" alt="${escapeHtml(iDisp)}">` : `<span style="font-size:9px;color:var(--text-muted);">-</span>`}
+                ${icon ? `<img src="${icon}" class="lab-slot-ing-icon" width="20" height="20" loading="lazy" decoding="async" alt="${escapeHtml(iDisp)}">` : `<span style="font-size:9px;color:var(--text-muted);">-</span>`}
               </div>
             `;
           }).join('')}
@@ -5550,7 +5517,7 @@ const TARGET_TOP_RECIPES = [
           <div class="lab-slot-main-row">
             <div class="lab-slot-identity-group">
               <div class="lab-slot-avatar-wrap">
-                <img src="${avatarUrl}" class="lab-slot-avatar-img" alt="${escapeHtml(displayName)}" loading="lazy">
+                <img src="${avatarUrl}" class="lab-slot-avatar-img" width="36" height="36" alt="${escapeHtml(displayName)}" loading="lazy" decoding="async">
                 <span class="lab-slot-lv-badge">Lv.${item.level || 1}</span>
               </div>
               <div class="lab-slot-name-col">
@@ -5561,7 +5528,7 @@ const TARGET_TOP_RECIPES = [
                 <div class="lab-slot-spec-left">
                   ${specialtyIconHtml}
                   <div class="lab-slot-berry-wrap ${isFav ? 'favored' : ''}" title="${escapeHtml(berryDisp)}${isFav ? ' (2x)' : ''}">
-                    ${berry.icon ? `<img src="${berry.icon}" class="lab-slot-berry-icon" alt="Berry">` : ''}
+                    ${berry.icon ? `<img src="${berry.icon}" class="lab-slot-berry-icon" width="15" height="15" loading="lazy" decoding="async" alt="Berry">` : ''}
                     ${isFav ? `<span class="lab-slot-fav-badge">2x</span>` : ''}
                   </div>
                   <span class="lab-slot-nature-name">${escapeHtml(natureDisplayName)}${(item.cleanseMint || item.mint) ? ` (${window.I18N?.t?.('lab.t_mint_short') ?? 'lab.t_mint_short'})` : ''}</span>
@@ -5621,7 +5588,7 @@ const TARGET_TOP_RECIPES = [
 
       return `
         <div style="display:inline-flex;align-items:center;gap:3px;background:${chipBg};border:${chipBorder};border-radius:4px;padding:${chipPadding};font-size:10.5px;" title="${escapeHtml(iDisplayName)}${isSurplusDaily ? (window.I18N?.t?.('lab.t_ing_surplus_paren') ?? 'lab.t_ing_surplus_paren') : (isCookMatch ? (window.I18N?.t?.('lab.t_ing_synergy_paren') ?? 'lab.t_ing_synergy_paren') : '')}">
-          ${iconUrl ? `<img src="${iconUrl}" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(iDisplayName)}">` : ''}
+          ${iconUrl ? `<img src="${iconUrl}" width="16" height="16" loading="lazy" decoding="async" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(iDisplayName)}">` : ''}
           <span style="color:${numColor};font-weight:700;">x${count}</span>
         </div>
       `;
@@ -5645,7 +5612,7 @@ const TARGET_TOP_RECIPES = [
           <div class="lab-supply-row">
             <div class="lab-supply-row-top">
               <div class="lab-supply-col-ing">
-                ${iconUrl ? `<img src="${iconUrl}" class="lab-supply-ing-icon" alt="${escapeHtml(iDisplayName)}">` : ''}
+                ${iconUrl ? `<img src="${iconUrl}" class="lab-supply-ing-icon" width="18" height="18" loading="lazy" decoding="async" alt="${escapeHtml(iDisplayName)}">` : ''}
                 <span class="lab-supply-ing-name">${escapeHtml(iDisplayName)}</span>
               </div>
               <div class="lab-supply-col-diff">
@@ -5677,7 +5644,7 @@ const TARGET_TOP_RECIPES = [
         <div class="lab-recipe-supply-board" id="lab-team-recipe-supply-demand">
           <div class="lab-supply-board-header">
             <div class="lab-supply-board-title-group">
-              ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-supply-dish-icon" alt="${escapeHtml(targetRecipeDisplayName)}" title="${escapeHtml(targetRecipeDisplayName)}">` : ''}
+              ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-supply-dish-icon" width="44" height="44" loading="lazy" decoding="async" alt="${escapeHtml(targetRecipeDisplayName)}" title="${escapeHtml(targetRecipeDisplayName)}">` : ''}
               <div>
                 <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
                   <span class="sr-only">${escapeHtml(targetRecipeDisplayName)}</span>
@@ -6067,12 +6034,12 @@ const TARGET_TOP_RECIPES = [
             </button>
           </div>
           <div class="lab-compare-vs-avatar-wrap">
-            <img src="${avatarUrl}" class="lab-compare-vs-avatar" alt="${window.I18N?.t?.('lab.c_cmp_player_label', { letter }) ?? `Player ${letter}`}" loading="lazy">
+            <img src="${avatarUrl}" class="lab-compare-vs-avatar" width="44" height="44" alt="${window.I18N?.t?.('lab.c_cmp_player_label', { letter }) ?? `Player ${letter}`}" loading="lazy" decoding="async">
             <span class="lab-compare-vs-lvl">Lv.${effLevel}</span>
           </div>
           <div class="lab-compare-micro-meta">
             ${specHtml}
-            ${berry && berry.icon ? `<img src="${berry.icon}" class="lab-compare-mini-berry" alt="Berry" title="${escapeHtml(berryDisp)}">` : ''}
+            ${berry && berry.icon ? `<img src="${berry.icon}" class="lab-compare-mini-berry" width="16" height="16" loading="lazy" decoding="async" alt="Berry" title="${escapeHtml(berryDisp)}">` : ''}
             <span class="lab-compare-vs-tag nat-tag">${escapeHtml(natDisplayName)}</span>
           </div>
           <div class="lab-compare-tap-hint">${window.I18N?.t?.('lab.c_cmp_tap_change') ?? 'Tap to change'}</div>
@@ -6381,7 +6348,7 @@ const TARGET_TOP_RECIPES = [
           <div class="lab-compare-distinct-row">
             <div class="lab-compare-distinct-head">
               <div class="lab-compare-distinct-title">
-                ${icon ? `<img src="${icon}" class="lab-compare-distinct-icon" alt="${escapeHtml(nameText)}">` : ''}
+                ${icon ? `<img src="${icon}" class="lab-compare-distinct-icon" width="22" height="22" loading="lazy" decoding="async" alt="${escapeHtml(nameText)}">` : ''}
                 <span>${escapeHtml(nameText)}</span>
               </div>
               <div>${badge}</div>
@@ -6863,7 +6830,7 @@ const TARGET_TOP_RECIPES = [
         <div class="lab-growth-header-card">
           <div class="lab-growth-target-summary">
             <div class="lab-growth-avatar-wrap">
-              <img src="${avatarUrl}" class="lab-growth-avatar-img" alt="${escapeHtml(pDisplayName)}" loading="lazy">
+              <img src="${avatarUrl}" class="lab-growth-avatar-img" width="52" height="52" alt="${escapeHtml(pDisplayName)}" loading="lazy" decoding="async">
             </div>
             <div class="lab-growth-target-info">
               <div class="lab-growth-target-name-row">
@@ -7146,17 +7113,17 @@ const TARGET_TOP_RECIPES = [
 
         <!-- 1. 幫手組隊子面板 (Team Builder & Simulator) -->
         <div id="lab-subpanel-team" class="lab-subpanel" style="${labState.currentSubTab === 'team' && !labState.editMode ? '' : 'display:none;'}">
-          ${renderTeamBuilderView(userBox, pokemons, undefined, isMobileH5)}
+          ${labState.currentSubTab === 'team' && !labState.editMode ? renderTeamBuilderView(userBox, pokemons, undefined, isMobileH5) : ''}
         </div>
 
         <!-- 2. 寶可夢對比子面板 (Side-by-Side Comparison) -->
         <div id="lab-subpanel-compare" class="lab-subpanel" style="${labState.currentSubTab === 'compare' ? '' : 'display:none;'}">
-          ${renderComparisonView(userBox, pokemons, undefined, isMobileH5)}
+          ${labState.currentSubTab === 'compare' ? renderComparisonView(userBox, pokemons, undefined, isMobileH5) : ''}
         </div>
 
         <!-- 3. 培育精算子面板 (Growth & Seeds Calculator) -->
         <div id="lab-subpanel-growth" class="lab-subpanel" style="${labState.currentSubTab === 'growth' ? '' : 'display:none;'}">
-          ${renderGrowthView(userBox, pokemons, undefined, isMobileH5)}
+          ${labState.currentSubTab === 'growth' ? renderGrowthView(userBox, pokemons, undefined, isMobileH5) : ''}
         </div>
       </div>
     `;

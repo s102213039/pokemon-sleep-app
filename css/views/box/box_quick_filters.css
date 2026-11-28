@@ -1,0 +1,238 @@
+/* 行動端盒子分頁與子容器防止過度滾動連鎖觸發下拉刷新 (Overscroll Containment) */
+.mobile-h5-app #panel-box,
+.mobile-h5-app #panel-box .table-container,
+.mobile-h5-app #panel-box #box-subpanel-lab,
+.mobile-h5-app #panel-box #box-subpanel-list,
+.mobile-h5-app #panel-box .box-cards-grid,
+.mobile-h5-app #panel-box .box-grid,
+.mobile-h5-app #panel-box .lab-growth-container {
+  overscroll-behavior-y: contain !important;
+}
+
+/* ─── 寶可夢盒子快捷篩選條與閃光標籤 (Box Quick Filter Chips & Shiny Tag) ───── */
+.box-shiny-tag {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: 700;
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.45);
+  color: #fbbf24;
+  line-height: 1.3;
+}
+
+/* ─── PR 評分標籤與快速快選標籤樣式 (預設隱藏過度設計之額外標籤列) ─── */
+.box-pr-badge,
+.box-shiny-tag,
+.box-quick-filter-bar,
+#box-quick-filters-container {
+  display: none !important;
+}
+
+.box-quick-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0 10px 0;
+  margin: 0;
+  width: 100%;
+}
+
+.box-quick-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--bg-card, rgba(30, 41, 59, 0.7));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  color: var(--text-secondary, #94a3b8);
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  user-select: none;
+}
+
+.box-quick-chip:hover {
+  background: var(--bg-card-hover, rgba(51, 65, 85, 0.85));
+  color: var(--text-primary, #f8fafc);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.box-quick-chip.active {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: #38bdf8;
+  color: #38bdf8;
+  font-weight: 700;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.25);
+}
+
+/* ─── 能量產出分解標籤與週日卡比獸預估階級 (預設隱藏過度設計之控制與膠囊) ─── */
+.lab-metric-breakdown-chips,
+.lab-projected-rank-badge,
+.lab-pot-config-group {
+  display: none !important;
+}
+
+.lab-metric-breakdown-chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 6px 0 8px 0;
+}
+
+.breakdown-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.breakdown-chip.chip-berry {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+}
+
+.breakdown-chip.chip-cooking {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+
+.breakdown-chip.chip-skill {
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  color: #c084fc;
+}
+
+.lab-projected-rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34d399;
+}
+
+.lab-projected-rank-badge strong {
+  color: #4ade80;
+  font-weight: 800;
+}
+
+/* ─── 鍋容量調節器與加成控制項 (Pot Size Controls & Modifiers) ───────────── */
+.lab-pot-config-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lab-pot-stepper-wrap {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.lab-pot-step-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-primary, #cbd5e1);
+  padding: 2px 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.lab-pot-step-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #38bdf8;
+}
+
+.lab-pot-size-display {
+  display: inline-block;
+  min-width: 28px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-title, #f8fafc);
+  padding: 0 4px;
+}
+
+.lab-pot-modifiers {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lab-pot-toggle-btn {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+  border-radius: 6px;
+  color: var(--text-secondary, #94a3b8);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.lab-pot-toggle-btn:hover {
+  background: rgba(51, 65, 85, 0.8);
+  color: #ffffff;
+}
+
+.lab-pot-toggle-btn.active {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: #f59e0b;
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.lab-effective-pot-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.lab-effective-pot-num {
+  color: #38bdf8;
+  font-weight: 800;
+}
+
+.lab-pot-feasibility {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.lab-pot-feasibility.feasible {
+  background: rgba(34, 197, 94, 0.14);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #34d399;
+}
+
+.lab-pot-feasibility.deficit {
+  background: rgba(244, 63, 94, 0.14);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  color: #f43f5e;
+}

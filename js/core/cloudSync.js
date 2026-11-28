@@ -2128,7 +2128,6 @@
 
   if (typeof window !== 'undefined') {
     window.showToast = showToast;
-    window.showAppToast = showToast;
     window.CloudSync = CloudSyncModule;
   }
 

@@ -418,7 +418,7 @@
   const recipeSearchClear    = document.getElementById('recipe-search-clear');
 
   function updateSliderFill(slider, min, max) {
-    if (!slider) return;
+    if (!slider || !slider.style || typeof slider.style.setProperty !== 'function') return;
     slider.style.setProperty('--slider-fill', (((slider.value - min) / (max - min)) * 100) + '%');
   }
 
@@ -464,8 +464,12 @@
     if (!tastyToggleBtn) return;
     if (tastyToggleBtn.type === 'checkbox') tastyToggleBtn.checked = showTasty;
     else {
-      tastyToggleBtn.classList.toggle('active', showTasty);
-      tastyToggleBtn.setAttribute('aria-checked', String(showTasty));
+      if (tastyToggleBtn.classList && typeof tastyToggleBtn.classList.toggle === 'function') {
+        tastyToggleBtn.classList.toggle('active', showTasty);
+      }
+      if (typeof tastyToggleBtn.setAttribute === 'function') {
+        tastyToggleBtn.setAttribute('aria-checked', String(showTasty));
+      }
     }
   }
 
@@ -563,13 +567,27 @@
     }
   }
 
+  let _recipesSliderRafId = null;
+  function scheduleRecipesSliderRender() {
+    if (_recipesSliderRafId !== null) return;
+    const raf = (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function')
+      ? window.requestAnimationFrame.bind(window)
+      : (fn) => setTimeout(fn, 0);
+    _recipesSliderRafId = raf(() => {
+      _recipesSliderRafId = null;
+      savePrefs();
+      render();
+    });
+  }
+
   function initSliders() {
     if (levelSlider) {
       syncLevelUI();
       levelSlider.addEventListener('input', () => {
         const caps = _getRecipesGameCaps(), parsed = parseInt(levelSlider.value, 10);
         recipeLevel = Math.min(Math.max(isNaN(parsed) ? 1 : parsed, 1), caps.RECIPE_LEVEL_CAP || 70);
-        syncLevelUI(); savePrefs(); render();
+        syncLevelUI();
+        scheduleRecipesSliderRender();
       });
     }
     if (islandSlider) {
@@ -577,21 +595,24 @@
       islandSlider.addEventListener('input', () => {
         const caps = _getRecipesGameCaps(), parsed = parseInt(islandSlider.value, 10);
         islandBonus = Math.min(Math.max(isNaN(parsed) ? 0 : parsed, 0), caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : _RECIPES_FALLBACK_CAPS.ISLAND_BONUS_CAP);
-        syncIslandUI(); savePrefs(); render();
+        syncIslandUI();
+        scheduleRecipesSliderRender();
       });
     }
     if (eventSlider) {
       syncEventUI();
       eventSlider.addEventListener('input', () => {
         eventBonus = parseFloat(eventSlider.value);
-        syncEventUI(); savePrefs(); render();
+        syncEventUI();
+        scheduleRecipesSliderRender();
       });
     }
     if (potExpansionSlider) {
       syncPotExpansionUI();
       potExpansionSlider.addEventListener('input', () => {
         potExpansion = parseInt(potExpansionSlider.value, 10) || 0;
-        syncPotExpansionUI(); savePrefs(); render();
+        syncPotExpansionUI();
+        scheduleRecipesSliderRender();
       });
     }
   }
@@ -749,45 +770,79 @@
     }
   }
 
-  fetchRecipesWithFallback(
-    (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/recipes.json`,
-    `data/recipes.json`, `../data/recipes.json`, `recipes.json`,
-    `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json`
-  )
-    .then(data => {
-      allRecipes = data;
-      if (typeof window !== 'undefined') {
-        window.allRecipes = data;
-        window.__RECIPES_CACHE__ = data;
-        if (typeof window.dispatchEvent === 'function' && typeof CustomEvent === 'function') {
-          window.dispatchEvent(new CustomEvent('recipes-data-updated', { detail: data }));
+  function isRecipesPanelHidden() {
+    if (typeof document === 'undefined' || !document.getElementById) return false;
+    const panel = document.getElementById('panel-recipes');
+    return !!(panel && panel.style && panel.style.display === 'none');
+  }
+
+  let _recipesFetchStarted = false;
+  let _recipesControlsInitialized = false;
+
+  function ensureRecipesControlsInitialized() {
+    if (_recipesControlsInitialized) return;
+    _recipesControlsInitialized = true;
+    initCategoryFilters();
+    initSelectFilters();
+    initSliders();
+    initTastyToggle();
+    initIngredientPicker();
+    initPantryUI();
+    initQuickFilterPill();
+    initViewToggle();
+    initSort();
+    initSearch();
+    initRecipeSidebarEvents();
+  }
+
+  function startRecipesFetch() {
+    if (_recipesFetchStarted) return;
+    _recipesFetchStarted = true;
+    fetchRecipesWithFallback(
+      (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/recipes.json`,
+      `data/recipes.json`, `../data/recipes.json`, `recipes.json`,
+      `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json`
+    )
+      .then(data => {
+        allRecipes = data;
+        if (typeof window !== 'undefined') {
+          window.allRecipes = data;
+          window.__RECIPES_CACHE__ = data;
+          if (typeof window.dispatchEvent === 'function' && typeof CustomEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('recipes-data-updated', { detail: data }));
+          }
         }
-      }
-      initCategoryFilters();
-      initSelectFilters();
-      initSliders();
-      initTastyToggle();
-      initIngredientPicker();
-      initPantryUI();
-      initQuickFilterPill();
-      initViewToggle();
-      initSort();
-      initSearch();
-      initRecipeSidebarEvents();
-      render();
-      scheduleDynamicRecipesSync();
-    })
-    .catch(err => {
-      console.error('Error loading recipes.json:', err);
-      if (typeof window.__renderInPlaceError === 'function') {
-        window.__renderInPlaceError('recipe-content-area', window.I18N?.t?.('recipes.ui_err_load_db') ?? '料理食譜資料庫載入失敗 (recipes.json)', err);
-      } else if (contentArea) {
-        const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
-          ? window.DOMUtils.escapeHtml(err.message)
-          : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">${window.I18N?.t?.('recipes.ui_err_load_prefix') ?? '載入 recipes.json 失敗：'}${safeMsg}</div>`;
-      }
-    });
+        ensureRecipesControlsInitialized();
+        initCategoryFilters();
+        initIngredientPicker();
+        initPantryUI();
+        if (!isRecipesPanelHidden()) {
+          render();
+        }
+        scheduleDynamicRecipesSync();
+      })
+      .catch(err => {
+        console.error('Error loading recipes.json:', err);
+        if (typeof window.__renderInPlaceError === 'function') {
+          window.__renderInPlaceError('recipe-content-area', window.I18N?.t?.('recipes.ui_err_load_db') ?? '料理食譜資料庫載入失敗 (recipes.json)', err);
+        } else if (contentArea) {
+          const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
+            ? window.DOMUtils.escapeHtml(err.message)
+            : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">${window.I18N?.t?.('recipes.ui_err_load_prefix') ?? '載入 recipes.json 失敗：'}${safeMsg}</div>`;
+        }
+      });
+  }
+
+  ensureRecipesControlsInitialized();
+  if (isRecipesPanelHidden()) {
+    const deferRecipes = (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function')
+      ? (fn) => window.requestAnimationFrame(() => setTimeout(fn, 0))
+      : (fn) => setTimeout(fn, 0);
+    deferRecipes(() => startRecipesFetch());
+  } else {
+    startRecipesFetch();
+  }
 
   function getRecipeName(r) {
     if (!r) return '';
@@ -883,7 +938,7 @@
       return `
         <div class="pantry-item-row" data-ing="${name}">
           <div class="pantry-item-info">
-            ${icon ? `<img src="${icon}" class="pantry-item-icon" alt="${displayName}">` : ''}
+            ${icon ? `<img src="${icon}" class="pantry-item-icon" width="20" height="20" loading="lazy" decoding="async" alt="${displayName}">` : ''}
             <span class="pantry-item-name" title="${displayName}">${displayName}</span>
           </div>
           <div class="pantry-stepper">
@@ -1241,26 +1296,6 @@
     });
   }
 
-  /* ─── Badge 與圖示輔助 ───────────────────────────────── */
-  function getBonusEmoji(pct) {
-    if (pct >= 78) return 'S';
-    if (pct >= 61) return 'A';
-    if (pct >= 48) return 'B';
-    if (pct >= 35) return 'C';
-    if (pct >= 25) return 'D';
-    if (pct >= 21) return 'E';
-    return '-';
-  }
-
-  function getBonusBadgeClass(pct) {
-    if (pct >= 78) return 'bonus-badge-78';
-    if (pct >= 61) return 'bonus-badge-61';
-    if (pct >= 48) return 'bonus-badge-48';
-    if (pct >= 35) return 'bonus-badge-35';
-    if (pct >= 25) return 'bonus-badge-25';
-    return 'bonus-badge-default';
-  }
-
   function _resolveRecipeAssetUrl(rawUrl) {
     if (!rawUrl || typeof rawUrl !== 'string') return '';
     if (rawUrl.startsWith('assets/') || rawUrl.includes('snackablenuts') || rawUrl.includes('seedbombnaanandcurry') || rawUrl.includes('grassknotsaladwrap') || rawUrl.includes('slowpoketailrollcake')) {
@@ -1289,7 +1324,7 @@
         const ingIcon = _resolveRecipeAssetUrl(i.icon);
         return `
         <div class="recipe-ing-chip" title="${ingDisplayName} × ${count}">
-          ${ingIcon ? `<img src="${ingIcon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+          ${ingIcon ? `<img src="${ingIcon}" class="recipe-ing-icon" width="20" height="20" alt="${ingDisplayName}" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
           <span class="recipe-ing-count">×${count}</span>
         </div>
       `;
@@ -1352,7 +1387,10 @@
     }
 
     const cookableBtn = document.getElementById('recipe-cookable-filter-btn');
-    if (cookableBtn) cookableBtn.classList.toggle('active', filterCookableOnly);
+    if (cookableBtn && cookableBtn.classList) {
+      if (typeof cookableBtn.classList.toggle === 'function') cookableBtn.classList.toggle('active', filterCookableOnly);
+      else cookableBtn.classList[filterCookableOnly ? 'add' : 'remove']('active');
+    }
   }
 
   function initRecipeSidebarEvents() {
@@ -1507,7 +1545,9 @@
       });
     });
 
-    const ingNames = _sortRecipesIngredientsByEnergyAsc(Array.from(ingMap.keys()));
+    const ingNames = ingMap.size > 0
+      ? _sortRecipesIngredientsByEnergyAsc(Array.from(ingMap.keys()))
+      : _getRecipesCanonicalIngredients();
     const excludedPickerContainer = document.getElementById('excluded-ingredient-picker-tags');
 
     const renderPickerButtons = (container, set, activeCls) => {
@@ -1517,7 +1557,7 @@
         const active = set.has(name) ? activeCls : '';
         const ingTitle = window.I18N ? window.I18N.getIngredientName(name) : name;
         return `<button class="ing-picker-btn ${active}" data-name="${name}" title="${ingTitle}">
-          ${icon ? `<img src="${icon}" class="ing-picker-icon" alt="${ingTitle}">` : ''}
+          ${icon ? `<img src="${icon}" class="ing-picker-icon" width="22" height="22" loading="lazy" decoding="async" alt="${ingTitle}">` : ''}
         </button>`;
       }).join('');
     };
@@ -1586,8 +1626,14 @@
 
   function initViewToggle() {
     if (!toggleGridBtn || !toggleTableBtn) return;
-    toggleGridBtn.classList.toggle('active', viewMode === 'grid');
-    toggleTableBtn.classList.toggle('active', viewMode === 'table');
+    if (toggleGridBtn.classList) {
+      if (typeof toggleGridBtn.classList.toggle === 'function') toggleGridBtn.classList.toggle('active', viewMode === 'grid');
+      else toggleGridBtn.classList[viewMode === 'grid' ? 'add' : 'remove']('active');
+    }
+    if (toggleTableBtn.classList) {
+      if (typeof toggleTableBtn.classList.toggle === 'function') toggleTableBtn.classList.toggle('active', viewMode === 'table');
+      else toggleTableBtn.classList[viewMode === 'table' ? 'add' : 'remove']('active');
+    }
 
     toggleGridBtn.addEventListener('click', () => {
       viewMode = 'grid';
@@ -1634,14 +1680,20 @@
 
   function initSearch() {
     if (!searchInput) return;
+    let recipeSearchTimer = null;
     searchInput.addEventListener('input', e => {
       currentSearch = e.target.value.trim().toLowerCase();
       updateRecipeClearBtn();
-      render();
+      if (recipeSearchTimer) clearTimeout(recipeSearchTimer);
+      recipeSearchTimer = setTimeout(() => {
+        recipeSearchTimer = null;
+        render();
+      }, 90);
     });
 
     if (recipeSearchClear) {
       recipeSearchClear.addEventListener('click', () => {
+        if (recipeSearchTimer) { clearTimeout(recipeSearchTimer); recipeSearchTimer = null; }
         searchInput.value = '';
         currentSearch = '';
         updateRecipeClearBtn();
@@ -1728,7 +1780,7 @@
               return `
               <tr>
                 <td style="vertical-align:middle;text-align:center;">
-                  <img src="${_resolveRecipeAssetUrl(r.icon)}" width="58" height="58" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';" style="object-fit:contain;display:block;margin:0 auto;">
+                  <img src="${_resolveRecipeAssetUrl(r.icon)}" width="58" height="58" alt="${primaryName}" loading="lazy" decoding="async" onerror="this.style.opacity='0.3';" style="object-fit:contain;display:block;margin:0 auto;">
                 </td>
                 <td class="recipe-name-cell" style="vertical-align:middle;text-align:left;">
                   <div class="recipe-name-wrapper" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left;min-height:52px;">
@@ -1779,7 +1831,7 @@
             <div class="h5-recipe-card">
               <div class="h5-recipe-left-col">
                 <div class="h5-recipe-top-row">
-                  <img class="h5-recipe-img" src="${_resolveRecipeAssetUrl(r.icon)}" alt="${primaryName}" loading="lazy" onerror="this.style.display='none';">
+                  <img class="h5-recipe-img" src="${_resolveRecipeAssetUrl(r.icon)}" width="44" height="44" alt="${primaryName}" loading="lazy" decoding="async" onerror="this.style.display='none';">
                   <div class="h5-recipe-title-meta">
                     <span class="h5-recipe-name">${primaryName}</span>
                     <div class="h5-recipe-tags-row">
@@ -1816,7 +1868,7 @@
           return `
           <div class="pokemon-card recipe-desktop-card">
             <div class="card-header" style="align-items:center;margin-bottom:6px;">
-              <img class="card-icon" src="${r.icon}" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';" style="width:56px;height:56px;object-fit:contain;">
+              <img class="card-icon" src="${r.icon}" width="56" height="56" alt="${primaryName}" loading="lazy" decoding="async" onerror="this.style.opacity='0.3';" style="width:56px;height:56px;object-fit:contain;">
               <div class="card-title-group" style="flex:1;min-width:0;">
                 <h3 class="pokemon-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px;margin-bottom:3px;">${primaryName}</h3>
                 <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
@@ -1854,7 +1906,7 @@
                   const count = (typeof i.count === 'number' && Number.isFinite(i.count)) ? i.count : 0;
                   return `
                   <div class="recipe-ing-chip compact-chip" title="${ingDisplayName} × ${count}">
-                    ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+                    ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" width="20" height="20" alt="${ingDisplayName}" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
                     <span class="recipe-ing-count">×${count}</span>
                   </div>
                 `;
@@ -1870,19 +1922,23 @@
   }
 
   function bindTableActionEvents() {
-    if (!contentArea) return;
-    contentArea.querySelectorAll('.pot-filler-open-btn').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        const recipeId = btn.getAttribute('data-recipe-id');
-        const targetRecipe = allRecipes.find(r => r.name_cn === recipeId || r.name === recipeId);
-        if (targetRecipe) openPotFillerModal(targetRecipe);
-      });
+    if (!contentArea || contentArea._hasPotFillerListener) return;
+    contentArea._hasPotFillerListener = true;
+    contentArea.addEventListener('click', e => {
+      const btn = e.target && e.target.closest ? e.target.closest('.pot-filler-open-btn') : null;
+      if (!btn) return;
+      e.stopPropagation();
+      const recipeId = btn.getAttribute('data-recipe-id');
+      const targetRecipe = allRecipes.find(r => r.name_cn === recipeId || r.name === recipeId);
+      if (targetRecipe) openPotFillerModal(targetRecipe);
     });
   }
 
   window.RecipesApp = {
     render: function() {
+      if (typeof startRecipesFetch === 'function' && !_recipesFetchStarted) {
+        startRecipesFetch();
+      }
       initCategoryFilters();
       initIngredientPicker();
       initPantryUI();

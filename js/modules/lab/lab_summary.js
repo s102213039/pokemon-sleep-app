@@ -57,7 +57,7 @@
     const name = window.I18N?.getRecipeName?.(rec) ?? (rec.name_cn || rec.name_en || '');
     const icon = rec.icon || rec.icon_url || '';
     if (!icon) return window.I18N?.t?.('lab.t_recipe_quote', { name }) ?? 'lab.t_recipe_quote';
-    return `<span class="appraisal-summary-recipe-chip" title="${name}"><img src="${icon}" class="appraisal-summary-recipe-icon" alt="${name}" loading="lazy" onerror="this.style.display='none'; if (this.nextElementSibling) { this.nextElementSibling.style.position='static'; this.nextElementSibling.style.clip='auto'; this.nextElementSibling.style.width='auto'; this.nextElementSibling.style.height='auto'; }"><span class="sr-only">${name}</span></span>`;
+    return `<span class="appraisal-summary-recipe-chip" title="${name}"><img src="${icon}" class="appraisal-summary-recipe-icon" width="22" height="22" alt="${name}" loading="lazy" decoding="async" onerror="this.style.display='none'; if (this.nextElementSibling) { this.nextElementSibling.style.position='static'; this.nextElementSibling.style.clip='auto'; this.nextElementSibling.style.width='auto'; this.nextElementSibling.style.height='auto'; }"><span class="sr-only">${name}</span></span>`;
   }
 
   function getSignatureRecipeRecommendations(ingredients) {

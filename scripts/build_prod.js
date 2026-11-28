@@ -60,6 +60,7 @@ async function buildProd() {
       minify: true,
       sourcemap: true,
       legalComments: 'none',
+      charset: 'utf8',
       loader: { '.css': 'css', '.js': 'js' }
     });
 

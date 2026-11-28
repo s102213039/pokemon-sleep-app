@@ -1343,22 +1343,6 @@
     return [];
   })();
 
-  // 舊版清單資料 (提供切換至列表檢視時使用)
-  const LV60_INGREDIENTS_LADDER = LV60_COORDINATE_LADDER_DATA.map(d => ({
-    id: d.id,
-    name: d.name,
-    icon: d.icon,
-    maxDaily: d.pokemon[0] ? d.pokemon[0].count : 100,
-    tiers: d.pokemon.map(p => ({
-      name: p.name,
-      recipe: p.recipe,
-      rawCount: p.count,
-      count: p.count,
-      rate: Math.min(Math.round((p.count / (d.isSpecialScale ? 20 : 105)) * 100), 100),
-      note: p.note
-    }))
-  }));
-
   const STORAGE_KEY_WIKI_SUBTAB = 'pksleep_active_wiki_subtab';
   const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'skills_ladder', 'values', 'ratings', 'islands', 'items'];
 
@@ -1467,6 +1451,14 @@
     if (activePanel) {
       if (activePanel.classList) activePanel.classList.add('active');
       if (activePanel.style) activePanel.style.display = '';
+      const isPending = (activePanel.getAttribute && activePanel.getAttribute('data-wiki-pending') === '1') || !(activePanel.innerHTML && activePanel.innerHTML.trim());
+      if (isPending) {
+        const wikiPanel = document.getElementById('panel-wiki');
+        if (wikiPanel && typeof wikiPanel._renderWikiSubpanelBody === 'function') {
+          activePanel.innerHTML = wikiPanel._renderWikiSubpanelBody(targetTab);
+          if (typeof activePanel.removeAttribute === 'function') activePanel.removeAttribute('data-wiki-pending');
+        }
+      }
     }
 
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList && document.body.classList.contains('mobile-h5-app');
@@ -1764,6 +1756,96 @@
         card.style.setProperty('display', 'none', 'important');
       }
     });
+  }
+
+  const TOP_RECIPES_FOR_INGREDIENTS = {
+    apple: { name: '電光香料可樂', name_en: 'Zing Zap Spiced Cola', need: 35, type: '甜點', type_en: 'Dessert', energy: 17494, icon: 'https://www.serebii.net/pokemonsleep/meals/zingzapspicedcola.png', secondary: '蘋果酸優格沙拉 (28)', secondary_en: 'Apple Acid Yogurt-Dressed Salad (28)' },
+    milk: { name: '茂盛焗烤酪梨', name_en: 'Overgrow Avocado Gratin', need: 41, type: '咖哩', type_en: 'Curry', energy: 24802, icon: 'https://www.serebii.net/pokemonsleep/meals/overgrowavocadogratin.png', secondary: '土王閃電泡芙 (26)', secondary_en: 'Clodsire Eclair (26)' },
+    soybeans: { name: '覺醒力量濃湯', name_en: 'Hidden Power Perk-Up Stew', need: 28, type: '咖哩', type_en: 'Curry', energy: 19061, icon: 'https://www.serebii.net/pokemonsleep/meals/hiddenpowerperk-upstew.png', secondary: '忍者咖哩 (24)', secondary_en: 'Ninja Curry (24)' },
+    honey: { name: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 38, type: '甜點', type_en: 'Dessert', energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', secondary: '心跳加速鬼面鬆餅 (32)', secondary_en: 'Scary Face Pancakes (32)' },
+    sausage: { name: '不服輸咖啡沙拉', name_en: 'Defiant Coffee-Dressed Salad', need: 28, type: '沙拉', type_en: 'Salad', energy: 20218, icon: 'https://www.serebii.net/pokemonsleep/meals/defiantcoffee-dressedsalad.png', secondary: '居合斬壽喜燒咖哩 (26)', secondary_en: 'Cut Sukiyaki Curry (26)' },
+    ginger: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 39, type: '咖哩', type_en: 'Curry', energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', secondary: '打草結沙拉捲 (36)', secondary_en: 'Grass Knot Salad Wrap (36)' },
+    tomato: { name: '打草結沙拉捲', name_en: 'Grass Knot Salad Wrap', need: 33, type: '沙拉', type_en: 'Salad', energy: 26350, icon: 'https://www.serebii.net/pokemonsleep/meals/grassknotsaladwrap.png', secondary: '心跳加速鬼面鬆餅 (29)', secondary_en: 'Scary Face Pancakes (29)' },
+    egg: { name: '蘋果酸優格沙拉', name_en: 'Apple Acid Yogurt-Dressed Salad', need: 35, type: '沙拉', type_en: 'Salad', energy: 19293, icon: 'https://www.serebii.net/pokemonsleep/meals/appleacidyogurt-dressedsalad.png', secondary: '美味尾巴蛋糕捲 (33)', secondary_en: 'Slowpoke Tail Roll Cake (33)' },
+    oil: { name: '茂盛焗烤酪梨', name_en: 'Overgrow Avocado Gratin', need: 32, type: '咖哩', type_en: 'Curry', energy: 24802, icon: 'https://www.serebii.net/pokemonsleep/meals/overgrowavocadogratin.png', secondary: '採蜜巧克力格子鬆餅 (28)', secondary_en: 'Honey Gather Chocolate Waffles (28)' },
+    potato: { name: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', need: 30, type: '沙拉', type_en: 'Salad', energy: 25356, icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png', secondary: '不服輸咖啡沙拉 (22)', secondary_en: 'Defiant Coffee-Dressed Salad (22)' },
+    herb: { name: '重踏酪梨醬脆片', name_en: 'Bulldoze Guacamole and Chips', need: 30, type: '沙拉', type_en: 'Salad', energy: 25162, icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png', secondary: '煉獄玉米乾咖哩 (27)', secondary_en: 'Inferno Corn Keema Curry (27)' },
+    corn: { name: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 28, type: '甜點', type_en: 'Dessert', energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', secondary: '重踏酪梨醬脆片 (25)', secondary_en: 'Bulldoze Guacamole and Chips (25)' },
+    cacao: { name: '土王閃電泡芙', name_en: 'Clodsire Eclair', need: 30, type: '甜點', type_en: 'Dessert', energy: 20885, icon: 'https://www.serebii.net/pokemonsleep/meals/clodsireeclair.png', secondary: '花之禮馬卡龍 (25)', secondary_en: 'Flower Gift Macarons (25)' },
+    coffee: { name: '不服輸咖啡沙拉', name_en: 'Defiant Coffee-Dressed Salad', need: 28, type: '沙拉', type_en: 'Salad', energy: 20218, icon: 'https://www.serebii.net/pokemonsleep/meals/defiantcoffee-dressedsalad.png', secondary: '土王閃電泡芙 (24)', secondary_en: 'Clodsire Eclair (24)' },
+    glossyavocado: { name: '重踏酪梨醬脆片', name_en: 'Bulldoze Guacamole and Chips', need: 28, type: '沙拉', type_en: 'Salad', energy: 25162, icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png', secondary: '打草結沙拉捲 (22)', secondary_en: 'Grass Knot Salad Wrap (22)' },
+    mushroom: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 31, type: '咖哩', type_en: 'Curry', energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', secondary: '大塊滿滿熱水沙拉 (27)', secondary_en: 'Scald Chunky Salad (27)' },
+    leek: { name: '居合斬壽喜燒咖哩', name_en: 'Cut Sukiyaki Curry', need: 27, type: '咖哩', type_en: 'Curry', energy: 20655, icon: 'https://www.serebii.net/pokemonsleep/meals/cutsukiyakicurry.png', secondary: '電光香料可樂 (20)', secondary_en: 'Zing Zap Spiced Cola (20)' },
+    pumpkin: { name: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', need: 20, type: '沙拉', type_en: 'Salad', energy: 25356, icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png', secondary: '心跳加速鬼面鬆餅 (18)', secondary_en: 'Scary Face Pancakes (18)' },
+    snackablenuts: { name: '打草結沙拉捲', name_en: 'Grass Knot Salad Wrap', need: 30, type: '沙拉', type_en: 'Salad', energy: 26350, icon: 'https://www.serebii.net/pokemonsleep/meals/grassknotsaladwrap.png', secondary: '美味尾巴蛋糕捲 (26)', secondary_en: 'Slowpoke Tail Roll Cake (26)' },
+    tail: { name: '美味尾巴蛋糕捲', name_en: 'Slowpoke Tail Roll Cake', need: 10, type: '甜點', type_en: 'Dessert', energy: 19846, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailrollcake.png', secondary: '呆呆獸尾巴的胡椒沙拉 (10)', secondary_en: 'Slowpoke Tail Pepper Salad (10)' }
+  };
+
+  // 食材天梯各分類前 10 高基礎能量之頂級大菜 (離線備援靜態資料，咖哩、沙拉、甜點三大類各 10 種)
+  const TOP_RECIPES_BY_CATEGORY = {
+    curry: [
+      { name_cn: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', category: '咖哩', pot_size: 112, base_energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', ingredients: [{ name: '暖暖薑', count: 39, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '品鮮蘑菇', count: 31, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }, { name: '火辣香草', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '豆製肉', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }] },
+      { name_cn: '茂盛焗烤酪梨', name_en: 'Overgrow Avocado Gratin', category: '咖哩', pot_size: 115, base_energy: 24802, icon: 'https://www.serebii.net/pokemonsleep/meals/overgrowavocadogratin.png', ingredients: [{ name: '嫩亮酪梨', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '窩心洋芋', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '哞哞鮮奶', count: 41, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }, { name: '純粹油', count: 32, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }] },
+      { name_cn: '居合斬壽喜燒咖哩', name_en: 'Cut Sukiyaki Curry', category: '咖哩', pot_size: 101, base_energy: 20655, icon: 'https://www.serebii.net/pokemonsleep/meals/cutsukiyakicurry.png', ingredients: [{ name: '粗枝大蔥', count: 27, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' }, { name: '豆製肉', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '甜甜蜜', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '特選蛋', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }] },
+      { name_cn: '覺醒力量濃湯', name_en: 'Hidden Power Perk-Up Stew', category: '咖哩', pot_size: 92, base_energy: 19061, icon: 'https://www.serebii.net/pokemonsleep/meals/hiddenpowerperk-upstew.png', ingredients: [{ name: '萌綠大豆', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '好眠番茄', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '品鮮蘑菇', count: 23, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }, { name: '醒腦咖啡豆', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }] },
+      { name_cn: '扮演南瓜精濃湯', name_en: 'Role Play Pumpkaboo Stew', category: '咖哩', pot_size: 69, base_energy: 15621, icon: 'https://www.serebii.net/pokemonsleep/meals/roleplaypumpkaboostew.png', ingredients: [{ name: '沉甸甸南瓜', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }, { name: '豆製肉', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '窩心洋芋', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '品鮮蘑菇', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }] },
+      { name_cn: '煉獄玉米乾咖哩', name_en: 'Inferno Corn Keema Curry', category: '咖哩', pot_size: 77, base_energy: 13690, icon: 'https://www.serebii.net/pokemonsleep/meals/infernocornkeemacurry.png', ingredients: [{ name: '火辣香草', count: 27, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '豆製肉', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '萌綠玉米', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '暖暖薑', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }] },
+      { name_cn: '萌綠咖哩麵包', name_en: 'Greengrass Curry Bun', category: '咖哩', pot_size: 63, base_energy: 10945, icon: 'https://www.serebii.net/pokemonsleep/meals/greengrasscurrybun.png', ingredients: [{ name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '火辣香草', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '萌綠大豆', count: 8, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }] },
+      { name_cn: '忍者咖哩', name_en: 'Ninja Curry', category: '咖哩', pot_size: 50, base_energy: 9445, icon: 'https://www.serebii.net/pokemonsleep/meals/ninjacurry.png', ingredients: [{ name: '萌綠大豆', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '豆製肉', count: 9, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '粗枝大蔥', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' }, { name: '品鮮蘑菇', count: 5, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }] },
+      { name_cn: '絕對睡眠奶油咖哩', name_en: 'Dream Eater Butter Curry', category: '咖哩', pot_size: 55, base_energy: 9010, icon: 'https://www.serebii.net/pokemonsleep/meals/dreameaterbuttercurry.png', ingredients: [{ name: '窩心洋芋', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '好眠番茄', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '放鬆可可', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' }, { name: '哞哞鮮奶', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
+      { name_cn: '種子炸彈烤餅咖哩', name_en: 'Seed Bomb Naan and Curry', category: '咖哩', pot_size: 39, base_energy: 7950, icon: 'https://www.serebii.net/pokemonsleep/meals/seedbombnaanandcurry.png', ingredients: [{ name: '一口堅果', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '沉甸甸南瓜', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }, { name: '萌綠玉米', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }] }
+    ],
+    salad: [
+      { name_cn: '打草結沙拉捲', name_en: 'Grass Knot Salad Wrap', category: '沙拉', pot_size: 121, base_energy: 26350, icon: 'https://www.serebii.net/pokemonsleep/meals/grassknotsaladwrap.png', ingredients: [{ name: '一口堅果', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '嫩亮酪梨', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '暖暖薑', count: 36, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '好眠番茄', count: 33, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }] },
+      { name_cn: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', category: '沙拉', pot_size: 95, base_energy: 25356, icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png', ingredients: [{ name: '沉甸甸南瓜', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }, { name: '窩心洋芋', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '萌綠玉米', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '品鮮蘑菇', count: 27, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }] },
+      { name_cn: '重踏酪梨醬脆片', name_en: 'Bulldoze Guacamole and Chips', category: '沙拉', pot_size: 105, base_energy: 25162, icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png', ingredients: [{ name: '嫩亮酪梨', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '萌綠玉米', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '火辣香草', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '萌綠大豆', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }] },
+      { name_cn: '不服輸咖啡沙拉', name_en: 'Defiant Coffee-Dressed Salad', category: '沙拉', pot_size: 100, base_energy: 20218, icon: 'https://www.serebii.net/pokemonsleep/meals/defiantcoffee-dressedsalad.png', ingredients: [{ name: '醒腦咖啡豆', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }, { name: '豆製肉', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '純粹油', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }, { name: '窩心洋芋', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }] },
+      { name_cn: '蘋果酸優格沙拉', name_en: 'Apple Acid Yogurt-Dressed Salad', category: '沙拉', pot_size: 104, base_energy: 19293, icon: 'https://www.serebii.net/pokemonsleep/meals/appleacidyogurt-dressedsalad.png', ingredients: [{ name: '特選蛋', count: 35, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '特選蘋果', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }, { name: '好眠番茄', count: 23, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '哞哞鮮奶', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
+      { name_cn: '落英繽紛含羞草蛋沙拉', name_en: 'Petal Blizzard Layered Salad', category: '沙拉', pot_size: 69, base_energy: 11811, icon: 'https://www.serebii.net/pokemonsleep/meals/petalblizzardlayeredsalad.png', ingredients: [{ name: '特選蛋', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '純粹油', count: 17, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }, { name: '窩心洋芋', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '豆製肉', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }] },
+      { name_cn: '忍者沙拉', name_en: 'Ninja Salad', category: '沙拉', pot_size: 57, base_energy: 11659, icon: 'https://www.serebii.net/pokemonsleep/meals/ninjasalad.png', ingredients: [{ name: '粗枝大蔥', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' }, { name: '萌綠大豆', count: 19, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '品鮮蘑菇', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }, { name: '暖暖薑', count: 11, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }] },
+      { name_cn: '萌綠沙拉', name_en: 'Greengrass Salad', category: '沙拉', pot_size: 62, base_energy: 11393, icon: 'https://www.serebii.net/pokemonsleep/meals/greengrasssalad.png', ingredients: [{ name: '純粹油', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }, { name: '萌綠玉米', count: 17, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '好眠番茄', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '窩心洋芋', count: 9, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }] },
+      { name_cn: '十字切碎丁沙拉', name_en: 'Cross Chop Salad', category: '沙拉', pot_size: 56, base_energy: 8755, icon: 'https://www.serebii.net/pokemonsleep/meals/crosschopsalad.png', ingredients: [{ name: '特選蛋', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '豆製肉', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '萌綠玉米', count: 11, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '好眠番茄', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }] },
+      { name_cn: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', category: '沙拉', pot_size: 35, base_energy: 8169, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png', ingredients: [{ name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }] }
+    ],
+    dessert: [
+      { name_cn: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', category: '甜點', pot_size: 115, base_energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', ingredients: [{ name: '甜甜蜜', count: 38, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '萌綠玉米', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '純粹油', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }, { name: '放鬆可可', count: 21, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' }] },
+      { name_cn: '心跳加速鬼面鬆餅', name_en: 'Scary Face Pancakes', category: '甜點', pot_size: 103, base_energy: 24354, icon: 'https://www.serebii.net/pokemonsleep/meals/scaryfacepancakes.png', ingredients: [{ name: '沉甸甸南瓜', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }, { name: '特選蛋', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '甜甜蜜', count: 32, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '好眠番茄', count: 29, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }] },
+      { name_cn: '土王閃電泡芙', name_en: 'Clodsire Eclair', category: '甜點', pot_size: 102, base_energy: 20885, icon: 'https://www.serebii.net/pokemonsleep/meals/clodsireeclair.png', ingredients: [{ name: '放鬆可可', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' }, { name: '哞哞鮮奶', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }, { name: '醒腦咖啡豆', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }, { name: '甜甜蜜', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }] },
+      { name_cn: '美味尾巴蛋糕捲', name_en: 'Slowpoke Tail Roll Cake', category: '甜點', pot_size: 91, base_energy: 19846, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailrollcake.png', ingredients: [{ name: '一口堅果', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '萌綠大豆', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '特選蛋', count: 33, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }] },
+      { name_cn: '電光香料可樂', name_en: 'Zing Zap Spiced Cola', category: '甜點', pot_size: 87, base_energy: 17494, icon: 'https://www.serebii.net/pokemonsleep/meals/zingzapspicedcola.png', ingredients: [{ name: '特選蘋果', count: 35, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }, { name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '粗枝大蔥', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' }, { name: '醒腦咖啡豆', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }] },
+      { name_cn: '花之禮馬卡龍', name_en: 'Flower Gift Macarons', category: '甜點', pot_size: 77, base_energy: 13834, icon: 'https://www.serebii.net/pokemonsleep/meals/flowergiftmacarons.png', ingredients: [{ name: '放鬆可可', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' }, { name: '特選蛋', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '甜甜蜜', count: 17, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '哞哞鮮奶', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
+      { name_cn: '茶會玉米司康', name_en: 'Teatime Corn Scones', category: '甜點', pot_size: 67, base_energy: 10925, icon: 'https://www.serebii.net/pokemonsleep/meals/teatimecornscones.png', ingredients: [{ name: '特選蘋果', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }, { name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '萌綠玉米', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '哞哞鮮奶', count: 9, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
+      { name_cn: '青草攪拌器冰沙', name_en: 'Leaf Tornado Smoothie', category: '甜點', pot_size: 48, base_energy: 8165, icon: 'https://www.serebii.net/pokemonsleep/meals/leaftornadosmoothie.png', ingredients: [{ name: '嫩亮酪梨', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '好眠番茄', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '哞哞鮮奶', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
+      { name_cn: '胖丁百匯布丁', name_en: "Jigglypuff's Fruity Flan", category: '甜點', pot_size: 55, base_energy: 7594, icon: "https://www.serebii.net/pokemonsleep/meals/jigglypuff'sfruityflan.png", ingredients: [{ name: '甜甜蜜', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '特選蛋', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '哞哞鮮奶', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }, { name: '特選蘋果', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }] },
+      { name_cn: '破格玉米香提拉米蘇', name_en: 'Mold Breaker Corn Tiramisu', category: '甜點', pot_size: 40, base_energy: 7125, icon: 'https://www.serebii.net/pokemonsleep/meals/moldbreakercorntiramisu.png', ingredients: [{ name: '醒腦咖啡豆', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }, { name: '萌綠玉米', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '哞哞鮮奶', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] }
+    ]
+  };
+
+  const FALLBACK_TOP_RECIPES_BY_CATEGORY = {
+    curry: TOP_RECIPES_BY_CATEGORY.curry.map(r => Object.freeze({ ...r, ingredients: (r.ingredients || []).map(i => Object.freeze({ ...i })) })),
+    salad: TOP_RECIPES_BY_CATEGORY.salad.map(r => Object.freeze({ ...r, ingredients: (r.ingredients || []).map(i => Object.freeze({ ...i })) })),
+    dessert: TOP_RECIPES_BY_CATEGORY.dessert.map(r => Object.freeze({ ...r, ingredients: (r.ingredients || []).map(i => Object.freeze({ ...i })) }))
+  };
+
+  const TAIL_FEATURED_RECIPES = [
+    { name_cn: '炙燒尾肉咖哩', name_en: 'Grilled Tail Curry', category: '咖哩', pot_size: 33, base_energy: 7483, icon: 'https://www.serebii.net/pokemonsleep/meals/grilledtailcurry.png', ingredients: [{ name: '美味尾巴', count: 8, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }] },
+    { name_cn: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', category: '沙拉', pot_size: 35, base_energy: 8169, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png', ingredients: [{ name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }] },
+    { name_cn: '打草結沙拉捲', name_en: 'Grass Knot Salad Wrap', category: '沙拉', pot_size: 121, base_energy: 26350, icon: 'https://www.serebii.net/pokemonsleep/meals/grassknotsaladwrap.png', ingredients: [{ name: '一口堅果', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '嫩亮酪梨', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '暖暖薑', count: 36, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '好眠番茄', count: 33, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }] },
+    { name_cn: '美味尾巴蛋糕捲', name_en: 'Slowpoke Tail Roll Cake', category: '甜點', pot_size: 91, base_energy: 19846, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailrollcake.png', ingredients: [{ name: '一口堅果', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '萌綠大豆', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '特選蛋', count: 33, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }] }
+  ];
+
+
+  const ALL_TOP_CATEGORY_RECIPES = [];
+  const _seenTopCategoryRecipes = new Set();
+  for (const r of [...TOP_RECIPES_BY_CATEGORY.curry, ...TOP_RECIPES_BY_CATEGORY.salad, ...TOP_RECIPES_BY_CATEGORY.dessert, ...TAIL_FEATURED_RECIPES]) {
+    if (r && r.name_cn && !_seenTopCategoryRecipes.has(r.name_cn)) {
+      _seenTopCategoryRecipes.add(r.name_cn);
+      ALL_TOP_CATEGORY_RECIPES.push(r);
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    window.ALL_TOP_CATEGORY_RECIPES = ALL_TOP_CATEGORY_RECIPES;
   }
 
   // 3.0 食材天梯榜即時副技能與性格補正開關、跨軌道搜尋/三維度篩選狀態
@@ -2148,97 +2230,6 @@
     else if (clean === '大綱蛇' || clean === '大鋼蛇') res = '樹果';
     _ladderSpecCache[pkmName] = res;
     return res;
-  }
-
-  const TOP_RECIPES_FOR_INGREDIENTS = {
-    apple: { name: '電光香料可樂', name_en: 'Zing Zap Spiced Cola', need: 35, type: '甜點', type_en: 'Dessert', energy: 17494, icon: 'https://www.serebii.net/pokemonsleep/meals/zingzapspicedcola.png', secondary: '蘋果酸優格沙拉 (28)', secondary_en: 'Apple Acid Yogurt-Dressed Salad (28)' },
-    milk: { name: '茂盛焗烤酪梨', name_en: 'Overgrow Avocado Gratin', need: 41, type: '咖哩', type_en: 'Curry', energy: 24802, icon: 'https://www.serebii.net/pokemonsleep/meals/overgrowavocadogratin.png', secondary: '土王閃電泡芙 (26)', secondary_en: 'Clodsire Eclair (26)' },
-    soybeans: { name: '覺醒力量濃湯', name_en: 'Hidden Power Perk-Up Stew', need: 28, type: '咖哩', type_en: 'Curry', energy: 19061, icon: 'https://www.serebii.net/pokemonsleep/meals/hiddenpowerperk-upstew.png', secondary: '忍者咖哩 (24)', secondary_en: 'Ninja Curry (24)' },
-    honey: { name: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 38, type: '甜點', type_en: 'Dessert', energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', secondary: '心跳加速鬼面鬆餅 (32)', secondary_en: 'Scary Face Pancakes (32)' },
-    sausage: { name: '不服輸咖啡沙拉', name_en: 'Defiant Coffee-Dressed Salad', need: 28, type: '沙拉', type_en: 'Salad', energy: 20218, icon: 'https://www.serebii.net/pokemonsleep/meals/defiantcoffee-dressedsalad.png', secondary: '居合斬壽喜燒咖哩 (26)', secondary_en: 'Cut Sukiyaki Curry (26)' },
-    ginger: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 39, type: '咖哩', type_en: 'Curry', energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', secondary: '打草結沙拉捲 (36)', secondary_en: 'Grass Knot Salad Wrap (36)' },
-    tomato: { name: '打草結沙拉捲', name_en: 'Grass Knot Salad Wrap', need: 33, type: '沙拉', type_en: 'Salad', energy: 26350, icon: 'https://www.serebii.net/pokemonsleep/meals/grassknotsaladwrap.png', secondary: '心跳加速鬼面鬆餅 (29)', secondary_en: 'Scary Face Pancakes (29)' },
-    egg: { name: '蘋果酸優格沙拉', name_en: 'Apple Acid Yogurt-Dressed Salad', need: 35, type: '沙拉', type_en: 'Salad', energy: 19293, icon: 'https://www.serebii.net/pokemonsleep/meals/appleacidyogurt-dressedsalad.png', secondary: '美味尾巴蛋糕捲 (33)', secondary_en: 'Slowpoke Tail Roll Cake (33)' },
-    oil: { name: '茂盛焗烤酪梨', name_en: 'Overgrow Avocado Gratin', need: 32, type: '咖哩', type_en: 'Curry', energy: 24802, icon: 'https://www.serebii.net/pokemonsleep/meals/overgrowavocadogratin.png', secondary: '採蜜巧克力格子鬆餅 (28)', secondary_en: 'Honey Gather Chocolate Waffles (28)' },
-    potato: { name: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', need: 30, type: '沙拉', type_en: 'Salad', energy: 25356, icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png', secondary: '不服輸咖啡沙拉 (22)', secondary_en: 'Defiant Coffee-Dressed Salad (22)' },
-    herb: { name: '重踏酪梨醬脆片', name_en: 'Bulldoze Guacamole and Chips', need: 30, type: '沙拉', type_en: 'Salad', energy: 25162, icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png', secondary: '煉獄玉米乾咖哩 (27)', secondary_en: 'Inferno Corn Keema Curry (27)' },
-    corn: { name: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 28, type: '甜點', type_en: 'Dessert', energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', secondary: '重踏酪梨醬脆片 (25)', secondary_en: 'Bulldoze Guacamole and Chips (25)' },
-    cacao: { name: '土王閃電泡芙', name_en: 'Clodsire Eclair', need: 30, type: '甜點', type_en: 'Dessert', energy: 20885, icon: 'https://www.serebii.net/pokemonsleep/meals/clodsireeclair.png', secondary: '花之禮馬卡龍 (25)', secondary_en: 'Flower Gift Macarons (25)' },
-    coffee: { name: '不服輸咖啡沙拉', name_en: 'Defiant Coffee-Dressed Salad', need: 28, type: '沙拉', type_en: 'Salad', energy: 20218, icon: 'https://www.serebii.net/pokemonsleep/meals/defiantcoffee-dressedsalad.png', secondary: '土王閃電泡芙 (24)', secondary_en: 'Clodsire Eclair (24)' },
-    glossyavocado: { name: '重踏酪梨醬脆片', name_en: 'Bulldoze Guacamole and Chips', need: 28, type: '沙拉', type_en: 'Salad', energy: 25162, icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png', secondary: '打草結沙拉捲 (22)', secondary_en: 'Grass Knot Salad Wrap (22)' },
-    mushroom: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 31, type: '咖哩', type_en: 'Curry', energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', secondary: '大塊滿滿熱水沙拉 (27)', secondary_en: 'Scald Chunky Salad (27)' },
-    leek: { name: '居合斬壽喜燒咖哩', name_en: 'Cut Sukiyaki Curry', need: 27, type: '咖哩', type_en: 'Curry', energy: 20655, icon: 'https://www.serebii.net/pokemonsleep/meals/cutsukiyakicurry.png', secondary: '電光香料可樂 (20)', secondary_en: 'Zing Zap Spiced Cola (20)' },
-    pumpkin: { name: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', need: 20, type: '沙拉', type_en: 'Salad', energy: 25356, icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png', secondary: '心跳加速鬼面鬆餅 (18)', secondary_en: 'Scary Face Pancakes (18)' },
-    snackablenuts: { name: '打草結沙拉捲', name_en: 'Grass Knot Salad Wrap', need: 30, type: '沙拉', type_en: 'Salad', energy: 26350, icon: 'https://www.serebii.net/pokemonsleep/meals/grassknotsaladwrap.png', secondary: '美味尾巴蛋糕捲 (26)', secondary_en: 'Slowpoke Tail Roll Cake (26)' },
-    tail: { name: '美味尾巴蛋糕捲', name_en: 'Slowpoke Tail Roll Cake', need: 10, type: '甜點', type_en: 'Dessert', energy: 19846, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailrollcake.png', secondary: '呆呆獸尾巴的胡椒沙拉 (10)', secondary_en: 'Slowpoke Tail Pepper Salad (10)' }
-  };
-
-  // 食材天梯各分類前 10 高基礎能量之頂級大菜 (離線備援靜態資料，咖哩、沙拉、甜點三大類各 10 種)
-  const TOP_RECIPES_BY_CATEGORY = {
-    curry: [
-      { name_cn: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', category: '咖哩', pot_size: 112, base_energy: 25539, icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png', ingredients: [{ name: '暖暖薑', count: 39, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '品鮮蘑菇', count: 31, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }, { name: '火辣香草', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '豆製肉', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }] },
-      { name_cn: '茂盛焗烤酪梨', name_en: 'Overgrow Avocado Gratin', category: '咖哩', pot_size: 115, base_energy: 24802, icon: 'https://www.serebii.net/pokemonsleep/meals/overgrowavocadogratin.png', ingredients: [{ name: '嫩亮酪梨', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '窩心洋芋', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '哞哞鮮奶', count: 41, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }, { name: '純粹油', count: 32, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }] },
-      { name_cn: '居合斬壽喜燒咖哩', name_en: 'Cut Sukiyaki Curry', category: '咖哩', pot_size: 101, base_energy: 20655, icon: 'https://www.serebii.net/pokemonsleep/meals/cutsukiyakicurry.png', ingredients: [{ name: '粗枝大蔥', count: 27, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' }, { name: '豆製肉', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '甜甜蜜', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '特選蛋', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }] },
-      { name_cn: '覺醒力量濃湯', name_en: 'Hidden Power Perk-Up Stew', category: '咖哩', pot_size: 92, base_energy: 19061, icon: 'https://www.serebii.net/pokemonsleep/meals/hiddenpowerperk-upstew.png', ingredients: [{ name: '萌綠大豆', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '好眠番茄', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '品鮮蘑菇', count: 23, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }, { name: '醒腦咖啡豆', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }] },
-      { name_cn: '扮演南瓜精濃湯', name_en: 'Role Play Pumpkaboo Stew', category: '咖哩', pot_size: 69, base_energy: 15621, icon: 'https://www.serebii.net/pokemonsleep/meals/roleplaypumpkaboostew.png', ingredients: [{ name: '沉甸甸南瓜', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }, { name: '豆製肉', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '窩心洋芋', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '品鮮蘑菇', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }] },
-      { name_cn: '煉獄玉米乾咖哩', name_en: 'Inferno Corn Keema Curry', category: '咖哩', pot_size: 77, base_energy: 13690, icon: 'https://www.serebii.net/pokemonsleep/meals/infernocornkeemacurry.png', ingredients: [{ name: '火辣香草', count: 27, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '豆製肉', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '萌綠玉米', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '暖暖薑', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }] },
-      { name_cn: '萌綠咖哩麵包', name_en: 'Greengrass Curry Bun', category: '咖哩', pot_size: 63, base_energy: 10945, icon: 'https://www.serebii.net/pokemonsleep/meals/greengrasscurrybun.png', ingredients: [{ name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '火辣香草', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '萌綠大豆', count: 8, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }] },
-      { name_cn: '忍者咖哩', name_en: 'Ninja Curry', category: '咖哩', pot_size: 50, base_energy: 9445, icon: 'https://www.serebii.net/pokemonsleep/meals/ninjacurry.png', ingredients: [{ name: '萌綠大豆', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '豆製肉', count: 9, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '粗枝大蔥', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' }, { name: '品鮮蘑菇', count: 5, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }] },
-      { name_cn: '絕對睡眠奶油咖哩', name_en: 'Dream Eater Butter Curry', category: '咖哩', pot_size: 55, base_energy: 9010, icon: 'https://www.serebii.net/pokemonsleep/meals/dreameaterbuttercurry.png', ingredients: [{ name: '窩心洋芋', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '好眠番茄', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '放鬆可可', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' }, { name: '哞哞鮮奶', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
-      { name_cn: '種子炸彈烤餅咖哩', name_en: 'Seed Bomb Naan and Curry', category: '咖哩', pot_size: 39, base_energy: 7950, icon: 'https://www.serebii.net/pokemonsleep/meals/seedbombnaanandcurry.png', ingredients: [{ name: '一口堅果', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '沉甸甸南瓜', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }, { name: '萌綠玉米', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }] }
-    ],
-    salad: [
-      { name_cn: '打草結沙拉捲', name_en: 'Grass Knot Salad Wrap', category: '沙拉', pot_size: 121, base_energy: 26350, icon: 'https://www.serebii.net/pokemonsleep/meals/grassknotsaladwrap.png', ingredients: [{ name: '一口堅果', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '嫩亮酪梨', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '暖暖薑', count: 36, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '好眠番茄', count: 33, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }] },
-      { name_cn: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', category: '沙拉', pot_size: 95, base_energy: 25356, icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png', ingredients: [{ name: '沉甸甸南瓜', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }, { name: '窩心洋芋', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '萌綠玉米', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '品鮮蘑菇', count: 27, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }] },
-      { name_cn: '重踏酪梨醬脆片', name_en: 'Bulldoze Guacamole and Chips', category: '沙拉', pot_size: 105, base_energy: 25162, icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png', ingredients: [{ name: '嫩亮酪梨', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '萌綠玉米', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '火辣香草', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '萌綠大豆', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }] },
-      { name_cn: '不服輸咖啡沙拉', name_en: 'Defiant Coffee-Dressed Salad', category: '沙拉', pot_size: 100, base_energy: 20218, icon: 'https://www.serebii.net/pokemonsleep/meals/defiantcoffee-dressedsalad.png', ingredients: [{ name: '醒腦咖啡豆', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }, { name: '豆製肉', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '純粹油', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }, { name: '窩心洋芋', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }] },
-      { name_cn: '蘋果酸優格沙拉', name_en: 'Apple Acid Yogurt-Dressed Salad', category: '沙拉', pot_size: 104, base_energy: 19293, icon: 'https://www.serebii.net/pokemonsleep/meals/appleacidyogurt-dressedsalad.png', ingredients: [{ name: '特選蛋', count: 35, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '特選蘋果', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }, { name: '好眠番茄', count: 23, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '哞哞鮮奶', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
-      { name_cn: '落英繽紛含羞草蛋沙拉', name_en: 'Petal Blizzard Layered Salad', category: '沙拉', pot_size: 69, base_energy: 11811, icon: 'https://www.serebii.net/pokemonsleep/meals/petalblizzardlayeredsalad.png', ingredients: [{ name: '特選蛋', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '純粹油', count: 17, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }, { name: '窩心洋芋', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }, { name: '豆製肉', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }] },
-      { name_cn: '忍者沙拉', name_en: 'Ninja Salad', category: '沙拉', pot_size: 57, base_energy: 11659, icon: 'https://www.serebii.net/pokemonsleep/meals/ninjasalad.png', ingredients: [{ name: '粗枝大蔥', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' }, { name: '萌綠大豆', count: 19, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '品鮮蘑菇', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }, { name: '暖暖薑', count: 11, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }] },
-      { name_cn: '萌綠沙拉', name_en: 'Greengrass Salad', category: '沙拉', pot_size: 62, base_energy: 11393, icon: 'https://www.serebii.net/pokemonsleep/meals/greengrasssalad.png', ingredients: [{ name: '純粹油', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }, { name: '萌綠玉米', count: 17, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '好眠番茄', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '窩心洋芋', count: 9, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }] },
-      { name_cn: '十字切碎丁沙拉', name_en: 'Cross Chop Salad', category: '沙拉', pot_size: 56, base_energy: 8755, icon: 'https://www.serebii.net/pokemonsleep/meals/crosschopsalad.png', ingredients: [{ name: '特選蛋', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '豆製肉', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }, { name: '萌綠玉米', count: 11, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '好眠番茄', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }] },
-      { name_cn: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', category: '沙拉', pot_size: 35, base_energy: 8169, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png', ingredients: [{ name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }] }
-    ],
-    dessert: [
-      { name_cn: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', category: '甜點', pot_size: 115, base_energy: 25484, icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png', ingredients: [{ name: '甜甜蜜', count: 38, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '萌綠玉米', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '純粹油', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }, { name: '放鬆可可', count: 21, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' }] },
-      { name_cn: '心跳加速鬼面鬆餅', name_en: 'Scary Face Pancakes', category: '甜點', pot_size: 103, base_energy: 24354, icon: 'https://www.serebii.net/pokemonsleep/meals/scaryfacepancakes.png', ingredients: [{ name: '沉甸甸南瓜', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' }, { name: '特選蛋', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '甜甜蜜', count: 32, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '好眠番茄', count: 29, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }] },
-      { name_cn: '土王閃電泡芙', name_en: 'Clodsire Eclair', category: '甜點', pot_size: 102, base_energy: 20885, icon: 'https://www.serebii.net/pokemonsleep/meals/clodsireeclair.png', ingredients: [{ name: '放鬆可可', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' }, { name: '哞哞鮮奶', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }, { name: '醒腦咖啡豆', count: 24, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }, { name: '甜甜蜜', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }] },
-      { name_cn: '美味尾巴蛋糕捲', name_en: 'Slowpoke Tail Roll Cake', category: '甜點', pot_size: 91, base_energy: 19846, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailrollcake.png', ingredients: [{ name: '一口堅果', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '萌綠大豆', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '特選蛋', count: 33, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }] },
-      { name_cn: '電光香料可樂', name_en: 'Zing Zap Spiced Cola', category: '甜點', pot_size: 87, base_energy: 17494, icon: 'https://www.serebii.net/pokemonsleep/meals/zingzapspicedcola.png', ingredients: [{ name: '特選蘋果', count: 35, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }, { name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '粗枝大蔥', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' }, { name: '醒腦咖啡豆', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }] },
-      { name_cn: '花之禮馬卡龍', name_en: 'Flower Gift Macarons', category: '甜點', pot_size: 77, base_energy: 13834, icon: 'https://www.serebii.net/pokemonsleep/meals/flowergiftmacarons.png', ingredients: [{ name: '放鬆可可', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png' }, { name: '特選蛋', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '甜甜蜜', count: 17, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '哞哞鮮奶', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
-      { name_cn: '茶會玉米司康', name_en: 'Teatime Corn Scones', category: '甜點', pot_size: 67, base_energy: 10925, icon: 'https://www.serebii.net/pokemonsleep/meals/teatimecornscones.png', ingredients: [{ name: '特選蘋果', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }, { name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '萌綠玉米', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '哞哞鮮奶', count: 9, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
-      { name_cn: '青草攪拌器冰沙', name_en: 'Leaf Tornado Smoothie', category: '甜點', pot_size: 48, base_energy: 8165, icon: 'https://www.serebii.net/pokemonsleep/meals/leaftornadosmoothie.png', ingredients: [{ name: '嫩亮酪梨', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '好眠番茄', count: 16, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }, { name: '哞哞鮮奶', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] },
-      { name_cn: '胖丁百匯布丁', name_en: "Jigglypuff's Fruity Flan", category: '甜點', pot_size: 55, base_energy: 7594, icon: "https://www.serebii.net/pokemonsleep/meals/jigglypuff'sfruityflan.png", ingredients: [{ name: '甜甜蜜', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' }, { name: '特選蛋', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }, { name: '哞哞鮮奶', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }, { name: '特選蘋果', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' }] },
-      { name_cn: '破格玉米香提拉米蘇', name_en: 'Mold Breaker Corn Tiramisu', category: '甜點', pot_size: 40, base_energy: 7125, icon: 'https://www.serebii.net/pokemonsleep/meals/moldbreakercorntiramisu.png', ingredients: [{ name: '醒腦咖啡豆', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' }, { name: '萌綠玉米', count: 14, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }, { name: '哞哞鮮奶', count: 12, icon: 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png' }] }
-    ]
-  };
-
-  const FALLBACK_TOP_RECIPES_BY_CATEGORY = {
-    curry: TOP_RECIPES_BY_CATEGORY.curry.map(r => Object.freeze({ ...r, ingredients: (r.ingredients || []).map(i => Object.freeze({ ...i })) })),
-    salad: TOP_RECIPES_BY_CATEGORY.salad.map(r => Object.freeze({ ...r, ingredients: (r.ingredients || []).map(i => Object.freeze({ ...i })) })),
-    dessert: TOP_RECIPES_BY_CATEGORY.dessert.map(r => Object.freeze({ ...r, ingredients: (r.ingredients || []).map(i => Object.freeze({ ...i })) }))
-  };
-
-  const TAIL_FEATURED_RECIPES = [
-    { name_cn: '炙燒尾肉咖哩', name_en: 'Grilled Tail Curry', category: '咖哩', pot_size: 33, base_energy: 7483, icon: 'https://www.serebii.net/pokemonsleep/meals/grilledtailcurry.png', ingredients: [{ name: '美味尾巴', count: 8, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }] },
-    { name_cn: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', category: '沙拉', pot_size: 35, base_energy: 8169, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png', ingredients: [{ name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '火辣香草', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }, { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }] },
-    { name_cn: '打草結沙拉捲', name_en: 'Grass Knot Salad Wrap', category: '沙拉', pot_size: 121, base_energy: 26350, icon: 'https://www.serebii.net/pokemonsleep/meals/grassknotsaladwrap.png', ingredients: [{ name: '一口堅果', count: 30, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '嫩亮酪梨', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' }, { name: '暖暖薑', count: 36, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' }, { name: '好眠番茄', count: 33, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }] },
-    { name_cn: '美味尾巴蛋糕捲', name_en: 'Slowpoke Tail Roll Cake', category: '甜點', pot_size: 91, base_energy: 19846, icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailrollcake.png', ingredients: [{ name: '一口堅果', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/snackablenuts.png' }, { name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' }, { name: '萌綠大豆', count: 22, icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' }, { name: '特選蛋', count: 33, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' }] }
-  ];
-
-  const ALL_TOP_CATEGORY_RECIPES = [];
-  (function _seedAllTopCategoryRecipes() {
-    const seen = new Set();
-    [...TOP_RECIPES_BY_CATEGORY.curry, ...TOP_RECIPES_BY_CATEGORY.salad, ...TOP_RECIPES_BY_CATEGORY.dessert, ...TAIL_FEATURED_RECIPES].forEach(r => {
-      if (r && r.name_cn && !seen.has(r.name_cn)) {
-        seen.add(r.name_cn);
-        ALL_TOP_CATEGORY_RECIPES.push(r);
-      }
-    });
-  })();
-
-  if (typeof window !== 'undefined') {
-    window.ALL_TOP_CATEGORY_RECIPES = ALL_TOP_CATEGORY_RECIPES;
   }
 
   // =========================================================================
@@ -3003,13 +2994,6 @@
     return recipes.some(r => r.name_cn === recipeName || r.name_en === recipeName);
   }
 
-  function renderIngQtyMarks(markList) {
-    if (!markList || !markList.length) return '';
-    return `<div class="ladder-ing-qty-marks">${markList.map(m =>
-      `<span class="ladder-ing-qty-mark" style="color:${m.fg};border-color:${m.color};background:${m.bg}">×${m.count}</span>`
-    ).join('')}</div>`;
-  }
-
   function getOverlayEl(id) {
     if (typeof window !== 'undefined' && typeof window.resolveUniqueOverlay === 'function') {
       return window.resolveUniqueOverlay(id);
@@ -3063,7 +3047,7 @@
           <div class="ladder-recipe-card ${isCurrent ? 'selected' : ''}" onclick="window.WikiDB.selectLadderHighlightRecipe('${r.name_cn}')" role="button" tabindex="0">
             <div class="recipe-card-top">
               <span class="recipe-card-rank">${rIdx + 1}</span>
-              <img src="${recipeIconUrl}" class="recipe-card-icon" alt="${displayName}" onerror="this.style.opacity='0.3';">
+              <img src="${recipeIconUrl}" class="recipe-card-icon" alt="${displayName}" width="48" height="48" loading="lazy" decoding="async" onerror="this.style.opacity='0.3';">
               <div class="recipe-card-meta">
                 <div class="recipe-card-name-row">
                   <span class="recipe-card-name">${displayName}</span>
@@ -3084,7 +3068,7 @@
                 const ingIconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon;
                 return `
                   <span class="recipe-card-ing-chip" title="${ingDisplayName}">
-                    <img src="${ingIconUrl}" class="recipe-card-ing-icon" alt="${ingDisplayName}" onerror="this.style.display='none';">
+                    <img src="${ingIconUrl}" class="recipe-card-ing-icon" alt="${ingDisplayName}" width="19" height="19" loading="lazy" decoding="async" onerror="this.style.display='none';">
                     <span class="ing-chip-count">×${ing.count}</span>
                   </span>
                 `;
@@ -3428,6 +3412,24 @@
     refreshCoordinateLadder();
   }
 
+  let _ladderSearchTimer = null;
+
+  function onLadderSearchInput(val) {
+    const queryStr = (val || '').trim();
+    const input = document.getElementById('ladder-pkm-search-input');
+    const clearBtn = document.getElementById('ladder-search-clear-btn');
+    if (input && typeof window !== 'undefined' && typeof window.updateSearchInputHighlight === 'function') {
+      window.updateSearchInputHighlight(input, clearBtn);
+    } else if (clearBtn) {
+      clearBtn.style.display = queryStr ? 'flex' : 'none';
+    }
+    if (_ladderSearchTimer) clearTimeout(_ladderSearchTimer);
+    _ladderSearchTimer = setTimeout(() => {
+      _ladderSearchTimer = null;
+      onLadderSearch(val);
+    }, 90);
+  }
+
   function onLadderSearch(val) {
     ladderSearchQuery = (val || '').trim();
     const input = document.getElementById('ladder-pkm-search-input');
@@ -3441,6 +3443,7 @@
   }
 
   function clearLadderSearch() {
+    if (_ladderSearchTimer) { clearTimeout(_ladderSearchTimer); _ladderSearchTimer = null; }
     ladderSearchQuery = '';
     const input = document.getElementById('ladder-pkm-search-input');
     if (input) input.value = '';
@@ -3793,7 +3796,7 @@
                   #${rank}
                 </div>
                 <div class="ing-rank-avatar-box ${rankClass}">
-                  <img src="${item.icon}" class="ing-rank-avatar-img" alt="${pkmDisplayName}" loading="lazy">
+                  <img src="${item.icon}" class="ing-rank-avatar-img" width="32" height="32" alt="${pkmDisplayName}" loading="lazy" decoding="async">
                 </div>
                 <span class="node-recipe-tag-inline recipe-tag-${item.recipe.toLowerCase()}">${item.recipe}</span>
               </div>
@@ -3815,10 +3818,10 @@
       <div class="ing-rank-dialog" onclick="event.stopPropagation()">
         <div class="ing-rank-header">
           <div class="ing-rank-title-group">
-            <img src="${ingData.icon}" class="ing-rank-header-icon" alt="${ingName}">
+            <img src="${ingData.icon}" class="ing-rank-header-icon" width="28" height="28" decoding="async" alt="${ingName}">
             <div class="ing-rank-header-text">
               <div class="ing-rank-header-title">${ingName} <span class="ing-rank-header-energy">[${window.I18N?.t?.('wiki.ui_energy_label') ?? '能量'} ${ingData.energy || ''}]</span></div>
-              <div class="ing-rank-header-sub">${dishIcon ? `<img src="${dishIcon}" class="tooltip-dish-icon" alt="" loading="lazy">` : ''}<span>${window.I18N?.t?.('wiki.ui_key_dish_colon') ?? '核心大菜：'} ${dishName} (${dishInfo.need}${window.I18N?.t?.('wiki.ui_per_meal') ?? '顆/餐'}) · ${window.I18N?.t?.('wiki.ui_ideal_energy') ?? '滿活力 (0.45x)'} · ${rankingList.length} ${window.I18N?.t?.('wiki.ui_pkm_count_suffix') ?? '隻寶可夢'}</span></div>
+              <div class="ing-rank-header-sub">${dishIcon ? `<img src="${dishIcon}" class="tooltip-dish-icon" width="24" height="24" alt="" loading="lazy" decoding="async">` : ''}<span>${window.I18N?.t?.('wiki.ui_key_dish_colon') ?? '核心大菜：'} ${dishName} (${dishInfo.need}${window.I18N?.t?.('wiki.ui_per_meal') ?? '顆/餐'}) · ${window.I18N?.t?.('wiki.ui_ideal_energy') ?? '滿活力 (0.45x)'} · ${rankingList.length} ${window.I18N?.t?.('wiki.ui_pkm_count_suffix') ?? '隻寶可夢'}</span></div>
             </div>
           </div>
           <button type="button" class="ing-rank-close-btn" onclick="window.WikiDB.closeIngredientRankingModal()" title="${window.I18N?.t?.('wiki.ui_close') ?? '關閉'}" aria-label="Close">
@@ -3896,17 +3899,6 @@
           `;
         }).join('');
       }
-
-      // 保留舊版相容性容器更新 (若有)
-      const dynamicContainer = document.getElementById('charge-stock-dynamic-levels');
-      if (dynamicContainer) {
-        dynamicContainer.innerHTML = vals.map((v, i) => `
-          <div class="skill-level-chip ${stackNum === 10 ? 'highlight-gold' : 'highlight-blue'}">
-            <span class="level-tag">Lv.${i + 1}</span>
-            <span class="level-val">${v.toLocaleString()} ${unit}</span>
-          </div>
-        `).join('');
-      }
     }
   }
 
@@ -3946,17 +3938,6 @@
             </div>
           `;
         }).join('');
-      }
-
-      // 保留舊版相容性容器更新 (若有)
-      const dynamicContainer = document.getElementById('helper-boost-dynamic-levels');
-      if (dynamicContainer) {
-        dynamicContainer.innerHTML = vals.map((v, i) => `
-          <div class="skill-level-chip highlight-blue">
-            <span class="level-tag">Lv.${i + 1}</span>
-            <span class="level-val">${v} ${unit}</span>
-          </div>
-        `).join('');
       }
     }
   }
@@ -4103,7 +4084,7 @@
       const bonusStr = currentIslandBonus > 0 ? (window.I18N?.t?.('wiki.ui_island_bonus_inline', { bonus: currentIslandBonus }) ?? ` +${currentIslandBonus}%島嶼`) : '';
       return `
         <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr} | ${window.I18N?.t?.('wiki.ui_base_label') ?? '基礎'}: ${energy1x} / ${window.I18N?.t?.('wiki.ui_fav_2x') ?? '順果 2x'}: ${energy2x}">
-          <img src="${b.icon}" class="value-compact-icon" alt="${bName}">
+          <img src="${b.icon}" class="value-compact-icon" width="32" height="32" loading="lazy" decoding="async" alt="${bName}">
           <span class="value-compact-energy berry-val" title="${window.I18N?.t?.('wiki.ui_base_energy_1x') ?? '基礎能量 (1x)'}"><span class="energy-multiplier-prefix">1x</span> ${energy1x}</span>
           <span class="value-compact-energy berry-val-fav" title="${window.I18N?.t?.('wiki.ui_fav_energy_2x') ?? '順果 2x 能量'}"><span class="energy-multiplier-prefix">2x</span> ${energy2x}</span>
         </div>
@@ -4529,6 +4510,32 @@
       }
     });
 
+    let _berrySliderRafId = null;
+    let _pendingBerryLevelVal = null;
+    let _pendingBerryIslandVal = null;
+
+    function flushBerrySliderRaf() {
+      _berrySliderRafId = null;
+      if (_pendingBerryLevelVal !== null) {
+        const val = _pendingBerryLevelVal;
+        _pendingBerryLevelVal = null;
+        updateBerryLevel(val);
+      }
+      if (_pendingBerryIslandVal !== null) {
+        const val = _pendingBerryIslandVal;
+        _pendingBerryIslandVal = null;
+        updateBerryIsland(val);
+      }
+    }
+
+    function scheduleBerrySliderRaf() {
+      if (_berrySliderRafId !== null) return;
+      const raf = (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function')
+        ? window.requestAnimationFrame.bind(window)
+        : (fn) => setTimeout(fn, 0);
+      _berrySliderRafId = raf(flushBerrySliderRaf);
+    }
+
     document.addEventListener('input', (e) => {
       if (e.target && e.target.id === 'calc-sleep-cur-lv') {
         handleSleepCurLvInput();
@@ -4536,10 +4543,16 @@
         recalcSleepDays();
       }
       if (e.target && e.target.id === 'berry-level-slider') {
-        updateBerryLevel(e.target.value);
+        const displayEl = document.getElementById('berry-level-display');
+        if (displayEl) displayEl.textContent = `Lv. ${parseInt(e.target.value, 10) || 1}`;
+        _pendingBerryLevelVal = e.target.value;
+        scheduleBerrySliderRaf();
       }
       if (e.target && e.target.id === 'berry-island-slider') {
-        updateBerryIsland(e.target.value);
+        const displayEl = document.getElementById('berry-island-display');
+        if (displayEl) displayEl.textContent = `+${parseInt(e.target.value, 10) || 0}%`;
+        _pendingBerryIslandVal = e.target.value;
+        scheduleBerrySliderRaf();
       }
     });
 
@@ -4551,7 +4564,7 @@
   }
 
   // --- 7.5. 全睡姿獲取研究點數與夢之碎片資料庫 (Sleep Styles EXP & Shards DB) ---
-  const SLEEP_STYLES_DATA = {"妙蛙種子":{"1":["光合作用睡","Sunbathing Sleep",23,46,4,"こうごうせい寝"],"2":["踏步睡","Braced Sleep",122,255,6,"ふんばり寝"],"3":["伸藤睡","Vine-Sprout Sleep",479,1005,9,"ツルだし寝"],"4":["肚子上睡","Atop-Belly Sleep",720,1513,10,"おなかのうえ寝"]},"妙蛙草":{"1":["光合作用睡","Sunbathing Sleep",122,255,6,"こうごうせい寝"],"2":["踏步睡","Braced Sleep",327,686,8,"ふんばり寝"],"3":["伸藤睡","Vine-Sprout Sleep",1063,2234,11,"ツルだし寝"],"4":["肚子上睡","Atop-Belly Sleep",1530,3216,12,"おなかのうえ寝"]},"妙蛙花":{"1":["光合作用睡","Sunbathing Sleep",587,1050,9,"こうごうせい寝"],"2":["踏步睡","Braced Sleep",1312,2351,11,"ふんばり寝"],"3":["伸藤睡","Vine-Sprout Sleep",3266,5850,14,"ツルだし寝"],"4":["肚子上睡","Atop-Belly Sleep",4449,7968,15,"おなかのうえ寝"]},"小火龍":{"1":["劈啪火花睡","Crackling Sleep",21,50,4,"ぱちぱち寝"],"2":["撫肚睡","Belly-Rub Sleep",109,278,6,"おなかさすり寝"],"3":["露肚睡","Exposed-Belly Sleep",427,1098,9,"おなかだし寝"],"4":["肚子上睡","Atop-Belly Sleep",642,1652,10,"おなかのうえ寝"]},"火恐龍":{"1":["手臂枕睡","Arm-Pillow Sleep",122,255,6,"うでまくら寝"],"2":["坐著睡","Sitting Sleep",327,686,8,"すわり寝"],"3":["懶散睡","Loafing Sleep",1063,2234,11,"ぐうたら寝"],"4":["肚子上睡","Atop-Belly Sleep",1530,3216,12,"おなかのうえ寝"]},"噴火龍":{"1":["趴臥睡","Prone Sleep",540,1134,9,"はらばい寝"],"2":["抱胸睡","Arms-Folded Sleep",1208,2538,11,"うでぐみ寝"],"3":["露肚睡","Exposed-Belly Sleep",3005,6318,14,"おなかだし寝"],"4":["肚子上睡","Atop-Belly Sleep",4093,8605,15,"おなかのうえ寝"]},"傑尼龜":{"1":["縮入殼中睡","Withdrawn-Shell Sleep",23,46,4,"からにこもる寝"],"2":["不入殼睡","Out-of-Shell Sleep",122,255,6,"こもらない寝"],"3":["翻肚睡","Belly-Up Sleep",479,1005,9,"ひっくりかえり寝"],"4":["肚子上睡","Atop-Belly Sleep",720,1513,10,"おなかのうえ寝"]},"卡咪龜":{"1":["縮入殼中睡","Withdrawn-Shell Sleep",122,255,6,"からにこもる寝"],"2":["不入殼睡","Out-of-Shell Sleep",327,686,8,"こもらない寝"],"3":["撲倒睡","Face-Down Sleep",1063,2234,11,"つっぷし寝"],"4":["肚子上睡","Atop-Belly Sleep",1530,3216,12,"おなかのうえ寝"]},"水箭龜":{"1":["縮入殼中睡","Withdrawn-Shell Sleep",540,1134,9,"からにこもる寝"],"2":["不入殼睡","Out-of-Shell Sleep",1208,2538,11,"こもらない寝"],"3":["翻肚睡","Belly-Up Sleep",3005,6318,14,"ひっくりかえり寝"],"4":["肚子上睡","Atop-Belly Sleep",4093,8605,15,"おなかのうえ寝"]},"綠毛蟲":{"1":["貼地睡","Flat Sleep",15,19,4,"ぺったり寝"],"2":["頭沉睡","Heavy-Head Sleep",94,103,6,"あたまおもい寝"],"3":["吐絲睡","Silk-Spinning Sleep",431,466,9,"いとをはく寝"],"4":["肚子上睡","Atop-Belly Sleep",660,712,10,"おなかのうえ寝"]},"鐵甲蛹":{"1":["靜止睡","Still Sleep",33,38,6,"じっと寝"],"2":["搖晃睡","Swaying Sleep",183,200,8,"ゆらゆら寝"],"3":["變硬睡","Hardened Sleep",707,762,11,"かたくなる寝"],"4":["肚子上睡","Atop-Belly Sleep",1038,1118,12,"おなかのうえ寝"]},"巴大蝶":{"1":["坐姿漂浮睡","Sitting-Floating Sleep",407,729,9,"すわりふゆう寝"],"2":["漂浮睡","Floating Sleep",951,1703,11,"ふゆう寝"],"3":["散播鱗粉睡","Scale-Spreading Sleep",2502,4481,14,"りんぷんだし寝"],"4":["肚子上睡","Atop-Belly Sleep",3408,6105,15,"おなかのうえ寝"]},"小拉達":{"1":["抓臉睡","Face-Scratch Sleep",11,27,4,"かおかき寝"],"2":["歪頭睡","Head-Tilt Sleep",58,167,6,"くびかしげ寝"],"3":["啃門牙睡","Teeth-Gnawing Sleep",260,771,9,"まえばかじり寝"],"4":["肚子上睡","Atop-Belly Sleep",397,1181,10,"おなかのうえ寝"]},"拉達":{"1":["磨牙睡","Tooth-Grinding Sleep",65,163,6,"はぎしり寝"],"2":["站立呆滯睡","Stiff-Standing Sleep",192,493,8,"ぼうだち寝"],"3":["啃門牙睡","Teeth-Gnawing Sleep",663,1706,11,"まえばかじり寝"],"4":["肚子上睡","Atop-Belly Sleep",988,2544,12,"おなかのうえ寝"]},"阿柏蛇":{"1":["盤卷睡","Coiled Sleep",11,26,4,"とぐろ寝"],"2":["伸縮睡","Stretching Sleep",63,158,6,"のびちぢみ寝"],"3":["舒展睡","Unwound Sleep",284,729,9,"ほぐれ寝"],"4":["肚子上睡","Atop-Belly Sleep",434,1115,10,"おなかのうえ寝"]},"阿柏怪":{"1":["盤卷睡","Coiled Sleep",109,278,6,"とぐろ寝"],"2":["傾斜睡","Tilted Sleep",292,749,8,"かたむき寝"],"3":["舒展睡","Unwound Sleep",948,2440,11,"ほぐれ寝"],"4":["肚子上睡","Atop-Belly Sleep",1364,3514,12,"おなかのうえ寝"]},"皮卡丘":{"1":["蜷縮睡","Curled-Up Sleep",11,27,5,"まるまり寝"],"2":["垂耳睡","Floppy-Eared Sleep",82,242,7,"たれみみ寝"],"3":["放電睡","Discharging Sleep",328,975,10,"ほうでん寝"],"4":["肚子上睡","Atop-Belly Sleep",513,1527,11,"おなかのうえ寝"]},"雷丘":{"1":["搖尾巴睡","Tail-Swaying Sleep",334,859,9,"しっぽゆらゆら寝"],"2":["坐著睡","Sitting Sleep",781,2008,11,"すわり寝"],"3":["尾巴接地睡","Tail-Grounded Sleep",2053,5287,14,"しっぽアース寝"],"4":["肚子上睡","Atop-Belly Sleep",2796,7203,15,"おなかのうえ寝"]},"穿山鼠":{"1":["露肚睡","Exposed-Belly Sleep",93,148,4,"おなかだし寝"],"2":["打瞌睡","Nodding-Off Sleep",405,644,6,"こっくり寝"],"3":["埋土睡","Buried Sleep",2114,3359,9,"つちうまり寝"],"4":["肚子上睡","Atop-Belly Sleep",2942,4673,10,"おなかのうえ寝"]},"穿山王":{"1":["搓臉睡","Face-Rubbing Sleep",511,812,6,"かおごしごし寝"],"2":["打瞌睡","Nodding-Off Sleep",1537,2442,8,"こっくり寝"],"3":["埋土睡","Buried Sleep",4969,7893,11,"つちうまり寝"],"4":["肚子上睡","Atop-Belly Sleep",7953,12632,12,"おなかのうえ寝"]},"皮皮":{"1":["安詳睡","Peaceful Sleep",53,60,5,"おだやか寝"],"2":["打瞌睡","Nodding-Off Sleep",226,245,7,"こっくり寝"],"3":["揮指睡","Metronome Sleep",827,892,10,"ゆびをふる寝"],"4":["肚子上睡","Atop-Belly Sleep",1204,1297,11,"おなかのうえ寝"]},"皮可西":{"1":["安詳睡","Peaceful Sleep",691,863,9,"おだやか寝"],"2":["打瞌睡","Nodding-Off Sleep",1548,1929,11,"こっくり寝"],"3":["揮指睡","Metronome Sleep",3854,4799,14,"ゆびをふる寝"],"4":["肚子上睡","Atop-Belly Sleep",5249,6535,15,"おなかのうえ寝"]},"六尾":{"1":["蜷縮睡","Curled-Up Sleep",29,71,4,"まるまり寝"],"2":["打瞌睡","Nodding-Off Sleep",249,638,6,"こっくり寝"],"3":["火花睡","Ember Sleep",838,2156,9,"ひのこ寝"],"4":["肚子上睡","Atop-Belly Sleep",1212,3121,10,"おなかのうえ寝"]},"六尾 (阿羅拉的樣子)":{"1":["蜷縮睡","Curled-Up Sleep",44,78,4,"まるまり寝"],"2":["打瞌睡","Nodding-Off Sleep",329,590,6,"こっくり寝"],"3":["細雪睡","Powder Snow Sleep",1085,1947,9,"こなゆき寝"],"4":["肚子上睡","Atop-Belly Sleep",1566,2811,10,"おなかのうえ寝"]},"九尾":{"1":["伸展睡","Stretching Sleep",228,478,8,"のび寝"],"2":["蓬鬆尾巴睡","Fluffy-Tail Sleep",931,1956,10,"しっぽふわり寝"],"3":["尾巴棉被睡","Tail-Blanket Sleep",2391,5026,13,"しっぽふとん寝"],"4":["肚子上睡","Atop-Belly Sleep",3334,7008,14,"おなかのうえ寝"]},"九尾 (阿羅拉的樣子)":{"1":["伸展睡","Stretching Sleep",1392,1958,8,"のび寝"],"2":["蓬鬆尾巴睡","Fluffy-Tail Sleep",3933,5529,10,"しっぽふわり寝"],"3":["尾巴包覆睡","Tail-Wrapped Sleep",10059,14143,13,"しっぽつつまれ寝"],"4":["肚子上睡","Atop-Belly Sleep",13927,19580,14,"おなかのうえ寝"]},"胖丁":{"1":["坐著睡","Sitting Sleep",27,31,5,"すわり寝"],"2":["發呆睡","Absentminded Sleep",148,161,7,"ぼんやり寝"],"3":["唱歌睡","Singing Sleep",595,642,10,"うたう寝"],"4":["肚子上睡","Atop-Belly Sleep",917,989,11,"おなかのうえ寝"]},"胖可丁":{"1":["微笑睡","Smiling Sleep",260,283,9,"ほほえみ寝"],"2":["受驚睡","Startled Sleep",673,726,11,"びっくり寝"],"3":["鼓腮睡","Puffy Sleep",1985,2136,14,"ぷくぷく寝"],"4":["肚子上睡","Atop-Belly Sleep",2764,2974,15,"おなかのうえ寝"]},"地鼠":{"1":["地中睡","Underground Sleep",11,27,4,"ちちゅう寝"],"2":["地上睡","Aboveground Sleep",58,167,6,"ちじょう寝"],"3":["挖洞睡","Digging Sleep",260,771,9,"あなをほる寝"]},"三地鼠":{"1":["地中睡","Underground Sleep",100,294,6,"ちちゅう寝"],"2":["地上睡","Aboveground Sleep",267,793,8,"ちじょう寝"],"3":["三胞胎和睦睡","Friendly Triplets Sleep",867,2585,11,"みつごなかよし寝"]},"喵喵":{"1":["蜷縮睡","Curled-Up Sleep",12,24,4,"まるまり寝"],"2":["坐著睡","Sitting Sleep",100,210,6,"すわり寝"],"3":["聚寶功睡","Pay Day Sleep",402,843,9,"ネコにこばん寝"],"4":["肚子上睡","Atop-Belly Sleep",629,1320,10,"おなかのうえ寝"]},"貓老大":{"1":["優雅睡","Graceful Sleep",122,255,6,"ゆうが寝"],"2":["踏步睡","Braced Sleep",327,686,8,"ふんばり寝"],"3":["抱頭謝罪睡","Apologetic Sleep",1063,2234,11,"ごめん寝"],"4":["肚子上睡","Atop-Belly Sleep",1530,3216,12,"おなかのうえ寝"]},"可達鴨":{"1":["頭痛睡","Headache Sleep",13,23,4,"ずつう寝"],"2":["打大哈欠睡","Big Yawn Sleep",76,135,6,"おおあくび寝"],"3":["撒嬌任性睡","Tantrum Sleep",346,618,9,"やだやだ寝"],"4":["肚子上睡","Atop-Belly Sleep",529,946,10,"おなかのうえ寝"]},"哥達鴨":{"1":["手臂枕睡","Arm-Pillow Sleep",132,236,6,"うでまくら寝"],"2":["抓屁股睡","Scratching-Rump Sleep",355,636,8,"おしりかき寝"],"3":["游泳睡","Swimming Sleep",1155,2069,11,"およぎ寝"],"4":["肚子上睡","Atop-Belly Sleep",1663,2979,12,"おなかのうえ寝"]},"猴怪":{"1":["憤怒睡","Angry Sleep",11,26,4,"おこり寝"],"2":["站立呆滯睡","Stiff-Standing Sleep",81,206,6,"ぼうだち寝"],"3":["安詳睡","Peaceful Sleep",333,855,9,"おだやか寝"],"4":["肚子上睡","Atop-Belly Sleep",516,1325,10,"おなかのうえ寝"]},"火爆猴":{"1":["憤怒睡","Angry Sleep",122,255,6,"おこり寝"],"2":["跺腳睡","Stomping Sleep",327,686,8,"じだんだ寝"],"3":["安詳睡","Peaceful Sleep",1063,2234,11,"おだやか寝"],"4":["肚子上睡","Atop-Belly Sleep",1530,3216,12,"おなかのうえ寝"]},"卡蒂狗":{"1":["伸展睡","Stretching Sleep",13,23,4,"のび寝"],"2":["端坐睡","Sitting-Pretty Sleep",109,195,6,"おすわり寝"],"3":["翻肚仰躺睡","Belly-Up Sleep",437,781,9,"へそてん寝"],"4":["肚子上睡","Atop-Belly Sleep",683,1223,10,"おなかのうえ寝"]},"風速狗":{"1":["伏臥睡","Lying-Down Sleep",680,1218,8,"ふせ寝"],"2":["端坐睡","Sitting-Pretty Sleep",1450,2597,10,"おすわり寝"],"3":["翻肚仰躺睡","Belly-Up Sleep",3573,6400,13,"へそてん寝"],"4":["肚子上睡","Atop-Belly Sleep",4939,8846,14,"おなかのうえ寝"]},"喇叭芽":{"1":["伸腿睡","Legs-Extended Sleep",13,23,4,"あしのばし寝"],"2":["溶解液睡","Acid Sleep",87,155,6,"ようかいえき寝"],"3":["扎根睡","Rooted Sleep",376,673,9,"ねをはる寝"],"4":["肚子上睡","Atop-Belly Sleep",576,1032,10,"おなかのうえ寝"]},"口呆花":{"1":["溶解液睡","Acid Sleep",78,139,6,"ようかいえき寝"],"2":["漂浮睡","Floating Sleep",234,419,8,"ふゆう寝"],"3":["黏著睡","Clinging Sleep",808,1447,11,"くっつき寝"],"4":["肚子上睡","Atop-Belly Sleep",1205,2157,12,"おなかのうえ寝"]},"大食花":{"1":["撲簌撲簌睡","Fluffy-Puff Sleep",407,729,9,"ばふばふ寝"],"2":["藤蔓支撐睡","Vine-Support Sleep",951,1703,11,"つるささえ寝"],"3":["翻肚睡","Belly-Up Sleep",2502,4481,14,"ひっくりかえり寝"],"4":["肚子上睡","Atop-Belly Sleep",3408,6105,15,"おなかのうえ寝"]},"小拳石":{"1":["抱胸睡","Arms-Folded Sleep",11,26,4,"うでぐみ寝"],"2":["忍耐睡","Enduring Sleep",63,158,6,"がまん寝"],"3":["陷入泥中睡","Sunken Sleep",284,729,9,"めりこみ寝"],"4":["肚子上睡","Atop-Belly Sleep",434,1115,10,"おなかのうえ寝"]},"隆隆石":{"1":["側滾睡","Tumbling Sleep",72,150,6,"ごろーん寝"],"2":["豪邁睡","Boisterous Sleep",215,452,8,"ごうかい寝"],"3":["滾來滾去睡","Rolling Sleep",744,1562,11,"ごろごろ寝"],"4":["肚子上睡","Atop-Belly Sleep",1109,2329,12,"おなかのうえ寝"]},"隆隆岩":{"1":["沉穩睡","Hefty Sleep",587,1050,9,"どっしり寝"],"2":["威風佇立睡","Commanding-Stance Sleep",1312,2351,11,"におうだち寝"],"3":["滾來滾去睡","Rolling Sleep",3266,5850,14,"ごろごろ寝"],"4":["肚子上睡","Atop-Belly Sleep",4449,7968,15,"おなかのうえ寝"]},"呆呆獸":{"1":["癱軟睡","Limp Sleep",15,19,4,"ぐでぐで寝"],"2":["茫然睡","Dazed Sleep",122,133,6,"ぼーっと寝"],"3":["呆鈍睡","Goofy Sleep",506,546,9,"まぬけだ寝"],"4":["肚子上睡","Atop-Belly Sleep",784,845,10,"おなかのうえ寝"]},"呆殼獸":{"1":["和睦睡","Harmonious Sleep",142,218,6,"なかよし寝"],"2":["流口水睡","Drooling Sleep",383,586,8,"よだれ寝"],"3":["被咬尾巴睡","Bitten-Tail Sleep",1247,1904,11,"しっぽかまれ寝"],"4":["肚子上睡","Atop-Belly Sleep",1796,2741,12,"おなかのうえ寝"]},"小磁怪":{"1":["傾斜漂浮睡","Tilted-Floating Sleep",11,27,4,"かたむきふゆう寝"],"2":["電磁漂浮睡","Magnet-Rise Sleep",66,192,6,"でんじふゆう寝"],"3":["倒立漂浮睡","Inverted-Floating Sleep",283,839,9,"さかさふゆう寝"]},"三合一磁怪":{"1":["連結漂浮睡","Connected-Floating Sleep",100,294,6,"れんけつふゆう寝"],"2":["欲墜漂浮睡","Falling-Floating Sleep",267,793,8,"おちかけふゆう寝"],"3":["散落漂浮睡","Scattered-Floating Sleep",867,2585,11,"ばらばらふゆう寝"]},"大蔥鴨":{"1":["貼地睡","Flat Sleep",553,867,7,"ぺったり寝"],"2":["持大蔥睡","Leek-Wielding Sleep",2337,3659,9,"クキかまえ寝"],"3":["咬大蔥睡","Leek-Chewing Sleep",8173,12797,12,"クキかみ寝"],"4":["肚子上睡","Atop-Belly Sleep",10084,15787,13,"おなかのうえ寝"]},"嘟嘟":{"1":["放哨睡","Lookout Sleep",11,27,4,"みはり寝"],"2":["偷懶放哨睡","Slacking-Lookout Sleep",58,167,6,"みはりさぼり寝"],"3":["雙胞胎睡","Twin Sleep",260,771,9,"ふたご寝"],"4":["肚子上睡","Atop-Belly Sleep",397,1181,10,"おなかのうえ寝"]},"嘟嘟利":{"1":["放哨睡","Lookout Sleep",65,163,6,"みはり寝"],"2":["偷懶放哨睡","Slacking-Lookout Sleep",192,493,8,"みはりさぼり寝"],"3":["三胞胎睡","Triplet Sleep",663,1706,11,"みつご寝"],"4":["肚子上睡","Atop-Belly Sleep",988,2544,12,"おなかのうえ寝"]},"鬼斯":{"1":["笑咪咪睡","Smiling Sleep",11,27,4,"にこにこ寝"],"2":["瓦斯漂浮睡","Gas-Floating Sleep",75,218,6,"ガスふゆう寝"],"3":["吐舌做鬼臉睡","Tongue-Out Sleep",305,905,9,"べろべろばー寝"]},"鬼斯通":{"1":["歪頭睡","Head-Tilt Sleep",67,195,6,"くびかしげ寝"],"2":["瓦斯漂浮睡","Gas-Floating Sleep",191,564,8,"ガスふゆう寝"],"3":["吐舌做鬼臉睡","Tongue-Out Sleep",653,1945,11,"べろべろばー寝"]},"耿鬼":{"1":["惡作劇睡","Mischief Sleep",441,1311,9,"いたずら寝"],"2":["壞笑睡","Smirking Sleep",985,2937,11,"にやにや寝"],"3":["吐舌做鬼臉睡","Tongue-Out Sleep",2451,7311,14,"べろべろばー寝"],"4":["肚子上睡","Atop-Belly Sleep",3338,9959,15,"おなかのうえ寝"]},"大岩蛇":{"1":["漩渦睡","Swirling Sleep",257,763,7,"うずまき寝"],"2":["搖搖欲墜睡","Wobbly Sleep",620,1845,9,"ぐらぐら寝"],"3":["持續挖掘睡","Digging-Forward Sleep",1707,5091,12,"ほりすすみ寝"]},"卡拉卡拉":{"1":["啜泣睡","Weeping Sleep",13,23,4,"しくしく寝"],"2":["抓骨棒睡","Bone-Scratching Sleep",98,176,6,"ホネかき寝"],"3":["骨頭枕睡","Bone-Pillow Sleep",405,726,9,"ホネまくら寝"],"4":["肚子上睡","Atop-Belly Sleep",628,1124,10,"おなかのうえ寝"]},"嘎啦嘎啦":{"1":["抱骨棒睡","Bone-Hugging Sleep",98,206,6,"ホネだき寝"],"2":["抓骨棒睡","Bone-Scratching Sleep",279,585,8,"ホネかき寝"],"3":["骨頭枕睡","Bone-Pillow Sleep",940,1974,11,"ホネまくら寝"],"4":["肚子上睡","Atop-Belly Sleep",1359,2857,12,"おなかのうえ寝"]},"吉利蛋":{"1":["坐著睡","Sitting Sleep",686,629,7,"すわり寝"],"2":["打瞌睡","Nodding-Off Sleep",2788,2547,9,"こっくり寝"],"3":["護蛋睡","Egg-Guarding Sleep",6432,5872,12,"タマゴだいじ寝"],"4":["肚子上睡","Atop-Belly Sleep",11256,10275,13,"おなかのうえ寝"]},"袋獸":{"1":["親子親情睡","Parent-Child Sleep",426,461,7,"おやこあい寝"],"2":["親子同步睡","Sync-Parent-Child Sleep",1030,1110,9,"おやこシンクロ寝"],"3":["先醒來睡","Early-Wake Sleep",2843,3057,12,"さきにおきた寝"],"4":["肚子上睡","Atop-Belly Sleep",3802,4088,13,"おなかのうえ寝"]},"魔牆人偶":{"1":["隱形牆睡","Invisible-Wall Sleep",100,294,6,"マイムのかべ寝"],"2":["小石輕敲睡","Pebble-Tapping Sleep",267,793,8,"こいしコツン寝"],"3":["默劇魔術床睡","Mime-Bed Sleep",867,2585,11,"マイムのベッド寝"],"4":["肚子上睡","Atop-Belly Sleep",1248,3722,12,"おなかのうえ寝"]},"凱羅斯":{"1":["大膽睡","Bold Sleep",242,621,7,"だいたん寝"],"2":["站立呆滯睡","Stiff-Standing Sleep",581,1494,9,"ぼうだち寝"],"3":["潛水睡","Diving Sleep",1636,4214,12,"もぐり寝"],"4":["肚子上睡","Atop-Belly Sleep",2277,5864,13,"おなかのうえ寝"]},"百變怪":{"1":["變身岩石睡","Stone-Transform Sleep",226,405,7,"いしにへんしん寝"],"2":["原樣睡","As-Is Sleep",580,1040,9,"そのまま寝"],"3":["皮卡丘睡","Pikachu-Transform Sleep",1657,2968,12,"ピカチュウ寝"],"4":["肚子上睡","Atop-Belly Sleep",2363,4234,13,"おなかのうえ寝"]},"伊布":{"1":["蜷縮睡","Curled-Up Sleep",24,43,4,"まるまり寝"],"2":["垂耳睡","Floppy-Eared Sleep",132,237,6,"たれみみ寝"],"3":["元氣滿滿睡","Energetic Sleep",520,931,9,"げんきいっぱい寝"],"4":["肚子上睡","Atop-Belly Sleep",782,1401,10,"おなかのうえ寝"]},"水伊布":{"1":["搖尾鰭睡","Tail-Fin-Wagging Sleep",689,743,8,"おびれふり寝"],"2":["端坐睡","Sitting-Pretty Sleep",1546,1664,10,"おすわり寝"],"3":["貼地睡","Flat Sleep",3840,4130,13,"ぺったり寝"],"4":["肚子上睡","Atop-Belly Sleep",5274,5670,14,"おなかのうえ寝"]},"雷伊布":{"1":["伏臥睡","Lying-Down Sleep",453,1165,8,"ふせ寝"],"2":["端坐睡","Sitting-Pretty Sleep",1015,2614,10,"おすわり寝"],"3":["夢中奔跑睡","Dream-Running Sleep",2520,6493,13,"ゆめではしり寝"],"4":["肚子上睡","Atop-Belly Sleep",3461,8917,14,"おなかのうえ寝"]},"火伊布":{"1":["擺動尾巴睡","Tail-Wagging Sleep",453,1165,8,"しっぽをふる寝"],"2":["母雞蹲坐睡","Loaf-Sitting Sleep",1015,2614,10,"こうばこずわり寝"],"3":["尾巴包緊睡","Tail-Wrapped Sleep",2520,6493,13,"しっぽくるまり寝"],"4":["肚子上睡","Atop-Belly Sleep",3461,8917,14,"おなかのうえ寝"]},"迷你龍":{"1":["盤卷睡","Coiled Sleep",25,52,4,"とぐろ寝"],"2":["扭動睡","Wiggling Sleep",534,1122,6,"くねく寝"],"3":["舒展睡","Unwound Sleep",1000,2100,9,"ほぐれ寝"],"4":["肚子上睡","Atop-Belly Sleep",1359,2857,10,"おなかのうえ寝"]},"哈克龍":{"1":["盤卷睡","Coiled Sleep",177,370,6,"とぐろ寝"],"2":["扭動睡","Wiggling Sleep",651,1368,8,"くねく寝"],"3":["舒展睡","Unwound Sleep",1835,3858,11,"ほぐれ寝"],"4":["肚子上睡","Atop-Belly Sleep",2554,5368,12,"おなかのうえ寝"]},"快龍":{"1":["蜷縮睡","Curled-Up Sleep",1880,3366,9,"まるまり寝"],"2":["坐著睡","Sitting Sleep",3510,6286,11,"すわり寝"],"3":["露肚睡","Exposed-Belly Sleep",8079,14470,14,"おなかだし寝"],"4":["肚子上睡","Atop-Belly Sleep",10700,19165,15,"おなかのうえ寝"]},"夢幻":{"1":["輕飄飄睡","Fluffy Sleep",1885,2994,11,"ふわふわ寝"],"2":["自由自在睡","Carefree Sleep",3720,5910,13,"じゆうじざい寝"],"3":["泡泡床睡","Bubble-Bed Sleep",9028,14341,16,"あわベッド寝"]},"菊草葉":{"1":["轉動葉片睡","Leaf-Spinning Sleep",23,46,4,"はっぱまわし寝"],"2":["下垂葉片睡","Drooping-Leaf Sleep",122,255,6,"はっぱたれ寝"],"3":["翻肚仰躺睡","Belly-Up Sleep",479,1005,9,"へそてん寝"],"4":["肚子上睡","Atop-Belly Sleep",720,1513,10,"おなかのうえ寝"]},"月桂葉":{"1":["伸展睡","Stretching Sleep",122,255,6,"のび寝"],"2":["搖晃花苞睡","Bud-Shaking Sleep",327,686,8,"つぼみふり寝"],"3":["香氣飄飄睡","Fragrant Sleep",1063,2234,11,"かおりただよい寝"],"4":["肚子上睡","Atop-Belly Sleep",1530,3216,12,"おなかのうえ寝"]},"大竺葵":{"1":["安詳睡","Peaceful Sleep",587,1050,9,"おだやか寝"],"2":["搖頭睡","Head-Shaking Sleep",1312,2351,11,"くびふり寝"],"3":["開花睡","Blooming Sleep",3266,5850,14,"はながさいた寝"],"4":["肚子上睡","Atop-Belly Sleep",4449,7968,15,"おなかのうえ寝"]},"火球鼠":{"1":["貼地睡","Flat Sleep",21,50,4,"ぺったり寝"],"2":["駝背彎腰睡","Back-Hunched Sleep",109,278,6,"せなかまるめ寝"],"3":["噴火焰睡","Flame-Blowing Sleep",427,1098,9,"ほのおふきあげ寝"],"4":["肚子上睡","Atop-Belly Sleep",642,1652,10,"おなかのうえ寝"]},"火岩鼠":{"1":["手臂枕睡","Arm-Pillow Sleep",122,255,6,"うでまくら寝"],"2":["撲倒睡","Face-Down Sleep",327,686,8,"つっぷし寝"],"3":["噴火焰睡","Flame-Blowing Sleep",1063,2234,11,"ほのおふきあげ寝"],"4":["肚子上睡","Atop-Belly Sleep",1530,3216,12,"おなかのうえ寝"]},"火爆獸":{"1":["手臂枕睡","Arm-Pillow Sleep",540,1134,9,"うでまくら寝"],"2":["理毛睡","Grooming Sleep",1208,2538,11,"けづくろい寝"],"3":["噴火焰睡","Flame-Blowing Sleep",3005,6318,14,"ほのおふきあげ寝"],"4":["肚子上睡","Atop-Belly Sleep",4093,8605,15,"おなかのうえ寝"]},"小鋸鱷":{"1":["半球睡","Hemisphere Sleep",24,43,4,"はんきゅう寝"],"2":["輕咬撒嬌睡","Nibbling Sleep",132,237,6,"あまがみ寝"],"3":["大張嘴睡","Mouth-Ajar Sleep",520,931,9,"おおぐちあけ寝"],"4":["肚子上睡","Atop-Belly Sleep",782,1401,10,"おなかのうえ寝"]},"藍鱷":{"1":["半球睡","Hemisphere Sleep",132,236,6,"はんきゅう寝"],"2":["露獠牙睡","Fang-Showing Sleep",355,636,8,"キバみせ寝"],"3":["大張嘴睡","Mouth-Ajar Sleep",1155,2069,11,"おおぐちあけ寝"],"4":["肚子上睡","Atop-Belly Sleep",1663,2979,12,"おなかのうえ寝"]},"大力鱷":{"1":["半球睡","Hemisphere Sleep",587,1050,9,"はんきゅう寝"],"2":["威嚇睡","Intimidating Sleep",1312,2351,11,"いかく寝"],"3":["大張嘴睡","Mouth-Ajar Sleep",3266,5850,14,"おおぐちあけ寝"],"4":["肚子上睡","Atop-Belly Sleep",4449,7968,15,"おなかのうえ寝"]},"皮丘":{"1":["安詳睡","Peaceful Sleep",11,27,4,"おだやか寝"],"2":["坐著睡","Sitting Sleep",58,167,6,"すわり寝"],"3":["放電睡","Discharging Sleep",260,771,9,"ほうでん寝"],"4":["肚子上睡","Atop-Belly Sleep",397,1181,10,"おなかのうえ寝"]},"皮寶寶":{"1":["滾動睡","Rolling Sleep",29,34,4,"ころころ寝"],"2":["打瞌睡","Nodding-Off Sleep",165,179,6,"こっくり寝"],"3":["翻肚睡","Belly-Up Sleep",649,700,9,"ひっくりかえり寝"],"4":["肚子上睡","Atop-Belly Sleep",977,1053,10,"おなかのうえ寝"]},"寶寶丁":{"1":["彈跳睡","Bouncing Sleep",15,19,4,"はずみ寝"],"2":["發呆睡","Absentminded Sleep",94,103,6,"ぼんやり寝"],"3":["唱歌睡","Singing Sleep",431,466,9,"うたう寝"],"4":["肚子上睡","Atop-Belly Sleep",660,712,10,"おなかのうえ寝"]},"波克比":{"1":["滾動睡","Rolling Sleep",23,46,4,"ころころ寝"],"2":["翻肚睡","Belly-Up Sleep",122,255,6,"ひっくりかえり寝"],"3":["殼中睡","Inside-Shell Sleep",479,1005,9,"カラのなか寝"],"4":["肚子上睡","Atop-Belly Sleep",720,1513,10,"おなかのうえ寝"]},"波克基古":{"1":["坐著拍翅睡","Sitting-Flap Sleep",82,170,5,"すわりはばたき寝"],"2":["站立拍翅睡","Standing-Flap Sleep",233,488,7,"たちはばたき寝"],"3":["飄浮撲翼睡","Floating-Flutter Sleep",800,1681,10,"うかびぱたぱた寝"],"4":["肚子上睡","Atop-Belly Sleep",1179,2478,11,"おなかのうえ寝"]},"天然雀":{"1":["夢中跳躍睡","Dream-Jumping Sleep",84,165,4,"ゆめでジャンプ寝"],"2":["展翅睡","Wing-Spread Sleep",364,718,6,"はねひろげ寝"],"3":["撲動翅膀睡","Fluttering Sleep",1774,3502,9,"ぱたぱた寝"],"4":["肚子上睡","Atop-Belly Sleep",2538,5010,10,"おなかのうえ寝"]},"天然鳥":{"1":["預知未來睡","Future-Sight Sleep",514,806,6,"みらいよち寝"],"2":["搖頭睡","Head-Shaking Sleep",1547,2423,8,"くびふり寝"],"3":["展翅睡","Wing-Spread Sleep",4751,7439,11,"はねひろげ寝"],"4":["肚子上睡","Atop-Belly Sleep",7561,11837,12,"おなかのうえ寝"]},"咩利羊":{"1":["毛茸茸睡","Woolly Sleep",15,20,4,"もこもこ寝"],"2":["刨蹄睡","Hoof-Paw Sleep",89,112,6,"ひづめかき寝"],"3":["發光尾巴睡","Tail-Glow Sleep",407,508,9,"しっぽひかり寝"],"4":["肚子上睡","Atop-Belly Sleep",623,777,10,"おなかのうえ寝"]},"茸茸羊":{"1":["貼地睡","Flat Sleep",84,129,6,"ぺったり寝"],"2":["毛茸茸睡","Woolly Sleep",252,386,8,"もこもこ寝"],"3":["發光尾巴睡","Tail-Glow Sleep",873,1332,11,"しっぽひかり寝"],"4":["肚子上睡","Atop-Belly Sleep",1301,1985,12,"おなかのうえ寝"]},"電龍":{"1":["抓尾巴睡","Tail-Scratching Sleep",407,729,9,"しっぽかき寝"],"2":["搖頭睡","Head-Shaking Sleep",951,1703,11,"くびふり寝"],"3":["閃耀尾巴睡","Tail-Shining Sleep",2502,4481,14,"しっぽかがやき寝"],"4":["肚子上睡","Atop-Belly Sleep",3408,6105,15,"おなかのうえ寝"]},"樹才怪":{"1":["偽裝成樹睡","Tree-Mimic Sleep",27,48,5,"きのふり寝"],"2":["偷懶偽裝樹睡","Slacking-Tree Sleep",147,264,7,"きのふりさぼり寝"],"3":["不偽裝樹睡","Non-Tree Sleep",567,1014,10,"きのふりしない寝"],"4":["肚子上睡","Atop-Belly Sleep",831,1489,11,"おなかのうえ寝"]},"烏波":{"1":["笑咪咪睡","Smiling Sleep",128,120,4,"にこにこ寝"],"2":["打大哈欠睡","Big Yawn Sleep",435,400,6,"おおあくび寝"],"3":["浮泥睡","Mud-Floating Sleep",1985,1815,9,"どろにうかび寝"],"4":["肚子上睡","Atop-Belly Sleep",2561,2340,10,"おなかのうえ寝"]},"烏波 (帕底亞的樣子)":{"1":["笑咪咪睡","Smiling Sleep",147,119,4,"にこにこ寝"],"2":["打大哈欠睡","Big Yawn Sleep",493,390,6,"おおあくび寝"],"3":["陷入泥中睡","Mud-Buried Sleep",2303,1809,9,"どろにうまり寝"],"4":["肚子上睡","Atop-Belly Sleep",3076,2415,10,"おなかのうえ寝"]},"沼王":{"1":["笑咪咪睡","Smiling Sleep",538,494,6,"にこにこ寝"],"2":["打大哈欠睡","Big Yawn Sleep",1445,1323,8,"おおあくび寝"],"3":["浮泥睡","Mud-Floating Sleep",4733,4322,11,"どろにうかび寝"],"4":["肚子上睡","Atop-Belly Sleep",6211,5670,12,"おなかのうえ寝"]},"太陽伊布":{"1":["預知睡","Premonition Sleep",453,1165,8,"よち寝"],"2":["端坐睡","Sitting-Pretty Sleep",1015,2614,10,"おすわり寝"],"3":["翻肚仰躺睡","Belly-Up Sleep",2520,6493,13,"へそてん寝"],"4":["肚子上睡","Atop-Belly Sleep",3461,8917,14,"おなかのうえ寝"]},"月亮伊布":{"1":["新月睡","Crescent Sleep",596,910,8,"みかづき寝"],"2":["端坐睡","Sitting-Pretty Sleep",1336,2039,10,"おすわり寝"],"3":["翻肚仰躺睡","Belly-Up Sleep",3318,5064,13,"へそてん寝"],"4":["肚子上睡","Atop-Belly Sleep",4557,6954,14,"おなかのうえ寝"]},"黑暗鴉":{"1":["整理羽毛睡","Feather-Preening Sleep",277,391,7,"はづくろい寝"],"2":["打大哈欠睡","Big Yawn Sleep",1386,1950,9,"おおあくび寝"],"3":["收集寶石睡","Gem-Collecting Sleep",3443,4841,12,"ほうせきあつめ寝"],"4":["肚子上睡","Atop-Belly Sleep",6035,8484,13,"おなかのうえ寝"]},"呆呆王":{"1":["懶散睡","Loafing Sleep",734,1121,8,"ぐうたら寝"],"2":["賢者睡","Sage Sleep",1566,2390,10,"けんじゃ寝"],"3":["靈感頓悟睡","Inspiration Sleep",3858,5888,13,"ひらめき寝"],"4":["肚子上睡","Atop-Belly Sleep",5334,8139,14,"おなかのうえ寝"]},"果然翁":{"1":["藏尾巴睡","Hidden-Tail Sleep",33,38,5,"しっぽかくし寝"],"2":["忍耐睡","Enduring Sleep",183,200,7,"がまん寝"],"3":["擺姿勢招牌睡","Signature-Pose Sleep",707,762,10,"きめポーズ寝"],"4":["肚子上睡","Atop-Belly Sleep",1038,1118,11,"おなかのうえ寝"]},"大綱蛇":{"1":["漩渦睡","Swirling Sleep",1192,2505,8,"うずまき寝"],"2":["搖搖欲墜睡","Wobbly Sleep",2329,4895,10,"ぐらぐら寝"],"3":["持續挖掘睡","Digging-Forward Sleep",5549,11665,13,"ほりすすみ寝"]},"壺壺":{"1":["縮入殼中睡","Withdrawn-Shell Sleep",452,1049,7,"からにこもる寝"],"2":["不入殼睡","Out-of-Shell Sleep",1979,4602,9,"こもらない寝"],"3":["果汁溢出睡","Spilled-Juice Sleep",7411,17238,12,"ジュースこぼれ寝"],"4":["肚子上睡","Atop-Belly Sleep",9309,21656,13,"おなかのうえ寝"]},"赫拉克羅斯":{"1":["甩角睡","Horn-Shaking Sleep",294,527,7,"ツノふり寝"],"2":["站立呆滯睡","Stiff-Standing Sleep",708,1267,9,"ぼうだち寝"],"3":["舔蜜睡","Honey-Licking Sleep",1994,3573,12,"ミツなめ寝"],"4":["肚子上睡","Atop-Belly Sleep",2776,4971,13,"おなかのうえ寝"]},"狃拉":{"1":["蜷縮睡","Curled-Up Sleep",236,465,7,"まるまり寝"],"2":["站立呆滯睡","Stiff-Standing Sleep",1177,2324,9,"ぼうだち寝"],"3":["翻肚仰躺睡","Belly-Up Sleep",2923,5772,12,"へそてん寝"],"4":["肚子上睡","Atop-Belly Sleep",5123,10117,13,"おなかのうえ寝"]},"信使鳥":{"1":["安詳睡","Peaceful Sleep",477,1003,7,"おだやか寝"],"2":["站立呆滯睡","Stiff-Standing Sleep",1073,2255,9,"ぼうだち寝"],"3":["送禮物睡","Gift-Giving Sleep",2661,5593,12,"プレゼント寝"],"4":["肚子上睡","Atop-Belly Sleep",3647,7666,13,"おなかのうえ寝"]},"戴魯比":{"1":["長嚎睡","Howling Sleep",12,24,4,"とおぼえ寝"],"2":["伸展睡","Stretching Sleep",100,210,6,"のび寝"],"3":["翻肚仰躺睡","Belly-Up Sleep",402,843,9,"へそてん寝"],"4":["肚子上睡","Atop-Belly Sleep",629,1320,10,"おなかのうえ寝"]},"黑魯加":{"1":["搖尾巴睡","Tail-Swaying Sleep",150,314,6,"しっぽゆらゆら寝"],"2":["踏步睡","Braced Sleep",385,807,8,"ふんばり寝"],"3":["吐火睡","Flame-Spitting Sleep",1226,2576,11,"ほのおはき寝"],"4":["肚子上睡","Atop-Belly Sleep",1691,3554,12,"おなかのうえ寝"]},"幸福蛋":{"1":["坐著睡","Sitting Sleep",1645,1504,8,"すわり寝"],"2":["搖晃睡","Swaying Sleep",4410,4027,10,"ゆらゆら寝"],"3":["護蛋睡","Egg-Guarding Sleep",11894,10857,13,"タマゴだいじ寝"],"4":["肚子上睡","Atop-Belly Sleep",15727,14353,14,"おなかのうえ寝"]},"雷公":{"1":["蓄力睡","Power-Gathering Sleep",669,4769,11,"ちからため寝"],"2":["冥想睡","Meditation Sleep",3696,12286,13,"めいそう寝"],"3":["雷霆睡","Thunderbolt Sleep",8857,29457,16,"いかずち寝"]},"炎帝":{"1":["蓄力睡","Power-Gathering Sleep",873,4805,11,"ちからため寝"],"2":["冥想睡","Meditation Sleep",4416,12111,13,"めいそう寝"],"3":["火山睡","Volcano Sleep",11597,28100,16,"かざん寝"]},"水君":{"1":["蓄力睡","Energy-Storing Sleep",1054,4844,11,"ちからため寝"],"2":["冥想睡","Meditative Sleep",5091,12084,13,"めいそう寝"],"3":["北風睡","Northern-Wind Sleep",13303,27414,16,"きたかぜ寝"]},"幼基拉斯":{"1":["伸展睡","Stretching Sleep",34,62,4,"のび寝"],"2":["搓臉睡","Face-Rubbing Sleep",163,292,6,"かおごしごし寝"],"3":["吃土睡","Dirt-Eating Sleep",616,1103,9,"つちたべ寝"],"4":["肚子上睡","Atop-Belly Sleep",896,1605,10,"おなかのうえ寝"]},"沙基拉斯":{"1":["倒地睡","Fallen Sleep",162,291,6,"たおれ寝"],"2":["瑟瑟發抖睡","Shivering Sleep",418,748,8,"ぶるぶる寝"],"3":["排氣睡","Gas-Release Sleep",1332,2386,11,"ガスぬき寝"],"4":["肚子上睡","Atop-Belly Sleep",1837,3291,12,"おなかのうえ寝"]},"班基拉斯":{"1":["趴臥睡","Prone Sleep",1457,2611,9,"はらばい寝"],"2":["威風佇立睡","Commanding-Stance Sleep",2859,5120,11,"におうだち寝"],"3":["大字形睡","Starfish Sleep",6764,12114,14,"だいのじ寝"],"4":["肚子上睡","Atop-Belly Sleep",8962,16051,15,"おなかのうえ寝"]},"木守宮":{"1":["坐著睡","Sitting Sleep",51,100,4,"すわり寝"],"2":["搓臉睡","Face-Rubbing Sleep",552,1090,6,"かおごしごし寝"],"3":["夢中攀爬睡","Dream-Climbing Sleep",1774,3502,9,"ゆめでのぼり寝"],"4":["肚子上睡","Atop-Belly Sleep",2248,4440,10,"おなかのうえ寝"]},"森林蜥蜴":{"1":["單膝立起睡","One-Knee-Up Sleep",183,360,6,"かたひざたて寝"],"2":["夢中擺架勢睡","Dream-Stance Sleep",905,1785,8,"ゆめでかまえ寝"],"3":["樹葉包覆睡","Leaf-Wrapped Sleep",2751,5432,11,"はっぱつつまれ寝"],"4":["肚子上睡","Atop-Belly Sleep",3770,7445,12,"おなかのうえ寝"]},"蜥蜴王":{"1":["沉穩睡","Hefty Sleep",1297,2560,9,"どっしり寝"],"2":["夢中擺架勢睡","Dream-Stance Sleep",2846,5619,11,"ゆめでかまえ寝"],"3":["培育幼木睡","Sapling-Tending Sleep",8851,17479,14,"わかぎそだて寝"],"4":["肚子上睡","Atop-Belly Sleep",10722,21174,15,"おなかのうえ寝"]},"火稚雞":{"1":["蜷縮睡","Curled-Up Sleep",57,90,4,"まるまり寝"],"2":["暖洋洋睡","Sunny-Warm Sleep",619,970,6,"ぽかぽか寝"],"3":["滾動睡","Rolling Sleep",1989,3116,9,"ころころ寝"],"4":["肚子上睡","Atop-Belly Sleep",2522,3950,10,"おなかのうえ寝"]},"力壯雞":{"1":["坐著睡","Sitting Sleep",204,321,6,"すわり寝"],"2":["跳躍睡","Jumping Sleep",1015,1589,8,"ジャンプ寝"],"3":["飛踢睡","Kicking Sleep",3086,4832,11,"キック寝"],"4":["肚子上睡","Atop-Belly Sleep",4229,6623,12,"おなかのうえ寝"]},"火焰雞":{"1":["單膝立起睡","One-Knee-Up Sleep",1445,2295,9,"かたひざたて寝"],"2":["聚氣睡","Focus-Energy Sleep",3171,5037,11,"きあいだめ寝"],"3":["火焰踢睡","Blaze-Kick Sleep",9863,15666,14,"ブレイズキック寝"],"4":["肚子上睡","Atop-Belly Sleep",11948,18978,15,"おなかのうえ寝"]},"水躍魚":{"1":["揮動魚鰭睡","Fin-Waving Sleep",57,91,4,"ヒレふり寝"],"2":["打瞌睡","Nodding-Off Sleep",615,978,6,"こっくり寝"],"3":["抱岩石睡","Rock-Hugging Sleep",1976,3140,9,"いわだき寝"],"4":["肚子上睡","Atop-Belly Sleep",2505,3980,10,"おなかのうえ寝"]},"沼躍魚":{"1":["坐著睡","Sitting Sleep",203,323,6,"すわり寝"],"2":["歡呼萬歲睡","Hooray-Arms Sleep",1008,1601,8,"ばんざい寝"],"3":["陷入泥中睡","Mud-Buried Sleep",3065,4869,11,"どろにうまり寝"],"4":["肚子上睡","Atop-Belly Sleep",4201,6674,12,"おなかのうえ寝"]},"巨沼怪":{"1":["夢中暢泳睡","Dream-Swimming Sleep",1560,2089,9,"ゆめでおよぎ寝"],"2":["踏步睡","Braced Sleep",3424,4583,11,"ふんばり寝"],"3":["玩泥巴睡","Mud-Play Sleep",10652,14254,14,"どろあそび寝"],"4":["肚子上睡","Atop-Belly Sleep",12904,17267,15,"おなかのうえ寝"]},"拉魯拉絲":{"1":["撲倒睡","Face-Down Sleep",21,42,4,"つっぷし寝"],"2":["扭扭捏捏睡","Fidgeting Sleep",457,959,6,"もじもじ寝"],"3":["笑咪咪睡","Smiling Sleep",867,1822,9,"にこにこ寝"],"4":["肚子上睡","Atop-Belly Sleep",1179,2478,10,"おなかのうえ寝"]},"奇鲁莉安":{"1":["坐著鞠躬睡","Sitting-Bow Sleep",177,370,6,"すわりおじぎ寝"],"2":["屈膝行禮睡","Curtsy Sleep",651,1368,8,"レヴェランス寝"],"3":["翩翩起舞睡","Dancing Sleep",1835,3858,11,"おどりながら寝"],"4":["肚子上睡","Atop-Belly Sleep",2554,5368,12,"おなかのうえ寝"]},"沙奈朵":{"1":["搖曳裙襬睡","Skirt-Swaying Sleep",697,1794,9,"すそゆらし寝"],"2":["害羞靦腆睡","Shy Sleep",1432,3688,11,"はずかしい寝"],"3":["裙襬展開睡","Flared-Hem Sleep",3466,8931,14,"すそひろがり寝"],"4":["肚子上睡","Atop-Belly Sleep",4607,11872,15,"おなかのうえ寝"]},"懶人獺":{"1":["懶惰睡","Lazy Sleep",15,19,4,"なまけ寝"],"2":["理毛睡","Grooming Sleep",122,133,6,"けづくろい寝"],"3":["偷吃睡","Snacking Sleep",506,546,9,"つまみぐい寝"],"4":["肚子上睡","Atop-Belly Sleep",784,845,10,"おなかのうえ寝"]},"過動猿":{"1":["蠢蠢欲動睡","Restless Sleep",128,196,6,"ウズウズ寝"],"2":["體操睡","Gymnastics Sleep",355,543,8,"たいそう寝"],"3":["懶惰睡","Lazy Sleep",1173,1790,11,"なまけ寝"],"4":["肚子上睡","Atop-Belly Sleep",1693,2584,12,"おなかのうえ寝"]},"請假王":{"1":["大字形睡","Starfish Sleep",1128,1215,9,"だいのじ寝"],"2":["懶散睡","Loafing Sleep",2330,2507,11,"ぐうたら寝"],"3":["偷吃睡","Snacking Sleep",5565,5983,14,"つまみぐい寝"],"4":["肚子上睡","Atop-Belly Sleep",7445,8003,15,"おなかのうえ寝"]},"勾魂眼":{"1":["大字形睡","Starfish Sleep",186,477,7,"だいのじ寝"],"2":["骨碌顫抖睡","Rattling Sleep",477,1226,9,"がくがく寝"],"3":["吃寶石睡","Gem-Eating Sleep",1359,3500,12,"ほうせきたべ寝"],"4":["肚子上睡","Atop-Belly Sleep",1939,4994,13,"おなかのうえ寝"]},"大嘴娃":{"1":["撲倒睡","Face-Down Sleep",493,974,7,"つっぷし寝"],"2":["甩動大顎睡","Big-Jaw-Wag Sleep",2083,4113,9,"おおあごふり寝"],"3":["抱著大顎睡","Big-Jaw-Hugging Sleep",7285,14388,12,"おおあごだき寝"],"4":["肚子上睡","Atop-Belly Sleep",8988,17749,13,"おなかのうえ寝"]},"可可多拉":{"1":["抓臉睡","Face-Scratch Sleep",93,148,4,"かおかき寝"],"2":["拉筋伸展睡","Stretch Sleep",405,644,6,"ストレッチ寝"],"3":["吃鐵塊睡","Iron-Eating Sleep",2258,3588,9,"てつたべ寝"],"4":["肚子上睡","Atop-Belly Sleep",3055,4854,10,"おなかのうえ寝"]},"可多拉":{"1":["撲倒睡","Face-Down Sleep",223,350,6,"つっぷし寝"],"2":["踏步睡","Braced Sleep",812,1272,8,"ふんばり寝"],"3":["吃鐵塊睡","Iron-Eating Sleep",3279,5135,11,"てつたべ寝"],"4":["肚子上睡","Atop-Belly Sleep",4503,7051,12,"おなかのうえ寝"]},"波士可多拉":{"1":["撫肚睡","Belly-Rub Sleep",1387,2738,9,"おなかさすり寝"],"2":["威風佇立睡","Commanding-Stance Sleep",3167,6253,11,"におうだち寝"],"3":["吃鐵塊睡","Iron-Eating Sleep",8851,17479,14,"てつたべ寝"],"4":["肚子上睡","Atop-Belly Sleep",11823,23349,15,"おなかのうえ寝"]},"正電拍拍":{"1":["安詳睡","Peaceful Sleep",1092,1537,7,"おだやか寝"],"2":["打瞌睡","Nodding-Off Sleep",2231,3137,9,"こっくり寝"],"3":["搖啦啦隊球睡","Pom-Pom Sleep",5252,7385,12,"ボンボンふり寝"],"4":["肚子上睡","Atop-Belly Sleep",7075,9946,13,"おなかのうえ寝"]},"負電拍拍":{"1":["安詳睡","Peaceful Sleep",1092,1537,7,"おだやか寝"],"2":["打瞌睡","Nodding-Off Sleep",2231,3137,9,"こっくり寝"],"3":["搖啦啦隊球睡","Pom-Pom Sleep",5252,7385,12,"ボンボンふり寝"],"4":["肚子上睡","Atop-Belly Sleep",7075,9946,13,"おなかのうえ寝"]},"溶食獸":{"1":["氣球膨脹睡","Balloon Sleep",15,19,4,"ふうせん寝"],"2":["點頭睡","Nodding Sleep",108,118,6,"うなずき寝"],"3":["大張嘴睡","Mouth-Ajar Sleep",468,506,9,"おおぐちあけ寝"],"4":["肚子上睡","Atop-Belly Sleep",719,776,10,"おなかのうえ寝"]},"吞食獸":{"1":["後仰睡","Bent-Backwards Sleep",164,179,6,"のけぞり寝"],"2":["點頭睡","Nodding Sleep",443,479,8,"うなずき寝"],"3":["大張嘴睡","Mouth-Ajar Sleep",1443,1554,11,"おおぐちあけ寝"],"4":["肚子上睡","Atop-Belly Sleep",2078,2236,12,"おなかのうえ寝"]},"大顎蟻":{"1":["貼地睡","Flat Sleep",72,114,4,"ぺったり寝"],"2":["拉筋伸展睡","Stretch Sleep",349,555,6,"ストレッチ寝"],"3":["潛水睡","Diving Sleep",1976,3140,9,"もぐり寝"],"4":["肚子上睡","Atop-Belly Sleep",2827,4491,10,"おなかのうえ寝"]},"超音波幼蟲":{"1":["羽棲睡","Roosting Sleep",473,741,6,"はねやすめ寝"],"2":["定點懸停睡","Hovering Sleep",1400,2193,8,"ホバリング寝"],"3":["磨翅膀睡","Wing-Rubbing Sleep",5002,7832,11,"はねこすり寝"],"4":["肚子上睡","Atop-Belly Sleep",6738,10549,12,"おなかのうえ寝"]},"沙漠蜻蜓":{"1":["蜷縮睡","Curled-Up Sleep",1765,2805,9,"まるまり寝"],"2":["拍翼睡","Wing-Flap Sleep",4130,6560,11,"はばたき寝"],"3":["露肚睡","Exposed-Belly Sleep",11876,18865,14,"おなかだし寝"],"4":["肚子上睡","Atop-Belly Sleep",15331,24352,15,"おなかのうえ寝"]},"青綿鳥":{"1":["羽棲睡","Roosting Sleep",12,24,4,"はねやすめ寝"],"2":["撲動翅膀睡","Fluttering Sleep",80,167,6,"ぱたぱた寝"],"3":["棉花雲睡","Cotton-Cloud Sleep",346,726,9,"わたぐも寝"],"4":["肚子上睡","Atop-Belly Sleep",530,1114,10,"おなかのうえ寝"]},"七夕青鳥":{"1":["埋羽毛睡","Feather-Buried Sleep",177,316,6,"はねうまり寝"],"2":["羽棲睡","Roosting Sleep",455,816,8,"はねやすめ寝"],"3":["棉花雲睡","Cotton-Cloud Sleep",1414,2532,11,"わたぐも寝"],"4":["肚子上睡","Atop-Belly Sleep",1934,3463,12,"おなかのうえ寝"]},"怨影娃娃":{"1":["翻身漂浮睡","Turning-Floating Sleep",12,24,4,"ねがえりふゆう寝"],"2":["瞌睡漂浮睡","Nodding-Floating Sleep",91,189,6,"こっくりふゆう寝"],"3":["倒立漂浮睡","Inverted-Floating Sleep",373,783,9,"さかさふゆう寝"]},"詛咒娃娃":{"1":["擰脖子睡","Neck-Twisting Sleep",193,404,6,"くびひねり寝"],"2":["擺臂睡","Arm-Swinging Sleep",497,1043,8,"うでふり寝"],"3":["大笑睡","Laughter Sleep",1462,3073,11,"おおわらい寝"],"4":["肚子上睡","Atop-Belly Sleep",2035,4279,12,"おなかのうえ寝"]},"阿勃梭魯":{"1":["母雞蹲坐睡","Loaf-Sitting Sleep",271,569,7,"こうばこずわり寝"],"2":["察覺危險睡","Danger-Sensing Sleep",651,1368,9,"きけんさっち寝"],"3":["翻肚仰躺睡","Belly-Up Sleep",1835,3858,12,"へそてん寝"],"4":["肚子上睡","Atop-Belly Sleep",2554,5368,13,"おなかのうえ寝"]},"小果然":{"1":["收回尾巴睡","Tail-Retracted Sleep",15,19,4,"しっぽもどし寝"],"2":["忍耐睡","Enduring Sleep",94,103,6,"がまん寝"],"3":["擺姿勢招牌睡","Signature-Pose Sleep",431,466,9,"きめポーズ寝"],"4":["肚子上睡","Atop-Belly Sleep",660,712,10,"おなかのうえ寝"]},"海豹球":{"1":["噗通倒下睡","Plop Sleep",15,19,4,"こてん寝"],"2":["打大哈欠睡","Big Yawn Sleep",122,133,6,"おおあくび寝"],"3":["拍手睡","Hand-Clapping Sleep",506,546,9,"てたたき寝"],"4":["肚子上睡","Atop-Belly Sleep",784,845,10,"おなかのうえ寝"]},"海魔獅":{"1":["輕踏腳步睡","Foot-Tapping Sleep",164,179,6,"あしトントン寝"],"2":["打大哈欠睡","Big Yawn Sleep",443,479,8,"おおあくび寝"],"3":["翻肚睡","Belly-Up Sleep",1443,1554,11,"ひっくりかえり寝"],"4":["肚子上睡","Atop-Belly Sleep",2078,2236,12,"おなかのうえ寝"]},"帝牙海獅":{"1":["懶散睡","Loafing Sleep",479,599,9,"ぐうたら寝"],"2":["威嚴沉著睡","Dignified Sleep",1121,1397,11,"かんろく寝"],"3":["獠牙插地睡","Tusk-Stuck Sleep",2952,3676,14,"キバささり寝"],"4":["肚子上睡","Atop-Belly Sleep",4021,5008,15,"おなかのうえ寝"]},"寶貝龍":{"1":["想飛上天睡","Longing-to-Fly Sleep",83,130,4,"そらとびたい寝"],"2":["打大哈欠睡","Big Yawn Sleep",379,594,6,"おおあくび寝"],"3":["墜落躺平睡","Fallen-Flat Sleep",2274,3561,9,"おちたまま寝"],"4":["肚子上睡","Atop-Belly Sleep",3076,4816,10,"おなかのうえ寝"]},"甲殼龍":{"1":["想飛上天睡","Longing-to-Fly Sleep",362,576,6,"そらとびたい寝"],"2":["伸展睡","Stretching Sleep",1157,1839,8,"のび寝"],"3":["夢中奔跑睡","Dream-Running Sleep",4480,7116,11,"ゆめではしり寝"],"4":["肚子上睡","Atop-Belly Sleep",5955,9459,12,"おなかのうえ寝"]},"暴飛龍":{"1":["拍翼睡","Wing-Flap Sleep",2545,4044,9,"はばたき寝"],"2":["打大哈欠睡","Big Yawn Sleep",5924,9410,11,"おおあくび寝"],"3":["噴射火焰睡","Flamethrower Sleep",13820,21952,14,"かえんほうしゃ寝"],"4":["肚子上睡","Atop-Belly Sleep",18476,29348,15,"おなかのうえ寝"]},"拉帝亞斯":{"1":["浮空拍翅睡","Wing-Floating Sleep",1038,5417,11,"うかびはばたき寝"],"2":["優雅飛行睡","Graceful Flight Sleep",5209,13423,13,"ゆうがにひこう寝"],"3":["無限之光睡","Illusion Light Sleep",15309,31548,16,"むげんのひかり寝"],"5":["珍惜夥伴睡","Empathy Sleep",16134,31862,25,"なかまおもい寝"]},"拉帝歐斯":{"1":["浮空拍翅睡","Wing-Floating Sleep",1038,5417,11,"うかびはばたき寝"],"2":["優雅飛行睡","Graceful Flight Sleep",5209,13423,13,"ゆうがにひこう寝"],"3":["無限氣場睡","Illusion Aura",15309,31548,16,"むげんのオーラ寝"],"5":["珍惜夥伴睡","Empathy Sleep",16134,31862,25,"なかまおもい寝"]},"草苗龜":{"1":["撲倒睡","Face-Down Sleep",59,86,4,"つっぷし寝"],"2":["踩踩踏踏睡","Treading Sleep",645,923,6,"ふみふみ寝"],"3":["滴水睡","Dripping Sleep",2219,3170,9,"しずくたれ寝"],"4":["肚子上睡","Atop-Belly Sleep",2808,4009,10,"おなかのうえ寝"]},"樹林龜":{"1":["打瞌睡","Nodding-Off Sleep",230,275,6,"こっくり寝"],"2":["原地踏步睡","Marching Sleep",1142,1360,8,"あしぶみ寝"],"3":["玩樹葉睡","Leaf-Playing Sleep",3693,4393,11,"はっぱあそび寝"],"4":["肚子上睡","Atop-Belly Sleep",5072,6032,12,"おなかのうえ寝"]},"土台龜":{"1":["沉穩睡","Hefty Sleep",1638,1949,9,"どっしり寝"],"2":["原地踏步睡","Marching Sleep",3595,4277,11,"あしぶみ寝"],"3":["背部安居睡","Back-Dwelling Sleep",11593,13787,14,"せなかすまわせ寝"]},"小火焰猴":{"1":["抓屁股睡","Scratching-Rump Sleep",60,85,4,"おしりかき寝"],"2":["打大哈欠睡","Big Yawn Sleep",650,915,6,"おおあくび寝"],"3":["燃燒屁股睡","Flame-Rump Sleep",2234,3143,9,"おしりもやし寝"],"4":["肚子上睡","Atop-Belly Sleep",2827,3975,10,"おなかのうえ寝"]},"猛火猴":{"1":["手臂枕睡","Arm-Pillow Sleep",213,305,6,"うでまくら寝"],"2":["打大哈欠睡","Big Yawn Sleep",1058,1511,8,"おおあくび寝"],"3":["燃燒尾巴睡","Flame-Tail Sleep",3419,4883,11,"しっぽもやし寝"],"4":["肚子上睡","Atop-Belly Sleep",4696,6705,12,"おなかのうえ寝"]},"烈焰猴":{"1":["單膝立起睡","One-Knee-Up Sleep",1527,2148,9,"かたひざたて寝"],"2":["打大哈欠睡","Big Yawn Sleep",3352,4713,11,"おおあくび寝"],"3":["噴火焰睡","Flame-Blowing Sleep",10808,15194,14,"ほのおふきあげ寝"],"4":["肚子上睡","Atop-Belly Sleep",13301,18698,15,"おなかのうえ寝"]},"波加曼":{"1":["坐著睡","Sitting Sleep",59,86,4,"すわり寝"],"2":["搖搖晃晃睡","Tottering Sleep",645,923,6,"よたよた寝"],"3":["神氣高傲睡","Pompous Sleep",2219,3170,9,"えらそう寝"],"4":["肚子上睡","Atop-Belly Sleep",2808,4009,10,"おなかのうえ寝"]},"波皇子":{"1":["坐著睡","Sitting Sleep",213,305,6,"すわり寝"],"2":["平衡站立睡","Balancing Sleep",1058,1511,8,"バランスだち寝"],"3":["神氣高傲睡","Pompous Sleep",3419,4883,11,"えらそう寝"],"4":["肚子上睡","Atop-Belly Sleep",4696,6705,12,"おなかのうえ寝"]},"帝王拿波":{"1":["沉穩睡","Hefty Sleep",1517,2166,9,"どっしり寝"],"2":["歡呼萬歲睡","Hooray-Arms Sleep",3329,4753,11,"ばんざい寝"],"3":["揮翼橫掃睡","Wing-Sweep Sleep",10735,15325,14,"つばさなぎはらい寝"],"4":["肚子上睡","Atop-Belly Sleep",13211,18859,15,"おなかのうえ寝"]},"小貓怪":{"1":["夢中奔跑睡","Dream-Running Sleep",72,114,4,"ゆめではしり寝"],"2":["踏步睡","Braced Sleep",349,555,6,"ふんばり寝"],"3":["電光火花睡","Spark Sleep",1976,3140,9,"スパーク寝"],"4":["肚子上睡","Atop-Belly Sleep",2827,4491,10,"おなかのうえ寝"]},"勒克貓":{"1":["蜷縮睡","Curled-Up Sleep",396,629,6,"まるまり寝"],"2":["踏步睡","Braced Sleep",1311,2084,8,"ふんばり寝"],"3":["電光火花睡","Spark Sleep",4719,7496,11,"スパーク寝"],"4":["肚子上睡","Atop-Belly Sleep",6314,10029,12,"おなかのうえ寝"]},"倫琴貓":{"1":["蜷縮睡","Curled-Up Sleep",1445,2295,9,"まるまり寝"],"2":["踏步睡","Braced Sleep",3314,5265,11,"ふんばり寝"],"3":["電光火花睡","Spark Sleep",9516,15116,14,"スパーク寝"],"4":["肚子上睡","Atop-Belly Sleep",12582,19985,15,"おなかのうえ寝"]},"飄飄球":{"1":["旋轉睡","Spinning Sleep",214,199,4,"かいてん寝"],"2":["漂浮睡","Floating Sleep",817,749,6,"ふゆう寝"],"3":["詭異神祕睡","Eerie Sleep",3831,3498,9,"あやし寝"]},"隨風球":{"1":["大旋轉睡","Grand-Spin Sleep",3381,3089,6,"だいかいてん寝"],"2":["漂浮睡","Floating Sleep",4649,4246,8,"ふゆう寝"],"3":["詭異神祕睡","Eerie Sleep",10703,9769,11,"あやし寝"]},"烏鴉頭頭":{"1":["整理羽毛睡","Feather-Preening Sleep",1789,1678,8,"はづくろい寝"],"2":["羽棲睡","Roosting Sleep",4608,4319,10,"はねやすめ寝"],"3":["守護寶石睡","Gem-Guarding Sleep",12219,11446,13,"ほうせきまもり寝"],"4":["肚子上睡","Atop-Belly Sleep",16323,15289,14,"おなかのうえ寝"]},"盆才怪":{"1":["噗通倒下睡","Plop Sleep",13,23,4,"こてん寝"],"2":["站立呆滯睡","Stiff-Standing Sleep",76,135,6,"ぼうだち寝"],"3":["眼中含淚睡","Tearful Sleep",346,618,9,"めからみず寝"],"4":["肚子上睡","Atop-Belly Sleep",529,946,10,"おなかのうえ寝"]},"魔尼尼":{"1":["歡呼萬歲睡","Hooray-Arms Sleep",11,27,4,"ばんざい寝"],"2":["站立呆滯睡","Stiff-Standing Sleep",82,242,6,"ぼうだち寝"],"3":["默劇魔術床睡","Mime-Bed Sleep",328,975,9,"マイムのベッド寝"],"4":["肚子上睡","Atop-Belly Sleep",513,1527,10,"おなかのうえ寝"]},"小福蛋":{"1":["笑咪咪睡","Smiling Sleep",56,55,4,"にこにこ寝"],"2":["珍愛礦石睡","Stone-Cherishing Sleep",366,337,6,"いしだいじ寝"],"3":["過家家睡","Playhouse Sleep",2194,2005,9,"ままごと寝"],"4":["肚子上睡","Atop-Belly Sleep",3130,2860,10,"おなかのうえ寝"]},"花岩怪":{"1":["楔石沉睡","Odd-Keystone Sleep",452,1049,7,"かなめいし寝"],"2":["打瞌睡","Nodding-Off Sleep",1979,4602,9,"こっくり寝"],"3":["緊貼地面睡","Ground-Hugging Sleep",7411,17238,12,"じめんぺったり寝"],"4":["肚子上睡","Atop-Belly Sleep",8981,20891,13,"おなかのうえ寝"]},"利歐路":{"1":["抱膝坐睡","Knee-Hugging Sleep",12,24,4,"ひざかかえ寝"],"2":["修行中睡","Training Sleep",100,210,6,"しゅぎょうちゅう寝"],"3":["單膝立起睡","One-Knee-Up Sleep",402,843,9,"かたひざたて寝"],"4":["肚子上睡","Atop-Belly Sleep",629,1320,10,"おなかのうえ寝"]},"路卡利歐":{"1":["單膝立起睡","One-Knee-Up Sleep",453,1165,8,"かたひざたて寝"],"2":["修行中睡","Training Sleep",1015,2614,10,"しゅぎょうちゅう寝"],"3":["修行歇息睡","Training-Break Sleep",2520,6493,13,"しゅぎょうやすみ寝"],"4":["肚子上睡","Atop-Belly Sleep",3461,8917,14,"おなかのうえ寝"]},"不良蛙":{"1":["懶散睡","Loafing Sleep",13,23,4,"ぐうたら寝"],"2":["頰囊鼓起睡","Cheek-Puff Sleep",98,176,6,"ほっぺぷくぷく寝"],"3":["挺直背脊睡","Spine-Straight Sleep",405,726,9,"せすじのばし寝"],"4":["肚子上睡","Atop-Belly Sleep",628,1124,10,"おなかのうえ寝"]},"毒骷蛙":{"1":["懶散睡","Loafing Sleep",132,236,6,"ぐうたら寝"],"2":["喉囊鼓起睡","Throat-Puff Sleep",355,636,8,"のどぷくぷく寝"],"3":["毒囊枕睡","Poison-Sac-Pillow Sleep",1155,2069,11,"どくぶくろまくら寝"],"4":["肚子上睡","Atop-Belly Sleep",1663,2979,12,"おなかのうえ寝"]},"雪笠怪":{"1":["坐著睡","Sitting Sleep",24,43,4,"すわり寝"],"2":["站立呆滯睡","Stiff-Standing Sleep",132,237,6,"ぼうだち寝"],"3":["樹果抱抱睡","Berry-Hugging Sleep",520,931,9,"きのみ寝"],"4":["肚子上睡","Atop-Belly Sleep",782,1401,10,"おなかのうえ寝"]},"暴雪王":{"1":["吐息睡","Frost-Breath Sleep",343,524,6,"といき寝"],"2":["威嚇睡","Intimidating Sleep",822,1255,8,"いかく寝"],"3":["暴風雪睡","Blizzard Sleep",2301,3512,11,"ブリザード寝"]},"瑪狃拉":{"1":["坐著睡","Sitting Sleep",1454,2278,8,"すわり寝"],"2":["挑釁睡","Taunting Sleep",3745,5864,10,"ちょうはつ寝"],"3":["懶散睡","Loafing Sleep",9930,15547,13,"ぐうたら寝"],"4":["肚子上睡","Atop-Belly Sleep",13264,20767,14,"おなかのうえ寝"]},"自爆磁怪":{"1":["搖晃漂浮睡","Swaying-Floating Sleep",558,1436,9,"ゆらゆらふゆう寝"],"2":["監視漂浮睡","Surveillance-Floating Sleep",1190,3064,11,"かんしふゆう寝"],"3":["倒立漂浮睡","Inverted-Floating Sleep",2930,7551,14,"さかさふゆう寝"]},"波克基斯":{"1":["自由飛行睡","Free-Flight Sleep",737,1320,9,"じゆうひこう寝"],"2":["站立拍翅睡","Standing-Flap Sleep",1526,2733,11,"たちはばたき寝"],"3":["特技飛行睡","Acrobatic-Flight Sleep",3804,6814,14,"きょくげいひこう寝"],"4":["肚子上睡","Atop-Belly Sleep",5200,9314,15,"おなかのうえ寝"]},"葉伊布":{"1":["擺動尾巴睡","Tail-Wagging Sleep",453,1165,8,"しっぽをふる寝"],"2":["踏步睡","Braced Sleep",1015,2614,10,"ふんばり寝"],"3":["抓緊樹葉睡","Leaf-Grasping Sleep",2520,6493,13,"はっぱつかみ寝"],"4":["肚子上睡","Atop-Belly Sleep",3461,8917,14,"おなかのうえ寝"]},"冰伊布":{"1":["手臂枕睡","Arm-Pillow Sleep",453,1165,8,"うでまくら寝"],"2":["踏步睡","Braced Sleep",1015,2614,10,"ふんばり寝"],"3":["貼地睡","Flat Sleep",2520,6493,13,"ぺったり寝"],"4":["肚子上睡","Atop-Belly Sleep",3461,8917,14,"おなかのうえ寝"]},"艾路雷朵":{"1":["端正有禮睡","Polite Sleep",1063,2736,9,"れいぎただしい寝"],"2":["居合斬睡","Cut Sleep",2076,5348,11,"いあいぎり寝"],"3":["夢中居合斬睡","Dream-Cut Sleep",4946,12745,14,"ゆめでいあいぎり寝"],"4":["肚子上睡","Atop-Belly Sleep",6604,17017,15,"おなかのうえ寝"]},"克雷色利亞":{"1":["撲倒睡","Face-Down Sleep",1058,5111,11,"つっぷし寝"],"2":["瞌睡漂浮睡","Nodding-Floating Sleep",5275,12524,13,"こっくりふゆう寝"],"3":["新月祈禱睡","Lunar-Prayer Sleep",13944,28734,16,"みかづきのいのり寝"]},"達克萊伊":{"1":["抱胸漂浮睡","Arms-Folded-Floating Sleep",951,4263,11,"ふゆううでぐみ寝"],"2":["架勢漂浮睡","Stance-Floating Sleep",2864,6797,16,"ふゆうかまえ寝"],"3":["暗黑洞睡","Dark-Void Sleep",7380,15721,20,"ダークホール寝"]},"食夢夢":{"1":["夢之煙霧睡","Dream-Smoke Sleep",35,35,4,"ゆめのけむり寝"],"2":["漂浮滾滾睡","Rolling-Floating Sleep",366,337,6,"ふゆうころころ寝"],"3":["食夢睡","Dream-Eater Sleep",1247,1141,9,"ゆめくい寝"]},"夢夢蝕":{"1":["飄浮蹭蹭睡","Snuggle-Floating Sleep",1196,1094,8,"ふゆうすりすり寝"],"2":["搓臉睡","Face-Rubbing Sleep",3562,3254,10,"かおごしごし寝"],"3":["夢之煙霧睡","Dream-Smoke Sleep",9286,8477,13,"ゆめのけむり寝"]},"石居蟹":{"1":["縮入殼中睡","Withdrawn-Shell Sleep",57,91,4,"からにこもる寝"],"2":["不入殼睡","Out-of-Shell Sleep",321,510,6,"こもらない寝"],"3":["珍愛甲殼睡","Shell-Cherishing Sleep",1848,2936,9,"からだいじ寝"],"4":["肚子上睡","Atop-Belly Sleep",2675,4248,10,"おなかのうえ寝"]},"岩殿居蟹":{"1":["縮入殼中睡","Withdrawn-Shell Sleep",1179,1847,6,"からにこもる寝"],"2":["不入殼睡","Out-of-Shell Sleep",3050,4776,8,"こもらない寝"],"3":["甲殼之上睡","Atop-Shell Sleep",10844,16977,11,"からのうえ寝"],"4":["肚子上睡","Atop-Belly Sleep",14540,22763,12,"おなかのうえ寝"]},"毛頭小鷹":{"1":["羽棲睡","Roosting Sleep",109,120,4,"はねやすめ寝"],"2":["拍翼睡","Wing-Flap Sleep",477,515,6,"はばたき寝"],"3":["哭鬧撒嬌睡","Fretful Sleep",2331,2504,9,"ぐずり寝"],"4":["肚子上睡","Atop-Belly Sleep",3336,3581,10,"おなかのうえ寝"]},"勇士雄鷹":{"1":["羽棲睡","Roosting Sleep",602,649,6,"はねやすめ寝"],"2":["拍翼睡","Wing-Flap Sleep",1813,1948,8,"はばたき寝"],"3":["整理羽毛睡","Feather-Preening Sleep",5568,5976,11,"はづくろい寝"],"4":["肚子上睡","Atop-Belly Sleep",8861,9509,12,"おなかのうえ寝"]},"寶寶暴龍":{"1":["坐著睡","Sitting Sleep",93,148,4,"すわり寝"],"2":["打大哈欠睡","Big Yawn Sleep",405,644,6,"おおあくび寝"],"3":["咬住睡","Biting Sleep",2114,3359,9,"かみつく寝"],"4":["肚子上睡","Atop-Belly Sleep",2942,4673,10,"おなかのうえ寝"]},"怪顎龍":{"1":["沉穩睡","Hefty Sleep",1171,1861,8,"どっしり寝"],"2":["打大哈欠睡","Big Yawn Sleep",3314,5265,10,"おおあくび寝"],"3":["咆哮睡","Roaring Sleep",9863,15666,13,"ほうこう寝"]},"仙子伊布":{"1":["蜷縮睡","Curled-Up Sleep",596,910,8,"まるまり寝"],"2":["踏步睡","Braced Sleep",1336,2039,10,"ふんばり寝"],"3":["緞帶纏繞睡","Ribbon-Entangled Sleep",3318,5064,13,"リボンからまり寝"],"4":["肚子上睡","Atop-Belly Sleep",4557,6954,14,"おなかのうえ寝"]},"摔角鷹人":{"1":["包覆蜷裹睡","Wrapped Sleep",549,874,7,"くるまり寝"],"2":["捶拳睡","Fist-Pounding Sleep",2850,4528,9,"こぶしうちつけ寝"],"3":["擺姿勢招牌睡","Signature-Pose Sleep",10224,16240,12,"きめポーズ寝"],"4":["肚子上睡","Atop-Belly Sleep",13175,20928,13,"おなかのうえ寝"]},"咚咚鼠":{"1":["尾巴蜷起睡","Tail-Curled Sleep",294,527,7,"しっぽまるまり寝"],"2":["搓臉睡","Face-Rubbing Sleep",1166,2088,9,"かおごしごし寝"],"3":["臉頰蹭蹭睡","Cheek-Snuggle Sleep",2892,5179,12,"ほっぺすりすり寝"],"4":["肚子上睡","Atop-Belly Sleep",3963,7099,13,"おなかのうえ寝"]},"南瓜精":{"1":["埋入泥沙睡","Buried Sleep",44,78,4,"うまり寝"],"2":["飄浮撲翼睡","Floating-Flutter Sleep",355,637,6,"うかびぱたぱた寝"],"3":["光芒映照睡","Light-Illuminating Sleep",1992,3577,9,"ひかりてらし寝"],"4":["肚子上睡","Atop-Belly Sleep",2772,4977,10,"おなかのうえ寝"]},"南瓜怪人":{"1":["擁抱睡","Hugging Sleep",891,1898,8,"だきしめ寝"],"2":["張開雙臂睡","Arms-Wide Sleep",2457,5233,10,"うでひろげ寝"],"3":["驚嚇睡","Astonishing Sleep",6631,14125,13,"おどろかし寝"],"4":["肚子上睡","Atop-Belly Sleep",9098,19381,14,"おなかのうえ寝"]},"嗡蝠":{"1":["羽棲睡","Roosting Sleep",93,148,4,"はねやすめ寝"],"2":["打大哈欠睡","Big Yawn Sleep",405,644,6,"おおあくび寝"],"3":["回聲定位睡","Echolocation Sleep",1976,3140,9,"エコロケーション寝"],"4":["肚子上睡","Atop-Belly Sleep",2827,4491,10,"おなかのうえ寝"]},"音波龍":{"1":["抖動耳朵睡","Ear-Twitch Sleep",511,812,6,"みみふるわせ寝"],"2":["打大哈欠睡","Big Yawn Sleep",1537,2442,8,"おおあくび寝"],"3":["爆音波睡","Boomburst Sleep",4969,7893,11,"ばくおんぱ寝"],"4":["肚子上睡","Atop-Belly Sleep",7510,11929,12,"おなかのうえ寝"]},"強顎雞母蟲":{"1":["拉筋伸展睡","Stretch Sleep",72,114,4,"ストレッチ寝"],"2":["搖晃睡","Swaying Sleep",349,555,6,"ゆらゆら寝"],"3":["持續挖掘睡","Digging-Forward Sleep",1976,3140,9,"ほりすすみ寝"],"4":["肚子上睡","Atop-Belly Sleep",2827,4491,10,"おなかのうえ寝"]},"蟲電寶":{"1":["拉筋伸展睡","Stretch Sleep",398,624,6,"ストレッチ寝"],"2":["反弓後仰睡","Arched-Back Sleep",1244,1949,8,"そりかえり寝"],"3":["埋入泥沙睡","Buried Sleep",4510,7062,11,"うまり寝"],"4":["肚子上睡","Atop-Belly Sleep",5995,9386,12,"おなかのうえ寝"]},"鍬農炮蟲":{"1":["傾斜睡","Tilted Sleep",1885,2994,9,"かたむき寝"],"2":["定點懸停睡","Hovering Sleep",4130,6560,11,"ホバリング寝"],"3":["腹部發電睡","Belly-Generating Sleep",11342,18016,14,"おなかはつでん寝"],"4":["肚子上睡","Atop-Belly Sleep",14877,23631,15,"おなかのうえ寝"]},"萌虻":{"1":["撲動翅膀睡","Fluttering Sleep",84,165,4,"ぱたぱた寝"],"2":["尋花睡","Flower-Seeking Sleep",364,718,6,"はなさがし寝"],"3":["採蜜睡","Honey-Gathering Sleep",1774,3502,9,"みつあつめ寝"],"4":["肚子上睡","Atop-Belly Sleep",2538,5010,10,"おなかのうえ寝"]},"蝶結萌虻":{"1":["撲動翅膀睡","Fluttering Sleep",459,905,6,"ぱたぱた寝"],"2":["搖晃睡","Swaying Sleep",1379,2724,8,"ゆらゆら寝"],"3":["花粉糰睡","Pollen-Puff Sleep",4459,8805,11,"かふんだんご寝"],"4":["肚子上睡","Atop-Belly Sleep",6740,13309,12,"おなかのうえ寝"]},"童偶熊":{"1":["掙扎撲騰睡","Flailing Sleep",32,41,4,"じたばた寝"],"2":["踏步睡","Braced Sleep",636,794,6,"ふんばり寝"],"3":["抱圓木睡","Log-Hugging Sleep",1204,1501,9,"まるただき寝"],"4":["肚子上睡","Atop-Belly Sleep",1742,2171,10,"おなかのうえ寝"]},"穿著熊":{"1":["坐著睡","Sitting Sleep",309,334,6,"すわり寝"],"2":["站立呆滯睡","Stiff-Standing Sleep",1117,1202,8,"ぼうだち寝"],"3":["抱圓木睡","Log-Hugging Sleep",3005,3232,11,"まるただき寝"],"4":["肚子上睡","Atop-Belly Sleep",4009,4311,12,"おなかのうえ寝"]},"花療環環":{"1":["蹭鼻子睡","Nose-Nuzzle Sleep",239,709,7,"はなすりすり寝"],"2":["瞌睡漂浮睡","Nodding-Floating Sleep",929,2769,9,"こっくりふゆう寝"],"3":["長鼻波浪睡","Trunk-Wave Sleep",2306,6878,12,"はなウェーブ寝"],"4":["肚子上睡","Atop-Belly Sleep",3166,9446,13,"おなかのうえ寝"]},"托戈德瑪爾":{"1":["滾動睡","Rolling Sleep",553,867,7,"ころころ寝"],"2":["搖尾巴睡","Tail-Swaying Sleep",2427,3800,9,"しっぽゆらゆら寝"],"3":["倒立棘刺睡","Spike-Handstand Sleep",9090,14231,12,"とげさかだち寝"],"4":["肚子上睡","Atop-Belly Sleep",11016,17246,13,"おなかのうえ寝"]},"謎擬Q":{"1":["想蜷縮睡","Wanna-Curl Sleep",452,1049,7,"まるまりたい寝"],"2":["穿幫暴露睡","Busted Sleep",1623,3774,9,"ばればれ寝"],"3":["模仿睡","Copycat Sleep",6316,14690,12,"まねっこ寝"],"4":["肚子上睡","Atop-Belly Sleep",7797,18137,13,"おなかのうえ寝"]},"老翁龍":{"1":["伸長脖子睡","Neck-Stretching Sleep",549,874,7,"くびのばし寝"],"2":["扭動睡","Wiggling Sleep",2410,3830,9,"くねく寝"],"3":["後背枕睡","Back-Pillow Sleep",8563,13602,12,"せなかまくら寝"],"4":["肚子上睡","Atop-Belly Sleep",11948,18978,13,"おなかのうえ寝"]},"古月鳥":{"1":["整理羽毛睡","Feather-Preening Sleep",315,660,7,"はづくろい寝"],"2":["大口咀嚼睡","Chomping Sleep",1208,2538,9,"ぱくぱく寝"],"3":["囫圇吞下睡","Swallowing-Whole Sleep",3287,6911,12,"まるのみ寝"],"4":["肚子上睡","Atop-Belly Sleep",4544,9553,13,"おなかのうえ寝"]},"毒電嬰":{"1":["吮指安撫睡","Thumb-Sucking Sleep",46,73,4,"おしゃぶり寝"],"2":["伸展睡","Stretching Sleep",293,466,6,"のび寝"],"3":["賴皮哭鬧睡","Fussy Sleep",1756,2790,9,"だだこ寝"],"4":["肚子上睡","Atop-Belly Sleep",2505,3980,10,"おなかのうえ寝"]},"顫弦蠑螈 (高調的樣子)":{"1":["坐著睡","Sitting Sleep",1313,1847,8,"すわり寝"],"2":["擺姿勢招牌睡","Signature-Pose Sleep",3352,4713,10,"きめポーズ寝"],"3":["夢中彈吉他睡","Dream-Guitar Sleep",9052,12726,13,"ゆめでギター寝"],"4":["肚子上睡","Atop-Belly Sleep",11989,16855,14,"おなかのうえ寝"]},"顫弦蠑螈 (低調的樣子)":{"1":["坐著睡","Sitting Sleep",1313,1847,8,"すわり寝"],"2":["夢中彈貝斯睡","Dream-Bass Sleep",3352,4713,10,"ゆめでベース寝"],"3":["懶散睡","Loafing Sleep",9052,12726,13,"ぐうたら寝"],"4":["肚子上睡","Atop-Belly Sleep",11989,16855,14,"おなかのうえ寝"]},"新葉喵":{"1":["母雞蹲坐睡","Loaf-Sitting Sleep",44,78,4,"こうばこずわり寝"],"2":["踩踩踏踏睡","Treading Sleep",539,967,6,"ふみふみ寝"],"3":["翻肚仰躺睡","Belly-Up Sleep",1741,3127,9,"へそてん寝"],"4":["肚子上睡","Atop-Belly Sleep",2209,3967,10,"おなかのうえ寝"]},"蒂蕾喵":{"1":["蜷縮睡","Curled-Up Sleep",197,279,6,"まるまり寝"],"2":["站立呆滯睡","Stiff-Standing Sleep",1001,1409,8,"ぼうだち寝"],"3":["嬉鬧撒嬌睡","Playful-Rough Sleep",3073,4321,11,"じゃれつく寝"],"4":["肚子上睡","Atop-Belly Sleep",4248,5973,12,"おなかのうえ寝"]},"魔幻假面喵":{"1":["蜷縮睡","Curled-Up Sleep",1238,1742,9,"まるまり寝"],"2":["鞠躬睡","Bowing Sleep",2689,3781,11,"おじぎ寝"],"3":["魔術師睡","Magician Sleep",8133,11434,14,"マジシャン寝"],"4":["肚子上睡","Atop-Belly Sleep",10588,14884,15,"おなかのうえ寝"]},"呆火鱷":{"1":["半球睡","Hemisphere Sleep",59,50,4,"はんきゅう寝"],"2":["細嚼慢嚥睡","Munching Sleep",749,591,6,"もぐもぐ寝"],"3":["翻肚仰躺睡","Belly-Up Sleep",2424,1904,9,"へそてん寝"],"4":["肚子上睡","Atop-Belly Sleep",3076,2415,10,"おなかのうえ寝"]},"炙燙鱷":{"1":["半球睡","Hemisphere Sleep",231,219,6,"はんきゅう寝"],"2":["心花怒放睡","Humming-Cheerful Sleep",1173,1101,8,"るんるん寝"],"3":["抱著火球睡","Fireball-Hugging Sleep",3601,3375,11,"ひだまかかえ寝"],"4":["肚子上睡","Atop-Belly Sleep",4979,4665,12,"おなかのうえ寝"]},"骨紋巨聲鱷":{"1":["半球睡","Hemisphere Sleep",1450,1361,9,"はんきゅう寝"],"2":["踏步睡","Braced Sleep",3151,2954,11,"ふんばり寝"],"3":["和睦睡","Harmonious Sleep",9532,8929,14,"なかよし寝"],"4":["肚子上睡","Atop-Belly Sleep",12408,11623,15,"おなかのうえ寝"]},"潤水鴨":{"1":["坐著睡","Sitting Sleep",48,70,4,"すわり寝"],"2":["梳理秀髮睡","Hair-Tending Sleep",600,858,6,"かみととのえ寝"],"3":["蓬亂頭髮睡","Messy-Hair Sleep",1940,2771,9,"ぼさぼさ寝"],"4":["肚子上睡","Atop-Belly Sleep",2462,3516,10,"おなかのうえ寝"]},"湧躍鴨":{"1":["單膝立起睡","One-Knee-Up Sleep",196,281,6,"かたひざたて寝"],"2":["梳理秀髮睡","Hair-Tending Sleep",995,1421,8,"かみととのえ寝"],"3":["凌亂長髮睡","Disheveled-Hair Sleep",3052,4358,11,"みだれがみ寝"],"4":["肚子上睡","Atop-Belly Sleep",4220,6024,12,"おなかのうえ寝"]},"狂歡浪舞鴨":{"1":["單膝立起睡","One-Knee-Up Sleep",1230,1757,9,"かたひざたて寝"],"2":["擺姿勢招牌睡","Signature-Pose Sleep",2671,3814,11,"きめポーズ寝"],"3":["夢中跳舞睡","Dream-Dancing Sleep",8079,11533,14,"ゆめでダンス寝"],"4":["肚子上睡","Atop-Belly Sleep",10516,15012,15,"おなかのうえ寝"]},"布撥":{"1":["蹭肉球睡","Paw-Rubbing Sleep",52,63,4,"にくきゅうこすり寝"],"2":["踏步睡","Braced Sleep",332,397,6,"ふんばり寝"],"3":["臉頰蹭蹭睡","Cheek-Snuggle Sleep",1990,2369,9,"ほっぺすりすり寝"],"4":["肚子上睡","Atop-Belly Sleep",2840,3380,10,"おなかのうえ寝"]},"布土撥":{"1":["蜷縮睡","Curled-Up Sleep",232,333,6,"まるまり寝"],"2":["夢中擺架勢睡","Dream-Stance Sleep",847,1210,8,"ゆめでかまえ寝"],"3":["放電睡","Discharging Sleep",3419,4883,11,"ほうでん寝"],"4":["肚子上睡","Atop-Belly Sleep",4696,6705,12,"おなかのうえ寝"]},"巴布土撥":{"1":["蜷縮睡","Curled-Up Sleep",1451,2041,9,"まるまり寝"],"2":["夢中急救護理睡","Dream-Tending Sleep",3730,5245,11,"ゆめでてあて寝"],"3":["放電睡","Discharging Sleep",10426,14658,14,"ほうでん寝"],"4":["肚子上睡","Atop-Belly Sleep",14583,20502,15,"おなかのうえ寝"]},"小鍛匠":{"1":["抱大錘睡","Hammer-Hugging Sleep",75,108,4,"ハンマーだき寝"],"2":["打大哈欠睡","Big Yawn Sleep",337,482,6,"おおあくび寝"],"3":["緊握大錘睡","Hammer-Grasping Sleep",1940,2771,9,"ハンマーにぎにぎ寝"],"4":["肚子上睡","Atop-Belly Sleep",2969,4238,10,"おなかのうえ寝"]},"巧鍛匠":{"1":["托腮睡","Cheek-Resting Sleep",452,648,6,"ほおづえ寝"],"2":["拿不動大錘睡","Heavy-Hammer Sleep",1215,1736,8,"もちあがらない寝"],"3":["大錘枕睡","Hammer-Pillow Sleep",4463,6372,11,"ハンマーまくら寝"],"4":["肚子上睡","Atop-Belly Sleep",5994,8557,12,"おなかのうえ寝"]},"巨鍛匠":{"1":["大錘之上睡","Atop-Hammer Sleep",1517,2166,9,"ハンマーのうえ寝"],"2":["扛大錘睡","Hammer-Shouldering Sleep",3329,4753,11,"ハンマーかつぎ寝"],"3":["撲抱大錘睡","Hammer-Clinging Sleep",10356,14784,14,"ハンマーだきつき寝"]},"走鯨":{"1":["歡呼萬歲睡","Hooray-Arms Sleep",121,99,4,"ばんざい寝"],"2":["搖搖晃晃睡","Tottering Sleep",493,390,6,"よたよた寝"],"3":["哭鬧撒嬌睡","Fretful Sleep",2592,2036,9,"ぐずり寝"],"4":["肚子上睡","Atop-Belly Sleep",3710,2911,10,"おなかのうえ寝"]},"浩大鯨":{"1":["夢中滑行睡","Dream-Sliding Sleep",1629,1281,8,"ゆめですべり寝"],"2":["沉穩睡","Hefty Sleep",4160,3264,10,"どっしり寝"],"3":["回聲定位睡","Echolocation Sleep",11849,9290,13,"エコロケーション寝"]},"土王":{"1":["大張嘴睡","Mouth-Ajar Sleep",669,528,6,"おおぐちあけ寝"],"2":["貼地睡","Flat Sleep",1720,1352,8,"ぺったり寝"],"3":["陷入泥中睡","Mud-Buried Sleep",5878,4611,11,"どろにうまり寝"],"4":["肚子上睡","Atop-Belly Sleep",7491,5875,12,"おなかのうえ寝"]},"超夢":{"1":["單膝立起睡","Knee-Up Sleep",1095,5717,11,"かたひざたて寝"],"2":["直立漂浮睡","Upright Floating Sleep",5496,14164,13,"ちょくりつふゆう寝"],"3":["精神擊破睡","Psystrike Sleep",15774,32506,16,"サイコブレイク寝"],"5":["不耐煩睡","Bothersome Sleep",15774,32506,25,"うっとうしい寝"]},"哎呀球菇":{"1":["偽裝睡","Mimic Sleep",116,109,4,"ぎたい寝"],"2":["搖晃傘蓋睡","Cap-Bobbing Sleep",552,507,6,"かさふり寝"],"3":["噴出孢子睡","Spore-Blowing Sleep",2641,2414,9,"ほうしふきだし寝"],"4":["肚子上睡","Atop-Belly Sleep",3818,3487,10,"おなかのうえ寝"]},"敗露球菇":{"1":["偽裝睡","Mimic Sleep",637,585,6,"ぎたい寝"],"2":["誘敵睡","Luring Sleep",2021,1847,8,"さそい寝"],"3":["散布孢子睡","Spore-Releasing Sleep",6432,5872,11,"ほうしとばし寝"],"4":["肚子上睡","Atop-Belly Sleep",10301,9403,12,"おなかのうえ寝"]},"六尾（阿羅拉的樣子）":{"1":["蜷縮睡","Curled-Up Sleep",44,78,4,"まるまり寝"],"2":["打瞌睡","Nodding-Off Sleep",329,590,6,"こっくり寝"],"3":["細雪睡","Powder Snow Sleep",1085,1947,9,"こなゆき寝"],"4":["肚子上睡","Atop-Belly Sleep",1566,2811,10,"おなかのうえ寝"]},"九尾（阿羅拉的樣子）":{"1":["伸展睡","Stretching Sleep",1392,1958,8,"のび寝"],"2":["蓬鬆尾巴睡","Fluffy-Tail Sleep",3933,5529,10,"しっぽふわり寝"],"3":["尾巴包覆睡","Tail-Wrapped Sleep",10059,14143,13,"しっぽつつまれ寝"],"4":["肚子上睡","Atop-Belly Sleep",13927,19580,14,"おなかのうえ寝"]},"烏波（帕底亞的樣子）":{"1":["笑咪咪睡","Smiling Sleep",147,119,4,"にこにこ寝"],"2":["打大哈欠睡","Big Yawn Sleep",493,390,6,"おおあくび寝"],"3":["陷入泥中睡","Mud-Buried Sleep",2303,1809,9,"どろにうまり寝"],"4":["肚子上睡","Atop-Belly Sleep",3076,2415,10,"おなかのうえ寝"]},"顫弦蠑螈（高調的樣子）":{"1":["坐著睡","Sitting Sleep",1313,1847,8,"すわり寝"],"2":["擺姿勢招牌睡","Signature-Pose Sleep",3352,4713,10,"きめポーズ寝"],"3":["夢中彈吉他睡","Dream-Guitar Sleep",9052,12726,13,"ゆめでギター寝"],"4":["肚子上睡","Atop-Belly Sleep",11989,16855,14,"おなかのうえ寝"]},"顫弦蠑螈（低調的樣子）":{"1":["坐著睡","Sitting Sleep",1313,1847,8,"すわり寝"],"2":["夢中彈貝斯睡","Dream-Bass Sleep",3352,4713,10,"ゆめでベース寝"],"3":["懶散睡","Loafing Sleep",9052,12726,13,"ぐうたら寝"],"4":["肚子上睡","Atop-Belly Sleep",11989,16855,14,"おなかのうえ寝"]},"皮卡丘（萬聖節）":{"1":["蜷縮睡","Curled-Up Sleep",11,27,5,"まるまり寝"],"2":["垂耳睡","Droopy-Eared Sleep",82,242,7,"たれみみ寝"]},"皮卡丘 (萬聖節)":{"1":["蜷縮睡","Curled-Up Sleep",11,27,5,"まるまり寝"],"2":["垂耳睡","Droopy-Eared Sleep",82,242,7,"たれみみ寝"]},"皮卡丘（佳節）":{"1":["蜷縮睡","Curled-Up Sleep",11,27,5,"まるまり寝"],"2":["送禮物睡","Gift Giving Sleep",82,242,7,"プレゼント寝"]},"皮卡丘 (佳節)":{"1":["蜷縮睡","Curled-Up Sleep",11,27,5,"まるまり寝"],"2":["送禮物睡","Gift Giving Sleep",82,242,7,"プレゼント寝"]},"皮卡丘（船長）":{"1":["翹尾巴睡","Tail-Stand Sleep",67,195,5,"しっぽたち寝"]},"皮卡丘 (船長)":{"1":["翹尾巴睡","Tail-Stand Sleep",67,195,5,"しっぽたち寝"]},"伊布（佳節）":{"1":["蜷縮睡","Curled-Up Sleep",27,75,4,"まるまり寝"],"2":["送禮物睡","Gift Giving Sleep",228,676,6,"プレゼント寝"]},"伊布 (佳節)":{"1":["蜷縮睡","Curled-Up Sleep",27,75,4,"まるまり寝"],"2":["送禮物睡","Gift Giving Sleep",228,676,6,"プレゼント寝"]},"伊布（萬聖節）":{"1":["蜷縮睡","Curled-Up Sleep",27,75,4,"まるまり寝"],"2":["垂耳睡","Droopy-Eared Sleep",228,676,6,"たれみみ寝"]},"伊布 (萬聖節)":{"1":["蜷縮睡","Curled-Up Sleep",27,75,4,"まるまり寝"],"2":["垂耳睡","Droopy-Eared Sleep",228,676,6,"たれみみ寝"]},"海豹球（佳節）":{"1":["噗通倒下睡","Flopped Sleep",27,75,4,"こてん寝"],"2":["送禮物睡","Gift-Giving Sleep",228,676,6,"プレゼント寝"]},"海豹球 (佳節)":{"1":["噗通倒下睡","Flopped Sleep",27,75,4,"こてん寝"],"2":["送禮物睡","Gift-Giving Sleep",228,676,6,"プレゼント寝"]},"南瓜精 (小顆種)":{"1":["埋入泥沙睡","Buried Sleep",44,78,4,"うまり寝"],"2":["飄浮撲翼睡","Floating-Flutter Sleep",355,637,6,"うかびぱたぱた寝"],"3":["光芒映照睡","Light-Illuminating Sleep",1992,3577,9,"ひかりてらし寝"],"4":["肚子上睡","Atop-Belly Sleep",2772,4977,10,"おなかのうえ寝"]},"南瓜精（小顆種）":{"1":["埋入泥沙睡","Buried Sleep",44,78,4,"うまり寝"],"2":["飄浮撲翼睡","Floating-Flutter Sleep",355,637,6,"うかびぱたぱた寝"],"3":["光芒映照睡","Light-Illuminating Sleep",1992,3577,9,"ひかりてらし寝"],"4":["肚子上睡","Atop-Belly Sleep",2772,4977,10,"おなかのうえ寝"]},"南瓜精 (中顆種)":{"1":["埋入泥沙睡","Buried Sleep",44,78,4,"うまり寝"],"2":["飄浮撲翼睡","Floating-Flutter Sleep",355,637,6,"うかびぱたぱた寝"],"3":["光芒映照睡","Light-Illuminating Sleep",1992,3577,9,"ひかりてらし寝"],"4":["肚子上睡","Atop-Belly Sleep",2772,4977,10,"おなかのうえ寝"]},"南瓜精（中顆種）":{"1":["埋入泥沙睡","Buried Sleep",44,78,4,"うまり寝"],"2":["飄浮撲翼睡","Floating-Flutter Sleep",355,637,6,"うかびぱたぱた寝"],"3":["光芒映照睡","Light-Illuminating Sleep",1992,3577,9,"ひかりてらし寝"],"4":["肚子上睡","Atop-Belly Sleep",2772,4977,10,"おなかのうえ寝"]},"南瓜精 (大顆種)":{"1":["埋入泥沙睡","Buried Sleep",44,78,4,"うまり寝"],"2":["飄浮撲翼睡","Floating-Flutter Sleep",355,637,6,"うかびぱたぱた寝"],"3":["光芒映照睡","Light-Illuminating Sleep",1992,3577,9,"ひかりてらし寝"],"4":["肚子上睡","Atop-Belly Sleep",2772,4977,10,"おなかのうえ寝"]},"南瓜精（大顆種）":{"1":["埋入泥沙睡","Buried Sleep",44,78,4,"うまり寝"],"2":["飄浮撲翼睡","Floating-Flutter Sleep",355,637,6,"うかびぱたぱた寝"],"3":["光芒映照睡","Light-Illuminating Sleep",1992,3577,9,"ひかりてらし寝"],"4":["肚子上睡","Atop-Belly Sleep",2772,4977,10,"おなかのうえ寝"]},"南瓜精 (巨顆種)":{"1":["埋入泥沙睡","Buried Sleep",44,78,4,"うまり寝"],"2":["飄浮撲翼睡","Floating-Flutter Sleep",355,637,6,"うかびぱたぱた寝"],"3":["光芒映照睡","Light-Illuminating Sleep",1992,3577,9,"ひかりてらし寝"],"4":["肚子上睡","Atop-Belly Sleep",2772,4977,10,"おなかのうえ寝"]},"南瓜精（巨顆種）":{"1":["埋入泥沙睡","Buried Sleep",44,78,4,"うまり寝"],"2":["飄浮撲翼睡","Floating-Flutter Sleep",355,637,6,"うかびぱたぱた寝"],"3":["光芒映照睡","Light-Illuminating Sleep",1992,3577,9,"ひかりてらし寝"],"4":["肚子上睡","Atop-Belly Sleep",2772,4977,10,"おなかのうえ寝"]},"南瓜怪人 (小顆種)":{"1":["擁抱睡","Hugging Sleep",891,1898,8,"だきしめ寝"],"2":["張開雙臂睡","Arms-Wide Sleep",2457,5233,10,"うでひろげ寝"],"3":["驚嚇睡","Astonishing Sleep",6631,14125,13,"おどろかし寝"],"4":["肚子上睡","Atop-Belly Sleep",9098,19381,14,"おなかのうえ寝"]},"南瓜怪人（小顆種）":{"1":["擁抱睡","Hugging Sleep",891,1898,8,"だきしめ寝"],"2":["張開雙臂睡","Arms-Wide Sleep",2457,5233,10,"うでひろげ寝"],"3":["驚嚇睡","Astonishing Sleep",6631,14125,13,"おどろかし寝"],"4":["肚子上睡","Atop-Belly Sleep",9098,19381,14,"おなかのうえ寝"]},"南瓜怪人 (中顆種)":{"1":["擁抱睡","Hugging Sleep",891,1898,8,"だきしめ寝"],"2":["張開雙臂睡","Arms-Wide Sleep",2457,5233,10,"うでひろげ寝"],"3":["驚嚇睡","Astonishing Sleep",6631,14125,13,"おどろかし寝"],"4":["肚子上睡","Atop-Belly Sleep",9098,19381,14,"おなかのうえ寝"]},"南瓜怪人（中顆種）":{"1":["擁抱睡","Hugging Sleep",891,1898,8,"だきしめ寝"],"2":["張開雙臂睡","Arms-Wide Sleep",2457,5233,10,"うでひろげ寝"],"3":["驚嚇睡","Astonishing Sleep",6631,14125,13,"おどろかし寝"],"4":["肚子上睡","Atop-Belly Sleep",9098,19381,14,"おなかのうえ寝"]},"南瓜怪人 (大顆種)":{"1":["擁抱睡","Hugging Sleep",891,1898,8,"だきしめ寝"],"2":["張開雙臂睡","Arms-Wide Sleep",2457,5233,10,"うでひろげ寝"],"3":["驚嚇睡","Astonishing Sleep",6631,14125,13,"おどろかし寝"],"4":["肚子上睡","Atop-Belly Sleep",9098,19381,14,"おなかのうえ寝"]},"南瓜怪人（大顆種）":{"1":["擁抱睡","Hugging Sleep",891,1898,8,"だきしめ寝"],"2":["張開雙臂睡","Arms-Wide Sleep",2457,5233,10,"うでひろげ寝"],"3":["驚嚇睡","Astonishing Sleep",6631,14125,13,"おどろかし寝"],"4":["肚子上睡","Atop-Belly Sleep",9098,19381,14,"おなかのうえ寝"]},"南瓜怪人 (巨顆種)":{"1":["擁抱睡","Hugging Sleep",891,1898,8,"だきしめ寝"],"2":["張開雙臂睡","Arms-Wide Sleep",2457,5233,10,"うでひろげ寝"],"3":["驚嚇睡","Astonishing Sleep",6631,14125,13,"おどろかし寝"],"4":["肚子上睡","Atop-Belly Sleep",9098,19381,14,"おなかのうえ寝"]},"南瓜怪人（巨顆種）":{"1":["擁抱睡","Hugging Sleep",891,1898,8,"だきしめ寝"],"2":["張開雙臂睡","Arms-Wide Sleep",2457,5233,10,"うでひろげ寝"],"3":["驚嚇睡","Astonishing Sleep",6631,14125,13,"おどろかし寝"],"4":["肚子上睡","Atop-Belly Sleep",9098,19381,14,"おなかのうえ寝"]},"夢妖":{"1":["秀髮飄逸睡","Hair-Fluttering Sleep",277,391,7,"かみなびき寝"],"2":["漂浮睡","Floating Sleep",1558,2192,9,"ふゆう寝"],"3":["驚嚇睡","Give-a-Fright Sleep",3830,5385,12,"おどろかし寝"]},"夢妖魔":{"1":["傾斜漂浮睡","Droopy-Float Sleep",1361,2444,8,"かたむきふゆう寝"],"2":["漂浮睡","Floating Sleep",3892,6987,10,"ふゆう寝"],"3":["吟唱咒語睡","Incantation-Chanting Sleep",10687,19189,13,"じゅもんとなえ寝"]},"木棉球":{"1":["撲動翅膀睡","Flapping Sleep",94,147,4,"ぱたぱた寝"],"2":["轉圈睡","Twirling Sleep",529,829,6,"くるりん寝"],"3":["埋入棉花睡","Cotton-Covered Sleep",2670,4181,9,"ワタうもれ寝"],"4":["肚子上睡","Atop-Belly Sleep",3866,6054,10,"おなかのうえ寝"]},"風妖精":{"1":["打大哈欠睡","Big-Yawn Sleep",1115,2202,8,"おおあくび寝"],"2":["輕飄飄睡","Floaty Sleep",3518,6947,10,"ふわふわ寝"],"3":["散落棉花睡","Cotton-Scattered Sleep",9665,19087,13,"ワタちらし寝"],"4":["肚子上睡","Atop-Belly Sleep",12960,25593,14,"おなかのうえ寝"]},"大鋼蛇":{"1":["漩渦睡","Swirling Sleep",1192,2505,8,"うずまき寝"],"2":["搖搖欲墜睡","Wobbly Sleep",2329,4895,10,"ぐらぐら寝"],"3":["持續挖掘睡","Digging-Forward Sleep",5549,11665,13,"ほりすすみ寝"]},"奇魯莉安":{"1":["坐著鞠躬睡","Sitting-Bow Sleep",177,370,6,"すわりおじぎ寝"],"2":["屈膝行禮睡","Curtsy Sleep",651,1368,8,"レヴェランス寝"],"3":["翩翩起舞睡","Dancing Sleep",1835,3858,11,"おどりながら寝"],"4":["肚子上睡","Atop-Belly Sleep",2554,5368,12,"おなかのうえ寝"]}};
+  const SLEEP_STYLES_DATA = {};
 
   let dynamicSleepStyles = null;
   const CACHE_KEY_SLEEP_STYLES_JSON = 'pksleep_cache_sleep_styles_json';
@@ -4565,17 +4578,26 @@
   }
 
   function loadDynamicSleepStyles() {
-    // 1. 優先讀取本機快取 (IndexedDB / LocalStorage)，達成 0ms 瞬時載入與零額外下載
+    // 1. 優先讀取本機快取 (LocalStorage 同步快取路徑 + IndexedDB 非同步快取)，達成 0ms 瞬時載入與零額外下載
+    let hasSyncCache = false;
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const cachedRaw = window.localStorage.getItem(CACHE_KEY_SLEEP_STYLES_JSON);
+        if (cachedRaw) {
+          const parsedSync = JSON.parse(cachedRaw);
+          if (parsedSync && parsedSync.byName) {
+            dynamicSleepStyles = parsedSync.byName;
+            _sleepStyleCacheHasDyn = false;
+            hasSyncCache = true;
+          }
+        }
+      }
+    } catch (e) {}
+
     (async () => {
       try {
-        if (typeof window !== 'undefined') {
-          let parsed = null;
-          if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
-            parsed = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_SLEEP_STYLES_JSON);
-          } else if (window.localStorage) {
-            const cachedRaw = window.localStorage.getItem(CACHE_KEY_SLEEP_STYLES_JSON);
-            if (cachedRaw) parsed = JSON.parse(cachedRaw);
-          }
+        if (typeof window !== 'undefined' && !hasSyncCache && window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
+          const parsed = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_SLEEP_STYLES_JSON);
           if (parsed && parsed.byName) {
             const prevJson = dynamicSleepStyles ? JSON.stringify(dynamicSleepStyles) : '';
             const nextJson = JSON.stringify(parsed.byName);
@@ -4817,26 +4839,9 @@
     }
   }
 
-  // --- 8. 7大研究島嶼營地與EX專家模式資料庫 (Research Camps & EX Mode DB) ---
-  const ISLANDS_DATA = [
-    {
-      id: "greengrass",
-      name: "萌綠之島",
-      name_en: "Greengrass Isle",
-      image: "https://www.serebii.net/pokemonsleep/locations/greengrassisle.jpg",
-      imageScene: "assets/islands/hd/greengrass.jpg",
-      badgeColor: "#22c55e",
-      unlockGoal: 0,
-      unlockGoalText: "初始營地 (0種睡姿)",
-      unlockGoalText_en: "Starting Camp (0 Styles)",
-      snorlaxMultiplier: "1.0x",
-      berriesMode: "random",
-      berriesDesc: "每週自18種樹果中隨機指定3種",
-      berriesDesc_en: "Random 3 Berries chosen weekly from all 18 types",
-      favoriteBerries: [],
-      favoriteTypes: [],
-      hasExpertMode: true,
-      expertMode: {
+  // --- 8A. EX專家模式資料庫 (Research Camps EX Mode Data) ---
+  const ISLAND_EXPERT_MODES = {
+    greengrass: {
         name: "萌綠之島 EX模式",
         name_en: "Greengrass Isle EX",
         unlockReq: "萌綠之島卡比獸達到 [大師 18]",
@@ -4958,126 +4963,7 @@
           ],
         }
       },
-      snorlaxEnergyTiers: [{ rank: "Basic 1", energy: 0 }, { rank: "Great 1", energy: 23385 }, { rank: "Ultra 1", energy: 79197 }, { rank: "Master 1", energy: 187832 }, { rank: "Master 5", energy: 321146 }, { rank: "Master 10", energy: 532707 }, { rank: "Master 15", energy: 1199506 }, { rank: "Master 20", energy: 3245795 }],
-      fullRankEnergyTiers: [{ rank: "Basic 1", energy: 0 }, { rank: "Basic 2", energy: 3118 }, { rank: "Basic 3", energy: 7171 }, { rank: "Basic 4", energy: 11693 }, { rank: "Basic 5", energy: 17149 }, { rank: "Great 1", energy: 23385 }, { rank: "Great 2", energy: 31492 }, { rank: "Great 3", energy: 41314 }, { rank: "Great 4", energy: 53006 }, { rank: "Great 5", energy: 65634 }, { rank: "Ultra 1", energy: 79197 }, { rank: "Ultra 2", energy: 93540 }, { rank: "Ultra 3", energy: 109130 }, { rank: "Ultra 4", energy: 125032 }, { rank: "Ultra 5", energy: 156121 }, { rank: "Master 1", energy: 187832 }, { rank: "Master 2", energy: 220177 }, { rank: "Master 3", energy: 253169 }, { rank: "Master 4", energy: 286821 }, { rank: "Master 5", energy: 321146 }, { rank: "Master 6", energy: 356158 }, { rank: "Master 7", energy: 391870 }, { rank: "Master 8", energy: 428296 }, { rank: "Master 9", energy: 465451 }, { rank: "Master 10", energy: 532707 }, { rank: "Master 11", energy: 601308 }, { rank: "Master 12", energy: 742056 }, { rank: "Master 13", energy: 885619 }, { rank: "Master 14", energy: 1029700 }, { rank: "Master 15", energy: 1199506 }, { rank: "Master 16", energy: 1486800 }, { rank: "Master 17", energy: 1795052 }, { rank: "Master 18", energy: 2165541 }, { rank: "Master 19", energy: 2604280 }, { rank: "Master 20", energy: 3245795 }],
-      drowsyPowerSpawns: [{ count: 3, power: "0+" }, { count: 4, power: "920,000" }, { count: 5, power: "2,060,000" }, { count: 6, power: "4,500,000" }, { count: 7, power: "8,320,000" }, { count: 8, power: "19,500,000" }],
-      spawns: {
-        dozing: [
-          { name: "妙蛙種子", name_en: "Bulbasaur", type: "草", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "妙蛙草", name_en: "Ivysaur", type: "草", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
-          { name: "妙蛙花", name_en: "Venusaur", type: "草", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" }, { name: "綠毛蟲", name_en: "Caterpie", type: "蟲", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
-          { name: "鐵甲蛹", name_en: "Metapod", type: "蟲", s1: "Great 1", s2: "Great 5", s3: "Master 1", s4: "Ultra 1" }, { name: "巴大蝶", name_en: "Butterfree", type: "蟲", s1: "Ultra 5", s2: "Master 4", s3: "Master 10", s4: "Master 5" },
-          { name: "阿柏蛇", name_en: "Ekans", type: "毒", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" }, { name: "阿柏怪", name_en: "Arbok", type: "毒", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
-          { name: "可達鴨", name_en: "Psyduck", type: "水", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "猴怪", name_en: "Mankey", type: "格鬥", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
-          { name: "火爆猴", name_en: "Primeape", type: "格鬥", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" }, { name: "喇叭芽", name_en: "Bellsprout", type: "草", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
-          { name: "口呆花", name_en: "Weepinbell", type: "草", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Ultra 2" }, { name: "大食花", name_en: "Victreebel", type: "草", s1: "Master 2", s2: "Master 6", s3: "-", s4: "Master 7" },
-          { name: "鬼斯", name_en: "Gastly", type: "幽靈", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "-" }, { name: "鬼斯通", name_en: "Haunter", type: "幽靈", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "-" },
-          { name: "凱羅斯", name_en: "Pinsir", type: "蟲", s1: "Ultra 2", s2: "Master 1", s3: "Master 7", s4: "Master 2" }, { name: "菊草葉", name_en: "Chikorita", type: "草", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" },
-          { name: "月桂葉", name_en: "Bayleef", type: "草", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" }, { name: "大竺葵", name_en: "Meganium", type: "草", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" },
-          { name: "烏波 (帕底亞的樣子)", name_en: "Paldean Wooper", type: "毒", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Master 1" }, { name: "月亮伊布", name_en: "Umbreon", type: "惡", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" },
-          { name: "黑暗鴉", name_en: "Murkrow", type: "惡", s1: "Ultra 1", s2: "Ultra 5", s3: "-", s4: "Master 1" }, { name: "壺壺", name_en: "Shuckle", type: "蟲", s1: "Master 4", s2: "Master 8", s3: "-", s4: "Master 9" },
-          { name: "赫拉克羅斯", name_en: "Heracross", type: "蟲", s1: "Ultra 2", s2: "Master 1", s3: "Master 7", s4: "Master 2" }, { name: "狃拉", name_en: "Sneasel", type: "惡", s1: "Ultra 1", s2: "Ultra 5", s3: "-", s4: "Master 1" },
-          { name: "信使鳥", name_en: "Delibird", type: "飛行", s1: "Ultra 3", s2: "Master 2", s3: "Master 8", s4: "Master 3" }, { name: "戴魯比", name_en: "Houndour", type: "惡", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" },
-          { name: "木守宮", name_en: "Treecko", type: "草", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "森林蜥蜴", name_en: "Grovyle", type: "草", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
-          { name: "蜥蜴王", name_en: "Sceptile", type: "草", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "過動猿", name_en: "Vigoroth", type: "一般", s1: "Great 3", s2: "Ultra 2", s3: "-", s4: "Ultra 3" },
-          { name: "溶食獸", name_en: "Gulpin", type: "毒", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "吞食獸", name_en: "Swalot", type: "毒", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Ultra 2" },
-          { name: "怨影娃娃", name_en: "Shuppet", type: "幽靈", s1: "Great 1", s2: "Great 5", s3: "-", s4: "-" }, { name: "詛咒娃娃", name_en: "Banette", type: "幽靈", s1: "Ultra 5", s2: "Master 4", s3: "-", s4: "Master 5" },
-          { name: "阿勃梭魯", name_en: "Absol", type: "惡", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" }, { name: "拉帝亞斯", name_en: "Latias", type: "龍", s1: "Master 9", s2: "Master 13", s3: "Master 19", s4: "-" },
-          { name: "拉帝歐斯", name_en: "Latios", type: "龍", s1: "Master 9", s2: "Master 13", s3: "Master 19", s4: "-" }, { name: "飄飄球", name_en: "Drifloon", type: "幽靈", s1: "Great 3", s2: "Ultra 2", s3: "-", s4: "-" },
-          { name: "烏鴉頭頭", name_en: "Honchkrow", type: "惡", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "花岩怪", name_en: "Spiritomb", type: "惡", s1: "Master 4", s2: "Master 8", s3: "-", s4: "Master 9" },
-          { name: "不良蛙", name_en: "Croagunk", type: "毒", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" }, { name: "毒骷蛙", name_en: "Toxicroak", type: "毒", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Ultra 2" },
-          { name: "瑪狃拉", name_en: "Weavile", type: "惡", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "葉伊布", name_en: "Leafeon", type: "草", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" },
-          { name: "南瓜精", name_en: "Pumpkaboo", type: "幽靈", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Master 1" }, { name: "南瓜怪人", name_en: "Gourgeist", type: "幽靈", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" },
-          { name: "嗡蝠", name_en: "Noibat", type: "龍", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "音波龍", name_en: "Noivern", type: "龍", s1: "Ultra 4", s2: "Master 3", s3: "-", s4: "Master 4" },
-          { name: "謎擬Q", name_en: "Mimikyu", type: "幽靈", s1: "Master 2", s2: "Master 6", s3: "-", s4: "Master 7" }, { name: "老翁龍", name_en: "Drampa", type: "龍", s1: "Master 4", s2: "Master 8", s3: "-", s4: "Master 9" },
-          { name: "顫弦蠑螈 (高調的樣子)", name_en: "Toxtricity Amped Form", type: "毒", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "顫弦蠑螈 (低調的樣子)", name_en: "Toxtricity Low Key Form", type: "毒", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" },
-          { name: "新葉喵", name_en: "Sprigatito", type: "草", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "蒂蕾喵", name_en: "Floragato", type: "草", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
-          { name: "魔幻假面喵", name_en: "Meowscarada", type: "惡", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "土王", name_en: "Clodsire", type: "毒", s1: "Master 2", s2: "Master 6", s3: "-", s4: "Master 7" },
-          { name: "哎呀球菇", name_en: "Foongus", type: "毒", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "敗露球菇", name_en: "Amoonguss", type: "毒", s1: "Ultra 4", s2: "Master 3", s3: "-", s4: "Master 4" },
-          { name: "夢妖", name_en: "Misdreavus", type: "幽靈", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "-" }, { name: "夢妖魔", name_en: "Mismagius", type: "幽靈", s1: "Master 8", s2: "Master 12", s3: "-", s4: "-" },
-          { name: "草苗龜", name_en: "Turtwig", type: "草", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "樹林龜", name_en: "Grotle", type: "草", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
-        ],
-        snoozing: [
-          { name: "小火龍", name_en: "Charmander", type: "火", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "火恐龍", name_en: "Charmeleon", type: "火", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
-          { name: "噴火龍", name_en: "Charizard", type: "火", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" }, { name: "小拉達", name_en: "Rattata", type: "一般", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
-          { name: "拉達", name_en: "Raticate", type: "一般", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" }, { name: "皮卡丘", name_en: "Pikachu", type: "電", s1: "Basic 3", s2: "Great 2", s3: "-", s4: "Great 3" },
-          { name: "雷丘", name_en: "Raichu", type: "電", s1: "Master 4", s2: "Master 8", s3: "Master 14", s4: "Master 9" }, { name: "皮皮", name_en: "Clefairy", type: "妖精", s1: "Basic 4", s2: "Great 3", s3: "-", s4: "Ultra 1" },
-          { name: "皮可西", name_en: "Clefable", type: "妖精", s1: "Master 3", s2: "Master 7", s3: "-", s4: "Master 8" }, { name: "六尾", name_en: "Vulpix", type: "火", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Master 1" },
-          { name: "九尾", name_en: "Ninetales", type: "火", s1: "Master 1", s2: "Master 5", s3: "-", s4: "Master 6" }, { name: "胖丁", name_en: "Jigglypuff", type: "妖精", s1: "Basic 4", s2: "Great 3", s3: "-", s4: "Great 4" },
-          { name: "胖可丁", name_en: "Wigglytuff", type: "妖精", s1: "Master 2", s2: "Master 6", s3: "-", s4: "Master 7" }, { name: "地鼠", name_en: "Diglett", type: "地面", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "-" },
-          { name: "三地鼠", name_en: "Dugtrio", type: "地面", s1: "Great 5", s2: "Ultra 4", s3: "-", s4: "-" }, { name: "喵喵", name_en: "Meowth", type: "一般", s1: "Basic 2", s2: "Great 1", s3: "Ultra 2", s4: "Great 2" },
-          { name: "貓老大", name_en: "Persian", type: "一般", s1: "Ultra 1", s2: "Ultra 5", s3: "Master 6", s4: "Master 1" }, { name: "卡蒂狗", name_en: "Growlithe", type: "火", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" },
-          { name: "呆呆獸", name_en: "Slowpoke", type: "水", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Ultra 1" }, { name: "呆殼獸", name_en: "Slowbro", type: "水", s1: "Ultra 1", s2: "Ultra 5", s3: "-", s4: "Master 1" },
-          { name: "吉利蛋", name_en: "Chansey", type: "一般", s1: "Ultra 5", s2: "Master 4", s3: "-", s4: "Master 5" }, { name: "袋獸", name_en: "Kangaskhan", type: "一般", s1: "Ultra 2", s2: "Master 1", s3: "Master 7", s4: "Master 2" },
-          { name: "百變怪", name_en: "Ditto", type: "一般", s1: "Great 5", s2: "Ultra 4", s3: "Master 5", s4: "Ultra 5" }, { name: "伊布", name_en: "Eevee", type: "一般", s1: "Basic 4", s2: "Great 3", s3: "-", s4: "Great 4" },
-          { name: "雷伊布", name_en: "Jolteon", type: "電", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" }, { name: "火伊布", name_en: "Flareon", type: "火", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" },
-          { name: "火球鼠", name_en: "Cyndaquil", type: "火", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "火岩鼠", name_en: "Quilava", type: "火", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
-          { name: "火爆獸", name_en: "Typhlosion", type: "火", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" }, { name: "波克基古", name_en: "Togetic", type: "妖精", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
-          { name: "天然雀", name_en: "Natu", type: "超能力", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "天然鳥", name_en: "Xatu", type: "超能力", s1: "Ultra 4", s2: "Master 3", s3: "-", s4: "Master 4" },
-          { name: "咩利羊", name_en: "Mareep", type: "電", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" }, { name: "茸茸羊", name_en: "Flaaffy", type: "電", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Ultra 2" },
-          { name: "太陽伊布", name_en: "Espeon", type: "超能力", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" }, { name: "果然翁", name_en: "Wobbuffet", type: "超能力", s1: "Basic 4", s2: "Great 3", s3: "-", s4: "Ultra 1" },
-          { name: "幸福蛋", name_en: "Blissey", type: "一般", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "雷公", name_en: "Raikou", type: "電", s1: "Master 9", s2: "Master 13", s3: "Master 19", s4: "-" },
-          { name: "炎帝", name_en: "Entei", type: "火", s1: "Master 9", s2: "Master 13", s3: "Master 19", s4: "-" }, { name: "火稚雞", name_en: "Torchic", type: "火", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
-          { name: "懶人獺", name_en: "Slakoth", type: "一般", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Ultra 1" }, { name: "請假王", name_en: "Slaking", type: "一般", s1: "Master 7", s2: "Master 11", s3: "Master 17", s4: "Master 12" },
-          { name: "正電拍拍", name_en: "Plusle", type: "電", s1: "Ultra 5", s2: "Master 4", s3: "-", s4: "Master 5" }, { name: "負電拍拍", name_en: "Minun", type: "電", s1: "Ultra 5", s2: "Master 4", s3: "-", s4: "Master 5" },
-          { name: "波克基斯", name_en: "Togekiss", type: "妖精", s1: "Master 6", s2: "Master 10", s3: "Master 16", s4: "Master 11" }, { name: "克雷色利亞", name_en: "Cresselia", type: "超能力", s1: "Master 9", s2: "Master 13", s3: "Master 19", s4: "-" },
-          { name: "食夢夢", name_en: "Munna", type: "超能力", s1: "Great 1", s2: "Great 5", s3: "-", s4: "-" }, { name: "夢夢蝕", name_en: "Musharna", type: "超能力", s1: "Master 7", s2: "Master 11", s3: "-", s4: "-" },
-          { name: "仙子伊布", name_en: "Sylveon", type: "妖精", s1: "Master 3", s2: "Master 7", s3: "Master 13", s4: "Master 8" }, { name: "咚咚鼠", name_en: "Dedenne", type: "電", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
-          { name: "萌虻", name_en: "Cutiefly", type: "妖精", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "蝶結萌虻", name_en: "Ribombee", type: "妖精", s1: "Ultra 4", s2: "Master 3", s3: "-", s4: "Master 4" },
-          { name: "花療環環", name_en: "Comfey", type: "妖精", s1: "Ultra 3", s2: "Master 2", s3: "Master 8", s4: "Master 3" }, { name: "呆火鱷", name_en: "Fuecoco", type: "火", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
-          { name: "布撥", name_en: "Pawmi", type: "電", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "小鍛匠", name_en: "Tinkatink", type: "妖精", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
-          { name: "巧鍛匠", name_en: "Tinkatuff", type: "妖精", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" }, { name: "巨鍛匠", name_en: "Tinkaton", type: "妖精", s1: "Master 7", s2: "Master 11", s3: "-", s4: "-" },
-          { name: "超夢", name_en: "Mewtwo", type: "超能力", s1: "Master 10", s2: "Master 14", s3: "Master 20", s4: "-" }, { name: "小火焰猴", name_en: "Chimchar", type: "火", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
-          { name: "木棉球", name_en: "Cottonee", type: "妖精", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Ultra 2" }, { name: "風妖精", name_en: "Whimsicott", type: "妖精", s1: "Master 8", s2: "Master 12", s3: "-", s4: "Master 13" },
-        ],
-        slumbering: [
-          { name: "傑尼龜", name_en: "Squirtle", type: "水", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "卡咪龜", name_en: "Wartortle", type: "水", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
-          { name: "水箭龜", name_en: "Blastoise", type: "水", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" }, { name: "穿山鼠", name_en: "Sandshrew", type: "地面", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
-          { name: "穿山王", name_en: "Sandslash", type: "地面", s1: "Ultra 4", s2: "Master 3", s3: "-", s4: "Master 4" }, { name: "小拳石", name_en: "Geodude", type: "岩石", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
-          { name: "隆隆石", name_en: "Graveler", type: "岩石", s1: "Great 3", s2: "Ultra 2", s3: "-", s4: "Ultra 3" }, { name: "小磁怪", name_en: "Magnemite", type: "鋼", s1: "Basic 1", s2: "Basic 5", s3: "Ultra 1", s4: "-" },
-          { name: "三合一磁怪", name_en: "Magneton", type: "鋼", s1: "Great 2", s2: "Ultra 1", s3: "Master 2", s4: "-" }, { name: "嘟嘟", name_en: "Doduo", type: "飛行", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
-          { name: "嘟嘟利", name_en: "Dodrio", type: "飛行", s1: "Great 5", s2: "Ultra 4", s3: "-", s4: "Ultra 5" }, { name: "卡拉卡拉", name_en: "Cubone", type: "地面", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
-          { name: "嘎啦嘎啦", name_en: "Marowak", type: "地面", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Ultra 2" }, { name: "水伊布", name_en: "Vaporeon", type: "水", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" },
-          { name: "小鋸鱷", name_en: "Totodile", type: "水", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "藍鱷", name_en: "Croconaw", type: "水", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
-          { name: "大力鱷", name_en: "Feraligatr", type: "水", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" }, { name: "皮丘", name_en: "Pichu", type: "電", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
-          { name: "皮寶寶", name_en: "Cleffa", type: "妖精", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Ultra 1" }, { name: "寶寶丁", name_en: "Igglybuff", type: "妖精", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
-          { name: "波克比", name_en: "Togepi", type: "妖精", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" }, { name: "樹才怪", name_en: "Sudowoodo", type: "岩石", s1: "Basic 3", s2: "Great 2", s3: "-", s4: "Ultra 1" },
-          { name: "烏波", name_en: "Wooper", type: "水", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "沼王", name_en: "Quagsire", type: "水", s1: "Master 1", s2: "Master 5", s3: "-", s4: "Master 6" },
-          { name: "水君", name_en: "Suicune", type: "水", s1: "Master 9", s2: "Master 13", s3: "Master 19", s4: "-" }, { name: "幼基拉斯", name_en: "Larvitar", type: "岩石", s1: "Basic 4", s2: "Great 3", s3: "-", s4: "Great 4" },
-          { name: "力壯雞", name_en: "Combusken", type: "格鬥", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" }, { name: "火焰雞", name_en: "Blaziken", type: "格鬥", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" },
-          { name: "水躍魚", name_en: "Mudkip", type: "水", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "沼躍魚", name_en: "Marshtomp", type: "地面", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
-          { name: "巨沼怪", name_en: "Swampert", type: "地面", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "大嘴娃", name_en: "Mawile", type: "鋼", s1: "Master 3", s2: "Master 7", s3: "-", s4: "Master 8" },
-          { name: "青綿鳥", name_en: "Swablu", type: "飛行", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" }, { name: "小果然", name_en: "Wynaut", type: "超能力", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
-          { name: "海豹球", name_en: "Spheal", type: "冰", s1: "Basic 1", s2: "Basic 5", s3: "Ultra 1", s4: "Great 1" }, { name: "盆才怪", name_en: "Bonsly", type: "岩石", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
-          { name: "小福蛋", name_en: "Happiny", type: "一般", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "利歐路", name_en: "Riolu", type: "格鬥", s1: "Basic 3", s2: "Great 2", s3: "-", s4: "Great 3" },
-          { name: "自爆磁怪", name_en: "Magnezone", type: "鋼", s1: "Master 7", s2: "Master 11", s3: "Master 17", s4: "-" }, { name: "冰伊布", name_en: "Glaceon", type: "冰", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" },
-          { name: "毛頭小鷹", name_en: "Rufflet", type: "飛行", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "勇士雄鷹", name_en: "Braviary", type: "飛行", s1: "Ultra 4", s2: "Master 3", s3: "Master 9", s4: "Master 4" },
-          { name: "寶寶暴龍", name_en: "Tyrunt", type: "岩石", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "怪顎龍", name_en: "Tyrantrum", type: "岩石", s1: "Master 7", s2: "Master 11", s3: "-", s4: "-" },
-          { name: "托戈德瑪爾", name_en: "Togedemaru", type: "鋼", s1: "Master 4", s2: "Master 8", s3: "-", s4: "Master 9" }, { name: "古月鳥", name_en: "Cramorant", type: "飛行", s1: "Master 1", s2: "Master 5", s3: "Master 11", s4: "Master 6" },
-          { name: "毒電嬰", name_en: "Toxel", type: "毒", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "潤水鴨", name_en: "Quaxly", type: "水", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
-          { name: "走鯨", name_en: "Cetoddle", type: "冰", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Master 1" }, { name: "大蔥鴨", name_en: "Farfetch'd", type: "飛行", s1: "Master 3", s2: "Master 7", s3: "-", s4: "Master 8" },
-          { name: "土台龜", name_en: "Torterra", type: "地面", s1: "Master 7", s2: "Master 11", s3: "-", s4: "-" }, { name: "猛火猴", name_en: "Monferno", type: "格鬥", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
-          { name: "烈焰猴", name_en: "Infernape", type: "格鬥", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "波加曼", name_en: "Piplup", type: "水", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
-          { name: "波皇子", name_en: "Prinplup", type: "水", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" }, { name: "帝王拿波", name_en: "Empoleon", type: "鋼", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" },
-          { name: "摔角鷹人", name_en: "Hawlucha", type: "飛行", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" },
-        ],
-      }
-    },
-    {
-      id: "cyan",
-      name: "天青沙灘",
-      name_en: "Cyan Beach",
-      image: "https://www.serebii.net/pokemonsleep/locations/cyanbeach.jpg",
-      imageScene: "assets/islands/hd/cyan.jpg",
-      badgeColor: "#06b6d4",
-      unlockGoal: 20,
-      unlockGoalText: "登錄 20 種睡姿",
-      unlockGoalText_en: "20 Sleep Styles",
-      snorlaxMultiplier: "1.25x",
-      berriesMode: "fixed",
-      favoriteBerries: ["橙橙果","椰木果","桃桃果"],
-      favoriteTypes: ["水","飛行","妖精"],
-      hasExpertMode: true,
-      expertMode: {
+    cyan: {
         name: "天青沙灘 EX模式",
         name_en: "Cyan Beach EX",
         unlockReq: "萌綠之島與天青沙灘卡比獸皆達到 [大師 18]",
@@ -5138,49 +5024,11 @@
             { name: "摔角鷹人", name_en: "Hawlucha", type: "飛行", s1: "Great 3", s2: "Ultra 5", s3: "Master 8", s4: "Master 10" }, { name: "古月鳥", name_en: "Cramorant", type: "飛行", s1: "Great 2", s2: "Ultra 1", s3: "Master 1", s4: "Master 2" },
           ],
         }
-      },
-      snorlaxEnergyTiers: [{ rank: "Basic 1", energy: 0 }, { rank: "Great 1", energy: 36164 }, { rank: "Ultra 1", energy: 122474 }, { rank: "Master 1", energy: 256544 }, { rank: "Master 5", energy: 420363 }, { rank: "Master 10", energy: 735875 }, { rank: "Master 15", energy: 1379432 }, { rank: "Master 20", energy: 3732664 }],
-      fullRankEnergyTiers: [{ rank: "Basic 1", energy: 0 }, { rank: "Basic 2", energy: 4822 }, { rank: "Basic 3", energy: 11090 }, { rank: "Basic 4", energy: 18082 }, { rank: "Basic 5", energy: 26520 }, { rank: "Great 1", energy: 36164 }, { rank: "Great 2", energy: 48700 }, { rank: "Great 3", energy: 63889 }, { rank: "Great 4", energy: 81971 }, { rank: "Great 5", energy: 101499 }, { rank: "Ultra 1", energy: 122474 }, { rank: "Ultra 2", energy: 144654 }, { rank: "Ultra 3", energy: 168763 }, { rank: "Ultra 4", energy: 195283 }, { rank: "Ultra 5", energy: 224455 }, { rank: "Master 1", energy: 256544 }, { rank: "Master 2", energy: 291842 }, { rank: "Master 3", energy: 330670 }, { rank: "Master 4", energy: 373381 }, { rank: "Master 5", energy: 420363 }, { rank: "Master 6", energy: 472043 }, { rank: "Master 7", energy: 528891 }, { rank: "Master 8", energy: 591424 }, { rank: "Master 9", energy: 660210 }, { rank: "Master 10", energy: 735875 }, { rank: "Master 11", energy: 819107 }, { rank: "Master 12", energy: 910662 }, { rank: "Master 13", energy: 1018462 }, { rank: "Master 14", energy: 1184155 }, { rank: "Master 15", energy: 1379432 }, { rank: "Master 16", energy: 1709820 }, { rank: "Master 17", energy: 2064310 }, { rank: "Master 18", energy: 2490372 }, { rank: "Master 19", energy: 2994922 }, { rank: "Master 20", energy: 3732664 }],
-      drowsyPowerSpawns: [{ count: 3, power: "0+" }, { count: 4, power: "1,574,330" }, { count: 5, power: "3,511,234" }, { count: 6, power: "7,162,381" }, { count: 7, power: "13,488,264" }, { count: 8, power: "30,491,710" }],
-      spawns: {
-        dozing: [
-          { name: "綠毛蟲", name_en: "Caterpie", type: "蟲", s1: "Basic 1", s2: "Basic 2", s3: "Great 3", s4: "Great 1" }, { name: "可達鴨", name_en: "Psyduck", type: "水", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Great 1" },
-          { name: "喇叭芽", name_en: "Bellsprout", type: "草", s1: "Basic 1", s2: "Basic 2", s3: "Great 3", s4: "Great 1" }, { name: "凱羅斯", name_en: "Pinsir", type: "蟲", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Ultra 4" },
-          { name: "壺壺", name_en: "Shuckle", type: "蟲", s1: "Master 1", s2: "Master 5", s3: "Master 11", s4: "Master 6" }, { name: "赫拉克羅斯", name_en: "Heracross", type: "蟲", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Ultra 4" },
-          { name: "木守宮", name_en: "Treecko", type: "草", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Great 3" }, { name: "森林蜥蜴", name_en: "Grovyle", type: "草", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Ultra 4" },
-          { name: "蜥蜴王", name_en: "Sceptile", type: "草", s1: "Master 4", s2: "Master 8", s3: "Master 14", s4: "Master 9" }, { name: "溶食獸", name_en: "Gulpin", type: "毒", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Great 1" },
-          { name: "不良蛙", name_en: "Croagunk", type: "毒", s1: "Basic 1", s2: "Basic 2", s3: "Great 3", s4: "Great 1" }, { name: "毒骷蛙", name_en: "Toxicroak", type: "毒", s1: "Basic 4", s2: "Great 3", s3: "Ultra 4", s4: "Great 4" },
-          { name: "骨紋巨聲鱷", name_en: "Skeledirge", type: "幽靈", s1: "Master 4", s2: "Master 8", s3: "Master 14", s4: "Master 9" },
-        ],
-        snoozing: [
-          { name: "皮卡丘", name_en: "Pikachu", type: "電", s1: "Basic 1", s2: "Basic 4", s3: "Great 5", s4: "Great 1" }, { name: "皮皮", name_en: "Clefairy", type: "妖精", s1: "Basic 1", s2: "Basic 5", s3: "Ultra 1", s4: "Ultra 1" },
-          { name: "皮可西", name_en: "Clefable", type: "妖精", s1: "Ultra 5", s2: "Master 4", s3: "Master 10", s4: "Master 6" }, { name: "胖丁", name_en: "Jigglypuff", type: "妖精", s1: "Basic 1", s2: "Basic 5", s3: "Ultra 1", s4: "Great 1" },
-          { name: "胖可丁", name_en: "Wigglytuff", type: "妖精", s1: "Ultra 4", s2: "Master 3", s3: "Master 9", s4: "Master 4" }, { name: "呆呆獸", name_en: "Slowpoke", type: "水", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Ultra 1" },
-          { name: "呆殼獸", name_en: "Slowbro", type: "水", s1: "Great 3", s2: "Ultra 2", s3: "Master 3", s4: "Ultra 3" }, { name: "袋獸", name_en: "Kangaskhan", type: "一般", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Master 1" },
-          { name: "魔牆人偶", name_en: "Mr. Mime", type: "超能力", s1: "Basic 5", s2: "Great 4", s3: "Ultra 5", s4: "Master 1" }, { name: "百變怪", name_en: "Ditto", type: "一般", s1: "Great 2", s2: "Ultra 1", s3: "Master 2", s4: "Ultra 2" },
-          { name: "伊布", name_en: "Eevee", type: "一般", s1: "Basic 1", s2: "Basic 5", s3: "Ultra 1", s4: "Great 1" }, { name: "呆呆王", name_en: "Slowking", type: "水", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" },
-          { name: "萌虻", name_en: "Cutiefly", type: "妖精", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Great 3" }, { name: "蝶結萌虻", name_en: "Ribombee", type: "妖精", s1: "Ultra 1", s2: "Ultra 5", s3: "Master 6", s4: "Master 1" },
-          { name: "花療環環", name_en: "Comfey", type: "妖精", s1: "Great 5", s2: "Ultra 4", s3: "Master 5", s4: "Master 1" }, { name: "呆火鱷", name_en: "Fuecoco", type: "火", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Ultra 1" },
-          { name: "炙燙鱷", name_en: "Crocalor", type: "火", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Master 1" }, { name: "小鍛匠", name_en: "Tinkatink", type: "妖精", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Great 3" },
-          { name: "巧鍛匠", name_en: "Tinkatuff", type: "妖精", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Master 1" }, { name: "巨鍛匠", name_en: "Tinkaton", type: "妖精", s1: "Master 4", s2: "Master 8", s3: "Master 14", s4: "-" },
-          { name: "木棉球", name_en: "Cottonee", type: "妖精", s1: "Basic 4", s2: "Great 3", s3: "Ultra 4", s4: "Great 4" }, { name: "風妖精", name_en: "Whimsicott", type: "妖精", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" },
-        ],
-        slumbering: [
-          { name: "傑尼龜", name_en: "Squirtle", type: "水", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Great 1" }, { name: "卡咪龜", name_en: "Wartortle", type: "水", s1: "Great 1", s2: "Great 5", s3: "Master 1", s4: "Ultra 1" },
-          { name: "水箭龜", name_en: "Blastoise", type: "水", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" }, { name: "哥達鴨", name_en: "Golduck", type: "水", s1: "Great 2", s2: "Ultra 1", s3: "Master 2", s4: "Ultra 2" },
-          { name: "水伊布", name_en: "Vaporeon", type: "水", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" }, { name: "小鋸鱷", name_en: "Totodile", type: "水", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Great 1" },
-          { name: "藍鱷", name_en: "Croconaw", type: "水", s1: "Great 1", s2: "Great 5", s3: "Master 1", s4: "Ultra 1" }, { name: "大力鱷", name_en: "Feraligatr", type: "水", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" },
-          { name: "皮寶寶", name_en: "Cleffa", type: "妖精", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Ultra 1" }, { name: "寶寶丁", name_en: "Igglybuff", type: "妖精", s1: "Basic 1", s2: "Basic 2", s3: "Great 3", s4: "Great 1" },
-          { name: "樹才怪", name_en: "Sudowoodo", type: "岩石", s1: "Basic 1", s2: "Basic 4", s3: "Great 5", s4: "Ultra 1" }, { name: "烏波", name_en: "Wooper", type: "水", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Ultra 1" },
-          { name: "沼王", name_en: "Quagsire", type: "水", s1: "Ultra 3", s2: "Master 2", s3: "Master 8", s4: "Master 3" }, { name: "水君", name_en: "Suicune", type: "水", s1: "Master 6", s2: "Master 10", s3: "Master 16", s4: "-" },
-          { name: "盆才怪", name_en: "Bonsly", type: "岩石", s1: "Basic 1", s2: "Basic 2", s3: "Great 3", s4: "Great 1" }, { name: "魔尼尼", name_en: "Mime Jr.", type: "超能力", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Ultra 1" },
-          { name: "毛頭小鷹", name_en: "Rufflet", type: "飛行", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Great 3" }, { name: "古月鳥", name_en: "Cramorant", type: "飛行", s1: "Ultra 3", s2: "Master 2", s3: "Master 8", s4: "Master 3" },
-          { name: "大蔥鴨", name_en: "Farfetch'd", type: "飛行", s1: "Ultra 5", s2: "Master 4", s3: "Master 10", s4: "Master 5" }, { name: "波加曼", name_en: "Piplup", type: "水", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Great 3" },
-          { name: "波皇子", name_en: "Prinplup", type: "水", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Ultra 4" }, { name: "帝王拿波", name_en: "Empoleon", type: "鋼", s1: "Master 4", s2: "Master 8", s3: "Master 14", s4: "Master 9" },
-          { name: "摔角鷹人", name_en: "Hawlucha", type: "飛行", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" },
-        ],
       }
-    },
+  };
+
+  // --- 8B. 一般島嶼資料庫 (Standard Research Islands Data: Taupe ~ Amber) ---
+  const ISLANDS_STD_DATA = [
     {
       id: "taupe",
       name: "灰褐洞窟",
@@ -5456,6 +5304,191 @@
         ],
       }
     }
+  ];
+
+  // --- 8C. 7大研究島嶼營地總表與睡姿目標 (Research Camps Config & Goals) ---
+  const ISLANDS_DATA = [
+    {
+      id: "greengrass",
+      name: "萌綠之島",
+      name_en: "Greengrass Isle",
+      image: "https://www.serebii.net/pokemonsleep/locations/greengrassisle.jpg",
+      imageScene: "assets/islands/hd/greengrass.jpg",
+      badgeColor: "#22c55e",
+      unlockGoal: 0,
+      unlockGoalText: "初始營地 (0種睡姿)",
+      unlockGoalText_en: "Starting Camp (0 Styles)",
+      snorlaxMultiplier: "1.0x",
+      berriesMode: "random",
+      berriesDesc: "每週自18種樹果中隨機指定3種",
+      berriesDesc_en: "Random 3 Berries chosen weekly from all 18 types",
+      favoriteBerries: [],
+      favoriteTypes: [],
+      hasExpertMode: true,
+      expertMode: ISLAND_EXPERT_MODES.greengrass,
+      snorlaxEnergyTiers: [{ rank: "Basic 1", energy: 0 }, { rank: "Great 1", energy: 23385 }, { rank: "Ultra 1", energy: 79197 }, { rank: "Master 1", energy: 187832 }, { rank: "Master 5", energy: 321146 }, { rank: "Master 10", energy: 532707 }, { rank: "Master 15", energy: 1199506 }, { rank: "Master 20", energy: 3245795 }],
+      fullRankEnergyTiers: [{ rank: "Basic 1", energy: 0 }, { rank: "Basic 2", energy: 3118 }, { rank: "Basic 3", energy: 7171 }, { rank: "Basic 4", energy: 11693 }, { rank: "Basic 5", energy: 17149 }, { rank: "Great 1", energy: 23385 }, { rank: "Great 2", energy: 31492 }, { rank: "Great 3", energy: 41314 }, { rank: "Great 4", energy: 53006 }, { rank: "Great 5", energy: 65634 }, { rank: "Ultra 1", energy: 79197 }, { rank: "Ultra 2", energy: 93540 }, { rank: "Ultra 3", energy: 109130 }, { rank: "Ultra 4", energy: 125032 }, { rank: "Ultra 5", energy: 156121 }, { rank: "Master 1", energy: 187832 }, { rank: "Master 2", energy: 220177 }, { rank: "Master 3", energy: 253169 }, { rank: "Master 4", energy: 286821 }, { rank: "Master 5", energy: 321146 }, { rank: "Master 6", energy: 356158 }, { rank: "Master 7", energy: 391870 }, { rank: "Master 8", energy: 428296 }, { rank: "Master 9", energy: 465451 }, { rank: "Master 10", energy: 532707 }, { rank: "Master 11", energy: 601308 }, { rank: "Master 12", energy: 742056 }, { rank: "Master 13", energy: 885619 }, { rank: "Master 14", energy: 1029700 }, { rank: "Master 15", energy: 1199506 }, { rank: "Master 16", energy: 1486800 }, { rank: "Master 17", energy: 1795052 }, { rank: "Master 18", energy: 2165541 }, { rank: "Master 19", energy: 2604280 }, { rank: "Master 20", energy: 3245795 }],
+      drowsyPowerSpawns: [{ count: 3, power: "0+" }, { count: 4, power: "920,000" }, { count: 5, power: "2,060,000" }, { count: 6, power: "4,500,000" }, { count: 7, power: "8,320,000" }, { count: 8, power: "19,500,000" }],
+      spawns: {
+        dozing: [
+          { name: "妙蛙種子", name_en: "Bulbasaur", type: "草", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "妙蛙草", name_en: "Ivysaur", type: "草", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
+          { name: "妙蛙花", name_en: "Venusaur", type: "草", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" }, { name: "綠毛蟲", name_en: "Caterpie", type: "蟲", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
+          { name: "鐵甲蛹", name_en: "Metapod", type: "蟲", s1: "Great 1", s2: "Great 5", s3: "Master 1", s4: "Ultra 1" }, { name: "巴大蝶", name_en: "Butterfree", type: "蟲", s1: "Ultra 5", s2: "Master 4", s3: "Master 10", s4: "Master 5" },
+          { name: "阿柏蛇", name_en: "Ekans", type: "毒", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" }, { name: "阿柏怪", name_en: "Arbok", type: "毒", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
+          { name: "可達鴨", name_en: "Psyduck", type: "水", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "猴怪", name_en: "Mankey", type: "格鬥", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
+          { name: "火爆猴", name_en: "Primeape", type: "格鬥", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" }, { name: "喇叭芽", name_en: "Bellsprout", type: "草", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
+          { name: "口呆花", name_en: "Weepinbell", type: "草", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Ultra 2" }, { name: "大食花", name_en: "Victreebel", type: "草", s1: "Master 2", s2: "Master 6", s3: "-", s4: "Master 7" },
+          { name: "鬼斯", name_en: "Gastly", type: "幽靈", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "-" }, { name: "鬼斯通", name_en: "Haunter", type: "幽靈", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "-" },
+          { name: "凱羅斯", name_en: "Pinsir", type: "蟲", s1: "Ultra 2", s2: "Master 1", s3: "Master 7", s4: "Master 2" }, { name: "菊草葉", name_en: "Chikorita", type: "草", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" },
+          { name: "月桂葉", name_en: "Bayleef", type: "草", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" }, { name: "大竺葵", name_en: "Meganium", type: "草", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" },
+          { name: "烏波 (帕底亞的樣子)", name_en: "Paldean Wooper", type: "毒", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Master 1" }, { name: "月亮伊布", name_en: "Umbreon", type: "惡", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" },
+          { name: "黑暗鴉", name_en: "Murkrow", type: "惡", s1: "Ultra 1", s2: "Ultra 5", s3: "-", s4: "Master 1" }, { name: "壺壺", name_en: "Shuckle", type: "蟲", s1: "Master 4", s2: "Master 8", s3: "-", s4: "Master 9" },
+          { name: "赫拉克羅斯", name_en: "Heracross", type: "蟲", s1: "Ultra 2", s2: "Master 1", s3: "Master 7", s4: "Master 2" }, { name: "狃拉", name_en: "Sneasel", type: "惡", s1: "Ultra 1", s2: "Ultra 5", s3: "-", s4: "Master 1" },
+          { name: "信使鳥", name_en: "Delibird", type: "飛行", s1: "Ultra 3", s2: "Master 2", s3: "Master 8", s4: "Master 3" }, { name: "戴魯比", name_en: "Houndour", type: "惡", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" },
+          { name: "木守宮", name_en: "Treecko", type: "草", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "森林蜥蜴", name_en: "Grovyle", type: "草", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
+          { name: "蜥蜴王", name_en: "Sceptile", type: "草", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "過動猿", name_en: "Vigoroth", type: "一般", s1: "Great 3", s2: "Ultra 2", s3: "-", s4: "Ultra 3" },
+          { name: "溶食獸", name_en: "Gulpin", type: "毒", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "吞食獸", name_en: "Swalot", type: "毒", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Ultra 2" },
+          { name: "怨影娃娃", name_en: "Shuppet", type: "幽靈", s1: "Great 1", s2: "Great 5", s3: "-", s4: "-" }, { name: "詛咒娃娃", name_en: "Banette", type: "幽靈", s1: "Ultra 5", s2: "Master 4", s3: "-", s4: "Master 5" },
+          { name: "阿勃梭魯", name_en: "Absol", type: "惡", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" }, { name: "拉帝亞斯", name_en: "Latias", type: "龍", s1: "Master 9", s2: "Master 13", s3: "Master 19", s4: "-" },
+          { name: "拉帝歐斯", name_en: "Latios", type: "龍", s1: "Master 9", s2: "Master 13", s3: "Master 19", s4: "-" }, { name: "飄飄球", name_en: "Drifloon", type: "幽靈", s1: "Great 3", s2: "Ultra 2", s3: "-", s4: "-" },
+          { name: "烏鴉頭頭", name_en: "Honchkrow", type: "惡", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "花岩怪", name_en: "Spiritomb", type: "惡", s1: "Master 4", s2: "Master 8", s3: "-", s4: "Master 9" },
+          { name: "不良蛙", name_en: "Croagunk", type: "毒", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" }, { name: "毒骷蛙", name_en: "Toxicroak", type: "毒", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Ultra 2" },
+          { name: "瑪狃拉", name_en: "Weavile", type: "惡", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "葉伊布", name_en: "Leafeon", type: "草", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" },
+          { name: "南瓜精", name_en: "Pumpkaboo", type: "幽靈", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Master 1" }, { name: "南瓜怪人", name_en: "Gourgeist", type: "幽靈", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" },
+          { name: "嗡蝠", name_en: "Noibat", type: "龍", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "音波龍", name_en: "Noivern", type: "龍", s1: "Ultra 4", s2: "Master 3", s3: "-", s4: "Master 4" },
+          { name: "謎擬Q", name_en: "Mimikyu", type: "幽靈", s1: "Master 2", s2: "Master 6", s3: "-", s4: "Master 7" }, { name: "老翁龍", name_en: "Drampa", type: "龍", s1: "Master 4", s2: "Master 8", s3: "-", s4: "Master 9" },
+          { name: "顫弦蠑螈 (高調的樣子)", name_en: "Toxtricity Amped Form", type: "毒", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "顫弦蠑螈 (低調的樣子)", name_en: "Toxtricity Low Key Form", type: "毒", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" },
+          { name: "新葉喵", name_en: "Sprigatito", type: "草", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "蒂蕾喵", name_en: "Floragato", type: "草", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
+          { name: "魔幻假面喵", name_en: "Meowscarada", type: "惡", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "土王", name_en: "Clodsire", type: "毒", s1: "Master 2", s2: "Master 6", s3: "-", s4: "Master 7" },
+          { name: "哎呀球菇", name_en: "Foongus", type: "毒", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "敗露球菇", name_en: "Amoonguss", type: "毒", s1: "Ultra 4", s2: "Master 3", s3: "-", s4: "Master 4" },
+          { name: "夢妖", name_en: "Misdreavus", type: "幽靈", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "-" }, { name: "夢妖魔", name_en: "Mismagius", type: "幽靈", s1: "Master 8", s2: "Master 12", s3: "-", s4: "-" },
+          { name: "草苗龜", name_en: "Turtwig", type: "草", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "樹林龜", name_en: "Grotle", type: "草", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
+        ],
+        snoozing: [
+          { name: "小火龍", name_en: "Charmander", type: "火", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "火恐龍", name_en: "Charmeleon", type: "火", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
+          { name: "噴火龍", name_en: "Charizard", type: "火", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" }, { name: "小拉達", name_en: "Rattata", type: "一般", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
+          { name: "拉達", name_en: "Raticate", type: "一般", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" }, { name: "皮卡丘", name_en: "Pikachu", type: "電", s1: "Basic 3", s2: "Great 2", s3: "-", s4: "Great 3" },
+          { name: "雷丘", name_en: "Raichu", type: "電", s1: "Master 4", s2: "Master 8", s3: "Master 14", s4: "Master 9" }, { name: "皮皮", name_en: "Clefairy", type: "妖精", s1: "Basic 4", s2: "Great 3", s3: "-", s4: "Ultra 1" },
+          { name: "皮可西", name_en: "Clefable", type: "妖精", s1: "Master 3", s2: "Master 7", s3: "-", s4: "Master 8" }, { name: "六尾", name_en: "Vulpix", type: "火", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Master 1" },
+          { name: "九尾", name_en: "Ninetales", type: "火", s1: "Master 1", s2: "Master 5", s3: "-", s4: "Master 6" }, { name: "胖丁", name_en: "Jigglypuff", type: "妖精", s1: "Basic 4", s2: "Great 3", s3: "-", s4: "Great 4" },
+          { name: "胖可丁", name_en: "Wigglytuff", type: "妖精", s1: "Master 2", s2: "Master 6", s3: "-", s4: "Master 7" }, { name: "地鼠", name_en: "Diglett", type: "地面", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "-" },
+          { name: "三地鼠", name_en: "Dugtrio", type: "地面", s1: "Great 5", s2: "Ultra 4", s3: "-", s4: "-" }, { name: "喵喵", name_en: "Meowth", type: "一般", s1: "Basic 2", s2: "Great 1", s3: "Ultra 2", s4: "Great 2" },
+          { name: "貓老大", name_en: "Persian", type: "一般", s1: "Ultra 1", s2: "Ultra 5", s3: "Master 6", s4: "Master 1" }, { name: "卡蒂狗", name_en: "Growlithe", type: "火", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" },
+          { name: "呆呆獸", name_en: "Slowpoke", type: "水", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Ultra 1" }, { name: "呆殼獸", name_en: "Slowbro", type: "水", s1: "Ultra 1", s2: "Ultra 5", s3: "-", s4: "Master 1" },
+          { name: "吉利蛋", name_en: "Chansey", type: "一般", s1: "Ultra 5", s2: "Master 4", s3: "-", s4: "Master 5" }, { name: "袋獸", name_en: "Kangaskhan", type: "一般", s1: "Ultra 2", s2: "Master 1", s3: "Master 7", s4: "Master 2" },
+          { name: "百變怪", name_en: "Ditto", type: "一般", s1: "Great 5", s2: "Ultra 4", s3: "Master 5", s4: "Ultra 5" }, { name: "伊布", name_en: "Eevee", type: "一般", s1: "Basic 4", s2: "Great 3", s3: "-", s4: "Great 4" },
+          { name: "雷伊布", name_en: "Jolteon", type: "電", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" }, { name: "火伊布", name_en: "Flareon", type: "火", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" },
+          { name: "火球鼠", name_en: "Cyndaquil", type: "火", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "火岩鼠", name_en: "Quilava", type: "火", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
+          { name: "火爆獸", name_en: "Typhlosion", type: "火", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" }, { name: "波克基古", name_en: "Togetic", type: "妖精", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
+          { name: "天然雀", name_en: "Natu", type: "超能力", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "天然鳥", name_en: "Xatu", type: "超能力", s1: "Ultra 4", s2: "Master 3", s3: "-", s4: "Master 4" },
+          { name: "咩利羊", name_en: "Mareep", type: "電", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" }, { name: "茸茸羊", name_en: "Flaaffy", type: "電", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Ultra 2" },
+          { name: "太陽伊布", name_en: "Espeon", type: "超能力", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" }, { name: "果然翁", name_en: "Wobbuffet", type: "超能力", s1: "Basic 4", s2: "Great 3", s3: "-", s4: "Ultra 1" },
+          { name: "幸福蛋", name_en: "Blissey", type: "一般", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "雷公", name_en: "Raikou", type: "電", s1: "Master 9", s2: "Master 13", s3: "Master 19", s4: "-" },
+          { name: "炎帝", name_en: "Entei", type: "火", s1: "Master 9", s2: "Master 13", s3: "Master 19", s4: "-" }, { name: "火稚雞", name_en: "Torchic", type: "火", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
+          { name: "懶人獺", name_en: "Slakoth", type: "一般", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Ultra 1" }, { name: "請假王", name_en: "Slaking", type: "一般", s1: "Master 7", s2: "Master 11", s3: "Master 17", s4: "Master 12" },
+          { name: "正電拍拍", name_en: "Plusle", type: "電", s1: "Ultra 5", s2: "Master 4", s3: "-", s4: "Master 5" }, { name: "負電拍拍", name_en: "Minun", type: "電", s1: "Ultra 5", s2: "Master 4", s3: "-", s4: "Master 5" },
+          { name: "波克基斯", name_en: "Togekiss", type: "妖精", s1: "Master 6", s2: "Master 10", s3: "Master 16", s4: "Master 11" }, { name: "克雷色利亞", name_en: "Cresselia", type: "超能力", s1: "Master 9", s2: "Master 13", s3: "Master 19", s4: "-" },
+          { name: "食夢夢", name_en: "Munna", type: "超能力", s1: "Great 1", s2: "Great 5", s3: "-", s4: "-" }, { name: "夢夢蝕", name_en: "Musharna", type: "超能力", s1: "Master 7", s2: "Master 11", s3: "-", s4: "-" },
+          { name: "仙子伊布", name_en: "Sylveon", type: "妖精", s1: "Master 3", s2: "Master 7", s3: "Master 13", s4: "Master 8" }, { name: "咚咚鼠", name_en: "Dedenne", type: "電", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
+          { name: "萌虻", name_en: "Cutiefly", type: "妖精", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "蝶結萌虻", name_en: "Ribombee", type: "妖精", s1: "Ultra 4", s2: "Master 3", s3: "-", s4: "Master 4" },
+          { name: "花療環環", name_en: "Comfey", type: "妖精", s1: "Ultra 3", s2: "Master 2", s3: "Master 8", s4: "Master 3" }, { name: "呆火鱷", name_en: "Fuecoco", type: "火", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
+          { name: "布撥", name_en: "Pawmi", type: "電", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "小鍛匠", name_en: "Tinkatink", type: "妖精", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
+          { name: "巧鍛匠", name_en: "Tinkatuff", type: "妖精", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" }, { name: "巨鍛匠", name_en: "Tinkaton", type: "妖精", s1: "Master 7", s2: "Master 11", s3: "-", s4: "-" },
+          { name: "超夢", name_en: "Mewtwo", type: "超能力", s1: "Master 10", s2: "Master 14", s3: "Master 20", s4: "-" }, { name: "小火焰猴", name_en: "Chimchar", type: "火", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
+          { name: "木棉球", name_en: "Cottonee", type: "妖精", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Ultra 2" }, { name: "風妖精", name_en: "Whimsicott", type: "妖精", s1: "Master 8", s2: "Master 12", s3: "-", s4: "Master 13" },
+        ],
+        slumbering: [
+          { name: "傑尼龜", name_en: "Squirtle", type: "水", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "卡咪龜", name_en: "Wartortle", type: "水", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
+          { name: "水箭龜", name_en: "Blastoise", type: "水", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" }, { name: "穿山鼠", name_en: "Sandshrew", type: "地面", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
+          { name: "穿山王", name_en: "Sandslash", type: "地面", s1: "Ultra 4", s2: "Master 3", s3: "-", s4: "Master 4" }, { name: "小拳石", name_en: "Geodude", type: "岩石", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
+          { name: "隆隆石", name_en: "Graveler", type: "岩石", s1: "Great 3", s2: "Ultra 2", s3: "-", s4: "Ultra 3" }, { name: "小磁怪", name_en: "Magnemite", type: "鋼", s1: "Basic 1", s2: "Basic 5", s3: "Ultra 1", s4: "-" },
+          { name: "三合一磁怪", name_en: "Magneton", type: "鋼", s1: "Great 2", s2: "Ultra 1", s3: "Master 2", s4: "-" }, { name: "嘟嘟", name_en: "Doduo", type: "飛行", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
+          { name: "嘟嘟利", name_en: "Dodrio", type: "飛行", s1: "Great 5", s2: "Ultra 4", s3: "-", s4: "Ultra 5" }, { name: "卡拉卡拉", name_en: "Cubone", type: "地面", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
+          { name: "嘎啦嘎啦", name_en: "Marowak", type: "地面", s1: "Great 2", s2: "Ultra 1", s3: "-", s4: "Ultra 2" }, { name: "水伊布", name_en: "Vaporeon", type: "水", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" },
+          { name: "小鋸鱷", name_en: "Totodile", type: "水", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Great 2" }, { name: "藍鱷", name_en: "Croconaw", type: "水", s1: "Great 4", s2: "Ultra 3", s3: "-", s4: "Ultra 4" },
+          { name: "大力鱷", name_en: "Feraligatr", type: "水", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" }, { name: "皮丘", name_en: "Pichu", type: "電", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
+          { name: "皮寶寶", name_en: "Cleffa", type: "妖精", s1: "Basic 2", s2: "Great 1", s3: "-", s4: "Ultra 1" }, { name: "寶寶丁", name_en: "Igglybuff", type: "妖精", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
+          { name: "波克比", name_en: "Togepi", type: "妖精", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" }, { name: "樹才怪", name_en: "Sudowoodo", type: "岩石", s1: "Basic 3", s2: "Great 2", s3: "-", s4: "Ultra 1" },
+          { name: "烏波", name_en: "Wooper", type: "水", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "沼王", name_en: "Quagsire", type: "水", s1: "Master 1", s2: "Master 5", s3: "-", s4: "Master 6" },
+          { name: "水君", name_en: "Suicune", type: "水", s1: "Master 9", s2: "Master 13", s3: "Master 19", s4: "-" }, { name: "幼基拉斯", name_en: "Larvitar", type: "岩石", s1: "Basic 4", s2: "Great 3", s3: "-", s4: "Great 4" },
+          { name: "力壯雞", name_en: "Combusken", type: "格鬥", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" }, { name: "火焰雞", name_en: "Blaziken", type: "格鬥", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" },
+          { name: "水躍魚", name_en: "Mudkip", type: "水", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "沼躍魚", name_en: "Marshtomp", type: "地面", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
+          { name: "巨沼怪", name_en: "Swampert", type: "地面", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "大嘴娃", name_en: "Mawile", type: "鋼", s1: "Master 3", s2: "Master 7", s3: "-", s4: "Master 8" },
+          { name: "青綿鳥", name_en: "Swablu", type: "飛行", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" }, { name: "小果然", name_en: "Wynaut", type: "超能力", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
+          { name: "海豹球", name_en: "Spheal", type: "冰", s1: "Basic 1", s2: "Basic 5", s3: "Ultra 1", s4: "Great 1" }, { name: "盆才怪", name_en: "Bonsly", type: "岩石", s1: "Basic 1", s2: "Basic 5", s3: "-", s4: "Great 1" },
+          { name: "小福蛋", name_en: "Happiny", type: "一般", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "利歐路", name_en: "Riolu", type: "格鬥", s1: "Basic 3", s2: "Great 2", s3: "-", s4: "Great 3" },
+          { name: "自爆磁怪", name_en: "Magnezone", type: "鋼", s1: "Master 7", s2: "Master 11", s3: "Master 17", s4: "-" }, { name: "冰伊布", name_en: "Glaceon", type: "冰", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" },
+          { name: "毛頭小鷹", name_en: "Rufflet", type: "飛行", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "勇士雄鷹", name_en: "Braviary", type: "飛行", s1: "Ultra 4", s2: "Master 3", s3: "Master 9", s4: "Master 4" },
+          { name: "寶寶暴龍", name_en: "Tyrunt", type: "岩石", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "怪顎龍", name_en: "Tyrantrum", type: "岩石", s1: "Master 7", s2: "Master 11", s3: "-", s4: "-" },
+          { name: "托戈德瑪爾", name_en: "Togedemaru", type: "鋼", s1: "Master 4", s2: "Master 8", s3: "-", s4: "Master 9" }, { name: "古月鳥", name_en: "Cramorant", type: "飛行", s1: "Master 1", s2: "Master 5", s3: "Master 11", s4: "Master 6" },
+          { name: "毒電嬰", name_en: "Toxel", type: "毒", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" }, { name: "潤水鴨", name_en: "Quaxly", type: "水", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
+          { name: "走鯨", name_en: "Cetoddle", type: "冰", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Master 1" }, { name: "大蔥鴨", name_en: "Farfetch'd", type: "飛行", s1: "Master 3", s2: "Master 7", s3: "-", s4: "Master 8" },
+          { name: "土台龜", name_en: "Torterra", type: "地面", s1: "Master 7", s2: "Master 11", s3: "-", s4: "-" }, { name: "猛火猴", name_en: "Monferno", type: "格鬥", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" },
+          { name: "烈焰猴", name_en: "Infernape", type: "格鬥", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" }, { name: "波加曼", name_en: "Piplup", type: "水", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
+          { name: "波皇子", name_en: "Prinplup", type: "水", s1: "Ultra 2", s2: "Master 1", s3: "-", s4: "Master 2" }, { name: "帝王拿波", name_en: "Empoleon", type: "鋼", s1: "Master 7", s2: "Master 11", s3: "-", s4: "Master 12" },
+          { name: "摔角鷹人", name_en: "Hawlucha", type: "飛行", s1: "Master 5", s2: "Master 9", s3: "-", s4: "Master 10" },
+        ],
+      }
+    },
+    {
+      id: "cyan",
+      name: "天青沙灘",
+      name_en: "Cyan Beach",
+      image: "https://www.serebii.net/pokemonsleep/locations/cyanbeach.jpg",
+      imageScene: "assets/islands/hd/cyan.jpg",
+      badgeColor: "#06b6d4",
+      unlockGoal: 20,
+      unlockGoalText: "登錄 20 種睡姿",
+      unlockGoalText_en: "20 Sleep Styles",
+      snorlaxMultiplier: "1.25x",
+      berriesMode: "fixed",
+      favoriteBerries: ["橙橙果","椰木果","桃桃果"],
+      favoriteTypes: ["水","飛行","妖精"],
+      hasExpertMode: true,
+      expertMode: ISLAND_EXPERT_MODES.cyan,
+      snorlaxEnergyTiers: [{ rank: "Basic 1", energy: 0 }, { rank: "Great 1", energy: 36164 }, { rank: "Ultra 1", energy: 122474 }, { rank: "Master 1", energy: 256544 }, { rank: "Master 5", energy: 420363 }, { rank: "Master 10", energy: 735875 }, { rank: "Master 15", energy: 1379432 }, { rank: "Master 20", energy: 3732664 }],
+      fullRankEnergyTiers: [{ rank: "Basic 1", energy: 0 }, { rank: "Basic 2", energy: 4822 }, { rank: "Basic 3", energy: 11090 }, { rank: "Basic 4", energy: 18082 }, { rank: "Basic 5", energy: 26520 }, { rank: "Great 1", energy: 36164 }, { rank: "Great 2", energy: 48700 }, { rank: "Great 3", energy: 63889 }, { rank: "Great 4", energy: 81971 }, { rank: "Great 5", energy: 101499 }, { rank: "Ultra 1", energy: 122474 }, { rank: "Ultra 2", energy: 144654 }, { rank: "Ultra 3", energy: 168763 }, { rank: "Ultra 4", energy: 195283 }, { rank: "Ultra 5", energy: 224455 }, { rank: "Master 1", energy: 256544 }, { rank: "Master 2", energy: 291842 }, { rank: "Master 3", energy: 330670 }, { rank: "Master 4", energy: 373381 }, { rank: "Master 5", energy: 420363 }, { rank: "Master 6", energy: 472043 }, { rank: "Master 7", energy: 528891 }, { rank: "Master 8", energy: 591424 }, { rank: "Master 9", energy: 660210 }, { rank: "Master 10", energy: 735875 }, { rank: "Master 11", energy: 819107 }, { rank: "Master 12", energy: 910662 }, { rank: "Master 13", energy: 1018462 }, { rank: "Master 14", energy: 1184155 }, { rank: "Master 15", energy: 1379432 }, { rank: "Master 16", energy: 1709820 }, { rank: "Master 17", energy: 2064310 }, { rank: "Master 18", energy: 2490372 }, { rank: "Master 19", energy: 2994922 }, { rank: "Master 20", energy: 3732664 }],
+      drowsyPowerSpawns: [{ count: 3, power: "0+" }, { count: 4, power: "1,574,330" }, { count: 5, power: "3,511,234" }, { count: 6, power: "7,162,381" }, { count: 7, power: "13,488,264" }, { count: 8, power: "30,491,710" }],
+      spawns: {
+        dozing: [
+          { name: "綠毛蟲", name_en: "Caterpie", type: "蟲", s1: "Basic 1", s2: "Basic 2", s3: "Great 3", s4: "Great 1" }, { name: "可達鴨", name_en: "Psyduck", type: "水", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Great 1" },
+          { name: "喇叭芽", name_en: "Bellsprout", type: "草", s1: "Basic 1", s2: "Basic 2", s3: "Great 3", s4: "Great 1" }, { name: "凱羅斯", name_en: "Pinsir", type: "蟲", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Ultra 4" },
+          { name: "壺壺", name_en: "Shuckle", type: "蟲", s1: "Master 1", s2: "Master 5", s3: "Master 11", s4: "Master 6" }, { name: "赫拉克羅斯", name_en: "Heracross", type: "蟲", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Ultra 4" },
+          { name: "木守宮", name_en: "Treecko", type: "草", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Great 3" }, { name: "森林蜥蜴", name_en: "Grovyle", type: "草", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Ultra 4" },
+          { name: "蜥蜴王", name_en: "Sceptile", type: "草", s1: "Master 4", s2: "Master 8", s3: "Master 14", s4: "Master 9" }, { name: "溶食獸", name_en: "Gulpin", type: "毒", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Great 1" },
+          { name: "不良蛙", name_en: "Croagunk", type: "毒", s1: "Basic 1", s2: "Basic 2", s3: "Great 3", s4: "Great 1" }, { name: "毒骷蛙", name_en: "Toxicroak", type: "毒", s1: "Basic 4", s2: "Great 3", s3: "Ultra 4", s4: "Great 4" },
+          { name: "骨紋巨聲鱷", name_en: "Skeledirge", type: "幽靈", s1: "Master 4", s2: "Master 8", s3: "Master 14", s4: "Master 9" },
+        ],
+        snoozing: [
+          { name: "皮卡丘", name_en: "Pikachu", type: "電", s1: "Basic 1", s2: "Basic 4", s3: "Great 5", s4: "Great 1" }, { name: "皮皮", name_en: "Clefairy", type: "妖精", s1: "Basic 1", s2: "Basic 5", s3: "Ultra 1", s4: "Ultra 1" },
+          { name: "皮可西", name_en: "Clefable", type: "妖精", s1: "Ultra 5", s2: "Master 4", s3: "Master 10", s4: "Master 6" }, { name: "胖丁", name_en: "Jigglypuff", type: "妖精", s1: "Basic 1", s2: "Basic 5", s3: "Ultra 1", s4: "Great 1" },
+          { name: "胖可丁", name_en: "Wigglytuff", type: "妖精", s1: "Ultra 4", s2: "Master 3", s3: "Master 9", s4: "Master 4" }, { name: "呆呆獸", name_en: "Slowpoke", type: "水", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Ultra 1" },
+          { name: "呆殼獸", name_en: "Slowbro", type: "水", s1: "Great 3", s2: "Ultra 2", s3: "Master 3", s4: "Ultra 3" }, { name: "袋獸", name_en: "Kangaskhan", type: "一般", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Master 1" },
+          { name: "魔牆人偶", name_en: "Mr. Mime", type: "超能力", s1: "Basic 5", s2: "Great 4", s3: "Ultra 5", s4: "Master 1" }, { name: "百變怪", name_en: "Ditto", type: "一般", s1: "Great 2", s2: "Ultra 1", s3: "Master 2", s4: "Ultra 2" },
+          { name: "伊布", name_en: "Eevee", type: "一般", s1: "Basic 1", s2: "Basic 5", s3: "Ultra 1", s4: "Great 1" }, { name: "呆呆王", name_en: "Slowking", type: "水", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" },
+          { name: "萌虻", name_en: "Cutiefly", type: "妖精", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Great 3" }, { name: "蝶結萌虻", name_en: "Ribombee", type: "妖精", s1: "Ultra 1", s2: "Ultra 5", s3: "Master 6", s4: "Master 1" },
+          { name: "花療環環", name_en: "Comfey", type: "妖精", s1: "Great 5", s2: "Ultra 4", s3: "Master 5", s4: "Master 1" }, { name: "呆火鱷", name_en: "Fuecoco", type: "火", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Ultra 1" },
+          { name: "炙燙鱷", name_en: "Crocalor", type: "火", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Master 1" }, { name: "小鍛匠", name_en: "Tinkatink", type: "妖精", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Great 3" },
+          { name: "巧鍛匠", name_en: "Tinkatuff", type: "妖精", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Master 1" }, { name: "巨鍛匠", name_en: "Tinkaton", type: "妖精", s1: "Master 4", s2: "Master 8", s3: "Master 14", s4: "-" },
+          { name: "木棉球", name_en: "Cottonee", type: "妖精", s1: "Basic 4", s2: "Great 3", s3: "Ultra 4", s4: "Great 4" }, { name: "風妖精", name_en: "Whimsicott", type: "妖精", s1: "Master 5", s2: "Master 9", s3: "Master 15", s4: "Master 10" },
+        ],
+        slumbering: [
+          { name: "傑尼龜", name_en: "Squirtle", type: "水", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Great 1" }, { name: "卡咪龜", name_en: "Wartortle", type: "水", s1: "Great 1", s2: "Great 5", s3: "Master 1", s4: "Ultra 1" },
+          { name: "水箭龜", name_en: "Blastoise", type: "水", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" }, { name: "哥達鴨", name_en: "Golduck", type: "水", s1: "Great 2", s2: "Ultra 1", s3: "Master 2", s4: "Ultra 2" },
+          { name: "水伊布", name_en: "Vaporeon", type: "水", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" }, { name: "小鋸鱷", name_en: "Totodile", type: "水", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Great 1" },
+          { name: "藍鱷", name_en: "Croconaw", type: "水", s1: "Great 1", s2: "Great 5", s3: "Master 1", s4: "Ultra 1" }, { name: "大力鱷", name_en: "Feraligatr", type: "水", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" },
+          { name: "皮寶寶", name_en: "Cleffa", type: "妖精", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Ultra 1" }, { name: "寶寶丁", name_en: "Igglybuff", type: "妖精", s1: "Basic 1", s2: "Basic 2", s3: "Great 3", s4: "Great 1" },
+          { name: "樹才怪", name_en: "Sudowoodo", type: "岩石", s1: "Basic 1", s2: "Basic 4", s3: "Great 5", s4: "Ultra 1" }, { name: "烏波", name_en: "Wooper", type: "水", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Ultra 1" },
+          { name: "沼王", name_en: "Quagsire", type: "水", s1: "Ultra 3", s2: "Master 2", s3: "Master 8", s4: "Master 3" }, { name: "水君", name_en: "Suicune", type: "水", s1: "Master 6", s2: "Master 10", s3: "Master 16", s4: "-" },
+          { name: "盆才怪", name_en: "Bonsly", type: "岩石", s1: "Basic 1", s2: "Basic 2", s3: "Great 3", s4: "Great 1" }, { name: "魔尼尼", name_en: "Mime Jr.", type: "超能力", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Ultra 1" },
+          { name: "毛頭小鷹", name_en: "Rufflet", type: "飛行", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Great 3" }, { name: "古月鳥", name_en: "Cramorant", type: "飛行", s1: "Ultra 3", s2: "Master 2", s3: "Master 8", s4: "Master 3" },
+          { name: "大蔥鴨", name_en: "Farfetch'd", type: "飛行", s1: "Ultra 5", s2: "Master 4", s3: "Master 10", s4: "Master 5" }, { name: "波加曼", name_en: "Piplup", type: "水", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Great 3" },
+          { name: "波皇子", name_en: "Prinplup", type: "水", s1: "Great 4", s2: "Ultra 3", s3: "Master 4", s4: "Ultra 4" }, { name: "帝王拿波", name_en: "Empoleon", type: "鋼", s1: "Master 4", s2: "Master 8", s3: "Master 14", s4: "Master 9" },
+          { name: "摔角鷹人", name_en: "Hawlucha", type: "飛行", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "Master 7" },
+        ],
+      }
+    },
+    ...ISLANDS_STD_DATA
   ];
 
   const STORAGE_KEY_ISLAND_ID = 'pksleep_active_island_id';
@@ -5904,7 +5937,7 @@
       layer = document.createElement('div');
       layer.className = 'island-scene-layer';
       layer.setAttribute('aria-hidden', 'true');
-      layer.innerHTML = '<img class="island-scene-photo" alt=""><div class="island-scene-fade"></div>';
+      layer.innerHTML = '<img class="island-scene-photo" width="2560" height="1372" decoding="async" alt=""><div class="island-scene-fade"></div>';
     }
     if (!layer) return null;
     if (host && layer.parentElement !== host && typeof host.insertBefore === 'function') {
@@ -6320,7 +6353,7 @@
         : isl.image;
       return `
         <button type="button" class="island-tab-btn ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', false)" title="${islName}" aria-label="${islName}">
-          <img src="${thumbSrc}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
+          <img src="${thumbSrc}" class="island-tab-thumb" alt="${islName}" width="48" height="48" loading="lazy" decoding="async" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
           <span class="island-tab-indicator"></span>
         </button>
       `;
@@ -6337,7 +6370,7 @@
       return `
         <button type="button" class="island-tab-btn island-tab-ex-item ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', true)" title="${islName}" aria-label="${islName}">
           <div class="island-tab-thumb-wrapper">
-            <img src="${thumbSrc}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
+            <img src="${thumbSrc}" class="island-tab-thumb" alt="${islName}" width="48" height="48" loading="lazy" decoding="async" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
             <span class="island-tab-ex-tag">EX</span>
           </div>
           <span class="island-tab-indicator"></span>
@@ -6370,7 +6403,7 @@
         const typeLabel = window.I18N?.getTypeName?.(rawType) || (window.I18N?.text?.(rawType) ?? rawType);
         return `
           <div class="island-berry-chip island-berry-icon-only" title="${displayName} (${typeLabel})">
-            ${iconSrc ? `<img src="${iconSrc}" class="island-berry-icon" alt="${displayName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">` : ''}
+            ${iconSrc ? `<img src="${iconSrc}" class="island-berry-icon" alt="${displayName}" width="38" height="38" loading="lazy" decoding="async" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">` : ''}
           </div>
         `;
       }).join('');
@@ -6631,7 +6664,7 @@
           <tr data-sleep-type="${p.sleepType || ''}">
             <td style="vertical-align:middle; text-align:center; padding:3px 4px;">
               <div class="island-pkm-item island-pkm-icon-only" title="${tooltipText}">
-                <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${tooltipText}" loading="lazy" onerror="if(typeof handlePokemonIconError==='function'){handlePokemonIconError(this);}else{this.style.opacity='0.5';}">
+                <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${tooltipText}" width="32" height="32" loading="lazy" decoding="async" onerror="if(typeof handlePokemonIconError==='function'){handlePokemonIconError(this);}else{this.style.opacity='0.5';}">
               </div>
             </td>
             <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${renderIslandSleepCell(p, 1, p.s1)}</td>
@@ -6692,7 +6725,7 @@
     const heroIslandTitle = isExpert ? (getLocIslandName(island) + ' EX') : getLocIslandName(island);
     return `
       <div class="island-scene-layer" aria-hidden="true">
-        <img class="island-scene-photo" src="${sceneSrc}" alt="" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
+        <img class="island-scene-photo" src="${sceneSrc}" alt="" width="2560" height="1372" decoding="async" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
         <div class="island-scene-fade"></div>
       </div>
       <div class="island-nav-strip">
@@ -6812,7 +6845,7 @@
             <thead>
               <tr>
                 ${renderIslandSortTh('pokemon', `<span>${window.I18N?.t?.('wiki.ui_pkm_col') ?? '寶可夢'}</span>`, window.I18N?.t?.('wiki.ui_island_sort_pkm_title') ?? '點選依寶可夢編號排序 (降冪 -> 升冪 -> 回復預設)', 'width:70px; text-align:center;')}
-                ${[1, 2, 3, 4].map(star => renderIslandSortTh(`s${star}`, `<span class="sleep-star-label">${star}<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, window.I18N?.t?.('wiki.ui_island_sort_star_title', { star }) ?? `點選依 ${star} 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)`, 'text-align:center;')).join('')}
+                ${[1, 2, 3, 4].map(star => renderIslandSortTh(`s${star}`, `<span class="sleep-star-label">${star}<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" width="14" height="14" decoding="async" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, window.I18N?.t?.('wiki.ui_island_sort_star_title', { star }) ?? `點選依 ${star} 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)`, 'text-align:center;')).join('')}
               </tr>
             </thead>
             <tbody>
@@ -6856,8 +6889,11 @@
     }
   }
 
+  let _wikiModuleInitialized = false;
+
   // --- 初始化 Wiki 模組 ---
   function initWikiModule() {
+    _wikiModuleInitialized = true;
     loadPersistedBerrySettings();
     currentWikiSubTab = getSavedWikiSubTab();
     currentSkillsCategory = getSavedSkillsCategory();
@@ -6869,21 +6905,27 @@
     const wikiContainer = document.getElementById('panel-wiki');
     if (!wikiContainer) return;
 
-    try {
-      renderWikiLayout(wikiContainer);
-      bindWikiFloatingFabs();
-    } catch (e) {
-      console.error('Error rendering Wiki layout:', e);
-      if (typeof window.__renderInPlaceError === 'function') {
-        window.__renderInPlaceError('panel-wiki', window.I18N?.t?.('wiki.ui_layout_error') ?? '數據百科佈局渲染異常', e);
+    const alreadyRendered = !!(wikiContainer.dataset && wikiContainer.dataset.wikiInitDone === '1' && document.getElementById('wiki-subpanel-skills'));
+    if (!alreadyRendered) {
+      if (wikiContainer.dataset) wikiContainer.dataset.wikiInitDone = '1';
+      try {
+        renderWikiLayout(wikiContainer);
+        bindWikiFloatingFabs();
+      } catch (e) {
+        console.error('Error rendering Wiki layout:', e);
+        if (typeof window.__renderInPlaceError === 'function') {
+          window.__renderInPlaceError('panel-wiki', window.I18N?.t?.('wiki.ui_layout_error') ?? '數據百科佈局渲染異常', e);
+        }
       }
-    }
 
-    try {
-      bindAllEvents();
-      bindGlobalDelegationFallback();
-    } catch (e) {
-      console.error('Error binding Wiki events:', e);
+      try {
+        bindAllEvents();
+        bindGlobalDelegationFallback();
+      } catch (e) {
+        console.error('Error binding Wiki events:', e);
+      }
+    } else {
+      bindWikiFloatingFabs();
     }
 
     try { switchWikiSubTab(currentWikiSubTab); } catch (e) {}
@@ -6900,11 +6942,11 @@
     try { recalcSleepDays(); } catch (e) {}
     try {
       const ladderCanvas = document.getElementById('wiki-ingredient-ladder-coordinate') || document.getElementById('ladder-coordinate-canvas');
-      if (!ladderCanvas || !ladderCanvas.innerHTML) refreshCoordinateLadder();
+      if (ladderCanvas && !ladderCanvas.innerHTML) refreshCoordinateLadder();
     } catch (e) {}
     try {
       const berryCanvas = document.getElementById('berry-energy-grid') || document.getElementById('berry-ladder-canvas');
-      if (!berryCanvas || !berryCanvas.innerHTML) refreshBerryNodes();
+      if (berryCanvas && !berryCanvas.innerHTML) refreshBerryNodes();
     } catch (e) {}
   }
 
@@ -7070,7 +7112,7 @@
           const icon = window.I18N.getIngredientIcon(ingName);
           if (icon) {
             const displayName = window.I18N?.getIngredientName?.(ingName) ?? ingName;
-            const tag = `<img src="${icon}" class="ladder-note-ing-icon" alt="${displayName}" title="${displayName}">`;
+            const tag = `<img src="${icon}" class="ladder-note-ing-icon" alt="${displayName}" title="${displayName}" width="16" height="16" loading="lazy" decoding="async">`;
             translated = translated.split(matchToken).join(tag);
           }
         }
@@ -7105,6 +7147,367 @@
 
   let _coordLadderRenderCache = { key: '', html: '' };
 
+  function _renderWikiRatingsBody(caps, sleepExpTargetLevels) {
+    return `
+          <!-- 區塊 1: 核心養成週期指引 -->
+          <div class="wiki-section-heading">
+            <h3 class="wiki-section-title">${window.I18N?.t?.('wiki.ui_growth_title') ?? '新手與進階養成核心週期指引'}</h3>
+            <p class="wiki-section-subtitle">${window.I18N?.t?.('wiki.ui_growth_sub') ?? '掌握前期突破門檻,活力常駐加成與種子珍稀資源的養成核心思維.'}</p>
+          </div>
+          <div class="wiki-card wiki-strategy-card">
+            <div class="wiki-strategy-grid">
+              <div class="strategy-item strategy-early">
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-early">${window.I18N?.t?.('wiki.ui_early_badge') ?? '前期目標'}</span>
+                  <span class="strategy-title">${window.I18N?.t?.('wiki.ui_early_title') ?? '優先放置在 <span class="text-accent font-bold">Lv.30</span>'}</span>
+                </div>
+                <div class="strategy-desc">${window.I18N?.t?.('wiki.ui_early_desc') ?? '先看性格與 <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> 副技能,無課/微課約養成 <span class="text-warning font-bold">2~4個月</span>即可解鎖<span class="text-accent font-bold">第2種食材</span>,成為中流砥柱.'}</div>
+              </div>
+              <div class="strategy-item strategy-late">
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-late">${window.I18N?.t?.('wiki.ui_late_badge') ?? '後期投資'}</span>
+                  <span class="strategy-title">${window.I18N?.t?.('wiki.ui_late_title') ?? '慎選投入 <span class="text-accent font-bold">Lv.50~60</span>'}</span>
+                </div>
+                <div class="strategy-desc">${window.I18N?.t?.('wiki.ui_late_desc') ?? '確認副技能與性格皆達畢業級再投入大量糖果與<span class="text-warning font-bold">金種子</span>(約需 <span class="text-warning font-bold">5~10個月</span>養成時間).'}</div>
+              </div>
+              <div class="strategy-item strategy-energy">
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-energy">${window.I18N?.t?.('wiki.ui_energy_badge') ?? '活力核心'}</span>
+                  <span class="strategy-title">${window.I18N?.t?.('wiki.ui_energy_title') ?? '優先養成一隻主力補師'}</span>
+                </div>
+                <div class="strategy-desc">${window.I18N?.t?.('wiki.ui_energy_desc') ?? '全體活力維持在 <span class="text-success font-bold">80%以上</span>可享受 <span class="text-accent font-bold">約2.22倍 (間隔 0.45x)</span> 幫忙速度!建議先練:<span class="text-warning font-bold">胖可丁</span>,<span class="text-warning font-bold">仙子伊布</span>,<span class="text-warning font-bold">沙奈朵</span>,<span class="text-warning font-bold">巴布土撥</span>或<span class="text-warning font-bold">土台龜</span>.'}</div>
+              </div>
+              <div class="strategy-item strategy-seeds">
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-seeds">${window.I18N?.t?.('wiki.ui_seeds_badge') ?? '種子機制'}</span>
+                  <span class="strategy-title">${window.I18N?.t?.('wiki.ui_seeds_title') ?? '主技能與副技能種子規則'}</span>
+                </div>
+                <div class="strategy-desc">${window.I18N?.t?.('wiki.ui_seeds_desc') ?? '每次進化<span class="text-success font-bold">主技能+1</span>.副技能不能同時存在相同名稱技能(如已有S與M,則S無法再升階為M).'}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 區塊 2: 三大專長畢業評級榜 -->
+          <div class="wiki-section-heading" style="margin-top: 24px;">
+            <h3 class="wiki-section-title">${window.I18N?.t?.('wiki.ui_grad_title') ?? '三大專長畢業評級指南'}</h3>
+            <p class="wiki-section-subtitle">${window.I18N?.t?.('wiki.ui_grad_sub') ?? '樹果,食材,技能三大專長的頂級副技能與黃金性格搭配方向.'}</p>
+          </div>
+          <div class="wiki-ratings-container">
+            ${renderRatingCard(RATINGS_GUIDE_DATA.berry)}
+            ${renderRatingCard(RATINGS_GUIDE_DATA.ingredient)}
+            ${renderRatingCard(RATINGS_GUIDE_DATA.skill)}
+          </div>
+
+          <!-- 區塊 3: 睡眠天數升級試算器 -->
+          <div class="wiki-section-heading" style="margin-top: 24px;">
+            <h3 class="wiki-section-title">${window.I18N?.t?.('wiki.ui_sleep_calc_title') ?? '寶可夢睡眠升級天數計算器'}</h3>
+            <p class="wiki-section-subtitle">${window.I18N?.t?.('wiki.ui_sleep_calc_sub') ?? '依據每日睡滿100分(100 EXP基礎),計算從目前等級升至目標等級所需睡眠天數與經驗值.'}</p>
+          </div>
+          <div class="wiki-card wiki-calc-card">
+            <div class="calc-inputs-row">
+              <div class="calc-form-col">
+                <div class="calc-form-row calc-form-row-levels">
+                  <div class="calc-field-group calc-field-cur">
+                    <label class="calc-label" for="calc-sleep-cur-lv">${window.I18N?.t?.('wiki.ui_cur_lv_lbl') ?? '目前等級:'}</label>
+                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="${caps.THEORETICAL_MAX_LEVEL - 1}" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.onSleepCurLvInput()" onchange="window.WikiDB.onSleepCurLvInput()">
+                  </div>
+
+                  <div class="calc-field-group calc-field-target">
+                    <label class="calc-label" for="calc-sleep-target-lv">${window.I18N?.t?.('wiki.ui_target_lv_lbl') ?? '目標等級:'}</label>
+                    <select id="calc-sleep-target-lv" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
+                      ${sleepExpTargetLevels.map(lv => `<option value="${lv}">Lv.${lv}</option>`).join('')}
+                    </select>
+                  </div>
+                </div>
+
+                <div class="calc-form-row calc-form-row-boosts">
+                  <div class="calc-field-group calc-field-switch">
+                    <label class="calc-switch-label">
+                      <input type="checkbox" id="calc-sleep-exp-subskill" class="switch-checkbox" onchange="window.WikiDB.recalcSleepDays()">
+                      <span class="switch-slider"></span>
+                      <span class="switch-text">${window.I18N?.t?.('wiki.ui_sleep_exp_sub') ?? '睡眠EXP獎勵 (+14%)'}</span>
+                    </label>
+                  </div>
+
+                  <div class="calc-field-group calc-field-nature">
+                    <select id="calc-sleep-nature-select" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
+                      <option value="1.0">${window.I18N?.t?.('wiki.ui_exp_neutral') ?? '性格無EXP修正'}</option>
+                      <option value="1.18">${window.I18N?.t?.('wiki.ui_exp_up') ?? '性格EXP▲ (+18%)'}</option>
+                      <option value="0.82">${window.I18N?.t?.('wiki.ui_exp_down') ?? '性格EXP▼ (-18%)'}</option>
+                    </select>
+                  </div>
+
+                  <div class="calc-field-group calc-field-exptype">
+                    <select id="calc-sleep-exp-type" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
+                      <option value="1.0">${window.I18N?.t?.('wiki.ui_exp_type_10') ?? '一般 (1.0倍)'}</option>
+                      <option value="1.5">${window.I18N?.t?.('wiki.ui_exp_type_15') ?? '準神 (1.5倍)'}</option>
+                      <option value="1.8">${window.I18N?.t?.('wiki.ui_exp_type_18') ?? '神獸 (1.8倍)'}</option>
+                      <option value="2.2">${window.I18N?.t?.('wiki.ui_exp_type_22') ?? '幻之寶可夢 (2.2倍)'}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="calc-result-box">
+                <div class="calc-result-label">${window.I18N?.t?.('wiki.ui_est_days_lbl') ?? '預估所需睡眠天數'}</div>
+                <div id="calc-sleep-days-result" class="calc-result-val">${window.I18N?.t?.('wiki.ui_default_days') ?? '120 天'}</div>
+                <div id="calc-sleep-exp-result" class="calc-result-badge">${window.I18N?.t?.('wiki.ui_default_exp') ?? '約需 11,992 EXP'}</div>
+                <div id="calc-sleep-candies-result" class="calc-result-candies">${window.I18N?.t?.('wiki.ui_default_candies') ?? '約需 480 顆糖果 (每顆 25 EXP)'}</div>
+              </div>
+            </div>
+
+            <!-- 基準天數對照表 -->
+            <div class="wiki-table-wrapper" style="margin-top: 14px;">
+              <table class="wiki-data-table milestone-table">
+                <thead>
+                  <tr>
+                    <th class="col-milestone-lv">${window.I18N?.t?.('wiki.ui_target_lv_th') ?? '目標'}</th>
+                    <th class="col-milestone-exp">${window.I18N?.t?.('wiki.ui_req_exp_th') ?? 'EXP'}</th>
+                    <th class="col-milestone-days">${window.I18N?.t?.('wiki.ui_daily_sleep_th') ?? '天數'}</th>
+                    <th class="col-milestone-note">${window.I18N?.t?.('wiki.ui_milestone_th') ?? '解鎖'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${SLEEP_DAYS_BASELINE.map(row => {
+                    const milestoneColor = row.level === 10 ? 'milestone-cyan'
+                      : row.level === 25 ? 'milestone-purple'
+                      : row.level === 30 ? 'milestone-green'
+                      : row.level === 50 ? 'milestone-amber'
+                      : row.level === 60 ? 'milestone-pink'
+                      : row.level === caps.POKEMON_LEVEL_CAP ? 'milestone-purple'
+                      : 'milestone-cyan';
+                    const rawNote = window.I18N?.field?.(row, 'note') ?? row.note;
+                    const formattedNote = rawNote
+                      .replace(/(第[一二三四五12345][個个]?副技能|第[一二三123][種种]?食材|1st Sub-skill|2nd Sub-skill|3rd Sub-skill|4th Sub-skill|5th Sub-skill|2nd Ing\.|3rd Ing\.)/g, '<span class="text-accent font-bold">$1</span>');
+                    return `
+                    <tr>
+                      <td class="col-milestone-lv" style="vertical-align: middle;"><span class="milestone-badge ${milestoneColor}">Lv.${row.level}</span></td>
+                      <td class="col-milestone-exp font-bold" style="vertical-align: middle;">${row.totalExp.toLocaleString()}</td>
+                      <td class="col-milestone-days text-success font-bold" style="vertical-align: middle;">${row.days} ${window.I18N?.t?.('wiki.ui_days_unit') ?? '天'}</td>
+                      <td class="col-milestone-note text-secondary" style="vertical-align: middle;">${formattedNote}</td>
+                    </tr>
+                  `;}).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+    `;
+  }
+
+
+  // 獨立美味尾巴專屬天梯子渲染器 (Standalone Slowpoke Tail Ladder Sub-Renderer)
+  function renderTailStandaloneLadder(tailIng, highlightMarks, highlightedIngMap, mult) {
+            const tailReqMarks = highlightMarks.get('美味尾巴') || highlightMarks.get('Slowpoke Tail') || [];
+            const tailReqCount = highlightedIngMap ? (highlightedIngMap.get('美味尾巴') || highlightedIngMap.get('Slowpoke Tail')) : null;
+            const isTailHighlighted = tailReqMarks.length > 0;
+            const isTailDimmed = highlightedIngMap && !isTailHighlighted;
+            const tailPassingTargets = tailReqMarks.map(m => ({ ...m, target: m.count * 3 }));
+            const tailThreeMealsTarget = isTailHighlighted ? Math.max(...tailPassingTargets.map(m => m.target)) : null;
+
+            let tailMax = 20;
+            if (isTailHighlighted && tailThreeMealsTarget > tailMax) {
+              tailMax = Math.ceil(tailThreeMealsTarget / 5) * 5;
+            }
+            const tailStep = tailMax > 30 ? 10 : 5;
+            const tailTicks = [];
+            for (let t = 0; t <= tailMax; t += tailStep) {
+              tailTicks.push(t);
+            }
+            if (tailTicks[tailTicks.length - 1] < tailMax) {
+              tailTicks.push(tailMax);
+            }
+            function getTailPct(val) {
+              const clamped = Math.min(Math.max(val, 0), tailMax);
+              return ((clamped / tailMax) * 100).toFixed(2);
+            }
+            const tailDishInfo = (typeof getDynamicTopRecipeForIngredient === 'function')
+              ? getDynamicTopRecipeForIngredient('tail', (tailIng && tailIng.name) || '美味尾巴')
+              : (TOP_RECIPES_FOR_INGREDIENTS.tail || { need: 10 });
+            let tailTop5Threshold = 0;
+            if (ladderSupplyFilter === 'TOP') {
+              const allMaxCounts = tailIng.pokemon.map(pkm => Math.max(...(pkm.variants || [{ count: pkm.count }]).map(v => v.count)));
+              const distinctCounts = [...new Set(allMaxCounts)].sort((a, b) => b - a);
+              tailTop5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
+            }
+            const filteredTailPkm = tailIng.pokemon.map((p, pIdx) => {
+              const pkmSpec = p.specialty || getPokemonLadderSpecialty(p.name);
+              if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return null;
+              if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return null;
+              if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return null;
+
+              if (ladderSearchQuery) {
+                if (!matchesLadderSearch(p.name, p.name_en, ladderSearchQuery)) return null;
+              }
+
+              let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
+              variants = variants.filter(v => matchesLadderRecipeFilter(v, ladderRecipeFilter));
+
+              if (ladderSupplyFilter === 'TOP') {
+                const pkmMaxCount = Math.max(...(p.variants || [{ count: p.count }]).map(v => v.count));
+                if (pkmMaxCount < tailTop5Threshold) return null;
+                variants = variants.slice(0, 1);
+              } else if (ladderSupplyFilter === 'MEALS_3') {
+                variants = variants.filter(v => Math.round(v.count * mult) >= tailDishInfo.need * 3);
+              } else if (ladderSupplyFilter === 'MEALS_2') {
+                variants = variants.filter(v => Math.round(v.count * mult) >= tailDishInfo.need * 2);
+              }
+
+              if (variants.length === 0) return null;
+              return { ...p, variants };
+            }).filter(Boolean);
+
+            const isTailEmpty = filteredTailPkm.length === 0;
+
+            return `
+              <div class="ladder-tail-standalone-container ${isTailDimmed ? 'ladder-track-dimmed' : ''}">
+                <div class="ladder-tail-standalone-box">
+                  <div class="ladder-tail-ruler">
+                    <div class="ladder-tail-ruler-spacer"></div>
+                    <div class="ladder-tail-ruler-scale">
+                      ${tailTicks.map(t => `
+                        <div class="ladder-tail-tick" style="left: ${getTailPct(t)}%;">
+                          <span class="tick-label">${t}</span>
+                          <div class="tick-line"></div>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+
+                  <div class="ladder-tail-track-row ${isTailEmpty ? 'ladder-track-empty' : ''} ${isTailDimmed ? 'ladder-track-dimmed' : (isTailHighlighted ? 'ladder-track-highlighted' : '')}" data-ladder-ing="tail">
+                    <div class="ladder-track-header ${isTailDimmed ? 'ladder-track-disabled-header' : 'clickable-ing-header'}" 
+                         ${isTailDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('tail')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.WikiDB.openIngredientRankingModal('tail');}" role="button" tabindex="0"`} 
+                         title="${window.I18N?.t?.('wiki.ldr_slowpoke_tail') ?? '美味尾巴'} · ${isTailDimmed ? (window.I18N?.t?.('wiki.ldr_not_required_for_recipe') ?? '非此料理所需食材') : (window.I18N?.t?.('wiki.ldr_click_view_yield_rank') ?? '點擊查看產量排名')}">
+                      <img src="${tailIng.icon}" class="ladder-ing-icon" alt="${window.I18N?.t?.('wiki.ldr_slowpoke_tail') ?? '美味尾巴'}" width="24" height="24" decoding="async">
+                    </div>
+
+                    <div class="ladder-tail-canvas">
+                      <div class="ladder-grid-lines">
+                        ${tailTicks.map(t => `<div class="ladder-grid-line" style="left: ${getTailPct(t)}%;"></div>`).join('')}
+                      </div>
+
+                      <div class="ladder-spans-container">
+                        ${filteredTailPkm.map(p => {
+                          if (p.variants.length < 2) return '';
+                          const scaledCounts = p.variants.map(v => Math.round(v.count * mult));
+                          const minC = Math.min(...scaledCounts);
+                          const maxC = Math.max(...scaledCounts);
+                          const minPct = parseFloat(getTailPct(minC));
+                          const maxPct = parseFloat(getTailPct(maxC));
+                          const widthPct = Math.max(maxPct - minPct, 1.5).toFixed(2);
+                          return `<div class="ladder-pkm-span-line" data-pkm-group="${p.name}" style="left: ${minPct}%; width: ${widthPct}%;"></div>`;
+                        }).join('')}
+                      </div>
+
+                      <div class="ladder-nodes-container">
+                        ${(() => {
+                          // 先計算美味尾巴最高產量 (Tail Track Max Yield)
+                          let tailMaxYield = 0;
+                          filteredTailPkm.forEach(p => {
+                            p.variants.forEach(v => {
+                              const scaled = Math.round(v.count * mult);
+                              if (scaled > tailMaxYield) tailMaxYield = scaled;
+                            });
+                          });
+
+                          const tailTrackNodes = [];
+                          filteredTailPkm.forEach((p, pIdx) => {
+                            const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
+                              ? (window.I18N.getPokemonName(p.name) || (window.I18N?.field?.(p, 'name') ?? p.name))
+                              : (window.I18N?.field?.(p, 'name') ?? (p.name_en || p.name));
+                            p.variants.forEach((v, vIdx) => {
+                              const scaledCount = Math.round(v.count * mult);
+                              const isTopNode = (scaledCount === tailMaxYield && scaledCount > 0) || v.isTop || (p.isTop && v.recipe === p.recipe);
+                              const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
+                              tailTrackNodes.push({
+                                p,
+                                pIdx,
+                                pkmDisplayName,
+                                v,
+                                vIdx,
+                                scaledCount,
+                                isTopNode,
+                                zIndex
+                              });
+                            });
+                          });
+
+                          const tailCountGroups = {};
+                          tailTrackNodes.forEach(node => {
+                            if (!tailCountGroups[node.scaledCount]) tailCountGroups[node.scaledCount] = [];
+                            tailCountGroups[node.scaledCount].push(node);
+                          });
+
+                          const distinctTailYields = [...new Set(tailTrackNodes.map(n => n.scaledCount))].sort((a, b) => b - a);
+                          const tailTop3Threshold = distinctTailYields.length > 0 ? distinctTailYields[Math.min(2, distinctTailYields.length - 1)] : Infinity;
+
+                          return tailTrackNodes.map(node => {
+                            const group = tailCountGroups[node.scaledCount];
+                            const groupSize = group.length;
+                            const itemIdx = group.indexOf(node);
+                            const baseTailPosPct = parseFloat(getTailPct(node.scaledCount));
+
+                            let offsetPx = 0;
+                            if (groupSize > 1) {
+                              const staggerStep = groupSize >= 6 ? 14 : 18;
+                              if (baseTailPosPct <= 4) {
+                                offsetPx = Math.round(itemIdx * staggerStep);
+                              } else if (baseTailPosPct >= 96) {
+                                offsetPx = Math.round((itemIdx - (groupSize - 1)) * staggerStep);
+                              } else {
+                                offsetPx = Math.round((itemIdx - (groupSize - 1) / 2) * staggerStep);
+                              }
+                            }
+
+                            const tailAlignClass = baseTailPosPct > 55 ? 'align-right' : (baseTailPosPct < 25 ? 'align-left' : 'align-center');
+                            const rawTailPosExpr = offsetPx === 0 ? `${baseTailPosPct}%` : `calc(${baseTailPosPct}% + ${offsetPx}px)`;
+                            const leftStyle = `clamp(12px, ${rawTailPosExpr}, calc(100% - 12px))`;
+                            const isTop3 = node.scaledCount > 0 && node.scaledCount >= tailTop3Threshold;
+                            const hasIngSelectSkill = (typeof hasPokemonIngSelectSkill === 'function') && hasPokemonIngSelectSkill(node.p.name);
+                            const showCountBadge = isTop3 || hasIngSelectSkill;
+
+                            return `
+                              <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${hasIngSelectSkill ? 'node-has-ing-select' : ''} ${tailAlignClass} recipe-${node.v.recipe.toLowerCase()} ${groupSize > 1 ? 'node-in-cluster' : ''}" 
+                                   data-pkm-group="${node.p.name}"
+                                   data-pkm="${node.p.name}" 
+                                   data-recipe="${node.v.recipe}"
+                                   style="left: ${leftStyle}; z-index: ${node.zIndex};">
+                                <div class="node-avatar-wrapper">
+                                  <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}" width="22" height="22" loading="lazy" decoding="async">
+                                </div>
+                                ${showCountBadge ? `
+                                  <div class="node-count-badge ${hasIngSelectSkill ? 'badge-ing-select' : ''}" ${hasIngSelectSkill ? `title="${window.I18N?.t?.('wiki.ldr_ing_select_pkm_title') ?? '食材精選類技能寶可夢'}"` : ''}>${node.scaledCount}</div>
+                                ` : ''}
+                                <div class="ladder-node-tooltip">
+                                  <div class="tooltip-title">${node.isTopNode ? (window.I18N?.t?.('wiki.ldr_top1_yield') ?? '產量 TOP 1 ') : ''}${node.pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${node.v.recipe.toLowerCase()}">${node.v.recipe}</span></div>
+                                  <div class="tooltip-detail">${window.I18N?.t?.('wiki.ldr_est_daily_output') ?? '預估日產：'}<span class="text-success font-bold">${node.scaledCount} ${window.I18N?.t?.('wiki.ldr_per_day') ?? '顆/天'}</span></div>
+                                  <div class="tooltip-note">${formatLadderNote(node.v.note || '')}</div>
+                                </div>
+                              </div>
+                            `;
+                          }).join('');
+                        })()}
+                      </div>
+
+                      <!-- 尾巴三餐及格線 - 置於節點容器後，確保不被覆蓋 -->
+                      ${tailPassingTargets.map(m => {
+                        const pctStr = getTailPct(m.target);
+                        const pctNum = parseFloat(pctStr);
+                        const edgeCls = pctNum >= 96 ? 'passing-edge-right' : (pctNum <= 4 ? 'passing-edge-left' : '');
+                        return `
+                        <div class="ladder-passing-line-container ${edgeCls}" style="left: ${pctStr}%; --ladder-passing-line-color: ${m.color}; --ladder-passing-line-glow: ${m.color}; --ladder-passing-color-dark: ${m.color}; --ladder-passing-color-light: ${m.fg};" title="${window.I18N?.t?.('wiki.ldr_3meals_target') ?? '三餐及格線: '}${m.target} ${window.I18N?.t?.('wiki.ldr_items_unit') ?? '顆'}">
+                          <div class="ladder-passing-line"></div>
+                          <div class="ladder-passing-badge">
+                            <span class="ladder-passing-num">${m.target}</span>
+                          </div>
+                        </div>
+                      `;
+                      }).join('')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+  }
 
   // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、動態自適應最大刻度、美味尾巴獨立分離)
   function renderCoordinateLadder(ladderData) {
@@ -7403,7 +7806,7 @@
                   return `
                     <div class="ladder-recipe-banner-recipe-chip" title="${recName}">
                       ${activeHighlightRecipes.length > 1 ? `<span class="ladder-recipe-banner-recipe-dot" style="background:${style.color}"></span>` : ''}
-                      <img src="${recIconUrl}" class="ladder-recipe-banner-icon" alt="${recName}">
+                      <img src="${recIconUrl}" class="ladder-recipe-banner-icon" alt="${recName}" width="34" height="34" decoding="async">
                     </div>
                   `;
                 }).join('')}
@@ -7498,7 +7901,7 @@
                    ${isDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('${ing.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.WikiDB.openIngredientRankingModal('${ing.id}');}" role="button" tabindex="0"`} 
                    title="${ingName} (${window.I18N?.t?.('wiki.ldr_base_energy') ?? '基礎能量'} ${ing.energy}) · ${isHighlighted ? (window.I18N?.t?.('wiki.ldr_selected_dish') ?? '選定料理: ') + targetDishName + ` (${targetDishNeed}${window.I18N?.t?.('wiki.ldr_per_meal') ?? '顆/餐'})` : (isDimmed ? (window.I18N?.t?.('wiki.ldr_not_in_recipe') ?? '非此料理所需食材') : (window.I18N?.t?.('wiki.ldr_key_dish') ?? '核心大菜: ') + dishName)} · ${window.I18N?.t?.('wiki.ldr_click_view_yield_rank') ?? '點擊查看產量排名'}">
                 <div class="ladder-track-ing-main">
-                  <img src="${(typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon}" class="ladder-ing-icon" alt="${ingName}">
+                  <img src="${(typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon}" class="ladder-ing-icon" alt="${ingName}" width="24" height="24" decoding="async">
                 </div>
               </div>
 
@@ -7601,7 +8004,7 @@
                              data-recipe="${node.v.recipe}"
                              style="left: ${leftStyle}; z-index: ${node.zIndex};">
                           <div class="node-avatar-wrapper">
-                            <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}" loading="lazy" decoding="async">
+                            <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}" width="22" height="22" loading="lazy" decoding="async">
                           </div>
                           ${showCountBadge ? `
                             <div class="node-count-badge ${hasIngSelectSkill ? 'badge-ing-select' : ''} ${hasSkillDraw ? 'badge-skill-draw' : ''}" ${hasSkillDraw ? `title="${window.I18N?.t?.('wiki.ldr_skill_draw_badge_title', { drop: node.dropCount, bonus: node.skillBonus }) ?? `常規食材掉落: ${node.dropCount} + 食材精選S Lv.7: ${node.skillBonus}`}"` : (hasIngSelectSkill ? `title="${window.I18N?.t?.('wiki.ldr_ing_select_pkm_title') ?? '食材精選類技能寶可夢'}"` : '')}>
@@ -7629,7 +8032,7 @@
 
                             <!-- 料理供貨能力指標 (動態對應選定料理，以料理圖示代替名稱) -->
                             <div class="tooltip-dish-box">
-                              <div class="tooltip-dish-title">${dishLabel}${targetDishIcon ? `<img src="${targetDishIcon}" class="tooltip-dish-icon" alt="${escapeHtml(targetDishName)}" title="${escapeHtml(targetDishName)}" loading="lazy">` : `<span class="text-white font-bold">${targetDishName}</span>`} (${targetDishNeed}${window.I18N?.t?.('wiki.ldr_per_meal') ?? '顆/餐'})</div>
+                              <div class="tooltip-dish-title">${dishLabel}${targetDishIcon ? `<img src="${targetDishIcon}" class="tooltip-dish-icon" alt="${escapeHtml(targetDishName)}" title="${escapeHtml(targetDishName)}" loading="lazy" width="24" height="24" decoding="async">` : `<span class="text-white font-bold">${targetDishName}</span>`} (${targetDishNeed}${window.I18N?.t?.('wiki.ldr_per_meal') ?? '顆/餐'})</div>
                               <div class="tooltip-dish-badge ${dishBadgeClass}">${dishTag}</div>
                             </div>
 
@@ -7661,218 +8064,7 @@
           }).join('')}
 
           <!-- 獨立美味尾巴專屬天梯小看板 (0 ~ 20 獨立刻度，支援高亮與及格線) -->
-          ${tailIng ? (() => {
-            const tailReqMarks = highlightMarks.get('美味尾巴') || highlightMarks.get('Slowpoke Tail') || [];
-            const tailReqCount = highlightedIngMap ? (highlightedIngMap.get('美味尾巴') || highlightedIngMap.get('Slowpoke Tail')) : null;
-            const isTailHighlighted = tailReqMarks.length > 0;
-            const isTailDimmed = highlightedIngMap && !isTailHighlighted;
-            const tailPassingTargets = tailReqMarks.map(m => ({ ...m, target: m.count * 3 }));
-            const tailThreeMealsTarget = isTailHighlighted ? Math.max(...tailPassingTargets.map(m => m.target)) : null;
-
-            let tailMax = 20;
-            if (isTailHighlighted && tailThreeMealsTarget > tailMax) {
-              tailMax = Math.ceil(tailThreeMealsTarget / 5) * 5;
-            }
-            const tailStep = tailMax > 30 ? 10 : 5;
-            const tailTicks = [];
-            for (let t = 0; t <= tailMax; t += tailStep) {
-              tailTicks.push(t);
-            }
-            if (tailTicks[tailTicks.length - 1] < tailMax) {
-              tailTicks.push(tailMax);
-            }
-            function getTailPct(val) {
-              const clamped = Math.min(Math.max(val, 0), tailMax);
-              return ((clamped / tailMax) * 100).toFixed(2);
-            }
-            const tailDishInfo = (typeof getDynamicTopRecipeForIngredient === 'function')
-              ? getDynamicTopRecipeForIngredient('tail', (tailIng && tailIng.name) || '美味尾巴')
-              : (TOP_RECIPES_FOR_INGREDIENTS.tail || { need: 10 });
-            let tailTop5Threshold = 0;
-            if (ladderSupplyFilter === 'TOP') {
-              const allMaxCounts = tailIng.pokemon.map(pkm => Math.max(...(pkm.variants || [{ count: pkm.count }]).map(v => v.count)));
-              const distinctCounts = [...new Set(allMaxCounts)].sort((a, b) => b - a);
-              tailTop5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
-            }
-            const filteredTailPkm = tailIng.pokemon.map((p, pIdx) => {
-              const pkmSpec = p.specialty || getPokemonLadderSpecialty(p.name);
-              if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return null;
-              if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return null;
-              if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return null;
-
-              if (ladderSearchQuery) {
-                if (!matchesLadderSearch(p.name, p.name_en, ladderSearchQuery)) return null;
-              }
-
-              let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
-              variants = variants.filter(v => matchesLadderRecipeFilter(v, ladderRecipeFilter));
-
-              if (ladderSupplyFilter === 'TOP') {
-                const pkmMaxCount = Math.max(...(p.variants || [{ count: p.count }]).map(v => v.count));
-                if (pkmMaxCount < tailTop5Threshold) return null;
-                variants = variants.slice(0, 1);
-              } else if (ladderSupplyFilter === 'MEALS_3') {
-                variants = variants.filter(v => Math.round(v.count * mult) >= tailDishInfo.need * 3);
-              } else if (ladderSupplyFilter === 'MEALS_2') {
-                variants = variants.filter(v => Math.round(v.count * mult) >= tailDishInfo.need * 2);
-              }
-
-              if (variants.length === 0) return null;
-              return { ...p, variants };
-            }).filter(Boolean);
-
-            const isTailEmpty = filteredTailPkm.length === 0;
-
-            return `
-              <div class="ladder-tail-standalone-container ${isTailDimmed ? 'ladder-track-dimmed' : ''}">
-                <div class="ladder-tail-standalone-box">
-                  <div class="ladder-tail-ruler">
-                    <div class="ladder-tail-ruler-spacer"></div>
-                    <div class="ladder-tail-ruler-scale">
-                      ${tailTicks.map(t => `
-                        <div class="ladder-tail-tick" style="left: ${getTailPct(t)}%;">
-                          <span class="tick-label">${t}</span>
-                          <div class="tick-line"></div>
-                        </div>
-                      `).join('')}
-                    </div>
-                  </div>
-
-                  <div class="ladder-tail-track-row ${isTailEmpty ? 'ladder-track-empty' : ''} ${isTailDimmed ? 'ladder-track-dimmed' : (isTailHighlighted ? 'ladder-track-highlighted' : '')}" data-ladder-ing="tail">
-                    <div class="ladder-track-header ${isTailDimmed ? 'ladder-track-disabled-header' : 'clickable-ing-header'}" 
-                         ${isTailDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('tail')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.WikiDB.openIngredientRankingModal('tail');}" role="button" tabindex="0"`} 
-                         title="${window.I18N?.t?.('wiki.ldr_slowpoke_tail') ?? '美味尾巴'} · ${isTailDimmed ? (window.I18N?.t?.('wiki.ldr_not_required_for_recipe') ?? '非此料理所需食材') : (window.I18N?.t?.('wiki.ldr_click_view_yield_rank') ?? '點擊查看產量排名')}">
-                      <img src="${tailIng.icon}" class="ladder-ing-icon" alt="${window.I18N?.t?.('wiki.ldr_slowpoke_tail') ?? '美味尾巴'}">
-                    </div>
-
-                    <div class="ladder-tail-canvas">
-                      <div class="ladder-grid-lines">
-                        ${tailTicks.map(t => `<div class="ladder-grid-line" style="left: ${getTailPct(t)}%;"></div>`).join('')}
-                      </div>
-
-                      <div class="ladder-spans-container">
-                        ${filteredTailPkm.map(p => {
-                          if (p.variants.length < 2) return '';
-                          const scaledCounts = p.variants.map(v => Math.round(v.count * mult));
-                          const minC = Math.min(...scaledCounts);
-                          const maxC = Math.max(...scaledCounts);
-                          const minPct = parseFloat(getTailPct(minC));
-                          const maxPct = parseFloat(getTailPct(maxC));
-                          const widthPct = Math.max(maxPct - minPct, 1.5).toFixed(2);
-                          return `<div class="ladder-pkm-span-line" data-pkm-group="${p.name}" style="left: ${minPct}%; width: ${widthPct}%;"></div>`;
-                        }).join('')}
-                      </div>
-
-                      <div class="ladder-nodes-container">
-                        ${(() => {
-                          // 先計算美味尾巴最高產量 (Tail Track Max Yield)
-                          let tailMaxYield = 0;
-                          filteredTailPkm.forEach(p => {
-                            p.variants.forEach(v => {
-                              const scaled = Math.round(v.count * mult);
-                              if (scaled > tailMaxYield) tailMaxYield = scaled;
-                            });
-                          });
-
-                          const tailTrackNodes = [];
-                          filteredTailPkm.forEach((p, pIdx) => {
-                            const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
-                              ? (window.I18N.getPokemonName(p.name) || (window.I18N?.field?.(p, 'name') ?? p.name))
-                              : (window.I18N?.field?.(p, 'name') ?? (p.name_en || p.name));
-                            p.variants.forEach((v, vIdx) => {
-                              const scaledCount = Math.round(v.count * mult);
-                              const isTopNode = (scaledCount === tailMaxYield && scaledCount > 0) || v.isTop || (p.isTop && v.recipe === p.recipe);
-                              const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
-                              tailTrackNodes.push({
-                                p,
-                                pIdx,
-                                pkmDisplayName,
-                                v,
-                                vIdx,
-                                scaledCount,
-                                isTopNode,
-                                zIndex
-                              });
-                            });
-                          });
-
-                          const tailCountGroups = {};
-                          tailTrackNodes.forEach(node => {
-                            if (!tailCountGroups[node.scaledCount]) tailCountGroups[node.scaledCount] = [];
-                            tailCountGroups[node.scaledCount].push(node);
-                          });
-
-                          const distinctTailYields = [...new Set(tailTrackNodes.map(n => n.scaledCount))].sort((a, b) => b - a);
-                          const tailTop3Threshold = distinctTailYields.length > 0 ? distinctTailYields[Math.min(2, distinctTailYields.length - 1)] : Infinity;
-
-                          return tailTrackNodes.map(node => {
-                            const group = tailCountGroups[node.scaledCount];
-                            const groupSize = group.length;
-                            const itemIdx = group.indexOf(node);
-                            const baseTailPosPct = parseFloat(getTailPct(node.scaledCount));
-
-                            let offsetPx = 0;
-                            if (groupSize > 1) {
-                              const staggerStep = groupSize >= 6 ? 14 : 18;
-                              if (baseTailPosPct <= 4) {
-                                offsetPx = Math.round(itemIdx * staggerStep);
-                              } else if (baseTailPosPct >= 96) {
-                                offsetPx = Math.round((itemIdx - (groupSize - 1)) * staggerStep);
-                              } else {
-                                offsetPx = Math.round((itemIdx - (groupSize - 1) / 2) * staggerStep);
-                              }
-                            }
-
-                            const tailAlignClass = baseTailPosPct > 55 ? 'align-right' : (baseTailPosPct < 25 ? 'align-left' : 'align-center');
-                            const rawTailPosExpr = offsetPx === 0 ? `${baseTailPosPct}%` : `calc(${baseTailPosPct}% + ${offsetPx}px)`;
-                            const leftStyle = `clamp(12px, ${rawTailPosExpr}, calc(100% - 12px))`;
-                            const isTop3 = node.scaledCount > 0 && node.scaledCount >= tailTop3Threshold;
-                            const hasIngSelectSkill = (typeof hasPokemonIngSelectSkill === 'function') && hasPokemonIngSelectSkill(node.p.name);
-                            const showCountBadge = isTop3 || hasIngSelectSkill;
-
-                            return `
-                              <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${hasIngSelectSkill ? 'node-has-ing-select' : ''} ${tailAlignClass} recipe-${node.v.recipe.toLowerCase()} ${groupSize > 1 ? 'node-in-cluster' : ''}" 
-                                   data-pkm-group="${node.p.name}"
-                                   data-pkm="${node.p.name}" 
-                                   data-recipe="${node.v.recipe}"
-                                   style="left: ${leftStyle}; z-index: ${node.zIndex};">
-                                <div class="node-avatar-wrapper">
-                                  <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}">
-                                </div>
-                                ${showCountBadge ? `
-                                  <div class="node-count-badge ${hasIngSelectSkill ? 'badge-ing-select' : ''}" ${hasIngSelectSkill ? `title="${window.I18N?.t?.('wiki.ldr_ing_select_pkm_title') ?? '食材精選類技能寶可夢'}"` : ''}>${node.scaledCount}</div>
-                                ` : ''}
-                                <div class="ladder-node-tooltip">
-                                  <div class="tooltip-title">${node.isTopNode ? (window.I18N?.t?.('wiki.ldr_top1_yield') ?? '產量 TOP 1 ') : ''}${node.pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${node.v.recipe.toLowerCase()}">${node.v.recipe}</span></div>
-                                  <div class="tooltip-detail">${window.I18N?.t?.('wiki.ldr_est_daily_output') ?? '預估日產：'}<span class="text-success font-bold">${node.scaledCount} ${window.I18N?.t?.('wiki.ldr_per_day') ?? '顆/天'}</span></div>
-                                  <div class="tooltip-note">${formatLadderNote(node.v.note || '')}</div>
-                                </div>
-                              </div>
-                            `;
-                          }).join('');
-                        })()}
-                      </div>
-
-                      <!-- 尾巴三餐及格線 - 置於節點容器後，確保不被覆蓋 -->
-                      ${tailPassingTargets.map(m => {
-                        const pctStr = getTailPct(m.target);
-                        const pctNum = parseFloat(pctStr);
-                        const edgeCls = pctNum >= 96 ? 'passing-edge-right' : (pctNum <= 4 ? 'passing-edge-left' : '');
-                        return `
-                        <div class="ladder-passing-line-container ${edgeCls}" style="left: ${pctStr}%; --ladder-passing-line-color: ${m.color}; --ladder-passing-line-glow: ${m.color}; --ladder-passing-color-dark: ${m.color}; --ladder-passing-color-light: ${m.fg};" title="${window.I18N?.t?.('wiki.ldr_3meals_target') ?? '三餐及格線: '}${m.target} ${window.I18N?.t?.('wiki.ldr_items_unit') ?? '顆'}">
-                          <div class="ladder-passing-line"></div>
-                          <div class="ladder-passing-badge">
-                            <span class="ladder-passing-num">${m.target}</span>
-                          </div>
-                        </div>
-                      `;
-                      }).join('')}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            `;
-          })() : ''}
+          ${tailIng ? renderTailStandaloneLadder(tailIng, highlightMarks, highlightedIngMap, mult) : ''}
         </div>
       </div>
     `;
@@ -7881,7 +8073,6 @@
     }
     return renderedHtml;
   }
-
 
   // =========================================================================
   // 主技能天梯基礎數據 (Main Skill Ladder Data)
@@ -8538,7 +8729,7 @@
         basePath = '../';
       }
     }
-    return `<span class="box-spec-tag spec-${key} specialty-icon-wrap node-specialty-tag specialty-${key}" title="${disp}" style="display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;padding:0;line-height:1;vertical-align:middle;"><img src="${basePath}assets/specialty/${key}.png" srcset="${basePath}assets/specialty/${key}@2x.png 2x" class="specialty-icon spec-${key}" width="${s}" height="${s}" alt="${disp}" loading="lazy" style="width:${s}px;height:${s}px;object-fit:contain;vertical-align:middle;display:inline-block;pointer-events:none;" /></span>`;
+    return `<span class="box-spec-tag spec-${key} specialty-icon-wrap node-specialty-tag specialty-${key}" title="${disp}" style="display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;padding:0;line-height:1;vertical-align:middle;"><img src="${basePath}assets/specialty/${key}.png" srcset="${basePath}assets/specialty/${key}@2x.png 2x" class="specialty-icon spec-${key}" width="${s}" height="${s}" alt="${disp}" loading="lazy" decoding="async" style="width:${s}px;height:${s}px;object-fit:contain;vertical-align:middle;display:inline-block;pointer-events:none;" /></span>`;
   }
 
   // =========================================================================
@@ -8715,6 +8906,23 @@
     onSkillLadderSearch(val);
   }
 
+  let _skillLadderSearchTimer = null;
+
+  function onSkillLadderSearchInput(val) {
+    const queryStr = (val || '').trim();
+    const clearBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('#skill-ladder-search-clear-btn')
+      : [];
+    clearBtns.forEach(b => {
+      b.style.display = queryStr ? 'inline-block' : 'none';
+    });
+    if (_skillLadderSearchTimer) clearTimeout(_skillLadderSearchTimer);
+    _skillLadderSearchTimer = setTimeout(() => {
+      _skillLadderSearchTimer = null;
+      onSkillLadderSearch(val);
+    }, 90);
+  }
+
   function onSkillLadderSearch(val) {
     skillLadderSearchQuery = (val || '').trim();
     const clearBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
@@ -8727,6 +8935,7 @@
   }
 
   function clearSkillLadderSearch() {
+    if (_skillLadderSearchTimer) { clearTimeout(_skillLadderSearchTimer); _skillLadderSearchTimer = null; }
     skillLadderSearchQuery = '';
     const inputs = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
       ? document.querySelectorAll('#skill-ladder-pkm-search-input')
@@ -9255,7 +9464,7 @@
                   #${rank}
                 </div>
                 <div class="ing-rank-avatar-box ${rankClass}" style="flex-shrink:0;">
-                  <img src="${item.iconUrl}" class="ing-rank-avatar-img rank-pkm-avatar" alt="${esc(item.pkmDisplayName)}" title="${esc(item.pkmDisplayName)}" loading="lazy">
+                  <img src="${item.iconUrl}" class="ing-rank-avatar-img rank-pkm-avatar" alt="${esc(item.pkmDisplayName)}" title="${esc(item.pkmDisplayName)}" loading="lazy" width="32" height="32" decoding="async">
                 </div>
                 <div class="skill-rank-meta-col" style="display:flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto;">
                   ${typeof getSkillLadderSpecialtyIcon === 'function' ? getSkillLadderSpecialtyIcon(item.specKey, item.specDisplay, 15) : `<span class="node-specialty-tag specialty-${item.specKey}" style="font-size:9.5px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,0.08);color:var(--accent-color, #38bdf8);">${esc(item.specDisplay)}</span>`}
@@ -9373,80 +9582,87 @@
 
     let globalMinProcs = Infinity;
     let globalMaxProcs = -Infinity;
-    const processedTracks = SKILL_TRACK_DEFINITIONS.map(track => {
-      const trackId = track.id;
-      const trackName = window.I18N?.t?.(track.nameKey) ?? (window.I18N?.field?.(track, 'name') ?? (track.name_cn || track.name || ''));
-      const trackDesc = window.I18N?.t?.(track.descKey) ?? (window.I18N?.field?.(track, 'desc') ?? (track.desc_cn || track.desc || ''));
+    const trackEntriesMap = new Map();
+    const q = skillLadderSearchQuery ? skillLadderSearchQuery.toLowerCase().trim() : '';
+    const isNum = q ? (/^\d+$/).test(q) : false;
+    const qNum = isNum ? parseInt(q, 10) : NaN;
+    const qPad = isNum ? q.padStart(3, '0') : '';
 
-      const matchingPokemon = allPkm.filter(p => {
-        if (!p || isExcludedSkill(p.main_skill)) return false;
-        const tracks = getSkillTracks(p.main_skill);
-        if (!tracks.includes(trackId)) return false;
+    for (let i = 0; i < allPkm.length; i++) {
+      const p = allPkm[i];
+      if (!p || isExcludedSkill(p.main_skill)) continue;
 
-        if (typeof skillLadderFinalOnly !== 'undefined' && skillLadderFinalOnly && typeof isPokemonSkillLadderFinalEvo === 'function' && !isPokemonSkillLadderFinalEvo(p)) return false;
+      if (typeof skillLadderFinalOnly !== 'undefined' && skillLadderFinalOnly && typeof isPokemonSkillLadderFinalEvo === 'function' && !isPokemonSkillLadderFinalEvo(p)) continue;
 
-        const spec = p.specialty || '';
-        if (skillLadderSpecialtyFilter === 'SKILL' && !spec.includes('技能') && spec !== 'Skills' && spec !== 'Skill') return false;
-        if (skillLadderSpecialtyFilter === 'BERRY' && !spec.includes('樹果') && spec !== 'Berries' && spec !== 'Berry') return false;
-        if (skillLadderSpecialtyFilter === 'INGREDIENT' && !spec.includes('食材') && spec !== 'Ingredients' && spec !== 'Ingredient') return false;
+      const spec = p.specialty || '';
+      if (skillLadderSpecialtyFilter === 'SKILL' && !spec.includes('技能') && spec !== 'Skills' && spec !== 'Skill') continue;
+      if (skillLadderSpecialtyFilter === 'BERRY' && !spec.includes('樹果') && spec !== 'Berries' && spec !== 'Berry') continue;
+      if (skillLadderSpecialtyFilter === 'INGREDIENT' && !spec.includes('食材') && spec !== 'Ingredients' && spec !== 'Ingredient') continue;
 
-        if (skillLadderSearchQuery) {
-          const q = skillLadderSearchQuery.toLowerCase().trim();
-          let matched = false;
-          if (typeof matchesLadderSearch === 'function') {
-            matched = matchesLadderSearch(p.name_cn || p.name, p.name_en, q);
-          }
-          if (!matched) {
-            const nCn = (p.name_cn || p.name || '').toLowerCase();
-            const nEn = (p.name_en || '').toLowerCase();
-            const nJp = (p.name_jp || '').toLowerCase();
-            const pId = String(p.id || '');
-            const pNo = String(p.formatted_no || '');
-            const isNum = (/^\d+$/).test(q);
-            const numMatch = isNum && (parseInt(pId, 10) === parseInt(q, 10) || pId === q || pNo === q || pNo === q.padStart(3, '0') || pId.padStart(3, '0') === q.padStart(3, '0'));
-            const nSimp = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function' && p.name_cn)
-              ? window.I18N.toSimplified(p.name_cn).toLowerCase()
-              : '';
-            matched = nCn.includes(q) || nEn.includes(q) || (nJp && nJp.includes(q)) || (nSimp && nSimp.includes(q)) || !!numMatch;
-          }
-          if (!matched) return false;
+      if (q) {
+        let matched = false;
+        if (typeof matchesLadderSearch === 'function') {
+          matched = matchesLadderSearch(p.name_cn || p.name, p.name_en, q);
         }
-        return true;
-      });
+        if (!matched) {
+          const nCn = (p.name_cn || p.name || '').toLowerCase();
+          const nEn = (p.name_en || '').toLowerCase();
+          const nJp = (p.name_jp || '').toLowerCase();
+          const pId = String(p.id || '');
+          const pNo = String(p.formatted_no || '');
+          const numMatch = isNum && (parseInt(pId, 10) === qNum || pId === q || pNo === q || pNo === qPad || pId.padStart(3, '0') === qPad);
+          const nSimp = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function' && p.name_cn)
+            ? window.I18N.toSimplified(p.name_cn).toLowerCase()
+            : '';
+          matched = nCn.includes(q) || nEn.includes(q) || (nJp && nJp.includes(q)) || (nSimp && nSimp.includes(q)) || !!numMatch;
+        }
+        if (!matched) continue;
+      }
 
-      const nodes = matchingPokemon.map(p => {
-        const calcRes = getPokemonSkillLadderProcs(p);
-        if (!calcRes) return null;
+      const tracks = getSkillTracks(p.main_skill);
+      if (!tracks || tracks.length === 0) continue;
 
-        const specStr = p.specialty || '技能';
-        const specKey = (specStr.includes('樹果') || specStr === 'Berries') ? 'berry'
-          : (specStr.includes('食材') || specStr === 'Ingredients') ? 'ingredient'
-          : 'skill';
-        const specDisplay = (specKey === 'berry')
-          ? (window.I18N?.t?.('wiki.ldr_spec_berries') ?? '樹果型')
-          : (specKey === 'ingredient')
-            ? (window.I18N?.t?.('wiki.ldr_spec_ingredients') ?? '食材型')
-            : (window.I18N?.t?.('wiki.ldr_spec_skills') ?? '技能型');
+      const calcRes = getPokemonSkillLadderProcs(p);
+      if (!calcRes) continue;
 
-        const pkmDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
-          ? window.I18N.getPokemonName(p.name_cn || p.name)
-          : (window.I18N?.field?.(p, 'name') ?? (p.name_cn || p.name || p.name_en || ''));
-        const skillName = p.main_skill || '';
-        const skillDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function')
-          ? window.I18N.getMainSkillName(skillName)
-          : skillName;
+      const specStr = p.specialty || '技能';
+      const specKey = (specStr.includes('樹果') || specStr === 'Berries') ? 'berry'
+        : (specStr.includes('食材') || specStr === 'Ingredients') ? 'ingredient'
+        : 'skill';
+      const specDisplay = (specKey === 'berry')
+        ? (window.I18N?.t?.('wiki.ldr_spec_berries') ?? '樹果型')
+        : (specKey === 'ingredient')
+          ? (window.I18N?.t?.('wiki.ldr_spec_ingredients') ?? '食材型')
+          : (window.I18N?.t?.('wiki.ldr_spec_skills') ?? '技能型');
+
+      const pkmDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
+        ? window.I18N.getPokemonName(p.name_cn || p.name)
+        : (window.I18N?.field?.(p, 'name') ?? (p.name_cn || p.name || p.name_en || ''));
+      const skillName = p.main_skill || '';
+      const skillDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function')
+        ? window.I18N.getMainSkillName(skillName)
+        : skillName;
+      const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
+      const displayCount = calcRes.procs.toFixed(2);
+
+      for (let tIdx = 0; tIdx < tracks.length; tIdx++) {
+        const trackId = tracks[tIdx];
         const subInfo = typeof getSkillSubCategoryInfo === 'function'
           ? getSkillSubCategoryInfo(skillName, trackId)
           : { subKey: '', subLabel: '', fullLabel: skillDisplayName };
         const skillFullDisplay = typeof sanitizeSkillFullLabel === 'function'
           ? sanitizeSkillFullLabel(subInfo.fullLabel || skillDisplayName)
           : (subInfo.fullLabel || skillDisplayName);
-        const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 
-        return {
+        let arr = trackEntriesMap.get(trackId);
+        if (!arr) {
+          arr = [];
+          trackEntriesMap.set(trackId, arr);
+        }
+        arr.push({
           p,
           procs: calcRes.procs,
-          displayCount: calcRes.procs.toFixed(2),
+          displayCount,
           calcRes,
           pkmDisplayName,
           specialtyKey: specKey,
@@ -9458,8 +9674,15 @@
           subLabel: subInfo.subLabel,
           iconUrl,
           isTopNode: false
-        };
-      }).filter(Boolean);
+        });
+      }
+    }
+
+    const processedTracks = SKILL_TRACK_DEFINITIONS.map(track => {
+      const trackId = track.id;
+      const trackName = window.I18N?.t?.(track.nameKey) ?? (window.I18N?.field?.(track, 'name') ?? (track.name_cn || track.name || ''));
+      const trackDesc = window.I18N?.t?.(track.descKey) ?? (window.I18N?.field?.(track, 'desc') ?? (track.desc_cn || track.desc || ''));
+      const nodes = trackEntriesMap.get(trackId) || [];
 
       nodes.sort((a, b) => b.procs - a.procs);
       if (nodes.length > 0) nodes[0].isTopNode = true;
@@ -9549,7 +9772,7 @@
                              data-pkm-id="${node.p.id}"
                              style="left: ${leftStyle}; z-index: ${zIndex};">
                           <div class="node-avatar-wrapper">
-                            <img src="${node.iconUrl}" class="node-avatar-img" alt="${_escapeHtml(node.pkmDisplayName)}" loading="lazy" decoding="async">
+                            <img src="${node.iconUrl}" class="node-avatar-img" alt="${_escapeHtml(node.pkmDisplayName)}" width="38" height="38" loading="lazy" decoding="async">
                           </div>
                           <div class="node-count-badge" title="${window.I18N?.t?.('wiki.ldr_12h_expected_triggers') ?? '日間 12h 預估發動次數：'}${node.displayCount}">
                             ${node.displayCount}
@@ -9688,7 +9911,7 @@
                   <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
                 </svg>
               </span>
-              <input type="text" id="skill-ladder-pkm-search-input" class="sidebar-search-input" placeholder="${window.I18N?.t?.('wiki.ldr_search_placeholder') ?? '搜尋寶可夢名稱...'}" value="${(typeof getSkillLadderSearchQuery === 'function' ? getSkillLadderSearchQuery() : '')}" oninput="window.WikiDB.onSkillLadderSearch(this.value)">
+              <input type="text" id="skill-ladder-pkm-search-input" class="sidebar-search-input" placeholder="${window.I18N?.t?.('wiki.ldr_search_placeholder') ?? '搜尋寶可夢名稱...'}" value="${(typeof getSkillLadderSearchQuery === 'function' ? getSkillLadderSearchQuery() : '')}" oninput="window.WikiDB.onSkillLadderSearchInput(this.value)">
             </div>
           </div>
 
@@ -9760,6 +9983,7 @@
       closeSkillLadderEnergyHelp: closeSkillLadderEnergyHelp,
       resetSkillLadderFilters: resetSkillLadderFilters,
       onSkillLadderSearch: onSkillLadderSearch,
+      onSkillLadderSearchInput: typeof onSkillLadderSearchInput === 'function' ? onSkillLadderSearchInput : onSkillLadderSearch,
       setSkillLadderSearchQuery: setSkillLadderSearchQuery,
       getSkillLadderSearchQuery: getSkillLadderSearchQuery,
       clearSkillLadderSearch: clearSkillLadderSearch,
@@ -9834,7 +10058,7 @@
                 <label for="berry-level-slider" class="berry-control-label">
                   ${window.I18N?.t?.('wiki.ui_level_colon') ?? '等級：'}<span id="berry-level-display" class="berry-level-tag">Lv. ${currentBerryLevel}</span>
                 </label>
-                <input type="range" id="berry-level-slider" min="1" max="${pokeCap}" value="${currentBerryLevel}" step="1" class="berry-slider" oninput="window.WikiDB.updateBerryLevel(this.value)">
+                <input type="range" id="berry-level-slider" min="1" max="${pokeCap}" value="${currentBerryLevel}" step="1" class="berry-slider">
               </div>
 
               <!-- 島嶼加成滑桿 (0% ~ ${islandCap}%) -->
@@ -9842,7 +10066,7 @@
                 <label for="berry-island-slider" class="berry-control-label">
                   ${window.I18N?.t?.('wiki.ui_island_bonus_colon') ?? '島嶼加成：'}<span id="berry-island-display" class="berry-island-tag">+${currentIslandBonus}%</span>
                 </label>
-                <input type="range" id="berry-island-slider" min="0" max="${islandCap}" value="${currentIslandBonus}" step="${islandStep}" class="berry-slider island-slider" oninput="window.WikiDB.updateBerryIsland(this.value)">
+                <input type="range" id="berry-island-slider" min="0" max="${islandCap}" value="${currentIslandBonus}" step="${islandStep}" class="berry-slider island-slider">
               </div>
             </div>
           </div>
@@ -9856,7 +10080,7 @@
               const bonusStr = currentIslandBonus > 0 ? (window.I18N?.t?.('wiki.ui_island_bonus_inline', { bonus: currentIslandBonus }) ?? ` +${currentIslandBonus}%島嶼`) : '';
               return `
                 <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr} | ${window.I18N?.t?.('wiki.ui_base_label') ?? '基礎'}: ${energy1x} / ${window.I18N?.t?.('wiki.ui_fav_2x') ?? '順果 2x'}: ${energy2x}">
-                  <img src="${b.icon}" class="value-compact-icon" alt="${bName}">
+                  <img src="${b.icon}" class="value-compact-icon" alt="${bName}" width="32" height="32" loading="lazy" decoding="async">
                   <span class="value-compact-energy berry-val" title="${window.I18N?.t?.('wiki.ui_base_energy_1x') ?? '基礎能量 (1x)'}"><span class="energy-multiplier-prefix">1x</span> ${energy1x}</span>
                   <span class="value-compact-energy berry-val-fav" title="${window.I18N?.t?.('wiki.ui_fav_energy_2x') ?? '順果 2x 能量'}"><span class="energy-multiplier-prefix">2x</span> ${energy2x}</span>
                 </div>
@@ -9881,7 +10105,7 @@
                 : ing.icon;
               return `
               <div class="value-compact-node ${ing.id === 'tail' ? 'value-tail-highlight' : ''}" title="${ingName} - ${window.I18N?.t?.('wiki.ui_base_energy') ?? '基礎能量'} ${ing.energy}">
-                <img src="${ingIcon}" class="value-compact-icon" alt="${ingName}">
+                <img src="${ingIcon}" class="value-compact-icon" alt="${ingName}" width="32" height="32" loading="lazy" decoding="async">
                 <span class="value-compact-energy ing-val">${ing.energy}</span>
               </div>
             `;}).join('')}
@@ -9889,90 +10113,6 @@
         </div>
       </div>
     `;
-  }
-
-  // 渲染食材天梯榜卡片 (舊版清單檢視)
-  function renderIngredientLadders(ladders) {
-    const mult = getLadderMultiplier();
-    const perDayText = window.I18N?.t?.('wiki.ui_per_day') ?? '顆/天';
-    return ladders.map(ing => {
-      const ingName = window.I18N?.getIngredientName?.(ing.name) || (window.I18N?.text?.(ing.name) ?? ing.name);
-      const dishInfo = (typeof getDynamicTopRecipeForIngredient === 'function')
-        ? getDynamicTopRecipeForIngredient(ing.id, ing.name)
-        : (TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { need: 20 });
-      
-      let filteredTiers = ing.tiers.filter((t, tIdx) => {
-        const pkmSpec = getPokemonLadderSpecialty(t.name);
-        if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return false;
-        if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return false;
-        if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return false;
-
-        if (!matchesLadderRecipeFilter(t, ladderRecipeFilter)) return false;
-
-        if (ladderSearchQuery) {
-          if (!matchesLadderSearch(t.name, t.name_en, ladderSearchQuery)) return false;
-        }
-
-        const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
-        const skillBonus = getPokemonSkillDrawBonus(t.name, ing.id, ing.name);
-        const scaledCount = Math.round(rawCountNum * mult) + skillBonus;
-        if (ladderSupplyFilter === 'TOP' && tIdx >= 5) return false;
-        if (ladderSupplyFilter === 'MEALS_3' && scaledCount < dishInfo.need * 3) return false;
-        if (ladderSupplyFilter === 'MEALS_2' && scaledCount < dishInfo.need * 2) return false;
-
-        return true;
-      });
-
-      if (ladderTop15Only && filteredTiers.length > 15) {
-        filteredTiers = filteredTiers.slice(0, 15);
-      }
-
-      const maxDailyBase = filteredTiers.length > 0 ? Math.max(...filteredTiers.map(t => {
-        const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
-        const skillBonus = getPokemonSkillDrawBonus(t.name, ing.id, ing.name);
-        return rawCountNum * mult + skillBonus;
-      })) : 0;
-      const scaledMax = maxDailyBase.toFixed(1);
-
-      return `
-      <div class="ladder-card ${filteredTiers.length === 0 ? 'ladder-track-empty' : ''}" data-ladder-ing="${ing.id}">
-        <div class="ladder-header">
-          <div class="ladder-title-group">
-            <img src="${(typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon}" class="ladder-icon" alt="${ingName}">
-            <h4 class="ladder-name">${ingName}</h4>
-          </div>
-          <span class="ladder-max-badge">${filteredTiers.length > 0 ? (window.I18N?.t?.('wiki.ui_max_daily_prefix') ?? '最高日產 ~ ') + scaledMax + perDayText : (window.I18N?.t?.('wiki.ui_no_match') ?? '無符合')}</span>
-        </div>
-
-        <div class="ladder-tiers-list">
-          ${filteredTiers.length === 0 ? `<div class="text-muted" style="padding: 12px; text-align: center; font-size: 12px;">${window.I18N?.t?.('wiki.ui_no_matching_pkm') ?? '無符合篩選條件之寶可夢'}</div>` : filteredTiers.map(t => {
-            const rawName = t.name || '';
-            const translatedPkm = window.I18N?.getPokemonName?.(rawName) || (window.I18N?.field?.(t, 'name') ?? rawName);
-            const pkmDisplayName = `${translatedPkm} (${t.recipe || 'AAA'})`;
-            const noteText = formatLadderNote(t.note || '');
-            const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
-            const skillBonus = getPokemonSkillDrawBonus(t.name, ing.id, ing.name);
-            const dropCount = (rawCountNum * mult).toFixed(1);
-            const totalCount = (parseFloat(dropCount) + skillBonus).toFixed(1);
-            const displayCount = skillBonus > 0
-              ? `${totalCount} ${perDayText} <span class="ladder-split-text" style="font-size: 11px; color: #f59e0b; font-weight: normal; margin-left: 4px;">(${dropCount} + ${skillBonus})</span>`
-              : `${dropCount} ${perDayText}`;
-
-            return `
-            <div class="ladder-tier-row">
-              <div class="ladder-tier-info">
-                <span class="ladder-pkm-name font-bold">${pkmDisplayName}</span>
-                <span class="ladder-count text-accent font-bold">${displayCount}</span>
-              </div>
-              <div class="ladder-progress-bar">
-                <div class="ladder-progress-fill" style="width: ${t.rate}%"></div>
-              </div>
-              <div class="ladder-note text-muted">${noteText}</div>
-            </div>
-          `;}).join('')}
-        </div>
-      </div>
-    `;}).join('');
   }
 
   // 方案 C: 渲染技能「精華單行速查 (Lv.1 -> Lv.Max)」與「縱向階梯清單（隨卡片點擊展開/收合）」
@@ -10198,7 +10338,7 @@
                   return `
                   <tr>
                     <td style="text-align: center; padding: 5px 4px;">
-                      <img src="${p.icon}" width="34" height="34" style="object-fit: contain; vertical-align: middle;" alt="${pName}" title="${pTitle}">
+                      <img src="${p.icon}" width="34" height="34" loading="lazy" decoding="async" style="object-fit: contain; vertical-align: middle;" alt="${pName}" title="${pTitle}">
                     </td>
                     <td style="text-align: center; padding: 5px 6px;">
                       <span class="wiki-skill-badge skill-badge-blue">${pSkill}</span>
@@ -10210,7 +10350,7 @@
                           const igName = window.I18N?.getIngredientName?.(ig.name) || (window.I18N?.field?.(ig, 'name') ?? ig.name);
                           return `
                           <div class="wiki-ing-badge" title="${igName}" style="display: inline-flex; align-items: center; justify-content: center; background: transparent; border: none; padding: 0; cursor: help;">
-                            <img src="${ig.icon}" width="24" height="24" alt="${igName}" style="object-fit: contain; vertical-align: middle;">
+                            <img src="${ig.icon}" width="24" height="24" loading="lazy" decoding="async" alt="${igName}" style="object-fit: contain; vertical-align: middle;">
                           </div>
                         `;}).join('')}
                       </div>
@@ -10411,6 +10551,37 @@
     renderFilteredItemsGrid();
   }
 
+  let _itemsSearchTimer = null;
+
+  function handleItemsSearchInput(query) {
+    const q = (query || '').trim();
+    const input = document.getElementById('wiki-items-search-input');
+    const clearBtn = document.getElementById('wiki-items-search-clear');
+    const searchBox = document.querySelector('.wiki-items-search-box');
+
+    if (input) {
+      if (q) {
+        input.classList.add('has-value');
+        if (searchBox) searchBox.classList.add('has-query');
+      } else {
+        input.classList.remove('has-value');
+        if (searchBox) searchBox.classList.remove('has-query');
+      }
+    }
+    if (clearBtn) {
+      clearBtn.style.display = q ? 'flex' : 'none';
+    }
+    if (input && typeof window !== 'undefined' && typeof window.updateSearchInputHighlight === 'function') {
+      try { window.updateSearchInputHighlight(input, clearBtn); } catch (e) {}
+    }
+
+    if (_itemsSearchTimer) clearTimeout(_itemsSearchTimer);
+    _itemsSearchTimer = setTimeout(() => {
+      _itemsSearchTimer = null;
+      handleItemsSearch(query);
+    }, 90);
+  }
+
   function handleItemsSearch(query) {
     currentItemsSearchQuery = (query || '').trim();
     const input = document.getElementById('wiki-items-search-input');
@@ -10439,6 +10610,7 @@
   }
 
   function clearItemsSearch() {
+    if (_itemsSearchTimer) { clearTimeout(_itemsSearchTimer); _itemsSearchTimer = null; }
     currentItemsSearchQuery = '';
     const input = document.getElementById('wiki-items-search-input');
     const clearBtn = document.getElementById('wiki-items-search-clear');
@@ -10482,16 +10654,26 @@
   }
 
   const ITEM_CATEGORY_BADGE_MAP = {
-    evolution: ['wiki.ui_item_cat_evolution', '進化道具'],
-    training: ['wiki.ui_item_cat_training', '培育與種子'],
-    biscuit: ['wiki.ui_item_cat_biscuit', '捕捉沙布蕾'],
-    supply: ['wiki.ui_item_cat_supply', '探索與補給']
+    evolution: ['wiki.ui_item_cat_evolution', '進化道具', '进化道具', 'Evolution'],
+    training: ['wiki.ui_item_cat_training', '培育與種子', '培育与种子', 'Training'],
+    biscuit: ['wiki.ui_item_cat_biscuit', '捕捉沙布蕾', '捕捉沙布蕾', 'Biscuits'],
+    supply: ['wiki.ui_item_cat_supply', '探索與補給', '探索与补给', 'Supplies']
   };
 
   function getItemCategoryBadgeName(category) {
     const entry = ITEM_CATEGORY_BADGE_MAP[category];
-    if (entry) return window.I18N?.t?.(entry[0]) ?? entry[1];
-    return window.I18N?.t?.('wiki.ui_item_cat_default') ?? '道具';
+    const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function')
+      ? window.I18N.getLanguage() : 'zh-TW';
+    if (entry) {
+      if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+        return window.I18N.t(entry[0]);
+      }
+      return lang === 'en-US' ? entry[3] : (lang === 'zh-CN' ? entry[2] : entry[1]);
+    }
+    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+      return window.I18N.t('wiki.ui_item_cat_default');
+    }
+    return lang === 'en-US' ? 'Item' : '道具';
   }
 
   const ITEM_HIGHLIGHT_STATS = {
@@ -10530,8 +10712,14 @@
 
   function _pickLocalizedObj(obj) {
     if (!obj) return '';
-    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.pick === 'function') {
-      return window.I18N.pick(obj);
+    if (typeof window !== 'undefined' && window.I18N) {
+      if (typeof window.I18N.pick === 'function') {
+        return window.I18N.pick(obj);
+      }
+      if (typeof window.I18N.getLanguage === 'function') {
+        const lang = window.I18N.getLanguage();
+        if (lang && obj[lang]) return obj[lang];
+      }
     }
     return obj['zh-TW'] || obj['zh-CN'] || obj['en-US'] || '';
   }
@@ -10539,11 +10727,6 @@
   function getItemLocalizedName(item) {
     if (!item || !item.name) return '';
     return _pickLocalizedObj(item.name);
-  }
-
-  function getItemLocalizedDescription(item) {
-    if (!item) return '';
-    return _pickLocalizedObj(item.effects || item.description);
   }
 
   function renderItemCardHTML(item) {
@@ -10584,7 +10767,7 @@
           : (p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`);
         return `
           <div class="wiki-item-evo-chip" title="${escapeHtml(pkmName)}">
-            <img src="${iconUrl}" class="wiki-item-evo-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="if(typeof handlePokemonIconError==='function'){handlePokemonIconError(this);}else{this.style.opacity='0.5';}" />
+            <img src="${iconUrl}" class="wiki-item-evo-avatar" alt="${escapeHtml(pkmName)}" width="28" height="28" loading="lazy" decoding="async" onerror="if(typeof handlePokemonIconError==='function'){handlePokemonIconError(this);}else{this.style.opacity='0.5';}" />
           </div>
         `;
       }).join('');
@@ -10607,7 +10790,7 @@
       <div class="wiki-item-card" data-item-id="${item.id}" onclick="window.WikiDB.openItemDetailModal('${item.id}')" role="button" tabindex="0">
         <div class="wiki-item-card-header">
           <div class="wiki-item-card-icon-wrap">
-            <img src="${iconUrl}" class="wiki-item-card-icon" alt="${name}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}else{this.style.opacity='0.3';}" />
+            <img src="${iconUrl}" class="wiki-item-card-icon" alt="${name}" width="44" height="44" loading="lazy" decoding="async" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}else{this.style.opacity='0.3';}" />
           </div>
           <div class="wiki-item-card-title-group">
             <h4 class="wiki-item-card-name" title="${name}">${name}</h4>
@@ -10684,7 +10867,7 @@
                 data-i18n-placeholder="wiki.items_search_placeholder"
                 autocomplete="off"
                 value="${escapeHtml(currentItemsSearchQuery)}"
-                oninput="window.WikiDB.handleItemsSearch(this.value)">
+                oninput="window.WikiDB.handleItemsSearchInput(this.value)">
               <button type="button" id="wiki-items-search-clear" class="sidebar-section-clear-btn wiki-items-search-clear"
                 style="${currentItemsSearchQuery ? 'display:flex;' : 'display:none;'}"
                 onclick="window.WikiDB.clearItemsSearch()"
@@ -10714,9 +10897,607 @@
     `;
   }
 
-  // --- 道具詳細資訊彈窗與雙向圖鑑跳轉模組 (Item Detail Modal & Bidirectional Dex Linkage) ---
+  // --- Wiki 主技能與副技能指南子面板渲染器 ---
+  function _renderWikiSkillsBody() {
+    return `
+        <div class="wiki-control-bar">
+          <div class="wiki-filter-pills">
+            <span class="wiki-pill-label">${window.I18N?.t?.('wiki.ui_skill_cat_label') ?? '技能類型：'}</span>
+            <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'all' ? 'active' : ''}" data-skill-cat="all" onclick="window.WikiDB.filterSkills('all')">${window.I18N?.t?.('wiki.ui_all_skills') ?? '全部技能'} (${MAIN_SKILLS_DATA.length})</button>
+            <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'energy' ? 'active' : ''}" data-skill-cat="energy" onclick="window.WikiDB.filterSkills('energy')">${window.I18N?.t?.('wiki.ui_cat_energy') ?? '能量系'}</button>
+            <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'energy_heal' ? 'active' : ''}" data-skill-cat="energy_heal" onclick="window.WikiDB.filterSkills('energy_heal')">${window.I18N?.t?.('wiki.ui_cat_energy_heal_btn') ?? '活力系'}</button>
+            <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'ingredient' ? 'active' : ''}" data-skill-cat="ingredient" onclick="window.WikiDB.filterSkills('ingredient')">${window.I18N?.t?.('wiki.ui_cat_ingredient') ?? '食材與料理'}</button>
+            <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'special' ? 'active' : ''}" data-skill-cat="special" onclick="window.WikiDB.filterSkills('special')">${window.I18N?.t?.('wiki.ui_cat_special_btn') ?? '神獸與特殊專屬'}</button>
+            <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'shards' ? 'active' : ''}" data-skill-cat="shards" onclick="window.WikiDB.filterSkills('shards')">${window.I18N?.t?.('wiki.ui_cat_shards_btn') ?? '夢之碎片'}</button>
+          </div>
+        </div>
 
-  let activeItemModalEscHandler = null;
+        <div id="wiki-skills-grid" class="wiki-skills-grid">
+          ${renderSkillsCards(MAIN_SKILLS_DATA)}
+        </div>
+    `;
+  }
+
+  function _renderWikiSubskillsBody(base) {
+    return `
+        <!-- 主技能發動機率矩陣速查表 -->
+        <div class="wiki-card wiki-card-trigger-matrix">
+          <div class="wiki-card-header">
+            <h3 class="wiki-card-title">${window.I18N?.t?.('wiki.ui_trigger_matrix_title') ?? '主技能發動機率矩陣'}</h3>
+          </div>
+          <div class="wiki-rule-banner">
+            ${window.I18N?.t?.('wiki.ui_trigger_matrix_formula') ?? '<strong>公式</strong>: <code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>'}
+          </div>
+
+          <!-- 速查對照表 -->
+          <div class="wiki-table-wrapper" style="margin-top: 10px;">
+            <table class="wiki-data-table">
+              <thead>
+                <tr>
+                  <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_subskills_col') ?? '副技能組合'}</th>
+                  <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_nature_col') ?? '性格'}</th>
+                  <th class="col-hide-mobile" style="text-align: center;">${window.I18N?.t?.('wiki.ui_formula_mult_col') ?? '乘算計算式'}</th>
+                  <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_multiplier_col') ?? '總倍率'}</th>
+                  <th class="col-hide-mobile" style="text-align: center;">${window.I18N?.t?.('wiki.ui_trigger_tier_col') ?? '發動強度評級'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${TRIGGER_CHANCE_MATRIX.map(row => {
+                  const gradeStr = row.grade || '';
+                  const tierClass = gradeStr.startsWith('SSS') ? 'tier-sss'
+                    : gradeStr.startsWith('SS') ? 'tier-ss'
+                    : gradeStr.startsWith('S') ? 'tier-s'
+                    : gradeStr.startsWith('A') ? 'tier-a'
+                    : gradeStr.startsWith('B') ? 'tier-b'
+                    : gradeStr.startsWith('C') ? 'tier-c'
+                    : gradeStr.startsWith('D') ? 'tier-d'
+                    : gradeStr.startsWith('E') ? 'tier-e'
+                    : 'tier-baseline';
+                  return `
+                  <tr>
+                    <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
+                      <div style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex-wrap: nowrap; white-space: nowrap;">
+                        ${row.subskills && row.subskills.length > 0 
+                          ? row.subskills.map(s => {
+                              const isM = s.name.includes('M');
+                              const sName = window.I18N?.t?.(isM ? 'wiki.ui_trigger_m_short' : 'wiki.ui_trigger_s_short') ?? (isM ? '機率提升M' : '機率提升S');
+                              return `<span class="wiki-skill-badge skill-badge-${s.color}" style="white-space: nowrap;">${sName}</span>`;
+                            }).join('') 
+                          : `<span class="text-muted font-bold" style="font-size: 13px;">-</span>`}
+                      </div>
+                    </td>
+                    <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
+                      ${row.natureBadge === 'up' 
+                        ? `<span class="matrix-rate-up">${window.I18N?.t?.('wiki.ui_nature_up') ?? '▲ 上升'}</span>` 
+                        : (row.natureBadge === 'down' 
+                          ? `<span class="matrix-rate-down">${window.I18N?.t?.('wiki.ui_nature_down') ?? '▼ 下降'}</span>` 
+                          : `<span class="text-muted font-bold" style="font-size: 13px;" data-symbol="-">-</span>`)}
+                    </td>
+                    <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
+                    <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
+                      <span class="text-accent font-bold" style="font-size: 13px;">x${row.multiplier.toFixed(3)}</span>
+                    </td>
+                    <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><span class="wiki-tier-badge ${tierClass}">${window.I18N?.field?.(row, 'grade') ?? row.grade}</span></td>
+                  </tr>
+                `;}).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 幫忙速度極限與計算機制指南 (Helping Speed Limits & Mechanics) -->
+        <div class="wiki-card wiki-card-speed-guide" style="margin-top: 20px;">
+          <div class="wiki-card-header">
+            <h3 class="wiki-card-title">${window.I18N?.t?.('wiki.ui_speed_guide_title') ?? '幫忙速度極限與計算機制指南'}</h3>
+          </div>
+          
+          <!-- 幫忙速度核心機制重點說明 (無外框直接展示, 文字極簡化) -->
+          <div class="wiki-speed-summary-points">
+            <div class="summary-point-line">
+              <span class="point-prefix">1.</span>
+              <span class="point-title">${window.I18N?.t?.('wiki.ui_speed_pt1_title') ?? '副技能上限35%:'}</span>
+              <span class="point-desc">${window.I18N?.t?.('wiki.ui_speed_pt1_desc') ?? '副技能合計縮短上限為35%,溢出無效.'}</span>
+            </div>
+            <div class="summary-point-line">
+              <span class="point-prefix">2.</span>
+              <span class="point-title">${window.I18N?.t?.('wiki.ui_speed_pt2_title') ?? '性格獨立乘區:'}</span>
+              <span class="point-desc">${window.I18N?.t?.('wiki.ui_speed_pt2_desc') ?? '直接與副技能相乘,不受35%上限約束.'}</span>
+            </div>
+            <div class="summary-point-line">
+              <span class="point-prefix">3.</span>
+              <span class="point-title">${window.I18N?.t?.('wiki.ui_speed_pt3_title') ?? '產能換算:'}</span>
+              <span class="point-desc">${window.I18N?.t?.('wiki.ui_speed_pt3_desc') ?? '產能為時間倒數,間隔58.5%等同產能提升70.94%.'}</span>
+            </div>
+          </div>
+
+          <!-- 速查對照表 (Quick-Lookup Table) -->
+          <div class="wiki-table-wrapper" style="margin-top: 10px;">
+            <table class="wiki-data-table">
+              <thead>
+                <tr>
+                  <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_subskills_col') ?? '副技能組合'}</th>
+                  <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_nature_col') ?? '性格'}</th>
+                  <th class="col-hide-mobile" style="text-align: center;">${window.I18N?.t?.('wiki.ui_formula_col') ?? '計算式'}</th>
+                  <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_interval_col') ?? '幫忙間隔'}</th>
+                  <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_boost_col') ?? '產能提升'}</th>
+                  <th class="col-hide-mobile" style="text-align: center;">${window.I18N?.t?.('wiki.ui_speed_tier_col') ?? '強度評級'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${HELPING_SPEED_MATRIX.map(row => {
+                  const gradeStr = row.grade || '';
+                  const tierClass = gradeStr.startsWith('SSS') ? 'tier-sss'
+                    : gradeStr.startsWith('SS') ? 'tier-ss'
+                    : gradeStr.startsWith('S') ? 'tier-s'
+                    : gradeStr.startsWith('A') ? 'tier-a'
+                    : gradeStr.startsWith('B') ? 'tier-b'
+                    : gradeStr.startsWith('C') ? 'tier-c'
+                    : gradeStr.startsWith('D') ? 'tier-d'
+                    : 'tier-baseline';
+                  const isBoostPositive = row.outputMultiplier >= 1.0;
+                  return `
+                  <tr>
+                    <td style="vertical-align: middle; text-align: center;">
+                      <div style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex-wrap: wrap;">
+                        ${row.subskills && row.subskills.length > 0 
+                          ? row.subskills.map(s => {
+                              const sName = window.I18N?.field?.(s, 'name') ?? s.name;
+                              return `<span class="wiki-skill-badge skill-badge-${s.color}" style="white-space: nowrap;">${sName}</span>`;
+                            }).join('') 
+                          : `<span class="text-muted font-bold" style="font-size: 13px;">-</span>`}
+                      </div>
+                    </td>
+                    <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
+                      ${row.natureBadge === 'up' 
+                        ? `<span class="matrix-rate-up">${window.I18N?.t?.('wiki.ui_nature_up') ?? '▲ 上升'}</span>` 
+                        : (row.natureBadge === 'down' 
+                          ? `<span class="matrix-rate-down">${window.I18N?.t?.('wiki.ui_nature_down') ?? '▼ 下降'}</span>` 
+                          : `<span class="text-muted font-bold" style="font-size: 13px;" data-symbol="-">-</span>`)}
+                    </td>
+                    <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
+                    <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
+                      <span class="font-bold text-accent" style="font-size: 13.5px;">${row.intervalRatio}x</span>
+                    </td>
+                    <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
+                      <span class="${isBoostPositive ? 'matrix-pct-up' : 'matrix-pct-down'} font-bold" style="font-size: 13px;">${row.outputBoostDisplay}</span>
+                    </td>
+                    <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><span class="wiki-tier-badge ${tierClass}">${window.I18N?.field?.(row, 'grade') ?? row.grade}</span></td>
+                  </tr>
+                `;}).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 睡飽飽獎章加成指南 (Good-Night Ribbon Quick Guide) -->
+        <div class="wiki-card wiki-card-ribbon-guide" style="margin-top: 16px;">
+          <div class="wiki-card-header" style="margin-bottom: 8px;">
+            <h3 class="wiki-card-title">${window.I18N?.t?.('wiki.ui_ribbon_guide_title') ?? '睡飽飽獎章加成指南'}</h3>
+          </div>
+
+          <div class="ribbon-compact-tiers">
+            <div class="ribbon-compact-chip chip-bronze">
+              <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
+                <img src="${base}assets/ribbons/ribbon_lv1.png" width="18" height="18" loading="lazy" decoding="async" style="width:18px;height:18px;object-fit:contain;" alt="" />
+                200h
+              </span>
+              <span class="chip-effect-text">${window.I18N?.t?.('wiki.ui_ribbon_200h') ?? '+1 持有上限'}</span>
+            </div>
+            <div class="ribbon-compact-chip chip-silver">
+              <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
+                <img src="${base}assets/ribbons/ribbon_lv2.png" width="18" height="18" loading="lazy" decoding="async" style="width:18px;height:18px;object-fit:contain;" alt="" />
+                500h
+              </span>
+              <span class="chip-effect-text">${window.I18N?.t?.('wiki.ui_ribbon_500h') ?? '+2 持有, 幫速 -5% / -11%'}</span>
+            </div>
+            <div class="ribbon-compact-chip chip-gold">
+              <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
+                <img src="${base}assets/ribbons/ribbon_lv3.png" width="18" height="18" loading="lazy" decoding="async" style="width:18px;height:18px;object-fit:contain;" alt="" />
+                1,000h
+              </span>
+              <span class="chip-effect-text">${window.I18N?.t?.('wiki.ui_ribbon_1000h') ?? '+3 持有上限'}</span>
+            </div>
+            <div class="ribbon-compact-chip chip-platinum">
+              <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
+                <img src="${base}assets/ribbons/ribbon_lv4.png" width="18" height="18" loading="lazy" decoding="async" style="width:18px;height:18px;object-fit:contain;" alt="" />
+                2,000h
+              </span>
+              <span class="chip-effect-text">${window.I18N?.t?.('wiki.ui_ribbon_2000h') ?? '+2 持有, 幫速 -12% / -25%'}</span>
+            </div>
+          </div>
+
+          <div class="ribbon-compact-notes">
+            <div class="compact-note-line">
+              <span class="compact-note-label">${window.I18N?.t?.('wiki.ui_ribbon_core_lbl') ?? '核心規則:'}</span>
+              <span class="compact-note-text">${window.I18N?.t?.('wiki.ui_ribbon_core_txt') ?? '僅未完全進化寶可夢享有幫速縮短(最高 -25%), 與性格/副技能獨立相乘, 不受 35% 上限限制.'}</span>
+            </div>
+            <div class="compact-note-line">
+              <span class="compact-note-label">${window.I18N?.t?.('wiki.ui_ribbon_case_lbl') ?? '經典案例:'}</span>
+              <span class="compact-note-text">${window.I18N?.t?.('wiki.ui_ribbon_case_txt') ?? '吉利蛋 vs 幸福蛋: 吉利蛋(能再進化 1 次)滿 2000h 幫速縮短 12% 至 <strong>2904 秒</strong>, 反超幸福蛋(3100 秒).'}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 副技能完整階級與數值說明表格 -->
+        <div class="wiki-card wiki-card-subskills-overview" style="margin-top: 20px;">
+          <div class="wiki-card-header">
+            <h3 class="wiki-card-title">${window.I18N?.t?.('wiki.ui_subskills_overview') ?? '副技能階級與數值總覽'}</h3>
+          </div>
+          <div class="wiki-table-wrapper" style="margin-top: 10px;">
+            <table class="wiki-data-table wiki-subskills-table">
+              <thead>
+                <tr>
+                  <th class="col-subskills-tags" style="text-align: center;">${window.I18N?.t?.('wiki.ui_skills_col') ?? '技能標籤'}</th>
+                  <th class="col-subskills-effect">${window.I18N?.t?.('wiki.ui_effect_col') ?? '詳細效果說明'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${SUB_SKILLS_DATA.map(row => `
+                  <tr>
+                    <td class="col-subskills-tags" style="vertical-align: middle; text-align: center;">
+                      <div class="wiki-subskill-tags-col">
+                        ${row.skills.map(s => renderSkillBadge(s)).join('')}
+                      </div>
+                    </td>
+                    <td class="col-subskills-effect text-secondary" style="vertical-align: middle;">${window.I18N?.field?.(row, 'desc') ?? row.desc}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 性格五維加成倍率表 -->
+        <div class="wiki-card wiki-card-natures-table" style="margin-top: 20px;">
+          <div class="wiki-card-header">
+            <h3 class="wiki-card-title">${window.I18N?.t?.('wiki.ui_nature_modifiers') ?? '性格五維屬性倍率表'}</h3>
+          </div>
+          <div class="wiki-table-wrapper" style="margin-top: 10px;">
+            <table class="wiki-data-table">
+              <thead>
+                <tr>
+                  <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_stat_col') ?? '屬性項目'}</th>
+                  <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_nat_up_col') ?? '▲ 性格'}</th>
+                  <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_nat_down_col') ?? '▼ 性格'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${NATURES_EFFECT_DATA.map(row => `
+                  <tr>
+                    <td class="font-bold text-accent" style="vertical-align: middle; text-align: center; white-space: nowrap;">${window.I18N?.field?.(row, 'stat') ?? row.stat}</td>
+                    <td class="text-success font-bold" style="vertical-align: middle; text-align: center; white-space: nowrap;">${window.I18N?.field?.(row, 'up') ?? row.up}</td>
+                    <td class="text-danger font-bold" style="vertical-align: middle; text-align: center; white-space: nowrap;">${window.I18N?.field?.(row, 'down') ?? row.down}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+    `;
+  }
+
+  // --- Wiki 主框架與側邊欄 HTML 殼層建構器 ---
+  function _buildWikiLayoutHtml(ctx) {
+    const {
+      isMobileH5,
+      isWikiMainActive,
+      initialLadderCollapsed,
+      initialSkillLadderCollapsed,
+      caps,
+      sleepExpTargetLevels,
+      shouldRenderSubpanel,
+      renderSkillsBody,
+      renderSubskillsBody
+    } = ctx;
+    return `
+      <!-- 天梯頂級料理食材高亮懸浮按鈕 (FAB) -->
+      <button type="button" id="ladder-recipe-highlight-fab" class="ladder-recipe-highlight-fab ${ladderHighlightRecipe ? 'has-active' : ''}" onclick="window.WikiDB.openLadderRecipeModal()" title="${window.I18N?.t?.('wiki.ui_highlight_recipe') ?? '選取料理高亮食材'}" aria-label="${window.I18N?.t?.('wiki.ui_highlight_recipe') ?? '選取料理高亮食材'}" style="${(ctx.isWikiMainActive && currentWikiSubTab === 'ingredients') ? 'display:flex;' : 'display:none;'}">
+        <span class="recipe-fab-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 11h18a1 1 0 0 1 1 1v2a7 7 0 0 1-14 0v-2"></path>
+            <path d="M7 11V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v5"></path>
+            <line x1="12" y1="2" x2="12" y2="4"></line>
+          </svg>
+        </span>
+        <span id="ladder-recipe-fab-badge" class="ladder-recipe-fab-badge" style="${ladderHighlightRecipe ? 'display:flex;' : 'display:none;'}">✓</span>
+      </button>
+
+      <!-- 天梯頂級料理食材高亮彈窗 (Modal) -->
+      <div id="ladder-recipe-modal" class="ladder-recipe-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="ladder-recipe-modal-title">
+        <div class="ladder-recipe-modal-backdrop" onclick="window.WikiDB.closeLadderRecipeModal()"></div>
+        <div class="ladder-recipe-modal-dialog">
+          <div class="ladder-recipe-modal-header">
+            <div class="ladder-recipe-modal-title-group">
+              <div class="ladder-recipe-modal-title-row">
+                <h3 id="ladder-recipe-modal-title" class="ladder-recipe-modal-title">${window.I18N?.t?.('wiki.ui_highlight_recipe_modal') ?? '選取料理高亮食材'}</h3>
+                <label class="ladder-multi-select-label" for="ladder-recipe-multi-toggle">
+                  <span class="ladder-multi-select-text">${window.I18N?.t?.('wiki.ui_multi_select') ?? '多選'}</span>
+                  <div class="sidebar-switch-wrapper">
+                    <input type="checkbox" id="ladder-recipe-multi-toggle" class="switch-checkbox" ${ladderRecipeMultiSelect ? 'checked' : ''} onchange="window.WikiDB.toggleLadderRecipeMultiSelect(this.checked)">
+                    <span class="switch-slider"></span>
+                  </div>
+                </label>
+              </div>
+              <p class="ladder-recipe-modal-subtitle">${window.I18N?.t?.('wiki.ui_highlight_recipe_sub') ?? '各前10高分料理，標記所需食材'}</p>
+            </div>
+            <div class="ladder-recipe-modal-actions">
+              <button type="button" class="ladder-recipe-header-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${window.I18N?.t?.('wiki.ui_clear_selection') ?? '清除選取'}">${window.I18N?.t?.('wiki.ui_clear_btn') ?? '清除'}</button>
+              <button type="button" class="ladder-recipe-modal-close" onclick="window.WikiDB.closeLadderRecipeModal()" aria-label="${window.I18N?.t?.('wiki.ui_close') ?? '關閉'}">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="ladder-recipe-cat-bar">
+            <!-- Dynamically populated on open -->
+          </div>
+          <div class="ladder-recipe-modal-body">
+            <!-- Dynamically populated on open -->
+          </div>
+        </div>
+      </div>
+
+      ${ctx.isMobileH5 ? `
+        <!-- 右下懸浮天梯篩選按鈕 (與圖鑑/料理完全一致的 FAB 結構) -->
+        <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn ${currentWikiSubTab === 'ingredients' ? '' : 'drawer-open'}" onclick="window.WikiDB.openLadderSidebar()" title="${window.I18N?.t?.('wiki.ui_open_ladder_filter') ?? '展開天梯篩選器'}" aria-label="${window.I18N?.t?.('wiki.ui_open_ladder_filter') ?? '展開天梯篩選器'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
+          <span class="bookmark-icon">
+            <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line>
+              <line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line>
+              <line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line>
+              <line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </span>
+          <span id="ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
+        </button>
+
+        ${typeof renderSkillLadderMobileHandle === 'function' ? renderSkillLadderMobileHandle(currentWikiSubTab) : ''}
+      ` : ''}
+
+      <!-- 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側滑動) -->
+      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${ctx.initialLadderCollapsed}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${window.I18N?.t?.('wiki.ui_filter_label') ?? '篩選器'}">
+        ${!ctx.isMobileH5 ? `
+          <!-- 側邊欄垂直中央書籤標籤 (Desktop: 抽屜把手，展開時自動隱藏，收合時展示) -->
+          <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleLadderSidebar(true)" title="${window.I18N?.t?.('wiki.ui_expand_ladder_sidebar') ?? '展開天梯篩選側邊欄'}" aria-label="${window.I18N?.t?.('wiki.ui_expand_ladder_sidebar') ?? '展開天梯篩選側邊欄'}">
+            <span class="bookmark-icon">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+            </span>
+            <span class="bookmark-text">${window.I18N?.t?.('wiki.ui_filter_short') ?? '篩選'}</span>
+            <span class="bookmark-arrow">◀</span>
+            <span id="ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
+          </button>
+        ` : ''}
+
+        <div class="sidebar-header">
+          <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.toggleLadderSidebar(false)" title="${window.I18N?.t?.('wiki.ui_collapse_sidebar') ?? '收合側邊欄'}" aria-label="${window.I18N?.t?.('wiki.ui_collapse_sidebar') ?? '收合側邊欄'}">◀</button>
+          <div class="sidebar-title-group" style="display:flex;align-items:center;gap:6px;">
+            <span class="sidebar-title">${window.I18N?.t?.('wiki.ui_filter_label') ?? '篩選器'}</span>
+            <button type="button" class="pokedex-formula-help-btn ladder-formula-help-btn" onclick="window.WikiDB.toggleLadderEnergyHelp(event)" title="${window.I18N?.t?.('wiki.ui_ladder_baseline_title') ?? '基準：Lv.60 滿活力 (0.45x)'}" aria-label="Ladder Energy Info">?</button>
+          </div>
+          <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${window.I18N?.t?.('wiki.ui_reset_filters_title') ?? '重設所有條件'}">${window.I18N?.t?.('wiki.ui_reset') ?? '重設'}</button>
+
+          <!-- 天梯基準滿活力浮窗 (Toast-style Popover) -->
+          <div id="ladder-energy-help-popover" class="ladder-energy-help-popover" style="display:none;" role="tooltip">
+            <div class="pokedex-energy-help-backdrop" onclick="window.WikiDB.closeLadderEnergyHelp(event)"></div>
+            <div class="pokedex-energy-help-bubble ladder-energy-help-bubble">
+              <div class="energy-help-title font-bold">${window.I18N?.t?.('wiki.ui_ladder_energy_help_title') ?? '天梯基準：Lv.60 滿活力'}</div>
+              <div class="energy-help-body">
+                ${window.I18N?.t?.('wiki.ui_ladder_energy_help_body') ?? '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。'}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-scrollable-content">
+          <!-- 1. 搜尋寶可夢 -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_search_pkm') ?? '搜尋寶可夢'}</span>
+              <button type="button" id="ladder-search-clear-btn" class="sidebar-section-clear-btn" style="${ladderSearchQuery ? 'display:inline-block;' : 'display:none;'}" onclick="window.WikiDB.clearLadderSearch()">${window.I18N?.t?.('wiki.ui_clear') ?? '清空'}</button>
+            </div>
+            <div class="sidebar-search-box" style="margin-top: 4px;">
+              <span class="sidebar-search-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+                </svg>
+              </span>
+              <input type="text" id="ladder-pkm-search-input" class="sidebar-search-input" placeholder="${window.I18N?.t?.('wiki.ui_search_pkm_ph') ?? '搜尋寶可夢名稱...'}" value="${ladderSearchQuery}" oninput="window.WikiDB.onLadderSearchInput(this.value)">
+            </div>
+          </div>
+
+          <!-- 2. 天梯軌道排序 (Track Sorting) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_track_sorting') ?? '天梯軌道排序'}</span>
+              <label class="ladder-top15-switch-label" title="${window.I18N?.t?.('wiki.ui_top15_title') ?? '預設開啟前15名排行'}">
+                <input type="checkbox" id="ladder-top15-switch" class="ladder-switch-input" ${ladderTop15Only ? 'checked' : ''} onchange="window.WikiDB.toggleLadderTop15(this.checked)">
+                <span class="ladder-switch-slider"></span>
+                <span class="ladder-switch-text">${window.I18N?.t?.('wiki.ui_top15') ?? '前15名'}</span>
+              </label>
+            </div>
+            <div class="sidebar-skills-list sidebar-2col-tags">
+              <button type="button" class="tag-btn ${ladderSortOrder === 'ENERGY_ASC' ? 'active' : ''}" data-sort-order="ENERGY_ASC" onclick="window.WikiDB.setLadderSortOrder('ENERGY_ASC')">${window.I18N?.t?.('wiki.ui_sort_energy_asc') ?? '能量：低到高'}</button>
+              <button type="button" class="tag-btn ${ladderSortOrder === 'ENERGY_DESC' ? 'active' : ''}" data-sort-order="ENERGY_DESC" onclick="window.WikiDB.setLadderSortOrder('ENERGY_DESC')">${window.I18N?.t?.('wiki.ui_sort_energy_desc') ?? '能量：高到低'}</button>
+              <button type="button" class="tag-btn ${ladderSortOrder === 'YIELD_DESC' ? 'active' : ''}" data-sort-order="YIELD_DESC" onclick="window.WikiDB.setLadderSortOrder('YIELD_DESC')">${window.I18N?.t?.('wiki.ui_sort_yield_desc') ?? '產量：多到少'}</button>
+              <button type="button" class="tag-btn ${ladderSortOrder === 'DEMAND_DESC' ? 'active' : ''}" data-sort-order="DEMAND_DESC" onclick="window.WikiDB.setLadderSortOrder('DEMAND_DESC')">${window.I18N?.t?.('wiki.ui_sort_demand_desc') ?? '大菜需求：多到少'}</button>
+            </div>
+          </div>
+
+          <!-- 3. 產量與供餐梯隊 (Supply Tier) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_supply_tier') ?? '產量供餐梯隊'}</span>
+              <label class="ladder-top15-switch-label" title="${window.I18N?.t?.('wiki.ui_final_evo_title') ?? '僅顯示最終進化（稀有食材不足 2 種時自動補入未進化）'}">
+                <input type="checkbox" id="ladder-final-only-switch" class="ladder-switch-input" ${(typeof getLadderFinalOnly === 'function' ? getLadderFinalOnly() : true) ? 'checked' : ''} onchange="window.WikiDB.toggleLadderFinalOnly(this.checked)">
+                <span class="ladder-switch-slider"></span>
+                <span class="ladder-switch-text">${window.I18N?.t?.('wiki.ui_final_evo') ?? '最終進化'}</span>
+              </label>
+            </div>
+            <div class="sidebar-skills-list">
+              <button type="button" class="tag-btn ${ladderSupplyFilter === 'ALL' ? 'active' : ''}" data-supply-filter="ALL" onclick="window.WikiDB.setLadderSupplyFilter('ALL')">${window.I18N?.t?.('wiki.ui_all') ?? '全部'}</button>
+              <button type="button" class="tag-btn ${ladderSupplyFilter === 'TOP' ? 'active' : ''}" data-supply-filter="TOP" onclick="window.WikiDB.setLadderSupplyFilter('TOP')">${window.I18N?.t?.('wiki.ui_top5') ?? '前五名'}</button>
+              <button type="button" class="tag-btn ${ladderSupplyFilter === 'MEALS_3' ? 'active' : ''}" data-supply-filter="MEALS_3" onclick="window.WikiDB.setLadderSupplyFilter('MEALS_3')">${window.I18N?.t?.('wiki.ui_meals_3') ?? '滿載 3 餐'}</button>
+              <button type="button" class="tag-btn ${ladderSupplyFilter === 'MEALS_2' ? 'active' : ''}" data-supply-filter="MEALS_2" onclick="window.WikiDB.setLadderSupplyFilter('MEALS_2')">${window.I18N?.t?.('wiki.ui_meals_2') ?? '充足 2 餐'}</button>
+            </div>
+          </div>
+
+          <!-- 4. 食材組合型態 (Recipe Structure) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_recipe_structure') ?? '食材組合型態'}</span>
+            </div>
+            <div class="sidebar-skills-list">
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'ALL' ? 'active' : ''}" data-recipe-filter="ALL" onclick="window.WikiDB.setLadderRecipeFilter('ALL')">${window.I18N?.t?.('wiki.ui_all') ?? '全部'}</button>
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'AAA' ? 'active' : ''}" data-recipe-filter="AAA" onclick="window.WikiDB.setLadderRecipeFilter('AAA')">${window.I18N?.t?.('wiki.ui_recipe_aaa') ?? '純種 AAA'}</button>
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'ABB' ? 'active' : ''}" data-recipe-filter="ABB" onclick="window.WikiDB.setLadderRecipeFilter('ABB')">${window.I18N?.t?.('wiki.ui_recipe_abb') ?? '雙食材 ABB'}</button>
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'AXX' ? 'active' : ''}" data-recipe-filter="AXX" onclick="window.WikiDB.setLadderRecipeFilter('AXX')">${window.I18N?.t?.('wiki.ui_recipe_axx') ?? '混搭 AXX'}</button>
+            </div>
+          </div>
+
+          <!-- 5. 寶可夢專長分類 (Specialty Type) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_specialty_type') ?? '寶可夢專長'}</span>
+              <div class="ladder-switch-with-help">
+                <label class="ladder-top15-switch-label" title="${window.I18N?.t?.('wiki.ui_ing_draw_tooltip') ?? '所有專長皆以 1.0 倍發動機率為基準\n請用技能機率M/S與技能機率▲模擬補正'}">
+                  <input type="checkbox" id="ladder-skill-draw-toggle" class="ladder-switch-input" ${isLadderSkillDrawExpected ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSkillDrawExpected(this.checked)">
+                  <span class="ladder-switch-slider"></span>
+                  <span class="ladder-switch-text">${window.I18N?.t?.('wiki.ui_ing_draw') ?? '食材精選'}</span>
+                </label>
+                <button type="button" class="ladder-help-icon-btn" onclick="window.WikiDB.openSkillDrawHelpModal(event)" title="${window.I18N?.t?.('wiki.ui_ing_draw_tooltip') ?? '所有專長皆以 1.0 倍發動機率為基準\n請用技能機率M/S與技能機率▲模擬補正'}" aria-label="${window.I18N?.t?.('wiki.ui_skill_help') ?? '技能說明'}">?</button>
+                <!-- 食材精選S 說明提示框 (點選?展示，格式與樣式與網頁版本滑鼠懸停框一致) -->
+                <div id="ladder-skill-help-modal" class="ladder-skill-tooltip-popover" style="display:none;" role="tooltip">
+                  <div class="ladder-skill-tooltip-backdrop" onclick="window.WikiDB.closeSkillDrawHelpModal()"></div>
+                  <div class="ladder-skill-tooltip-bubble">
+                    <div class="ladder-skill-tooltip-line">${window.I18N?.t?.('wiki.ui_ing_draw_line1') ?? '所有專長皆以 1.0 倍發動機率為基準'}</div>
+                    <div class="ladder-skill-tooltip-line">${window.I18N?.t?.('wiki.ui_ing_draw_line2') ?? '請用技能機率M/S與技能機率▲模擬補正'}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="sidebar-skills-list">
+              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'ALL' ? 'active' : ''}" data-specialty-filter="ALL" onclick="window.WikiDB.setLadderSpecialtyFilter('ALL')">${window.I18N?.t?.('wiki.ui_all') ?? '全部'}</button>
+              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'INGREDIENT' ? 'active' : ''}" data-specialty-filter="INGREDIENT" onclick="window.WikiDB.setLadderSpecialtyFilter('INGREDIENT')">${window.I18N?.t?.('wiki.ui_spec_ing') ?? '食材型'}</button>
+              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'BERRY' ? 'active' : ''}" data-specialty-filter="BERRY" onclick="window.WikiDB.setLadderSpecialtyFilter('BERRY')">${window.I18N?.t?.('wiki.ui_spec_berry') ?? '樹果型'}</button>
+              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'SKILL' ? 'active' : ''}" data-specialty-filter="SKILL" onclick="window.WikiDB.setLadderSpecialtyFilter('SKILL')">${window.I18N?.t?.('wiki.ui_spec_skill') ?? '技能型'}</button>
+            </div>
+          </div>
+
+
+          <!-- 6. 副技能補正模擬 (Sub-Skill Boost Simulation) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_subskill_boost') ?? '副技能補正模擬'}</span>
+            </div>
+            <div class="sidebar-skills-list sidebar-2col-tags">
+              <button type="button" class="tag-btn ${isLadderIngM ? 'active' : ''}" id="ladder-ing-m-toggle" data-subskill-boost="ING_M" onclick="window.WikiDB.toggleLadderSubskill('ING_M')">${window.I18N?.t?.('wiki.ui_sub_ing_m') ?? '食材機率M'}</button>
+              <button type="button" class="tag-btn ${isLadderIngS ? 'active' : ''}" id="ladder-ing-s-toggle" data-subskill-boost="ING_S" onclick="window.WikiDB.toggleLadderSubskill('ING_S')">${window.I18N?.t?.('wiki.ui_sub_ing_s') ?? '食材機率S'}</button>
+              <button type="button" class="tag-btn ${isLadderSpeedM ? 'active' : ''}" id="ladder-speed-m-toggle" data-subskill-boost="SPEED_M" onclick="window.WikiDB.toggleLadderSubskill('SPEED_M')">${window.I18N?.t?.('wiki.ui_sub_spd_m') ?? '幫忙速度M'}</button>
+              <button type="button" class="tag-btn ${isLadderSpeedS ? 'active' : ''}" id="ladder-speed-s-toggle" data-subskill-boost="SPEED_S" onclick="window.WikiDB.toggleLadderSubskill('SPEED_S')">${window.I18N?.t?.('wiki.ui_sub_spd_s') ?? '幫忙速度S'}</button>
+              <button type="button" class="tag-btn ${isLadderSkillM ? 'active' : ''}" id="ladder-skill-m-toggle" data-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleLadderSubskill('SKILL_M')">${window.I18N?.t?.('wiki.ui_sub_skl_m') ?? '技能機率M'}</button>
+              <button type="button" class="tag-btn ${isLadderSkillS ? 'active' : ''}" id="ladder-skill-s-toggle" data-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleLadderSubskill('SKILL_S')">${window.I18N?.t?.('wiki.ui_sub_skl_s') ?? '技能機率S'}</button>
+            </div>
+          </div>
+
+          <!-- 7. 性格補正模擬 (Nature Boost Simulation - 單選) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_nature_boost') ?? '性格補正模擬'}</span>
+            </div>
+            <div class="sidebar-skills-list sidebar-2col-tags">
+              <button type="button" class="tag-btn ${ladderNatureIng ? 'active' : ''}" data-nature-filter="ING" onclick="window.WikiDB.toggleLadderNatureFilter('ING')">${window.I18N?.t?.('wiki.ui_nat_ing') ?? '食材機率▲'}</button>
+              <button type="button" class="tag-btn ${ladderNatureSpeed ? 'active' : ''}" data-nature-filter="SPEED" onclick="window.WikiDB.toggleLadderNatureFilter('SPEED')">${window.I18N?.t?.('wiki.ui_nat_spd') ?? '幫忙速度▲'}</button>
+              <button type="button" class="tag-btn ${ladderNatureSkill ? 'active' : ''}" data-nature-filter="SKILL" onclick="window.WikiDB.toggleLadderNatureFilter('SKILL')">${window.I18N?.t?.('wiki.ui_nat_skl') ?? '技能機率▲'}</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      ${typeof renderSkillLadderSidebar === 'function' ? renderSkillLadderSidebar(initialSkillLadderCollapsed, undefined, currentWikiSubTab) : ''}
+
+      <div class="wiki-main-container">
+        <!-- 二級子分頁導航 (Sub-tabs) - 精簡無大標題橫幅 -->
+        <div class="wiki-subnav-bar">
+          <div class="wiki-subnav-tabs" role="tablist">
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_skills_m' : 'wiki.ui_tab_skills') ?? '主技能數值庫'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_subskills_m' : 'wiki.ui_tab_subskills') ?? '副技能與性格指南'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_ing_m' : 'wiki.ui_tab_ing') ?? '食材產量天梯榜'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills_ladder' ? 'active' : ''}" data-subtab="skills_ladder" onclick="window.WikiDB.switchSubTab('skills_ladder')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_skl_m' : 'wiki.ui_tab_skl') ?? '主技能天梯榜'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_values_m' : 'wiki.ui_tab_values') ?? '樹果與食材能量'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_ratings_m' : 'wiki.ui_tab_ratings') ?? '培育與評級指南'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'islands' ? 'active' : ''}" data-subtab="islands" onclick="window.WikiDB.switchSubTab('islands')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_islands_m' : 'wiki.ui_tab_islands') ?? '島嶼營地與EX模式'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'items' ? 'active' : ''}" data-subtab="items" onclick="window.WikiDB.switchSubTab('items')">${window.I18N?.t?.('wiki.ui_tab_items') ?? '道具百科'}</button>
+          </div>
+        </div>
+
+        <!-- 子分頁 1：主技能數值庫 (Main Skills) -->
+        <div id="wiki-subpanel-skills" class="wiki-subpanel ${currentWikiSubTab === 'skills' ? 'active' : ''}" style="${currentWikiSubTab === 'skills' ? '' : 'display:none;'}"${ctx.shouldRenderSubpanel('skills') ? '' : ' data-wiki-pending="1"'}>
+          ${ctx.shouldRenderSubpanel('skills') ? ctx.renderSkillsBody() : ''}
+        </div>
+
+        <!-- 子分頁 2：副技能與性格指南 (Sub-Skills & Natures) -->
+        <div id="wiki-subpanel-subskills" class="wiki-subpanel ${currentWikiSubTab === 'subskills' ? 'active' : ''}" style="${currentWikiSubTab === 'subskills' ? '' : 'display:none;'}"${ctx.shouldRenderSubpanel('subskills') ? '' : ' data-wiki-pending="1"'}>
+          ${ctx.shouldRenderSubpanel('subskills') ? ctx.renderSubskillsBody() : ''}
+        </div>
+
+        <!-- 子分頁 3：食材產量天梯榜 (Ingredient Yield Ladder) -->
+        <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? '' : 'display:none;'}"${ctx.shouldRenderSubpanel('ingredients') ? '' : ' data-wiki-pending="1"'}>
+          <!-- 橫向視覺天梯座標圖 (預設顯示) -->
+          ${ctx.shouldRenderSubpanel('ingredients') ? `<div id="wiki-ingredient-ladder-coordinate">${renderCoordinateLadder()}</div>` : ''}
+        </div>
+
+        <!-- 子分頁：主技能天梯榜 (Skill Proc Ladder) -->
+        <div id="wiki-subpanel-skills_ladder" class="wiki-subpanel ${currentWikiSubTab === 'skills_ladder' ? 'active' : ''}" style="${currentWikiSubTab === 'skills_ladder' ? '' : 'display:none;'}"${ctx.shouldRenderSubpanel('skills_ladder') ? '' : ' data-wiki-pending="1"'}>
+          <!-- 橫向視覺技能天梯座標圖 -->
+          ${ctx.shouldRenderSubpanel('skills_ladder') ? `<div id="wiki-skill-ladder-coordinate">${typeof renderSkillCoordinateLadder === 'function' ? renderSkillCoordinateLadder() : ''}</div>` : ''}
+        </div>
+
+        <!-- 子分頁 4：樹果與食材基礎能量 (Berry & Ingredient Values) -->
+        <div id="wiki-subpanel-values" class="wiki-subpanel ${currentWikiSubTab === 'values' ? 'active' : ''}" style="${currentWikiSubTab === 'values' ? '' : 'display:none;'}"${ctx.shouldRenderSubpanel('values') ? '' : ' data-wiki-pending="1"'}>
+          ${ctx.shouldRenderSubpanel('values') ? renderValuesBoard() : ''}
+        </div>
+
+        <!-- 子分頁 5: 培育與評級指南 (Ratings & Growth) -->
+        <div id="wiki-subpanel-ratings" class="wiki-subpanel ${currentWikiSubTab === 'ratings' ? 'active' : ''}" style="${currentWikiSubTab === 'ratings' ? '' : 'display:none;'}"${ctx.shouldRenderSubpanel('ratings') ? '' : ' data-wiki-pending="1"'}>
+          ${ctx.shouldRenderSubpanel('ratings') ? _renderWikiRatingsBody(ctx.caps, ctx.sleepExpTargetLevels) : ''}
+        </div>
+
+        <!-- 子分頁 6: 島嶼營地與EX專家模式 (Research Camps & EX Mode) -->
+        <div id="wiki-subpanel-islands" class="wiki-subpanel ${currentWikiSubTab === 'islands' ? 'active' : ''}" style="${currentWikiSubTab === 'islands' ? '' : 'display:none;'}"${ctx.shouldRenderSubpanel('islands') ? '' : ' data-wiki-pending="1"'}>
+          ${ctx.shouldRenderSubpanel('islands') ? renderIslandsSubpanel() : ''}
+        </div>
+
+        <!-- 子分頁 7: 道具百科 (Items Encyclopedia) -->
+        <div id="wiki-subpanel-items" class="wiki-subpanel ${currentWikiSubTab === 'items' ? 'active' : ''}" style="${currentWikiSubTab === 'items' ? '' : 'display:none;'}"${ctx.shouldRenderSubpanel('items') ? '' : ' data-wiki-pending="1"'}>
+          ${ctx.shouldRenderSubpanel('items') ? renderItemsSubpanel() : ''}
+        </div>
+      </div>
+
+      <!-- 遮罩層 (Backdrop for Mobile Drawer - 阻斷點擊穿透) -->
+      <div id="ladder-sidebar-backdrop" class="sidebar-backdrop" onclick="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchend="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchstart="event.stopPropagation()"></div>
+      <div id="skill-ladder-sidebar-backdrop" class="sidebar-backdrop" onclick="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeSkillLadderSidebar()" ontouchend="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeSkillLadderSidebar()" ontouchstart="event.stopPropagation()"></div>
+    `;
+  }
+
+  // --- 道具詳細資訊彈窗與雙向圖鑑跳轉模組 (Item Detail Modal & Bidirectional Dex Linkage) ---
 
   function getItemLocalizedEffects(item) {
     if (!item) return '';
@@ -10746,6 +11527,8 @@
     }
     return window.I18N?.text?.(limitStr) ?? limitStr;
   }
+
+  let activeItemModalEscHandler = null;
 
   function navigateToPokemonDex(pokemonId) {
     const pokedexModal = document.getElementById('pokedex-detail-modal');
@@ -10788,7 +11571,7 @@
           <div class="box-modal-header wiki-item-modal-header">
             <div class="wiki-item-modal-title-group">
               <div class="wiki-item-modal-icon-wrap" id="wiki-item-modal-icon-wrap">
-                <img id="wiki-item-modal-icon" class="wiki-item-modal-icon" alt="Item" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
+                <img id="wiki-item-modal-icon" class="wiki-item-modal-icon" alt="Item" width="52" height="52" loading="lazy" decoding="async" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
               </div>
               <div class="wiki-item-modal-heading">
                 <div class="wiki-item-modal-title-row">
@@ -11004,7 +11787,7 @@
               </div>
             `;
           } else {
-            const idx = _getWikiPkmIndex();
+            const idx = typeof _getWikiPkmIndex === 'function' ? _getWikiPkmIndex() : {};
 
             pkmGridEl.innerHTML = pkmIds.map(pkmId => {
               const idStr = String(pkmId);
@@ -11025,7 +11808,7 @@
                 <button type="button" class="wiki-item-pkm-card"
                   onclick="window.WikiDB.navigateToPokemonDex('${targetId}'); if (window.PokemonApp && window.PokemonApp.openPokemonDetailModal) { window.PokemonApp.openPokemonDetailModal('${targetId}'); }"
                   title="${viewTitle}">
-                  <img src="${pkmIcon}" class="wiki-item-pkm-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="if(typeof handlePokemonIconError==='function'){handlePokemonIconError(this);}else{this.style.opacity='0.5';}" />
+                  <img src="${pkmIcon}" class="wiki-item-pkm-avatar" alt="${escapeHtml(pkmName)}" width="40" height="40" loading="lazy" decoding="async" onerror="if(typeof handlePokemonIconError==='function'){handlePokemonIconError(this);}else{this.style.opacity='0.5';}" />
                   <div class="wiki-item-pkm-info">
                     <span class="wiki-item-pkm-no font-mono">No.${pkmNo}</span>
                     <span class="wiki-item-pkm-name">${escapeHtml(pkmName)}</span>
@@ -11176,7 +11959,6 @@
     }
   }
 
-  // 渲染 Wiki 主佈局與 5 大子分頁 (精簡二級選單列)
   function renderWikiLayout(container) {
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
@@ -11196,723 +11978,34 @@
       ? gameCfg.getSleepExpTargetLevels()
       : Array.from(new Set([30, 50, 60, caps.POKEMON_LEVEL_CAP, 80, caps.THEORETICAL_MAX_LEVEL].filter(Boolean))).sort((a, b) => a - b);
 
-    container.innerHTML = `
-      <!-- 天梯頂級料理食材高亮懸浮按鈕 (FAB) -->
-      <button type="button" id="ladder-recipe-highlight-fab" class="ladder-recipe-highlight-fab ${ladderHighlightRecipe ? 'has-active' : ''}" onclick="window.WikiDB.openLadderRecipeModal()" title="${window.I18N?.t?.('wiki.ui_highlight_recipe') ?? '選取料理高亮食材'}" aria-label="${window.I18N?.t?.('wiki.ui_highlight_recipe') ?? '選取料理高亮食材'}" style="${(isWikiMainActive && currentWikiSubTab === 'ingredients') ? 'display:flex;' : 'display:none;'}">
-        <span class="recipe-fab-icon">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 11h18a1 1 0 0 1 1 1v2a7 7 0 0 1-14 0v-2"></path>
-            <path d="M7 11V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v5"></path>
-            <line x1="12" y1="2" x2="12" y2="4"></line>
-          </svg>
-        </span>
-        <span id="ladder-recipe-fab-badge" class="ladder-recipe-fab-badge" style="${ladderHighlightRecipe ? 'display:flex;' : 'display:none;'}">✓</span>
-      </button>
-
-      <!-- 天梯頂級料理食材高亮彈窗 (Modal) -->
-      <div id="ladder-recipe-modal" class="ladder-recipe-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="ladder-recipe-modal-title">
-        <div class="ladder-recipe-modal-backdrop" onclick="window.WikiDB.closeLadderRecipeModal()"></div>
-        <div class="ladder-recipe-modal-dialog">
-          <div class="ladder-recipe-modal-header">
-            <div class="ladder-recipe-modal-title-group">
-              <div class="ladder-recipe-modal-title-row">
-                <h3 id="ladder-recipe-modal-title" class="ladder-recipe-modal-title">${window.I18N?.t?.('wiki.ui_highlight_recipe_modal') ?? '選取料理高亮食材'}</h3>
-                <label class="ladder-multi-select-label" for="ladder-recipe-multi-toggle">
-                  <span class="ladder-multi-select-text">${window.I18N?.t?.('wiki.ui_multi_select') ?? '多選'}</span>
-                  <div class="sidebar-switch-wrapper">
-                    <input type="checkbox" id="ladder-recipe-multi-toggle" class="switch-checkbox" ${ladderRecipeMultiSelect ? 'checked' : ''} onchange="window.WikiDB.toggleLadderRecipeMultiSelect(this.checked)">
-                    <span class="switch-slider"></span>
-                  </div>
-                </label>
-              </div>
-              <p class="ladder-recipe-modal-subtitle">${window.I18N?.t?.('wiki.ui_highlight_recipe_sub') ?? '各前10高分料理，標記所需食材'}</p>
-            </div>
-            <div class="ladder-recipe-modal-actions">
-              <button type="button" class="ladder-recipe-header-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${window.I18N?.t?.('wiki.ui_clear_selection') ?? '清除選取'}">${window.I18N?.t?.('wiki.ui_clear_btn') ?? '清除'}</button>
-              <button type="button" class="ladder-recipe-modal-close" onclick="window.WikiDB.closeLadderRecipeModal()" aria-label="${window.I18N?.t?.('wiki.ui_close') ?? '關閉'}">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            </div>
-          </div>
-          <div class="ladder-recipe-cat-bar">
-            <!-- Dynamically populated on open -->
-          </div>
-          <div class="ladder-recipe-modal-body">
-            <!-- Dynamically populated on open -->
-          </div>
-        </div>
-      </div>
-
-      ${isMobileH5 ? `
-        <!-- 右下懸浮天梯篩選按鈕 (與圖鑑/料理完全一致的 FAB 結構) -->
-        <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn ${currentWikiSubTab === 'ingredients' ? '' : 'drawer-open'}" onclick="window.WikiDB.openLadderSidebar()" title="${window.I18N?.t?.('wiki.ui_open_ladder_filter') ?? '展開天梯篩選器'}" aria-label="${window.I18N?.t?.('wiki.ui_open_ladder_filter') ?? '展開天梯篩選器'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
-          <span class="bookmark-icon">
-            <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="4" y1="21" x2="4" y2="14"></line>
-              <line x1="4" y1="10" x2="4" y2="3"></line>
-              <line x1="12" y1="21" x2="12" y2="12"></line>
-              <line x1="12" y1="8" x2="12" y2="3"></line>
-              <line x1="20" y1="21" x2="20" y2="16"></line>
-              <line x1="20" y1="12" x2="20" y2="3"></line>
-              <line x1="1" y1="14" x2="7" y2="14"></line>
-              <line x1="9" y1="8" x2="15" y2="8"></line>
-              <line x1="17" y1="16" x2="23" y2="16"></line>
-            </svg>
-          </span>
-          <span id="ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
-        </button>
-
-        ${typeof renderSkillLadderMobileHandle === 'function' ? renderSkillLadderMobileHandle(currentWikiSubTab) : ''}
-      ` : ''}
-
-      <!-- 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側滑動) -->
-      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialLadderCollapsed}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${window.I18N?.t?.('wiki.ui_filter_label') ?? '篩選器'}">
-        ${!isMobileH5 ? `
-          <!-- 側邊欄垂直中央書籤標籤 (Desktop: 抽屜把手，展開時自動隱藏，收合時展示) -->
-          <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleLadderSidebar(true)" title="${window.I18N?.t?.('wiki.ui_expand_ladder_sidebar') ?? '展開天梯篩選側邊欄'}" aria-label="${window.I18N?.t?.('wiki.ui_expand_ladder_sidebar') ?? '展開天梯篩選側邊欄'}">
-            <span class="bookmark-icon">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="21" x2="4" y2="14"></line>
-                <line x1="4" y1="10" x2="4" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12" y2="3"></line>
-                <line x1="20" y1="21" x2="20" y2="16"></line>
-                <line x1="20" y1="12" x2="20" y2="3"></line>
-                <line x1="1" y1="14" x2="7" y2="14"></line>
-                <line x1="9" y1="8" x2="15" y2="8"></line>
-                <line x1="17" y1="16" x2="23" y2="16"></line>
-              </svg>
-            </span>
-            <span class="bookmark-text">${window.I18N?.t?.('wiki.ui_filter_short') ?? '篩選'}</span>
-            <span class="bookmark-arrow">◀</span>
-            <span id="ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
-          </button>
-        ` : ''}
-
-        <div class="sidebar-header">
-          <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.toggleLadderSidebar(false)" title="${window.I18N?.t?.('wiki.ui_collapse_sidebar') ?? '收合側邊欄'}" aria-label="${window.I18N?.t?.('wiki.ui_collapse_sidebar') ?? '收合側邊欄'}">◀</button>
-          <div class="sidebar-title-group" style="display:flex;align-items:center;gap:6px;">
-            <span class="sidebar-title">${window.I18N?.t?.('wiki.ui_filter_label') ?? '篩選器'}</span>
-            <button type="button" class="pokedex-formula-help-btn ladder-formula-help-btn" onclick="window.WikiDB.toggleLadderEnergyHelp(event)" title="${window.I18N?.t?.('wiki.ui_ladder_baseline_title') ?? '基準：Lv.60 滿活力 (0.45x)'}" aria-label="Ladder Energy Info">?</button>
-          </div>
-          <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${window.I18N?.t?.('wiki.ui_reset_filters_title') ?? '重設所有條件'}">${window.I18N?.t?.('wiki.ui_reset') ?? '重設'}</button>
-
-          <!-- 天梯基準滿活力浮窗 (Toast-style Popover) -->
-          <div id="ladder-energy-help-popover" class="ladder-energy-help-popover" style="display:none;" role="tooltip">
-            <div class="pokedex-energy-help-backdrop" onclick="window.WikiDB.closeLadderEnergyHelp(event)"></div>
-            <div class="pokedex-energy-help-bubble ladder-energy-help-bubble">
-              <div class="energy-help-title font-bold">${window.I18N?.t?.('wiki.ui_ladder_energy_help_title') ?? '天梯基準：Lv.60 滿活力'}</div>
-              <div class="energy-help-body">
-                ${window.I18N?.t?.('wiki.ui_ladder_energy_help_body') ?? '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。'}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sidebar-scrollable-content">
-          <!-- 1. 搜尋寶可夢 -->
-          <div class="sidebar-section">
-            <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_search_pkm') ?? '搜尋寶可夢'}</span>
-              <button type="button" id="ladder-search-clear-btn" class="sidebar-section-clear-btn" style="${ladderSearchQuery ? 'display:inline-block;' : 'display:none;'}" onclick="window.WikiDB.clearLadderSearch()">${window.I18N?.t?.('wiki.ui_clear') ?? '清空'}</button>
-            </div>
-            <div class="sidebar-search-box" style="margin-top: 4px;">
-              <span class="sidebar-search-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="7"></circle>
-                  <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
-                </svg>
-              </span>
-              <input type="text" id="ladder-pkm-search-input" class="sidebar-search-input" placeholder="${window.I18N?.t?.('wiki.ui_search_pkm_ph') ?? '搜尋寶可夢名稱...'}" value="${ladderSearchQuery}" oninput="window.WikiDB.onLadderSearch(this.value)">
-            </div>
-          </div>
-
-          <!-- 2. 天梯軌道排序 (Track Sorting) -->
-          <div class="sidebar-section">
-            <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_track_sorting') ?? '天梯軌道排序'}</span>
-              <label class="ladder-top15-switch-label" title="${window.I18N?.t?.('wiki.ui_top15_title') ?? '預設開啟前15名排行'}">
-                <input type="checkbox" id="ladder-top15-switch" class="ladder-switch-input" ${ladderTop15Only ? 'checked' : ''} onchange="window.WikiDB.toggleLadderTop15(this.checked)">
-                <span class="ladder-switch-slider"></span>
-                <span class="ladder-switch-text">${window.I18N?.t?.('wiki.ui_top15') ?? '前15名'}</span>
-              </label>
-            </div>
-            <div class="sidebar-skills-list sidebar-2col-tags">
-              <button type="button" class="tag-btn ${ladderSortOrder === 'ENERGY_ASC' ? 'active' : ''}" data-sort-order="ENERGY_ASC" onclick="window.WikiDB.setLadderSortOrder('ENERGY_ASC')">${window.I18N?.t?.('wiki.ui_sort_energy_asc') ?? '能量：低到高'}</button>
-              <button type="button" class="tag-btn ${ladderSortOrder === 'ENERGY_DESC' ? 'active' : ''}" data-sort-order="ENERGY_DESC" onclick="window.WikiDB.setLadderSortOrder('ENERGY_DESC')">${window.I18N?.t?.('wiki.ui_sort_energy_desc') ?? '能量：高到低'}</button>
-              <button type="button" class="tag-btn ${ladderSortOrder === 'YIELD_DESC' ? 'active' : ''}" data-sort-order="YIELD_DESC" onclick="window.WikiDB.setLadderSortOrder('YIELD_DESC')">${window.I18N?.t?.('wiki.ui_sort_yield_desc') ?? '產量：多到少'}</button>
-              <button type="button" class="tag-btn ${ladderSortOrder === 'DEMAND_DESC' ? 'active' : ''}" data-sort-order="DEMAND_DESC" onclick="window.WikiDB.setLadderSortOrder('DEMAND_DESC')">${window.I18N?.t?.('wiki.ui_sort_demand_desc') ?? '大菜需求：多到少'}</button>
-            </div>
-          </div>
-
-          <!-- 3. 產量與供餐梯隊 (Supply Tier) -->
-          <div class="sidebar-section">
-            <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_supply_tier') ?? '產量供餐梯隊'}</span>
-              <label class="ladder-top15-switch-label" title="${window.I18N?.t?.('wiki.ui_final_evo_title') ?? '僅顯示最終進化（稀有食材不足 2 種時自動補入未進化）'}">
-                <input type="checkbox" id="ladder-final-only-switch" class="ladder-switch-input" ${(typeof getLadderFinalOnly === 'function' ? getLadderFinalOnly() : true) ? 'checked' : ''} onchange="window.WikiDB.toggleLadderFinalOnly(this.checked)">
-                <span class="ladder-switch-slider"></span>
-                <span class="ladder-switch-text">${window.I18N?.t?.('wiki.ui_final_evo') ?? '最終進化'}</span>
-              </label>
-            </div>
-            <div class="sidebar-skills-list">
-              <button type="button" class="tag-btn ${ladderSupplyFilter === 'ALL' ? 'active' : ''}" data-supply-filter="ALL" onclick="window.WikiDB.setLadderSupplyFilter('ALL')">${window.I18N?.t?.('wiki.ui_all') ?? '全部'}</button>
-              <button type="button" class="tag-btn ${ladderSupplyFilter === 'TOP' ? 'active' : ''}" data-supply-filter="TOP" onclick="window.WikiDB.setLadderSupplyFilter('TOP')">${window.I18N?.t?.('wiki.ui_top5') ?? '前五名'}</button>
-              <button type="button" class="tag-btn ${ladderSupplyFilter === 'MEALS_3' ? 'active' : ''}" data-supply-filter="MEALS_3" onclick="window.WikiDB.setLadderSupplyFilter('MEALS_3')">${window.I18N?.t?.('wiki.ui_meals_3') ?? '滿載 3 餐'}</button>
-              <button type="button" class="tag-btn ${ladderSupplyFilter === 'MEALS_2' ? 'active' : ''}" data-supply-filter="MEALS_2" onclick="window.WikiDB.setLadderSupplyFilter('MEALS_2')">${window.I18N?.t?.('wiki.ui_meals_2') ?? '充足 2 餐'}</button>
-            </div>
-          </div>
-
-          <!-- 4. 食材組合型態 (Recipe Structure) -->
-          <div class="sidebar-section">
-            <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_recipe_structure') ?? '食材組合型態'}</span>
-            </div>
-            <div class="sidebar-skills-list">
-              <button type="button" class="tag-btn ${ladderRecipeFilter === 'ALL' ? 'active' : ''}" data-recipe-filter="ALL" onclick="window.WikiDB.setLadderRecipeFilter('ALL')">${window.I18N?.t?.('wiki.ui_all') ?? '全部'}</button>
-              <button type="button" class="tag-btn ${ladderRecipeFilter === 'AAA' ? 'active' : ''}" data-recipe-filter="AAA" onclick="window.WikiDB.setLadderRecipeFilter('AAA')">${window.I18N?.t?.('wiki.ui_recipe_aaa') ?? '純種 AAA'}</button>
-              <button type="button" class="tag-btn ${ladderRecipeFilter === 'ABB' ? 'active' : ''}" data-recipe-filter="ABB" onclick="window.WikiDB.setLadderRecipeFilter('ABB')">${window.I18N?.t?.('wiki.ui_recipe_abb') ?? '雙食材 ABB'}</button>
-              <button type="button" class="tag-btn ${ladderRecipeFilter === 'AXX' ? 'active' : ''}" data-recipe-filter="AXX" onclick="window.WikiDB.setLadderRecipeFilter('AXX')">${window.I18N?.t?.('wiki.ui_recipe_axx') ?? '混搭 AXX'}</button>
-            </div>
-          </div>
-
-          <!-- 5. 寶可夢專長分類 (Specialty Type) -->
-          <div class="sidebar-section">
-            <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_specialty_type') ?? '寶可夢專長'}</span>
-              <div class="ladder-switch-with-help">
-                <label class="ladder-top15-switch-label" title="${window.I18N?.t?.('wiki.ui_ing_draw_tooltip') ?? '所有專長皆以 1.0 倍發動機率為基準\n請用技能機率M/S與技能機率▲模擬補正'}">
-                  <input type="checkbox" id="ladder-skill-draw-toggle" class="ladder-switch-input" ${isLadderSkillDrawExpected ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSkillDrawExpected(this.checked)">
-                  <span class="ladder-switch-slider"></span>
-                  <span class="ladder-switch-text">${window.I18N?.t?.('wiki.ui_ing_draw') ?? '食材精選'}</span>
-                </label>
-                <button type="button" class="ladder-help-icon-btn" onclick="window.WikiDB.openSkillDrawHelpModal(event)" title="${window.I18N?.t?.('wiki.ui_ing_draw_tooltip') ?? '所有專長皆以 1.0 倍發動機率為基準\n請用技能機率M/S與技能機率▲模擬補正'}" aria-label="${window.I18N?.t?.('wiki.ui_skill_help') ?? '技能說明'}">?</button>
-                <!-- 食材精選S 說明提示框 (點選?展示，格式與樣式與網頁版本滑鼠懸停框一致) -->
-                <div id="ladder-skill-help-modal" class="ladder-skill-tooltip-popover" style="display:none;" role="tooltip">
-                  <div class="ladder-skill-tooltip-backdrop" onclick="window.WikiDB.closeSkillDrawHelpModal()"></div>
-                  <div class="ladder-skill-tooltip-bubble">
-                    <div class="ladder-skill-tooltip-line">${window.I18N?.t?.('wiki.ui_ing_draw_line1') ?? '所有專長皆以 1.0 倍發動機率為基準'}</div>
-                    <div class="ladder-skill-tooltip-line">${window.I18N?.t?.('wiki.ui_ing_draw_line2') ?? '請用技能機率M/S與技能機率▲模擬補正'}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="sidebar-skills-list">
-              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'ALL' ? 'active' : ''}" data-specialty-filter="ALL" onclick="window.WikiDB.setLadderSpecialtyFilter('ALL')">${window.I18N?.t?.('wiki.ui_all') ?? '全部'}</button>
-              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'INGREDIENT' ? 'active' : ''}" data-specialty-filter="INGREDIENT" onclick="window.WikiDB.setLadderSpecialtyFilter('INGREDIENT')">${window.I18N?.t?.('wiki.ui_spec_ing') ?? '食材型'}</button>
-              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'BERRY' ? 'active' : ''}" data-specialty-filter="BERRY" onclick="window.WikiDB.setLadderSpecialtyFilter('BERRY')">${window.I18N?.t?.('wiki.ui_spec_berry') ?? '樹果型'}</button>
-              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'SKILL' ? 'active' : ''}" data-specialty-filter="SKILL" onclick="window.WikiDB.setLadderSpecialtyFilter('SKILL')">${window.I18N?.t?.('wiki.ui_spec_skill') ?? '技能型'}</button>
-            </div>
-          </div>
+    const deferSubpanels = !!(container && container.id === 'panel-wiki' && container.style && container.style.display === 'none');
+    const shouldRenderSubpanel = (subName) => !deferSubpanels || currentWikiSubTab === subName || subName === 'ratings';
 
 
-          <!-- 6. 副技能補正模擬 (Sub-Skill Boost Simulation) -->
-          <div class="sidebar-section">
-            <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_subskill_boost') ?? '副技能補正模擬'}</span>
-            </div>
-            <div class="sidebar-skills-list sidebar-2col-tags">
-              <button type="button" class="tag-btn ${isLadderIngM ? 'active' : ''}" id="ladder-ing-m-toggle" data-subskill-boost="ING_M" onclick="window.WikiDB.toggleLadderSubskill('ING_M')">${window.I18N?.t?.('wiki.ui_sub_ing_m') ?? '食材機率M'}</button>
-              <button type="button" class="tag-btn ${isLadderIngS ? 'active' : ''}" id="ladder-ing-s-toggle" data-subskill-boost="ING_S" onclick="window.WikiDB.toggleLadderSubskill('ING_S')">${window.I18N?.t?.('wiki.ui_sub_ing_s') ?? '食材機率S'}</button>
-              <button type="button" class="tag-btn ${isLadderSpeedM ? 'active' : ''}" id="ladder-speed-m-toggle" data-subskill-boost="SPEED_M" onclick="window.WikiDB.toggleLadderSubskill('SPEED_M')">${window.I18N?.t?.('wiki.ui_sub_spd_m') ?? '幫忙速度M'}</button>
-              <button type="button" class="tag-btn ${isLadderSpeedS ? 'active' : ''}" id="ladder-speed-s-toggle" data-subskill-boost="SPEED_S" onclick="window.WikiDB.toggleLadderSubskill('SPEED_S')">${window.I18N?.t?.('wiki.ui_sub_spd_s') ?? '幫忙速度S'}</button>
-              <button type="button" class="tag-btn ${isLadderSkillM ? 'active' : ''}" id="ladder-skill-m-toggle" data-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleLadderSubskill('SKILL_M')">${window.I18N?.t?.('wiki.ui_sub_skl_m') ?? '技能機率M'}</button>
-              <button type="button" class="tag-btn ${isLadderSkillS ? 'active' : ''}" id="ladder-skill-s-toggle" data-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleLadderSubskill('SKILL_S')">${window.I18N?.t?.('wiki.ui_sub_skl_s') ?? '技能機率S'}</button>
-            </div>
-          </div>
+    function _renderWikiSubpanelBody(subTabId) {
+      if (subTabId === 'skills') return _renderWikiSkillsBody();
+      if (subTabId === 'subskills') return _renderWikiSubskillsBody(base);
+      if (subTabId === 'ingredients') return `<div id="wiki-ingredient-ladder-coordinate">${renderCoordinateLadder()}</div>`;
+      if (subTabId === 'skills_ladder') return `<div id="wiki-skill-ladder-coordinate">${typeof renderSkillCoordinateLadder === 'function' ? renderSkillCoordinateLadder() : ''}</div>`;
+      if (subTabId === 'values') return renderValuesBoard();
+      if (subTabId === 'ratings') return _renderWikiRatingsBody(caps, sleepExpTargetLevels);
+      if (subTabId === 'islands') return renderIslandsSubpanel();
+      if (subTabId === 'items') return renderItemsSubpanel();
+      return '';
+    }
+    container._renderWikiSubpanelBody = _renderWikiSubpanelBody;
 
-          <!-- 7. 性格補正模擬 (Nature Boost Simulation - 單選) -->
-          <div class="sidebar-section">
-            <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${window.I18N?.t?.('wiki.ui_nature_boost') ?? '性格補正模擬'}</span>
-            </div>
-            <div class="sidebar-skills-list sidebar-2col-tags">
-              <button type="button" class="tag-btn ${ladderNatureIng ? 'active' : ''}" data-nature-filter="ING" onclick="window.WikiDB.toggleLadderNatureFilter('ING')">${window.I18N?.t?.('wiki.ui_nat_ing') ?? '食材機率▲'}</button>
-              <button type="button" class="tag-btn ${ladderNatureSpeed ? 'active' : ''}" data-nature-filter="SPEED" onclick="window.WikiDB.toggleLadderNatureFilter('SPEED')">${window.I18N?.t?.('wiki.ui_nat_spd') ?? '幫忙速度▲'}</button>
-              <button type="button" class="tag-btn ${ladderNatureSkill ? 'active' : ''}" data-nature-filter="SKILL" onclick="window.WikiDB.toggleLadderNatureFilter('SKILL')">${window.I18N?.t?.('wiki.ui_nat_skl') ?? '技能機率▲'}</button>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      ${typeof renderSkillLadderSidebar === 'function' ? renderSkillLadderSidebar(initialSkillLadderCollapsed, undefined, currentWikiSubTab) : ''}
-
-      <div class="wiki-main-container">
-        <!-- 二級子分頁導航 (Sub-tabs) - 精簡無大標題橫幅 -->
-        <div class="wiki-subnav-bar">
-          <div class="wiki-subnav-tabs" role="tablist">
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_skills_m' : 'wiki.ui_tab_skills') ?? '主技能數值庫'}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_subskills_m' : 'wiki.ui_tab_subskills') ?? '副技能與性格指南'}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_ing_m' : 'wiki.ui_tab_ing') ?? '食材產量天梯榜'}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills_ladder' ? 'active' : ''}" data-subtab="skills_ladder" onclick="window.WikiDB.switchSubTab('skills_ladder')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_skl_m' : 'wiki.ui_tab_skl') ?? '主技能天梯榜'}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_values_m' : 'wiki.ui_tab_values') ?? '樹果與食材能量'}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_ratings_m' : 'wiki.ui_tab_ratings') ?? '培育與評級指南'}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'islands' ? 'active' : ''}" data-subtab="islands" onclick="window.WikiDB.switchSubTab('islands')">${window.I18N?.t?.(isMobileH5 ? 'wiki.ui_tab_islands_m' : 'wiki.ui_tab_islands') ?? '島嶼營地與EX模式'}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'items' ? 'active' : ''}" data-subtab="items" onclick="window.WikiDB.switchSubTab('items')">${window.I18N?.t?.('wiki.ui_tab_items') ?? '道具百科'}</button>
-          </div>
-        </div>
-
-        <!-- 子分頁 1：主技能數值庫 (Main Skills) -->
-        <div id="wiki-subpanel-skills" class="wiki-subpanel ${currentWikiSubTab === 'skills' ? 'active' : ''}" style="${currentWikiSubTab === 'skills' ? '' : 'display:none;'}">
-          <div class="wiki-control-bar">
-            <div class="wiki-filter-pills">
-              <span class="wiki-pill-label">${window.I18N?.t?.('wiki.ui_skill_cat_label') ?? '技能類型：'}</span>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'all' ? 'active' : ''}" data-skill-cat="all" onclick="window.WikiDB.filterSkills('all')">${window.I18N?.t?.('wiki.ui_all_skills') ?? '全部技能'} (${MAIN_SKILLS_DATA.length})</button>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'energy' ? 'active' : ''}" data-skill-cat="energy" onclick="window.WikiDB.filterSkills('energy')">${window.I18N?.t?.('wiki.ui_cat_energy') ?? '能量系'}</button>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'energy_heal' ? 'active' : ''}" data-skill-cat="energy_heal" onclick="window.WikiDB.filterSkills('energy_heal')">${window.I18N?.t?.('wiki.ui_cat_energy_heal_btn') ?? '活力系'}</button>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'ingredient' ? 'active' : ''}" data-skill-cat="ingredient" onclick="window.WikiDB.filterSkills('ingredient')">${window.I18N?.t?.('wiki.ui_cat_ingredient') ?? '食材與料理'}</button>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'special' ? 'active' : ''}" data-skill-cat="special" onclick="window.WikiDB.filterSkills('special')">${window.I18N?.t?.('wiki.ui_cat_special_btn') ?? '神獸與特殊專屬'}</button>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'shards' ? 'active' : ''}" data-skill-cat="shards" onclick="window.WikiDB.filterSkills('shards')">${window.I18N?.t?.('wiki.ui_cat_shards_btn') ?? '夢之碎片'}</button>
-            </div>
-          </div>
-
-          <div id="wiki-skills-grid" class="wiki-skills-grid">
-            ${renderSkillsCards(MAIN_SKILLS_DATA)}
-          </div>
-        </div>
-
-        <!-- 子分頁 2：副技能與性格指南 (Sub-Skills & Natures) -->
-        <div id="wiki-subpanel-subskills" class="wiki-subpanel ${currentWikiSubTab === 'subskills' ? 'active' : ''}" style="${currentWikiSubTab === 'subskills' ? '' : 'display:none;'}">
-          <!-- 主技能發動機率矩陣速查表 -->
-          <div class="wiki-card wiki-card-trigger-matrix">
-            <div class="wiki-card-header">
-              <h3 class="wiki-card-title">${window.I18N?.t?.('wiki.ui_trigger_matrix_title') ?? '主技能發動機率矩陣'}</h3>
-            </div>
-            <div class="wiki-rule-banner">
-              ${window.I18N?.t?.('wiki.ui_trigger_matrix_formula') ?? '<strong>公式</strong>: <code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>'}
-            </div>
-
-            <!-- 速查對照表 -->
-            <div class="wiki-table-wrapper" style="margin-top: 10px;">
-              <table class="wiki-data-table">
-                <thead>
-                  <tr>
-                    <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_subskills_col') ?? '副技能組合'}</th>
-                    <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_nature_col') ?? '性格'}</th>
-                    <th class="col-hide-mobile" style="text-align: center;">${window.I18N?.t?.('wiki.ui_formula_mult_col') ?? '乘算計算式'}</th>
-                    <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_multiplier_col') ?? '總倍率'}</th>
-                    <th class="col-hide-mobile" style="text-align: center;">${window.I18N?.t?.('wiki.ui_trigger_tier_col') ?? '發動強度評級'}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${TRIGGER_CHANCE_MATRIX.map(row => {
-                    const gradeStr = row.grade || '';
-                    const tierClass = gradeStr.startsWith('SSS') ? 'tier-sss'
-                      : gradeStr.startsWith('SS') ? 'tier-ss'
-                      : gradeStr.startsWith('S') ? 'tier-s'
-                      : gradeStr.startsWith('A') ? 'tier-a'
-                      : gradeStr.startsWith('B') ? 'tier-b'
-                      : gradeStr.startsWith('C') ? 'tier-c'
-                      : gradeStr.startsWith('D') ? 'tier-d'
-                      : gradeStr.startsWith('E') ? 'tier-e'
-                      : 'tier-baseline';
-                    return `
-                    <tr>
-                      <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
-                        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex-wrap: nowrap; white-space: nowrap;">
-                          ${row.subskills && row.subskills.length > 0 
-                            ? row.subskills.map(s => {
-                                const isM = s.name.includes('M');
-                                const sName = window.I18N?.t?.(isM ? 'wiki.ui_trigger_m_short' : 'wiki.ui_trigger_s_short') ?? (isM ? '機率提升M' : '機率提升S');
-                                return `<span class="wiki-skill-badge skill-badge-${s.color}" style="white-space: nowrap;">${sName}</span>`;
-                              }).join('') 
-                            : `<span class="text-muted font-bold" style="font-size: 13px;">-</span>`}
-                        </div>
-                      </td>
-                      <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
-                        ${row.natureBadge === 'up' 
-                          ? `<span class="matrix-rate-up">${window.I18N?.t?.('wiki.ui_nature_up') ?? '▲ 上升'}</span>` 
-                          : (row.natureBadge === 'down' 
-                            ? `<span class="matrix-rate-down">${window.I18N?.t?.('wiki.ui_nature_down') ?? '▼ 下降'}</span>` 
-                            : `<span class="text-muted font-bold" style="font-size: 13px;" data-symbol="-">-</span>`)}
-                      </td>
-                      <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
-                      <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
-                        <span class="text-accent font-bold" style="font-size: 13px;">x${row.multiplier.toFixed(3)}</span>
-                      </td>
-                      <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><span class="wiki-tier-badge ${tierClass}">${window.I18N?.field?.(row, 'grade') ?? row.grade}</span></td>
-                    </tr>
-                  `;}).join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- 幫忙速度極限與計算機制指南 (Helping Speed Limits & Mechanics) -->
-          <div class="wiki-card wiki-card-speed-guide" style="margin-top: 20px;">
-            <div class="wiki-card-header">
-              <h3 class="wiki-card-title">${window.I18N?.t?.('wiki.ui_speed_guide_title') ?? '幫忙速度極限與計算機制指南'}</h3>
-            </div>
-            
-            <!-- 幫忙速度核心機制重點說明 (無外框直接展示, 文字極簡化) -->
-            <div class="wiki-speed-summary-points">
-              <div class="summary-point-line">
-                <span class="point-prefix">1.</span>
-                <span class="point-title">${window.I18N?.t?.('wiki.ui_speed_pt1_title') ?? '副技能上限35%:'}</span>
-                <span class="point-desc">${window.I18N?.t?.('wiki.ui_speed_pt1_desc') ?? '副技能合計縮短上限為35%,溢出無效.'}</span>
-              </div>
-              <div class="summary-point-line">
-                <span class="point-prefix">2.</span>
-                <span class="point-title">${window.I18N?.t?.('wiki.ui_speed_pt2_title') ?? '性格獨立乘區:'}</span>
-                <span class="point-desc">${window.I18N?.t?.('wiki.ui_speed_pt2_desc') ?? '直接與副技能相乘,不受35%上限約束.'}</span>
-              </div>
-              <div class="summary-point-line">
-                <span class="point-prefix">3.</span>
-                <span class="point-title">${window.I18N?.t?.('wiki.ui_speed_pt3_title') ?? '產能換算:'}</span>
-                <span class="point-desc">${window.I18N?.t?.('wiki.ui_speed_pt3_desc') ?? '產能為時間倒數,間隔58.5%等同產能提升70.94%.'}</span>
-              </div>
-            </div>
-
-            <!-- 速查對照表 (Quick-Lookup Table) -->
-            <div class="wiki-table-wrapper" style="margin-top: 10px;">
-              <table class="wiki-data-table">
-                <thead>
-                  <tr>
-                    <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_subskills_col') ?? '副技能組合'}</th>
-                    <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_nature_col') ?? '性格'}</th>
-                    <th class="col-hide-mobile" style="text-align: center;">${window.I18N?.t?.('wiki.ui_formula_col') ?? '計算式'}</th>
-                    <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_interval_col') ?? '幫忙間隔'}</th>
-                    <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_boost_col') ?? '產能提升'}</th>
-                    <th class="col-hide-mobile" style="text-align: center;">${window.I18N?.t?.('wiki.ui_speed_tier_col') ?? '強度評級'}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${HELPING_SPEED_MATRIX.map(row => {
-                    const gradeStr = row.grade || '';
-                    const tierClass = gradeStr.startsWith('SSS') ? 'tier-sss'
-                      : gradeStr.startsWith('SS') ? 'tier-ss'
-                      : gradeStr.startsWith('S') ? 'tier-s'
-                      : gradeStr.startsWith('A') ? 'tier-a'
-                      : gradeStr.startsWith('B') ? 'tier-b'
-                      : gradeStr.startsWith('C') ? 'tier-c'
-                      : gradeStr.startsWith('D') ? 'tier-d'
-                      : 'tier-baseline';
-                    const isBoostPositive = row.outputMultiplier >= 1.0;
-                    return `
-                    <tr>
-                      <td style="vertical-align: middle; text-align: center;">
-                        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex-wrap: wrap;">
-                          ${row.subskills && row.subskills.length > 0 
-                            ? row.subskills.map(s => {
-                                const sName = window.I18N?.field?.(s, 'name') ?? s.name;
-                                return `<span class="wiki-skill-badge skill-badge-${s.color}" style="white-space: nowrap;">${sName}</span>`;
-                              }).join('') 
-                            : `<span class="text-muted font-bold" style="font-size: 13px;">-</span>`}
-                        </div>
-                      </td>
-                      <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
-                        ${row.natureBadge === 'up' 
-                          ? `<span class="matrix-rate-up">${window.I18N?.t?.('wiki.ui_nature_up') ?? '▲ 上升'}</span>` 
-                          : (row.natureBadge === 'down' 
-                            ? `<span class="matrix-rate-down">${window.I18N?.t?.('wiki.ui_nature_down') ?? '▼ 下降'}</span>` 
-                            : `<span class="text-muted font-bold" style="font-size: 13px;" data-symbol="-">-</span>`)}
-                      </td>
-                      <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
-                      <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
-                        <span class="font-bold text-accent" style="font-size: 13.5px;">${row.intervalRatio}x</span>
-                      </td>
-                      <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
-                        <span class="${isBoostPositive ? 'matrix-pct-up' : 'matrix-pct-down'} font-bold" style="font-size: 13px;">${row.outputBoostDisplay}</span>
-                      </td>
-                      <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><span class="wiki-tier-badge ${tierClass}">${window.I18N?.field?.(row, 'grade') ?? row.grade}</span></td>
-                    </tr>
-                  `;}).join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- 睡飽飽獎章加成指南 (Good-Night Ribbon Quick Guide) -->
-          <div class="wiki-card wiki-card-ribbon-guide" style="margin-top: 16px;">
-            <div class="wiki-card-header" style="margin-bottom: 8px;">
-              <h3 class="wiki-card-title">${window.I18N?.t?.('wiki.ui_ribbon_guide_title') ?? '睡飽飽獎章加成指南'}</h3>
-            </div>
-
-            <div class="ribbon-compact-tiers">
-              <div class="ribbon-compact-chip chip-bronze">
-                <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
-                  <img src="${base}assets/ribbons/ribbon_lv1.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
-                  200h
-                </span>
-                <span class="chip-effect-text">${window.I18N?.t?.('wiki.ui_ribbon_200h') ?? '+1 持有上限'}</span>
-              </div>
-              <div class="ribbon-compact-chip chip-silver">
-                <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
-                  <img src="${base}assets/ribbons/ribbon_lv2.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
-                  500h
-                </span>
-                <span class="chip-effect-text">${window.I18N?.t?.('wiki.ui_ribbon_500h') ?? '+2 持有, 幫速 -5% / -11%'}</span>
-              </div>
-              <div class="ribbon-compact-chip chip-gold">
-                <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
-                  <img src="${base}assets/ribbons/ribbon_lv3.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
-                  1,000h
-                </span>
-                <span class="chip-effect-text">${window.I18N?.t?.('wiki.ui_ribbon_1000h') ?? '+3 持有上限'}</span>
-              </div>
-              <div class="ribbon-compact-chip chip-platinum">
-                <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
-                  <img src="${base}assets/ribbons/ribbon_lv4.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
-                  2,000h
-                </span>
-                <span class="chip-effect-text">${window.I18N?.t?.('wiki.ui_ribbon_2000h') ?? '+2 持有, 幫速 -12% / -25%'}</span>
-              </div>
-            </div>
-
-            <div class="ribbon-compact-notes">
-              <div class="compact-note-line">
-                <span class="compact-note-label">${window.I18N?.t?.('wiki.ui_ribbon_core_lbl') ?? '核心規則:'}</span>
-                <span class="compact-note-text">${window.I18N?.t?.('wiki.ui_ribbon_core_txt') ?? '僅未完全進化寶可夢享有幫速縮短(最高 -25%), 與性格/副技能獨立相乘, 不受 35% 上限限制.'}</span>
-              </div>
-              <div class="compact-note-line">
-                <span class="compact-note-label">${window.I18N?.t?.('wiki.ui_ribbon_case_lbl') ?? '經典案例:'}</span>
-                <span class="compact-note-text">${window.I18N?.t?.('wiki.ui_ribbon_case_txt') ?? '吉利蛋 vs 幸福蛋: 吉利蛋(能再進化 1 次)滿 2000h 幫速縮短 12% 至 <strong>2904 秒</strong>, 反超幸福蛋(3100 秒).'}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 副技能完整階級與數值說明表格 -->
-          <div class="wiki-card wiki-card-subskills-overview" style="margin-top: 20px;">
-            <div class="wiki-card-header">
-              <h3 class="wiki-card-title">${window.I18N?.t?.('wiki.ui_subskills_overview') ?? '副技能階級與數值總覽'}</h3>
-            </div>
-            <div class="wiki-table-wrapper" style="margin-top: 10px;">
-              <table class="wiki-data-table wiki-subskills-table">
-                <thead>
-                  <tr>
-                    <th class="col-subskills-tags" style="text-align: center;">${window.I18N?.t?.('wiki.ui_skills_col') ?? '技能標籤'}</th>
-                    <th class="col-subskills-effect">${window.I18N?.t?.('wiki.ui_effect_col') ?? '詳細效果說明'}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${SUB_SKILLS_DATA.map(row => `
-                    <tr>
-                      <td class="col-subskills-tags" style="vertical-align: middle; text-align: center;">
-                        <div class="wiki-subskill-tags-col">
-                          ${row.skills.map(s => renderSkillBadge(s)).join('')}
-                        </div>
-                      </td>
-                      <td class="col-subskills-effect text-secondary" style="vertical-align: middle;">${window.I18N?.field?.(row, 'desc') ?? row.desc}</td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- 性格五維加成倍率表 -->
-          <div class="wiki-card wiki-card-natures-table" style="margin-top: 20px;">
-            <div class="wiki-card-header">
-              <h3 class="wiki-card-title">${window.I18N?.t?.('wiki.ui_nature_modifiers') ?? '性格五維屬性倍率表'}</h3>
-            </div>
-            <div class="wiki-table-wrapper" style="margin-top: 10px;">
-              <table class="wiki-data-table">
-                <thead>
-                  <tr>
-                    <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_stat_col') ?? '屬性項目'}</th>
-                    <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_nat_up_col') ?? '▲ 性格'}</th>
-                    <th style="text-align: center;">${window.I18N?.t?.('wiki.ui_nat_down_col') ?? '▼ 性格'}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${NATURES_EFFECT_DATA.map(row => `
-                    <tr>
-                      <td class="font-bold text-accent" style="vertical-align: middle; text-align: center; white-space: nowrap;">${window.I18N?.field?.(row, 'stat') ?? row.stat}</td>
-                      <td class="text-success font-bold" style="vertical-align: middle; text-align: center; white-space: nowrap;">${window.I18N?.field?.(row, 'up') ?? row.up}</td>
-                      <td class="text-danger font-bold" style="vertical-align: middle; text-align: center; white-space: nowrap;">${window.I18N?.field?.(row, 'down') ?? row.down}</td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- 子分頁 3：食材產量天梯榜 (Ingredient Yield Ladder) -->
-        <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? '' : 'display:none;'}">
-          <!-- 橫向視覺天梯座標圖 (預設顯示) -->
-          <div id="wiki-ingredient-ladder-coordinate">
-            ${renderCoordinateLadder()}
-          </div>
-        </div>
-
-        <!-- 子分頁：主技能天梯榜 (Skill Proc Ladder) -->
-        <div id="wiki-subpanel-skills_ladder" class="wiki-subpanel ${currentWikiSubTab === 'skills_ladder' ? 'active' : ''}" style="${currentWikiSubTab === 'skills_ladder' ? '' : 'display:none;'}">
-          <!-- 橫向視覺技能天梯座標圖 -->
-          <div id="wiki-skill-ladder-coordinate">
-            ${typeof renderSkillCoordinateLadder === 'function' ? renderSkillCoordinateLadder() : ''}
-          </div>
-        </div>
-
-        <!-- 子分頁 4：樹果與食材基礎能量 (Berry & Ingredient Values) -->
-        <div id="wiki-subpanel-values" class="wiki-subpanel ${currentWikiSubTab === 'values' ? 'active' : ''}" style="${currentWikiSubTab === 'values' ? '' : 'display:none;'}">
-          ${renderValuesBoard()}
-        </div>
-
-        <!-- 子分頁 5: 培育與評級指南 (Ratings & Growth) -->
-        <div id="wiki-subpanel-ratings" class="wiki-subpanel ${currentWikiSubTab === 'ratings' ? 'active' : ''}" style="${currentWikiSubTab === 'ratings' ? '' : 'display:none;'}">
-          <!-- 區塊 1: 核心養成週期指引 -->
-          <div class="wiki-section-heading">
-            <h3 class="wiki-section-title">${window.I18N?.t?.('wiki.ui_growth_title') ?? '新手與進階養成核心週期指引'}</h3>
-            <p class="wiki-section-subtitle">${window.I18N?.t?.('wiki.ui_growth_sub') ?? '掌握前期突破門檻,活力常駐加成與種子珍稀資源的養成核心思維.'}</p>
-          </div>
-          <div class="wiki-card wiki-strategy-card">
-            <div class="wiki-strategy-grid">
-              <div class="strategy-item strategy-early">
-                <div class="strategy-header">
-                  <span class="strategy-badge badge-early">${window.I18N?.t?.('wiki.ui_early_badge') ?? '前期目標'}</span>
-                  <span class="strategy-title">${window.I18N?.t?.('wiki.ui_early_title') ?? '優先放置在 <span class="text-accent font-bold">Lv.30</span>'}</span>
-                </div>
-                <div class="strategy-desc">${window.I18N?.t?.('wiki.ui_early_desc') ?? '先看性格與 <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> 副技能,無課/微課約養成 <span class="text-warning font-bold">2~4個月</span>即可解鎖<span class="text-accent font-bold">第2種食材</span>,成為中流砥柱.'}</div>
-              </div>
-              <div class="strategy-item strategy-late">
-                <div class="strategy-header">
-                  <span class="strategy-badge badge-late">${window.I18N?.t?.('wiki.ui_late_badge') ?? '後期投資'}</span>
-                  <span class="strategy-title">${window.I18N?.t?.('wiki.ui_late_title') ?? '慎選投入 <span class="text-accent font-bold">Lv.50~60</span>'}</span>
-                </div>
-                <div class="strategy-desc">${window.I18N?.t?.('wiki.ui_late_desc') ?? '確認副技能與性格皆達畢業級再投入大量糖果與<span class="text-warning font-bold">金種子</span>(約需 <span class="text-warning font-bold">5~10個月</span>養成時間).'}</div>
-              </div>
-              <div class="strategy-item strategy-energy">
-                <div class="strategy-header">
-                  <span class="strategy-badge badge-energy">${window.I18N?.t?.('wiki.ui_energy_badge') ?? '活力核心'}</span>
-                  <span class="strategy-title">${window.I18N?.t?.('wiki.ui_energy_title') ?? '優先養成一隻主力補師'}</span>
-                </div>
-                <div class="strategy-desc">${window.I18N?.t?.('wiki.ui_energy_desc') ?? '全體活力維持在 <span class="text-success font-bold">80%以上</span>可享受 <span class="text-accent font-bold">約2.22倍 (間隔 0.45x)</span> 幫忙速度!建議先練:<span class="text-warning font-bold">胖可丁</span>,<span class="text-warning font-bold">仙子伊布</span>,<span class="text-warning font-bold">沙奈朵</span>,<span class="text-warning font-bold">巴布土撥</span>或<span class="text-warning font-bold">土台龜</span>.'}</div>
-              </div>
-              <div class="strategy-item strategy-seeds">
-                <div class="strategy-header">
-                  <span class="strategy-badge badge-seeds">${window.I18N?.t?.('wiki.ui_seeds_badge') ?? '種子機制'}</span>
-                  <span class="strategy-title">${window.I18N?.t?.('wiki.ui_seeds_title') ?? '主技能與副技能種子規則'}</span>
-                </div>
-                <div class="strategy-desc">${window.I18N?.t?.('wiki.ui_seeds_desc') ?? '每次進化<span class="text-success font-bold">主技能+1</span>.副技能不能同時存在相同名稱技能(如已有S與M,則S無法再升階為M).'}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 區塊 2: 三大專長畢業評級榜 -->
-          <div class="wiki-section-heading" style="margin-top: 24px;">
-            <h3 class="wiki-section-title">${window.I18N?.t?.('wiki.ui_grad_title') ?? '三大專長畢業評級指南'}</h3>
-            <p class="wiki-section-subtitle">${window.I18N?.t?.('wiki.ui_grad_sub') ?? '樹果,食材,技能三大專長的頂級副技能與黃金性格搭配方向.'}</p>
-          </div>
-          <div class="wiki-ratings-container">
-            ${renderRatingCard(RATINGS_GUIDE_DATA.berry)}
-            ${renderRatingCard(RATINGS_GUIDE_DATA.ingredient)}
-            ${renderRatingCard(RATINGS_GUIDE_DATA.skill)}
-          </div>
-
-          <!-- 區塊 3: 睡眠天數升級試算器 -->
-          <div class="wiki-section-heading" style="margin-top: 24px;">
-            <h3 class="wiki-section-title">${window.I18N?.t?.('wiki.ui_sleep_calc_title') ?? '寶可夢睡眠升級天數計算器'}</h3>
-            <p class="wiki-section-subtitle">${window.I18N?.t?.('wiki.ui_sleep_calc_sub') ?? '依據每日睡滿100分(100 EXP基礎),計算從目前等級升至目標等級所需睡眠天數與經驗值.'}</p>
-          </div>
-          <div class="wiki-card wiki-calc-card">
-            <div class="calc-inputs-row">
-              <div class="calc-form-col">
-                <div class="calc-form-row calc-form-row-levels">
-                  <div class="calc-field-group calc-field-cur">
-                    <label class="calc-label" for="calc-sleep-cur-lv">${window.I18N?.t?.('wiki.ui_cur_lv_lbl') ?? '目前等級:'}</label>
-                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="${caps.THEORETICAL_MAX_LEVEL - 1}" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.onSleepCurLvInput()" onchange="window.WikiDB.onSleepCurLvInput()">
-                  </div>
-
-                  <div class="calc-field-group calc-field-target">
-                    <label class="calc-label" for="calc-sleep-target-lv">${window.I18N?.t?.('wiki.ui_target_lv_lbl') ?? '目標等級:'}</label>
-                    <select id="calc-sleep-target-lv" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
-                      ${sleepExpTargetLevels.map(lv => `<option value="${lv}">Lv.${lv}</option>`).join('')}
-                    </select>
-                  </div>
-                </div>
-
-                <div class="calc-form-row calc-form-row-boosts">
-                  <div class="calc-field-group calc-field-switch">
-                    <label class="calc-switch-label">
-                      <input type="checkbox" id="calc-sleep-exp-subskill" class="switch-checkbox" onchange="window.WikiDB.recalcSleepDays()">
-                      <span class="switch-slider"></span>
-                      <span class="switch-text">${window.I18N?.t?.('wiki.ui_sleep_exp_sub') ?? '睡眠EXP獎勵 (+14%)'}</span>
-                    </label>
-                  </div>
-
-                  <div class="calc-field-group calc-field-nature">
-                    <select id="calc-sleep-nature-select" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
-                      <option value="1.0">${window.I18N?.t?.('wiki.ui_exp_neutral') ?? '性格無EXP修正'}</option>
-                      <option value="1.18">${window.I18N?.t?.('wiki.ui_exp_up') ?? '性格EXP▲ (+18%)'}</option>
-                      <option value="0.82">${window.I18N?.t?.('wiki.ui_exp_down') ?? '性格EXP▼ (-18%)'}</option>
-                    </select>
-                  </div>
-
-                  <div class="calc-field-group calc-field-exptype">
-                    <select id="calc-sleep-exp-type" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
-                      <option value="1.0">${window.I18N?.t?.('wiki.ui_exp_type_10') ?? '一般 (1.0倍)'}</option>
-                      <option value="1.5">${window.I18N?.t?.('wiki.ui_exp_type_15') ?? '準神 (1.5倍)'}</option>
-                      <option value="1.8">${window.I18N?.t?.('wiki.ui_exp_type_18') ?? '神獸 (1.8倍)'}</option>
-                      <option value="2.2">${window.I18N?.t?.('wiki.ui_exp_type_22') ?? '幻之寶可夢 (2.2倍)'}</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="calc-result-box">
-                <div class="calc-result-label">${window.I18N?.t?.('wiki.ui_est_days_lbl') ?? '預估所需睡眠天數'}</div>
-                <div id="calc-sleep-days-result" class="calc-result-val">${window.I18N?.t?.('wiki.ui_default_days') ?? '120 天'}</div>
-                <div id="calc-sleep-exp-result" class="calc-result-badge">${window.I18N?.t?.('wiki.ui_default_exp') ?? '約需 11,992 EXP'}</div>
-                <div id="calc-sleep-candies-result" class="calc-result-candies">${window.I18N?.t?.('wiki.ui_default_candies') ?? '約需 480 顆糖果 (每顆 25 EXP)'}</div>
-              </div>
-            </div>
-
-            <!-- 基準天數對照表 -->
-            <div class="wiki-table-wrapper" style="margin-top: 14px;">
-              <table class="wiki-data-table milestone-table">
-                <thead>
-                  <tr>
-                    <th class="col-milestone-lv">${window.I18N?.t?.('wiki.ui_target_lv_th') ?? '目標'}</th>
-                    <th class="col-milestone-exp">${window.I18N?.t?.('wiki.ui_req_exp_th') ?? 'EXP'}</th>
-                    <th class="col-milestone-days">${window.I18N?.t?.('wiki.ui_daily_sleep_th') ?? '天數'}</th>
-                    <th class="col-milestone-note">${window.I18N?.t?.('wiki.ui_milestone_th') ?? '解鎖'}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${SLEEP_DAYS_BASELINE.map(row => {
-                    const milestoneColor = row.level === 10 ? 'milestone-cyan'
-                      : row.level === 25 ? 'milestone-purple'
-                      : row.level === 30 ? 'milestone-green'
-                      : row.level === 50 ? 'milestone-amber'
-                      : row.level === 60 ? 'milestone-pink'
-                      : row.level === caps.POKEMON_LEVEL_CAP ? 'milestone-purple'
-                      : 'milestone-cyan';
-                    const rawNote = window.I18N?.field?.(row, 'note') ?? row.note;
-                    const formattedNote = rawNote
-                      .replace(/(第[一二三四五12345][個个]?副技能|第[一二三123][種种]?食材|1st Sub-skill|2nd Sub-skill|3rd Sub-skill|4th Sub-skill|5th Sub-skill|2nd Ing\.|3rd Ing\.)/g, '<span class="text-accent font-bold">$1</span>');
-                    return `
-                    <tr>
-                      <td class="col-milestone-lv" style="vertical-align: middle;"><span class="milestone-badge ${milestoneColor}">Lv.${row.level}</span></td>
-                      <td class="col-milestone-exp font-bold" style="vertical-align: middle;">${row.totalExp.toLocaleString()}</td>
-                      <td class="col-milestone-days text-success font-bold" style="vertical-align: middle;">${row.days} ${window.I18N?.t?.('wiki.ui_days_unit') ?? '天'}</td>
-                      <td class="col-milestone-note text-secondary" style="vertical-align: middle;">${formattedNote}</td>
-                    </tr>
-                  `;}).join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- 子分頁 6: 島嶼營地與EX專家模式 (Research Camps & EX Mode) -->
-        <div id="wiki-subpanel-islands" class="wiki-subpanel ${currentWikiSubTab === 'islands' ? 'active' : ''}" style="${currentWikiSubTab === 'islands' ? '' : 'display:none;'}">
-          ${renderIslandsSubpanel()}
-        </div>
-
-        <!-- 子分頁 7: 道具百科 (Items Encyclopedia) -->
-        <div id="wiki-subpanel-items" class="wiki-subpanel ${currentWikiSubTab === 'items' ? 'active' : ''}" style="${currentWikiSubTab === 'items' ? '' : 'display:none;'}">
-          ${renderItemsSubpanel()}
-        </div>
-      </div>
-
-      <!-- 遮罩層 (Backdrop for Mobile Drawer - 阻斷點擊穿透) -->
-      <div id="ladder-sidebar-backdrop" class="sidebar-backdrop" onclick="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchend="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchstart="event.stopPropagation()"></div>
-      <div id="skill-ladder-sidebar-backdrop" class="sidebar-backdrop" onclick="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeSkillLadderSidebar()" ontouchend="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeSkillLadderSidebar()" ontouchstart="event.stopPropagation()"></div>
-    `;
+    container.innerHTML = _buildWikiLayoutHtml({
+      isMobileH5,
+      isWikiMainActive,
+      initialLadderCollapsed,
+      initialSkillLadderCollapsed,
+      caps,
+      sleepExpTargetLevels,
+      shouldRenderSubpanel,
+      renderSkillsBody: _renderWikiSkillsBody,
+      renderSubskillsBody: () => _renderWikiSubskillsBody(base)
+    });
 
     if (typeof window.pruneOverlayDuplicates === 'function') {
       window.pruneOverlayDuplicates([
@@ -11980,7 +12073,6 @@
     BERRY_VALUES_DATA,
     INGREDIENT_VALUES_DATA,
     LV60_COORDINATE_LADDER_DATA,
-    LV60_INGREDIENTS_LADDER,
     mergeRecipeCodes,
     matchesLadderRecipeFilter,
     matchesLadderSearch,
@@ -12027,6 +12119,7 @@
     setLadderNature: setLadderNature,
     toggleLadderRecipeMultiSelect: toggleLadderRecipeMultiSelect,
     onLadderSearch: onLadderSearch,
+    onLadderSearchInput: onLadderSearchInput,
     clearLadderSearch: clearLadderSearch,
     setLadderSupplyFilter: setLadderSupplyFilter,
     setLadderRecipeFilter: setLadderRecipeFilter,
@@ -12096,6 +12189,7 @@
     formatSnorlaxRankBadge: formatSnorlaxRankBadge,
     filterItemsByCategory: filterItemsByCategory,
     handleItemsSearch: handleItemsSearch,
+    handleItemsSearchInput: handleItemsSearchInput,
     clearItemsSearch: clearItemsSearch,
     resetItemsFilters: resetItemsFilters,
     filterItems: filterItems,
@@ -12120,6 +12214,7 @@
   window.WikiDB = WikiDBExport;
   window.filterItemsByCategory = filterItemsByCategory;
   window.handleItemsSearch = handleItemsSearch;
+  window.handleItemsSearchInput = handleItemsSearchInput;
   window.clearItemsSearch = clearItemsSearch;
   window.resetItemsFilters = resetItemsFilters;
   window.filterItems = filterItems;
@@ -12141,7 +12236,7 @@
     toggleBerryFavorite, toggleLadderTop15, getLadderTop15Only, toggleLadderIngM, toggleLadderIngS,
     toggleLadderSpeedM, toggleLadderSpeedS, toggleLadderSkillM, toggleLadderSkillS, toggleLadderSubskill,
     toggleLadderNatureIng, toggleLadderNatureSpeed, toggleLadderNatureFilter, toggleLadderRecipeMultiSelect,
-    getLadderNature, setLadderNature, onLadderSearch, clearLadderSearch, setLadderSupplyFilter,
+    getLadderNature, setLadderNature, onLadderSearch, onLadderSearchInput, clearLadderSearch, setLadderSupplyFilter,
     setLadderRecipeFilter, setLadderSpecialtyFilter, toggleLadderSkillDrawExpected, getLadderSkillDrawExpected,
     getPokemonSkillDrawBonus, hasPokemonIngSelectSkill, INGREDIENT_DRAW_SKILL_EXPECTATIONS, setLadderSortOrder, getLadderSortOrder,
     resetLadderFilters, refreshCoordinateLadder, renderCoordinateLadder, handleLadderGroupHover,
@@ -12154,11 +12249,25 @@
     getLadderRecipeCategory: () => ladderRecipeCategory, getLadderHighlightRecipe: () => ladderHighlightRecipe
   });
 
-  // 當 DOM 準備完成時自動初始化
+  // 當 DOM 準備完成時自動初始化（若百科分頁處於隱藏狀態則延後至首幀繪製後初始化）
+  function scheduleWikiInit() {
+    const wikiPanel = typeof document !== 'undefined' && document.getElementById ? document.getElementById('panel-wiki') : null;
+    if (wikiPanel && wikiPanel.style && wikiPanel.style.display === 'none') {
+      const deferWiki = (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function')
+        ? (fn) => window.requestAnimationFrame(() => setTimeout(fn, 0))
+        : (fn) => setTimeout(fn, 0);
+      deferWiki(() => {
+        if (!_wikiModuleInitialized) initWikiModule();
+      });
+    } else {
+      initWikiModule();
+    }
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initWikiModule);
+    document.addEventListener('DOMContentLoaded', scheduleWikiInit);
   } else {
-    initWikiModule();
+    scheduleWikiInit();
   }
 
 })();

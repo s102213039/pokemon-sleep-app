@@ -52,16 +52,23 @@
   }
 
   function initSearch() {
-    if (!newsSearchInput) return;
+    if (!newsSearchInput || newsSearchInput._hasSearchListener) return;
+    newsSearchInput._hasSearchListener = true;
+    let newsSearchTimer = null;
 
     newsSearchInput.addEventListener('input', e => {
       searchQuery = e.target.value.trim().toLowerCase();
       updateClearBtn();
-      renderNews();
+      if (newsSearchTimer) clearTimeout(newsSearchTimer);
+      newsSearchTimer = setTimeout(() => {
+        newsSearchTimer = null;
+        renderNews();
+      }, 90);
     });
 
     if (newsSearchClear) {
       newsSearchClear.addEventListener('click', () => {
+        if (newsSearchTimer) { clearTimeout(newsSearchTimer); newsSearchTimer = null; }
         newsSearchInput.value = '';
         searchQuery = '';
         updateClearBtn();
@@ -103,67 +110,6 @@
       }
       return true;
     });
-  }
-
-  /* ─── 官方詳細公告展開抽屜渲染器 (Reusable Official Announcement Reader) ─── */
-  function renderFormattedFullContent(item) {
-    const content = window.I18N?.field?.(item, 'full_content') || window.I18N?.field?.(item, 'content_preview') || '';
-    if (!content || !content.trim()) return '';
-
-    const lines = content.split('\n');
-    const htmlChunks = [];
-    let inList = false;
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) {
-        if (inList) {
-          htmlChunks.push('</ul>');
-          inList = false;
-        }
-        continue;
-      }
-
-      // 檢查是否為章節標題
-      const isHeading = (line.startsWith('【') && line.endsWith('】')) ||
-        /^(?:概要|獎勵|奖励|更新內容|更新内容|其他|修正的異常問題|修正的异常问题|機率提升|概率提升|任務期間|任务期间|舉辦期間|举办期间|活動營地|活动营地|特徵|特征|注意|注意事項|注意事项|商品詳細|商品详细|能新遇見的寶可夢|能新遇见的宝可梦|能新遇見的寶可夢的資訊|能新遇见的宝可梦的资讯|開始出現的時間|开始出现的时间|出現的營地|出现的营地|可遇見的睡眠類型|可遇见的睡眠类型|主技能|主技能名稱|主技能名称|技能效果|關於EX模式時的獎勵|关于EX模式时的奖励)\b/.test(line);
-
-      const isBullet = line.startsWith('・') || line.startsWith('- ') || line.startsWith('* ');
-      const isNote = line.startsWith('※') || line.startsWith('*');
-
-      if (isHeading) {
-        if (inList) {
-          htmlChunks.push('</ul>');
-          inList = false;
-        }
-        htmlChunks.push(`<h4 class="news-full-heading">${escapeHtml(line)}</h4>`);
-      } else if (isBullet) {
-        if (!inList) {
-          htmlChunks.push('<ul class="news-full-list">');
-          inList = true;
-        }
-        const bulletText = line.replace(/^[・\-\*]\s*/, '');
-        htmlChunks.push(`<li>${escapeHtml(bulletText)}</li>`);
-      } else if (isNote) {
-        if (inList) {
-          htmlChunks.push('</ul>');
-          inList = false;
-        }
-        htmlChunks.push(`<p class="news-full-note">${escapeHtml(line)}</p>`);
-      } else {
-        if (inList) {
-          htmlChunks.push('</ul>');
-          inList = false;
-        }
-        htmlChunks.push(`<p class="news-full-para">${escapeHtml(line)}</p>`);
-      }
-    }
-
-    if (inList) {
-      htmlChunks.push('</ul>');
-    }
-
-    return htmlChunks.join('');
   }
 
   /* ─── 渲染新聞列表 (折疊式 Accordion 卡片) ─────────────── */
@@ -328,12 +274,15 @@
       `;
     }).join('');
 
-    // 點選整個卡片直接展開與隱藏
-    newsListContainer.querySelectorAll('.news-accordion-card').forEach(card => {
-      card.addEventListener('click', e => {
+    // 點選整個卡片直接展開與隱藏 (單一委派監聽)
+    if (!newsListContainer._hasAccordionListener) {
+      newsListContainer._hasAccordionListener = true;
+      newsListContainer.addEventListener('click', e => {
         if (e.target.closest('a') || e.target.closest('button')) {
           return;
         }
+        const card = e.target.closest('.news-accordion-card');
+        if (!card) return;
         const id = card.getAttribute('data-id');
         if (expandedMap.has(id)) {
           expandedMap.delete(id);
@@ -343,7 +292,7 @@
           card.classList.add('expanded');
         }
       });
-    });
+    }
   }
 
   /* ─── 關鍵字高亮格式化 ─────────────────────────────────── */
@@ -585,25 +534,41 @@
       .replace(/'/g, '&#39;');
   }
 
-  // 初始化載入新聞
-  if (typeof document !== 'undefined') {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', loadNews);
+  // 初始化載入新聞（若新聞分頁處於隱藏狀態則延後至首幀繪製後載入）
+  function scheduleNewsInit() {
+    if (isNewsPanelHidden()) {
+      const deferNews = (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function')
+        ? (fn) => window.requestAnimationFrame(() => setTimeout(fn, 0))
+        : (fn) => setTimeout(fn, 0);
+      deferNews(() => {
+        if (!newsLoadStarted) loadNews();
+      });
     } else {
       loadNews();
     }
   }
 
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', scheduleNewsInit);
+    } else {
+      scheduleNewsInit();
+    }
+  }
+
   // 暴露全域刷新介面（如從同步完成後觸發）
   if (typeof window !== 'undefined') {
-    window.refreshNews = loadNews;
     window.PokemonNewsApp = {
       loadNews,
       parseEventTimeline
     };
     window.NewsApp = {
       render: function() {
+        if (!newsLoadStarted) {
+          loadNews();
+        }
         initCategoryTags();
+        initSearch();
         renderNews();
         renderEventTimeline();
       }

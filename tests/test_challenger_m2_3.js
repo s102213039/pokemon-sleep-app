@@ -184,6 +184,12 @@ function createTestEnvironment(customCode = null) {
     },
     addEventListener(evt, fn) {
       if (listeners[evt]) listeners[evt].push(fn);
+    },
+    removeEventListener(evt, fn) {
+      if (listeners[evt]) {
+        const idx = listeners[evt].indexOf(fn);
+        if (idx !== -1) listeners[evt].splice(idx, 1);
+      }
     }
   };
 
@@ -216,12 +222,12 @@ function createTestEnvironment(customCode = null) {
     }
   };
 
-  const rawCode = customCode || fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/pokedex/pokedex_ui.js'), 'utf8');
+  const rawCode = customCode || fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/pokedex/pokedex_gestures.js'), 'utf8');
   const initPtrStart = rawCode.indexOf('function initPullToRefresh()');
   const closingMarker = 'PokemonApp.initPullToRefresh = initPullToRefresh;\n    }';
   const closingIdx = rawCode.indexOf(closingMarker, initPtrStart);
   if (initPtrStart === -1 || closingIdx === -1) {
-    throw new Error('Failed to locate initPullToRefresh() in pokedex_ui.js');
+    throw new Error('Failed to locate initPullToRefresh() in pokedex_gestures.js');
   }
   const initPtrEnd = closingIdx + closingMarker.length;
   const initPtrSnippet = rawCode.slice(initPtrStart, initPtrEnd) + '\nreturn { initPullToRefresh };';
@@ -659,7 +665,13 @@ const glyphRegex = /\[\u2605\]|\[\u2606\]|\u2605|\u2606|\[\*\]/;
 const containsGlyph = glyphRegex.test(pokedexUiCode);
 assert(!containsGlyph, 'js/modules/pokedex/pokedex_ui.js strictly obeys Zero Decorative Star/Glyph Policy');
 
-// 4.4 Invariant Required Tokens Check
+// 4.4 Invariant Required Tokens Check (in pokedex_gestures.js)
+const pokedexGesturesPath = path.join(WORKSPACE_ROOT, 'js/modules/pokedex/pokedex_gestures.js');
+const pokedexGesturesCode = fs.readFileSync(pokedexGesturesPath, 'utf8');
+assert(pokedexGesturesCode.split('\n').length <= 1000, `js/modules/pokedex/pokedex_gestures.js line count (${pokedexGesturesCode.split('\n').length}) is within <= 1000 lines budget`);
+assert(!emojiRegex.test(pokedexGesturesCode), 'js/modules/pokedex/pokedex_gestures.js strictly obeys Zero Emoji Policy');
+assert(!glyphRegex.test(pokedexGesturesCode), 'js/modules/pokedex/pokedex_gestures.js strictly obeys Zero Decorative Star/Glyph Policy');
+
 const requiredTokens = [
   'function initPullToRefresh()',
   'window.initPullToRefresh = initPullToRefresh;',
@@ -671,7 +683,7 @@ const requiredTokens = [
 ];
 
 requiredTokens.forEach(token => {
-  assert(pokedexUiCode.includes(token), `Required invariant token preserved: "${token}"`);
+  assert(pokedexGesturesCode.includes(token), `Required invariant token preserved: "${token}"`);
 });
 
 // -----------------------------------------------------------------------------

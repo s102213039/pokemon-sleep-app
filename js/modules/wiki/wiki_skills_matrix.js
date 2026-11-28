@@ -543,22 +543,6 @@
     return [];
   })();
 
-  // 舊版清單資料 (提供切換至列表檢視時使用)
-  const LV60_INGREDIENTS_LADDER = LV60_COORDINATE_LADDER_DATA.map(d => ({
-    id: d.id,
-    name: d.name,
-    icon: d.icon,
-    maxDaily: d.pokemon[0] ? d.pokemon[0].count : 100,
-    tiers: d.pokemon.map(p => ({
-      name: p.name,
-      recipe: p.recipe,
-      rawCount: p.count,
-      count: p.count,
-      rate: Math.min(Math.round((p.count / (d.isSpecialScale ? 20 : 105)) * 100), 100),
-      note: p.note
-    }))
-  }));
-
   const STORAGE_KEY_WIKI_SUBTAB = 'pksleep_active_wiki_subtab';
   const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'skills_ladder', 'values', 'ratings', 'islands', 'items'];
 

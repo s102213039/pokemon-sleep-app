@@ -80,16 +80,6 @@
     return _basePkmIndex[idOrName] || list.find(p => p.id === idOrName || p.name_cn === idOrName || p.name_en === idOrName) || list[0] || null;
   }
 
-  function getMainSkillMaxLvl(skillName) {
-    if (!skillName) return 6;
-    if (skillName.includes('能量充填') || skillName.includes('Charge Strength')) return 7;
-    if (skillName.includes('食材獲取') || skillName.includes('Ingredient Magnet')) return 7;
-    if (skillName.includes('食材精選') || skillName.includes('Ingredient Draw')) return 7;
-    if (skillName.includes('夢之碎片') || skillName.includes('Dream Shard')) return 7;
-    if (skillName.includes('料理等級') || skillName.includes('Cooking Power')) return 7;
-    return 6;
-  }
-
   function loadBoxItem(item) {
     if (!item) return;
     const pokemons = window.allPokemons || (window.PokemonApp && window.PokemonApp.allPokemons) || [];
@@ -369,7 +359,7 @@
         const avatarUrl = p.icon_url || p.icon || (p.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png` : '') || 'assets/placeholder.svg';
         return `
           <div class="box-pkm-dropdown-item ${isSelected ? 'active' : ''}" data-id="${p.id}" data-name="${escapeHtml(p.name_cn)}" style="display:flex;align-items:center;gap:8px;padding:6px 10px;cursor:pointer;">
-            <img src="${avatarUrl}" class="box-pkm-dropdown-avatar" style="width:28px;height:28px;object-fit:contain;" alt="${escapeHtml(pkmDisplayName)}" loading="lazy">
+            <img src="${avatarUrl}" class="box-pkm-dropdown-avatar" width="28" height="28" style="width:28px;height:28px;object-fit:contain;" alt="${escapeHtml(pkmDisplayName)}" loading="lazy" decoding="async">
             <div class="box-pkm-dropdown-info" style="display:flex;flex-direction:column;">
               <span style="font-size:12px;font-weight:700;color:var(--text-primary);">No.${p.formatted_no || p.id} ${pkmDisplayName}</span>
             </div>
@@ -407,99 +397,4 @@
         }
       });
     }
-  }
-
-  /* ─── 雙重雷達圖渲染 (Dual Radar Chart SVG for Comparison) ─────────────── */
-  function renderDualRadarChartSVG(scoresA, scoresB, nameA, nameB, width, height) {
-    width = width || 360;
-    height = height || 310;
-    const SIX_DIM_META = getSixDimMeta();
-    const cx = width / 2;
-    const cy = (height / 2) + 8;
-    const r = Math.min(width * 0.34, height * 0.34);
-
-    const scoreKeys = ['berry', 'ingredient', 'skill', 'speed', 'growth', 'roi'];
-    const angles = SIX_DIM_META.map(function (m) { return m.angle; });
-
-    // 5 圈同心正六角形網格
-    const gridLevels = [0.2, 0.4, 0.6, 0.8, 1.0];
-    const gridPolygons = gridLevels.map(function (level) {
-      const pts = angles.map(function (a) {
-        const x = cx + (r * level) * Math.cos(a);
-        const y = cy + (r * level) * Math.sin(a);
-        return x.toFixed(1) + ',' + y.toFixed(1);
-      }).join(' ');
-      const cls = level === 1.0 ? 'radar-grid-poly radar-grid-outer' : 'radar-grid-poly';
-      return '<polygon class="' + cls + '" points="' + pts + '" fill="' + (level === 1.0 ? 'rgba(255,255,255,0.02)' : 'none') + '" stroke="rgba(255,255,255,0.09)" stroke-width="' + (level === 1.0 ? '1.5' : '1') + '" stroke-dasharray="' + (level === 1.0 ? 'none' : '2,2') + '" />';
-    }).join('');
-
-    // 6 條徑向軸線
-    const radialAxes = angles.map(function (a) {
-      const x2 = cx + r * Math.cos(a);
-      const y2 = cy + r * Math.sin(a);
-      return '<line class="radar-axis-line" x1="' + cx + '" y1="' + cy + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="rgba(255,255,255,0.12)" stroke-width="1" />';
-    }).join('');
-
-    // 多邊形 A (Cyan)
-    const ptsA = scoreKeys.map(function (k, i) {
-      const s = Math.max(scoresA[k] || 20, 10);
-      const ratio = Math.min(Math.max(s / 100, 0.1), 1.0);
-      const x = cx + (r * ratio) * Math.cos(angles[i]);
-      const y = cy + (r * ratio) * Math.sin(angles[i]);
-      return { x, y, score: s };
-    });
-    const polygonAPts = ptsA.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
-
-    // 多邊形 B (Purple)
-    const ptsB = scoreKeys.map(function (k, i) {
-      const s = Math.max(scoresB[k] || 20, 10);
-      const ratio = Math.min(Math.max(s / 100, 0.1), 1.0);
-      const x = cx + (r * ratio) * Math.cos(angles[i]);
-      const y = cy + (r * ratio) * Math.sin(angles[i]);
-      return { x, y, score: s };
-    });
-    const polygonBPts = ptsB.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
-
-    const dotsA = ptsA.map(p => `<circle class="radar-data-dot radar-dot-a" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1" />`).join('');
-    const dotsB = ptsB.map(p => `<circle class="radar-data-dot radar-dot-b" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="#c084fc" stroke="#0f172a" stroke-width="1" />`).join('');
-
-    const labelsSvg = SIX_DIM_META.map(function (m, i) {
-      const labelR = r + 24;
-      const lx = cx + labelR * Math.cos(m.angle);
-      const ly = cy + labelR * Math.sin(m.angle);
-      const scoreA = scoresA[m.key] || 0;
-      const scoreB = scoresB[m.key] || 0;
-      let textAnchor = 'middle';
-      if (Math.cos(m.angle) > 0.3) textAnchor = 'start';
-      else if (Math.cos(m.angle) < -0.3) textAnchor = 'end';
-
-      return `
-        <text class="radar-label-text" x="${lx.toFixed(1)}" y="${(ly - 6).toFixed(1)}" text-anchor="${textAnchor}" fill="var(--text-primary, #cbd5e1)" font-size="11" font-weight="700">${m.label}</text>
-        <text x="${lx.toFixed(1)}" y="${(ly + 8).toFixed(1)}" text-anchor="${textAnchor}" font-size="10" font-weight="800">
-          <tspan class="radar-score-a" fill="#38bdf8">${scoreA}</tspan> <tspan fill="var(--text-muted, #64748b)">/</tspan> <tspan class="radar-score-b" fill="#c084fc">${scoreB}</tspan>
-        </text>
-      `;
-    }).join('');
-
-    const legendSvg = `
-      <g transform="translate(14, 18)">
-        <rect class="radar-legend-a" x="0" y="0" width="10" height="10" rx="2" fill="#38bdf8" />
-        <text class="radar-legend-a" x="14" y="9" fill="#38bdf8" font-size="11" font-weight="700">${escapeHtml(nameA || (window.I18N?.t?.('lab.c_pokemon_a') ?? 'Pokémon A'))}</text>
-        <rect class="radar-legend-b" x="150" y="0" width="10" height="10" rx="2" fill="#c084fc" />
-        <text class="radar-legend-b" x="164" y="9" fill="#c084fc" font-size="11" font-weight="700">${escapeHtml(nameB || (window.I18N?.t?.('lab.c_pokemon_b') ?? 'Pokémon B'))}</text>
-      </g>
-    `;
-
-    return `
-      <svg viewBox="0 0 ${width} ${height}" class="radar-svg-chart radar-dual-svg-chart" style="width:100%;max-width:${width}px;aspect-ratio:${width}/${height};overflow:visible;" xmlns="http://www.w3.org/2000/svg">
-        ${legendSvg}
-        ${gridPolygons}
-        ${radialAxes}
-        <polygon class="radar-data-poly radar-data-poly-a" points="${polygonAPts}" fill="rgba(56, 189, 248, 0.22)" stroke="#38bdf8" stroke-width="2.2" />
-        <polygon class="radar-data-poly radar-data-poly-b" points="${polygonBPts}" fill="rgba(168, 85, 247, 0.22)" stroke="#c084fc" stroke-width="2.2" />
-        ${dotsA}
-        ${dotsB}
-        ${labelsSvg}
-      </svg>
-    `;
   }

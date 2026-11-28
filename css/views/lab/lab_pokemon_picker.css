@@ -1,0 +1,488 @@
+/* 多選手規格與效能對照表 (Multi-Player Spec & Performance Table) */
+.lab-cmp-table {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  border-top: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.06));
+}
+
+.lab-cmp-row {
+  display: grid;
+  grid-template-columns: 140px repeat(var(--n, 2), 1fr);
+  align-items: center;
+  padding: 7px 8px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.04));
+}
+
+.lab-cmp-row:nth-child(even) {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.lab-cmp-row.lab-cmp-head {
+  padding: 8px 8px 6px;
+  font-weight: 800;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.lab-cmp-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.lab-cmp-val {
+  text-align: center;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+.lab-cmp-val.best {
+  color: var(--pc, var(--accent-color, #38bdf8));
+  font-weight: 900;
+}
+
+.lab-compare-empty-section-hint {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 16px 12px;
+}
+
+@media (max-width: 640px) {
+  .lab-compare-vs-header {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 4px !important;
+  }
+  .lab-compare-vs-player {
+    padding: 6px 3px 8px;
+    gap: 3px;
+    border-radius: 10px;
+  }
+  .lab-compare-empty-slot {
+    min-height: 105px;
+    padding: 6px 3px;
+  }
+  .lab-compare-vs-avatar-wrap {
+    width: 36px;
+    height: 36px;
+  }
+  .lab-compare-vs-avatar {
+    width: 36px;
+    height: 36px;
+  }
+  .lab-compare-vs-lvl {
+    font-size: 8.5px;
+    padding: 0 4px;
+    bottom: -2px;
+    right: -3px;
+  }
+  .lab-compare-pkm-name {
+    font-size: 10.5px;
+    max-width: 82px;
+  }
+  .lab-compare-micro-meta {
+    gap: 2px;
+  }
+  .lab-compare-vs-tag.nat-tag {
+    font-size: 9px;
+    padding: 0 3px;
+    max-width: 44px;
+  }
+  .lab-compare-tap-hint {
+    font-size: 8.5px;
+  }
+  .lab-compare-vs-divider {
+    width: 10px;
+  }
+  .lab-compare-vs-badge {
+    width: 18px;
+    height: 18px;
+    font-size: 8px;
+  }
+  .lab-cmp-row {
+    grid-template-columns: 88px repeat(var(--n, 2), 1fr) !important;
+    font-size: 10.5px !important;
+    padding: 6px 3px !important;
+  }
+  .lab-cmp-label {
+    font-size: 10.5px !important;
+    padding-left: 3px !important;
+  }
+  .lab-cmp-val {
+    font-size: 10.5px !important;
+  }
+  .lab-compare-benchmark-row {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+  .lab-compare-benchmark-title {
+    font-size: 11px;
+  }
+  .benchmark-chip {
+    font-size: 10.5px;
+    padding: 2px 7px;
+  }
+  .lab-subskill-pill {
+    font-size: 9px;
+    padding: 1px 3px;
+  }
+}
+
+/* ═══ 選手/隊員挑選視窗：多欄卡片格線 ═══ */
+.lab-picker-container { max-width: 880px; }
+
+.lab-picker-controls-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--bg-card-inner);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.lab-picker-search-bar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px 4px;
+}
+
+.lab-picker-filter-chips button.active {
+  background: var(--accent-btn-bg, var(--accent-color, #38bdf8)) !important;
+  color: var(--accent-btn-text, #ffffff) !important;
+  border-color: transparent !important;
+  font-weight: 700;
+}
+
+/* 樹果與食材次級快速篩選器 (Berry & Ingredient Secondary Filters) */
+.lab-picker-secondary-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 2px 18px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lab-picker-berry-filter-group,
+.lab-picker-ing-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lab-picker-filter-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.lab-picker-berry-select {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 11px;
+  padding: 3px 36px 3px 8px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 8px 5px;
+  max-width: 160px;
+}
+
+.lab-picker-berry-chips-scroll {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  white-space: nowrap;
+  max-width: 100%;
+  padding-bottom: 2px;
+}
+
+.lab-picker-berry-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  min-width: 26px;
+  padding: 2px 5px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.lab-picker-berry-chip-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.lab-picker-berry-chip-btn.active {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: var(--accent-color, #38bdf8);
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.35);
+  color: var(--accent-color, #38bdf8);
+  font-weight: 700;
+}
+
+.lab-picker-filter-berry-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.lab-picker-ing-chips-scroll {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  white-space: nowrap;
+  max-width: 100%;
+  padding-bottom: 2px;
+}
+
+.lab-picker-ing-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  min-width: 26px;
+  padding: 2px 5px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.lab-picker-ing-chip-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.lab-picker-ing-chip-btn.active {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: var(--accent-color, #38bdf8);
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.35);
+  color: var(--accent-color, #38bdf8);
+  font-weight: 700;
+}
+
+.lab-picker-filter-ing-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.lab-picker-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  align-content: start;
+  gap: 8px;
+  padding: 12px 18px 18px;
+}
+
+.lab-picker-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 8px 8px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  cursor: pointer;
+  min-width: 0;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+.lab-picker-card:hover {
+  border-color: var(--accent-color, #38bdf8);
+  background: var(--bg-card-hover, rgba(56, 189, 248, 0.08));
+  transform: translateY(-1px);
+}
+
+.lab-picker-card.selected {
+  border-color: var(--accent-color, #38bdf8);
+  box-shadow: inset 0 0 0 1px var(--accent-color, #38bdf8);
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.lab-picker-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.lab-picker-avatar { position: relative; flex-shrink: 0; }
+.lab-picker-avatar img { width: 44px; height: 44px; object-fit: contain; display: block; }
+
+.lab-picker-lv {
+  position: absolute;
+  bottom: -2px;
+  right: -6px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  padding: 0 4px;
+  font-size: 9px;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+.lab-picker-card.occupied,
+.lab-picker-card.disabled {
+  opacity: 0.5;
+  filter: grayscale(0.5);
+  cursor: not-allowed;
+  border-style: dashed;
+}
+
+.lab-picker-card.occupied:hover,
+.lab-picker-card.disabled:hover {
+  transform: none;
+  border-color: var(--border-color);
+  background: var(--bg-card);
+}
+
+.lab-picker-occupied-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-size: 8.5px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.lab-picker-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;
+}
+
+.lab-picker-sub {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lab-picker-berry { width: 15px; height: 15px; object-fit: contain; }
+
+.lab-picker-ings {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.lab-picker-ing-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  padding: 1px;
+}
+
+.lab-picker-ing-chip.is-locked {
+  opacity: 0.35;
+  filter: grayscale(0.8);
+}
+
+.lab-picker-ing-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.lab-picker-nick {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-color, #38bdf8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  width: 100%;
+  line-height: 1.2;
+}
+
+@media (max-width: 640px) {
+  .mobile-h5-app .lab-picker-modal {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .mobile-h5-app .lab-picker-container {
+    max-width: 100%;
+    max-height: 86vh;
+    border-radius: 16px 16px 0 0;
+    border-bottom: none;
+  }
+  .lab-picker-list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 12px 12px calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+  .lab-picker-card { padding: 10px 4px 8px; }
+  .lab-picker-avatar img { width: 46px; height: 46px; }
+  .lab-picker-search-bar { padding: 10px 12px; }
+  .lab-picker-header { padding: 12px 14px; }
+}
+
+/* ═══ 評測彈窗：編輯按鈕樣式 ═══ */
+.appraisal-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--accent-color, #38bdf8);
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--accent-color, #38bdf8);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.appraisal-edit-btn:hover {
+  background: rgba(56, 189, 248, 0.25);
+}
+
+.appraisal-header-actions {
+  align-items: center;
+  gap: 10px;
+}

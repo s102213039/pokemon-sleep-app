@@ -184,13 +184,6 @@
     return recipes.some(r => r.name_cn === recipeName || r.name_en === recipeName);
   }
 
-  function renderIngQtyMarks(markList) {
-    if (!markList || !markList.length) return '';
-    return `<div class="ladder-ing-qty-marks">${markList.map(m =>
-      `<span class="ladder-ing-qty-mark" style="color:${m.fg};border-color:${m.color};background:${m.bg}">×${m.count}</span>`
-    ).join('')}</div>`;
-  }
-
   function getOverlayEl(id) {
     if (typeof window !== 'undefined' && typeof window.resolveUniqueOverlay === 'function') {
       return window.resolveUniqueOverlay(id);
@@ -244,7 +237,7 @@
           <div class="ladder-recipe-card ${isCurrent ? 'selected' : ''}" onclick="window.WikiDB.selectLadderHighlightRecipe('${r.name_cn}')" role="button" tabindex="0">
             <div class="recipe-card-top">
               <span class="recipe-card-rank">${rIdx + 1}</span>
-              <img src="${recipeIconUrl}" class="recipe-card-icon" alt="${displayName}" onerror="this.style.opacity='0.3';">
+              <img src="${recipeIconUrl}" class="recipe-card-icon" alt="${displayName}" width="48" height="48" loading="lazy" decoding="async" onerror="this.style.opacity='0.3';">
               <div class="recipe-card-meta">
                 <div class="recipe-card-name-row">
                   <span class="recipe-card-name">${displayName}</span>
@@ -265,7 +258,7 @@
                 const ingIconUrl = (typeof window.mapExternalToLocalAsset === 'function' ? window.mapExternalToLocalAsset(ing.icon) : ing.icon) || ing.icon;
                 return `
                   <span class="recipe-card-ing-chip" title="${ingDisplayName}">
-                    <img src="${ingIconUrl}" class="recipe-card-ing-icon" alt="${ingDisplayName}" onerror="this.style.display='none';">
+                    <img src="${ingIconUrl}" class="recipe-card-ing-icon" alt="${ingDisplayName}" width="19" height="19" loading="lazy" decoding="async" onerror="this.style.display='none';">
                     <span class="ing-chip-count">×${ing.count}</span>
                   </span>
                 `;

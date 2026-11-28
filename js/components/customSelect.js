@@ -67,7 +67,7 @@
       const selected = (selectElement.selectedIndex >= 0 && options[selectElement.selectedIndex]) || options[0] || null;
       const selectedIcon = selected ? selected.getAttribute('data-icon') : null;
       if (selectedIcon) {
-        labelSpan.innerHTML = '<img src="' + escapeAttr(selectedIcon) + '" class="custom-select-icon" alt="" /><span>' + escapeHtml(selected ? selected.text : '') + '</span>';
+        labelSpan.innerHTML = '<img src="' + escapeAttr(selectedIcon) + '" class="custom-select-icon" width="20" height="20" decoding="async" alt="" /><span>' + escapeHtml(selected ? selected.text : '') + '</span>';
       } else {
         labelSpan.textContent = selected ? selected.text : '';
       }
@@ -84,7 +84,7 @@
         const optIcon = opt.getAttribute('data-icon');
         item.innerHTML =
           '<div class="custom-select-item-content">' +
-            (optIcon ? '<img src="' + escapeAttr(optIcon) + '" class="custom-select-icon" alt="" />' : '') +
+            (optIcon ? '<img src="' + escapeAttr(optIcon) + '" class="custom-select-icon" width="20" height="20" loading="lazy" decoding="async" alt="" />' : '') +
             '<span class="custom-select-item-text">' + escapeHtml(opt.text) + '</span>' +
           '</div>';
 

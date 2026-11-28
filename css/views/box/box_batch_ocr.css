@@ -1,0 +1,497 @@
+/* ═══════════════════════════════════════════════════════════════
+    多圖批次智能辨識 (Batch OCR Progress & Floating Toast)
+   ═══════════════════════════════════════════════════════════════ */
+.batch-ocr-progress-card {
+  width: 100%;
+  max-width: 520px;
+  background: var(--bg-card-solid);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 14px 18px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.batch-ocr-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.batch-ocr-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--accent-blue);
+}
+
+.batch-ocr-counter {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.batch-ocr-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-card-inner);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-color-subtle);
+}
+
+.batch-ocr-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #a855f7);
+  border-radius: 6px;
+  transition: width 0.25s ease;
+}
+
+.batch-ocr-status-text {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 倉庫與雲端浮動 Toast 系統 */
+.box-toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .box-toast-container {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    right: 14px;
+    left: 14px;
+    align-items: center;
+  }
+  .box-toast-item {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 420px !important;
+  }
+}
+
+.box-toast-item {
+  pointer-events: auto;
+  min-width: 320px;
+  max-width: 440px;
+  background: var(--bg-card-solid);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: var(--shadow-lg);
+  animation: toastSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+@keyframes toastSlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.box-toast-item.toast-fadeout {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+}
+
+.box-toast-item.toast-success {
+  border-color: rgba(16, 185, 129, 0.45);
+  border-left: 4px solid #10b981;
+}
+
+.box-toast-item.toast-warning {
+  border-color: rgba(245, 158, 11, 0.45);
+  border-left: 4px solid #f59e0b;
+}
+
+.box-toast-item.toast-info {
+  border-color: rgba(56, 189, 248, 0.45);
+  border-left: 4px solid #38bdf8;
+}
+
+.box-toast-item.toast-error {
+  border-color: rgba(239, 68, 68, 0.45);
+  border-left: 4px solid #ef4444;
+}
+
+.box-toast-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.box-toast-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.box-toast-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.box-toast-msg {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.box-toast-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color 0.15s ease;
+}
+
+.box-toast-close:hover {
+  color: #ef4444;
+}
+
+/* ───────────────────────────────────────────────────────────────
+   雲端資料庫與帳號同步樣式 (Supabase Cloud Sync & Auth Modal)
+   ─────────────────────────────────────────────────────────────── */
+.header-auth-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card, rgba(30, 41, 59, 0.7));
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.header-auth-btn:hover {
+  background: var(--bg-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+.header-auth-btn.is-logged-in {
+  border-color: rgba(16, 185, 129, 0.45);
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.mobile-header-btn.is-logged-in {
+  color: #10b981 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .header-auth-btn.is-logged-in,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .header-auth-btn.is-logged-in,
+[data-theme="midnight"][data-theme-inverted="true"] .header-auth-btn.is-logged-in,
+[data-theme="onyx"][data-theme-inverted="true"] .header-auth-btn.is-logged-in {
+  border-color: rgba(5, 150, 105, 0.45);
+  background: rgba(5, 150, 105, 0.12);
+  color: #065f46;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-header-btn.is-logged-in,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-header-btn.is-logged-in,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-header-btn.is-logged-in,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-header-btn.is-logged-in {
+  color: #065f46 !important;
+}
+
+.box-btn-cloud-sync {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg-card, rgba(30, 41, 59, 0.7));
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.box-btn-cloud-sync:hover {
+  background: var(--bg-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+.box-btn-cloud-sync.is-logged-in {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.sync-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.sync-dot.dot-active,
+.status-indicator-dot.dot-active {
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+
+.sync-dot.dot-guest,
+.status-indicator-dot.dot-guest {
+  background: var(--text-muted, #94a3b8);
+}
+
+.box-cloud-sync-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-card, rgba(30, 41, 59, 0.7));
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+.box-cloud-sync-chip.is-logged-in {
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10b981;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .box-cloud-sync-chip.is-logged-in,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .box-cloud-sync-chip.is-logged-in,
+[data-theme="midnight"][data-theme-inverted="true"] .box-cloud-sync-chip.is-logged-in,
+[data-theme="onyx"][data-theme-inverted="true"] .box-cloud-sync-chip.is-logged-in {
+  border-color: rgba(5, 150, 105, 0.45);
+  color: #065f46;
+}
+
+/* 帳號密碼登入/註冊彈窗 */
+.cloud-auth-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeInModal 0.2s ease-out;
+}
+
+.cloud-auth-dialog {
+  background: var(--bg-card-solid, var(--bg-card, #1e293b));
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--shadow-lg, 0 20px 40px rgba(0, 0, 0, 0.35));
+  overflow: hidden;
+  animation: slideUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUpModal {
+  from { opacity: 0; transform: translateY(18px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.cloud-auth-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-glass, rgba(255, 255, 255, 0.02));
+}
+
+.cloud-auth-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cloud-auth-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.cloud-auth-close-btn:hover {
+  color: var(--text-primary);
+}
+
+.cloud-auth-body {
+  padding: 16px 18px;
+}
+
+.auth-status-card {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-hover, rgba(255, 255, 255, 0.03));
+}
+
+.auth-status-card.status-active {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.06);
+}
+
+.auth-status-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.status-indicator-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.auth-account-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.auth-sub-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.cloud-auth-input-group {
+  margin-bottom: 12px;
+}
+
+.cloud-auth-label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+}
+
+.cloud-auth-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg-input, var(--bg-dark, #0f172a));
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.cloud-auth-input:focus {
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+.cloud-auth-password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cloud-auth-pwd-toggle {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px;
+}
+
+.cloud-auth-btn-row {
+  display: flex;
+  gap: 10px;
+}
+
+.cloud-auth-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 16px;
+  min-height: 38px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+  user-select: none;
+}
+
+.cloud-auth-btn:active {
+  transform: scale(0.98);
+}
+
+.cloud-auth-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* 預設 / 深邃夜空 (Midnight Dark) */
+.cloud-auth-btn.btn-primary {
+  background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
+  border-color: rgba(56, 189, 248, 0.45);
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(3, 105, 161, 0.35);
+}

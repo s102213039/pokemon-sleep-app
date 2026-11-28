@@ -11,6 +11,8 @@
  * Total build time < 25ms. Zero external dependencies.
  */
 
+const fs = require('fs');
+const path = require('path');
 const { buildCss } = require('./build_css');
 const { buildIngredientLadder } = require('./build_ingredient_ladder');
 const { buildWiki } = require('./build_wiki');
@@ -22,8 +24,53 @@ const { buildCloudSync } = require('./build_cloudSync');
 const { buildRecipes } = require('./build_recipes');
 const { buildNews } = require('./build_news');
 
+function buildItemsData() {
+  const rootDir = path.resolve(__dirname, '..');
+  const itemsJsonPath = path.join(rootDir, 'data', 'items.json');
+  const itemsJsPath = path.join(rootDir, 'js', 'data', 'items.js');
+  const items = JSON.parse(fs.readFileSync(itemsJsonPath, 'utf8'));
+  const lines = [
+    '/**',
+    ' * js/data/items.js - Pokémon Sleep Items Master Data',
+    ` * Master dataset containing ${items.length} essential items across 4 categories (evolution, training, biscuit, supply).`,
+    ' * Auto-generated from data/items.json via scripts/build_all.js.',
+    ' */',
+    '(function () {',
+    "  'use strict';",
+    '',
+    '  const ITEMS_DATA = ['
+  ];
+  for (let i = 0; i < items.length; i++) {
+    lines.push('  ' + JSON.stringify(items[i]) + (i < items.length - 1 ? ',' : ''));
+  }
+  lines.push(
+    '];',
+    '',
+    "  if (typeof window !== 'undefined') {",
+    '    window.ITEMS_DATA = ITEMS_DATA;',
+    '  }',
+    "  if (typeof module !== 'undefined' && module.exports) {",
+    '    module.exports = ITEMS_DATA;',
+    '  }',
+    '})();',
+    ''
+  );
+  const nextContent = lines.join('\n');
+  const prevContent = fs.existsSync(itemsJsPath) ? fs.readFileSync(itemsJsPath, 'utf8') : '';
+  if (prevContent !== nextContent) {
+    fs.writeFileSync(itemsJsPath, nextContent, 'utf8');
+  }
+  return {
+    itemsCount: items.length,
+    totalBytes: Buffer.byteLength(nextContent, 'utf8'),
+    totalLines: lines.length,
+    updated: prevContent !== nextContent
+  };
+}
+
 function buildAll() {
   const startTime = Date.now();
+  const itemsRes = buildItemsData();
   const ladderRes = buildIngredientLadder();
   const cssRes = buildCss();
   const wikiRes = buildWiki();
@@ -37,6 +84,7 @@ function buildAll() {
   const elapsed = Date.now() - startTime;
 
   return {
+    items: itemsRes,
     ladder: ladderRes,
     css: cssRes,
     wiki: wikiRes,
@@ -54,6 +102,7 @@ function buildAll() {
 if (require.main === module) {
   const res = buildAll();
   console.log(`[build_all] Successfully built all assets in ${res.elapsed}ms:`);
+  console.log(`  - Items: ${res.items.itemsCount} items -> js/data/items.js (${(res.items.totalBytes / 1024).toFixed(1)} KB)`);
   console.log(`  - CSS: ${res.css.modulesCount} modules -> css/styles.css (${(res.css.totalBytes / 1024).toFixed(1)} KB)`);
   console.log(`  - I18N: ${res.i18n.modulesCount} modules -> js/core/i18n.js (${(res.i18n.totalBytes / 1024).toFixed(1)} KB)`);
   console.log(`  - CloudSync: ${res.cloudSync.modulesCount} modules -> js/core/cloudSync.js (${(res.cloudSync.totalBytes / 1024).toFixed(1)} KB)`);
@@ -65,4 +114,4 @@ if (require.main === module) {
   console.log(`  - App: ${res.app.modulesCount} modules -> js/modules/app.js (${(res.app.totalBytes / 1024).toFixed(1)} KB)`);
 }
 
-module.exports = { buildAll };
+module.exports = { buildAll, buildItemsData };

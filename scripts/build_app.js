@@ -17,14 +17,22 @@ const OUTPUT_FILE = path.join(ROOT_DIR, 'js', 'modules', 'app.js');
 
 const POKEDEX_MODULES = [
   'pokedex_base.js',
+  'pokedex_skill_descriptions.js',
   'pokedex_skills.js',
+  'pokedex_pinyin.js',
   'pokedex_search.js',
   'pokedex_overlay.js',
   'pokedex_nav.js',
   'pokedex_filters.js',
+  'pokedex_tooltips.js',
+  'pokedex_gestures.js',
   'pokedex_ui.js',
+  'pokedex_modal_state.js',
+  'pokedex_evo_tree.js',
   'pokedex_detail_ctrl.js',
   'pokedex_calc.js',
+  'pokedex_calc_ui.js',
+  'pokedex_modal_live.js',
   'pokedex_modal.js'
 ];
 

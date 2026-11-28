@@ -324,6 +324,7 @@
     return _sortBoxIngredientsByEnergyAsc(Array.from(map.entries()).map(([name, icon]) => ({ name, icon })));
   }
 
+
   const BOX_SPECIALTIES = ['樹果', '食材', '技能'];
 
   function renderBoxSpecialtyButtons() {
@@ -349,7 +350,7 @@
       const typeName = (typeof window !== 'undefined' ? window.I18N?.getTypeName?.(b.type) : undefined) ?? b.type;
       return `
         <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${berryName} (${typeName})" aria-label="${berryName}">
-          ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" alt="${berryName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+          ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" width="22" height="22" alt="${berryName}" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
         </button>
       `;
     }).join('');
@@ -370,7 +371,7 @@
       const ingName = typeof window !== 'undefined' && window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
       return `
         <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-ing="${ing.name}" title="${ingName}" aria-label="${ingName}">
-          ${ing.icon ? `<img src="${ing.icon}" class="subfilter-icon-img" alt="${ingName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+          ${ing.icon ? `<img src="${ing.icon}" class="subfilter-icon-img" width="22" height="22" alt="${ingName}" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
         </button>
       `;
     }).join('');
@@ -815,7 +816,7 @@
     window.setBoxFilterState = setBoxFilterState;
   }
 
-  /* ─── 初始化與資料載入 ───────────────────────────────────── */
+
   function getBoxStorage() {
     try {
       if (typeof window !== 'undefined' && window.localStorage) return window.localStorage;
@@ -1585,11 +1586,56 @@
     }
   }
 
+  const _boxIngMapCache = typeof WeakMap === 'function' ? new WeakMap() : null;
+  let _boxNatureMapCache = null;
+  let _boxNatureMapLen = -1;
+  let _boxSubskillMapCache = null;
+  let _boxSubskillMapLen = -1;
+
+  function _getBoxNature(name) {
+    if (!name || !Array.isArray(NATURE_DATA)) return null;
+    if (!_boxNatureMapCache || _boxNatureMapLen !== NATURE_DATA.length) {
+      _boxNatureMapCache = new Map();
+      for (let i = 0; i < NATURE_DATA.length; i++) {
+        if (NATURE_DATA[i]) _boxNatureMapCache.set(NATURE_DATA[i].name, NATURE_DATA[i]);
+      }
+      _boxNatureMapLen = NATURE_DATA.length;
+    }
+    return _boxNatureMapCache.get(name) || null;
+  }
+
+  function _getBoxSubskill(name) {
+    if (!name || !Array.isArray(SUBSKILLS_DATA)) return null;
+    if (!_boxSubskillMapCache || _boxSubskillMapLen !== SUBSKILLS_DATA.length) {
+      _boxSubskillMapCache = new Map();
+      for (let i = 0; i < SUBSKILLS_DATA.length; i++) {
+        if (SUBSKILLS_DATA[i]) _boxSubskillMapCache.set(SUBSKILLS_DATA[i].name, SUBSKILLS_DATA[i]);
+      }
+      _boxSubskillMapLen = SUBSKILLS_DATA.length;
+    }
+    return _boxSubskillMapCache.get(name) || null;
+  }
+
   function getIngCountFromBase(basePkm, slotIdx, ingName) {
     if (!basePkm || !basePkm.ingredients) {
       return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
     }
-    const found = basePkm.ingredients.find(ig => ig.name === ingName);
+    let found = null;
+    if (_boxIngMapCache && Array.isArray(basePkm.ingredients)) {
+      let cached = _boxIngMapCache.get(basePkm.ingredients);
+      if (!cached || cached.len !== basePkm.ingredients.length) {
+        const map = new Map();
+        for (let i = 0; i < basePkm.ingredients.length; i++) {
+          const ig = basePkm.ingredients[i];
+          if (ig && ig.name && !map.has(ig.name)) map.set(ig.name, ig);
+        }
+        cached = { len: basePkm.ingredients.length, map };
+        _boxIngMapCache.set(basePkm.ingredients, cached);
+      }
+      found = cached.map.get(ingName) || null;
+    } else {
+      found = basePkm.ingredients.find(ig => ig.name === ingName);
+    }
     if (found) {
       if (slotIdx === 0 && found.l1 !== undefined) return parseInt(found.l1, 10);
       if (slotIdx === 1 && found.l30 !== undefined) return parseInt(found.l30, 10);
@@ -1644,7 +1690,7 @@
 
     return `
       <div class="box-ing-chip${lockClass}" title="${escapeHtml(displayName)}${lockTitleSuffix}">
-        ${iconUrl ? `<img src="${iconUrl}" class="box-ing-chip-icon" alt="${escapeHtml(displayName)}">` : ''}
+        ${iconUrl ? `<img src="${iconUrl}" class="box-ing-chip-icon" width="20" height="20" alt="${escapeHtml(displayName)}" loading="lazy" decoding="async">` : ''}
       </div>
     `;
   }
@@ -1667,7 +1713,7 @@
     return `
       <td class="td-ing" title="${escapeHtml(displayName)}${lockTitleSuffix}">
         <div class="ing-cell${lockClass}">
-          ${iconUrl ? `<img src="${iconUrl}" class="ing-icon" alt="${escapeHtml(displayName)}">` : ''}
+          ${iconUrl ? `<img src="${iconUrl}" class="ing-icon" width="22" height="22" alt="${escapeHtml(displayName)}" loading="lazy" decoding="async">` : ''}
         </div>
       </td>
     `;
@@ -1684,7 +1730,7 @@
         ${list.map(p => {
           const base = findPokemonBase(p.pokemonId || p.name);
           const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
-          const natureObj = NATURE_DATA.find(n => n.name === p.nature);
+          const natureObj = _getBoxNature(p.nature);
           const prInfo = calculatePokemonPR(p, base);
           const unknownLabel = (typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_unknown') : undefined) ?? '未知';
           const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function')
@@ -1708,7 +1754,7 @@
             <div class="box-card" data-uid="${p.uid}" title="${escapeHtml(stripHtml(prInfo.summaryNote || ''))}">
               <div class="box-card-header">
                 <div class="box-card-img-wrap">
-                  ${iconUrl ? `<img src="${iconUrl}" alt="${escapeHtml(pkmDisplayName)}" class="box-card-icon" onerror="this.style.display='none';">` : ''}
+                  ${iconUrl ? `<img src="${iconUrl}" width="40" height="40" alt="${escapeHtml(pkmDisplayName)}" class="box-card-icon" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
                 </div>
                 <div class="box-card-info">
                   <div class="box-card-name-row">
@@ -1745,12 +1791,12 @@
                     ` : ''}
                     ${berry && berry.icon ? `
                     <span class="pkm-berry-icon-wrapper" title="${berryName}">
-                      <img src="${berry.icon}" alt="${berryName}" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;">
+                      <img src="${berry.icon}" width="18" height="18" alt="${berryName}" loading="lazy" decoding="async" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;">
                     </span>` : ''}
                     ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(base ? base.specialty : p.specialty, 18) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}
                     ${p.ribbon ? `
                       <span class="box-ribbon-tag" title="${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_ribbon_tier_title', { tier: p.ribbon }) : undefined) ?? '睡飽飽獎章'}">
-                        <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" alt="Ribbon" />
+                        <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" width="20" height="20" loading="lazy" decoding="async" alt="Ribbon" />
                       </span>
                     ` : ''}
                   </div>
@@ -1775,7 +1821,7 @@
                 <div class="box-subskills-grid">
                   ${[10, 25, 50, 70, 80].map((lv, i) => {
                     const skName = (p.subskills || [])[i];
-                    const sk = SUBSKILLS_DATA.find(s => s.name === skName);
+                    const sk = _getBoxSubskill(skName);
                     const tier = sk ? sk.tier : 'empty';
                     const displaySkName = skName ? ((typeof window !== 'undefined' ? window.I18N?.getSubSkillName?.(skName) : undefined) ?? skName) : '--';
                     const isUnlocked = (p.level || 1) >= lv;
@@ -1864,7 +1910,7 @@
                 <tr data-uid="${p.uid}" title="${escapeHtml(stripHtml(prInfo.summaryNote || ''))}">
                   <td class="td-icon" style="text-align:center;">
                     <div class="table-icon-wrapper" style="margin:0 auto;width:38px;height:38px;">
-                      ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="table-icon" onerror="this.style.display='none';">` : ''}
+                      ${iconUrl ? `<img src="${iconUrl}" width="38" height="38" alt="${pkmDisplayName}" class="table-icon" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
                     </div>
                   </td>
                   <td style="text-align:center;">
@@ -1881,7 +1927,7 @@
                     ${p.nickname ? `<div style="font-size:11px;color:var(--accent-color);text-align:center;">${escapeHtml(p.nickname)}</div>` : ''}
                   </td>
                   <td style="text-align:center;">
-                    ${berry && berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}">` : `<span class="berry-name-text">${berryName || '--'}</span>`}
+                    ${berry && berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}" loading="lazy" decoding="async">` : `<span class="berry-name-text">${berryName || '--'}</span>`}
                   </td>
                   ${renderBoxTableIngCell(p.ing1, base, 0, p.level || 1)}
                   ${renderBoxTableIngCell(p.ing2, base, 1, p.level || 1)}
@@ -1957,7 +2003,7 @@
           ${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_delete_modal_title') : undefined) ?? '確認刪除寶可夢？'}
         </div>
         <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0 12px;padding:2px 0;background:transparent;border:none;">
-          ${iconUrl ? `<img src="${iconUrl}" width="40" height="40" style="object-fit:contain;" alt="">` : ''}
+          ${iconUrl ? `<img src="${iconUrl}" width="40" height="40" loading="lazy" decoding="async" style="object-fit:contain;" alt="">` : ''}
           <div style="text-align:left;">
             <div style="font-size:13px;font-weight:700;color:var(--text-primary);">${escapeHtml(displayName)}</div>
             <div style="font-size:11px;color:var(--text-muted);font-weight:600;">Lv.${item.level || 1}</div>
@@ -2489,7 +2535,7 @@
 
         return `
           <div class="box-pkm-dropdown-item ${isSelected ? 'active' : ''}" data-id="${p.id}" data-name="${escapeHtml(p.name_cn)}">
-            <img src="${avatarUrl}" class="box-pkm-dropdown-avatar" alt="${escapeHtml(pkmDisplayName)}" loading="lazy" onerror="this.src='https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png'">
+            <img src="${avatarUrl}" class="box-pkm-dropdown-avatar" width="24" height="24" alt="${escapeHtml(pkmDisplayName)}" loading="lazy" decoding="async" onerror="this.src='https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png'">
             <div class="box-pkm-dropdown-info">
               <div class="box-pkm-dropdown-name">
                 <span>No.${p.formatted_no} ${escapeHtml(pkmDisplayName)}</span>
@@ -2697,7 +2743,7 @@
 
         return `
           <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" data-slot="${slot.key}" data-ing="${escapeHtml(ing.name)}" title="${escapeHtml(ingDisplayName)}" aria-label="${escapeHtml(ingDisplayName)}">
-            <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}" loading="lazy">
+            <img src="${iconUrl}" class="box-ing-opt-icon" width="20" height="20" alt="${escapeHtml(ingDisplayName)}" loading="lazy" decoding="async">
           </button>
         `;
       }).join('');
@@ -2895,7 +2941,7 @@
         previewContainer.innerHTML = `
           <div class="box-screenshot-preview-wrap">
             <span class="box-screenshot-preview-tag">${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_original_screenshot') : undefined) ?? '原始截圖對照'}</span>
-            <img src="${screenshotSrc}" alt="Screenshot" class="box-screenshot-img">
+            <img src="${screenshotSrc}" alt="Screenshot" class="box-screenshot-img" loading="lazy" decoding="async">
           </div>
         `;
         previewContainer.style.display = 'block';
@@ -3330,7 +3376,7 @@
     if (summaryEl) {
       summaryEl.innerHTML = `
         <div class="box-conflict-summary-pkm">
-          ${iconUrl ? `<img src="${iconUrl}" class="box-conflict-pkm-icon" alt="" loading="lazy">` : ''}
+          ${iconUrl ? `<img src="${iconUrl}" class="box-conflict-pkm-icon" width="32" height="32" alt="" loading="lazy" decoding="async">` : ''}
           <div class="box-conflict-pkm-names">
             <div class="box-conflict-pkm-main">${escapeHtml(candidateDisplayName)}</div>
             <div class="box-conflict-pkm-sub">UID: ${existingCandidate.uid ? existingCandidate.uid.slice(-8) : ''} · ${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_existing_lv', { level: existingCandidate.level || 1 }) : undefined) ?? ('現有 Lv.' + (existingCandidate.level || 1))}</div>
@@ -4669,17 +4715,6 @@
         };
 
         try {
-          if (typeof window !== 'undefined' && window.OcrAiEngine && typeof window.OcrAiEngine.recognize === 'function' && window.OcrAiEngine.isLoaded && window.OcrAiEngine.isLoaded()) {
-            try {
-              const aiRet = await window.OcrAiEngine.recognize(img);
-              if (aiRet && aiRet.text) {
-                result = parsePokemonFromOcr(aiRet.text, [], allPokemonsRef, null);
-              }
-            } catch (aiErr) {
-              console.warn('[AI OCR Error, falling back to standard OCR]:', aiErr);
-            }
-          }
-
           if (!result.name && worker) {
             let compositeCanvas = null;
             let rgbSlots = [];
@@ -4847,6 +4882,324 @@
       return true;
     }
     return false;
+  }
+
+  /* ─── 初始化事件監聽器 ───────────────────────────────────── */
+  let boxEventsInitialized = false;
+  function initBoxEvents() {
+    loadUserBox();
+    initBoxFilters();
+    if (boxEventsInitialized) return;
+    boxEventsInitialized = true;
+
+    // 1. 拖曳上傳與截圖掃描
+    const dropzone = document.getElementById('box-dropzone');
+    const fileInput = document.getElementById('box-file-input');
+    const manualBtn = document.getElementById('box-manual-add-btn');
+    const exportBtn = document.getElementById('box-export-btn');
+    const importInput = document.getElementById('box-import-input');
+
+    const settingsExportBtn = document.getElementById('settings-export-box-btn');
+    const settingsImportInput = document.getElementById('settings-import-box-input');
+
+    if (dropzone && fileInput) {
+      dropzone.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', (e) => {
+        handleScreenshotFiles(e.target.files);
+        fileInput.value = '';
+      });
+
+      // 拖曳事件
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropzone.classList.add('dragover');
+        });
+      });
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropzone.classList.remove('dragover');
+        });
+      });
+      dropzone.addEventListener('drop', (e) => {
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          handleScreenshotFiles(e.dataTransfer.files);
+        }
+      });
+    }
+
+    const uploadBtn = document.getElementById('box-upload-btn');
+    if (uploadBtn && fileInput) {
+      uploadBtn.addEventListener('click', () => fileInput.click());
+    }
+
+    const toggleGuideBtn = document.getElementById('box-toggle-guide-btn');
+    if (toggleGuideBtn) {
+      toggleGuideBtn.addEventListener('click', () => {
+        boxUserForcedGuideVisible = !boxUserForcedGuideVisible;
+        syncBoxVisibility();
+      });
+    }
+
+    // 全域剪貼簿貼上監聽 (Ctrl+V / Cmd+V 支援單張或多張截圖連續入庫)
+    window.addEventListener('paste', (e) => {
+      const panelBox = document.getElementById('panel-box');
+      if (panelBox && panelBox.style.display !== 'none') {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        const imageBlobs = [];
+        for (let index in items) {
+          const item = items[index];
+          if (item.kind === 'file' && item.type.startsWith('image/')) {
+            imageBlobs.push(item.getAsFile());
+          }
+        }
+        if (imageBlobs.length > 0) {
+          handleScreenshotFiles(imageBlobs);
+        }
+      }
+    });
+
+    // 1.5 標準截圖指引卡片與 Lightbox 大圖彈窗
+    const guideToggleBtn = document.getElementById('box-guide-toggle-btn');
+    const guideBody = document.getElementById('box-guide-body');
+    const guideThumbWrap = document.getElementById('box-guide-thumb-wrap');
+    const guideLightbox = document.getElementById('box-guide-lightbox-modal');
+    const guideLightboxClose = document.getElementById('box-guide-lightbox-close');
+
+    if (guideToggleBtn && guideBody) {
+      guideToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isCollapsed = guideBody.style.display === 'none';
+        guideBody.style.display = isCollapsed ? 'flex' : 'none';
+        guideToggleBtn.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
+        guideToggleBtn.textContent = isCollapsed
+          ? ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_guide_collapse') : undefined) ?? '收合說明')
+          : ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_guide_expand') : undefined) ?? '展開說明');
+      });
+    }
+
+    if (guideThumbWrap && guideLightbox) {
+      guideThumbWrap.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(guideLightbox);
+        guideLightbox.style.display = 'flex'; if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(guideLightbox);
+      });
+    }
+
+    if (guideLightboxClose && guideLightbox) {
+      guideLightboxClose.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (typeof window.animateOverlayClose === 'function') window.animateOverlayClose(guideLightbox, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
+        else { guideLightbox.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); }
+      });
+    }
+
+    if (guideLightbox) {
+      guideLightbox.addEventListener('click', (e) => {
+        if (e.target === guideLightbox) {
+          if (typeof window.animateOverlayClose === 'function') window.animateOverlayClose(guideLightbox, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
+        else { guideLightbox.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); }
+        }
+      });
+    }
+
+    if (manualBtn) {
+      manualBtn.addEventListener('click', () => openBoxEditModal());
+    }
+
+    if (exportBtn) {
+      exportBtn.addEventListener('click', exportBoxJSON);
+    }
+
+    if (importInput) {
+      importInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          importBoxJSON(e.target.files[0]);
+          importInput.value = '';
+        }
+      });
+    }
+
+    if (settingsExportBtn) {
+      settingsExportBtn.addEventListener('click', exportBoxJSON);
+    }
+
+    if (settingsImportInput) {
+      settingsImportInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          importBoxJSON(e.target.files[0]);
+          settingsImportInput.value = '';
+        }
+      });
+    }
+
+    // 2. 編輯彈窗表單監聽
+    const form = document.getElementById('box-edit-form');
+    if (form) form.addEventListener('submit', handleFormSave);
+
+    const closeBtn = document.getElementById('box-modal-close-btn');
+    if (closeBtn) closeBtn.addEventListener('click', closeBoxEditModal);
+
+    const cancelBtn = document.getElementById('box-modal-cancel-btn');
+    if (cancelBtn) cancelBtn.addEventListener('click', closeBoxEditModal);
+
+    const modal = document.getElementById('box-edit-modal');
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeBoxEditModal();
+      });
+    }
+
+    // 3. 倉庫搜尋與一鍵清空
+    const searchInput = document.getElementById('box-search-input');
+    const boxSearchClear = document.getElementById('box-search-clear');
+
+    function updateBoxClearBtn() {
+      if (!searchInput) return;
+      if (typeof window !== 'undefined' && typeof window.updateSearchInputHighlight === 'function') {
+        window.updateSearchInputHighlight(searchInput, boxSearchClear);
+      } else if (boxSearchClear) {
+        boxSearchClear.style.display = searchInput.value.trim() ? 'flex' : 'none';
+      }
+    }
+
+    if (searchInput) {
+      let boxSearchTimer = null;
+      searchInput.addEventListener('input', (e) => {
+        currentSearch = e.target.value;
+        updateBoxClearBtn();
+        if (boxSearchTimer) clearTimeout(boxSearchTimer);
+        boxSearchTimer = setTimeout(() => {
+          boxSearchTimer = null;
+          renderBox();
+        }, 90);
+      });
+
+      if (boxSearchClear) {
+        boxSearchClear.addEventListener('click', () => {
+          if (boxSearchTimer) { clearTimeout(boxSearchTimer); boxSearchTimer = null; }
+          searchInput.value = '';
+          currentSearch = '';
+          updateBoxClearBtn();
+          searchInput.focus();
+          renderBox();
+        });
+      }
+    }
+
+    const sortSelect = document.getElementById('box-sort-select');
+    if (sortSelect) {
+      if (typeof window.setupCustomSelect === 'function') {
+        window.setupCustomSelect(sortSelect);
+      }
+      sortSelect.addEventListener('change', (e) => {
+        sortBy = e.target.value;
+        renderBox();
+      });
+    }
+
+    const boxContentArea = document.getElementById('box-content-area');
+    if (boxContentArea) {
+      boxContentArea.addEventListener('click', (e) => {
+        const th = e.target.closest('th[data-sort]');
+        if (!th) return;
+        const col = th.dataset.sort || th.getAttribute('data-sort');
+        if (!col) return;
+        sortBy = nextBoxSort(sortBy, col);
+        if (sortSelect) {
+          const hasOpt = Array.from(sortSelect.options || []).some(o => o.value === sortBy);
+          if (hasOpt) {
+            sortSelect.value = sortBy;
+            if (sortSelect.closest && sortSelect.closest('.custom-select-container')) {
+              const trigger = sortSelect.closest('.custom-select-container').querySelector('.custom-select-trigger');
+              const opt = sortSelect.options[sortSelect.selectedIndex];
+              if (trigger && opt) trigger.textContent = opt.textContent;
+            }
+          }
+        }
+        renderBox();
+      });
+    }
+
+    // 4. 視圖切換
+    const toggleGridBtn = document.getElementById('box-toggle-grid');
+    const toggleTableBtn = document.getElementById('box-toggle-table');
+    if (toggleGridBtn && toggleTableBtn) {
+      toggleGridBtn.addEventListener('click', () => {
+        boxViewMode = 'grid';
+        toggleGridBtn.classList.add('active');
+        toggleTableBtn.classList.remove('active');
+        renderBox();
+      });
+      toggleTableBtn.addEventListener('click', () => {
+        boxViewMode = 'table';
+        toggleTableBtn.classList.add('active');
+        toggleGridBtn.classList.remove('active');
+        renderBox();
+      });
+    }
+
+    // 5. 頂部 Segmented 子分頁切換 (寶可夢倉庫 vs 深度評測室)
+    const subtabList = document.getElementById('box-subtab-list');
+    const subtabLab = document.getElementById('box-subtab-lab');
+
+    if (subtabList) subtabList.addEventListener('click', () => switchBoxSubtab('list'));
+    if (subtabLab) subtabLab.addEventListener('click', () => switchBoxSubtab('lab'));
+
+    try {
+      const initialSubtab = getSavedBoxSubtab();
+      if (initialSubtab === 'lab') {
+        switchBoxSubtab('lab');
+      }
+    } catch (e) {}
+
+    // 6. 雲端同步監聽與回調綁定 (Supabase CloudSync)
+    if (typeof window !== 'undefined' && window.CloudSync) {
+      let lastReceivedBoxHash = '';
+      window.CloudSync.onRemoteUpdate((remoteBox) => {
+        const newHash = JSON.stringify(remoteBox || []);
+        let currentLocalHash = '';
+        try {
+          currentLocalHash = localStorage.getItem(STORAGE_KEY) || '[]';
+        } catch (e) {}
+
+        // 若雲端推送的內容與目前本地完全一樣，或與上次接收的完全一樣，直接略過，不重複渲染亦不彈出 Toast
+        if (newHash === currentLocalHash || newHash === lastReceivedBoxHash) {
+          return;
+        }
+        lastReceivedBoxHash = newHash;
+
+        userBox = Array.isArray(remoteBox) ? remoteBox : [];
+        try {
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(STORAGE_KEY, newHash);
+          }
+        } catch (e) {}
+        renderBox();
+        if (window.AppraisalLab && typeof window.AppraisalLab.updateBoxItems === 'function') {
+          window.AppraisalLab.updateBoxItems();
+        }
+        showBoxToast((typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_cloud_sync_title') : undefined) ?? '雲端同步成功', (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_cloud_sync_desc') : undefined) ?? '已從其他裝置即時同步最新寶可夢倉庫資料！', 'success');
+      });
+
+      window.CloudSync.onAuthStateChange(() => {
+        loadUserBox();
+        renderBox();
+        if (window.AppraisalLab && typeof window.AppraisalLab.updateBoxItems === 'function') {
+          window.AppraisalLab.updateBoxItems();
+        }
+      });
+    }
+
+    const cloudSyncBtns = document.querySelectorAll('.box-btn-cloud-sync, #box-cloud-sync-btn');
+    cloudSyncBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (window.CloudSync && typeof window.CloudSync.openAuthModal === 'function') {
+          window.CloudSync.openAuthModal();
+        }
+      });
+    });
   }
 
   /* ─── 統一去重與高階升級入庫函式 (Unified Upsert & Deduplication) ───── */
@@ -5088,318 +5441,6 @@
       .replace(/'/g, '&#39;');
   }
 
-  /* ─── 初始化事件監聽器 ───────────────────────────────────── */
-  let boxEventsInitialized = false;
-  function initBoxEvents() {
-    loadUserBox();
-    initBoxFilters();
-    if (boxEventsInitialized) return;
-    boxEventsInitialized = true;
-
-    // 1. 拖曳上傳與截圖掃描
-    const dropzone = document.getElementById('box-dropzone');
-    const fileInput = document.getElementById('box-file-input');
-    const manualBtn = document.getElementById('box-manual-add-btn');
-    const exportBtn = document.getElementById('box-export-btn');
-    const importInput = document.getElementById('box-import-input');
-
-    const settingsExportBtn = document.getElementById('settings-export-box-btn');
-    const settingsImportInput = document.getElementById('settings-import-box-input');
-
-    if (dropzone && fileInput) {
-      dropzone.addEventListener('click', () => fileInput.click());
-      fileInput.addEventListener('change', (e) => {
-        handleScreenshotFiles(e.target.files);
-        fileInput.value = '';
-      });
-
-      // 拖曳事件
-      ['dragenter', 'dragover'].forEach(eventName => {
-        dropzone.addEventListener(eventName, (e) => {
-          e.preventDefault();
-          dropzone.classList.add('dragover');
-        });
-      });
-      ['dragleave', 'drop'].forEach(eventName => {
-        dropzone.addEventListener(eventName, (e) => {
-          e.preventDefault();
-          dropzone.classList.remove('dragover');
-        });
-      });
-      dropzone.addEventListener('drop', (e) => {
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-          handleScreenshotFiles(e.dataTransfer.files);
-        }
-      });
-    }
-
-    const uploadBtn = document.getElementById('box-upload-btn');
-    if (uploadBtn && fileInput) {
-      uploadBtn.addEventListener('click', () => fileInput.click());
-    }
-
-    const toggleGuideBtn = document.getElementById('box-toggle-guide-btn');
-    if (toggleGuideBtn) {
-      toggleGuideBtn.addEventListener('click', () => {
-        boxUserForcedGuideVisible = !boxUserForcedGuideVisible;
-        syncBoxVisibility();
-      });
-    }
-
-    // 全域剪貼簿貼上監聽 (Ctrl+V / Cmd+V 支援單張或多張截圖連續入庫)
-    window.addEventListener('paste', (e) => {
-      const panelBox = document.getElementById('panel-box');
-      if (panelBox && panelBox.style.display !== 'none') {
-        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-        const imageBlobs = [];
-        for (let index in items) {
-          const item = items[index];
-          if (item.kind === 'file' && item.type.startsWith('image/')) {
-            imageBlobs.push(item.getAsFile());
-          }
-        }
-        if (imageBlobs.length > 0) {
-          handleScreenshotFiles(imageBlobs);
-        }
-      }
-    });
-
-    // 1.5 標準截圖指引卡片與 Lightbox 大圖彈窗
-    const guideToggleBtn = document.getElementById('box-guide-toggle-btn');
-    const guideBody = document.getElementById('box-guide-body');
-    const guideThumbWrap = document.getElementById('box-guide-thumb-wrap');
-    const guideLightbox = document.getElementById('box-guide-lightbox-modal');
-    const guideLightboxClose = document.getElementById('box-guide-lightbox-close');
-
-    if (guideToggleBtn && guideBody) {
-      guideToggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isCollapsed = guideBody.style.display === 'none';
-        guideBody.style.display = isCollapsed ? 'flex' : 'none';
-        guideToggleBtn.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
-        guideToggleBtn.textContent = isCollapsed
-          ? ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_guide_collapse') : undefined) ?? '收合說明')
-          : ((typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_guide_expand') : undefined) ?? '展開說明');
-      });
-    }
-
-    if (guideThumbWrap && guideLightbox) {
-      guideThumbWrap.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(guideLightbox);
-        guideLightbox.style.display = 'flex'; if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(guideLightbox);
-      });
-    }
-
-    if (guideLightboxClose && guideLightbox) {
-      guideLightboxClose.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (typeof window.animateOverlayClose === 'function') window.animateOverlayClose(guideLightbox, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
-        else { guideLightbox.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); }
-      });
-    }
-
-    if (guideLightbox) {
-      guideLightbox.addEventListener('click', (e) => {
-        if (e.target === guideLightbox) {
-          if (typeof window.animateOverlayClose === 'function') window.animateOverlayClose(guideLightbox, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
-        else { guideLightbox.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); }
-        }
-      });
-    }
-
-    if (manualBtn) {
-      manualBtn.addEventListener('click', () => openBoxEditModal());
-    }
-
-    if (exportBtn) {
-      exportBtn.addEventListener('click', exportBoxJSON);
-    }
-
-    if (importInput) {
-      importInput.addEventListener('change', (e) => {
-        if (e.target.files && e.target.files[0]) {
-          importBoxJSON(e.target.files[0]);
-          importInput.value = '';
-        }
-      });
-    }
-
-    if (settingsExportBtn) {
-      settingsExportBtn.addEventListener('click', exportBoxJSON);
-    }
-
-    if (settingsImportInput) {
-      settingsImportInput.addEventListener('change', (e) => {
-        if (e.target.files && e.target.files[0]) {
-          importBoxJSON(e.target.files[0]);
-          settingsImportInput.value = '';
-        }
-      });
-    }
-
-    // 2. 編輯彈窗表單監聽
-    const form = document.getElementById('box-edit-form');
-    if (form) form.addEventListener('submit', handleFormSave);
-
-    const closeBtn = document.getElementById('box-modal-close-btn');
-    if (closeBtn) closeBtn.addEventListener('click', closeBoxEditModal);
-
-    const cancelBtn = document.getElementById('box-modal-cancel-btn');
-    if (cancelBtn) cancelBtn.addEventListener('click', closeBoxEditModal);
-
-    const modal = document.getElementById('box-edit-modal');
-    if (modal) {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeBoxEditModal();
-      });
-    }
-
-    // 3. 倉庫搜尋與一鍵清空
-    const searchInput = document.getElementById('box-search-input');
-    const boxSearchClear = document.getElementById('box-search-clear');
-
-    function updateBoxClearBtn() {
-      if (!searchInput) return;
-      if (typeof window !== 'undefined' && typeof window.updateSearchInputHighlight === 'function') {
-        window.updateSearchInputHighlight(searchInput, boxSearchClear);
-      } else if (boxSearchClear) {
-        boxSearchClear.style.display = searchInput.value.trim() ? 'flex' : 'none';
-      }
-    }
-
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        currentSearch = e.target.value;
-        updateBoxClearBtn();
-        renderBox();
-      });
-
-      if (boxSearchClear) {
-        boxSearchClear.addEventListener('click', () => {
-          searchInput.value = '';
-          currentSearch = '';
-          updateBoxClearBtn();
-          searchInput.focus();
-          renderBox();
-        });
-      }
-    }
-
-    const sortSelect = document.getElementById('box-sort-select');
-    if (sortSelect) {
-      if (typeof window.setupCustomSelect === 'function') {
-        window.setupCustomSelect(sortSelect);
-      }
-      sortSelect.addEventListener('change', (e) => {
-        sortBy = e.target.value;
-        renderBox();
-      });
-    }
-
-    const boxContentArea = document.getElementById('box-content-area');
-    if (boxContentArea) {
-      boxContentArea.addEventListener('click', (e) => {
-        const th = e.target.closest('th[data-sort]');
-        if (!th) return;
-        const col = th.dataset.sort || th.getAttribute('data-sort');
-        if (!col) return;
-        sortBy = nextBoxSort(sortBy, col);
-        if (sortSelect) {
-          const hasOpt = Array.from(sortSelect.options || []).some(o => o.value === sortBy);
-          if (hasOpt) {
-            sortSelect.value = sortBy;
-            if (sortSelect.closest && sortSelect.closest('.custom-select-container')) {
-              const trigger = sortSelect.closest('.custom-select-container').querySelector('.custom-select-trigger');
-              const opt = sortSelect.options[sortSelect.selectedIndex];
-              if (trigger && opt) trigger.textContent = opt.textContent;
-            }
-          }
-        }
-        renderBox();
-      });
-    }
-
-    // 4. 視圖切換
-    const toggleGridBtn = document.getElementById('box-toggle-grid');
-    const toggleTableBtn = document.getElementById('box-toggle-table');
-    if (toggleGridBtn && toggleTableBtn) {
-      toggleGridBtn.addEventListener('click', () => {
-        boxViewMode = 'grid';
-        toggleGridBtn.classList.add('active');
-        toggleTableBtn.classList.remove('active');
-        renderBox();
-      });
-      toggleTableBtn.addEventListener('click', () => {
-        boxViewMode = 'table';
-        toggleTableBtn.classList.add('active');
-        toggleGridBtn.classList.remove('active');
-        renderBox();
-      });
-    }
-
-    // 5. 頂部 Segmented 子分頁切換 (寶可夢倉庫 vs 深度評測室)
-    const subtabList = document.getElementById('box-subtab-list');
-    const subtabLab = document.getElementById('box-subtab-lab');
-
-    if (subtabList) subtabList.addEventListener('click', () => switchBoxSubtab('list'));
-    if (subtabLab) subtabLab.addEventListener('click', () => switchBoxSubtab('lab'));
-
-    try {
-      const initialSubtab = getSavedBoxSubtab();
-      if (initialSubtab === 'lab') {
-        switchBoxSubtab('lab');
-      }
-    } catch (e) {}
-
-    // 6. 雲端同步監聽與回調綁定 (Supabase CloudSync)
-    if (typeof window !== 'undefined' && window.CloudSync) {
-      let lastReceivedBoxHash = '';
-      window.CloudSync.onRemoteUpdate((remoteBox) => {
-        const newHash = JSON.stringify(remoteBox || []);
-        let currentLocalHash = '';
-        try {
-          currentLocalHash = localStorage.getItem(STORAGE_KEY) || '[]';
-        } catch (e) {}
-
-        // 若雲端推送的內容與目前本地完全一樣，或與上次接收的完全一樣，直接略過，不重複渲染亦不彈出 Toast
-        if (newHash === currentLocalHash || newHash === lastReceivedBoxHash) {
-          return;
-        }
-        lastReceivedBoxHash = newHash;
-
-        userBox = Array.isArray(remoteBox) ? remoteBox : [];
-        try {
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem(STORAGE_KEY, newHash);
-          }
-        } catch (e) {}
-        renderBox();
-        if (window.AppraisalLab && typeof window.AppraisalLab.updateBoxItems === 'function') {
-          window.AppraisalLab.updateBoxItems();
-        }
-        showBoxToast((typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_cloud_sync_title') : undefined) ?? '雲端同步成功', (typeof window !== 'undefined' ? window.I18N?.t?.('box.msg_cloud_sync_desc') : undefined) ?? '已從其他裝置即時同步最新寶可夢倉庫資料！', 'success');
-      });
-
-      window.CloudSync.onAuthStateChange(() => {
-        loadUserBox();
-        renderBox();
-        if (window.AppraisalLab && typeof window.AppraisalLab.updateBoxItems === 'function') {
-          window.AppraisalLab.updateBoxItems();
-        }
-      });
-    }
-
-    const cloudSyncBtns = document.querySelectorAll('.box-btn-cloud-sync, #box-cloud-sync-btn');
-    cloudSyncBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (window.CloudSync && typeof window.CloudSync.openAuthModal === 'function') {
-          window.CloudSync.openAuthModal();
-        }
-      });
-    });
-  }
-
   const STORAGE_KEY_BOX_SUBTAB = 'pksleep_active_box_subtab';
   const VALID_BOX_SUBTABS = ['list', 'lab'];
 
@@ -5584,6 +5625,9 @@
       allPokemonsRef = pokemons || [];
       initBoxEvents();
       initBoxFilters();
+      const boxPanel = typeof document !== 'undefined' && document.getElementById ? document.getElementById('panel-box') : null;
+      const isBoxHidden = !!(boxPanel && boxPanel.style && boxPanel.style.display === 'none');
+      if (isBoxHidden) return;
       const initialSubtab = getSavedBoxSubtab();
       if (initialSubtab === 'lab') {
         switchBoxSubtab('lab');

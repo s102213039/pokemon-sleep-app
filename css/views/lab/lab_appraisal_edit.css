@@ -1,0 +1,669 @@
+.lab-box-chip-lv {
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+}
+
+.lab-box-empty-hint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-color);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.lab-nickname-tag {
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(147, 51, 234, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(147, 51, 234, 0.35);
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+
+.lab-control-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.lab-select {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 6px 36px 6px 10px;
+  font-size: 12px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 8px 5px;
+}
+
+.lab-slider {
+  width: 100%;
+  accent-color: var(--accent-blue);
+}
+
+.lab-subskills-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.lab-subskill-slot {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 6px;
+  align-items: center;
+}
+
+.slot-lv-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--accent-blue);
+  background: rgba(56, 189, 248, 0.15);
+  padding: 4px 6px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.lab-select-subskill {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 4px 36px 4px 8px;
+  font-size: 11.5px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 8px 5px;
+}
+
+/* 實驗室評測展示 (無外框一體化設計) */
+.appraisal-lab-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+.lab-preview-header {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  border-bottom: 1px solid var(--border-color-subtle, rgba(255,255,255,0.08));
+  padding-bottom: 12px;
+  padding-right: 50px !important;
+}
+
+.lab-preview-header-right {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  z-index: 5 !important;
+}
+
+.btn-lab-edit-toggle {
+  width: 32px;
+  height: 32px;
+  background: var(--accent-color, #38bdf8);
+  color: #0f172a;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.25);
+  padding: 0;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-lab-edit-toggle:hover {
+  background: #0284c7;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* 深度評測室修改模式頂部導航列：參照 box-modal-header (取消靠左，標題居中，確定靠右) */
+.appraisal-lab-preview.lab-preview-edit-mode {
+  gap: 4px !important;
+}
+
+.lab-preview-header.lab-edit-header {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: minmax(44px, 1fr) auto minmax(44px, 1fr) !important;
+  align-items: center !important;
+  padding: 0 4px 6px !important;
+  margin: 0 !important;
+  border-bottom: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08)) !important;
+  background: transparent !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.lab-edit-header .box-modal-header-cancel {
+  justify-self: start !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2px 0 !important;
+  color: var(--text-secondary) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+}
+
+.lab-edit-header .box-modal-title {
+  justify-self: center !important;
+  text-align: center !important;
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+}
+
+.lab-edit-header .box-modal-header-confirm {
+  justify-self: end !important;
+  height: 28px !important;
+  line-height: 28px !important;
+  padding: 0 12px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+  background: #3b82f6 !important;
+  color: #fff !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+/* 深度評測室修改模式：完全繼承 box-modal-form 與 box-form-grid */
+.lab-edit-form {
+  margin-top: 4px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+.lab-edit-form .box-form-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+.lab-edit-form .box-pkm-level-mainskill-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.lab-edit-form .flex-pkm-compact {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+.lab-edit-form .box-pkm-display-slot {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  height: 34px !important;
+  overflow: hidden !important;
+}
+
+.lab-edit-form .box-pkm-display-avatar {
+  width: 26px !important;
+  height: 26px !important;
+  flex: 0 0 26px !important;
+  object-fit: contain !important;
+}
+
+.lab-edit-form .box-pkm-display-name {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.lab-edit-form .box-pkm-display-nick {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: var(--text-secondary) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.lab-edit-form .box-form-row-2col {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.lab-edit-form .flex-level-compact {
+  width: 48px !important;
+  min-width: 48px !important;
+  flex: 0 0 48px !important;
+}
+
+.lab-edit-form .lab-level-compact-input {
+  width: 48px !important;
+  height: 34px !important;
+  text-align: center !important;
+  padding: 0 2px !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+}
+
+.lab-edit-form .flex-mainskill-compact {
+  flex: 1.35 1 auto !important;
+  min-width: 0 !important;
+}
+
+.lab-edit-form .box-mainskill-inline-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  width: 100% !important;
+  height: 34px !important;
+}
+
+.lab-edit-form .box-mainskill-name-badge {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  height: 34px !important;
+  line-height: 32px !important;
+  padding: 0 5px !important;
+  border-radius: 6px !important;
+  background: rgba(56, 189, 248, 0.12) !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  color: #38bdf8 !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+.lab-edit-form .box-mainskill-inline-wrap .custom-select-container {
+  width: 56px !important;
+  min-width: 56px !important;
+  flex: 0 0 56px !important;
+}
+
+.lab-edit-form .box-mainskill-inline-wrap .custom-select-trigger {
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 2px 13px 2px 5px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  border-radius: 6px !important;
+}
+
+.lab-edit-form .box-mainskill-inline-wrap .custom-select-arrow {
+  right: 4px !important;
+}
+
+.lab-edit-form .box-nickname-ribbon-row {
+  display: grid !important;
+  grid-template-columns: 1.2fr 1fr !important;
+  gap: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.lab-edit-form .flex-ribbon .custom-select-trigger {
+  padding-left: 6px !important;
+  padding-right: 20px !important;
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+}
+
+.lab-edit-form .flex-ribbon .custom-select-arrow {
+  right: 7px !important;
+}
+
+.lab-edit-form .flex-ribbon .custom-select-label {
+  gap: 4px !important;
+  font-size: 11.5px !important;
+}
+
+.lab-edit-form .flex-ribbon .custom-select-icon {
+  width: 17px !important;
+  height: 17px !important;
+}
+
+.lab-edit-form .box-pkm-level-row {
+  grid-template-columns: 1fr 72px !important;
+}
+
+.lab-edit-form .flex-level input {
+  text-align: center !important;
+  padding: 0 4px !important;
+}
+
+.lab-edit-form .box-form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  margin-bottom: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.lab-edit-form .box-form-label {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--text-secondary) !important;
+  margin: 0 !important;
+}
+
+.lab-edit-form .box-form-input {
+  height: 34px !important;
+  border-radius: 8px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  font-size: 12px !important;
+  padding: 0 10px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.lab-edit-form .box-form-group .custom-select-container {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.lab-edit-form .box-form-group .custom-select-trigger {
+  width: 100% !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+  font-size: 12px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+.lab-edit-form .custom-select-menu {
+  top: calc(100% + 2px) !important;
+  border-radius: 8px !important;
+  padding: 3px !important;
+  max-height: 220px !important;
+  z-index: 1050 !important;
+}
+
+.lab-edit-form .custom-select-item {
+  padding: 6px 10px !important;
+  font-size: 12px !important;
+}
+
+.lab-edit-form .box-ing-strip {
+  gap: 4px !important;
+  padding: 2px 6px !important;
+}
+
+.lab-edit-form .box-ing-opt-btn {
+  width: 28px !important;
+  height: 28px !important;
+  padding: 2px !important;
+}
+
+.lab-edit-form .box-ing-opt-icon {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.lab-edit-form .box-subskill-clear-btn {
+  padding: 2px 8px !important;
+  font-size: 11px !important;
+  line-height: 16px !important;
+}
+
+.lab-edit-form .box-subskill-slots-row {
+  display: grid !important;
+  grid-template-columns: repeat(6, 1fr) !important;
+  gap: 4px !important;
+  margin-bottom: 5px !important;
+}
+
+.lab-edit-form .box-subskill-slots-row .box-subskill-slot-btn:nth-child(1),
+.lab-edit-form .box-subskill-slots-row .box-subskill-slot-btn:nth-child(2),
+.lab-edit-form .box-subskill-slots-row .box-subskill-slot-btn:nth-child(3) {
+  grid-column: span 2 !important;
+}
+
+.lab-edit-form .box-subskill-slots-row .box-subskill-slot-btn:nth-child(4),
+.lab-edit-form .box-subskill-slots-row .box-subskill-slot-btn:nth-child(5) {
+  grid-column: span 3 !important;
+}
+
+.lab-edit-form .box-subskill-slot-btn {
+  padding: 2px 2px !important;
+  min-height: 32px !important;
+}
+
+.lab-edit-form .box-subskill-slot-btn .slot-lvl-header {
+  font-size: 9.5px !important;
+}
+
+.lab-edit-form .box-subskill-slot-btn .slot-val-badge {
+  font-size: 10.5px !important;
+  padding: 1px 2px !important;
+  white-space: nowrap !important;
+}
+
+.lab-edit-form .box-subskill-palette {
+  background: var(--bg-card-inner, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  padding: 6px 8px !important;
+  gap: 4px !important;
+}
+
+.lab-edit-form .subskill-tier-section {
+  gap: 3px !important;
+}
+
+.lab-edit-form .subskill-tier-label {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+}
+
+.lab-edit-form .subskill-chips-row {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 4px !important;
+}
+
+.lab-edit-form .box-subskill-chip {
+  padding: 4px 2px !important;
+  font-size: 11px !important;
+  height: auto !important;
+  min-height: 26px !important;
+  border-radius: 6px !important;
+}
+
+.lab-preview-stats-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  padding: 4px 0 6px 0;
+}
+
+.lab-preview-mainskill-row,
+.lab-preview-nature-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  flex-wrap: wrap;
+}
+
+.lab-preview-ing-chips {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.lab-preview-ing-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--table-row-odd-solid, #0d1527);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11.5px;
+  transition: opacity 0.2s ease;
+}
+
+.lab-preview-ing-chip.is-locked {
+  opacity: 0.45;
+  filter: grayscale(0.5);
+}
+
+.lab-preview-subskills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.lab-preview-subskills-grid .subskill-last-slot {
+  grid-column: 1 / 2;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.lab-preview-pokemon-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lab-preview-icon {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.lab-preview-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.lab-preview-spec {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.lab-preview-verdict {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card-inner-subtle);
+  border: 1.5px solid var(--accent-blue);
+  padding: 4px 12px;
+  border-radius: 8px;
+}
+
+.lab-grade-char {
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.lab-grade-title {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.lab-chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 8px 0;
+  overflow: visible;
+}
+
+.lab-chart-container .radar-svg-chart {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  aspect-ratio: 340 / 310;
+  display: block;
+  margin: 0 auto;
+}
+
+.mobile-h5-app .lab-chart-container {
+  padding: 4px 0;
+}
+
+.mobile-h5-app .lab-chart-container .radar-svg-chart {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.lab-pros-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.lab-bullet-item {
+  font-size: 12px;
+  color: var(--text-primary);
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  padding: 6px 10px;
+  border-radius: 6px;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .appraisal-modal-body,
+  .appraisal-chart-flex,
+  .appraisal-lab-layout,
+  .lab-preview-chart-row,
+  .appraisal-costs-grid {
+    grid-template-columns: 1fr;
+  }
+}

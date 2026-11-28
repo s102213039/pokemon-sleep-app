@@ -168,6 +168,24 @@
     refreshCoordinateLadder();
   }
 
+  let _ladderSearchTimer = null;
+
+  function onLadderSearchInput(val) {
+    const queryStr = (val || '').trim();
+    const input = document.getElementById('ladder-pkm-search-input');
+    const clearBtn = document.getElementById('ladder-search-clear-btn');
+    if (input && typeof window !== 'undefined' && typeof window.updateSearchInputHighlight === 'function') {
+      window.updateSearchInputHighlight(input, clearBtn);
+    } else if (clearBtn) {
+      clearBtn.style.display = queryStr ? 'flex' : 'none';
+    }
+    if (_ladderSearchTimer) clearTimeout(_ladderSearchTimer);
+    _ladderSearchTimer = setTimeout(() => {
+      _ladderSearchTimer = null;
+      onLadderSearch(val);
+    }, 90);
+  }
+
   function onLadderSearch(val) {
     ladderSearchQuery = (val || '').trim();
     const input = document.getElementById('ladder-pkm-search-input');
@@ -181,6 +199,7 @@
   }
 
   function clearLadderSearch() {
+    if (_ladderSearchTimer) { clearTimeout(_ladderSearchTimer); _ladderSearchTimer = null; }
     ladderSearchQuery = '';
     const input = document.getElementById('ladder-pkm-search-input');
     if (input) input.value = '';

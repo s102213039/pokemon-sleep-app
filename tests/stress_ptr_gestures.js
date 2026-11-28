@@ -140,6 +140,12 @@ function createMockPtrEnvironment(customPokedexUiCode = null) {
     },
     addEventListener(evt, fn) {
       if (listeners[evt]) listeners[evt].push(fn);
+    },
+    removeEventListener(evt, fn) {
+      if (listeners[evt]) {
+        const idx = listeners[evt].indexOf(fn);
+        if (idx !== -1) listeners[evt].splice(idx, 1);
+      }
     }
   };
 
@@ -167,12 +173,12 @@ function createMockPtrEnvironment(customPokedexUiCode = null) {
     }
   };
 
-  const rawCode = customPokedexUiCode || fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/pokedex/pokedex_ui.js'), 'utf8');
+  const rawCode = customPokedexUiCode || fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/pokedex/pokedex_gestures.js'), 'utf8');
   const initPtrStart = rawCode.indexOf('function initPullToRefresh()');
   const closingMarker = 'PokemonApp.initPullToRefresh = initPullToRefresh;\n    }';
   const closingIdx = rawCode.indexOf(closingMarker, initPtrStart);
   if (initPtrStart === -1 || closingIdx === -1) {
-    throw new Error('Failed to locate initPullToRefresh() in pokedex_ui.js');
+    throw new Error('Failed to locate initPullToRefresh() in pokedex_gestures.js');
   }
   const initPtrEnd = closingIdx + closingMarker.length;
   const initPtrSnippet = rawCode.slice(initPtrStart, initPtrEnd) + '\nreturn { initPullToRefresh };';

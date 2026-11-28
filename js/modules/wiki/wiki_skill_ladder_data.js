@@ -653,5 +653,5 @@
         basePath = '../';
       }
     }
-    return `<span class="box-spec-tag spec-${key} specialty-icon-wrap node-specialty-tag specialty-${key}" title="${disp}" style="display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;padding:0;line-height:1;vertical-align:middle;"><img src="${basePath}assets/specialty/${key}.png" srcset="${basePath}assets/specialty/${key}@2x.png 2x" class="specialty-icon spec-${key}" width="${s}" height="${s}" alt="${disp}" loading="lazy" style="width:${s}px;height:${s}px;object-fit:contain;vertical-align:middle;display:inline-block;pointer-events:none;" /></span>`;
+    return `<span class="box-spec-tag spec-${key} specialty-icon-wrap node-specialty-tag specialty-${key}" title="${disp}" style="display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;padding:0;line-height:1;vertical-align:middle;"><img src="${basePath}assets/specialty/${key}.png" srcset="${basePath}assets/specialty/${key}@2x.png 2x" class="specialty-icon spec-${key}" width="${s}" height="${s}" alt="${disp}" loading="lazy" decoding="async" style="width:${s}px;height:${s}px;object-fit:contain;vertical-align:middle;display:inline-block;pointer-events:none;" /></span>`;
   }

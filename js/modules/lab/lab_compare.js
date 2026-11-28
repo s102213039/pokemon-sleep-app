@@ -296,12 +296,12 @@
             </button>
           </div>
           <div class="lab-compare-vs-avatar-wrap">
-            <img src="${avatarUrl}" class="lab-compare-vs-avatar" alt="${window.I18N?.t?.('lab.c_cmp_player_label', { letter }) ?? `Player ${letter}`}" loading="lazy">
+            <img src="${avatarUrl}" class="lab-compare-vs-avatar" width="44" height="44" alt="${window.I18N?.t?.('lab.c_cmp_player_label', { letter }) ?? `Player ${letter}`}" loading="lazy" decoding="async">
             <span class="lab-compare-vs-lvl">Lv.${effLevel}</span>
           </div>
           <div class="lab-compare-micro-meta">
             ${specHtml}
-            ${berry && berry.icon ? `<img src="${berry.icon}" class="lab-compare-mini-berry" alt="Berry" title="${escapeHtml(berryDisp)}">` : ''}
+            ${berry && berry.icon ? `<img src="${berry.icon}" class="lab-compare-mini-berry" width="16" height="16" loading="lazy" decoding="async" alt="Berry" title="${escapeHtml(berryDisp)}">` : ''}
             <span class="lab-compare-vs-tag nat-tag">${escapeHtml(natDisplayName)}</span>
           </div>
           <div class="lab-compare-tap-hint">${window.I18N?.t?.('lab.c_cmp_tap_change') ?? 'Tap to change'}</div>
@@ -610,7 +610,7 @@
           <div class="lab-compare-distinct-row">
             <div class="lab-compare-distinct-head">
               <div class="lab-compare-distinct-title">
-                ${icon ? `<img src="${icon}" class="lab-compare-distinct-icon" alt="${escapeHtml(nameText)}">` : ''}
+                ${icon ? `<img src="${icon}" class="lab-compare-distinct-icon" width="22" height="22" loading="lazy" decoding="async" alt="${escapeHtml(nameText)}">` : ''}
                 <span>${escapeHtml(nameText)}</span>
               </div>
               <div>${badge}</div>

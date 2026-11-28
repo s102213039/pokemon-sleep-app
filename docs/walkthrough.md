@@ -5,6 +5,21 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-11-28 已完成（Carbon R1 計畫審查修正、R1 過大檔案拆分與 CSS 管線修復、R2 S1 死碼清理、R3 效能與無損圖檔優化）
+
+- **Carbon R1 Plan-Review 審查結論與 6 項實際調整**（由 Argon 規劃審查、Neon 主導實作與 Gemini 3.8 Flash 協同執行）：
+  1. **C2-12 延伸與 CSS 模組對應修正**：將 C2-12 延伸為 `css/views/news/news_cards.css:700-799`（含 `tier4_part4.js:2551-2552` 斷言移除之 `.news-official-full-drawer` 等死碼），並修正 C2-1/5/7/10/11 模組行號定位；同步調整 `scripts/build_css.js` `CSS_MODULES` 與 `tests/test_r1_r5_theme_pwa_css.js` 斷言。
+  2. **雙向 CSS 漂移整合與括號修復**：先搶救 `pokedex.css` / `wiki_camps.css` 孤立規則並整併 `styles.css` 獨有規則至語意模組，修復 40 個大括號失衡模組後再啟用 `scripts/build_css.js` 串接產出 `css/styles.css`。
+  3. **A1 採用 Scheme B 純 JS 拆分與 A12 自動生成**：`wiki_camps_data.js` 拆為 `wiki_camps_islands_ex.js`、`wiki_camps_islands_std.js`、`wiki_camps_config.js` 以保留離線 `sw.js` 可用性與同步 VM 測試相容；`js/data/items.js` 保留於磁碟並由 `scripts/build_all.js` 從 `data/items.json` 自動生成（`< 800` 行 / `< 50 KB`），搭配 UTF-8 `esbuild` 將 `items.min.js` 壓至約 `39 KB`。
+  4. **A2 / A4 `<head>` 與彈窗相容性防護**：保留 `viewRouter` 與 `errorDiag` 於 `index.html` / `app/index.html` `<head>` 內避免閃屏與額外 RTT，維持 `#box-edit-modal`、`#box-conflict-modal`、`#modal-poke-level` 結構相容，藉由抽離 `#wiki-item-detail-modal` 與精簡標記將 HTML 瘦身至 `< 1,000` 行。
+  5. **R3 數量校正與 `isContentDifferent` 保留**：將 A3（`wiki_sleep_styles.js`）併入 P2-1（`scripts/sync_manager.js` 改讀 `data/sleep_styles.json` 與 VM 預注入）；保留 `pokedex_nav.js` `isContentDifferent` 識別碼；P0-2 分頁延遲渲染於 80-120 ms 完成 DOM 填充；P1-3 `.pokemon-card` `blur(10px)` 精確歸位於 `wiki_matrix.css:707`；P2-2 因環境無 `oxipng`/`optipng`，改採 Pillow `optimize=True`（逐像素相等驗證）+ `jpegtran -optimize -progressive -copy none` 無損最佳化，不進行 `.webp` 原位替換。
+  6. **Section 1.6 範圍界定**：`build_news.py`、`pokemon_sleep_sync.py` 與 11 個測試檔列為範圍外不拆分。
+- **M1–M4 交付成果**：
+  - **M1（R2 S1 清理與 CSS 管線修復）**：刪除 44 個 S1 嚴格無用 Git 追蹤檔案（A1 8 個 + A2 36 個）、16 段 C1 JS/PY 死碼與 12 段 C2 CSS 死碼區塊，完整保留防誤判項目與 S2 可選檔案；重整並驗證 `75` 個 CSS 模組（全部 `<= 753` 行、`0` 括號失衡、`build_css.js` 與 `css/styles.css` 0 位元組漂移，執行期維持單一 `styles.min.css`）。
+  - **M2（UTF-8 建置與 R3 P0–P2 效能優化）**：`scripts/build_prod.js` 補齊 `charset: 'utf8'`（17 支產物總量下降約 30.2%，`i18n.min.js` 與 `items.min.js` `0` 個 `\uXXXX` 轉義）；實作 P0-1 至 P0-4、P1-1 至 P1-5、P2-1/A3 與 R4 防護（`defer` 置於 `src=` 之後、`document.removeEventListener` 防護、100 ms CDP 分頁同步架構）；P2-2 對 `352 / 442` 張圖檔完成數學無損最佳化（保留資產合計節省 `485,807` Bytes）。
+  - **M3（Tier A 11 檔與 Tier B 10 支 JS 拆分）**：嚴格遵守 7 支開放式單一 IIFE 建置器（`chunks.join('')` 尾端換行保留）與 `build_app.js` 全域宣告順序，完成全部拆分與測試同步，`108 / 108` 個模組化 JS/HTML 原始檔皆 `< 1,000` 行與 `< 50 KB`。
+  - **M4（Shell `<img>` 補齊、文件同步與全量驗收）**：於 `js/core/i18n/i18n_shell_hydrate.js` 與 `i18n_shell_settings.js` 補齊 M3 抽離的最後 10 個 `<img>` `decoding="async"`；同步共享文件與 `docs/walkthrough.md`（位元組一致）；`npm run build` / `npm run test:fast`（172/172）/ `npm test`（296/296）/ `test_wiki_skill_ladder.js`（986）/ `test_r1_r5_theme_pwa_css.js`（10）/ `test_e2e_r1_r5_pwa_ui.js`（12）/ `test_e2e_r1_r7_acceptance.js` / 6 項 PTR 壓力測試 / `e2e_sync_and_multitab.js` / `test_217_items_encyclopedia.js --strict` / `test_auditor_m3_1_forensic.js` / `test_security_audit.js` 全部通過。
+
 ## 交接：2026-11-26 已完成（全站寶可夢排序對齊官方圖鑑順序：佳節／地區／異色形態不再排到最後）
 
 - **問題根因**：

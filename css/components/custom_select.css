@@ -1,0 +1,362 @@
+/* ─── 全域自訂下拉選單系統 (Custom Dropdown System) ────────────────────────── */
+.custom-select-container {
+  position: relative;
+  display: inline-block;
+  user-select: none;
+}
+
+.custom-select-sort {
+  width: 100%;
+}
+
+.custom-select-rf {
+  min-width: 110px;
+}
+
+.custom-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.custom-select-sort .custom-select-trigger {
+  padding: 9px 42px 9px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.custom-select-rf .custom-select-trigger {
+  padding: 6px 38px 6px 10px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.custom-select-trigger:hover,
+.custom-select-container.open .custom-select-trigger {
+  border-color: rgba(99, 102, 241, 0.6);
+}
+
+.custom-select-container.open .custom-select-trigger {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.custom-select-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-select-label span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.custom-select-arrow {
+  position: absolute;
+  right: 14px; /* 保留充足寬鬆且精緻之視覺間距 (Rule VI) */
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.custom-select-arrow svg {
+  width: 7px !important;
+  height: 4.5px !important;
+  display: block;
+}
+
+.custom-select-container.open .custom-select-arrow {
+  transform: translateY(-50%) rotate(180deg);
+  color: #818cf8;
+}
+
+/* 下拉選單選單面板：嚴格位於下方正對展開，並與選擇框底部對齊 */
+.custom-select-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 100%;
+  width: max-content;
+  max-width: 420px;
+  max-height: 260px;
+  overflow-y: auto;
+  background: var(--bg-card-solid);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  padding: 4px;
+  display: none;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  box-sizing: border-box;
+}
+
+.custom-select-container.open .custom-select-menu {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.custom-select-item {
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+
+.custom-select-item:hover {
+  background: rgba(99, 102, 241, 0.2);
+  color: var(--text-primary);
+}
+
+.custom-select-item.active {
+  background: rgba(99, 102, 241, 0.28);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.custom-select-check {
+  font-size: 12px;
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+.custom-select-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.custom-select-item-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ─── Recipe ingredient inline chips ─────────────────── */
+.recipe-ing-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.pokemon-table .recipe-ing-row {
+  justify-content: center;
+}
+
+.recipe-ing-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0 3px 0 0;
+  white-space: nowrap;
+}
+
+.recipe-ing-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.recipe-ing-count {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+/* ─── Level & Island Bonus Sliders ─────────────────────── */
+.slider-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 160px;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.slider-value-badge {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-accent-gold);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  padding: 2px 10px;
+  white-space: nowrap;
+  min-width: 52px;
+  text-align: center;
+}
+
+.island-bonus-badge {
+  color: var(--color-accent-green);
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.event-bonus-badge {
+  color: var(--color-accent-rose);
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+}
+
+.pot-expansion-badge {
+  color: var(--accent-blue, #38bdf8);
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+/* Range slider base */
+input[type=range].rf-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border-color);
+  outline: none;
+  cursor: pointer;
+  flex: 1;
+  transition: background 0.2s;
+}
+
+input[type=range].rf-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-accent-gold), #f59e0b);
+  border: 2px solid rgba(255,255,255,0.8);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4);
+  transition: transform 0.15s;
+}
+
+input[type=range].rf-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+input[type=range].rf-slider.island-slider::-webkit-slider-thumb {
+  background: linear-gradient(135deg, var(--color-accent-green), #10b981);
+  box-shadow: 0 2px 6px rgba(16,185,129,0.4);
+}
+
+input[type=range].rf-slider.event-slider::-webkit-slider-thumb {
+  background: linear-gradient(135deg, var(--color-accent-rose), #f43f5e);
+  box-shadow: 0 2px 6px rgba(244,63,94,0.4);
+}
+
+input[type=range].rf-slider.pot-slider::-webkit-slider-thumb {
+  background: linear-gradient(135deg, var(--accent-blue, #38bdf8), #0284c7);
+  box-shadow: 0 2px 6px rgba(56, 189, 248, 0.4);
+}
+
+input[type=range].rf-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-accent-gold), #f59e0b);
+  border: 2px solid rgba(255,255,255,0.8);
+  cursor: pointer;
+}
+
+/* Track fill */
+input[type=range].rf-slider {
+  background: linear-gradient(
+    to right,
+    rgba(245, 158, 11, 0.7) 0%,
+    rgba(245, 158, 11, 0.7) var(--slider-fill, 0%),
+    var(--border-color) var(--slider-fill, 0%),
+    var(--border-color) 100%
+  );
+}
+
+input[type=range].rf-slider.island-slider {
+  background: linear-gradient(
+    to right,
+    rgba(16, 185, 129, 0.7) 0%,
+    rgba(16, 185, 129, 0.7) var(--slider-fill, 0%),
+    var(--border-color) var(--slider-fill, 0%),
+    var(--border-color) 100%
+  );
+}
+
+input[type=range].rf-slider.event-slider {
+  background: linear-gradient(
+    to right,
+    rgba(244, 63, 94, 0.7) 0%,
+    rgba(244, 63, 94, 0.7) var(--slider-fill, 0%),
+    var(--border-color) var(--slider-fill, 0%),
+    var(--border-color) 100%
+  );
+}
+
+input[type=range].rf-slider.pot-slider {
+  background: linear-gradient(
+    to right,
+    rgba(56, 189, 248, 0.7) 0%,
+    rgba(56, 189, 248, 0.7) var(--slider-fill, 0%),
+    var(--border-color) var(--slider-fill, 0%),
+    var(--border-color) 100%
+  );
+}

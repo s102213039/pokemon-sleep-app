@@ -75,26 +75,6 @@
     });
   }
 
-  /* ─── Badge 與圖示輔助 ───────────────────────────────── */
-  function getBonusEmoji(pct) {
-    if (pct >= 78) return 'S';
-    if (pct >= 61) return 'A';
-    if (pct >= 48) return 'B';
-    if (pct >= 35) return 'C';
-    if (pct >= 25) return 'D';
-    if (pct >= 21) return 'E';
-    return '-';
-  }
-
-  function getBonusBadgeClass(pct) {
-    if (pct >= 78) return 'bonus-badge-78';
-    if (pct >= 61) return 'bonus-badge-61';
-    if (pct >= 48) return 'bonus-badge-48';
-    if (pct >= 35) return 'bonus-badge-35';
-    if (pct >= 25) return 'bonus-badge-25';
-    return 'bonus-badge-default';
-  }
-
   function _resolveRecipeAssetUrl(rawUrl) {
     if (!rawUrl || typeof rawUrl !== 'string') return '';
     if (rawUrl.startsWith('assets/') || rawUrl.includes('snackablenuts') || rawUrl.includes('seedbombnaanandcurry') || rawUrl.includes('grassknotsaladwrap') || rawUrl.includes('slowpoketailrollcake')) {
@@ -123,7 +103,7 @@
         const ingIcon = _resolveRecipeAssetUrl(i.icon);
         return `
         <div class="recipe-ing-chip" title="${ingDisplayName} × ${count}">
-          ${ingIcon ? `<img src="${ingIcon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+          ${ingIcon ? `<img src="${ingIcon}" class="recipe-ing-icon" width="20" height="20" alt="${ingDisplayName}" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
           <span class="recipe-ing-count">×${count}</span>
         </div>
       `;
@@ -186,7 +166,10 @@
     }
 
     const cookableBtn = document.getElementById('recipe-cookable-filter-btn');
-    if (cookableBtn) cookableBtn.classList.toggle('active', filterCookableOnly);
+    if (cookableBtn && cookableBtn.classList) {
+      if (typeof cookableBtn.classList.toggle === 'function') cookableBtn.classList.toggle('active', filterCookableOnly);
+      else cookableBtn.classList[filterCookableOnly ? 'add' : 'remove']('active');
+    }
   }
 
   function initRecipeSidebarEvents() {
@@ -341,7 +324,9 @@
       });
     });
 
-    const ingNames = _sortRecipesIngredientsByEnergyAsc(Array.from(ingMap.keys()));
+    const ingNames = ingMap.size > 0
+      ? _sortRecipesIngredientsByEnergyAsc(Array.from(ingMap.keys()))
+      : _getRecipesCanonicalIngredients();
     const excludedPickerContainer = document.getElementById('excluded-ingredient-picker-tags');
 
     const renderPickerButtons = (container, set, activeCls) => {
@@ -351,7 +336,7 @@
         const active = set.has(name) ? activeCls : '';
         const ingTitle = window.I18N ? window.I18N.getIngredientName(name) : name;
         return `<button class="ing-picker-btn ${active}" data-name="${name}" title="${ingTitle}">
-          ${icon ? `<img src="${icon}" class="ing-picker-icon" alt="${ingTitle}">` : ''}
+          ${icon ? `<img src="${icon}" class="ing-picker-icon" width="22" height="22" loading="lazy" decoding="async" alt="${ingTitle}">` : ''}
         </button>`;
       }).join('');
     };
@@ -420,8 +405,14 @@
 
   function initViewToggle() {
     if (!toggleGridBtn || !toggleTableBtn) return;
-    toggleGridBtn.classList.toggle('active', viewMode === 'grid');
-    toggleTableBtn.classList.toggle('active', viewMode === 'table');
+    if (toggleGridBtn.classList) {
+      if (typeof toggleGridBtn.classList.toggle === 'function') toggleGridBtn.classList.toggle('active', viewMode === 'grid');
+      else toggleGridBtn.classList[viewMode === 'grid' ? 'add' : 'remove']('active');
+    }
+    if (toggleTableBtn.classList) {
+      if (typeof toggleTableBtn.classList.toggle === 'function') toggleTableBtn.classList.toggle('active', viewMode === 'table');
+      else toggleTableBtn.classList[viewMode === 'table' ? 'add' : 'remove']('active');
+    }
 
     toggleGridBtn.addEventListener('click', () => {
       viewMode = 'grid';
@@ -468,14 +459,20 @@
 
   function initSearch() {
     if (!searchInput) return;
+    let recipeSearchTimer = null;
     searchInput.addEventListener('input', e => {
       currentSearch = e.target.value.trim().toLowerCase();
       updateRecipeClearBtn();
-      render();
+      if (recipeSearchTimer) clearTimeout(recipeSearchTimer);
+      recipeSearchTimer = setTimeout(() => {
+        recipeSearchTimer = null;
+        render();
+      }, 90);
     });
 
     if (recipeSearchClear) {
       recipeSearchClear.addEventListener('click', () => {
+        if (recipeSearchTimer) { clearTimeout(recipeSearchTimer); recipeSearchTimer = null; }
         searchInput.value = '';
         currentSearch = '';
         updateRecipeClearBtn();
@@ -562,7 +559,7 @@
               return `
               <tr>
                 <td style="vertical-align:middle;text-align:center;">
-                  <img src="${_resolveRecipeAssetUrl(r.icon)}" width="58" height="58" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';" style="object-fit:contain;display:block;margin:0 auto;">
+                  <img src="${_resolveRecipeAssetUrl(r.icon)}" width="58" height="58" alt="${primaryName}" loading="lazy" decoding="async" onerror="this.style.opacity='0.3';" style="object-fit:contain;display:block;margin:0 auto;">
                 </td>
                 <td class="recipe-name-cell" style="vertical-align:middle;text-align:left;">
                   <div class="recipe-name-wrapper" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left;min-height:52px;">
@@ -613,7 +610,7 @@
             <div class="h5-recipe-card">
               <div class="h5-recipe-left-col">
                 <div class="h5-recipe-top-row">
-                  <img class="h5-recipe-img" src="${_resolveRecipeAssetUrl(r.icon)}" alt="${primaryName}" loading="lazy" onerror="this.style.display='none';">
+                  <img class="h5-recipe-img" src="${_resolveRecipeAssetUrl(r.icon)}" width="44" height="44" alt="${primaryName}" loading="lazy" decoding="async" onerror="this.style.display='none';">
                   <div class="h5-recipe-title-meta">
                     <span class="h5-recipe-name">${primaryName}</span>
                     <div class="h5-recipe-tags-row">
@@ -650,7 +647,7 @@
           return `
           <div class="pokemon-card recipe-desktop-card">
             <div class="card-header" style="align-items:center;margin-bottom:6px;">
-              <img class="card-icon" src="${r.icon}" alt="${primaryName}" loading="lazy" onerror="this.style.opacity='0.3';" style="width:56px;height:56px;object-fit:contain;">
+              <img class="card-icon" src="${r.icon}" width="56" height="56" alt="${primaryName}" loading="lazy" decoding="async" onerror="this.style.opacity='0.3';" style="width:56px;height:56px;object-fit:contain;">
               <div class="card-title-group" style="flex:1;min-width:0;">
                 <h3 class="pokemon-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px;margin-bottom:3px;">${primaryName}</h3>
                 <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
@@ -688,7 +685,7 @@
                   const count = (typeof i.count === 'number' && Number.isFinite(i.count)) ? i.count : 0;
                   return `
                   <div class="recipe-ing-chip compact-chip" title="${ingDisplayName} × ${count}">
-                    ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+                    ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" width="20" height="20" alt="${ingDisplayName}" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
                     <span class="recipe-ing-count">×${count}</span>
                   </div>
                 `;
@@ -704,19 +701,23 @@
   }
 
   function bindTableActionEvents() {
-    if (!contentArea) return;
-    contentArea.querySelectorAll('.pot-filler-open-btn').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        const recipeId = btn.getAttribute('data-recipe-id');
-        const targetRecipe = allRecipes.find(r => r.name_cn === recipeId || r.name === recipeId);
-        if (targetRecipe) openPotFillerModal(targetRecipe);
-      });
+    if (!contentArea || contentArea._hasPotFillerListener) return;
+    contentArea._hasPotFillerListener = true;
+    contentArea.addEventListener('click', e => {
+      const btn = e.target && e.target.closest ? e.target.closest('.pot-filler-open-btn') : null;
+      if (!btn) return;
+      e.stopPropagation();
+      const recipeId = btn.getAttribute('data-recipe-id');
+      const targetRecipe = allRecipes.find(r => r.name_cn === recipeId || r.name === recipeId);
+      if (targetRecipe) openPotFillerModal(targetRecipe);
     });
   }
 
   window.RecipesApp = {
     render: function() {
+      if (typeof startRecipesFetch === 'function' && !_recipesFetchStarted) {
+        startRecipesFetch();
+      }
       initCategoryFilters();
       initIngredientPicker();
       initPantryUI();

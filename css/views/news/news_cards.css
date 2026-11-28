@@ -1,799 +1,500 @@
-  line-height: 1.4;
+/* ═══════════════════════════════════════════════════════════════
+    最新更新與新聞專區樣式 (News & Updates Styles)
+   ═══════════════════════════════════════════════════════════════ */
+.news-filter-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.diag-bar-msg {
-  display: inline-block;
-  margin-left: 6px;
-  font-family: monospace;
-  font-size: 12px;
-  color: #fca5a5;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 2px 6px;
-  border-radius: 4px;
-  max-width: 600px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  vertical-align: middle;
-}
-
-.diag-copy-btn {
-  padding: 6px 14px;
-  font-size: 12.5px;
-  font-weight: 700;
-  background: #dc2626;
-  color: #ffffff;
-  border: 1px solid #ef4444;
-  border-radius: 8px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.diag-copy-btn:hover {
-  background: #ef4444;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-}
-
-/* ─── 內容區居中錯誤診斷卡片 ─── */
-.content-error-card {
-  max-width: 800px;
-  margin: 40px auto;
-  background: var(--bg-card, #131b2e);
-  border: 2px solid #ef4444;
-  border-radius: 14px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  font-family: inherit;
-}
-
-.content-error-header {
+.news-top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  border-bottom: 1px solid rgba(239, 68, 68, 0.3);
-  padding-bottom: 16px;
-  margin-bottom: 16px;
 }
 
-.content-error-icon {
-  font-size: 32px;
-  flex-shrink: 0;
+.news-category-tags {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: stretch;
 }
 
-.content-error-title-group {
-  flex: 1;
-  min-width: 240px;
-}
-
-.content-error-title {
-  font-size: 17px;
-  font-weight: 700;
-  color: #ef4444;
-  margin: 0 0 4px 0;
-}
-
-.content-error-sub {
-  font-size: 13px;
-  color: var(--text-muted, #94a3b8);
-  margin: 0;
-}
-
-.diag-copy-btn-large {
-  padding: 10px 18px;
-  font-size: 14px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: #ffffff;
-  border: 1px solid #f87171;
-  border-radius: 10px;
-  cursor: pointer;
+.news-tag-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
-  transition: all 0.2s ease;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  padding: 6px 10px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 9999px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
   white-space: nowrap;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  user-select: none;
 }
 
-.diag-copy-btn-large:hover {
-  background: #f87171;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.6);
+.news-tag-btn:hover {
+  border-color: rgba(99, 102, 241, 0.5);
+  color: var(--text-primary);
+  background: var(--bg-card-hover);
 }
 
-.content-error-box {
-  background: rgba(0, 0, 0, 0.35);
-  border-radius: 8px;
-  padding: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.news-tag-btn.active {
+  background: var(--accent-gradient);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.3);
 }
 
-.content-error-msg {
+.news-tag-count {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  font-weight: 700;
+}
+
+.news-tag-btn.active .news-tag-count {
+  background: rgba(0, 0, 0, 0.25);
+  color: #ffffff;
+}
+
+.news-search-box {
+  position: relative;
+  min-width: 240px;
+  flex: 0 1 340px;
+  max-width: 380px;
+}
+
+.news-search-input {
+  width: 100%;
+  padding: 8px 36px 8px 36px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
   font-size: 13.5px;
-  color: #fca5a5;
-  margin-bottom: 8px;
-  word-break: break-all;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  box-sizing: border-box;
 }
 
-.content-error-stack {
-  margin: 0;
-  font-family: monospace;
+.news-search-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+.news-info-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
   font-size: 12px;
-  color: #94a3b8;
-  white-space: pre-wrap;
-  word-break: break-all;
-  max-height: 240px;
-  overflow-y: auto;
+}
+
+/*  新聞頁面極簡底部備註 (Minimal News Footer) */
+.news-minimal-footer {
+  width: 100%;
+  margin: 24px auto 10px;
+  padding: 14px 16px 8px;
+  text-align: center;
+  border-top: 1px dashed var(--border-color, rgba(255, 255, 255, 0.08));
+}
+
+.news-footer-source {
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0.75;
+  margin: 0;
   line-height: 1.5;
 }
 
-/* ==========================================================================
-   Pokédex Detail & Appraisal Modal (圖鑑頭像評測懸浮窗)
-   ========================================================================== */
-
-/* 互動指標與動畫效果 */
-.pokemon-icon[onclick],
-.table-icon[onclick],
-.card-name[onclick],
-.table-pkm-name[onclick] {
-  cursor: pointer;
-  transition: transform 0.18s ease, filter 0.18s ease;
-}
-
-.pokemon-icon[onclick]:hover,
-.table-icon[onclick]:hover {
-  transform: scale(1.08);
-  filter: brightness(1.12);
-}
-
-.card-name[onclick]:hover,
-.table-pkm-name[onclick]:hover {
+.news-footer-source a {
   color: var(--accent-blue, #38bdf8);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.news-footer-source a:hover {
   text-decoration: underline;
-  text-underline-offset: 3px;
+  opacity: 1;
 }
 
-/* 遮罩背景 */
-#pokedex-detail-modal.pokedex-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 10050;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 16px;
-  box-sizing: border-box;
-  overscroll-behavior: contain !important;
-  overscroll-behavior-y: contain !important;
-  -webkit-overflow-scrolling: touch;
-  animation: pokedexModalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+.news-content-container {
+  max-width: 1200px;
+  width: 92%;
+  margin: 0 auto 40px;
+  padding: 0 16px;
 }
 
-@keyframes pokedexModalFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.pokedex-modal-backdrop-dismiss {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-
-/* 彈窗對話框本體 */
-#pokedex-detail-modal .pokedex-modal-dialog,
-.pokedex-modal-dialog {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  max-width: 1040px;
-  height: auto;
-  max-height: min(880px, 90vh);
+.news-list-grid {
   display: flex;
   flex-direction: column;
-  border-radius: 16px;
-  background: var(--bg-card, #111827);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
-  box-sizing: border-box;
-  overscroll-behavior: contain !important;
-  overscroll-behavior-y: contain !important;
-  -webkit-overflow-scrolling: touch;
-  animation: pokedexDialogScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes pokedexDialogScaleIn {
-  from {
-    transform: scale(0.96) translateY(8px);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-  }
-}
-
-/* 頂部標題列 */
-.pokedex-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 10px 18px;
-  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.03));
-  flex-shrink: 0;
-}
-
-.pokedex-modal-header-main {
-  display: flex;
-  align-items: center;
   gap: 16px;
-  flex: 1;
-  min-width: 0;
-  flex-wrap: wrap;
 }
 
-.pokedex-header-avatar {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
-  border-radius: 0;
-  background: transparent;
-  padding: 0;
-  border: none;
-  flex-shrink: 0;
-}
-
-.pokedex-modal-title {
+/* 新聞卡片 */
+.news-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 12px;
-  flex-wrap: wrap;
-  min-width: 0;
 }
 
-.pokedex-header-info {
+.news-card:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.news-card-featured {
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.12);
+}
+
+.news-card-header,
+.news-card-header-meta {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.news-meta-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.news-date-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-card-inner);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.news-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(99, 102, 241, 0.22);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.45);
+}
+
+/* 官方原文右上角精緻膠囊按鈕 (Top-Right Official Link Button) */
+.news-official-link-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  color: var(--accent-blue, #38bdf8) !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.06)) !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 3px 10px !important;
+  border-radius: 12px !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+}
+
+.news-official-link-btn:hover {
+  background: var(--accent-gradient, linear-gradient(135deg, #38bdf8, #818cf8)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 10px rgba(56, 189, 248, 0.35) !important;
+}
+
+.news-official-link-btn:active {
+  transform: scale(0.96) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .news-official-link-btn {
+  background: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #0284c7 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .news-official-link-btn:hover {
+  background: #0284c7 !important;
+  border-color: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .news-official-link-btn {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .news-official-link-btn:hover {
+  background: #475569 !important;
+  border-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .news-official-link-btn {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #cbd5e1 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .news-official-link-btn:hover {
+  background: #3f3f46 !important;
+  border-color: #52525b !important;
+  color: #ffffff !important;
+}
+
+.news-badge.news-badge-event {
+  background: rgba(249, 115, 22, 0.22);
+  color: #fb923c;
+  border: 1px solid rgba(249, 115, 22, 0.45);
+}
+
+.news-badge.news-badge-update {
+  background: rgba(244, 63, 94, 0.22);
+  color: #fb7185;
+  border: 1px solid rgba(244, 63, 94, 0.45);
+}
+
+.news-badge.news-badge-maintenance {
+  background: rgba(168, 85, 247, 0.22);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.45);
+}
+
+.news-badge.news-badge-notice {
+  background: rgba(99, 102, 241, 0.22);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.45);
+}
+
+[data-theme="dawn"] .news-badge,
+[data-theme="emerald"] .news-badge {
+  background: rgba(99, 102, 241, 0.12);
+  color: #4338ca;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+[data-theme="dawn"] .news-badge.news-badge-event,
+[data-theme="emerald"] .news-badge.news-badge-event {
+  background: rgba(249, 115, 22, 0.12);
+  color: #c2410c;
+  border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+[data-theme="dawn"] .news-badge.news-badge-update,
+[data-theme="emerald"] .news-badge.news-badge-update {
+  background: rgba(244, 63, 94, 0.12);
+  color: #be123c;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+[data-theme="dawn"] .news-badge.news-badge-maintenance,
+[data-theme="emerald"] .news-badge.news-badge-maintenance {
+  background: rgba(168, 85, 247, 0.12);
+  color: #6d28d9;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+[data-theme="dawn"] .news-badge.news-badge-notice,
+[data-theme="emerald"] .news-badge.news-badge-notice {
+  background: rgba(99, 102, 241, 0.12);
+  color: #4338ca;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.news-latest-tag {
+  font-size: 11px;
+  font-weight: 800;
+  color: #ff6b6b;
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  padding: 2px 7px;
+  border-radius: 6px;
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
+/*  活動狀態標籤 (Status Badges: Expired / Ongoing / Upcoming) */
+.news-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+
+.news-status-badge.status-expired {
+  background: rgba(239, 68, 68, 0.16);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+}
+
+.news-status-badge.status-ongoing {
+  background: rgba(16, 185, 129, 0.16);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+}
+
+.news-status-badge.status-upcoming {
+  background: rgba(56, 189, 248, 0.16);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+}
+
+[data-theme="dawn"] .news-status-badge.status-expired,
+[data-theme="emerald"] .news-status-badge.status-expired {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+[data-theme="dawn"] .news-status-badge.status-ongoing,
+[data-theme="emerald"] .news-status-badge.status-ongoing {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+[data-theme="dawn"] .news-status-badge.status-upcoming,
+[data-theme="emerald"] .news-status-badge.status-upcoming {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-color: #7dd3fc;
+}
+
+/*  特殊醒目過期警告橫條 (Special Eye-Catching Expired Alert Banner) */
+.news-expired-alert-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-left: 4px solid #ef4444;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 6px 0 10px 0;
+  box-sizing: border-box;
+}
+
+.news-expired-alert-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
+  margin-top: 1px;
+}
+
+.news-expired-alert-content {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
-  flex: 1 1 auto;
 }
 
-.pokedex-header-top-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: nowrap;
-  min-width: 0;
-}
-
-.pokedex-header-no {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted, #94a3b8);
-  letter-spacing: 0.5px;
-  flex-shrink: 0;
-}
-
-.pokedex-header-pkm-name {
-  font-size: 19px;
-  font-weight: 800;
-  color: var(--text-primary, #f8fafc);
-  margin: 0;
-  display: block;
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.pokedex-header-name-row {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  width: 100%;
-  min-width: 0;
-}
-
-.pokedex-header-title-en {
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--text-secondary, #94a3b8);
-}
-
-.pokedex-header-tags,
-.pokedex-header-berry-spec-group {
-  display: inline-flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 4px !important;
-  margin: 0 !important;
-  flex-shrink: 0;
-}
-
-.pokedex-header-top-row .pokedex-header-tags img,
-.pokedex-header-top-row .pokedex-header-tags .pokedex-berry-icon-img {
-  width: 16px !important;
-  height: 16px !important;
-  object-fit: contain;
-}
-
-.pokedex-header-top-row .pokedex-header-tags svg {
-  width: 15px !important;
-  height: 15px !important;
-}
-
-.pokedex-header-top-row .pokedex-header-tags .pokedex-tag {
-  height: 18px !important;
-  padding: 0 2px !important;
-  line-height: 1 !important;
-}
-
-.pokedex-tag {
+.news-expired-alert-title {
   font-size: 12.5px;
   font-weight: 700;
-  line-height: 1.2;
-}
-
-.pokedex-tag-berry {
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pokedex-berry-icon-img {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
-  vertical-align: middle;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
-}
-
-.pokedex-header-berry-spec-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  vertical-align: middle;
-}
-
-.pokedex-header-berry-spec-group .pokedex-berry-icon-img {
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
-  vertical-align: middle;
-}
-
-.pokedex-tag-spec {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 8px !important;
-  border-radius: 9999px !important;
-  line-height: 1.2;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-}
-
-.pokedex-tag-spec.spec-berry {
-  background: rgba(34, 197, 94, 0.18) !important;
-  border: 1.5px solid #22c55e !important;
-  color: #4ade80 !important;
-}
-
-.pokedex-tag-spec.spec-ingredient {
-  background: rgba(234, 179, 8, 0.18) !important;
-  border: 1.5px solid #eab308 !important;
-  color: #facc15 !important;
-}
-
-.pokedex-tag-spec.spec-skill {
-  background: rgba(14, 165, 233, 0.18) !important;
-  border: 1.5px solid #38bdf8 !important;
-  color: #38bdf8 !important;
-}
-
-[data-theme="light"] .pokedex-tag-spec.spec-berry {
-  background: #dcfce7 !important;
-  border: 1.5px solid #16a34a !important;
-  color: #15803d !important;
-}
-
-[data-theme="light"] .pokedex-tag-spec.spec-ingredient {
-  background: #fef9c3 !important;
-  border: 1.5px solid #ca8a04 !important;
-  color: #854d0e !important;
-}
-
-[data-theme="light"] .pokedex-tag-spec.spec-skill {
-  background: #e0f2fe !important;
-  border: 1.5px solid #0284c7 !important;
-  color: #0369a1 !important;
-}
-
-.pokedex-tag-evo {
-  display: none !important;
-}
-
-/* 頂部橫向基礎數值條 (無不必要外框與深色底色，乾淨簡潔，文字放大) */
-.pokedex-header-stats-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 20px;
-  background: transparent !important;
-  padding: 0 !important;
-  border: none !important;
-  border-radius: 0;
-  flex-wrap: wrap;
-}
-
-.pokedex-header-stats-row.pokedex-header-stats-dual {
-  display: inline-flex !important;
-  align-items: center;
-  gap: 16px;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
-
-.pokedex-header-stat-col {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.pokedex-header-stat-item {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-.header-stat-k {
-  font-size: 12px;
-  color: var(--text-muted, #94a3b8);
-  font-weight: 600;
-  min-width: 48px;
-}
-
-.header-stat-v {
-  font-size: 15.5px;
-  color: var(--text-primary, #f8fafc);
-  font-weight: 700;
-  font-family: monospace, system-ui, -apple-system;
-  font-variant-numeric: tabular-nums;
-  white-space: pre;
-}
-
-.header-stat-diff {
-  font-size: 12px;
-  font-weight: 600;
-  margin-left: 1px;
-}
-
-.header-stat-diff.diff-pos {
-  color: #10b981;
-}
-
-.header-stat-diff.diff-neg {
-  color: #ef4444;
-}
-
-.header-stat-diff.diff-zero {
-  color: var(--text-muted, #94a3b8);
-  opacity: 0.8;
-}
-
-.pokedex-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-.pokedex-dual-verdict-column {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  align-items: flex-end;
-}
-
-.pokedex-header-verdict-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #ffffff;
-  border: 1.5px solid #10b981;
-  border-radius: 8px;
-  padding: 3px 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.pokedex-header-verdict-badge.current-track {
-  gap: 6px;
-  padding: 2px 8px;
-  height: 24px;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.pokedex-header-verdict-badge.potential-track {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  padding: 1px 7px !important;
-  height: 19px !important;
-  min-height: 19px !important;
-  border-radius: 4px !important;
-  background: rgba(148, 163, 184, 0.1) !important;
-  border: 1px solid rgba(148, 163, 184, 0.25) !important;
-  box-shadow: none !important;
-  text-shadow: none !important;
-  font-size: 10px !important;
-  color: #94a3b8 !important;
-  opacity: 0.88 !important;
-}
-
-.pokedex-header-verdict-badge.potential-track .verdict-potential-grade {
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  color: #94a3b8 !important;
-  line-height: 1 !important;
-  text-shadow: none !important;
-}
-
-.pokedex-header-verdict-badge.potential-track .pokedex-header-score-text {
-  font-size: 10px !important;
-  color: #94a3b8 !important;
-}
-
-.pokedex-header-verdict-badge.potential-track .verdict-potential-num {
-  font-weight: 500 !important;
-  color: #94a3b8 !important;
-}
-
-.pokedex-header-grade-text {
-  font-size: 19px;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.pokedex-header-score-text {
-  font-size: 13px;
-  font-weight: 600;
-  color: #0f172a;
-  font-family: monospace, system-ui, -apple-system;
-}
-
-.pokedex-header-score-text .verdict-num {
-  font-size: 15px;
-  color: #0f172a;
-}
-
-.pokedex-header-reset-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 7px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: rgba(239, 68, 68, 0.12);
   color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.35);
+  line-height: 1.35;
 }
 
-.pokedex-header-reset-btn:hover {
-  background: rgba(239, 68, 68, 0.24);
-  border-color: #ef4444;
-  color: #fca5a5;
+.news-expired-alert-desc {
+  font-size: 11.5px;
+  color: var(--text-secondary, #94a3b8);
+  line-height: 1.5;
 }
 
-.pokedex-modal-close-btn {
-  background: transparent;
-  border: none;
-  font-size: 18px;
-  line-height: 1;
-  color: var(--text-muted, #94a3b8);
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+[data-theme="dawn"] .news-expired-alert-banner,
+[data-theme="emerald"] .news-expired-alert-banner {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  border-left-color: #dc2626;
 }
 
-.pokedex-modal-close-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-primary, #ffffff);
+[data-theme="dawn"] .news-expired-alert-badge,
+[data-theme="emerald"] .news-expired-alert-badge {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #f87171;
 }
 
-/* 內容主體雙欄佈局 (左欄：強度評分與算法拆解，右欄：控制設定) */
-.pokedex-modal-body {
-  display: grid;
-  grid-template-columns: 370px 1fr;
-  gap: 12px;
-  padding: 12px 16px;
-  overflow-y: auto;
-  overscroll-behavior: contain !important;
-  overscroll-behavior-y: contain !important;
-  -webkit-overflow-scrolling: touch;
-  flex: 1;
-  min-height: 0;
-  box-sizing: border-box;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-color, rgba(255, 255, 255, 0.2)) transparent;
+[data-theme="dawn"] .news-expired-alert-title,
+[data-theme="emerald"] .news-expired-alert-title {
+  color: #b91c1c;
 }
 
-.pokedex-modal-body::-webkit-scrollbar {
-  width: 6px;
+[data-theme="dawn"] .news-expired-alert-desc,
+[data-theme="emerald"] .news-expired-alert-desc {
+  color: #64748b;
 }
 
-.pokedex-modal-body::-webkit-scrollbar-thumb {
-  background: var(--border-color, rgba(255, 255, 255, 0.2));
-  border-radius: 3px;
+/* ⏳ 已過期新聞卡片微弱化 (Expired News Card Visual Muting) */
+.news-card.is-expired {
+  opacity: 0.85;
+  border-color: rgba(239, 68, 68, 0.22) !important;
+  transition: opacity 0.25s ease, border-color 0.25s ease;
 }
 
-.pokedex-modal-col {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
+.news-card.is-expired:hover {
+  opacity: 1;
+  border-color: rgba(239, 68, 68, 0.45) !important;
 }
 
-.pokedex-left-col .pokedex-formula-steps-row {
-  grid-template-columns: 1fr;
-  gap: 6px;
+[data-theme="dawn"] .news-card.is-expired,
+[data-theme="emerald"] .news-card.is-expired {
+  opacity: 0.88;
+  border-color: #fecaca !important;
 }
 
-/* 強度評估報告盒與六維雷達圖 */
-.pokedex-appraisal-verdict-box {
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.02));
-  border: 1.5px solid var(--accent-blue, #38bdf8);
-  border-radius: 10px;
-  padding: 8px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  transition: border-color 0.25s ease;
-}
-
-.verdict-score-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.verdict-grade {
-  font-size: 28px;
-  font-weight: 900;
-  line-height: 1;
-  font-family: monospace, system-ui, -apple-system;
-  text-shadow: 0 0 10px currentColor;
-  min-width: 38px;
-  text-align: center;
-}
-
-/* ─── 官方詳細公告展開抽屜 (Official Announcement Expandable Reader) ─── */
-.news-official-full-drawer {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px dashed var(--border-color-subtle, rgba(255, 255, 255, 0.1));
-}
-
-.news-full-toggle-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent-blue, #38bdf8);
-  background: rgba(56, 189, 248, 0.08);
-  border: 1px solid rgba(56, 189, 248, 0.28);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  user-select: none;
-}
-
-.news-full-toggle-btn:hover {
-  background: rgba(56, 189, 248, 0.16);
-  border-color: rgba(56, 189, 248, 0.45);
-  color: #7dd3fc;
-}
-
-.news-full-toggle-btn.active {
-  background: rgba(56, 189, 248, 0.2);
-  border-color: var(--accent-blue, #38bdf8);
-}
-
-.news-toggle-arrow {
-  font-size: 10px;
-  line-height: 1;
-}
-
-.news-full-content-body {
-  margin-top: 10px;
-  padding: 12px 14px;
-  background: var(--bg-card-inner, rgba(15, 23, 42, 0.5));
-  border-radius: 8px;
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
-  font-size: 13px;
-  line-height: 1.65;
-  color: var(--text-primary, #cbd5e1);
-  animation: newsFullFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.news-full-content-body.hidden {
-  display: none !important;
-}
-
-@keyframes newsFullFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.news-full-heading {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--accent-blue, #38bdf8);
-  margin: 12px 0 6px 0;
-  padding-bottom: 3px;
-  border-bottom: 1px solid rgba(56, 189, 248, 0.18);
-}
-
-.news-full-heading:first-child {
-  margin-top: 0;
-}
-
-.news-full-para {
-  margin: 0 0 8px 0;
-  color: var(--text-primary, #cbd5e1);
-}
-
-.news-full-note {
-  margin: 4px 0 8px 0;
-  color: var(--text-muted, #94a3b8);
-  font-size: 12px;
-}
-
-.news-full-list {
-  margin: 4px 0 10px 18px;
-  padding: 0;
-  list-style-type: disc;
-}
-
-.news-full-list li {
-  margin-bottom: 3px;
-  color: var(--text-primary, #cbd5e1);
+[data-theme="dawn"] .news-card.is-expired:hover,
+[data-theme="emerald"] .news-card.is-expired:hover {
+  opacity: 1;
+  border-color: #f87171 !important;
 }

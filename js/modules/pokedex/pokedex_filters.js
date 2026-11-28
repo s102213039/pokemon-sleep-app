@@ -27,7 +27,7 @@
         const typeName = window.I18N ? window.I18N.getTypeName(b.type) : b.type;
         return `
           <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${berryName} (${typeName})" aria-label="${berryName}">
-            ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" alt="${berryName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+            ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" width="22" height="22" alt="${berryName}" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
           </button>
         `;
       }).join('');
@@ -45,7 +45,7 @@
         const ingName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
         return `
           <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-ing="${ing.name}" title="${ingName}" aria-label="${ingName}">
-            ${ing.icon ? `<img src="${ing.icon}" class="subfilter-icon-img" alt="${ingName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+            ${ing.icon ? `<img src="${ing.icon}" class="subfilter-icon-img" width="22" height="22" alt="${ingName}" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ''}
           </button>
         `;
       }).join('');
@@ -248,14 +248,20 @@
           }
         };
 
+        let pkmSearchTimer = null;
         searchInput.addEventListener('input', (e) => {
           currentSearch = e.target.value.trim().toLowerCase();
           updatePkmClear();
-          renderUI();
+          if (pkmSearchTimer) clearTimeout(pkmSearchTimer);
+          pkmSearchTimer = setTimeout(() => {
+            pkmSearchTimer = null;
+            renderUI();
+          }, 90);
         });
 
         if (pokemonSearchClear) {
           pokemonSearchClear.addEventListener('click', () => {
+            if (pkmSearchTimer) { clearTimeout(pkmSearchTimer); pkmSearchTimer = null; }
             searchInput.value = '';
             currentSearch = '';
             updatePkmClear();

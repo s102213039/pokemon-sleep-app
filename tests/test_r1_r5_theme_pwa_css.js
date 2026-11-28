@@ -27,37 +27,45 @@ console.log('======================================================');
 console.log('  R1-R5 Theme Boot, Standalone PWA & CSS Sync Suite');
 console.log('======================================================');
 
+const { CSS_MODULES } = require(path.join(ROOT_DIR, 'scripts', 'build_css.js'));
+const readMod = (rel) => fs.readFileSync(path.join(ROOT_DIR, 'css', rel), 'utf8');
 const indexHtml = fs.readFileSync(path.join(ROOT_DIR, 'index.html'), 'utf8');
 const appHtml = fs.readFileSync(path.join(ROOT_DIR, 'app', 'index.html'), 'utf8');
 const stylesCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'styles.css'), 'utf8');
-const tokensCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'tokens.css'), 'utf8');
-const tokensInvCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'tokens_inverted.css'), 'utf8');
-const wikiLadderCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'wiki', 'wiki_ladder.css'), 'utf8');
-const wikiLadderMealsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'wiki', 'wiki_ladder_meals.css'), 'utf8');
-const recipesCardsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'recipes_cards.css'), 'utf8');
-const wikiNavCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'mobile', 'wiki_nav.css'), 'utf8');
-const dockNavCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'mobile', 'dock_nav.css'), 'utf8');
-const dockSheetsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'mobile', 'dock_sheets.css'), 'utf8');
-const wikiSkillLadderCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'wiki', 'wiki_skill_ladder.css'), 'utf8');
-const wikiSkillsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'mobile', 'wiki_skills.css'), 'utf8');
-const wikiCampsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'mobile', 'wiki_camps.css'), 'utf8');
-const recipesPickerCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'recipes_picker.css'), 'utf8');
-const recipePickerModalCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'components', 'modals', 'recipe_picker.css'), 'utf8');
-const wikiItemsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'wiki', 'wiki_items.css'), 'utf8');
-const wikiSubskillsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'wiki', 'wiki_subskills.css'), 'utf8');
-const themePreviewCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'components', 'theme_preview.css'), 'utf8');
-const wikiCalcsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'mobile', 'wiki_calcs.css'), 'utf8');
-const itemModalCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'components', 'modals', 'item_modal.css'), 'utf8');
-const pokedexModalHeroCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'components', 'modals', 'pokedex_modal_hero.css'), 'utf8');
-const mobileItemsCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'mobile', 'items.css'), 'utf8');
-const boxGridCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'box', 'box_grid.css'), 'utf8');
-const pokedexFiltersCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'pokedex_filters.css'), 'utf8');
-const labLightboxCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'lab', 'lab_lightbox.css'), 'utf8');
-const labAuthCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'lab', 'lab_auth.css'), 'utf8');
-const boxCalcCss = fs.readFileSync(path.join(ROOT_DIR, 'css', 'views', 'box', 'box_calc.css'), 'utf8');
+const tokensCss = readMod('tokens.css');
+const tokensInvCss = readMod('tokens_inverted.css');
+const h5PokedexViewportCss = readMod('mobile/h5_pokedex_viewport.css');
+const wikiLadderCss = readMod('views/wiki/wiki_ladder.css');
+const wikiLadderOverridesCss = readMod('views/wiki/wiki_ladder_overrides.css');
+const wikiLadderNodesCss = readMod('views/wiki/wiki_ladder_nodes.css');
+const wikiLadderSidebarCss = readMod('views/wiki/wiki_ladder_sidebar.css');
+const wikiLadderPassingCss = readMod('views/wiki/wiki_ladder_passing.css');
+const wikiLadderMealsH5Css = readMod('mobile/wiki_ladder_meals_h5.css');
+const wikiValuesGridCss = readMod('views/wiki/wiki_values_grid.css');
+const wikiValuesCampsH5Css = readMod('mobile/wiki_values_camps_h5.css');
+const wikiStrategiesCss = readMod('views/wiki/wiki_strategies.css');
+const wikiTablesCss = readMod('views/wiki/wiki_tables.css');
+const wikiCampsSpawnsCss = readMod('views/wiki/wiki_camps_spawns.css');
+const dockNavCss = readMod('mobile/dock_nav.css');
+const wikiSkillLadderCss = readMod('views/wiki/wiki_skill_ladder.css');
+const ingRankModalCss = readMod('components/modals/ing_rank_modal.css');
+const settingsModalCss = readMod('components/modals/settings_modal.css');
+const settingsH5Css = readMod('components/modals/settings_h5.css');
+const wikiItemsCss = readMod('views/wiki/wiki_items.css');
+const wikiItemModalCss = readMod('components/modals/wiki_item_modal.css');
+const itemCategoriesCss = readMod('components/item_categories.css');
+const pokedexModalFormulasCss = readMod('components/modals/pokedex_modal_formulas.css');
+const mobileItemsCss = readMod('mobile/items.css');
+const boxEditCss = readMod('mobile/box_edit.css');
+const boxSheetControlsCss = readMod('mobile/box_sheet_controls.css');
+const boxFabThemesCss = readMod('mobile/box_fab_themes.css');
+const modalOverridesCss = readMod('mobile/modal_overrides.css');
+const pokedexFiltersCss = readMod('views/pokedex_filters.css');
+const boxBatchOcrCss = readMod('views/box/box_batch_ocr.css');
+const boxCloudAuthCss = readMod('views/box/box_cloud_auth.css');
+const recipesPantryCss = readMod('views/recipes_pantry.css');
 const wikiLadderModalJs = fs.readFileSync(path.join(ROOT_DIR, 'js', 'modules', 'wiki', 'wiki_ladder_modal.js'), 'utf8');
 const wikiRenderLadderJs = fs.readFileSync(path.join(ROOT_DIR, 'js', 'modules', 'wiki', 'wiki_render_ladder.js'), 'utf8');
-const { CSS_MODULES } = require(path.join(ROOT_DIR, 'scripts', 'build_css.js'));
 const pokedexOverlayJs = fs.readFileSync(path.join(ROOT_DIR, 'js', 'modules', 'pokedex', 'pokedex_overlay.js'), 'utf8');
 const pokedexFiltersJs = fs.readFileSync(path.join(ROOT_DIR, 'js', 'modules', 'pokedex', 'pokedex_filters.js'), 'utf8');
 const pokedexNavJs = fs.readFileSync(path.join(ROOT_DIR, 'js', 'modules', 'pokedex', 'pokedex_nav.js'), 'utf8');
@@ -188,7 +196,7 @@ check('R1+R5 CSS Sync: color-scheme tokens and html.pwa-standalone rules exist i
   }
 
   for (const [label, css] of [
-    ['css/views/wiki/wiki_ladder.css', wikiLadderCss],
+    ['css/mobile/h5_pokedex_viewport.css', h5PokedexViewportCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('html.pwa-standalone .mobile-app-header'), `${label} missing standalone header rule`);
@@ -204,7 +212,7 @@ check('R2+R3+R4 CSS Sync: track header z-index, aligned margins, badge-ing-selec
   assert(stylesCss.includes('.node-count-badge.badge-ing-select') && stylesCss.includes('font-style: italic'), 'styles.css styles .badge-ing-select with distinct italic monospace font');
 
   for (const [label, css] of [
-    ['css/views/wiki/wiki_ladder_meals.css', wikiLadderMealsCss],
+    ['css/views/wiki/wiki_ladder_overrides.css', wikiLadderOverridesCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('body:not(.mobile-h5-app) .values-compact-grid.values-ing-grid'), `${label} scopes single-row .values-ing-grid to desktop`);
@@ -216,7 +224,7 @@ check('R2+R3+R4 CSS Sync: track header z-index, aligned margins, badge-ing-selec
   }
 
   for (const [label, css] of [
-    ['css/views/recipes_cards.css', recipesCardsCss],
+    ['css/mobile/wiki_values_camps_h5.css', wikiValuesCampsH5Css],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('.mobile-h5-app .values-compact-grid.values-ing-grid'), `${label} defines explicit H5 6-column parity rule`);
@@ -261,15 +269,15 @@ check('R1-3: Throwing localStorage SecurityError fails safely in head boot scrip
     'pokedex_nav.js must route localStorage accesses through try/catch-guarded getStorage()');
 });
 
-check('R3+8-Theme WCAG AA CSS Sync: inverted theme isolation, light/dark tooltip & badge contrast, and <=1000 line modular CSS', () => {
-  assert.strictEqual(CSS_MODULES.length, 54, 'scripts/build_css.js must list all 54 CSS modules');
+check('R3+8-Theme WCAG AA CSS Sync: inverted theme isolation, light/dark tooltip & badge contrast, and <=800 line modular CSS', () => {
+  assert.strictEqual(CSS_MODULES.length, 75, 'scripts/build_css.js must list all 75 CSS modules');
   for (const mod of CSS_MODULES) {
     const lines = fs.readFileSync(path.join(ROOT_DIR, 'css', mod), 'utf8').split('\n').length;
-    assert(lines <= 1000, `css/${mod} must stay <= 1,000 lines (got ${lines})`);
+    assert(lines <= 800, `css/${mod} must stay <= 800 lines (got ${lines})`);
   }
 
   for (const [label, css] of [
-    ['css/mobile/wiki_nav.css', wikiNavCss],
+    ['css/views/wiki/wiki_values_grid.css', wikiValuesGridCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-node-tooltip'), `${label} guards dawn tooltip rule`);
@@ -305,17 +313,23 @@ check('R3+8-Theme WCAG AA CSS Sync: inverted theme isolation, light/dark tooltip
   }
 
   for (const [label, css] of [
-    ['css/mobile/dock_sheets.css', dockSheetsCss],
+    ['css/views/wiki/wiki_ladder_nodes.css', wikiLadderNodesCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('[data-theme="midnight"]:not([data-theme-inverted="true"]) .dish-badge-full'), `${label} guards midnight .dish-badge-full`);
     assert(css.includes('[data-theme="dawn"][data-theme-inverted="true"] .dish-badge-full'), `${label} styles dawn+inv .dish-badge-full`);
     assert(css.includes('[data-theme="emerald"][data-theme-inverted="true"] .dish-badge-assist'), `${label} styles emerald+inv .dish-badge-assist`);
+  }
+
+  for (const [label, css] of [
+    ['css/views/wiki/wiki_ladder_sidebar.css', wikiLadderSidebarCss],
+    ['css/styles.css', stylesCss]
+  ]) {
     assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-switch-text.nature-ing-text'), `${label} guards dawn .nature-ing-text`);
   }
 
   for (const [label, css] of [
-    ['css/mobile/wiki_skills.css', wikiSkillsCss],
+    ['css/mobile/wiki_ladder_meals_h5.css', wikiLadderMealsH5Css],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-node-tooltip .tooltip-detail .text-success'), `${label} fixes light tooltip .text-success`);
@@ -325,7 +339,7 @@ check('R3+8-Theme WCAG AA CSS Sync: inverted theme isolation, light/dark tooltip
   }
 
   for (const [label, css] of [
-    ['css/mobile/wiki_camps.css', wikiCampsCss],
+    ['css/views/wiki/wiki_ladder_passing.css', wikiLadderPassingCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('var(--ladder-passing-color-dark'), `${label} uses --ladder-passing-color-dark on .ladder-passing-badge`);
@@ -341,7 +355,7 @@ check('R3+8-Theme WCAG AA CSS Sync: inverted theme isolation, light/dark tooltip
   }
 
   for (const [label, css] of [
-    ['css/views/recipes_cards.css', recipesCardsCss],
+    ['css/mobile/wiki_values_camps_h5.css', wikiValuesCampsH5Css],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .value-compact-energy.berry-val'), `${label} guards H5 .value-compact-energy`);
@@ -350,7 +364,7 @@ check('R3+8-Theme WCAG AA CSS Sync: inverted theme isolation, light/dark tooltip
   }
 
   for (const [label, css] of [
-    ['css/views/recipes_picker.css', recipesPickerCss],
+    ['css/components/modals/ing_rank_modal.css', ingRankModalCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .ing-rank-avatar-box'), `${label} guards .ing-rank-avatar-box`);
@@ -358,12 +372,21 @@ check('R3+8-Theme WCAG AA CSS Sync: inverted theme isolation, light/dark tooltip
   }
 
   for (const [label, css] of [
-    ['css/components/modals/recipe_picker.css', recipePickerModalCss],
+    ['css/components/modals/settings_modal.css', settingsModalCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .settings-section-title') && css.includes('[data-theme="midnight"][data-theme-inverted="true"] .settings-section-title'),
       `${label} darkens .settings-section-title in dawn & midnight+inv`);
     assert(css.includes('[data-theme="midnight"][data-theme-inverted="true"] .theme-card-badge'), `${label} styles midnight+inv .theme-card-badge`);
+    assert(css.includes('var(--accent-btn-bg') && css.includes('var(--accent-btn-text'), `${label} uses --accent-btn-bg/--accent-btn-text for settings accent buttons`);
+    assert(!/\.settings-modal-close-btn\s*\{[^}]*color:\s*var\(--text-muted\)/.test(css), `${label} must not use low-contrast --text-muted on .settings-modal-close-btn`);
+    assert(/\.settings-modal-close-btn\s*\{[^}]*color:\s*var\(--text-secondary\)/.test(css), `${label} uses --text-secondary on .settings-modal-close-btn`);
+  }
+
+  for (const [label, css] of [
+    ['css/components/modals/settings_h5.css', settingsH5Css],
+    ['css/styles.css', stylesCss]
+  ]) {
     assert(css.includes('[data-theme="midnight"][data-theme-inverted="true"] .app-theme-chip.active'), `${label} styles midnight+inv .app-theme-chip.active`);
     assert(!/\.app-theme-chip\s+\.theme-chip-check\s*\{[^}]*color:\s*var\(--accent-blue/.test(css), `${label} must not hardcode --accent-blue on .theme-chip-check`);
     assert(/\.app-theme-chip\s+\.theme-chip-check\s*\{[^}]*color:\s*inherit;/.test(css), `${label} sets color: inherit on .theme-chip-check`);
@@ -387,21 +410,21 @@ check('R3+8-Theme WCAG AA CSS Sync: inverted theme isolation, light/dark tooltip
   }
 
   for (const [label, css] of [
-    ['css/views/lab/lab_lightbox.css', labLightboxCss],
+    ['css/views/box/box_batch_ocr.css', boxBatchOcrCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .header-auth-btn.is-logged-in'),
       `${label} darkens .header-auth-btn.is-logged-in in light themes`);
     assert(css.includes('[data-theme="onyx"][data-theme-inverted="true"] .mobile-header-btn.is-logged-in'),
       `${label} darkens .mobile-header-btn.is-logged-in in light themes`);
+    assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .box-cloud-sync-chip.is-logged-in'),
+      `${label} darkens .box-cloud-sync-chip.is-logged-in in light themes`);
   }
 
   for (const [label, css] of [
-    ['css/views/lab/lab_auth.css', labAuthCss],
+    ['css/views/box/box_cloud_auth.css', boxCloudAuthCss],
     ['css/styles.css', stylesCss]
   ]) {
-    assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .box-cloud-sync-chip.is-logged-in'),
-      `${label} darkens .box-cloud-sync-chip.is-logged-in in light themes`);
     assert(!/\.cloud-auth-close-btn\s*\{[^}]*var\(--text-muted\)/.test(css), `${label} must not use --text-muted on .cloud-auth-close-btn`);
     assert(!/\.auth-sub-hint\s*\{[^}]*var\(--text-muted\)/.test(css), `${label} must not use --text-muted on .auth-sub-hint`);
     assert(!/\.cloud-auth-pwd-toggle\s*\{[^}]*var\(--text-muted\)/.test(css), `${label} must not use --text-muted on .cloud-auth-pwd-toggle`);
@@ -414,18 +437,12 @@ check('R3+8-Theme WCAG AA CSS Sync: inverted theme isolation, light/dark tooltip
       `${label} darkens dawn .cloud-auth-switch-btn to #0369a1`);
     assert(css.includes('[data-theme="midnight"][data-theme-inverted="true"] .cloud-auth-switch-btn {\n  color: #0369a1;'),
       `${label} darkens midnight+inv .cloud-auth-switch-btn to #0369a1`);
-  }
-
-  for (const [label, css] of [
-    ['css/views/box/box_calc.css', boxCalcCss],
-    ['css/styles.css', stylesCss]
-  ]) {
     assert(!/\.box-auth-guest-link\s*\{[^}]*var\(--text-muted\)/.test(css), `${label} must not use --text-muted on .box-auth-guest-link`);
     assert(/\.box-auth-guest-link\s*\{[^}]*var\(--text-secondary\)/.test(css), `${label} uses --text-secondary on .box-auth-guest-link`);
   }
 
   for (const [label, css] of [
-    ['css/views/wiki/wiki_items.css', wikiItemsCss],
+    ['css/mobile/box_fab_themes.css', boxFabThemesCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(/\.app-backup-action-btn\.export-btn\s*\{[^}]*--accent-btn-bg/.test(css), `${label} uses --accent-btn-bg on .app-backup-action-btn.export-btn`);
@@ -441,15 +458,21 @@ check('R3+8-Theme WCAG AA CSS Sync: inverted theme isolation, light/dark tooltip
   }
 
   for (const [label, css] of [
-    ['css/mobile/dock_nav.css', dockNavCss],
+    ['css/views/wiki/wiki_strategies.css', wikiStrategiesCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('[data-theme="dawn"][data-theme-inverted="true"] .ladder-max-badge'), `${label} styles dawn+inv .ladder-max-badge`);
+  }
+
+  for (const [label, css] of [
+    ['css/views/wiki/wiki_ladder.css', wikiLadderCss],
+    ['css/styles.css', stylesCss]
+  ]) {
     assert(css.includes('[data-theme="emerald"][data-theme-inverted="true"] .ladder-track-champion-badge'), `${label} styles emerald+inv .ladder-track-champion-badge`);
   }
 
   for (const [label, css] of [
-    ['css/views/box/box_grid.css', boxGridCss],
+    ['css/components/modals/pokedex_modal_formulas.css', pokedexModalFormulasCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('[data-theme="dawn"][data-theme-inverted="true"] .ladder-skill-tooltip-bubble'), `${label} styles dawn+inv .ladder-skill-tooltip-bubble`);
@@ -587,9 +610,9 @@ check('R3+8-Theme WCAG AA CSS Sync: inverted theme isolation, light/dark tooltip
 });
 
 check('M2 Items Tab & Item Detail Modal 8-Theme CSS Sync & WCAG AA Contrast', () => {
-  // 1. #wiki-item-detail-modal & light/dark 8-theme rules in wiki_subskills.css <-> styles.css
+  // 1. #wiki-item-detail-modal & light/dark 8-theme rules in wiki_item_modal.css <-> styles.css
   for (const [label, css] of [
-    ['css/views/wiki/wiki_subskills.css', wikiSubskillsCss],
+    ['css/components/modals/wiki_item_modal.css', wikiItemModalCss],
     ['css/styles.css', stylesCss]
   ]) {
     for (const sel of [
@@ -609,9 +632,9 @@ check('M2 Items Tab & Item Detail Modal 8-Theme CSS Sync & WCAG AA Contrast', ()
     }
   }
 
-  // 2. .wiki-item-cat-* in theme_preview.css + recipe_picker.css <-> styles.css
+  // 2. .wiki-item-cat-* in item_categories.css <-> styles.css
   for (const [label, css] of [
-    ['css/components/theme_preview.css', themePreviewCss],
+    ['css/components/item_categories.css', itemCategoriesCss],
     ['css/styles.css', stylesCss]
   ]) {
     for (const cat of ['evolution', 'pokemon_incense', 'functional_incense', 'training', 'biscuit', 'supply']) {
@@ -621,22 +644,15 @@ check('M2 Items Tab & Item Detail Modal 8-Theme CSS Sync & WCAG AA Contrast', ()
       assert(css.includes(`[data-theme="emerald"][data-theme-inverted="true"] .wiki-item-cat-${cat}`), `${label} styles emerald+inv .wiki-item-cat-${cat}`);
       assert(css.includes(`[data-theme="onyx"]:not([data-theme-inverted="true"]) .wiki-item-cat-${cat}`), `${label} guards onyx .wiki-item-cat-${cat}`);
       assert(css.includes(`[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-item-cat-${cat}`), `${label} guards dawn .wiki-item-cat-${cat}`);
+      assert(css.includes(`[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-${cat}`), `${label} guards emerald .wiki-item-cat-${cat}`);
       assert(css.includes(`[data-theme="midnight"][data-theme-inverted="true"] .wiki-item-cat-${cat}`), `${label} styles midnight+inv .wiki-item-cat-${cat}`);
       assert(css.includes(`[data-theme="onyx"][data-theme-inverted="true"] .wiki-item-cat-${cat}`), `${label} styles onyx+inv .wiki-item-cat-${cat}`);
     }
   }
-  for (const [label, css] of [
-    ['css/components/modals/recipe_picker.css', recipePickerModalCss],
-    ['css/styles.css', stylesCss]
-  ]) {
-    for (const cat of ['evolution', 'pokemon_incense', 'functional_incense', 'training', 'biscuit', 'supply']) {
-      assert(css.includes(`[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-item-cat-${cat}`), `${label} guards emerald .wiki-item-cat-${cat}`);
-    }
-  }
 
-  // 3. .stat-type-* in wiki_calcs.css <-> styles.css
+  // 3. .stat-type-* in wiki_items.css <-> styles.css
   for (const [label, css] of [
-    ['css/mobile/wiki_calcs.css', wikiCalcsCss],
+    ['css/views/wiki/wiki_items.css', wikiItemsCss],
     ['css/styles.css', stylesCss]
   ]) {
     for (const st of ['biscuit', 'biscuit-max', 'seed', 'mint', 'candy', 'shard', 'energy', 'whistle', 'camp', 'ticket', 'evolution']) {
@@ -649,7 +665,7 @@ check('M2 Items Tab & Item Detail Modal 8-Theme CSS Sync & WCAG AA Contrast', ()
 
   // 4. .sheet-drag-handle, .wiki-items-filter-pills .wiki-pill-btn.active, .mobile-box-sheet .box-modal-close
   for (const [label, css] of [
-    ['css/components/modals/pokedex_modal_hero.css', pokedexModalHeroCss],
+    ['css/mobile/dock_nav.css', dockNavCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .sheet-drag-handle'), `${label} guards dawn .sheet-drag-handle`);
@@ -658,7 +674,7 @@ check('M2 Items Tab & Item Detail Modal 8-Theme CSS Sync & WCAG AA Contrast', ()
     assert(css.includes('[data-theme="onyx"][data-theme-inverted="true"] .sheet-drag-handle'), `${label} styles onyx+inv .sheet-drag-handle`);
   }
   for (const [label, css] of [
-    ['css/views/wiki/wiki_items.css', wikiItemsCss],
+    ['css/mobile/box_edit.css', boxEditCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .sheet-drag-handle'), `${label} guards dawn mobile sheet drag handle`);
@@ -666,15 +682,15 @@ check('M2 Items Tab & Item Detail Modal 8-Theme CSS Sync & WCAG AA Contrast', ()
     assert(css.includes('[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle'), `${label} styles onyx+inv mobile sheet drag handle`);
   }
   for (const [label, css] of [
-    ['css/mobile/wiki_skills.css', wikiSkillsCss],
-    ['css/components/modals/item_modal.css', itemModalCss],
+    ['css/views/wiki/wiki_items.css', wikiItemsCss],
+    ['css/mobile/items.css', mobileItemsCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('.wiki-items-filter-pills .wiki-pill-btn.active'), `${label} styles .wiki-items-filter-pills .wiki-pill-btn.active`);
     assert(css.includes('var(--accent-btn-bg') && css.includes('var(--accent-btn-text'), `${label} uses --accent-btn-bg/--accent-btn-text`);
   }
   for (const [label, css] of [
-    ['css/components/modals/item_modal.css', itemModalCss],
+    ['css/mobile/box_sheet_controls.css', boxSheetControlsCss],
     ['css/styles.css', stylesCss]
   ]) {
     for (const sel of [
@@ -687,7 +703,7 @@ check('M2 Items Tab & Item Detail Modal 8-Theme CSS Sync & WCAG AA Contrast', ()
     }
   }
   for (const [label, css] of [
-    ['css/mobile/items.css', mobileItemsCss],
+    ['css/mobile/box_edit.css', boxEditCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('color: var(--text-secondary) !important;'), `${label} uses --text-secondary for mobile item controls`);
@@ -782,16 +798,8 @@ check('M2 Items Tab & Item Detail Modal 8-Theme CSS Sync & WCAG AA Contrast', ()
 });
 
 check('8-Theme Dropdown, Modal, Tooltip & Popover Isolation Guard (Zero Bare/Bogus Selectors & Zero Undefined Vars)', () => {
-  const readCss = (rel) => fs.readFileSync(path.join(ROOT_DIR, rel), 'utf8');
-  const settingsModalCss = readCss('css/components/modals/settings_modal.css');
-  const wikiSubskillsCss = readCss('css/views/wiki/wiki_subskills.css');
-  const recipesPantryCss = readCss('css/views/recipes_pantry.css');
-  const wikiLadderMobileCss = readCss('css/mobile/wiki_ladder.css');
-  const wikiItemsCss = readCss('css/views/wiki/wiki_items.css');
-  const boxDetailCss = readCss('css/views/box/box_detail.css');
-
   for (const [label, css] of [
-    ['css/components/modals/settings_modal.css', settingsModalCss],
+    ['css/views/wiki/wiki_tables.css', wikiTablesCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(!/\[data-theme="(?:dawn|emerald)"\]\s+\.custom-select-calc\s+\.custom-select-menu/.test(css),
@@ -804,7 +812,7 @@ check('8-Theme Dropdown, Modal, Tooltip & Popover Isolation Guard (Zero Bare/Bog
   }
 
   for (const [label, css] of [
-    ['css/views/wiki/wiki_subskills.css', wikiSubskillsCss],
+    ['css/mobile/modal_overrides.css', modalOverridesCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(!/\[data-theme="(?:dawn|emerald)"\]\s+\.box-conflict-dialog/.test(css),
@@ -825,7 +833,7 @@ check('8-Theme Dropdown, Modal, Tooltip & Popover Isolation Guard (Zero Bare/Bog
   }
 
   for (const [label, css] of [
-    ['css/mobile/wiki_ladder.css', wikiLadderMobileCss],
+    ['css/views/wiki/wiki_camps_spawns.css', wikiCampsSpawnsCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(!/\[data-theme="light"\]\s+\.island-sleep-hover-tooltip/.test(css),
@@ -836,7 +844,7 @@ check('8-Theme Dropdown, Modal, Tooltip & Popover Isolation Guard (Zero Bare/Bog
   }
 
   for (const [label, css] of [
-    ['css/views/wiki/wiki_items.css', wikiItemsCss],
+    ['css/mobile/box_fab_themes.css', boxFabThemesCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(css.includes('[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-menu') &&
@@ -845,7 +853,7 @@ check('8-Theme Dropdown, Modal, Tooltip & Popover Isolation Guard (Zero Bare/Bog
   }
 
   for (const [label, css] of [
-    ['css/views/box/box_detail.css', boxDetailCss],
+    ['css/components/modals/pokedex_modal_formulas.css', pokedexModalFormulasCss],
     ['css/styles.css', stylesCss]
   ]) {
     assert(!/\[data-theme="(?:midnight|onyx)"\]\s+#pokedex-detail-modal\s+\.calc-color-/.test(css),
@@ -863,35 +871,30 @@ check('Zero Emoji & Zero Decorative Glyphs compliance in all modified R1-R5 & M2
     'js/modules/pokedex/pokedex_filters.js',
     'js/modules/pokedex/pokedex_nav.js',
     'js/modules/box/box_storage_crud.js',
+    'js/modules/wiki/wiki_nav_ctrl.js',
+    'js/modules/wiki/wiki_ladder_top_recipes.js',
     'js/modules/wiki/wiki_ladder_recipes.js',
     'js/modules/wiki/wiki_ladder_modal.js',
+    'js/modules/wiki/wiki_calculators.js',
+    'js/modules/wiki/wiki_events.js',
+    'js/modules/wiki/wiki_camps_islands_ex.js',
+    'js/modules/wiki/wiki_camps_islands_std.js',
+    'js/modules/wiki/wiki_camps_config.js',
+    'js/modules/wiki/wiki_render_ladder_tail.js',
     'js/modules/wiki/wiki_render_ladder.js',
+    'js/modules/wiki/wiki_items.js',
+    'js/modules/wiki/wiki_item_modal.js',
+    'js/modules/wiki/wiki_render_subskills.js',
+    'js/modules/wiki/wiki_render_layout.js',
     'js/modules/wiki/wiki_main.js',
-    'css/tokens.css',
-    'css/tokens_inverted.css',
-    'css/views/wiki/wiki_ladder.css',
-    'css/views/wiki/wiki_skill_ladder.css',
-    'css/views/wiki/wiki_ladder_meals.css',
-    'css/views/wiki/wiki_subskills.css',
-    'css/views/recipes_cards.css',
-    'css/views/recipes_picker.css',
-    'css/components/modals/recipe_picker.css',
-    'css/components/modals/item_modal.css',
-    'css/components/modals/pokedex_modal_hero.css',
-    'css/components/theme_preview.css',
-    'css/views/wiki/wiki_items.css',
-    'css/views/box/box_grid.css',
-    'css/views/box/box_calc.css',
-    'css/views/pokedex_filters.css',
-    'css/views/lab/lab_lightbox.css',
-    'css/views/lab/lab_auth.css',
-    'css/mobile/dock_nav.css',
-    'css/mobile/dock_sheets.css',
-    'css/mobile/wiki_nav.css',
-    'css/mobile/wiki_camps.css',
-    'css/mobile/wiki_skills.css',
-    'css/mobile/wiki_calcs.css',
-    'css/mobile/items.css',
+    'js/core/i18n/i18n_entities_items.js',
+    'js/core/i18n/i18n_entities.js',
+    'js/core/i18n/i18n_icons_names.js',
+    'js/core/i18n/i18n_translate_en.js',
+    'js/core/i18n/i18n_shell_settings.js',
+    'js/core/i18n/i18n_shell_hydrate.js',
+    'js/core/i18n/i18n_core.js',
+    ...CSS_MODULES.map(m => 'css/' + m),
     'css/styles.css'
   ];
   for (const rel of files) {

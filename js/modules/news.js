@@ -108,7 +108,25 @@
     }, 1500);
   }
 
+  let newsLoadStarted = false;
+
+  function isNewsPanelHidden() {
+    if (typeof document === 'undefined' || !document.getElementById) return false;
+    const panel = document.getElementById('panel-news');
+    return !!(panel && panel.style && panel.style.display === 'none');
+  }
+
+  function applyLoadedNewsUI() {
+    initSearch();
+    if (!isNewsPanelHidden()) {
+      renderEventTimeline();
+      initCategoryTags();
+      renderNews();
+    }
+  }
+
   async function loadNews() {
+    newsLoadStarted = true;
     try {
       // 1. 優先自本機快取瞬間載入 (Cache-First 0ms 秒開：IndexedDB / LocalStorage)
       try {
@@ -122,10 +140,7 @@
           }
           if (Array.isArray(cachedData) && cachedData.length > 0 && isNewsHealthy(cachedData)) {
             allNews = cachedData;
-            renderEventTimeline();
-            initCategoryTags();
-            initSearch();
-            renderNews();
+            applyLoadedNewsUI();
             scheduleDynamicNewsSync();
             return;
           }
@@ -184,10 +199,7 @@
             if (Array.isArray(cachedData) && cachedData.length > 0) {
               console.warn('[News Engine] 網路請求暫時失敗，已自動自本機離線快取載入 news.json (' + cachedData.length + ' 筆公告)');
               allNews = cachedData;
-              renderEventTimeline();
-              initCategoryTags();
-              initSearch();
-              renderNews();
+              applyLoadedNewsUI();
               scheduleDynamicNewsSync();
               return;
             }
@@ -210,10 +222,7 @@
           window.DataCacheManager.saveCachedJson(CACHE_KEY_NEWS_JSON, 'news.json', allNews);
         }
       } catch (e) {}
-      renderEventTimeline();
-      initCategoryTags();
-      initSearch();
-      renderNews();
+      applyLoadedNewsUI();
       scheduleDynamicNewsSync();
     } catch (err) {
       console.error('Failed to load news.json:', err);
@@ -663,115 +672,108 @@
       </div>
     `;
 
-    // 綁定日曆切換與點選事件
-    const prevBtn = newsTimelineContainer.querySelector('.prev-btn');
-    const nextBtn = newsTimelineContainer.querySelector('.next-btn');
-    const todayBtn = newsTimelineContainer.querySelector('.today-btn');
-    const filterOngoingBtn = newsTimelineContainer.querySelector('.news-cal-filter-ongoing-btn');
+    // 綁定日曆切換與點選事件 (單一委派監聽)
+    if (!newsTimelineContainer._hasTimelineListener) {
+      newsTimelineContainer._hasTimelineListener = true;
+      newsTimelineContainer.addEventListener('click', e => {
+        const target = e.target;
+        if (!target || !target.closest) return;
 
-    if (filterOngoingBtn) {
-      filterOngoingBtn.addEventListener('click', () => {
-        filterOnlyOngoing = !filterOnlyOngoing;
-        if (filterOnlyOngoing) {
-          // 展開當日進行中活動卡片
-          const selectedDayStart = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 0, 0, 0);
-          const selectedDayEnd = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 23, 59, 59);
-          const activeIds = ganttData.filter(ev => ev.startDate <= selectedDayEnd && ev.endDate >= selectedDayStart).map(e => e.id);
-          activeIds.forEach(id => expandedMap.add(id));
-        }
-        renderNews();
-        renderEventTimeline();
-        if (filterOnlyOngoing && newsListContainer) {
-          newsListContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    }
-
-    if (prevBtn) {
-      prevBtn.addEventListener('click', () => {
-        if (calCurrentMonth > 0) calCurrentMonth--;
-        else { calCurrentYear--; calCurrentMonth = 11; }
-        calSelectedDay = 1;
-        renderEventTimeline();
-      });
-    }
-
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        if (calCurrentMonth < 11) calCurrentMonth++;
-        else { calCurrentYear++; calCurrentMonth = 0; }
-        calSelectedDay = 1;
-        renderEventTimeline();
-      });
-    }
-
-    if (todayBtn) {
-      todayBtn.addEventListener('click', () => {
-        calCurrentYear = _today.getFullYear();
-        calCurrentMonth = _today.getMonth();
-        calSelectedDay = _today.getDate();
-        renderEventTimeline();
-      });
-    }
-
-    // 點擊日期格子切換選取日
-    newsTimelineContainer.querySelectorAll('.news-cal-day-cell:not(.empty)').forEach(cell => {
-      cell.addEventListener('click', () => {
-        const day = parseInt(cell.getAttribute('data-day'), 10);
-        if (day) {
-          calSelectedDay = day;
+        if (target.closest('.news-cal-filter-ongoing-btn')) {
+          filterOnlyOngoing = !filterOnlyOngoing;
           if (filterOnlyOngoing) {
-            renderNews();
+            const curGantt = parseEventTimeline(allNews);
+            const selectedDayStart = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 0, 0, 0);
+            const selectedDayEnd = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 23, 59, 59);
+            const activeIds = curGantt.filter(ev => ev.startDate <= selectedDayEnd && ev.endDate >= selectedDayStart).map(ev => ev.id);
+            activeIds.forEach(id => expandedMap.add(id));
           }
+          renderNews();
           renderEventTimeline();
-        }
-      });
-    });
-
-    // 點擊活動項目：直接在搜尋框輸入該活動名稱並進行搜尋過濾
-    newsTimelineContainer.querySelectorAll('.news-cal-event-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const evId = item.getAttribute('data-event-id');
-        const evTitle = item.getAttribute('data-event-title') || '';
-        const targetItem = allNews.find(n => n.id === evId);
-        const searchWord = evTitle || (targetItem ? targetItem.title : '');
-
-        // 1. 填入搜尋關鍵字
-        if (newsSearchInput) {
-          newsSearchInput.value = searchWord;
-          searchQuery = searchWord.trim().toLowerCase();
-          updateClearBtn();
-        }
-
-        // 2. 切換分類至全部 (ALL) 確保搜尋完整覆蓋
-        currentCategory = 'ALL';
-        if (newsCategoryContainer) {
-          newsCategoryContainer.querySelectorAll('.news-tag-btn').forEach(b => {
-            b.classList.toggle('active', b.getAttribute('data-cat') === 'ALL');
-          });
-        }
-
-        // 3. 展開該活動卡片並渲染搜尋結果
-        if (evId) {
-          expandedMap.add(evId);
-        }
-        filterOnlyOngoing = false;
-        renderNews();
-        renderEventTimeline();
-
-        // 4. 平滑滾動至搜尋結果新聞卡片
-        setTimeout(() => {
-          const el = document.getElementById(`news-${evId}`) || newsSearchInput;
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            if (el.classList) {
-              el.classList.add('news-card-highlight-flash');
-              setTimeout(() => el.classList.remove('news-card-highlight-flash'), 1800);
-            }
+          if (filterOnlyOngoing && newsListContainer) {
+            newsListContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
-        }, 80);
+          return;
+        }
+
+        if (target.closest('.prev-btn')) {
+          if (calCurrentMonth > 0) calCurrentMonth--;
+          else { calCurrentYear--; calCurrentMonth = 11; }
+          calSelectedDay = 1;
+          renderEventTimeline();
+          return;
+        }
+
+        if (target.closest('.next-btn')) {
+          if (calCurrentMonth < 11) calCurrentMonth++;
+          else { calCurrentYear++; calCurrentMonth = 0; }
+          calSelectedDay = 1;
+          renderEventTimeline();
+          return;
+        }
+
+        if (target.closest('.today-btn')) {
+          const nowToday = new Date();
+          calCurrentYear = nowToday.getFullYear();
+          calCurrentMonth = nowToday.getMonth();
+          calSelectedDay = nowToday.getDate();
+          renderEventTimeline();
+          return;
+        }
+
+        const dayCell = target.closest('.news-cal-day-cell:not(.empty)');
+        if (dayCell) {
+          const day = parseInt(dayCell.getAttribute('data-day'), 10);
+          if (day) {
+            calSelectedDay = day;
+            if (filterOnlyOngoing) {
+              renderNews();
+            }
+            renderEventTimeline();
+          }
+          return;
+        }
+
+        const item = target.closest('.news-cal-event-item');
+        if (item) {
+          const evId = item.getAttribute('data-event-id');
+          const evTitle = item.getAttribute('data-event-title') || '';
+          const targetItem = allNews.find(n => n.id === evId);
+          const searchWord = evTitle || (targetItem ? targetItem.title : '');
+
+          if (newsSearchInput) {
+            newsSearchInput.value = searchWord;
+            searchQuery = searchWord.trim().toLowerCase();
+            updateClearBtn();
+          }
+
+          currentCategory = 'ALL';
+          if (newsCategoryContainer) {
+            newsCategoryContainer.querySelectorAll('.news-tag-btn').forEach(b => {
+              b.classList.toggle('active', b.getAttribute('data-cat') === 'ALL');
+            });
+          }
+
+          if (evId) {
+            expandedMap.add(evId);
+          }
+          filterOnlyOngoing = false;
+          renderNews();
+          renderEventTimeline();
+
+          setTimeout(() => {
+            const el = document.getElementById(`news-${evId}`) || newsSearchInput;
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              if (el.classList) {
+                el.classList.add('news-card-highlight-flash');
+                setTimeout(() => el.classList.remove('news-card-highlight-flash'), 1800);
+              }
+            }
+          }, 80);
+        }
       });
-    });
+    }
   }
 
   /* ─── 初始化分類標籤 ─────────────────────────────────── */
@@ -829,16 +831,23 @@
   }
 
   function initSearch() {
-    if (!newsSearchInput) return;
+    if (!newsSearchInput || newsSearchInput._hasSearchListener) return;
+    newsSearchInput._hasSearchListener = true;
+    let newsSearchTimer = null;
 
     newsSearchInput.addEventListener('input', e => {
       searchQuery = e.target.value.trim().toLowerCase();
       updateClearBtn();
-      renderNews();
+      if (newsSearchTimer) clearTimeout(newsSearchTimer);
+      newsSearchTimer = setTimeout(() => {
+        newsSearchTimer = null;
+        renderNews();
+      }, 90);
     });
 
     if (newsSearchClear) {
       newsSearchClear.addEventListener('click', () => {
+        if (newsSearchTimer) { clearTimeout(newsSearchTimer); newsSearchTimer = null; }
         newsSearchInput.value = '';
         searchQuery = '';
         updateClearBtn();
@@ -880,67 +889,6 @@
       }
       return true;
     });
-  }
-
-  /* ─── 官方詳細公告展開抽屜渲染器 (Reusable Official Announcement Reader) ─── */
-  function renderFormattedFullContent(item) {
-    const content = window.I18N?.field?.(item, 'full_content') || window.I18N?.field?.(item, 'content_preview') || '';
-    if (!content || !content.trim()) return '';
-
-    const lines = content.split('\n');
-    const htmlChunks = [];
-    let inList = false;
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) {
-        if (inList) {
-          htmlChunks.push('</ul>');
-          inList = false;
-        }
-        continue;
-      }
-
-      // 檢查是否為章節標題
-      const isHeading = (line.startsWith('【') && line.endsWith('】')) ||
-        /^(?:概要|獎勵|奖励|更新內容|更新内容|其他|修正的異常問題|修正的异常问题|機率提升|概率提升|任務期間|任务期间|舉辦期間|举办期间|活動營地|活动营地|特徵|特征|注意|注意事項|注意事项|商品詳細|商品详细|能新遇見的寶可夢|能新遇见的宝可梦|能新遇見的寶可夢的資訊|能新遇见的宝可梦的资讯|開始出現的時間|开始出现的时间|出現的營地|出现的营地|可遇見的睡眠類型|可遇见的睡眠类型|主技能|主技能名稱|主技能名称|技能效果|關於EX模式時的獎勵|关于EX模式时的奖励)\b/.test(line);
-
-      const isBullet = line.startsWith('・') || line.startsWith('- ') || line.startsWith('* ');
-      const isNote = line.startsWith('※') || line.startsWith('*');
-
-      if (isHeading) {
-        if (inList) {
-          htmlChunks.push('</ul>');
-          inList = false;
-        }
-        htmlChunks.push(`<h4 class="news-full-heading">${escapeHtml(line)}</h4>`);
-      } else if (isBullet) {
-        if (!inList) {
-          htmlChunks.push('<ul class="news-full-list">');
-          inList = true;
-        }
-        const bulletText = line.replace(/^[・\-\*]\s*/, '');
-        htmlChunks.push(`<li>${escapeHtml(bulletText)}</li>`);
-      } else if (isNote) {
-        if (inList) {
-          htmlChunks.push('</ul>');
-          inList = false;
-        }
-        htmlChunks.push(`<p class="news-full-note">${escapeHtml(line)}</p>`);
-      } else {
-        if (inList) {
-          htmlChunks.push('</ul>');
-          inList = false;
-        }
-        htmlChunks.push(`<p class="news-full-para">${escapeHtml(line)}</p>`);
-      }
-    }
-
-    if (inList) {
-      htmlChunks.push('</ul>');
-    }
-
-    return htmlChunks.join('');
   }
 
   /* ─── 渲染新聞列表 (折疊式 Accordion 卡片) ─────────────── */
@@ -1105,12 +1053,15 @@
       `;
     }).join('');
 
-    // 點選整個卡片直接展開與隱藏
-    newsListContainer.querySelectorAll('.news-accordion-card').forEach(card => {
-      card.addEventListener('click', e => {
+    // 點選整個卡片直接展開與隱藏 (單一委派監聽)
+    if (!newsListContainer._hasAccordionListener) {
+      newsListContainer._hasAccordionListener = true;
+      newsListContainer.addEventListener('click', e => {
         if (e.target.closest('a') || e.target.closest('button')) {
           return;
         }
+        const card = e.target.closest('.news-accordion-card');
+        if (!card) return;
         const id = card.getAttribute('data-id');
         if (expandedMap.has(id)) {
           expandedMap.delete(id);
@@ -1120,7 +1071,7 @@
           card.classList.add('expanded');
         }
       });
-    });
+    }
   }
 
   /* ─── 關鍵字高亮格式化 ─────────────────────────────────── */
@@ -1362,25 +1313,41 @@
       .replace(/'/g, '&#39;');
   }
 
-  // 初始化載入新聞
-  if (typeof document !== 'undefined') {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', loadNews);
+  // 初始化載入新聞（若新聞分頁處於隱藏狀態則延後至首幀繪製後載入）
+  function scheduleNewsInit() {
+    if (isNewsPanelHidden()) {
+      const deferNews = (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function')
+        ? (fn) => window.requestAnimationFrame(() => setTimeout(fn, 0))
+        : (fn) => setTimeout(fn, 0);
+      deferNews(() => {
+        if (!newsLoadStarted) loadNews();
+      });
     } else {
       loadNews();
     }
   }
 
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', scheduleNewsInit);
+    } else {
+      scheduleNewsInit();
+    }
+  }
+
   // 暴露全域刷新介面（如從同步完成後觸發）
   if (typeof window !== 'undefined') {
-    window.refreshNews = loadNews;
     window.PokemonNewsApp = {
       loadNews,
       parseEventTimeline
     };
     window.NewsApp = {
       render: function() {
+        if (!newsLoadStarted) {
+          loadNews();
+        }
         initCategoryTags();
+        initSearch();
         renderNews();
         renderEventTimeline();
       }

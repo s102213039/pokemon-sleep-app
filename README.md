@@ -3,9 +3,9 @@
 <div align="center">
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue?style=for-the-badge&logo=github)](https://s102213039.github.io/pokemon-sleep-app/)
-[![Tests](https://img.shields.io/badge/Tests-284%2F284%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
+[![Tests](https://img.shields.io/badge/Tests-296%2F296%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
 [![Bilingual](https://img.shields.io/badge/Language-繁體中文%20%7C%20简体中文%20%7C%20English-orange?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
-[![Themes](https://img.shields.io/badge/Themes-4%20Themes%20(Dark%2FLight)-purple?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
+[![Themes](https://img.shields.io/badge/Themes-8%20Variants%20(WCAG%20AA)-purple?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 **專為《Pokémon Sleep》玩家打造的一站式現代化 Web 應用程式**  
@@ -132,12 +132,12 @@
 graph TD
     User["使用者 (Browser / Mobile)"] --> SPA["SPA 單頁核心 (index.html / app/index.html)"]
     
-    subgraph ModularSource ["領域模組化原始碼 (Sub-25ms Bundler)"]
+    subgraph ModularSource ["領域模組化原始碼 (Sub-25ms Bundler · 108 JS/HTML <1000L/<50KB + 75 CSS <=753L)"]
         DexSrc["圖鑑模組 (js/modules/pokedex/)"] --> Dex["app.js"]
         BoxSrc["倉庫模組 (js/modules/box/)"] --> Box["box.js"]
         WikiSrc["百科模組 (js/modules/wiki/)"] --> Wiki["wiki.js"]
         LabSrc["研究室模組 (js/modules/lab/)"] --> Lab["appraisal.js"]
-        CssSrc["樣式模組 (css/)"] --> Css["styles.css"]
+        CssSrc["樣式模組 (75 CSS Modules)"] --> Css["styles.css (0 drift)"]
     end
     
     subgraph CoreEngine ["核心引擎與驅動器"]
@@ -159,24 +159,32 @@ graph TD
     CoreEngine --> DataServices
 ```
 
+### 模組化建構與效能架構 (R1-R3 Refactor)
+- **JS/HTML 模組化與 CSS 管線**：全站 `108` 個手寫 JS/HTML 模組皆控制在 `< 1,000` 行與 `< 50 KB`；CSS 拆分為 `75` 個語意模組（最大 `753` 行）並由 `scripts/build_css.js` 驗證大括號平衡後產出 `css/styles.css`（與模組總和 0 漂移），執行期僅載入單一 `css/styles.min.css`。
+- **UTF-8 建置與流暢度優化**：`scripts/build_prod.js` 全面啟用 `charset: 'utf8'`（零 `\uXXXX` 轉義膨脹），搭配預載入與 `defer` 調整、分頁延遲渲染、PTR 防重排手勢狀態機、搜尋防抖與滑桿 `rAF` 節流、`content-visibility: auto`、`<img>` `decoding="async"`、`Map` 快取、事件委派及 `352` 張圖檔數學無損最佳化（節省 `485,807` Bytes）。
+
 ---
 
 ## 本地開發與自動化測試 (Testing)
 
-本專案內建一套獨立的 **284 項全自動化測試套件**與多組專項測試，涵蓋資料庫完整性、公式精確度、OCR 多錨點辨識與去重升級、主技能天梯、i18n 三語翻譯、雙端路徑跳轉、評測演算法、樹果遽增 BFS 協同、生產環境資料壓縮、原生 IndexedDB 快取驗證、食譜健康防禦、下拉刷新狀態機與各島嶼營地。詳細測試架構與反饋原則請參考 [docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md)。
+本專案內建一套獨立的 **296 項全自動化測試套件**與多組專項及無頭 Chrome CDP E2E 測試，涵蓋資料庫完整性、公式精確度、OCR 多錨點辨識與去重升級、動態食材天梯（414 項）、主技能天梯（986 項）、8 主題 WCAG 2.1 AA 對比與 Standalone PWA（10 項 / CDP E2E 12 項）、i18n 三語翻譯、雙端路徑跳轉、評測演算法、樹果遽增 BFS 協同、生產環境資料壓縮、原生 IndexedDB 快取驗證、食譜健康防禦、下拉刷新狀態機與各島嶼營地。詳細測試架構與反饋原則請參考 [docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md)。
 
 ### 常用命令 (Commands)
 ```bash
 # 確保已安裝 Node.js (v18+)
 
-# 1. 日常開發推薦：極速執行 Tier 1~3 (161 項，僅 < 0.4 秒)
+# 1. 日常開發推薦：極速執行 Tier 1~3 (172 項，僅 < 0.4 秒)
 npm run test:fast
 
-# 2. 完整回歸驗證：全量 284 項測試 (約 2.2 秒)
+# 2. 完整回歸驗證：全量 296 項測試 (約 2.2 秒)
 npm test
 
-# 3. 專項領域、手勢與健康度測試
-node tests/test_wiki_skill_ladder.js          # 783 項主技能天梯測試
+# 3. 專項領域、手勢、主題與健康度測試
+node tests/test_dynamic_ingredient_ladder.js  # 414 項動態食材天梯與前3/精選測試
+node tests/test_wiki_skill_ladder.js          # 986 項主技能天梯測試
+node tests/test_r1_r5_theme_pwa_css.js        # 10 項 CSS 同步、75 模組<=753行與 WCAG AA 測試
+node tests/test_e2e_r1_r5_pwa_ui.js           # 12 項 R1-R5 雙端 Chrome CDP E2E 測試
+node tests/test_e2e_r1_r7_acceptance.js       # 100 項 R1-R7 雙端 Chrome CDP 驗收測試
 node tests/test_cross_module_consistency.js   # 跨模組資料與規則一致性測試
 node tests/test_box_import_dedup.js           # 倉庫去重升級與非阻塞視窗測試
 node tests/adversarial_ptr_stress.js          # 19 項 PTR 對抗手勢測試
@@ -190,8 +198,10 @@ npm run test:tier1    # Tier 1 基礎覆蓋
 npm run test:tier4    # Tier 4 真實情境整合
 node tests/run_tests.js --tier=2,3
 
-# 5. 一鍵打包所有 CSS 與 JS 子模組 (約 25ms)
+# 5. 一鍵驗證 CSS 模組化 (75 模組 <= 753 行、0 漂移) 與建置打包
+npm run build:css
 npm run build:all
+npm run build
 
 # 6. 資料庫維護雙模式
 npm run data:format   # 展開為 2 格縮排（編輯資料或審查 git diff）
@@ -199,10 +209,10 @@ npm run data:minify   # 壓回生產極致壓縮格式並自動更新 manifest.j
 ```
 
 ### 測試覆蓋階層
-- **Tier 1 - Feature Coverage (73 項)**：資料集結構、公式計算、食譜加成、主技能矩陣、主題色系、H5 入口完整性、回到頂部按鈕結構。
+- **Tier 1 - Feature Coverage (74 項)**：資料集結構、公式計算、食譜加成、主技能矩陣、主題色系、H5 入口完整性、回到頂部按鈕結構與島嶼出沒資料一致性。
 - **Tier 2 - Boundary Cases (70 項)**：空搜尋、大小寫不敏感、多選交集、等級邊界 (Lv.1~80)、鍋子容量上下限、副技能防重複選擇、進化等級防禦、19 項 PTR 嚴苛手勢與死區邊界、12 項食譜健康邊界。
-- **Tier 3 - Cross-Feature (18 項)**：多維度複合篩選、主題語言聯動切換、Dock 導航持久化、睡飽飽獎章抵扣結算、10 項 PTR 跨模組導航切換與並行中斷。
-- **Tier 4 - Real-World Scenarios (123 項)**：雙端真實工作流、OCR 全量解析校準（102x 提速）、嚴格評測雙軌定級、樹果遽增 BFS 爆發、傳說神獸團隊協同、目標料理導向組隊、生產資料壓縮、原生 IndexedDB 0ms 秒開與琥褐溪谷營地驗證。
+- **Tier 3 - Cross-Feature (28 項)**：多維度複合篩選、主題語言聯動切換、Dock 導航持久化、睡飽飽獎章抵扣結算、10 項 PTR 跨模組導航切換與並行中斷、R1-R5 主題 PWA CSS 同步檢核。
+- **Tier 4 - Real-World Scenarios (124 項)**：雙端真實工作流、OCR 全量解析校準（102x 提速）、嚴格評測雙軌定級、樹果遽增 BFS 爆發、傳說神獸團隊協同、目標料理導向組隊、生產資料壓縮、原生 IndexedDB 0ms 秒開與全 9 區島嶼營地/三語睡姿浮窗驗證。
 
 > 完整開發、擴充資料庫與模組化建構流程，請參閱 **[docs/MAINTENANCE_AND_DEVELOPMENT_GUIDE.md](docs/MAINTENANCE_AND_DEVELOPMENT_GUIDE.md)**。
 

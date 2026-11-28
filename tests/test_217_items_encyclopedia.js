@@ -13,8 +13,9 @@
  * 9. UI Standards & Compliance (Zero Emoji, Single Frame Rule, Dropdowns, Themes)
  *
  * Execution:
- *   rtk node tests/test_217_items_encyclopedia.js
- *   rtk node tests/test_217_items_encyclopedia.js --strict
+ *   node tests/test_217_items_encyclopedia.js          (exits 1 on failure by default)
+ *   node tests/test_217_items_encyclopedia.js --strict
+ *   node tests/test_217_items_encyclopedia.js --non-strict
  */
 
 const fs = require('fs');
@@ -110,7 +111,17 @@ function loadItemsData() {
 // Core Probe Runner
 // -----------------------------------------------------------------------------
 function runProbe(options = {}) {
-  const isStrict = options.strict || process.argv.includes('--strict') || process.env.STRICT_ASSERT === '1';
+  totalChecks = 0;
+  passedChecks = 0;
+  failedChecks = 0;
+  failureDetails.length = 0;
+
+  const isNonStrict = options.nonStrict === true || process.argv.includes('--non-strict');
+  const isStrict = !isNonStrict && (
+    options.strict !== undefined
+      ? Boolean(options.strict)
+      : (require.main === module || process.argv.includes('--strict') || process.env.STRICT_ASSERT === '1')
+  );
 
   console.log('================================================================');
   console.log('  Test 217 Probe: Pokémon Sleep Items & Incense Encyclopedia');
@@ -125,6 +136,8 @@ function runProbe(options = {}) {
     ? fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8') : '';
   const wikiCode = fs.existsSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'))
     ? fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8') : '';
+  const wikiModalPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_item_modal.js');
+  const wikiItemModalCode = fs.existsSync(wikiModalPath) ? fs.readFileSync(wikiModalPath, 'utf8') : '';
   const appCode = fs.existsSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'))
     ? fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8') : '';
   const i18nCode = fs.existsSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'))
@@ -310,11 +323,17 @@ function runProbe(options = {}) {
   // ---------------------------------------------------------------------------
   // Part 4: Item Detail Modal & Bidirectional Dex Linkage
   // ---------------------------------------------------------------------------
-  check('Item Modal & Dex Linkage', 'Modal markup #wiki-item-detail-modal exists in desktop and mobile index.html', () => {
-    const hasDesktopModal = desktopHtml.includes('id="wiki-item-detail-modal"') || wikiCode.includes('id="wiki-item-detail-modal"');
-    const hasMobileModal = h5Html.includes('id="wiki-item-detail-modal"') || wikiCode.includes('id="wiki-item-detail-modal"');
-    assert(hasDesktopModal, 'index.html or wiki.js must provide #wiki-item-detail-modal');
-    assert(hasMobileModal, 'app/index.html or wiki.js must provide #wiki-item-detail-modal for mobile H5');
+  check('Item Modal & Dex Linkage', 'Modal markup #wiki-item-detail-modal is provided for desktop and mobile H5 (HTML or wiki_item_modal.js/wiki.js)', () => {
+    const modalSrc = [wikiCode, wikiItemModalCode].join('\n');
+    const hasDynamicBuilder =
+      modalSrc.includes("modal.id = 'wiki-item-detail-modal'") &&
+      modalSrc.includes('class="wiki-item-modal-backdrop-dismiss"') &&
+      modalSrc.includes('id="wiki-item-modal-pokemon-grid"') &&
+      modalSrc.includes('bottom-sheet mobile-modal-sheet');
+    const hasDesktopModal = desktopHtml.includes('id="wiki-item-detail-modal"') || wikiCode.includes('id="wiki-item-detail-modal"') || hasDynamicBuilder;
+    const hasMobileModal = h5Html.includes('id="wiki-item-detail-modal"') || wikiCode.includes('id="wiki-item-detail-modal"') || hasDynamicBuilder;
+    assert(hasDesktopModal, 'index.html or wiki_item_modal.js/wiki.js must provide #wiki-item-detail-modal');
+    assert(hasMobileModal, 'app/index.html or wiki_item_modal.js/wiki.js must provide #wiki-item-detail-modal with mobile bottom-sheet markup');
   });
 
   check('Item Modal & Dex Linkage', 'WikiDB provides openItemDetailModal and closeItemDetailModal', () => {

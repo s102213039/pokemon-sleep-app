@@ -82,7 +82,7 @@
       return `
         <div class="pantry-item-row" data-ing="${name}">
           <div class="pantry-item-info">
-            ${icon ? `<img src="${icon}" class="pantry-item-icon" alt="${displayName}">` : ''}
+            ${icon ? `<img src="${icon}" class="pantry-item-icon" width="20" height="20" loading="lazy" decoding="async" alt="${displayName}">` : ''}
             <span class="pantry-item-name" title="${displayName}">${displayName}</span>
           </div>
           <div class="pantry-stepper">

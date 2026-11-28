@@ -69,17 +69,17 @@
 
         <!-- 1. 幫手組隊子面板 (Team Builder & Simulator) -->
         <div id="lab-subpanel-team" class="lab-subpanel" style="${labState.currentSubTab === 'team' && !labState.editMode ? '' : 'display:none;'}">
-          ${renderTeamBuilderView(userBox, pokemons, undefined, isMobileH5)}
+          ${labState.currentSubTab === 'team' && !labState.editMode ? renderTeamBuilderView(userBox, pokemons, undefined, isMobileH5) : ''}
         </div>
 
         <!-- 2. 寶可夢對比子面板 (Side-by-Side Comparison) -->
         <div id="lab-subpanel-compare" class="lab-subpanel" style="${labState.currentSubTab === 'compare' ? '' : 'display:none;'}">
-          ${renderComparisonView(userBox, pokemons, undefined, isMobileH5)}
+          ${labState.currentSubTab === 'compare' ? renderComparisonView(userBox, pokemons, undefined, isMobileH5) : ''}
         </div>
 
         <!-- 3. 培育精算子面板 (Growth & Seeds Calculator) -->
         <div id="lab-subpanel-growth" class="lab-subpanel" style="${labState.currentSubTab === 'growth' ? '' : 'display:none;'}">
-          ${renderGrowthView(userBox, pokemons, undefined, isMobileH5)}
+          ${labState.currentSubTab === 'growth' ? renderGrowthView(userBox, pokemons, undefined, isMobileH5) : ''}
         </div>
       </div>
     `;

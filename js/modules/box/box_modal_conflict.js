@@ -24,7 +24,7 @@
         previewContainer.innerHTML = `
           <div class="box-screenshot-preview-wrap">
             <span class="box-screenshot-preview-tag">${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_original_screenshot') : undefined) ?? '原始截圖對照'}</span>
-            <img src="${screenshotSrc}" alt="Screenshot" class="box-screenshot-img">
+            <img src="${screenshotSrc}" alt="Screenshot" class="box-screenshot-img" loading="lazy" decoding="async">
           </div>
         `;
         previewContainer.style.display = 'block';
@@ -459,7 +459,7 @@
     if (summaryEl) {
       summaryEl.innerHTML = `
         <div class="box-conflict-summary-pkm">
-          ${iconUrl ? `<img src="${iconUrl}" class="box-conflict-pkm-icon" alt="" loading="lazy">` : ''}
+          ${iconUrl ? `<img src="${iconUrl}" class="box-conflict-pkm-icon" width="32" height="32" alt="" loading="lazy" decoding="async">` : ''}
           <div class="box-conflict-pkm-names">
             <div class="box-conflict-pkm-main">${escapeHtml(candidateDisplayName)}</div>
             <div class="box-conflict-pkm-sub">UID: ${existingCandidate.uid ? existingCandidate.uid.slice(-8) : ''} · ${(typeof window !== 'undefined' ? window.I18N?.t?.('box.ui_existing_lv', { level: existingCandidate.level || 1 }) : undefined) ?? ('現有 Lv.' + (existingCandidate.level || 1))}</div>

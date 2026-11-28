@@ -17,80 +17,87 @@
 
     let globalMinProcs = Infinity;
     let globalMaxProcs = -Infinity;
-    const processedTracks = SKILL_TRACK_DEFINITIONS.map(track => {
-      const trackId = track.id;
-      const trackName = window.I18N?.t?.(track.nameKey) ?? (window.I18N?.field?.(track, 'name') ?? (track.name_cn || track.name || ''));
-      const trackDesc = window.I18N?.t?.(track.descKey) ?? (window.I18N?.field?.(track, 'desc') ?? (track.desc_cn || track.desc || ''));
+    const trackEntriesMap = new Map();
+    const q = skillLadderSearchQuery ? skillLadderSearchQuery.toLowerCase().trim() : '';
+    const isNum = q ? (/^\d+$/).test(q) : false;
+    const qNum = isNum ? parseInt(q, 10) : NaN;
+    const qPad = isNum ? q.padStart(3, '0') : '';
 
-      const matchingPokemon = allPkm.filter(p => {
-        if (!p || isExcludedSkill(p.main_skill)) return false;
-        const tracks = getSkillTracks(p.main_skill);
-        if (!tracks.includes(trackId)) return false;
+    for (let i = 0; i < allPkm.length; i++) {
+      const p = allPkm[i];
+      if (!p || isExcludedSkill(p.main_skill)) continue;
 
-        if (typeof skillLadderFinalOnly !== 'undefined' && skillLadderFinalOnly && typeof isPokemonSkillLadderFinalEvo === 'function' && !isPokemonSkillLadderFinalEvo(p)) return false;
+      if (typeof skillLadderFinalOnly !== 'undefined' && skillLadderFinalOnly && typeof isPokemonSkillLadderFinalEvo === 'function' && !isPokemonSkillLadderFinalEvo(p)) continue;
 
-        const spec = p.specialty || '';
-        if (skillLadderSpecialtyFilter === 'SKILL' && !spec.includes('技能') && spec !== 'Skills' && spec !== 'Skill') return false;
-        if (skillLadderSpecialtyFilter === 'BERRY' && !spec.includes('樹果') && spec !== 'Berries' && spec !== 'Berry') return false;
-        if (skillLadderSpecialtyFilter === 'INGREDIENT' && !spec.includes('食材') && spec !== 'Ingredients' && spec !== 'Ingredient') return false;
+      const spec = p.specialty || '';
+      if (skillLadderSpecialtyFilter === 'SKILL' && !spec.includes('技能') && spec !== 'Skills' && spec !== 'Skill') continue;
+      if (skillLadderSpecialtyFilter === 'BERRY' && !spec.includes('樹果') && spec !== 'Berries' && spec !== 'Berry') continue;
+      if (skillLadderSpecialtyFilter === 'INGREDIENT' && !spec.includes('食材') && spec !== 'Ingredients' && spec !== 'Ingredient') continue;
 
-        if (skillLadderSearchQuery) {
-          const q = skillLadderSearchQuery.toLowerCase().trim();
-          let matched = false;
-          if (typeof matchesLadderSearch === 'function') {
-            matched = matchesLadderSearch(p.name_cn || p.name, p.name_en, q);
-          }
-          if (!matched) {
-            const nCn = (p.name_cn || p.name || '').toLowerCase();
-            const nEn = (p.name_en || '').toLowerCase();
-            const nJp = (p.name_jp || '').toLowerCase();
-            const pId = String(p.id || '');
-            const pNo = String(p.formatted_no || '');
-            const isNum = (/^\d+$/).test(q);
-            const numMatch = isNum && (parseInt(pId, 10) === parseInt(q, 10) || pId === q || pNo === q || pNo === q.padStart(3, '0') || pId.padStart(3, '0') === q.padStart(3, '0'));
-            const nSimp = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function' && p.name_cn)
-              ? window.I18N.toSimplified(p.name_cn).toLowerCase()
-              : '';
-            matched = nCn.includes(q) || nEn.includes(q) || (nJp && nJp.includes(q)) || (nSimp && nSimp.includes(q)) || !!numMatch;
-          }
-          if (!matched) return false;
+      if (q) {
+        let matched = false;
+        if (typeof matchesLadderSearch === 'function') {
+          matched = matchesLadderSearch(p.name_cn || p.name, p.name_en, q);
         }
-        return true;
-      });
+        if (!matched) {
+          const nCn = (p.name_cn || p.name || '').toLowerCase();
+          const nEn = (p.name_en || '').toLowerCase();
+          const nJp = (p.name_jp || '').toLowerCase();
+          const pId = String(p.id || '');
+          const pNo = String(p.formatted_no || '');
+          const numMatch = isNum && (parseInt(pId, 10) === qNum || pId === q || pNo === q || pNo === qPad || pId.padStart(3, '0') === qPad);
+          const nSimp = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.toSimplified === 'function' && p.name_cn)
+            ? window.I18N.toSimplified(p.name_cn).toLowerCase()
+            : '';
+          matched = nCn.includes(q) || nEn.includes(q) || (nJp && nJp.includes(q)) || (nSimp && nSimp.includes(q)) || !!numMatch;
+        }
+        if (!matched) continue;
+      }
 
-      const nodes = matchingPokemon.map(p => {
-        const calcRes = getPokemonSkillLadderProcs(p);
-        if (!calcRes) return null;
+      const tracks = getSkillTracks(p.main_skill);
+      if (!tracks || tracks.length === 0) continue;
 
-        const specStr = p.specialty || '技能';
-        const specKey = (specStr.includes('樹果') || specStr === 'Berries') ? 'berry'
-          : (specStr.includes('食材') || specStr === 'Ingredients') ? 'ingredient'
-          : 'skill';
-        const specDisplay = (specKey === 'berry')
-          ? (window.I18N?.t?.('wiki.ldr_spec_berries') ?? '樹果型')
-          : (specKey === 'ingredient')
-            ? (window.I18N?.t?.('wiki.ldr_spec_ingredients') ?? '食材型')
-            : (window.I18N?.t?.('wiki.ldr_spec_skills') ?? '技能型');
+      const calcRes = getPokemonSkillLadderProcs(p);
+      if (!calcRes) continue;
 
-        const pkmDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
-          ? window.I18N.getPokemonName(p.name_cn || p.name)
-          : (window.I18N?.field?.(p, 'name') ?? (p.name_cn || p.name || p.name_en || ''));
-        const skillName = p.main_skill || '';
-        const skillDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function')
-          ? window.I18N.getMainSkillName(skillName)
-          : skillName;
+      const specStr = p.specialty || '技能';
+      const specKey = (specStr.includes('樹果') || specStr === 'Berries') ? 'berry'
+        : (specStr.includes('食材') || specStr === 'Ingredients') ? 'ingredient'
+        : 'skill';
+      const specDisplay = (specKey === 'berry')
+        ? (window.I18N?.t?.('wiki.ldr_spec_berries') ?? '樹果型')
+        : (specKey === 'ingredient')
+          ? (window.I18N?.t?.('wiki.ldr_spec_ingredients') ?? '食材型')
+          : (window.I18N?.t?.('wiki.ldr_spec_skills') ?? '技能型');
+
+      const pkmDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getPokemonName === 'function')
+        ? window.I18N.getPokemonName(p.name_cn || p.name)
+        : (window.I18N?.field?.(p, 'name') ?? (p.name_cn || p.name || p.name_en || ''));
+      const skillName = p.main_skill || '';
+      const skillDisplayName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getMainSkillName === 'function')
+        ? window.I18N.getMainSkillName(skillName)
+        : skillName;
+      const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
+      const displayCount = calcRes.procs.toFixed(2);
+
+      for (let tIdx = 0; tIdx < tracks.length; tIdx++) {
+        const trackId = tracks[tIdx];
         const subInfo = typeof getSkillSubCategoryInfo === 'function'
           ? getSkillSubCategoryInfo(skillName, trackId)
           : { subKey: '', subLabel: '', fullLabel: skillDisplayName };
         const skillFullDisplay = typeof sanitizeSkillFullLabel === 'function'
           ? sanitizeSkillFullLabel(subInfo.fullLabel || skillDisplayName)
           : (subInfo.fullLabel || skillDisplayName);
-        const iconUrl = p.icon_url || (p.formatted_no ? 'https://www.serebii.net/pokemonsleep/pokemon/icon/' + p.formatted_no + '.png' : '');
 
-        return {
+        let arr = trackEntriesMap.get(trackId);
+        if (!arr) {
+          arr = [];
+          trackEntriesMap.set(trackId, arr);
+        }
+        arr.push({
           p,
           procs: calcRes.procs,
-          displayCount: calcRes.procs.toFixed(2),
+          displayCount,
           calcRes,
           pkmDisplayName,
           specialtyKey: specKey,
@@ -102,8 +109,15 @@
           subLabel: subInfo.subLabel,
           iconUrl,
           isTopNode: false
-        };
-      }).filter(Boolean);
+        });
+      }
+    }
+
+    const processedTracks = SKILL_TRACK_DEFINITIONS.map(track => {
+      const trackId = track.id;
+      const trackName = window.I18N?.t?.(track.nameKey) ?? (window.I18N?.field?.(track, 'name') ?? (track.name_cn || track.name || ''));
+      const trackDesc = window.I18N?.t?.(track.descKey) ?? (window.I18N?.field?.(track, 'desc') ?? (track.desc_cn || track.desc || ''));
+      const nodes = trackEntriesMap.get(trackId) || [];
 
       nodes.sort((a, b) => b.procs - a.procs);
       if (nodes.length > 0) nodes[0].isTopNode = true;
@@ -193,7 +207,7 @@
                              data-pkm-id="${node.p.id}"
                              style="left: ${leftStyle}; z-index: ${zIndex};">
                           <div class="node-avatar-wrapper">
-                            <img src="${node.iconUrl}" class="node-avatar-img" alt="${_escapeHtml(node.pkmDisplayName)}" loading="lazy" decoding="async">
+                            <img src="${node.iconUrl}" class="node-avatar-img" alt="${_escapeHtml(node.pkmDisplayName)}" width="38" height="38" loading="lazy" decoding="async">
                           </div>
                           <div class="node-count-badge" title="${window.I18N?.t?.('wiki.ldr_12h_expected_triggers') ?? '日間 12h 預估發動次數：'}${node.displayCount}">
                             ${node.displayCount}
@@ -332,7 +346,7 @@
                   <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
                 </svg>
               </span>
-              <input type="text" id="skill-ladder-pkm-search-input" class="sidebar-search-input" placeholder="${window.I18N?.t?.('wiki.ldr_search_placeholder') ?? '搜尋寶可夢名稱...'}" value="${(typeof getSkillLadderSearchQuery === 'function' ? getSkillLadderSearchQuery() : '')}" oninput="window.WikiDB.onSkillLadderSearch(this.value)">
+              <input type="text" id="skill-ladder-pkm-search-input" class="sidebar-search-input" placeholder="${window.I18N?.t?.('wiki.ldr_search_placeholder') ?? '搜尋寶可夢名稱...'}" value="${(typeof getSkillLadderSearchQuery === 'function' ? getSkillLadderSearchQuery() : '')}" oninput="window.WikiDB.onSkillLadderSearchInput(this.value)">
             </div>
           </div>
 
@@ -404,6 +418,7 @@
       closeSkillLadderEnergyHelp: closeSkillLadderEnergyHelp,
       resetSkillLadderFilters: resetSkillLadderFilters,
       onSkillLadderSearch: onSkillLadderSearch,
+      onSkillLadderSearchInput: typeof onSkillLadderSearchInput === 'function' ? onSkillLadderSearchInput : onSkillLadderSearch,
       setSkillLadderSearchQuery: setSkillLadderSearchQuery,
       getSkillLadderSearchQuery: getSkillLadderSearchQuery,
       clearSkillLadderSearch: clearSkillLadderSearch,

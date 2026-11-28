@@ -91,7 +91,11 @@ const recipesJsonPath = path.join(WORKSPACE_ROOT, 'data', 'recipes.json');
 const ladderJsonPath = path.join(WORKSPACE_ROOT, 'data', 'ladder_lv60.json');
 const ladderJsPath = path.join(WORKSPACE_ROOT, 'js', 'data', 'ladder_data.js');
 const sleepStylesPath = path.join(WORKSPACE_ROOT, 'data', 'sleep_styles.json');
-const campsDataPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_camps_data.js');
+const campsDataPaths = [
+  path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_camps_islands_ex.js'),
+  path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_camps_islands_std.js'),
+  path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_camps_config.js')
+];
 const i18nCorePath = path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n', 'i18n_core.js');
 const pokedexCalcPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'pokedex', 'pokedex_calc.js');
 const recipesBundlePath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js');
@@ -104,7 +108,9 @@ assert(fs.existsSync(recipesJsonPath), 'data/recipes.json exists');
 assert(fs.existsSync(ladderJsonPath), 'data/ladder_lv60.json exists');
 assert(fs.existsSync(ladderJsPath), 'js/data/ladder_data.js exists');
 assert(fs.existsSync(sleepStylesPath), 'data/sleep_styles.json exists');
-assert(fs.existsSync(campsDataPath), 'js/modules/wiki/wiki_camps_data.js exists');
+for (const cp of campsDataPaths) {
+  assert(fs.existsSync(cp), path.relative(WORKSPACE_ROOT, cp) + ' exists');
+}
 assert(fs.existsSync(i18nCorePath), 'js/core/i18n/i18n_core.js exists');
 assert(fs.existsSync(recipesBundlePath), 'js/modules/recipes.js exists');
 assert(fs.existsSync(wikiBundlePath), 'js/modules/wiki.js exists');
@@ -114,27 +120,39 @@ const masterItems = JSON.parse(fs.readFileSync(itemsJsonPath, 'utf8'));
 const allRecipes = JSON.parse(fs.readFileSync(recipesJsonPath, 'utf8'));
 const ladderLv60 = JSON.parse(fs.readFileSync(ladderJsonPath, 'utf8'));
 const sleepStyles = JSON.parse(fs.readFileSync(sleepStylesPath, 'utf8'));
-const campsDataCode = fs.readFileSync(campsDataPath, 'utf8');
+const campsDataCode = campsDataPaths.map(p => fs.readFileSync(p, 'utf8')).join('\n');
 
 // =============================================================================
 // Helper: Initialize Browser VM Contexts
 // =============================================================================
 function createRecipesVM() {
   const recipesJsCode = fs.readFileSync(recipesBundlePath, 'utf8');
+  const makeMockElement = (tag = 'div', id = '') => ({
+    id,
+    tagName: String(tag).toUpperCase(),
+    addEventListener: () => {},
+    appendChild: () => {},
+    insertBefore: () => {},
+    prepend: () => {},
+    setAttribute: () => {},
+    getAttribute: () => null,
+    dispatchEvent: () => true,
+    classList: { add: () => {}, remove: () => {}, toggle: () => false, contains: () => false },
+    style: { setProperty: () => {} },
+    innerHTML: '',
+    textContent: '',
+    value: '0',
+    querySelector: () => null,
+    querySelectorAll: () => []
+  });
   const mockDom = {
     document: {
-      getElementById: (id) => ({
-        addEventListener: () => {},
-        appendChild: () => {},
-        classList: { add: () => {}, remove: () => {}, contains: () => false },
-        innerHTML: '',
-        value: '0',
-        querySelector: () => null,
-        querySelectorAll: () => []
-      }),
+      readyState: 'complete',
+      getElementById: (id) => makeMockElement('div', id),
+      createElement: (tag) => makeMockElement(tag),
       querySelectorAll: () => [],
       querySelector: () => null,
-      body: { classList: { contains: () => false, add: () => {}, remove: () => {} } },
+      body: { classList: { contains: () => false, add: () => {}, remove: () => {} }, appendChild: () => {} },
       documentElement: { style: {} },
       addEventListener: () => {}
     },
@@ -424,8 +442,8 @@ check('IngredientLadder', 'WikiDB.renderCoordinateLadder executes on 19 tracks w
 // =============================================================================
 console.log('\n[Section 4] Sleep Style Goal 570 & Island Camp Progression');
 
-check('Camps', 'wiki_camps_data.js defines sleep style goal 570 unlocking pot size 84', () => {
-  assert(campsDataCode.includes('570'), 'wiki_camps_data.js must contain 570');
+check('Camps', 'wiki_camps_config.js defines sleep style goal 570 unlocking pot size 84', () => {
+  assert(campsDataCode.includes('570'), 'wiki_camps modules must contain 570');
   assert(campsDataCode.includes('unlockedPotSize: 84') || campsDataCode.includes('84'), 'Must unlock pot size 84');
   assert(campsDataCode.includes('diamonds: 200') || campsDataCode.includes('200'), 'Must award 200 diamonds');
   assert(campsDataCode.includes('1450000'), 'Must define upgradeShardCost 1,450,000');

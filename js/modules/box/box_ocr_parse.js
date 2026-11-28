@@ -551,17 +551,6 @@
         };
 
         try {
-          if (typeof window !== 'undefined' && window.OcrAiEngine && typeof window.OcrAiEngine.recognize === 'function' && window.OcrAiEngine.isLoaded && window.OcrAiEngine.isLoaded()) {
-            try {
-              const aiRet = await window.OcrAiEngine.recognize(img);
-              if (aiRet && aiRet.text) {
-                result = parsePokemonFromOcr(aiRet.text, [], allPokemonsRef, null);
-              }
-            } catch (aiErr) {
-              console.warn('[AI OCR Error, falling back to standard OCR]:', aiErr);
-            }
-          }
-
           if (!result.name && worker) {
             let compositeCanvas = null;
             let rgbSlots = [];

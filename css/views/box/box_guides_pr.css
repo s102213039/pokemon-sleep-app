@@ -1,0 +1,393 @@
+/* =========================================================
+   標準截圖指引卡片 (Standard Screenshot Guide Card)
+   ========================================================= */
+.box-screenshot-guide-card {
+  background: var(--bg-card-solid);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  margin-top: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s ease;
+}
+
+.box-screenshot-guide-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.box-guide-header {
+  padding: 10px 16px;
+  background: var(--bg-card-inner);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.box-guide-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.box-guide-icon {
+  color: var(--accent-blue);
+  flex-shrink: 0;
+}
+
+.box-guide-toggle-btn {
+  background: transparent;
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.box-guide-toggle-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-blue);
+  background: var(--bg-card-hover);
+}
+
+.box-guide-body {
+  padding: 16px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.box-guide-thumb-col {
+  width: 160px;
+  flex: 0 0 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.box-guide-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 19;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid var(--border-color);
+  cursor: pointer;
+  background: var(--bg-surface);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.box-guide-thumb-wrap:hover {
+  border-color: var(--accent-blue);
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.3);
+  transform: translateY(-2px);
+}
+
+.box-guide-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+}
+
+.box-guide-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.box-guide-thumb-wrap:hover .box-guide-thumb-overlay {
+  opacity: 1;
+}
+
+.box-guide-thumb-caption {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.box-guide-info-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.box-guide-subtitle {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.box-guide-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px 14px;
+}
+
+.box-guide-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.box-guide-num {
+  color: var(--accent-blue);
+  font-weight: 800;
+  font-family: monospace;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.box-guide-item-content strong {
+  color: var(--text-primary);
+  font-size: 12px;
+  margin-right: 4px;
+}
+
+.box-guide-item-content p {
+  margin: 2px 0 0 0;
+  color: var(--text-secondary);
+  font-size: 11.5px;
+}
+
+.box-guide-tips {
+  margin-top: 4px;
+  padding: 8px 12px;
+  background: rgba(56, 189, 248, 0.08);
+  border-left: 3px solid var(--accent-blue);
+  border-radius: 0 6px 6px 0;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.box-guide-tip-badge {
+  background: var(--accent-blue);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .box-guide-body {
+    flex-direction: column;
+    align-items: center;
+  }
+  .box-guide-thumb-col {
+    width: 140px;
+  }
+  .box-guide-items-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 截圖指引大圖 Lightbox 彈窗 */
+.box-guide-lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.box-guide-lightbox-dialog {
+  position: relative;
+  max-width: 90vw;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.box-guide-lightbox-img {
+  max-width: 100%;
+  max-height: 86vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.box-guide-lightbox-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 1.5px solid #475569;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.box-guide-lightbox-close:hover {
+  background: #ef4444;
+  border-color: #ef4444;
+}
+
+/* =========================================================
+   PR 潛力評級徽章 (RaenonX Percentile Ranking Badges)
+   ========================================================= */
+
+.box-pr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.pr-tier-sss {
+  background: linear-gradient(135deg, #f43f5e, #fb7185);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.pr-tier-ss {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.pr-tier-splus {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.pr-tier-s {
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.pr-tier-a {
+  background: linear-gradient(135deg, #22c55e, #10b981);
+  color: #ffffff;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.pr-tier-b {
+  background: rgba(148, 163, 184, 0.2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.pr-tier-c {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.pr-tier-d {
+  background: rgba(220, 38, 38, 0.25);
+  color: #ef4444;
+  border: 1px solid rgba(220, 38, 38, 0.5);
+}
+
+/* 滿級潛力副徽章 (小尺寸、一般較不明顯顏色、無高亮) */
+.box-pr-badge-potential {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.1 !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  background: rgba(148, 163, 184, 0.12) !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  letter-spacing: 0.2px;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.box-pr-summary-bar {
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+}
+
+.box-pr-summary-label {
+  font-weight: 700;
+  color: var(--accent-blue);
+  flex-shrink: 0;
+}
+
+.box-pr-summary-text {
+  color: var(--text-secondary);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+    官方活動與禮包時程甘特圖 (Gantt Schedule Timeline)
+   ========================================================= */
+
+.news-timeline-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px 12px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-lg);
+}

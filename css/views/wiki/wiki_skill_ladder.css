@@ -1,8 +1,5 @@
-/* =========================================================================
-   Skill Ladder Scoped Layout & Node Sizing Rules
-   ========================================================================= */
-
-/* Subpanel Flex & Single Frame Rule Compliance */
+/* 橫向天梯座標圖 (白底圓角陰影卡片樣式) */
+#wiki-subpanel-ingredients,
 #wiki-subpanel-skills_ladder {
   flex: 1;
   display: flex;
@@ -20,6 +17,11 @@
   flex-direction: column;
   min-height: 0;
 }
+
+
+/* =========================================================================
+   Skill Ladder Scoped Layout & Node Sizing Rules
+   ========================================================================= */
 
 /* Track Header & Ruler Spacer Synchronization (Desktop 68px, Mobile 56px) */
 .mobile-h5-app .wiki-skill-coordinate-ladder .skill-ladder-ruler-spacer,
@@ -328,90 +330,4 @@ body.skill-ranking-modal-open .wiki-skill-coordinate-ladder .ladder-track-row.ha
   #wiki-skill-ranking-modal .ing-rank-num.rank-3 {
     font-size: 10px !important;
   }
-}
-
-/* ==========================================================================
-   Light Themes (4 variants): Remove Harsh Dark-Mode Neon Glare on Ladder Icons
-   ========================================================================== */
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .node-avatar-img,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .node-avatar-img,
-[data-theme="midnight"][data-theme-inverted="true"] .node-avatar-img,
-[data-theme="onyx"][data-theme-inverted="true"] .node-avatar-img,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .node-avatar-img,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .node-avatar-img,
-[data-theme="midnight"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .node-avatar-img,
-[data-theme="onyx"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .node-avatar-img {
-  background: #ffffff;
-  border-color: rgba(100, 116, 139, 0.35);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1);
-}
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-node.node-top1 .node-avatar-img,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-node.node-top1 .node-avatar-img,
-[data-theme="midnight"][data-theme-inverted="true"] .ladder-node.node-top1 .node-avatar-img,
-[data-theme="onyx"][data-theme-inverted="true"] .ladder-node.node-top1 .node-avatar-img,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node.node-top1 .node-avatar-img,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node.node-top1 .node-avatar-img,
-[data-theme="midnight"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node.node-top1 .node-avatar-img,
-[data-theme="onyx"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node.node-top1 .node-avatar-img {
-  border: 2px solid #d97706;
-  box-shadow: 0 1px 2px rgba(180, 83, 9, 0.22);
-}
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-node.node-has-skill-draw .node-avatar-img,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-node.node-has-ing-select .node-avatar-img,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-node.node-has-skill-draw .node-avatar-img,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-node.node-has-ing-select .node-avatar-img,
-[data-theme="midnight"][data-theme-inverted="true"] .ladder-node.node-has-skill-draw .node-avatar-img,
-[data-theme="midnight"][data-theme-inverted="true"] .ladder-node.node-has-ing-select .node-avatar-img,
-[data-theme="onyx"][data-theme-inverted="true"] .ladder-node.node-has-skill-draw .node-avatar-img,
-[data-theme="onyx"][data-theme-inverted="true"] .ladder-node.node-has-ing-select .node-avatar-img {
-  border: 1.5px solid #7e22ce;
-  box-shadow: none;
-}
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-node.node-top1.node-has-skill-draw .node-avatar-img,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-node.node-top1.node-has-ing-select .node-avatar-img,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-node.node-top1.node-has-skill-draw .node-avatar-img,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-node.node-top1.node-has-ing-select .node-avatar-img,
-[data-theme="midnight"][data-theme-inverted="true"] .ladder-node.node-top1.node-has-skill-draw .node-avatar-img,
-[data-theme="midnight"][data-theme-inverted="true"] .ladder-node.node-top1.node-has-ing-select .node-avatar-img,
-[data-theme="onyx"][data-theme-inverted="true"] .ladder-node.node-top1.node-has-skill-draw .node-avatar-img,
-[data-theme="onyx"][data-theme-inverted="true"] .ladder-node.node-top1.node-has-ing-select .node-avatar-img {
-  border: 2px solid #d97706;
-  box-shadow: 0 0 0 1.5px rgba(126, 34, 206, 0.7);
-}
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .node-count-badge.badge-skill-draw,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .node-count-badge.badge-ing-select,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .node-count-badge.badge-skill-draw,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .node-count-badge.badge-ing-select,
-[data-theme="midnight"][data-theme-inverted="true"] .node-count-badge.badge-skill-draw,
-[data-theme="midnight"][data-theme-inverted="true"] .node-count-badge.badge-ing-select,
-[data-theme="onyx"][data-theme-inverted="true"] .node-count-badge.badge-skill-draw,
-[data-theme="onyx"][data-theme-inverted="true"] .node-count-badge.badge-ing-select {
-  box-shadow: none;
-}
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-wrapper,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node.group-selected .node-avatar-wrapper,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-wrapper,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node.group-selected .node-avatar-wrapper,
-[data-theme="midnight"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-wrapper,
-[data-theme="midnight"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node.group-selected .node-avatar-wrapper,
-[data-theme="onyx"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-wrapper,
-[data-theme="onyx"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node.group-selected .node-avatar-wrapper {
-  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.35);
-}
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-img,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node.group-selected .node-avatar-img,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-img,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .wiki-skill-coordinate-ladder .ladder-node.group-selected .node-avatar-img,
-[data-theme="midnight"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-img,
-[data-theme="midnight"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node.group-selected .node-avatar-img,
-[data-theme="onyx"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node.group-hover-active .node-avatar-img,
-[data-theme="onyx"][data-theme-inverted="true"] .wiki-skill-coordinate-ladder .ladder-node.group-selected .node-avatar-img {
-  border: 2px solid #0284c7 !important;
-  box-shadow: none !important;
 }

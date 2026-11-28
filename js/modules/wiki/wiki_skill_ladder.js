@@ -172,6 +172,23 @@
     onSkillLadderSearch(val);
   }
 
+  let _skillLadderSearchTimer = null;
+
+  function onSkillLadderSearchInput(val) {
+    const queryStr = (val || '').trim();
+    const clearBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
+      ? document.querySelectorAll('#skill-ladder-search-clear-btn')
+      : [];
+    clearBtns.forEach(b => {
+      b.style.display = queryStr ? 'inline-block' : 'none';
+    });
+    if (_skillLadderSearchTimer) clearTimeout(_skillLadderSearchTimer);
+    _skillLadderSearchTimer = setTimeout(() => {
+      _skillLadderSearchTimer = null;
+      onSkillLadderSearch(val);
+    }, 90);
+  }
+
   function onSkillLadderSearch(val) {
     skillLadderSearchQuery = (val || '').trim();
     const clearBtns = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
@@ -184,6 +201,7 @@
   }
 
   function clearSkillLadderSearch() {
+    if (_skillLadderSearchTimer) { clearTimeout(_skillLadderSearchTimer); _skillLadderSearchTimer = null; }
     skillLadderSearchQuery = '';
     const inputs = (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function')
       ? document.querySelectorAll('#skill-ladder-pkm-search-input')
@@ -712,7 +730,7 @@
                   #${rank}
                 </div>
                 <div class="ing-rank-avatar-box ${rankClass}" style="flex-shrink:0;">
-                  <img src="${item.iconUrl}" class="ing-rank-avatar-img rank-pkm-avatar" alt="${esc(item.pkmDisplayName)}" title="${esc(item.pkmDisplayName)}" loading="lazy">
+                  <img src="${item.iconUrl}" class="ing-rank-avatar-img rank-pkm-avatar" alt="${esc(item.pkmDisplayName)}" title="${esc(item.pkmDisplayName)}" loading="lazy" width="32" height="32" decoding="async">
                 </div>
                 <div class="skill-rank-meta-col" style="display:flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto;">
                   ${typeof getSkillLadderSpecialtyIcon === 'function' ? getSkillLadderSpecialtyIcon(item.specKey, item.specDisplay, 15) : `<span class="node-specialty-tag specialty-${item.specKey}" style="font-size:9.5px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,0.08);color:var(--accent-color, #38bdf8);">${esc(item.specDisplay)}</span>`}

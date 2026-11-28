@@ -240,7 +240,7 @@
             const iconUrl = ing.icon || (window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(ing.name) : '');
             return `
               <span class="lab-recipe-ing-chip" title="${escapeHtml(iDisp)} x${ing.count}">
-                ${iconUrl ? `<img src="${iconUrl}" class="lab-recipe-ing-icon" alt="${escapeHtml(iDisp)}">` : ''}
+                ${iconUrl ? `<img src="${iconUrl}" class="lab-recipe-ing-icon" alt="${escapeHtml(iDisp)}" width="18" height="18" loading="lazy" decoding="async">` : ''}
                 <span class="lab-recipe-ing-count">x${ing.count}</span>
               </span>
             `;
@@ -252,7 +252,7 @@
           return `
             <div class="lab-recipe-card ${catClass} ${isSelected ? 'selected' : ''}" onclick="window.AppraisalLab.onRecipePickerSelect('${escapeHtml(rNameCn)}')">
               <div class="lab-recipe-card-left">
-                ${r.icon ? `<img src="${r.icon}" class="lab-recipe-card-icon" alt="" loading="lazy">` : ''}
+                ${r.icon ? `<img src="${r.icon}" class="lab-recipe-card-icon" alt="" width="38" height="38" loading="lazy" decoding="async">` : ''}
                 <div class="lab-recipe-card-info">
                   <div class="lab-recipe-card-title-row">
                     <span class="lab-recipe-card-title">${escapeHtml(rNameDisplay)}</span>
@@ -299,7 +299,7 @@
           const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
           return `
             <button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === iName ? 'active' : ''}" data-recipe-ing="${escapeHtml(iName)}" title="${escapeHtml(iDisp)}">
-              ${icon ? `<img src="${icon}" class="lab-picker-filter-ing-img" alt="${escapeHtml(iDisp)}">` : `<span>${escapeHtml(iDisp)}</span>`}
+              ${icon ? `<img src="${icon}" class="lab-picker-filter-ing-img" alt="${escapeHtml(iDisp)}" width="18" height="18" loading="lazy" decoding="async">` : `<span>${escapeHtml(iDisp)}</span>`}
             </button>
           `;
         })
@@ -516,7 +516,7 @@
           const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
           return `
             <span class="lab-picker-ing-chip ${!s.unlocked ? 'is-locked' : ''}" title="Lv.${s.req}: ${escapeHtml(iDisp)}${!s.unlocked ? (window.I18N?.t?.('lab.t_locked_paren') ?? 'lab.t_locked_paren') : ''}">
-              ${icon ? `<img src="${icon}" class="lab-picker-ing-icon" alt="${escapeHtml(iDisp)}">` : `<span style="font-size:9px;color:var(--text-muted);">-</span>`}
+              ${icon ? `<img src="${icon}" class="lab-picker-ing-icon" alt="${escapeHtml(iDisp)}" width="20" height="20" loading="lazy" decoding="async">` : `<span style="font-size:9px;color:var(--text-muted);">-</span>`}
             </span>
           `;
         }).join('');
@@ -526,12 +526,12 @@
             ${isOccupied ? `<span class="lab-picker-occupied-badge">${window.I18N?.t?.('lab.t_in_compare_badge') ?? 'lab.t_in_compare_badge'}</span>` : ''}
             <div class="lab-picker-main">
               <div class="lab-picker-avatar">
-                <img src="${avatarUrl}" alt="${escapeHtml(pDisplayName)}" loading="lazy">
+                <img src="${avatarUrl}" alt="${escapeHtml(pDisplayName)}" width="44" height="44" loading="lazy" decoding="async">
                 <span class="lab-picker-lv">Lv.${item.level || 1}</span>
               </div>
               <div class="lab-picker-meta">
                 <div class="lab-picker-sub">
-                  ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berryDisp)}">` : ''}
+                  ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berryDisp)}" width="15" height="15" loading="lazy" decoding="async">` : ''}
                   ${specHtml}
                 </div>
                 <div class="lab-picker-ings">
@@ -561,7 +561,7 @@
         const bIcon = b.icon || '';
         return `
           <button type="button" class="lab-picker-berry-chip-btn ${currentBerryFilter === b.name ? 'active' : ''}" data-berry="${escapeHtml(b.name)}" title="${escapeHtml(bDisp)} (${escapeHtml(tDisp)})">
-            ${bIcon ? `<img src="${bIcon}" class="lab-picker-filter-berry-img" alt="${escapeHtml(bDisp)}">` : `<span>${escapeHtml(bDisp)}</span>`}
+            ${bIcon ? `<img src="${bIcon}" class="lab-picker-filter-berry-img" alt="${escapeHtml(bDisp)}" width="18" height="18" loading="lazy" decoding="async">` : `<span>${escapeHtml(bDisp)}</span>`}
           </button>
         `;
       })
@@ -574,7 +574,7 @@
         const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
         return `
           <button type="button" class="lab-picker-ing-chip-btn ${currentIngFilter === iName ? 'active' : ''}" data-ing="${escapeHtml(iName)}" title="${escapeHtml(iDisp)}">
-            ${icon ? `<img src="${icon}" class="lab-picker-filter-ing-img" alt="${escapeHtml(iDisp)}">` : `<span>${escapeHtml(iDisp)}</span>`}
+            ${icon ? `<img src="${icon}" class="lab-picker-filter-ing-img" alt="${escapeHtml(iDisp)}" width="18" height="18" loading="lazy" decoding="async">` : `<span>${escapeHtml(iDisp)}</span>`}
           </button>
         `;
       })

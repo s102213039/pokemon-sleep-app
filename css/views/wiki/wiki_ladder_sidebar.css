@@ -1,0 +1,468 @@
+/*  食材產量天梯榜 - 外部固定側邊篩選器 (Left Fixed Sidebar Filter - Pokédex Style) */
+.ladder-fixed-sidebar .sidebar-header {
+  position: relative;
+  overflow: visible !important;
+}
+
+.ladder-fixed-sidebar {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  bottom: 0;
+  width: 240px;
+  height: calc(100vh - 70px);
+  background-color: var(--bg-sidebar);
+  background-image: 
+    radial-gradient(at 0% 0%, var(--bg-radial-1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, var(--bg-radial-2) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, var(--bg-radial-3) 0px, transparent 50%);
+  background-attachment: fixed;
+  border-right: 1px solid var(--border-color);
+  border-top: none;
+  border-left: none;
+  border-bottom: none;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 95;
+  transform: translateX(0);
+  transition: transform 0.25s ease;
+  box-sizing: border-box;
+}
+
+.ladder-fixed-sidebar.collapsed {
+  transform: translateX(-100%);
+  box-shadow: none;
+}
+
+.ladder-fixed-sidebar .sidebar-scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 10px 40px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box !important;
+}
+
+/*  食材天梯側邊欄選項按鈕字體微調與單行防折行 (Compact Font Size & Single Line Display) */
+.ladder-fixed-sidebar .tag-btn {
+  font-size: 11.5px !important;
+  padding: 4.5px 3px !important;
+  white-space: nowrap !important;
+  letter-spacing: -0.25px !important;
+  min-height: 27px !important;
+}
+
+.ladder-fixed-sidebar .sidebar-final-evo-label {
+  padding: 4px 6px !important;
+}
+
+.ladder-fixed-sidebar .sidebar-final-evo-text {
+  font-size: 11.5px !important;
+  white-space: nowrap !important;
+  letter-spacing: -0.2px !important;
+}
+
+.ladder-switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ladder-switch-label input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ladder-switch-slider {
+  position: relative;
+  display: inline-block;
+  width: 28px;
+  height: 15px;
+  background: var(--bg-card-inner-subtle);
+  border-radius: 15px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.ladder-switch-slider::before {
+  position: absolute;
+  content: "";
+  height: 9px;
+  width: 9px;
+  left: 2px;
+  bottom: 2px;
+  background-color: var(--text-primary);
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.ladder-switch-label input:checked + .ladder-switch-slider {
+  background: var(--color-accent-gold);
+  border-color: var(--color-accent-gold);
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.35);
+}
+
+.ladder-switch-label input#ladder-speed-m-toggle:checked + .ladder-switch-slider {
+  background: #0284c7;
+  border-color: #0284c7;
+  box-shadow: 0 0 6px rgba(2, 132, 199, 0.35);
+}
+
+.ladder-switch-label input#ladder-nature-ing-toggle:checked + .ladder-switch-slider {
+  background: #10b981;
+  border-color: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.35);
+}
+
+.ladder-switch-label input#ladder-nature-speed-toggle:checked + .ladder-switch-slider {
+  background: #8b5cf6;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 6px rgba(139, 92, 246, 0.35);
+}
+
+.ladder-switch-label input#ladder-skill-draw-toggle:checked + .ladder-switch-slider,
+.ladder-top15-switch-label input#ladder-skill-draw-toggle:checked + .ladder-switch-slider {
+  background: #a855f7;
+  border-color: #a855f7;
+  box-shadow: 0 0 6px rgba(168, 85, 247, 0.4);
+}
+
+.ladder-switch-label input#ladder-skill-draw-toggle:checked ~ .ladder-switch-text,
+.ladder-top15-switch-label input#ladder-skill-draw-toggle:checked ~ .ladder-switch-text {
+  color: #c084fc;
+}
+
+.ladder-switch-label input:checked + .ladder-switch-slider::before {
+  transform: translateX(13px);
+  background-color: #ffffff;
+}
+
+.ladder-switch-text {
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ladder-switch-text.ing-m-text {
+  color: var(--color-accent-gold);
+}
+
+.ladder-switch-text.speed-m-text {
+  color: var(--color-accent-blue);
+}
+
+.ladder-switch-text.nature-ing-text {
+  color: #10b981;
+}
+
+.ladder-switch-text.nature-speed-text {
+  color: #c084fc;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-switch-text.nature-ing-text,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-switch-text.nature-ing-text, [data-theme="onyx"][data-theme-inverted="true"] .ladder-switch-text.nature-ing-text {
+  color: #047857;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-switch-text.nature-speed-text,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-switch-text.nature-speed-text, [data-theme="onyx"][data-theme-inverted="true"] .ladder-switch-text.nature-speed-text {
+  color: #6d28d9;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-switch-text.nature-ing-text {
+  color: #15803d;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-switch-text.nature-speed-text {
+  color: #5b21b6;
+}
+
+/*  樹果與食材基礎能量看板 (Image 1 實體化) */
+.values-board-container {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+}
+
+.values-col {
+  flex: 1;
+  max-width: 520px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.values-header-box {
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.values-col-berry .values-header-box {
+  background: var(--badge-cat-salad-bg);
+  border: 1px solid var(--badge-cat-salad-border);
+}
+
+.values-col-ing .values-header-box {
+  background: var(--badge-cat-curry-bg);
+  border: 1px solid var(--badge-cat-curry-border);
+}
+
+/* --- 樹果與食材基礎能量一覽 (極簡無名、無滾輪 18 格全展開) --- */
+.values-horizontal-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 2px;
+}
+
+.values-horizontal-section {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  padding: 16px 20px 18px;
+  box-shadow: var(--shadow-sm, 0 4px 16px rgba(0, 0, 0, 0.06));
+  box-sizing: border-box;
+}
+
+.values-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.values-section-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.values-section-badge {
+  font-size: 13px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.values-section-badge.berry-badge {
+  background: rgba(125, 211, 252, 0.12);
+  color: #7dd3fc;
+  border: 1px solid rgba(125, 211, 252, 0.25);
+}
+
+.values-section-badge.ing-badge {
+  background: rgba(253, 224, 71, 0.12);
+  color: #fde047;
+  border: 1px solid rgba(253, 224, 71, 0.25);
+}
+
+/* 樹果動態試算控制列 (等級滑桿與順果 2x 開關) */
+.berry-calc-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.berry-control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.berry-control-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.berry-level-tag {
+  color: #38bdf8;
+  font-weight: 800;
+  font-size: 13px;
+  font-feature-settings: 'tnum';
+  min-width: 38px;
+}
+
+.berry-island-tag {
+  color: #34d399;
+  font-weight: 800;
+  font-size: 13px;
+  font-feature-settings: 'tnum';
+  min-width: 42px;
+}
+
+.berry-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100px;
+  height: 6px;
+  background: rgba(56, 189, 248, 0.2);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.berry-slider:hover {
+  background: rgba(56, 189, 248, 0.35);
+}
+
+.berry-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #38bdf8;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
+  transition: transform 0.1s ease;
+}
+
+.berry-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.berry-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #38bdf8;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
+}
+
+.island-slider {
+  background: rgba(52, 211, 153, 0.2);
+}
+
+.island-slider:hover {
+  background: rgba(52, 211, 153, 0.35);
+}
+
+.island-slider::-webkit-slider-thumb {
+  background: #34d399;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.7);
+}
+
+.island-slider::-moz-range-thumb {
+  background: #34d399;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.7);
+}
+
+.berry-switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.berry-switch-label input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.berry-switch-slider {
+  position: relative;
+  display: inline-block;
+  width: 32px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  transition: background-color 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.berry-switch-slider::before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.berry-switch-label input:checked + .berry-switch-slider {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+
+.berry-switch-label input:checked + .berry-switch-slider::before {
+  transform: translateX(14px);
+}
+
+.berry-switch-text {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.values-compact-grid {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 4px 0 2px;
+}
+
+.values-berry-grid {
+  grid-template-columns: repeat(18, minmax(0, 1fr));
+}
+
+.values-ing-grid {
+  grid-template-columns: repeat(19, minmax(0, 1fr));
+}
+
+.value-compact-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 4px 2px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  cursor: pointer;
+  position: relative;
+  min-width: 0;
+}

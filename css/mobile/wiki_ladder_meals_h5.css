@@ -1,0 +1,437 @@
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip {
+  background: transparent;
+  border: none;
+  color: #0f172a;
+  box-shadow: none;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-banner-ing-count,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-banner-ing-count,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-banner-ing-count {
+  color: #0284c7;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-banner-ing-count {
+  color: #334155;
+}
+
+/* 2. Highlighted Track Row in Light Theme */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-track-row.ladder-track-highlighted,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-track-row.ladder-track-highlighted,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-track-row.ladder-track-highlighted,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-track-row.ladder-track-highlighted,
+.ladder-tail-track-row.ladder-track-highlighted {
+  background: transparent !important;
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+/* 3. Modal Components in Light Theme */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-cat-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-cat-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-cat-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-cat-btn {
+  background: #f1f5f9;
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #475569;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-cat-btn:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-cat-btn:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-cat-btn:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-cat-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-card,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-card,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-card {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-card:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-card:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-card:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-card:hover {
+  background: #f8fafc;
+  border-color: #0284c7;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-card.selected,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-card.selected,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-card.selected {
+  background: #f0f9ff;
+  border-color: #0284c7;
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.18);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-card.selected {
+  background: #f1f5f9;
+  border-color: #475569;
+  box-shadow: 0 0 12px rgba(71, 85, 105, 0.18);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-icon,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-icon,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-icon,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-icon {
+  background: transparent;
+  border: none;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-active-pill,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-active-pill,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-active-pill {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #7dd3fc;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-active-pill {
+  background: #e2e8f0;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-energy-num,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-energy-num,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-energy-num,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-energy-num {
+  color: #b45309;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-ing-chip,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-ing-chip {
+  background: transparent;
+  border: none;
+  color: #334155;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip .ing-chip-count,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-ing-chip .ing-chip-count,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-ing-chip .ing-chip-count {
+  color: #0284c7;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip .ing-chip-count {
+  color: #334155;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-modal-footer,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-modal-footer,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-modal-footer,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-modal-footer {
+  background: #f8fafc;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-clear,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-clear,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-header-clear-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-header-clear-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-header-clear-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-header-clear-btn {
+  background: #fee2e2 !important;
+  border: 1px solid #fca5a5 !important;
+  color: #b91c1c !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-clear:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-clear:hover,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-header-clear-btn:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-header-clear-btn:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-header-clear-btn:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-header-clear-btn:hover {
+  background: #fecaca !important;
+  color: #991b1b !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-cancel,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-cancel {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  color: #0f172a;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-cancel:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-cancel:hover {
+  background: #f1f5f9;
+}
+
+/* 4. 3-Meal Passing Line in Light Theme */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-passing-line,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-passing-line,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-passing-line {
+  background: var(--ladder-passing-color-light, #d97706);
+  box-shadow: 0 0 4px rgba(217, 119, 6, 0.35);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-passing-badge,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-passing-badge,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-passing-badge {
+  background: #fffbeb;
+  border-color: var(--ladder-passing-color-light, #d97706);
+  color: var(--ladder-passing-color-light, #92400e);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-passing-line {
+  background: var(--ladder-passing-color-light, #b45309);
+  box-shadow: 0 0 4px rgba(180, 83, 9, 0.3);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-passing-badge {
+  background: #fef3c7;
+  border-color: var(--ladder-passing-color-light, #b45309);
+  color: var(--ladder-passing-color-light, #78350f);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.mobile-h5-app .ladder-passing-badge {
+  font-size: 8.5px !important;
+  padding: 0 3px !important;
+  top: 1px !important;
+}
+
+/* Mobile H5 Condensed Single-Row Recipe Banner */
+.mobile-h5-app .ladder-recipe-banner,
+.mobile-h5-html .ladder-recipe-banner {
+  padding: 4px 10px;
+  gap: 8px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  min-height: 42px;
+  height: auto;
+}
+
+.mobile-h5-app .ladder-recipe-banner-left,
+.mobile-h5-html .ladder-recipe-banner-left {
+  flex-shrink: 0;
+}
+
+.mobile-h5-app .ladder-recipe-banner-icon,
+.mobile-h5-html .ladder-recipe-banner-icon {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 8px;
+}
+
+.mobile-h5-app .ladder-recipe-banner-recipe-chip,
+.mobile-h5-html .ladder-recipe-banner-recipe-chip {
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 旁邊的料理名稱與類型還有基礎能量都不要了 */
+.mobile-h5-app .ladder-recipe-banner-text,
+.mobile-h5-html .ladder-recipe-banner-text {
+  display: none !important;
+}
+
+/* 直接把下方的食材圖示以及數量拿上來，做好排版 */
+.mobile-h5-app .ladder-recipe-banner-ings,
+.mobile-h5-html .ladder-recipe-banner-ings {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 5px !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow-x: auto !important;
+  flex-wrap: nowrap !important;
+  border-top: none !important;
+  padding-top: 0 !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.mobile-h5-app .ladder-recipe-banner-ings::-webkit-scrollbar,
+.mobile-h5-html .ladder-recipe-banner-ings::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .ladder-recipe-banner-ing-chip,
+.mobile-h5-html .ladder-recipe-banner-ing-chip {
+  padding: 0 3px 0 0 !important;
+  gap: 3px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .ladder-banner-ing-icon,
+.mobile-h5-html .ladder-banner-ing-icon {
+  width: 21px !important;
+  height: 21px !important;
+}
+
+.mobile-h5-app .ladder-banner-ing-count,
+.mobile-h5-html .ladder-banner-ing-count {
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .ladder-recipe-banner-clear-btn,
+.mobile-h5-html .ladder-recipe-banner-clear-btn {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+@media (max-width: 768px) {
+  .ladder-recipe-banner {
+    padding: 4px 10px;
+    gap: 8px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    min-height: 42px;
+    height: auto;
+  }
+
+  .ladder-recipe-banner-left {
+    flex-shrink: 0;
+  }
+
+  .ladder-recipe-banner-icon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 8px;
+  }
+
+  .ladder-recipe-banner-recipe-chip {
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .ladder-recipe-banner-text {
+    display: none !important;
+  }
+
+  .ladder-recipe-banner-ings {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 5px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    border-top: none !important;
+    padding-top: 0 !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .ladder-recipe-banner-ings::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .ladder-recipe-banner-ing-chip {
+    padding: 0 3px 0 0 !important;
+    gap: 3px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    flex-shrink: 0 !important;
+  }
+
+  .ladder-banner-ing-icon {
+    width: 21px !important;
+    height: 21px !important;
+  }
+
+  .ladder-banner-ing-count {
+    font-size: 11.5px !important;
+  }
+
+  .ladder-recipe-banner-clear-btn {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* 8-Theme Tooltip Yield/Note & Mobile Header Brand Contrast Overrides */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-node-tooltip .tooltip-detail .text-success,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-node-tooltip .tooltip-detail .text-success,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-detail .text-success,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-detail .text-success {
+  color: #047857 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-node-tooltip .tooltip-note,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-node-tooltip .tooltip-note,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-note,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-note {
+  color: #0369a1;
+}
+
+[data-theme="emerald"][data-theme-inverted="true"] .ladder-node-tooltip .tooltip-note {
+  color: #cbd5e1;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .mobile-app-header .mobile-brand-title,
+[data-theme="emerald"][data-theme-inverted="true"] .mobile-app-header .mobile-brand-title {
+  background: linear-gradient(135deg, #cbd5e1 0%, #f8fafc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #f8fafc;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-app-header .mobile-brand-title {
+  background: linear-gradient(135deg, #0369a1 0%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #0369a1;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-app-header .mobile-brand-title {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #1e293b;
+}
+
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-app-header .mobile-brand-title {
+  background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #0369a1;
+}

@@ -1322,319 +1322,6 @@
     }
   };
 
-  // 屬性名稱官方英中對照
-  const TYPE_NAMES = {
-    '一般': { 'zh-TW': '一般', 'en-US': 'Normal' },
-    '火': { 'zh-TW': '火', 'en-US': 'Fire' },
-    '水': { 'zh-TW': '水', 'en-US': 'Water' },
-    '電': { 'zh-TW': '電', 'en-US': 'Electric' },
-    '草': { 'zh-TW': '草', 'en-US': 'Grass' },
-    '冰': { 'zh-TW': '冰', 'en-US': 'Ice' },
-    '格鬥': { 'zh-TW': '格鬥', 'en-US': 'Fighting' },
-    '毒': { 'zh-TW': '毒', 'en-US': 'Poison' },
-    '地面': { 'zh-TW': '地面', 'en-US': 'Ground' },
-    '飛行': { 'zh-TW': '飛行', 'en-US': 'Flying' },
-    '超能力': { 'zh-TW': '超能力', 'en-US': 'Psychic' },
-    '超能': { 'zh-TW': '超能', 'en-US': 'Psychic' },
-    '蟲': { 'zh-TW': '蟲', 'en-US': 'Bug' },
-    '岩石': { 'zh-TW': '岩石', 'en-US': 'Rock' },
-    '幽靈': { 'zh-TW': '幽靈', 'en-US': 'Ghost' },
-    '龍': { 'zh-TW': '龍', 'en-US': 'Dragon' },
-    '惡': { 'zh-TW': '惡', 'en-US': 'Dark' },
-    '鋼': { 'zh-TW': '鋼', 'en-US': 'Steel' },
-    '妖精': { 'zh-TW': '妖精', 'en-US': 'Fairy' }
-  };
-
-  // 專長類型官方英中對照
-  const SPECIALTY_NAMES = {
-    '樹果': { 'zh-TW': '樹果', 'en-US': 'Berries' },
-    '樹果型': { 'zh-TW': '樹果型', 'en-US': 'Berries' },
-    '食材': { 'zh-TW': '食材', 'en-US': 'Ingredients' },
-    '食材型': { 'zh-TW': '食材型', 'en-US': 'Ingredients' },
-    '技能': { 'zh-TW': '技能', 'en-US': 'Skills' },
-    '技能型': { 'zh-TW': '技能型', 'en-US': 'Skills' },
-    '全能': { 'zh-TW': '全能', 'en-US': 'All-Rounder' },
-    '全能型': { 'zh-TW': '全能型', 'en-US': 'All-Rounder' },
-    '全部': { 'zh-TW': '全能', 'en-US': 'All-Rounder' }
-  };
-
-  // 食材名稱官方英中對照 (19種食材全收錄)
-  const INGREDIENT_NAMES = {
-    '特選蘋果': { 'zh-TW': '特選蘋果', 'en-US': 'Fancy Apple' },
-    '哞哞鮮奶': { 'zh-TW': '哞哞鮮奶', 'en-US': 'Moomoo Milk' },
-    '純粹鮮奶': { 'zh-TW': '純粹鮮奶', 'en-US': 'Moomoo Milk' },
-    '萌綠大豆': { 'zh-TW': '萌綠大豆', 'en-US': 'Greengrass Soybeans' },
-    '甜甜蜜': { 'zh-TW': '甜甜蜜', 'en-US': 'Honey' },
-    '豆製肉': { 'zh-TW': '豆製肉', 'en-US': 'Bean Sausage' },
-    '暖暖薑': { 'zh-TW': '暖暖薑', 'en-US': 'Warming Ginger' },
-    '好眠番茄': { 'zh-TW': '好眠番茄', 'en-US': 'Snoozy Tomato' },
-    '特選蛋': { 'zh-TW': '特選蛋', 'en-US': 'Fancy Egg' },
-    '純粹油': { 'zh-TW': '純粹油', 'en-US': 'Pure Oil' },
-    '窩心洋芋': { 'zh-TW': '窩心洋芋', 'en-US': 'Soft Potato' },
-    '火辣香草': { 'zh-TW': '火辣香草', 'en-US': 'Fiery Herb' },
-    '萌綠玉米': { 'zh-TW': '萌綠玉米', 'en-US': 'Greengrass Corn' },
-    '放鬆可可': { 'zh-TW': '放鬆可可', 'en-US': 'Soothing Cacao' },
-    '醒腦咖啡豆': { 'zh-TW': '醒腦咖啡豆', 'en-US': 'Rousing Coffee' },
-    '嫩亮酪梨': { 'zh-TW': '嫩亮酪梨', 'en-US': 'Glossy Avocado' },
-    '品鮮蘑菇': { 'zh-TW': '品鮮蘑菇', 'en-US': 'Tasty Mushroom' },
-    '粗枝大蔥': { 'zh-TW': '粗枝大蔥', 'en-US': 'Large Leek' },
-    '沉甸甸南瓜': { 'zh-TW': '沉甸甸南瓜', 'en-US': 'Plump Pumpkin' },
-    '美味尾巴': { 'zh-TW': '美味尾巴', 'en-US': 'Slowpoke Tail' },
-    '一口堅果': { 'zh-TW': '一口堅果', 'zh-CN': '一口坚果', 'en-US': 'Snackable Nuts' }
-  };
-
-  // 樹果名稱官方英中對照 (18種屬性樹果全收錄)
-  const BERRY_NAMES = {
-    '藍異果': { 'zh-TW': '藍異果', 'en-US': 'Pamtre Berry' },
-    '木子果': { 'zh-TW': '木子果', 'en-US': 'Lum Berry' },
-    '芭亞果': { 'zh-TW': '芭亞果', 'en-US': 'Lum Berry' },
-    '椰木果': { 'zh-TW': '椰木果', 'en-US': 'Pamtre Berry' },
-    '異奇果': { 'zh-TW': '異奇果', 'en-US': 'Grepa Berry' },
-    '檬果': { 'zh-TW': '檬果', 'en-US': 'Bluk Berry' },
-    '桃桃果': { 'zh-TW': '桃桃果', 'en-US': 'Pecha Berry' },
-    '芒念果': { 'zh-TW': '芒念果', 'en-US': 'Mago Berry' },
-    '芒芒果': { 'zh-TW': '芒芒果', 'en-US': 'Mago Berry' },
-    '蘋野果': { 'zh-TW': '蘋野果', 'en-US': 'Leppa Berry' },
-    '櫻子果': { 'zh-TW': '櫻子果', 'en-US': 'Cheri Berry' },
-    '柿仔果': { 'zh-TW': '柿仔果', 'en-US': 'Persim Berry' },
-    '勿花果': { 'zh-TW': '勿花果', 'en-US': 'Figy Berry' },
-    '文柚果': { 'zh-TW': '文柚果', 'en-US': 'Sitrus Berry' },
-    '榴石果': { 'zh-TW': '榴石果', 'en-US': 'Durin Berry' },
-    '墨莓果': { 'zh-TW': '墨莓果', 'en-US': 'Durin Berry' },
-    '橙橙果': { 'zh-TW': '橙橙果', 'en-US': 'Oran Berry' },
-    '芭拉果': { 'zh-TW': '芭拉果', 'en-US': 'Wiki Berry' },
-    '零餘果': { 'zh-TW': '零餘果', 'en-US': 'Chesto Berry' },
-    '生薑果': { 'zh-TW': '生薑果', 'en-US': 'Rawst Berry' },
-    '靛莓果': { 'zh-TW': '靛莓果', 'en-US': 'Belue Berry' },
-    '巧可果': { 'zh-TW': '巧可果', 'en-US': 'Yache Berry' },
-    '番荔果': { 'zh-TW': '番荔果', 'en-US': 'Magost Berry' }
-  };
-
-  // 性格名稱官方英中對照 (25種全收錄)
-  const NATURE_NAMES = {
-    '固執': { 'zh-TW': '固執', 'en-US': 'Adamant' },
-    '勇敢': { 'zh-TW': '勇敢', 'en-US': 'Brave' },
-    '怕寂寞': { 'zh-TW': '怕寂寞', 'en-US': 'Lonely' },
-    '頑皮': { 'zh-TW': '頑皮', 'en-US': 'Naughty' },
-    '大膽': { 'zh-TW': '大膽', 'en-US': 'Bold' },
-    '淘氣': { 'zh-TW': '淘氣', 'en-US': 'Impish' },
-    '悠閒': { 'zh-TW': '悠閒', 'en-US': 'Relaxed' },
-    '樂天': { 'zh-TW': '樂天', 'en-US': 'Lax' },
-    '內斂': { 'zh-TW': '內斂', 'en-US': 'Modest' },
-    '慢吞吞': { 'zh-TW': '慢吞吞', 'en-US': 'Mild' },
-    '冷靜': { 'zh-TW': '冷靜', 'en-US': 'Quiet' },
-    '馬虎': { 'zh-TW': '馬虎', 'en-US': 'Rash' },
-    '溫和': { 'zh-TW': '溫和', 'en-US': 'Calm' },
-    '溫順': { 'zh-TW': '溫順', 'en-US': 'Gentle' },
-    '慎重': { 'zh-TW': '慎重', 'en-US': 'Careful' },
-    '自大': { 'zh-TW': '自大', 'en-US': 'Sassy' },
-    '膽小': { 'zh-TW': '膽小', 'en-US': 'Timid' },
-    '急躁': { 'zh-TW': '急躁', 'en-US': 'Hasty' },
-    '爽朗': { 'zh-TW': '爽朗', 'en-US': 'Jolly' },
-    '天真': { 'zh-TW': '天真', 'en-US': 'Naive' },
-    '坦率': { 'zh-TW': '坦率', 'en-US': 'Hardy' },
-    '認真': { 'zh-TW': '認真', 'en-US': 'Docile' },
-    '害羞': { 'zh-TW': '害羞', 'en-US': 'Bashful' },
-    '浮躁': { 'zh-TW': '浮躁', 'en-US': 'Quirky' },
-    '勤奮': { 'zh-TW': '勤奮', 'en-US': 'Serious' }
-  };
-
-  // 主技能官方英中對照 (包含基礎名稱、變體招式與神獸專屬 - 嚴格遵照官方 Sleep 英文命名)
-  const MAIN_SKILL_NAMES = {
-    // 基礎主技能系列
-    '能量填充S': { 'zh-TW': '能量填充S', 'en-US': 'Charge Strength S' },
-    '能量填充S (固定)': { 'zh-TW': '能量填充S (固定)', 'en-US': 'Charge Strength S (Fixed)' },
-    '能量填充S（固定）': { 'zh-TW': '能量填充S（固定）', 'en-US': 'Charge Strength S (Fixed)' },
-    '能量填充S (固定值)': { 'zh-TW': '能量填充S (固定值)', 'en-US': 'Charge Strength S (Fixed)' },
-    '能量填充S (隨機/變動值)': { 'zh-TW': '能量填充S (隨機/變動值)', 'en-US': 'Charge Strength S (Random)' },
-    '能量填充S (隨機)': { 'zh-TW': '能量填充S (隨機)', 'en-US': 'Charge Strength S (Random)' },
-    '能量填充S（隨機）': { 'zh-TW': '能量填充S（隨機）', 'en-US': 'Charge Strength S (Random)' },
-    '能量填充M': { 'zh-TW': '能量填充M', 'en-US': 'Charge Strength M' },
-    '能量填充M (固定)': { 'zh-TW': '能量填充M (固定)', 'en-US': 'Charge Strength M (Fixed)' },
-    '能量填充M（固定）': { 'zh-TW': '能量填充M（固定）', 'en-US': 'Charge Strength M (Fixed)' },
-    '能量填充M (固定值)': { 'zh-TW': '能量填充M (固定值)', 'en-US': 'Charge Strength M (Fixed)' },
-    
-    '食材獲取S': { 'zh-TW': '食材獲取S', 'en-US': 'Ingredient Magnet S' },
-    '食材獲取M': { 'zh-TW': '食材獲取M', 'en-US': 'Ingredient Magnet M' },
-    '食材精選S': { 'zh-TW': '食材精選S', 'en-US': 'Ingredient Selection S' },
-    '食材精選': { 'zh-TW': '食材精選', 'en-US': 'Ingr. Selection' },
-    '食材隨機S': { 'zh-TW': '食材隨機S', 'en-US': 'Random Ingredients S' },
-    
-    '料理強化S': { 'zh-TW': '料理強化S', 'en-US': 'Cooking Power-Up S' },
-    '料理強化S (擴充鍋子容量)': { 'zh-TW': '料理強化S (擴充鍋子容量)', 'en-US': 'Cooking Power-Up S' },
-    '料理擴大S': { 'zh-TW': '料理擴大S', 'en-US': 'Cooking Power-Up S' },
-    '料理成功S': { 'zh-TW': '料理成功S', 'en-US': 'Tasty Chance S' },
-    '料理成功S (漂亮成功率提升)': { 'zh-TW': '料理成功S (漂亮成功率提升)', 'en-US': 'Tasty Chance S' },
-    '料理成功率提升S': { 'zh-TW': '料理成功率提升S', 'en-US': 'Tasty Chance S' },
-    
-    '活力填充S': { 'zh-TW': '活力填充S', 'en-US': 'Charge Energy S' },
-    '活力充填S': { 'zh-TW': '活力充填S', 'en-US': 'Charge Energy S' },
-    '自體活力回復S': { 'zh-TW': '自體活力回復S', 'en-US': 'Charge Energy S' },
-    '活力療癒S': { 'zh-TW': '活力療癒S', 'en-US': 'Energizing Cheer S' },
-    '活力充沛S': { 'zh-TW': '活力充沛S', 'en-US': 'Energizing Cheer S' },
-    '活力全體療癒S': { 'zh-TW': '活力全體療癒S', 'en-US': 'Energy for Everyone S' },
-    '全體療癒S': { 'zh-TW': '全體療癒S', 'en-US': 'Energy for Everyone S' },
-    '全體能量回復S': { 'zh-TW': '全體能量回復S', 'en-US': 'Energy for Everyone S' },
-    
-    '幫手支援S': { 'zh-TW': '幫手支援S', 'en-US': 'Extra Helpful S' },
-    '幫手加速': { 'zh-TW': '幫手加速', 'en-US': 'Helper Boost' },
-    '幫手加速 (屬性) (神獸專屬)': { 'zh-TW': '幫手加速 (屬性) (神獸專屬)', 'en-US': 'Helper Boost' },
-    '幫手加速（屬性）（神獸專屬）': { 'zh-TW': '幫手加速（屬性）（神獸專屬）', 'en-US': 'Helper Boost' },
-    '幫手加速（電）': { 'zh-TW': '幫手加速（電）', 'en-US': 'Helper Boost (Electric)' },
-    '幫手加速 (電)': { 'zh-TW': '幫手加速 (電)', 'en-US': 'Helper Boost (Electric)' },
-    '幫手加速（火）': { 'zh-TW': '幫手加速（火）', 'en-US': 'Helper Boost (Fire)' },
-    '幫手加速 (火)': { 'zh-TW': '幫手加速 (火)', 'en-US': 'Helper Boost (Fire)' },
-    '幫手加速（水）': { 'zh-TW': '幫手加速（水）', 'en-US': 'Helper Boost (Water)' },
-    '幫手加速 (水)': { 'zh-TW': '幫手加速 (水)', 'en-US': 'Helper Boost (Water)' },
-    '雷公幫手支援': { 'zh-TW': '雷公幫手支援', 'en-US': 'Raikou Helper Boost' },
-    '炎帝幫手支援': { 'zh-TW': '炎帝幫手支援', 'en-US': 'Entei Helper Boost' },
-    '水君幫手支援': { 'zh-TW': '水君幫手支援', 'en-US': 'Suicune Helper Boost' },
-    '傳說降臨（雷公）': { 'zh-TW': '傳說降臨（雷公）', 'en-US': 'Raikou Helper Boost' },
-    '傳說降臨（炎帝）': { 'zh-TW': '傳說降臨（炎帝）', 'en-US': 'Entei Helper Boost' },
-    '傳說降臨（水君）': { 'zh-TW': '傳說降臨（水君）', 'en-US': 'Suicune Helper Boost' },
-    
-    '樹果遽增': { 'zh-TW': '樹果遽增', 'en-US': 'Berry Burst' },
-    '樹果擴增': { 'zh-TW': '樹果擴增', 'en-US': 'Berry Burst' },
-    '樹果領域': { 'zh-TW': '樹果領域', 'en-US': 'Berry Field' },
-    '精神擊破': { 'zh-TW': '精神擊破', 'en-US': 'Psystrike' },
-    '精神擊破（樹果領域）': { 'zh-TW': '精神擊破', 'en-US': 'Psystrike' },
-    '精神擊破 (樹果領域)': { 'zh-TW': '精神擊破', 'en-US': 'Psystrike' },
-    '流星群': { 'zh-TW': '流星群', 'en-US': 'Draco Meteor' },
-    '流星群（樹果遽增）': { 'zh-TW': '流星群', 'en-US': 'Draco Meteor' },
-    '流星群 (樹果遽增)': { 'zh-TW': '流星群', 'en-US': 'Draco Meteor' },
-    '畫皮': { 'zh-TW': '畫皮', 'en-US': 'Disguise' },
-    '畫皮（樹果遽增）': { 'zh-TW': '畫皮', 'en-US': 'Disguise' },
-    '畫皮 (樹果遽增)': { 'zh-TW': '畫皮', 'en-US': 'Disguise' },
-    
-    '夢之碎片獲取S': { 'zh-TW': '夢之碎片獲取S', 'en-US': 'Dream Shard Magnet S' },
-    '碎片獲取S': { 'zh-TW': '碎片獲取S', 'en-US': 'Dream Shard Magnet S' },
-    '夢之碎片獲取S (固定)': { 'zh-TW': '夢之碎片獲取S (固定)', 'en-US': 'Dream Shard Magnet S (Fixed)' },
-    '夢之碎片獲取S（固定）': { 'zh-TW': '夢之碎片獲取S（固定）', 'en-US': 'Dream Shard Magnet S (Fixed)' },
-    '夢之碎片獲取S (固定值)': { 'zh-TW': '夢之碎片獲取S (固定值)', 'en-US': 'Dream Shard Magnet S (Fixed)' },
-    '夢之碎片獲取S (隨機)': { 'zh-TW': '夢之碎片獲取S (隨機)', 'en-US': 'Dream Shard Magnet S (Random)' },
-    '夢之碎片獲取S（隨機）': { 'zh-TW': '夢之碎片獲取S（隨機）', 'en-US': 'Dream Shard Magnet S (Random)' },
-    '夢之碎片獲取S (隨機/變動值)': { 'zh-TW': '夢之碎片獲取S (隨機/變動值)', 'en-US': 'Dream Shard Magnet S (Random)' },
-    '波導彈': { 'zh-TW': '波導彈', 'en-US': 'Aura Sphere' },
-    '波導彈（夢之碎片獲取S）': { 'zh-TW': '波導彈', 'en-US': 'Aura Sphere' },
-    '波導彈 (夢之碎片獲取S)': { 'zh-TW': '波導彈', 'en-US': 'Aura Sphere' },
-    
-    '揮指': { 'zh-TW': '揮指', 'en-US': 'Metronome' },
-    '揮指（隨機技能）': { 'zh-TW': '揮指（隨機技能）', 'en-US': 'Metronome (Random)' },
-    '揮指 (隨機技能)': { 'zh-TW': '揮指 (隨機技能)', 'en-US': 'Metronome (Random)' },
-    '十項全能': { 'zh-TW': '十項全能', 'en-US': 'All-Rounder' },
-    '十項全能（揮指）[可替換]': { 'zh-TW': '十項全能', 'en-US': 'All-Rounder' },
-    '十項全能 (揮指) [可替換]': { 'zh-TW': '十項全能', 'en-US': 'All-Rounder' },
-    
-    '變身': { 'zh-TW': '變身', 'en-US': 'Transform' },
-    '技能複製': { 'zh-TW': '技能複製', 'en-US': 'Skill Copy' },
-    '變身（技能複製）': { 'zh-TW': '變身', 'en-US': 'Transform' },
-    '變身 (技能複製)': { 'zh-TW': '變身', 'en-US': 'Transform' },
-    '模仿': { 'zh-TW': '模仿', 'en-US': 'Mimic' },
-    '模仿（技能複製）': { 'zh-TW': '模仿', 'en-US': 'Mimic' },
-    '模仿 (技能複製)': { 'zh-TW': '模仿', 'en-US': 'Mimic' },
-    
-    '月光': { 'zh-TW': '月光', 'en-US': 'Moonlight' },
-    '月光（活力填充S）': { 'zh-TW': '月光', 'en-US': 'Moonlight' },
-    '月光 (活力填充S)': { 'zh-TW': '月光', 'en-US': 'Moonlight' },
-    '月光（活力充填S）': { 'zh-TW': '月光', 'en-US': 'Moonlight' },
-    '新月祈禱': { 'zh-TW': '新月祈禱', 'en-US': 'Lunar Prayer' },
-    '新月祈禱（活力全體療癒S）': { 'zh-TW': '新月祈禱', 'en-US': 'Lunar Prayer' },
-    '新月祈禱 (活力全體療癒S)': { 'zh-TW': '新月祈禱', 'en-US': 'Lunar Prayer' },
-    
-    '蓄力': { 'zh-TW': '蓄力', 'en-US': 'Stockpile' },
-    '蓄力（能量填充S）': { 'zh-TW': '蓄力', 'en-US': 'Stockpile' },
-    '蓄力 (能量填充S)': { 'zh-TW': '蓄力', 'en-US': 'Stockpile' },
-    
-    '夢魘': { 'zh-TW': '夢魘', 'en-US': 'Bad Dreams' },
-    '夢魘（能量填充M）': { 'zh-TW': '夢魘', 'en-US': 'Bad Dreams' },
-    '夢魘 (能量填充M)': { 'zh-TW': '夢魘', 'en-US': 'Bad Dreams' },
-    '達克萊伊專屬': { 'zh-TW': '達克萊伊專屬', 'en-US': 'Darkrai Nightmare' },
-    
-    '健美': { 'zh-TW': '健美', 'en-US': 'Bulk Up' },
-    '健美（料理輔助S）': { 'zh-TW': '健美', 'en-US': 'Bulk Up' },
-    '健美 (料理輔助S)': { 'zh-TW': '健美', 'en-US': 'Bulk Up' },
-    '魔法火焰': { 'zh-TW': '魔法火焰', 'en-US': 'Mystical Fire' },
-    '魔法火焰（料理躍進S）': { 'zh-TW': '魔法火焰', 'en-US': 'Mystical Fire' },
-    '魔法火焰 (料理躍進S)': { 'zh-TW': '魔法火焰', 'en-US': 'Mystical Fire' },
-    '樹果汁': { 'zh-TW': '樹果汁', 'en-US': 'Berry Juice' },
-    '樹果汁（活力全體療癒S）': { 'zh-TW': '樹果汁', 'en-US': 'Berry Juice' },
-    '樹果汁 (活力全體療癒S)': { 'zh-TW': '樹果汁', 'en-US': 'Berry Juice' },
-    '禮物': { 'zh-TW': '禮物', 'en-US': 'Present' },
-    '禮物（食材獲取S）': { 'zh-TW': '禮物', 'en-US': 'Present' },
-    '禮物 (食材獲取S)': { 'zh-TW': '禮物', 'en-US': 'Present' },
-    '怪力鉗': { 'zh-TW': '怪力鉗', 'en-US': 'Hyper Cutter' },
-    '怪力钳': { 'zh-TW': '怪力鉗', 'en-US': 'Hyper Cutter' },
-    '怪力鉗（食材精選S）': { 'zh-TW': '怪力鉗', 'en-US': 'Hyper Cutter' },
-    '怪力鉗 (食材精選S)': { 'zh-TW': '怪力鉗', 'en-US': 'Hyper Cutter' },
-    '怪力钳（食材精選S）': { 'zh-TW': '怪力鉗', 'en-US': 'Hyper Cutter' },
-    '怪力钳 (食材精選S)': { 'zh-TW': '怪力鉗', 'en-US': 'Hyper Cutter' },
-    '超幸運': { 'zh-TW': '超幸運', 'en-US': 'Super Luck' },
-    '超幸運（食材精選S）': { 'zh-TW': '超幸運', 'en-US': 'Super Luck' },
-    '超幸運 (食材精選S)': { 'zh-TW': '超幸運', 'en-US': 'Super Luck' },
-    '正電': { 'zh-TW': '正電', 'en-US': 'Plus' },
-    '正電（食材獲取S）': { 'zh-TW': '正電', 'en-US': 'Plus' },
-    '正電 (食材獲取S)': { 'zh-TW': '正電', 'en-US': 'Plus' },
-    '負電': { 'zh-TW': '負電', 'en-US': 'Minus' },
-    '負電（料理強化S）': { 'zh-TW': '負電', 'en-US': 'Minus' },
-    '負電 (料理強化S)': { 'zh-TW': '負電', 'en-US': 'Minus' },
-    '治癒波動': { 'zh-TW': '治癒波動', 'en-US': 'Heal Pulse' },
-    '治癒波動（活力療癒S）': { 'zh-TW': '治癒波動', 'en-US': 'Heal Pulse' },
-    '治癒波動 (活力療癒S)': { 'zh-TW': '治癒波動', 'en-US': 'Heal Pulse' },
-    '蹭蹭臉頰': { 'zh-TW': '蹭蹭臉頰', 'en-US': 'Nuzzle' },
-    '蹭蹭臉頰（活力療癒S）': { 'zh-TW': '蹭蹭臉頰', 'en-US': 'Nuzzle' },
-    '蹭蹭臉頰 (活力療癒S)': { 'zh-TW': '蹭蹭臉頰', 'en-US': 'Nuzzle' },
-    
-    '電光一閃': { 'zh-TW': '電光一閃', 'en-US': 'Quick Attack' },
-    '精神強念': { 'zh-TW': '精神強念', 'en-US': 'Psychic' },
-    '晨光': { 'zh-TW': '晨光', 'en-US': 'Morning Sun' }
-  };
-
-  // 副技能官方英中對照
-  const SUBSKILL_NAMES = {
-    '樹果數量S': { 'zh-TW': '樹果數量S', 'en-US': 'Berry Finding S' },
-    '幫手獎勵': { 'zh-TW': '幫手獎勵', 'en-US': 'Helping Bonus' },
-    '睡眠EXP提升': { 'zh-TW': '睡眠EXP提升', 'en-US': 'Sleep EXP Bonus' },
-    '睡眠EXP獎勵': { 'zh-TW': '睡眠EXP獎勵', 'en-US': 'Sleep EXP Bonus' },
-    '研究EXP提升': { 'zh-TW': '研究EXP提升', 'en-US': 'Research EXP Bonus' },
-    '研究EXP獎勵': { 'zh-TW': '研究EXP獎勵', 'en-US': 'Research EXP Bonus' },
-    '夢之碎片獎勵': { 'zh-TW': '夢之碎片獎勵', 'en-US': 'Dream Shard Bonus' },
-    '活力回復獎勵': { 'zh-TW': '活力回復獎勵', 'en-US': 'Energy Recovery Bonus' },
-    '幫手速度M': { 'zh-TW': '幫手速度M', 'en-US': 'Helping Speed M' },
-    '幫忙速度M': { 'zh-TW': '幫忙速度M', 'en-US': 'Helping Speed M' },
-    '幫手速度S': { 'zh-TW': '幫手速度S', 'en-US': 'Helping Speed S' },
-    '幫忙速度S': { 'zh-TW': '幫忙速度S', 'en-US': 'Helping Speed S' },
-    '食材機率提升M': { 'zh-TW': '食材機率提升M', 'en-US': 'Ingredient Finder M' },
-    '食材機率提升S': { 'zh-TW': '食材機率提升S', 'en-US': 'Ingredient Finder S' },
-    '食材機率M': { 'zh-TW': '食材機率M', 'en-US': 'Ingredient Finder M' },
-    '食材機率S': { 'zh-TW': '食材機率S', 'en-US': 'Ingredient Finder S' },
-    '技能發動率提升M': { 'zh-TW': '技能發動率提升M', 'en-US': 'Skill Trigger M' },
-    '技能發動率提升S': { 'zh-TW': '技能發動率提升S', 'en-US': 'Skill Trigger S' },
-    '技能機率提升M': { 'zh-TW': '技能機率提升M', 'en-US': 'Skill Trigger M' },
-    '技能機率提升S': { 'zh-TW': '技能機率提升S', 'en-US': 'Skill Trigger S' },
-    '技能機率M': { 'zh-TW': '技能機率M', 'en-US': 'Skill Trigger M' },
-    '技能機率S': { 'zh-TW': '技能機率S', 'en-US': 'Skill Trigger S' },
-    '技能等級提升M': { 'zh-TW': '技能等級提升M', 'en-US': 'Skill Level Up M' },
-    '技能等級提升S': { 'zh-TW': '技能等級提升S', 'en-US': 'Skill Level Up S' },
-    '技能等級M': { 'zh-TW': '技能等級M', 'en-US': 'Skill Level Up M' },
-    '技能等級S': { 'zh-TW': '技能等級S', 'en-US': 'Skill Level Up S' },
-    '持有上限提升L': { 'zh-TW': '持有上限提升L', 'en-US': 'Inventory Up L' },
-    '持有上限提升M': { 'zh-TW': '持有上限提升M', 'en-US': 'Inventory Up M' },
-    '持有上限提升S': { 'zh-TW': '持有上限提升S', 'en-US': 'Inventory Up S' },
-    '持有上限提升 L': { 'zh-TW': '持有上限提升 L', 'en-US': 'Inventory Up L' },
-    '持有上限提升 M': { 'zh-TW': '持有上限提升 M', 'en-US': 'Inventory Up M' },
-    '持有上限提升 S': { 'zh-TW': '持有上限提升 S', 'en-US': 'Inventory Up S' },
-    '持有上限L': { 'zh-TW': '持有上限L', 'en-US': 'Inventory Up L' },
-    '持有上限M': { 'zh-TW': '持有上限M', 'en-US': 'Inventory Up M' },
-    '持有上限S': { 'zh-TW': '持有上限S', 'en-US': 'Inventory Up S' },
-    '持有上限 L': { 'zh-TW': '持有上限 L', 'en-US': 'Inventory Up L' },
-    '持有上限 M': { 'zh-TW': '持有上限 M', 'en-US': 'Inventory Up M' },
-    '持有上限 S': { 'zh-TW': '持有上限 S', 'en-US': 'Inventory Up S' },
-    '最大持有上限提升L': { 'zh-TW': '最大持有上限提升L', 'en-US': 'Inventory Up L' },
-    '最大持有上限提升M': { 'zh-TW': '最大持有上限提升M', 'en-US': 'Inventory Up M' },
-    '最大持有上限提升S': { 'zh-TW': '最大持有上限提升S', 'en-US': 'Inventory Up S' },
-    '活力回復提升S': { 'zh-TW': '活力回復提升S', 'en-US': 'Energy Recovery Up S' }
-  };
-
   // 道具名稱官方英中對照
   const ITEM_NAMES = {
     'ingredient_ticket_s': { 'zh-TW': '食材券S', 'zh-CN': '食材券S', 'en-US': 'Ingredient Ticket S' },
@@ -1991,6 +1678,318 @@
     '薰香': { 'zh-TW': '薰香', 'zh-CN': '熏香', 'en-US': 'Incense' },
     '糖果': { 'zh-TW': '糖果', 'zh-CN': '糖果', 'en-US': 'Candy' },
     '鑽石': { 'zh-TW': '鑽石', 'zh-CN': '钻石', 'en-US': 'Diamonds' }
+  };
+  // 屬性名稱官方英中對照
+  const TYPE_NAMES = {
+    '一般': { 'zh-TW': '一般', 'en-US': 'Normal' },
+    '火': { 'zh-TW': '火', 'en-US': 'Fire' },
+    '水': { 'zh-TW': '水', 'en-US': 'Water' },
+    '電': { 'zh-TW': '電', 'en-US': 'Electric' },
+    '草': { 'zh-TW': '草', 'en-US': 'Grass' },
+    '冰': { 'zh-TW': '冰', 'en-US': 'Ice' },
+    '格鬥': { 'zh-TW': '格鬥', 'en-US': 'Fighting' },
+    '毒': { 'zh-TW': '毒', 'en-US': 'Poison' },
+    '地面': { 'zh-TW': '地面', 'en-US': 'Ground' },
+    '飛行': { 'zh-TW': '飛行', 'en-US': 'Flying' },
+    '超能力': { 'zh-TW': '超能力', 'en-US': 'Psychic' },
+    '超能': { 'zh-TW': '超能', 'en-US': 'Psychic' },
+    '蟲': { 'zh-TW': '蟲', 'en-US': 'Bug' },
+    '岩石': { 'zh-TW': '岩石', 'en-US': 'Rock' },
+    '幽靈': { 'zh-TW': '幽靈', 'en-US': 'Ghost' },
+    '龍': { 'zh-TW': '龍', 'en-US': 'Dragon' },
+    '惡': { 'zh-TW': '惡', 'en-US': 'Dark' },
+    '鋼': { 'zh-TW': '鋼', 'en-US': 'Steel' },
+    '妖精': { 'zh-TW': '妖精', 'en-US': 'Fairy' }
+  };
+
+  // 專長類型官方英中對照
+  const SPECIALTY_NAMES = {
+    '樹果': { 'zh-TW': '樹果', 'en-US': 'Berries' },
+    '樹果型': { 'zh-TW': '樹果型', 'en-US': 'Berries' },
+    '食材': { 'zh-TW': '食材', 'en-US': 'Ingredients' },
+    '食材型': { 'zh-TW': '食材型', 'en-US': 'Ingredients' },
+    '技能': { 'zh-TW': '技能', 'en-US': 'Skills' },
+    '技能型': { 'zh-TW': '技能型', 'en-US': 'Skills' },
+    '全能': { 'zh-TW': '全能', 'en-US': 'All-Rounder' },
+    '全能型': { 'zh-TW': '全能型', 'en-US': 'All-Rounder' },
+    '全部': { 'zh-TW': '全能', 'en-US': 'All-Rounder' }
+  };
+
+  // 食材名稱官方英中對照 (19種食材全收錄)
+  const INGREDIENT_NAMES = {
+    '特選蘋果': { 'zh-TW': '特選蘋果', 'en-US': 'Fancy Apple' },
+    '哞哞鮮奶': { 'zh-TW': '哞哞鮮奶', 'en-US': 'Moomoo Milk' },
+    '純粹鮮奶': { 'zh-TW': '純粹鮮奶', 'en-US': 'Moomoo Milk' },
+    '萌綠大豆': { 'zh-TW': '萌綠大豆', 'en-US': 'Greengrass Soybeans' },
+    '甜甜蜜': { 'zh-TW': '甜甜蜜', 'en-US': 'Honey' },
+    '豆製肉': { 'zh-TW': '豆製肉', 'en-US': 'Bean Sausage' },
+    '暖暖薑': { 'zh-TW': '暖暖薑', 'en-US': 'Warming Ginger' },
+    '好眠番茄': { 'zh-TW': '好眠番茄', 'en-US': 'Snoozy Tomato' },
+    '特選蛋': { 'zh-TW': '特選蛋', 'en-US': 'Fancy Egg' },
+    '純粹油': { 'zh-TW': '純粹油', 'en-US': 'Pure Oil' },
+    '窩心洋芋': { 'zh-TW': '窩心洋芋', 'en-US': 'Soft Potato' },
+    '火辣香草': { 'zh-TW': '火辣香草', 'en-US': 'Fiery Herb' },
+    '萌綠玉米': { 'zh-TW': '萌綠玉米', 'en-US': 'Greengrass Corn' },
+    '放鬆可可': { 'zh-TW': '放鬆可可', 'en-US': 'Soothing Cacao' },
+    '醒腦咖啡豆': { 'zh-TW': '醒腦咖啡豆', 'en-US': 'Rousing Coffee' },
+    '嫩亮酪梨': { 'zh-TW': '嫩亮酪梨', 'en-US': 'Glossy Avocado' },
+    '品鮮蘑菇': { 'zh-TW': '品鮮蘑菇', 'en-US': 'Tasty Mushroom' },
+    '粗枝大蔥': { 'zh-TW': '粗枝大蔥', 'en-US': 'Large Leek' },
+    '沉甸甸南瓜': { 'zh-TW': '沉甸甸南瓜', 'en-US': 'Plump Pumpkin' },
+    '美味尾巴': { 'zh-TW': '美味尾巴', 'en-US': 'Slowpoke Tail' },
+    '一口堅果': { 'zh-TW': '一口堅果', 'zh-CN': '一口坚果', 'en-US': 'Snackable Nuts' }
+  };
+
+  // 樹果名稱官方英中對照 (18種屬性樹果全收錄)
+  const BERRY_NAMES = {
+    '藍異果': { 'zh-TW': '藍異果', 'en-US': 'Pamtre Berry' },
+    '木子果': { 'zh-TW': '木子果', 'en-US': 'Lum Berry' },
+    '芭亞果': { 'zh-TW': '芭亞果', 'en-US': 'Lum Berry' },
+    '椰木果': { 'zh-TW': '椰木果', 'en-US': 'Pamtre Berry' },
+    '異奇果': { 'zh-TW': '異奇果', 'en-US': 'Grepa Berry' },
+    '檬果': { 'zh-TW': '檬果', 'en-US': 'Bluk Berry' },
+    '桃桃果': { 'zh-TW': '桃桃果', 'en-US': 'Pecha Berry' },
+    '芒念果': { 'zh-TW': '芒念果', 'en-US': 'Mago Berry' },
+    '芒芒果': { 'zh-TW': '芒芒果', 'en-US': 'Mago Berry' },
+    '蘋野果': { 'zh-TW': '蘋野果', 'en-US': 'Leppa Berry' },
+    '櫻子果': { 'zh-TW': '櫻子果', 'en-US': 'Cheri Berry' },
+    '柿仔果': { 'zh-TW': '柿仔果', 'en-US': 'Persim Berry' },
+    '勿花果': { 'zh-TW': '勿花果', 'en-US': 'Figy Berry' },
+    '文柚果': { 'zh-TW': '文柚果', 'en-US': 'Sitrus Berry' },
+    '榴石果': { 'zh-TW': '榴石果', 'en-US': 'Durin Berry' },
+    '墨莓果': { 'zh-TW': '墨莓果', 'en-US': 'Durin Berry' },
+    '橙橙果': { 'zh-TW': '橙橙果', 'en-US': 'Oran Berry' },
+    '芭拉果': { 'zh-TW': '芭拉果', 'en-US': 'Wiki Berry' },
+    '零餘果': { 'zh-TW': '零餘果', 'en-US': 'Chesto Berry' },
+    '生薑果': { 'zh-TW': '生薑果', 'en-US': 'Rawst Berry' },
+    '靛莓果': { 'zh-TW': '靛莓果', 'en-US': 'Belue Berry' },
+    '巧可果': { 'zh-TW': '巧可果', 'en-US': 'Yache Berry' },
+    '番荔果': { 'zh-TW': '番荔果', 'en-US': 'Magost Berry' }
+  };
+
+  // 性格名稱官方英中對照 (25種全收錄)
+  const NATURE_NAMES = {
+    '固執': { 'zh-TW': '固執', 'en-US': 'Adamant' },
+    '勇敢': { 'zh-TW': '勇敢', 'en-US': 'Brave' },
+    '怕寂寞': { 'zh-TW': '怕寂寞', 'en-US': 'Lonely' },
+    '頑皮': { 'zh-TW': '頑皮', 'en-US': 'Naughty' },
+    '大膽': { 'zh-TW': '大膽', 'en-US': 'Bold' },
+    '淘氣': { 'zh-TW': '淘氣', 'en-US': 'Impish' },
+    '悠閒': { 'zh-TW': '悠閒', 'en-US': 'Relaxed' },
+    '樂天': { 'zh-TW': '樂天', 'en-US': 'Lax' },
+    '內斂': { 'zh-TW': '內斂', 'en-US': 'Modest' },
+    '慢吞吞': { 'zh-TW': '慢吞吞', 'en-US': 'Mild' },
+    '冷靜': { 'zh-TW': '冷靜', 'en-US': 'Quiet' },
+    '馬虎': { 'zh-TW': '馬虎', 'en-US': 'Rash' },
+    '溫和': { 'zh-TW': '溫和', 'en-US': 'Calm' },
+    '溫順': { 'zh-TW': '溫順', 'en-US': 'Gentle' },
+    '慎重': { 'zh-TW': '慎重', 'en-US': 'Careful' },
+    '自大': { 'zh-TW': '自大', 'en-US': 'Sassy' },
+    '膽小': { 'zh-TW': '膽小', 'en-US': 'Timid' },
+    '急躁': { 'zh-TW': '急躁', 'en-US': 'Hasty' },
+    '爽朗': { 'zh-TW': '爽朗', 'en-US': 'Jolly' },
+    '天真': { 'zh-TW': '天真', 'en-US': 'Naive' },
+    '坦率': { 'zh-TW': '坦率', 'en-US': 'Hardy' },
+    '認真': { 'zh-TW': '認真', 'en-US': 'Docile' },
+    '害羞': { 'zh-TW': '害羞', 'en-US': 'Bashful' },
+    '浮躁': { 'zh-TW': '浮躁', 'en-US': 'Quirky' },
+    '勤奮': { 'zh-TW': '勤奮', 'en-US': 'Serious' }
+  };
+
+  // 主技能官方英中對照 (包含基礎名稱、變體招式與神獸專屬 - 嚴格遵照官方 Sleep 英文命名)
+  const MAIN_SKILL_NAMES = {
+    // 基礎主技能系列
+    '能量填充S': { 'zh-TW': '能量填充S', 'en-US': 'Charge Strength S' },
+    '能量填充S (固定)': { 'zh-TW': '能量填充S (固定)', 'en-US': 'Charge Strength S (Fixed)' },
+    '能量填充S（固定）': { 'zh-TW': '能量填充S（固定）', 'en-US': 'Charge Strength S (Fixed)' },
+    '能量填充S (固定值)': { 'zh-TW': '能量填充S (固定值)', 'en-US': 'Charge Strength S (Fixed)' },
+    '能量填充S (隨機/變動值)': { 'zh-TW': '能量填充S (隨機/變動值)', 'en-US': 'Charge Strength S (Random)' },
+    '能量填充S (隨機)': { 'zh-TW': '能量填充S (隨機)', 'en-US': 'Charge Strength S (Random)' },
+    '能量填充S（隨機）': { 'zh-TW': '能量填充S（隨機）', 'en-US': 'Charge Strength S (Random)' },
+    '能量填充M': { 'zh-TW': '能量填充M', 'en-US': 'Charge Strength M' },
+    '能量填充M (固定)': { 'zh-TW': '能量填充M (固定)', 'en-US': 'Charge Strength M (Fixed)' },
+    '能量填充M（固定）': { 'zh-TW': '能量填充M（固定）', 'en-US': 'Charge Strength M (Fixed)' },
+    '能量填充M (固定值)': { 'zh-TW': '能量填充M (固定值)', 'en-US': 'Charge Strength M (Fixed)' },
+    
+    '食材獲取S': { 'zh-TW': '食材獲取S', 'en-US': 'Ingredient Magnet S' },
+    '食材獲取M': { 'zh-TW': '食材獲取M', 'en-US': 'Ingredient Magnet M' },
+    '食材精選S': { 'zh-TW': '食材精選S', 'en-US': 'Ingredient Selection S' },
+    '食材精選': { 'zh-TW': '食材精選', 'en-US': 'Ingr. Selection' },
+    '食材隨機S': { 'zh-TW': '食材隨機S', 'en-US': 'Random Ingredients S' },
+    
+    '料理強化S': { 'zh-TW': '料理強化S', 'en-US': 'Cooking Power-Up S' },
+    '料理強化S (擴充鍋子容量)': { 'zh-TW': '料理強化S (擴充鍋子容量)', 'en-US': 'Cooking Power-Up S' },
+    '料理擴大S': { 'zh-TW': '料理擴大S', 'en-US': 'Cooking Power-Up S' },
+    '料理成功S': { 'zh-TW': '料理成功S', 'en-US': 'Tasty Chance S' },
+    '料理成功S (漂亮成功率提升)': { 'zh-TW': '料理成功S (漂亮成功率提升)', 'en-US': 'Tasty Chance S' },
+    '料理成功率提升S': { 'zh-TW': '料理成功率提升S', 'en-US': 'Tasty Chance S' },
+    
+    '活力填充S': { 'zh-TW': '活力填充S', 'en-US': 'Charge Energy S' },
+    '活力充填S': { 'zh-TW': '活力充填S', 'en-US': 'Charge Energy S' },
+    '自體活力回復S': { 'zh-TW': '自體活力回復S', 'en-US': 'Charge Energy S' },
+    '活力療癒S': { 'zh-TW': '活力療癒S', 'en-US': 'Energizing Cheer S' },
+    '活力充沛S': { 'zh-TW': '活力充沛S', 'en-US': 'Energizing Cheer S' },
+    '活力全體療癒S': { 'zh-TW': '活力全體療癒S', 'en-US': 'Energy for Everyone S' },
+    '全體療癒S': { 'zh-TW': '全體療癒S', 'en-US': 'Energy for Everyone S' },
+    '全體能量回復S': { 'zh-TW': '全體能量回復S', 'en-US': 'Energy for Everyone S' },
+    
+    '幫手支援S': { 'zh-TW': '幫手支援S', 'en-US': 'Extra Helpful S' },
+    '幫手加速': { 'zh-TW': '幫手加速', 'en-US': 'Helper Boost' },
+    '幫手加速 (屬性) (神獸專屬)': { 'zh-TW': '幫手加速 (屬性) (神獸專屬)', 'en-US': 'Helper Boost' },
+    '幫手加速（屬性）（神獸專屬）': { 'zh-TW': '幫手加速（屬性）（神獸專屬）', 'en-US': 'Helper Boost' },
+    '幫手加速（電）': { 'zh-TW': '幫手加速（電）', 'en-US': 'Helper Boost (Electric)' },
+    '幫手加速 (電)': { 'zh-TW': '幫手加速 (電)', 'en-US': 'Helper Boost (Electric)' },
+    '幫手加速（火）': { 'zh-TW': '幫手加速（火）', 'en-US': 'Helper Boost (Fire)' },
+    '幫手加速 (火)': { 'zh-TW': '幫手加速 (火)', 'en-US': 'Helper Boost (Fire)' },
+    '幫手加速（水）': { 'zh-TW': '幫手加速（水）', 'en-US': 'Helper Boost (Water)' },
+    '幫手加速 (水)': { 'zh-TW': '幫手加速 (水)', 'en-US': 'Helper Boost (Water)' },
+    '雷公幫手支援': { 'zh-TW': '雷公幫手支援', 'en-US': 'Raikou Helper Boost' },
+    '炎帝幫手支援': { 'zh-TW': '炎帝幫手支援', 'en-US': 'Entei Helper Boost' },
+    '水君幫手支援': { 'zh-TW': '水君幫手支援', 'en-US': 'Suicune Helper Boost' },
+    '傳說降臨（雷公）': { 'zh-TW': '傳說降臨（雷公）', 'en-US': 'Raikou Helper Boost' },
+    '傳說降臨（炎帝）': { 'zh-TW': '傳說降臨（炎帝）', 'en-US': 'Entei Helper Boost' },
+    '傳說降臨（水君）': { 'zh-TW': '傳說降臨（水君）', 'en-US': 'Suicune Helper Boost' },
+    
+    '樹果遽增': { 'zh-TW': '樹果遽增', 'en-US': 'Berry Burst' },
+    '樹果擴增': { 'zh-TW': '樹果擴增', 'en-US': 'Berry Burst' },
+    '樹果領域': { 'zh-TW': '樹果領域', 'en-US': 'Berry Field' },
+    '精神擊破': { 'zh-TW': '精神擊破', 'en-US': 'Psystrike' },
+    '精神擊破（樹果領域）': { 'zh-TW': '精神擊破', 'en-US': 'Psystrike' },
+    '精神擊破 (樹果領域)': { 'zh-TW': '精神擊破', 'en-US': 'Psystrike' },
+    '流星群': { 'zh-TW': '流星群', 'en-US': 'Draco Meteor' },
+    '流星群（樹果遽增）': { 'zh-TW': '流星群', 'en-US': 'Draco Meteor' },
+    '流星群 (樹果遽增)': { 'zh-TW': '流星群', 'en-US': 'Draco Meteor' },
+    '畫皮': { 'zh-TW': '畫皮', 'en-US': 'Disguise' },
+    '畫皮（樹果遽增）': { 'zh-TW': '畫皮', 'en-US': 'Disguise' },
+    '畫皮 (樹果遽增)': { 'zh-TW': '畫皮', 'en-US': 'Disguise' },
+    
+    '夢之碎片獲取S': { 'zh-TW': '夢之碎片獲取S', 'en-US': 'Dream Shard Magnet S' },
+    '碎片獲取S': { 'zh-TW': '碎片獲取S', 'en-US': 'Dream Shard Magnet S' },
+    '夢之碎片獲取S (固定)': { 'zh-TW': '夢之碎片獲取S (固定)', 'en-US': 'Dream Shard Magnet S (Fixed)' },
+    '夢之碎片獲取S（固定）': { 'zh-TW': '夢之碎片獲取S（固定）', 'en-US': 'Dream Shard Magnet S (Fixed)' },
+    '夢之碎片獲取S (固定值)': { 'zh-TW': '夢之碎片獲取S (固定值)', 'en-US': 'Dream Shard Magnet S (Fixed)' },
+    '夢之碎片獲取S (隨機)': { 'zh-TW': '夢之碎片獲取S (隨機)', 'en-US': 'Dream Shard Magnet S (Random)' },
+    '夢之碎片獲取S（隨機）': { 'zh-TW': '夢之碎片獲取S（隨機）', 'en-US': 'Dream Shard Magnet S (Random)' },
+    '夢之碎片獲取S (隨機/變動值)': { 'zh-TW': '夢之碎片獲取S (隨機/變動值)', 'en-US': 'Dream Shard Magnet S (Random)' },
+    '波導彈': { 'zh-TW': '波導彈', 'en-US': 'Aura Sphere' },
+    '波導彈（夢之碎片獲取S）': { 'zh-TW': '波導彈', 'en-US': 'Aura Sphere' },
+    '波導彈 (夢之碎片獲取S)': { 'zh-TW': '波導彈', 'en-US': 'Aura Sphere' },
+    
+    '揮指': { 'zh-TW': '揮指', 'en-US': 'Metronome' },
+    '揮指（隨機技能）': { 'zh-TW': '揮指（隨機技能）', 'en-US': 'Metronome (Random)' },
+    '揮指 (隨機技能)': { 'zh-TW': '揮指 (隨機技能)', 'en-US': 'Metronome (Random)' },
+    '十項全能': { 'zh-TW': '十項全能', 'en-US': 'All-Rounder' },
+    '十項全能（揮指）[可替換]': { 'zh-TW': '十項全能', 'en-US': 'All-Rounder' },
+    '十項全能 (揮指) [可替換]': { 'zh-TW': '十項全能', 'en-US': 'All-Rounder' },
+    
+    '變身': { 'zh-TW': '變身', 'en-US': 'Transform' },
+    '技能複製': { 'zh-TW': '技能複製', 'en-US': 'Skill Copy' },
+    '變身（技能複製）': { 'zh-TW': '變身', 'en-US': 'Transform' },
+    '變身 (技能複製)': { 'zh-TW': '變身', 'en-US': 'Transform' },
+    '模仿': { 'zh-TW': '模仿', 'en-US': 'Mimic' },
+    '模仿（技能複製）': { 'zh-TW': '模仿', 'en-US': 'Mimic' },
+    '模仿 (技能複製)': { 'zh-TW': '模仿', 'en-US': 'Mimic' },
+    
+    '月光': { 'zh-TW': '月光', 'en-US': 'Moonlight' },
+    '月光（活力填充S）': { 'zh-TW': '月光', 'en-US': 'Moonlight' },
+    '月光 (活力填充S)': { 'zh-TW': '月光', 'en-US': 'Moonlight' },
+    '月光（活力充填S）': { 'zh-TW': '月光', 'en-US': 'Moonlight' },
+    '新月祈禱': { 'zh-TW': '新月祈禱', 'en-US': 'Lunar Prayer' },
+    '新月祈禱（活力全體療癒S）': { 'zh-TW': '新月祈禱', 'en-US': 'Lunar Prayer' },
+    '新月祈禱 (活力全體療癒S)': { 'zh-TW': '新月祈禱', 'en-US': 'Lunar Prayer' },
+    
+    '蓄力': { 'zh-TW': '蓄力', 'en-US': 'Stockpile' },
+    '蓄力（能量填充S）': { 'zh-TW': '蓄力', 'en-US': 'Stockpile' },
+    '蓄力 (能量填充S)': { 'zh-TW': '蓄力', 'en-US': 'Stockpile' },
+    
+    '夢魘': { 'zh-TW': '夢魘', 'en-US': 'Bad Dreams' },
+    '夢魘（能量填充M）': { 'zh-TW': '夢魘', 'en-US': 'Bad Dreams' },
+    '夢魘 (能量填充M)': { 'zh-TW': '夢魘', 'en-US': 'Bad Dreams' },
+    '達克萊伊專屬': { 'zh-TW': '達克萊伊專屬', 'en-US': 'Darkrai Nightmare' },
+    
+    '健美': { 'zh-TW': '健美', 'en-US': 'Bulk Up' },
+    '健美（料理輔助S）': { 'zh-TW': '健美', 'en-US': 'Bulk Up' },
+    '健美 (料理輔助S)': { 'zh-TW': '健美', 'en-US': 'Bulk Up' },
+    '魔法火焰': { 'zh-TW': '魔法火焰', 'en-US': 'Mystical Fire' },
+    '魔法火焰（料理躍進S）': { 'zh-TW': '魔法火焰', 'en-US': 'Mystical Fire' },
+    '魔法火焰 (料理躍進S)': { 'zh-TW': '魔法火焰', 'en-US': 'Mystical Fire' },
+    '樹果汁': { 'zh-TW': '樹果汁', 'en-US': 'Berry Juice' },
+    '樹果汁（活力全體療癒S）': { 'zh-TW': '樹果汁', 'en-US': 'Berry Juice' },
+    '樹果汁 (活力全體療癒S)': { 'zh-TW': '樹果汁', 'en-US': 'Berry Juice' },
+    '禮物': { 'zh-TW': '禮物', 'en-US': 'Present' },
+    '禮物（食材獲取S）': { 'zh-TW': '禮物', 'en-US': 'Present' },
+    '禮物 (食材獲取S)': { 'zh-TW': '禮物', 'en-US': 'Present' },
+    '怪力鉗': { 'zh-TW': '怪力鉗', 'en-US': 'Hyper Cutter' },
+    '怪力钳': { 'zh-TW': '怪力鉗', 'en-US': 'Hyper Cutter' },
+    '怪力鉗（食材精選S）': { 'zh-TW': '怪力鉗', 'en-US': 'Hyper Cutter' },
+    '怪力鉗 (食材精選S)': { 'zh-TW': '怪力鉗', 'en-US': 'Hyper Cutter' },
+    '怪力钳（食材精選S）': { 'zh-TW': '怪力鉗', 'en-US': 'Hyper Cutter' },
+    '怪力钳 (食材精選S)': { 'zh-TW': '怪力鉗', 'en-US': 'Hyper Cutter' },
+    '超幸運': { 'zh-TW': '超幸運', 'en-US': 'Super Luck' },
+    '超幸運（食材精選S）': { 'zh-TW': '超幸運', 'en-US': 'Super Luck' },
+    '超幸運 (食材精選S)': { 'zh-TW': '超幸運', 'en-US': 'Super Luck' },
+    '正電': { 'zh-TW': '正電', 'en-US': 'Plus' },
+    '正電（食材獲取S）': { 'zh-TW': '正電', 'en-US': 'Plus' },
+    '正電 (食材獲取S)': { 'zh-TW': '正電', 'en-US': 'Plus' },
+    '負電': { 'zh-TW': '負電', 'en-US': 'Minus' },
+    '負電（料理強化S）': { 'zh-TW': '負電', 'en-US': 'Minus' },
+    '負電 (料理強化S)': { 'zh-TW': '負電', 'en-US': 'Minus' },
+    '治癒波動': { 'zh-TW': '治癒波動', 'en-US': 'Heal Pulse' },
+    '治癒波動（活力療癒S）': { 'zh-TW': '治癒波動', 'en-US': 'Heal Pulse' },
+    '治癒波動 (活力療癒S)': { 'zh-TW': '治癒波動', 'en-US': 'Heal Pulse' },
+    '蹭蹭臉頰': { 'zh-TW': '蹭蹭臉頰', 'en-US': 'Nuzzle' },
+    '蹭蹭臉頰（活力療癒S）': { 'zh-TW': '蹭蹭臉頰', 'en-US': 'Nuzzle' },
+    '蹭蹭臉頰 (活力療癒S)': { 'zh-TW': '蹭蹭臉頰', 'en-US': 'Nuzzle' },
+    
+    '電光一閃': { 'zh-TW': '電光一閃', 'en-US': 'Quick Attack' },
+    '精神強念': { 'zh-TW': '精神強念', 'en-US': 'Psychic' },
+    '晨光': { 'zh-TW': '晨光', 'en-US': 'Morning Sun' }
+  };
+
+  // 副技能官方英中對照
+  const SUBSKILL_NAMES = {
+    '樹果數量S': { 'zh-TW': '樹果數量S', 'en-US': 'Berry Finding S' },
+    '幫手獎勵': { 'zh-TW': '幫手獎勵', 'en-US': 'Helping Bonus' },
+    '睡眠EXP提升': { 'zh-TW': '睡眠EXP提升', 'en-US': 'Sleep EXP Bonus' },
+    '睡眠EXP獎勵': { 'zh-TW': '睡眠EXP獎勵', 'en-US': 'Sleep EXP Bonus' },
+    '研究EXP提升': { 'zh-TW': '研究EXP提升', 'en-US': 'Research EXP Bonus' },
+    '研究EXP獎勵': { 'zh-TW': '研究EXP獎勵', 'en-US': 'Research EXP Bonus' },
+    '夢之碎片獎勵': { 'zh-TW': '夢之碎片獎勵', 'en-US': 'Dream Shard Bonus' },
+    '活力回復獎勵': { 'zh-TW': '活力回復獎勵', 'en-US': 'Energy Recovery Bonus' },
+    '幫手速度M': { 'zh-TW': '幫手速度M', 'en-US': 'Helping Speed M' },
+    '幫忙速度M': { 'zh-TW': '幫忙速度M', 'en-US': 'Helping Speed M' },
+    '幫手速度S': { 'zh-TW': '幫手速度S', 'en-US': 'Helping Speed S' },
+    '幫忙速度S': { 'zh-TW': '幫忙速度S', 'en-US': 'Helping Speed S' },
+    '食材機率提升M': { 'zh-TW': '食材機率提升M', 'en-US': 'Ingredient Finder M' },
+    '食材機率提升S': { 'zh-TW': '食材機率提升S', 'en-US': 'Ingredient Finder S' },
+    '食材機率M': { 'zh-TW': '食材機率M', 'en-US': 'Ingredient Finder M' },
+    '食材機率S': { 'zh-TW': '食材機率S', 'en-US': 'Ingredient Finder S' },
+    '技能發動率提升M': { 'zh-TW': '技能發動率提升M', 'en-US': 'Skill Trigger M' },
+    '技能發動率提升S': { 'zh-TW': '技能發動率提升S', 'en-US': 'Skill Trigger S' },
+    '技能機率提升M': { 'zh-TW': '技能機率提升M', 'en-US': 'Skill Trigger M' },
+    '技能機率提升S': { 'zh-TW': '技能機率提升S', 'en-US': 'Skill Trigger S' },
+    '技能機率M': { 'zh-TW': '技能機率M', 'en-US': 'Skill Trigger M' },
+    '技能機率S': { 'zh-TW': '技能機率S', 'en-US': 'Skill Trigger S' },
+    '技能等級提升M': { 'zh-TW': '技能等級提升M', 'en-US': 'Skill Level Up M' },
+    '技能等級提升S': { 'zh-TW': '技能等級提升S', 'en-US': 'Skill Level Up S' },
+    '技能等級M': { 'zh-TW': '技能等級M', 'en-US': 'Skill Level Up M' },
+    '技能等級S': { 'zh-TW': '技能等級S', 'en-US': 'Skill Level Up S' },
+    '持有上限提升L': { 'zh-TW': '持有上限提升L', 'en-US': 'Inventory Up L' },
+    '持有上限提升M': { 'zh-TW': '持有上限提升M', 'en-US': 'Inventory Up M' },
+    '持有上限提升S': { 'zh-TW': '持有上限提升S', 'en-US': 'Inventory Up S' },
+    '持有上限提升 L': { 'zh-TW': '持有上限提升 L', 'en-US': 'Inventory Up L' },
+    '持有上限提升 M': { 'zh-TW': '持有上限提升 M', 'en-US': 'Inventory Up M' },
+    '持有上限提升 S': { 'zh-TW': '持有上限提升 S', 'en-US': 'Inventory Up S' },
+    '持有上限L': { 'zh-TW': '持有上限L', 'en-US': 'Inventory Up L' },
+    '持有上限M': { 'zh-TW': '持有上限M', 'en-US': 'Inventory Up M' },
+    '持有上限S': { 'zh-TW': '持有上限S', 'en-US': 'Inventory Up S' },
+    '持有上限 L': { 'zh-TW': '持有上限 L', 'en-US': 'Inventory Up L' },
+    '持有上限 M': { 'zh-TW': '持有上限 M', 'en-US': 'Inventory Up M' },
+    '持有上限 S': { 'zh-TW': '持有上限 S', 'en-US': 'Inventory Up S' },
+    '最大持有上限提升L': { 'zh-TW': '最大持有上限提升L', 'en-US': 'Inventory Up L' },
+    '最大持有上限提升M': { 'zh-TW': '最大持有上限提升M', 'en-US': 'Inventory Up M' },
+    '最大持有上限提升S': { 'zh-TW': '最大持有上限提升S', 'en-US': 'Inventory Up S' },
+    '活力回復提升S': { 'zh-TW': '活力回復提升S', 'en-US': 'Energy Recovery Up S' }
   };
 
   // 島嶼與營地名稱官方英中對照
@@ -4398,214 +4397,6 @@ registerResources({
     'lab.t_items_per_day': ['個/日', 'items/day'],
     'lab.t_no_ings_yet': ['尚無食材產出', 'No ingredients yet']
   });
-  const SUPPORTED_LANGS = ['zh-TW', 'zh-CN', 'en-US'];
-
-  function initLanguage() {
-    let initialLang = DEFAULT_LANG;
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_LANG);
-      if (saved && SUPPORTED_LANGS.includes(saved)) {
-        initialLang = saved;
-      }
-    } catch (e) {}
-
-    syncActiveLocale(initialLang);
-
-    if (typeof document !== 'undefined' && document.documentElement) {
-      document.documentElement.setAttribute('lang', activeStrategy.docLang);
-      document.documentElement.setAttribute('data-lang', activeStrategy.dataLang);
-      const onReady = () => {
-        updatePageTranslations();
-      };
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', onReady);
-      } else {
-        onReady();
-      }
-    }
-  }
-
-  function getLanguage() {
-    return currentLang;
-  }
-
-  function setLanguage(lang) {
-    if (!SUPPORTED_LANGS.includes(lang)) return;
-    syncActiveLocale(lang);
-    try {
-      localStorage.setItem(STORAGE_KEY_LANG, activeStrategy.lang);
-    } catch (e) {}
-
-    if (typeof document !== 'undefined' && document.documentElement) {
-      document.documentElement.setAttribute('lang', activeStrategy.docLang);
-      document.documentElement.setAttribute('data-lang', activeStrategy.dataLang);
-      updatePageTranslations();
-    }
-
-    // 通知各模組刷新
-    if (typeof window !== 'undefined') {
-      if (window.PokemonApp && typeof window.PokemonApp.render === 'function') {
-        window.PokemonApp.render();
-      }
-      if (window.RecipesApp && typeof window.RecipesApp.render === 'function') {
-        window.RecipesApp.render();
-      }
-      if (window.WikiDB && typeof window.WikiDB.renderWikiLayout === 'function') {
-        const wikiPanel = document.getElementById('panel-wiki');
-        if (wikiPanel) {
-          window.WikiDB.renderWikiLayout(wikiPanel);
-          if (wikiPanel.style && wikiPanel.style.display !== 'none' && typeof window.WikiDB.switchSubTab === 'function' && typeof window.WikiDB.getCurrentSubTab === 'function') {
-            try { window.WikiDB.switchSubTab(window.WikiDB.getCurrentSubTab()); } catch (e) {}
-          }
-          // 重新渲染後執行必要的計算（renderWikiLayout 已包含座標天梯渲染，無須重複 refreshCoordinateLadder）
-          if (typeof window.WikiDB.recalcTriggerChance === 'function') window.WikiDB.recalcTriggerChance();
-          if (typeof window.WikiDB.recalcSleepDays === 'function') window.WikiDB.recalcSleepDays();
-        }
-      } else if (window.WikiDB && typeof window.WikiDB.init === 'function') {
-        window.WikiDB.init();
-      }
-      if (window.PokemonBoxApp && typeof window.PokemonBoxApp.renderBox === 'function') {
-        window.PokemonBoxApp.renderBox();
-      }
-      if (window.NewsApp && typeof window.NewsApp.render === 'function') {
-        window.NewsApp.render();
-      }
-      if (window.AppraisalLab && typeof window.AppraisalLab.renderLab === 'function') {
-        const labCont = document.getElementById('appraisal-lab-container');
-        if (labCont) window.AppraisalLab.renderLab(labCont);
-      }
-      if (typeof CustomEvent !== 'undefined' && typeof window.dispatchEvent === 'function') {
-        window.dispatchEvent(new CustomEvent('appLanguageChanged', { detail: { lang: currentLang } }));
-      }
-    }
-  }
-
-  // ─── 全域正規化與多層級容錯查找引擎 (Universal Normalization Engine) ───
-  function normalizeSearchKey(str) {
-    if (!str || typeof str !== 'string') return '';
-    return str
-      .trim()
-      .replace(/（/g, '(')
-      .replace(/）/g, ')')
-      .replace(/【/g, '[')
-      .replace(/】/g, ']')
-      .replace(/：/g, ':')
-      .replace(/\(\s+/g, '(')
-      .replace(/\s+\)/g, ')')
-      .replace(/\[\s+/g, '[')
-      .replace(/\s+\]/g, ']')
-      .replace(/恢復/g, '回復')
-      .replace(/恢/g, '回')
-      .replace(/\s+/g, ' ');
-  }
-
-  function compactSearchKey(str) {
-    if (!str || typeof str !== 'string') return '';
-    return str.replace(/\s+/g, '').replace(/（/g, '(').replace(/）/g, ')').replace(/恢/g, '回');
-  }
-
-  function ensureDictIndex(dict) {
-    if (dict.__normIndex && dict.__compactIndex) return;
-    const normIdx = Object.create(null);
-    const compactIdx = Object.create(null);
-    for (const key in dict) {
-      if (!Object.prototype.hasOwnProperty.call(dict, key)) continue;
-      const val = dict[key];
-      const nKey = normalizeSearchKey(key);
-      if (nKey && normIdx[nKey] === undefined) normIdx[nKey] = val;
-      const cKey = compactSearchKey(key);
-      if (cKey && compactIdx[cKey] === undefined) compactIdx[cKey] = val;
-    }
-    try {
-      Object.defineProperty(dict, '__normIndex', { value: normIdx, enumerable: false, configurable: true });
-      Object.defineProperty(dict, '__compactIndex', { value: compactIdx, enumerable: false, configurable: true });
-    } catch (e) {}
-  }
-
-  function lookupBilingualDict(dict, query, lang) {
-    if (!query || !dict) return null;
-    const str = String(query).trim();
-    if (!str) return '';
-    const strategy = _getStrategy(lang);
-
-    // Level 1: 直接精確命中 (Direct Fast Match)
-    if (dict[str] !== undefined) {
-      return strategy.resolveLookupVal(dict[str], str);
-    }
-
-    // 建立或讀取 O(1) 預索引表 (Pre-indexed O(1) Lookup Maps)
-    ensureDictIndex(dict);
-
-    // Level 2: 標點符號與括號正規化比對 (O(1) Normalized Match)
-    const normTarget = normalizeSearchKey(str);
-    if (dict.__normIndex && dict.__normIndex[normTarget] !== undefined) {
-      return strategy.resolveLookupVal(dict.__normIndex[normTarget], str);
-    }
-
-    // Level 3: 緊湊無視空格比對 (O(1) Compact Match without Whitespace)
-    const compactTarget = compactSearchKey(str);
-    if (dict.__compactIndex && dict.__compactIndex[compactTarget] !== undefined) {
-      return strategy.resolveLookupVal(dict.__compactIndex[compactTarget], str);
-    }
-
-    return strategy.fallbackLookup(str);
-  }
-
-  const _I18N_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
-
-  function _resolveDynamicCaps(str) {
-    if (typeof str !== 'string') return str;
-    if (!str.includes('{maxRecipe') && !str.includes('{maxIsland') && !str.includes('{islandStep}')) {
-      return str;
-    }
-    const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
-               (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
-    const maxRecipeLv = (gc && typeof gc.getRecipeLevelCap === 'function')
-      ? gc.getRecipeLevelCap()
-      : ((gc && gc.CAPS && gc.CAPS.RECIPE_LEVEL_CAP) || _I18N_FALLBACK_CAPS.RECIPE_LEVEL_CAP || 70);
-    const maxRecipeBonus = (gc && typeof gc.getRecipeMaxBonusPct === 'function')
-      ? gc.getRecipeMaxBonusPct()
-      : ((gc && gc.CAPS && gc.CAPS.RECIPE_MAX_BONUS_PCT) || _I18N_FALLBACK_CAPS.RECIPE_MAX_BONUS_PCT || 258);
-    const maxIslandPct = (gc && typeof gc.getIslandBonusCap === 'function')
-      ? gc.getIslandBonusCap()
-      : ((gc && gc.CAPS && gc.CAPS.ISLAND_BONUS_CAP !== undefined) ? gc.CAPS.ISLAND_BONUS_CAP : _I18N_FALLBACK_CAPS.ISLAND_BONUS_CAP);
-    const islandStep = (gc && typeof gc.getIslandBonusStep === 'function')
-      ? gc.getIslandBonusStep()
-      : ((gc && gc.CAPS && gc.CAPS.ISLAND_BONUS_STEP !== undefined) ? gc.CAPS.ISLAND_BONUS_STEP : (_I18N_FALLBACK_CAPS.ISLAND_BONUS_STEP || 5));
-    const maxIslandMult = (1 + Number(maxIslandPct) / 100).toFixed(2);
-
-    return str
-      .replace(/\{maxRecipeLv\}/g, String(maxRecipeLv))
-      .replace(/\{maxRecipeBonus\}/g, String(maxRecipeBonus))
-      .replace(/\{maxIslandPct\}/g, String(maxIslandPct))
-      .replace(/\{islandStep\}/g, String(islandStep))
-      .replace(/\{maxIslandMult\}/g, String(maxIslandMult));
-  }
-
-  function t(key, paramsOrFallback, fallbackOrParams) {
-    _ensureActiveLocale();
-    let params = null;
-    let fallback = '';
-    if (paramsOrFallback && typeof paramsOrFallback === 'object') {
-      params = paramsOrFallback;
-      if (typeof fallbackOrParams === 'string') fallback = fallbackOrParams;
-    } else {
-      if (typeof paramsOrFallback === 'string') fallback = paramsOrFallback;
-      if (fallbackOrParams && typeof fallbackOrParams === 'object') params = fallbackOrParams;
-    }
-    let res = activeDict[key];
-    if (res === undefined) {
-      res = fallback ? activeStrategy.text(fallback) : key;
-    }
-    if (params) res = _interpolateParams(res, params);
-    return _resolveDynamicCaps(res);
-  }
-
-  function getTypeName(type, lang = currentLang) {
-    if (!type) return '';
-    return lookupBilingualDict(TYPE_NAMES, type, lang) || type;
-  }
-
   const TYPE_SVG_PATHS = {
     bug: '<path clip-rule="evenodd" d="m342.198.501279c.373-.5317158 1.105-.660937 1.637-.288625l36.354 25.455546c.532.3723.661 1.1051.289 1.6368l-50.599 72.2623c24.599 7.8587 41.358 16.3357 41.358 16.3357s-40.964 70.462-110.443 70.462-118.85-65.672-118.85-65.672 17.506-11.172 43.456-20.7539l-55.5-66.1415c-.417-.4973-.352-1.2386.145-1.6558l33.997-28.52715c.498-.41723 1.239-.35238 1.656.14487l70.272 83.74688c6.017-.6806 12.147-1.061 18.333-1.061 8.891 0 17.771.6759 26.44 1.8229zm13.746 189.200721c18.541-13.242 46.597-47.804 46.597-47.804s71.664 56.79 71.664 177.206c0 120.415-123.896 192.888-123.896 192.888s-59.195-59.781-73.727-135.562c-14.531-75.781 21.496-159.927 21.496-159.927s39.324-13.559 57.866-26.801zm-199.683 0c-18.541-13.242-46.597-47.804-46.597-47.804s-71.664 56.79-71.664 177.206c0 120.415 123.896 192.888 123.896 192.888s59.195-59.781 73.727-135.562c14.531-75.781-21.496-159.927-21.496-159.927s-39.324-13.559-57.866-26.801z" fill="currentColor" fill-rule="evenodd"/>',
     dark: '<path fill-rule="evenodd" clip-rule="evenodd" d="M229.379 452.85C239.106 454.339 249.068 455.111 259.212 455.111C367.214 455.111 454.767 367.558 454.767 259.556C454.767 151.553 367.214 64 259.212 64C251.966 64 244.811 64.3941 237.77 65.1621C291.345 105.751 326.767 176.062 326.767 256C326.767 340.04 287.616 413.44 229.379 452.85ZM255.656 512C397.041 512 511.656 397.385 511.656 256C511.656 114.615 397.041 0 255.656 0C114.271 0 -0.34375 114.615 -0.34375 256C-0.34375 397.385 114.271 512 255.656 512Z" fill="currentColor"/>',
@@ -4695,7 +4486,7 @@ registerResources({
     const basePath = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : (typeof window !== 'undefined' && window.location && window.location.pathname.includes('/app/') ? '../' : '');
     const title = getSpecialtyName(spec) || spec || '';
     const s = size || 20;
-    return `<span class="box-spec-tag ${specClass} specialty-icon-wrap ${extraClass}" title="${safeEscape(title)}" style="display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;padding:0;line-height:1;vertical-align:middle;"><img src="${basePath}assets/specialty/${key}.png" srcset="${basePath}assets/specialty/${key}@2x.png 2x" class="specialty-icon spec-${key}" width="${s}" height="${s}" alt="${safeEscape(title)}" loading="lazy" style="width:${s}px;height:${s}px;object-fit:contain;vertical-align:middle;display:inline-block;pointer-events:none;" /></span>`;
+    return `<span class="box-spec-tag ${specClass} specialty-icon-wrap ${extraClass}" title="${safeEscape(title)}" style="display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;padding:0;line-height:1;vertical-align:middle;"><img src="${basePath}assets/specialty/${key}.png" srcset="${basePath}assets/specialty/${key}@2x.png 2x" class="specialty-icon spec-${key}" width="${s}" height="${s}" alt="${safeEscape(title)}" loading="lazy" decoding="async" style="width:${s}px;height:${s}px;object-fit:contain;vertical-align:middle;display:inline-block;pointer-events:none;" /></span>`;
   }
 
   const INGREDIENT_ICONS = {
@@ -4733,72 +4524,96 @@ registerResources({
     return icon;
   }
 
-  function getIngredientName(ing, lang = currentLang) {
-    if (!ing) return '';
-    const raw = typeof ing === 'string' ? ing : (ing.name || ing.name_cn || ing.name_tw || ing.name_en || '');
-    if (!raw) return '';
-    return lookupBilingualDict(INGREDIENT_NAMES, raw, lang) || raw;
-  }
-
-  function getRecipeName(rec, lang) {
-    if (!rec) return '';
-    const strategy = _getStrategy(lang);
-    let name_cn = '';
-    let name_en = '';
-    if (typeof rec === 'object') {
-      name_cn = rec.name_cn || rec.name_tw || rec.name || '';
-      name_en = rec.name_en || '';
-    } else if (typeof rec === 'string') {
-      name_cn = rec;
-    }
-    if (!name_cn && !name_en) return '';
-
-    if (typeof window !== 'undefined' && Array.isArray(window.__RECIPES_CACHE__)) {
-      const match = window.__RECIPES_CACHE__.find(r =>
-        (name_cn && (r.name_cn === name_cn || r.name_tw === name_cn || r.name === name_cn || r.name_en === name_cn)) ||
-        (name_en && (r.name_en === name_en || r.name_cn === name_en))
-      );
-      if (match) {
-        name_cn = match.name_cn || match.name_tw || name_cn;
-        name_en = match.name_en || name_en;
-      }
-    }
-
-    return strategy.recipeFromNames(name_cn, name_en);
-  }
-
-  function getBerryName(berry, lang) {
-    if (!berry) return '';
-    return lookupBilingualDict(BERRY_NAMES, berry, lang) || berry;
-  }
-
-  function getNatureName(nat, lang) {
-    if (!nat) return '';
-    return lookupBilingualDict(NATURE_NAMES, nat, lang) || nat;
-  }
-
-  function getMainSkillName(skill, lang) {
-    if (!skill) return '';
-    const strategy = _getStrategy(lang);
-    const res = lookupBilingualDict(MAIN_SKILL_NAMES, skill, strategy.lang);
-    if (res) return res;
-
-    // 支援整段括號包覆（如 "(幫手支援S)"）與複合型括號變體（如 "能量填充S (隨機)"）
-    const trimmed = String(skill).trim();
-    const outerParen = trimmed.match(/^([(\[（【])([^()\[\]（）【】]+)([)\]）】])$/);
-    if (outerParen) {
-      return `${outerParen[1]}${getMainSkillName(outerParen[2], strategy.lang)}${outerParen[3]}`;
-    }
-    const parenMatch = trimmed.match(/^(.+?)\s*([(\[（【].+[)\]）】])$/);
-    if (parenMatch) {
-      const baseSkill = getMainSkillName(parenMatch[1], strategy.lang);
-      const suffix = strategy.text(parenMatch[2]);
-      return `${baseSkill} ${suffix}`;
-    }
-    return strategy.fallbackLookup(trimmed) || trimmed;
-  }
-
-  const POKEMON_NAMES = {"妙蛙種子":"Bulbasaur","妙蛙草":"Ivysaur","妙蛙花":"Venusaur","小火龍":"Charmander","火恐龍":"Charmeleon","噴火龍":"Charizard","傑尼龜":"Squirtle","卡咪龜":"Wartortle","水箭龜":"Blastoise","綠毛蟲":"Caterpie","鐵甲蛹":"Metapod","巴大蝶":"Butterfree","小拉達":"Rattata","拉達":"Raticate","阿柏蛇":"Ekans","阿柏怪":"Arbok","皮丘":"Pichu","皮卡丘":"Pikachu","皮卡丘（萬聖節）":"Pikachu (Halloween)","皮卡丘（佳節）":"Pikachu (Holiday)","皮卡丘（船長）":"Pikachu (Captain)","雷丘":"Raichu","穿山鼠":"Sandshrew","穿山王":"Sandslash","皮寶寶":"Cleffa","皮皮":"Clefairy","皮可西":"Clefable","六尾":"Vulpix","六尾（阿羅拉的樣子）":"Vulpix (Alolan Form)","九尾":"Ninetales","九尾（阿羅拉的樣子）":"Ninetales (Alolan Form)","寶寶丁":"Igglybuff","胖丁":"Jigglypuff","胖可丁":"Wigglytuff","地鼠":"Diglett","三地鼠":"Dugtrio","喵喵":"Meowth","貓老大":"Persian","可達鴨":"Psyduck","哥達鴨":"Golduck","猴怪":"Mankey","火爆猴":"Primeape","卡蒂狗":"Growlithe","卡蒂狗（洗翠的樣子）":"Growlithe (Hisuian Form)","風速狗":"Arcanine","風速狗（洗翠的樣子）":"Arcanine (Hisuian Form)","喇叭芽":"Bellsprout","口呆花":"Weepinbell","大食花":"Victreebel","小拳石":"Geodude","隆隆石":"Graveler","隆隆岩":"Golem","呆呆獸":"Slowpoke","呆殼獸":"Slowbro","呆呆王":"Slowking","小磁怪":"Magnemite","三合一磁怪":"Magneton","自爆磁怪":"Magnezone","大蔥鴨":"Farfetch'd","嘟嘟":"Doduo","嘟嘟利":"Dodrio","鬼斯":"Gastly","鬼斯通":"Haunter","耿鬼":"Gengar","大岩蛇":"Onix","大鋼蛇":"Steelix","大綱蛇":"Steelix","卡拉卡拉":"Cubone","嘎啦嘎啦":"Marowak","小福蛋":"Happiny","吉利蛋":"Chansey","幸福蛋":"Blissey","袋獸":"Kangaskhan","魔尼尼":"Mime Jr.","魔牆人偶":"Mr. Mime","凱羅斯":"Pinsir","百變怪":"Ditto","伊布":"Eevee","伊布（佳節）":"Eevee (Holiday)","伊布（萬聖節）":"Eevee (Halloween)","伊布家族（8種進化）":"Eevee Evolutions (8 Forms)","伊布家族":"Eevee Evolutions","水伊布":"Vaporeon","雷伊布":"Jolteon","火伊布":"Flareon","太陽伊布":"Espeon","月亮伊布":"Umbreon","葉伊布":"Leafeon","冰伊布":"Glaceon","仙子伊布":"Sylveon","迷你龍":"Dratini","哈克龍":"Dragonair","快龍":"Dragonite","超夢":"Mewtwo","夢幻":"Mew","菊草葉":"Chikorita","月桂葉":"Bayleef","大竺葵":"Meganium","火球鼠":"Cyndaquil","火岩鼠":"Quilava","火爆獸":"Typhlosion","小鋸鱷":"Totodile","藍鱷":"Croconaw","大力鱷":"Feraligatr","波克比":"Togepi","波克基古":"Togetic","波克基斯":"Togekiss","天然雀":"Natu","天然鳥":"Xatu","咩利羊":"Mareep","茸茸羊":"Flaaffy","電龍":"Ampharos","盆才怪":"Bonsly","樹才怪":"Sudowoodo","烏波":"Wooper","烏波（阿羅拉的樣子）":"Wooper (Paldea Form)","烏波（帕底亞的樣子）":"Wooper (Paldea Form)","沼王":"Quagsire","土王":"Clodsire","黑暗鴉":"Murkrow","烏鴉頭頭":"Honchkrow","夢妖":"Misdreavus","夢妖魔":"Mismagius","小果然":"Wynaut","果然翁":"Wobbuffet","壺壺":"Shuckle","赫拉克羅斯":"Heracross","狃拉":"Sneasel","瑪狃拉":"Weavile","信使鳥":"Delibird","戴魯比":"Houndour","黑魯加":"Houndoom","雷公":"Raikou","炎帝":"Entei","水君":"Suicune","幼基拉斯":"Larvitar","沙基拉斯":"Pupitar","班基拉斯":"Tyranitar","木守宮":"Treecko","森林蜥蜴":"Grovyle","蜥蜴王":"Sceptile","火稚雞":"Torchic","力壯雞":"Combusken","火焰雞":"Blaziken","水躍魚":"Mudkip","沼躍魚":"Marshtomp","巨沼怪":"Swampert","拉魯拉絲":"Ralts","奇鲁莉安":"Kirlia","沙奈朵":"Gardevoir","艾路雷朵":"Gallade","懶人獺":"Slakoth","過動猿":"Vigoroth","請假王":"Slaking","勾魂眼":"Sableye","大嘴娃":"Mawile","可可多拉":"Aron","可多拉":"Lairon","波士可多拉":"Aggron","正電拍拍":"Plusle","負電拍拍":"Minun","溶食獸":"Gulpin","吞食獸":"Swalot","大顎蟻":"Trapinch","超音波幼蟲":"Vibrava","沙漠蜻蜓":"Flygon","青綿鳥":"Swablu","七夕青鳥":"Altaria","怨影娃娃":"Shuppet","詛咒娃娃":"Banette","阿勃梭魯":"Absol","海豹球":"Spheal","海豹球（佳節）":"Spheal (Holiday)","海魔獅":"Sealeo","帝牙海獅":"Walrein","寶貝龍":"Bagon","甲殼龍":"Shelgon","暴飛龍":"Salamence","拉帝亞斯":"Latias","拉帝歐斯":"Latios","草苗龜":"Turtwig","樹林龜":"Grotle","土台龜":"Torterra","小火焰猴":"Chimchar","猛火猴":"Monferno","烈焰猴":"Infernape","波加曼":"Piplup","波皇子":"Prinplup","帝王拿波":"Empoleon","小貓怪":"Shinx","勒克貓":"Luxio","倫琴貓":"Luxray","飄飄球":"Drifloon","隨風球":"Drifblim","花岩怪":"Spiritomb","利歐路":"Riolu","路卡利歐":"Lucario","不良蛙":"Croagunk","毒骷蛙":"Toxicroak","雪笠怪":"Snover","暴雪王":"Abomasnow","克雷色利亞":"Cresselia","達克萊伊":"Darkrai","食夢夢":"Munna","夢夢蝕":"Musharna","石居蟹":"Dwebble","岩殿居蟹":"Crustle","毛頭小鷹":"Rufflet","勇士雄鷹":"Braviary","寶寶暴龍":"Tyrunt","怪顎龍":"Tyrantrum","摔角鷹人":"Hawlucha","咚咚鼠":"Dedenne","南瓜精":"Pumpkaboo","南瓜怪人":"Gourgeist","南瓜精 (小顆種)":"Pumpkaboo (Small Variety)","南瓜精 (中顆種)":"Pumpkaboo (Medium Variety)","南瓜精 (大顆種)":"Pumpkaboo (Large Variety)","南瓜精 (巨顆種)":"Pumpkaboo (Jumbo Variety)","南瓜怪人 (小顆種)":"Gourgeist (Small Variety)","南瓜怪人 (中顆種)":"Gourgeist (Medium Variety)","南瓜怪人 (大顆種)":"Gourgeist (Large Variety)","南瓜怪人 (巨顆種)":"Gourgeist (Jumbo Variety)","嗡蝠":"Noibat","音波龍":"Noivern","強顎雞母蟲":"Grubbin","蟲電寶":"Charjabug","鍬農炮蟲":"Vikavolt","萌虻":"Cutiefly","蝶結萌虻":"Ribombee","童偶熊":"Stufful","穿著熊":"Bewear","花療環環":"Comfey","托戈德瑪爾":"Togedemaru","謎擬Q":"Mimikyu","謎擬Ｑ":"Mimikyu","谜拟Q":"Mimikyu","谜拟Ｑ":"Mimikyu","老翁龍":"Drampa","古月鳥":"Cramorant","毒電嬰":"Toxel","顫弦蠑螈（高調的樣子）":"Toxtricity (Amped Form)","顫弦蠑螈（低調的樣子）":"Toxtricity (Low Key Form)","新葉喵":"Sprigatito","蒂蕾喵":"Floragato","魔幻假面喵":"Meowscarada","呆火鱷":"Fuecoco","炙燙鱷":"Crocalor","骨紋巨聲鱷":"Skeledirge","潤水鴨":"Quaxly","湧躍鴨":"Quaxwell","狂歡浪舞鴨":"Quaquaval","布撥":"Pawmi","布土撥":"Pawmo","巴布土撥":"Pawmot","小鍛匠":"Tinkatink","巧鍛匠":"Tinkatuff","巨鍛匠":"Tinkaton","哎呀球菇":"Foongus","敗露球菇":"Amoonguss","走鯨":"Cetoddle","浩大鯨":"Cetitan","木棉球":"Cottonee","風妖精":"Whimsicott"};
+  const POKEMON_NAMES = {
+    "妙蛙種子": "Bulbasaur", "妙蛙草": "Ivysaur", "妙蛙花": "Venusaur",
+    "小火龍": "Charmander", "火恐龍": "Charmeleon", "噴火龍": "Charizard",
+    "傑尼龜": "Squirtle", "卡咪龜": "Wartortle", "水箭龜": "Blastoise",
+    "綠毛蟲": "Caterpie", "鐵甲蛹": "Metapod", "巴大蝶": "Butterfree",
+    "小拉達": "Rattata", "拉達": "Raticate", "阿柏蛇": "Ekans",
+    "阿柏怪": "Arbok", "皮丘": "Pichu", "皮卡丘": "Pikachu",
+    "皮卡丘（萬聖節）": "Pikachu (Halloween)", "皮卡丘（佳節）": "Pikachu (Holiday)", "皮卡丘（船長）": "Pikachu (Captain)",
+    "雷丘": "Raichu", "穿山鼠": "Sandshrew", "穿山王": "Sandslash",
+    "皮寶寶": "Cleffa", "皮皮": "Clefairy", "皮可西": "Clefable",
+    "六尾": "Vulpix", "六尾（阿羅拉的樣子）": "Vulpix (Alolan Form)", "九尾": "Ninetales",
+    "九尾（阿羅拉的樣子）": "Ninetales (Alolan Form)", "寶寶丁": "Igglybuff", "胖丁": "Jigglypuff",
+    "胖可丁": "Wigglytuff", "地鼠": "Diglett", "三地鼠": "Dugtrio",
+    "喵喵": "Meowth", "貓老大": "Persian", "可達鴨": "Psyduck",
+    "哥達鴨": "Golduck", "猴怪": "Mankey", "火爆猴": "Primeape",
+    "卡蒂狗": "Growlithe", "卡蒂狗（洗翠的樣子）": "Growlithe (Hisuian Form)", "風速狗": "Arcanine",
+    "風速狗（洗翠的樣子）": "Arcanine (Hisuian Form)", "喇叭芽": "Bellsprout", "口呆花": "Weepinbell",
+    "大食花": "Victreebel", "小拳石": "Geodude", "隆隆石": "Graveler",
+    "隆隆岩": "Golem", "呆呆獸": "Slowpoke", "呆殼獸": "Slowbro",
+    "呆呆王": "Slowking", "小磁怪": "Magnemite", "三合一磁怪": "Magneton",
+    "自爆磁怪": "Magnezone", "大蔥鴨": "Farfetch'd", "嘟嘟": "Doduo",
+    "嘟嘟利": "Dodrio", "鬼斯": "Gastly", "鬼斯通": "Haunter",
+    "耿鬼": "Gengar", "大岩蛇": "Onix", "大鋼蛇": "Steelix",
+    "大綱蛇": "Steelix", "卡拉卡拉": "Cubone", "嘎啦嘎啦": "Marowak",
+    "小福蛋": "Happiny", "吉利蛋": "Chansey", "幸福蛋": "Blissey",
+    "袋獸": "Kangaskhan", "魔尼尼": "Mime Jr.", "魔牆人偶": "Mr. Mime",
+    "凱羅斯": "Pinsir", "百變怪": "Ditto", "伊布": "Eevee",
+    "伊布（佳節）": "Eevee (Holiday)", "伊布（萬聖節）": "Eevee (Halloween)", "伊布家族（8種進化）": "Eevee Evolutions (8 Forms)",
+    "伊布家族": "Eevee Evolutions", "水伊布": "Vaporeon", "雷伊布": "Jolteon",
+    "火伊布": "Flareon", "太陽伊布": "Espeon", "月亮伊布": "Umbreon",
+    "葉伊布": "Leafeon", "冰伊布": "Glaceon", "仙子伊布": "Sylveon",
+    "迷你龍": "Dratini", "哈克龍": "Dragonair", "快龍": "Dragonite",
+    "超夢": "Mewtwo", "夢幻": "Mew", "菊草葉": "Chikorita",
+    "月桂葉": "Bayleef", "大竺葵": "Meganium", "火球鼠": "Cyndaquil",
+    "火岩鼠": "Quilava", "火爆獸": "Typhlosion", "小鋸鱷": "Totodile",
+    "藍鱷": "Croconaw", "大力鱷": "Feraligatr", "波克比": "Togepi",
+    "波克基古": "Togetic", "波克基斯": "Togekiss", "天然雀": "Natu",
+    "天然鳥": "Xatu", "咩利羊": "Mareep", "茸茸羊": "Flaaffy",
+    "電龍": "Ampharos", "盆才怪": "Bonsly", "樹才怪": "Sudowoodo",
+    "烏波": "Wooper", "烏波（阿羅拉的樣子）": "Wooper (Paldea Form)", "烏波（帕底亞的樣子）": "Wooper (Paldea Form)",
+    "沼王": "Quagsire", "土王": "Clodsire", "黑暗鴉": "Murkrow",
+    "烏鴉頭頭": "Honchkrow", "夢妖": "Misdreavus", "夢妖魔": "Mismagius",
+    "小果然": "Wynaut", "果然翁": "Wobbuffet", "壺壺": "Shuckle",
+    "赫拉克羅斯": "Heracross", "狃拉": "Sneasel", "瑪狃拉": "Weavile",
+    "信使鳥": "Delibird", "戴魯比": "Houndour", "黑魯加": "Houndoom",
+    "雷公": "Raikou", "炎帝": "Entei", "水君": "Suicune",
+    "幼基拉斯": "Larvitar", "沙基拉斯": "Pupitar", "班基拉斯": "Tyranitar",
+    "木守宮": "Treecko", "森林蜥蜴": "Grovyle", "蜥蜴王": "Sceptile",
+    "火稚雞": "Torchic", "力壯雞": "Combusken", "火焰雞": "Blaziken",
+    "水躍魚": "Mudkip", "沼躍魚": "Marshtomp", "巨沼怪": "Swampert",
+    "拉魯拉絲": "Ralts", "奇鲁莉安": "Kirlia", "沙奈朵": "Gardevoir",
+    "艾路雷朵": "Gallade", "懶人獺": "Slakoth", "過動猿": "Vigoroth",
+    "請假王": "Slaking", "勾魂眼": "Sableye", "大嘴娃": "Mawile",
+    "可可多拉": "Aron", "可多拉": "Lairon", "波士可多拉": "Aggron",
+    "正電拍拍": "Plusle", "負電拍拍": "Minun", "溶食獸": "Gulpin",
+    "吞食獸": "Swalot", "大顎蟻": "Trapinch", "超音波幼蟲": "Vibrava",
+    "沙漠蜻蜓": "Flygon", "青綿鳥": "Swablu", "七夕青鳥": "Altaria",
+    "怨影娃娃": "Shuppet", "詛咒娃娃": "Banette", "阿勃梭魯": "Absol",
+    "海豹球": "Spheal", "海豹球（佳節）": "Spheal (Holiday)", "海魔獅": "Sealeo",
+    "帝牙海獅": "Walrein", "寶貝龍": "Bagon", "甲殼龍": "Shelgon",
+    "暴飛龍": "Salamence", "拉帝亞斯": "Latias", "拉帝歐斯": "Latios",
+    "草苗龜": "Turtwig", "樹林龜": "Grotle", "土台龜": "Torterra",
+    "小火焰猴": "Chimchar", "猛火猴": "Monferno", "烈焰猴": "Infernape",
+    "波加曼": "Piplup", "波皇子": "Prinplup", "帝王拿波": "Empoleon",
+    "小貓怪": "Shinx", "勒克貓": "Luxio", "倫琴貓": "Luxray",
+    "飄飄球": "Drifloon", "隨風球": "Drifblim", "花岩怪": "Spiritomb",
+    "利歐路": "Riolu", "路卡利歐": "Lucario", "不良蛙": "Croagunk",
+    "毒骷蛙": "Toxicroak", "雪笠怪": "Snover", "暴雪王": "Abomasnow",
+    "克雷色利亞": "Cresselia", "達克萊伊": "Darkrai", "食夢夢": "Munna",
+    "夢夢蝕": "Musharna", "石居蟹": "Dwebble", "岩殿居蟹": "Crustle",
+    "毛頭小鷹": "Rufflet", "勇士雄鷹": "Braviary", "寶寶暴龍": "Tyrunt",
+    "怪顎龍": "Tyrantrum", "摔角鷹人": "Hawlucha", "咚咚鼠": "Dedenne",
+    "南瓜精": "Pumpkaboo", "南瓜怪人": "Gourgeist", "南瓜精 (小顆種)": "Pumpkaboo (Small Variety)",
+    "南瓜精 (中顆種)": "Pumpkaboo (Medium Variety)", "南瓜精 (大顆種)": "Pumpkaboo (Large Variety)", "南瓜精 (巨顆種)": "Pumpkaboo (Jumbo Variety)",
+    "南瓜怪人 (小顆種)": "Gourgeist (Small Variety)", "南瓜怪人 (中顆種)": "Gourgeist (Medium Variety)", "南瓜怪人 (大顆種)": "Gourgeist (Large Variety)",
+    "南瓜怪人 (巨顆種)": "Gourgeist (Jumbo Variety)", "嗡蝠": "Noibat", "音波龍": "Noivern",
+    "強顎雞母蟲": "Grubbin", "蟲電寶": "Charjabug", "鍬農炮蟲": "Vikavolt",
+    "萌虻": "Cutiefly", "蝶結萌虻": "Ribombee", "童偶熊": "Stufful",
+    "穿著熊": "Bewear", "花療環環": "Comfey", "托戈德瑪爾": "Togedemaru",
+    "謎擬Q": "Mimikyu", "謎擬Ｑ": "Mimikyu", "谜拟Q": "Mimikyu",
+    "谜拟Ｑ": "Mimikyu", "老翁龍": "Drampa", "古月鳥": "Cramorant",
+    "毒電嬰": "Toxel", "顫弦蠑螈（高調的樣子）": "Toxtricity (Amped Form)", "顫弦蠑螈（低調的樣子）": "Toxtricity (Low Key Form)",
+    "新葉喵": "Sprigatito", "蒂蕾喵": "Floragato", "魔幻假面喵": "Meowscarada",
+    "呆火鱷": "Fuecoco", "炙燙鱷": "Crocalor", "骨紋巨聲鱷": "Skeledirge",
+    "潤水鴨": "Quaxly", "湧躍鴨": "Quaxwell", "狂歡浪舞鴨": "Quaquaval",
+    "布撥": "Pawmi", "布土撥": "Pawmo", "巴布土撥": "Pawmot",
+    "小鍛匠": "Tinkatink", "巧鍛匠": "Tinkatuff", "巨鍛匠": "Tinkaton",
+    "哎呀球菇":"Foongus", "敗露球菇":"Amoonguss", "走鯨": "Cetoddle",
+    "浩大鯨": "Cetitan", "木棉球":"Cottonee", "風妖精":"Whimsicott"
+  };
 
   // 預排序與預建立英文對照快取，避免於每次呼叫時重複排序與建構陣列
   const SORTED_POKEMON_NAMES_KEYS = Object.keys(POKEMON_NAMES).sort((a, b) => b.length - a.length);
@@ -4809,88 +4624,8 @@ registerResources({
   let _allPkmEnMapRef = null;
   let _allPkmEnMapLen = 0;
   let _allPkmEnMap = null;
-
-  function _resolvePokemonNameEn(str) {
-    // Level 1 & 2 & 3 字典比對 (O(1))
-    const direct = lookupBilingualDict(POKEMON_NAMES, str, 'en-US');
-    if (direct) return direct;
-
-    // Level 4: 支援括號後綴（如 毒骷蛙 (ABB)、皮卡丘（萬聖節）等）
-    const parenMatch = str.match(/^(.+?)\s*([(\[（【].+[)\]）】])$/);
-    if (parenMatch) {
-      const baseName = _resolvePokemonNameEn(parenMatch[1]);
-      const suffix = _translateDynamicToEn(parenMatch[2]);
-      return `${baseName} ${suffix}`;
-    }
-
-    // Level 5: 搜尋全域陣列備援 (O(1) 預索引快取)
-    if (typeof window !== 'undefined' && Array.isArray(window.allPokemons)) {
-      if (_allPkmEnMapRef !== window.allPokemons || _allPkmEnMapLen !== window.allPokemons.length || !_allPkmEnMap) {
-        _allPkmEnMapRef = window.allPokemons;
-        _allPkmEnMapLen = window.allPokemons.length;
-        _allPkmEnMap = Object.create(null);
-        for (let i = 0; i < window.allPokemons.length; i++) {
-          const p = window.allPokemons[i];
-          if (!p || !p.name_en) continue;
-          if (p.name_cn) {
-            _allPkmEnMap[p.name_cn] = p.name_en;
-            _allPkmEnMap[normalizeSearchKey(p.name_cn)] = p.name_en;
-          }
-          if (p.name && typeof p.name === 'string') {
-            _allPkmEnMap[p.name] = p.name_en;
-          }
-        }
-      }
-      const mapped = _allPkmEnMap[str] || _allPkmEnMap[normalizeSearchKey(str)];
-      if (mapped) return mapped;
-    }
-
-    return str;
-  }
-
-  function formatCompactRegionalName(displayName) {
-    if (!displayName || typeof displayName !== 'string') return displayName || '';
-    let out = displayName.replace(
-      /([（(])\s*(阿羅拉|阿罗拉|伽勒爾|伽勒尔|洗翠|帕底亞|帕底亚)的(?:樣子|样子)\s*([）)])/g,
-      '$1$2$3'
-    );
-    out = out.replace(
-      /(\()\s*(Alola|Alolan|Galar|Galarian|Hisui|Hisuian|Paldea|Paldean)(?:\s+Form)?\s*(\))/gi,
-      function (_m, open, region, close) {
-        const lower = region.toLowerCase();
-        if (lower.startsWith('alola')) return open + 'Alola' + close;
-        if (lower.startsWith('galar')) return open + 'Galar' + close;
-        if (lower.startsWith('hisui')) return open + 'Hisui' + close;
-        if (lower.startsWith('paldea')) return open + 'Paldea' + close;
-        return _m;
-      }
-    );
-    return out;
-  }
-
-  function getPokemonName(name, lang) {
-    if (!name) return '';
-    const strategy = _getStrategy(lang);
-    const resolved = (typeof name === 'object')
-      ? strategy.pokemonFromObj(name)
-      : strategy.pokemonFromStr(String(name).trim());
-    return formatCompactRegionalName(resolved);
-  }
-
-  function getSubSkillName(subskill, lang) {
-    if (!subskill) return '';
-    const res = lookupBilingualDict(SUBSKILL_NAMES, subskill, lang);
-    return res || String(subskill).trim();
-  }
-
   const _dynTextEnCache = Object.create(null);
   let _dynTextEnCacheCount = 0;
-
-  function translateDynamicText(text) {
-    if (!text || typeof text !== 'string') return text;
-    _ensureActiveLocale();
-    return activeStrategy.text(text);
-  }
 
   function _translateDynamicToEn(text) {
     if (!text || typeof text !== 'string') return text;
@@ -5175,6 +4910,1160 @@ registerResources({
     }
     return out;
   }
+  // ─── 設定彈窗靜態模板建構器 (Settings Modal Shell Templates) ───
+  function _getSettingsModalHtml(isMobileH5) {
+    return isMobileH5 ? `<div class="settings-modal-container app-settings-dialog">
+<div class="settings-modal-header">
+<h3 class="settings-modal-title">
+<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="12" cy="12" r="3"></circle>
+<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+</svg>
+<span data-i18n="settings.title">系統設定</span>
+</h3>
+<button type="button" id="settings-modal-close-btn" class="settings-modal-close-btn" title="關閉" aria-label="關閉" data-i18n-title="common.close" data-i18n-aria="common.close">
+<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<line x1="18" y1="6" x2="6" y2="18"></line>
+<line x1="6" y1="6" x2="18" y2="18"></line>
+</svg>
+</button>
+</div>
+<div class="settings-modal-body app-settings-body">
+<div class="app-settings-group">
+<div class="app-group-header">
+<span class="app-group-title">
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+<circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+<circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+<circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path>
+</svg>
+<span data-i18n="settings.theme_section">外觀主題</span>
+</span>
+<div class="app-theme-invert-control-row">
+<label class="app-theme-invert-title" for="app-theme-invert-switch" data-i18n="settings.theme_invert">反色模式</label>
+<label class="switch switch-sm" for="app-theme-invert-switch" title="反色模式" data-i18n-title="header.invert_title">
+<input type="checkbox" id="app-theme-invert-switch" class="switch-checkbox">
+<span class="switch-slider"></span>
+</label>
+</div>
+</div>
+<div class="app-theme-grid">
+<button type="button" class="theme-card-btn app-theme-chip active" data-theme-val="midnight">
+<span class="theme-chip-dot" style="background: linear-gradient(135deg, #0a0f1d, #38bdf8);"></span>
+<span class="theme-chip-label" data-i18n="settings.theme_midnight">深邃夜空</span>
+<span class="theme-chip-check">✓</span>
+</button>
+<button type="button" class="theme-card-btn app-theme-chip" data-theme-val="onyx">
+<span class="theme-chip-dot" style="background: linear-gradient(135deg, #050505, #94a3b8);"></span>
+<span class="theme-chip-label" data-i18n="settings.theme_onyx">曜石暗影</span>
+<span class="theme-chip-check">✓</span>
+</button>
+<button type="button" class="theme-card-btn app-theme-chip" data-theme-val="dawn">
+<span class="theme-chip-dot" style="background: linear-gradient(135deg, #f8fafc, #0284c7);"></span>
+<span class="theme-chip-label" data-i18n="settings.theme_dawn">晨曦暖陽</span>
+<span class="theme-chip-check">✓</span>
+</button>
+<button type="button" class="theme-card-btn app-theme-chip" data-theme-val="emerald">
+<span class="theme-chip-dot" style="background: linear-gradient(135deg, #f1f5f9, #475569);"></span>
+<span class="theme-chip-label" data-i18n="settings.theme_emerald">雅緻灰石</span>
+<span class="theme-chip-check">✓</span>
+</button>
+</div>
+</div>
+<div class="app-settings-group">
+<div class="app-group-header">
+<span class="app-group-title">
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="12" cy="12" r="10"></circle>
+<line x1="2" y1="12" x2="22" y2="12"></line>
+<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+</svg>
+<span data-i18n="settings.lang_section">介面語言</span>
+</span>
+</div>
+<div class="app-segmented-lang">
+<button type="button" id="lang-btn-zh" class="lang-btn app-segment-btn active" data-lang-val="zh-TW">
+<img src="https://flagsapi.com/TW/flat/64.png" alt="TW" class="lang-flag-icon" width="18" height="18" loading="lazy" decoding="async" onerror="this.style.display='none'">
+<span data-i18n="settings.lang_zh">繁體中文</span>
+</button>
+<button type="button" id="lang-btn-zh-cn" class="lang-btn app-segment-btn" data-lang-val="zh-CN">
+<img src="https://flagsapi.com/CN/flat/64.png" alt="CN" class="lang-flag-icon" width="18" height="18" loading="lazy" decoding="async" onerror="this.style.display='none'">
+<span data-i18n="settings.lang_zh_cn">简体中文</span>
+</button>
+<button type="button" id="lang-btn-en" class="lang-btn app-segment-btn" data-lang-val="en-US">
+<img src="https://flagsapi.com/US/flat/64.png" alt="US" class="lang-flag-icon" width="18" height="18" loading="lazy" decoding="async" onerror="this.style.display='none'">
+<span data-i18n="settings.lang_en">English</span>
+</button>
+</div>
+</div>
+<div class="app-settings-group">
+<div class="app-group-header">
+<span class="app-group-title">
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<polyline points="21 8 21 21 3 21 3 8"></polyline>
+<rect x="1" y="3" width="22" height="5"></rect>
+<line x1="10" y1="12" x2="14" y2="12"></line>
+</svg>
+<span data-i18n="settings.box_backup_section">倉庫備份與還原</span>
+</span>
+</div>
+<div class="app-backup-card">
+<div class="app-backup-btn-row">
+<button type="button" id="settings-export-box-btn" class="app-backup-action-btn export-btn">
+<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+<polyline points="7 10 12 15 17 10"></polyline>
+<line x1="12" y1="15" x2="12" y2="3"></line>
+</svg>
+<span data-i18n="settings.box_export_btn">匯出備份 JSON</span>
+</button>
+<label class="app-backup-action-btn import-btn" style="cursor:pointer;margin:0;">
+<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+<polyline points="17 8 12 3 7 8"></polyline>
+<line x1="12" y1="3" x2="12" y2="15"></line>
+</svg>
+<span data-i18n="settings.box_import_btn">匯入還原 JSON</span>
+<input type="file" id="settings-import-box-input" accept=".json" style="display:none;">
+</label>
+</div>
+<div class="app-cloud-sync-card" style="margin-top:10px;padding:8px 12px;background:var(--bg-hover, rgba(255,255,255,0.03));border:1px solid var(--border-color);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+<div style="font-size:12px;color:var(--text-secondary);">
+<strong style="color:var(--text-primary);display:block;margin-bottom:2px;" data-i18n="settings.cloud_sync_title">雲端即時同步</strong>
+<span data-i18n="settings.cloud_sync_desc">跨裝置自動同步倉庫資料</span>
+</div>
+<button type="button" class="box-btn box-btn-cloud-sync is-guest" onclick="window.CloudSync && window.CloudSync.openAuthModal()" style="padding:5px 10px;font-size:11.5px;">
+<span class="sync-dot dot-guest"></span>
+<span class="sync-text" data-i18n="settings.cloud_sync_btn">登入 / 註冊</span>
+</button>
+</div>
+</div>
+</div>
+<div class="app-settings-group">
+<div class="app-group-header">
+<span class="app-group-title">
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+</svg>
+<span data-i18n="settings.telemetry_section">系統健康與診斷</span>
+</span>
+</div>
+<div class="app-backup-card">
+<div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;line-height:1.4;">
+<span data-i18n="settings.telemetry_desc">監控首屏載入耗時、Web Vitals 與本地快取健康狀態。若遇到功能異常，可一鍵複製診斷報告排查問題。</span>
+</div>
+<button type="button" id="settings-copy-diag-btn" class="app-backup-action-btn export-btn" style="width:100%;justify-content:center;" onclick="if(window.TelemetryManager){window.TelemetryManager.copyDiagnosticReport().then(function(ok){var l=(window.I18N&&window.I18N.getLanguage)?window.I18N.getLanguage():'zh-TW';alert(ok?(l==='en-US'?'Diagnostic report copied to clipboard!':(l==='zh-CN'?'诊断报告已复制至剪贴板！':'診斷報告已複製至剪貼簿！')):(l==='en-US'?'Copy failed':(l==='zh-CN'?'复制失败':'複製失敗')));});}">
+<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+</svg>
+<span data-i18n="settings.copy_diag_btn">複製系統診斷日誌報告</span>
+</button>
+</div>
+</div>
+</div>
+</div>` : `<div class="settings-modal-container">
+<div class="settings-modal-header">
+<h3 class="settings-modal-title">
+<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="12" cy="12" r="3"></circle>
+<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+</svg>
+<span data-i18n="settings.title">系統設定</span>
+</h3>
+<button type="button" id="settings-modal-close-btn" class="settings-modal-close-btn" title="關閉" data-i18n-title="common.close" data-i18n-aria="common.close">✕</button>
+</div>
+<div class="settings-modal-body">
+<div class="settings-section-card">
+<div class="settings-section-header">
+<div class="settings-section-title">
+<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+<circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+<circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+<circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path>
+</svg>
+<span data-i18n="settings.theme_section">外觀主題風格</span>
+</div>
+<div class="theme-invert-control-row">
+<label class="theme-invert-title" for="theme-invert-switch" data-i18n="settings.theme_invert">反色模式</label>
+<label class="switch switch-sm" for="theme-invert-switch" title="反色模式" data-i18n-title="header.invert_title">
+<input type="checkbox" id="theme-invert-switch" class="switch-checkbox">
+<span class="switch-slider"></span>
+</label>
+</div>
+</div>
+<div class="theme-picker-grid">
+<button type="button" class="theme-card-btn active" data-theme-val="midnight">
+<div class="theme-card-header">
+<div class="theme-card-palette">
+<span class="theme-dot" style="background:#0a0f1d;"></span>
+<span class="theme-dot" style="background:#1e293b;"></span>
+<span class="theme-dot" style="background:#38bdf8;"></span>
+</div>
+<span class="theme-card-badge" data-i18n="settings.theme_active">✓ 使用中</span>
+</div>
+<div class="theme-card-name" data-i18n="settings.theme_midnight">深邃夜空</div>
+</button>
+<button type="button" class="theme-card-btn" data-theme-val="onyx">
+<div class="theme-card-header">
+<div class="theme-card-palette">
+<span class="theme-dot" style="background:#050505;"></span>
+<span class="theme-dot" style="background:#18181b;"></span>
+<span class="theme-dot" style="background:#94a3b8;"></span>
+</div>
+<span class="theme-card-badge" data-i18n="settings.theme_active">✓ 使用中</span>
+</div>
+<div class="theme-card-name" data-i18n="settings.theme_onyx">曜石暗影</div>
+</button>
+<button type="button" class="theme-card-btn" data-theme-val="dawn">
+<div class="theme-card-header">
+<div class="theme-card-palette">
+<span class="theme-dot" style="background:#f1f5f9;"></span>
+<span class="theme-dot" style="background:#ffffff;"></span>
+<span class="theme-dot" style="background:#0284c7;"></span>
+</div>
+<span class="theme-card-badge" data-i18n="settings.theme_active">✓ 使用中</span>
+</div>
+<div class="theme-card-name" data-i18n="settings.theme_dawn">晨曦暖陽</div>
+</button>
+<button type="button" class="theme-card-btn" data-theme-val="emerald">
+<div class="theme-card-header">
+<div class="theme-card-palette">
+<span class="theme-dot" style="background:#f1f5f9;"></span>
+<span class="theme-dot" style="background:#e2e8f0;"></span>
+<span class="theme-dot" style="background:#475569;"></span>
+</div>
+<span class="theme-card-badge" data-i18n="settings.theme_active">✓ 使用中</span>
+</div>
+<div class="theme-card-name" data-i18n="settings.theme_emerald">雅緻灰石</div>
+</button>
+</div>
+</div>
+<div class="settings-section-card">
+<div class="settings-section-header">
+<div class="settings-section-title">
+<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="12" cy="12" r="10"></circle>
+<line x1="2" y1="12" x2="22" y2="12"></line>
+<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+</svg>
+<span data-i18n="settings.lang_section">介面語言</span>
+</div>
+</div>
+<div class="lang-switcher-row">
+<button type="button" id="lang-btn-zh" class="lang-btn active" data-lang-val="zh-TW">
+<img src="https://flagsapi.com/TW/flat/64.png" alt="TW" class="lang-flag-icon" width="22" height="22" loading="lazy" decoding="async" onerror="this.style.display='none'">
+<span data-i18n="settings.lang_zh">繁體中文</span>
+</button>
+<button type="button" id="lang-btn-zh-cn" class="lang-btn" data-lang-val="zh-CN">
+<img src="https://flagsapi.com/CN/flat/64.png" alt="CN" class="lang-flag-icon" width="22" height="22" loading="lazy" decoding="async" onerror="this.style.display='none'">
+<span data-i18n="settings.lang_zh_cn">简体中文</span>
+</button>
+<button type="button" id="lang-btn-en" class="lang-btn" data-lang-val="en-US">
+<img src="https://flagsapi.com/US/flat/64.png" alt="US" class="lang-flag-icon" width="22" height="22" loading="lazy" decoding="async" onerror="this.style.display='none'">
+<span data-i18n="settings.lang_en">English</span>
+</button>
+</div>
+</div>
+<div class="settings-section-card">
+<div class="settings-section-header">
+<div class="settings-section-title">
+<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<polyline points="21 8 21 21 3 21 3 8"></polyline>
+<rect x="1" y="3" width="22" height="5"></rect>
+<line x1="10" y1="12" x2="14" y2="12"></line>
+</svg>
+<span data-i18n="settings.box_backup_section">倉庫備份與還原</span>
+</div>
+</div>
+<div style="display:flex;gap:10px;margin-top:2px;">
+<button type="button" id="settings-export-box-btn" class="settings-backup-btn settings-export-btn">
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+<polyline points="7 10 12 15 17 10"></polyline>
+<line x1="12" y1="15" x2="12" y2="3"></line>
+</svg>
+<span data-i18n="settings.box_export_btn">匯出備份 JSON</span>
+</button>
+<label class="settings-backup-btn settings-import-btn" style="cursor:pointer;margin:0;">
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+<polyline points="17 8 12 3 7 8"></polyline>
+<line x1="12" y1="3" x2="12" y2="15"></line>
+</svg>
+<span data-i18n="settings.box_import_btn">匯入還原 JSON</span>
+<input type="file" id="settings-import-box-input" accept=".json" style="display:none;">
+</label>
+</div>
+<div class="app-cloud-sync-card" style="margin-top:12px;padding:10px 14px;background:var(--bg-hover, rgba(255,255,255,0.03));border:1px solid var(--border-color);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+<div style="font-size:12px;color:var(--text-secondary);">
+<strong style="color:var(--text-primary);display:block;margin-bottom:2px;" data-i18n="settings.cloud_sync_title">雲端即時同步 (手機與電腦)</strong>
+<span data-i18n="settings.cloud_sync_desc">登入帳號即可跨裝置秒級雙向同步個人倉庫</span>
+</div>
+<button type="button" class="box-btn box-btn-cloud-sync is-guest" onclick="window.CloudSync && window.CloudSync.openAuthModal()" style="padding:6px 12px;font-size:12px;">
+<span class="sync-dot dot-guest"></span>
+<span class="sync-text" data-i18n="settings.cloud_sync_btn">登入 / 註冊</span>
+</button>
+</div>
+</div>
+<div class="settings-section-card">
+<div class="settings-section-header">
+<div class="settings-section-title">
+<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+</svg>
+<span data-i18n="settings.telemetry_section">系統健康與診斷</span>
+</div>
+</div>
+<div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">
+<span data-i18n="settings.telemetry_desc">監控首屏載入耗時、Web Vitals 與本地快取健康狀態。若遇到功能異常，可一鍵複製診斷報告排查問題。</span>
+</div>
+<button type="button" id="settings-copy-diag-btn" class="settings-backup-btn settings-import-btn" style="width:100%;justify-content:center;" onclick="if(window.TelemetryManager){window.TelemetryManager.copyDiagnosticReport().then(function(ok){var l=(window.I18N&&window.I18N.getLanguage)?window.I18N.getLanguage():'zh-TW';alert(ok?(l==='en-US'?'Diagnostic report copied to clipboard!':(l==='zh-CN'?'诊断报告已复制至剪贴板！':'診斷報告已複製至剪貼簿！')):(l==='en-US'?'Copy failed':(l==='zh-CN'?'复制失败':'複製失敗')));});}">
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+</svg>
+<span data-i18n="settings.copy_diag_btn">複製系統診斷日誌報告</span>
+</button>
+</div>
+</div>
+</div>`;
+  }
+  // ─── 靜態 Shell 動態掛載引擎 (Static HTML Shell Hydration Engine) ───
+  let _shellsHydrated = false;
+  function hydrateAppShells() {
+    if (typeof document === "undefined" || typeof document.getElementById !== "function") return;
+    const isMobileH5 = !!(document.body && document.body.classList && typeof document.body.classList.contains === "function" && document.body.classList.contains("mobile-h5-app"));
+
+    const settingsModal = document.getElementById("settings-modal");
+    if (settingsModal && (!settingsModal.children || settingsModal.children.length === 0) && typeof _getSettingsModalHtml === "function") {
+      settingsModal.innerHTML = _getSettingsModalHtml(isMobileH5);
+    }
+
+    const boxAuthOverlay = document.getElementById("box-auth-overlay");
+    if (boxAuthOverlay && (!boxAuthOverlay.children || boxAuthOverlay.children.length === 0)) {
+      boxAuthOverlay.innerHTML = `<div class="box-auth-prompt-card" onclick="window.CloudSync && window.CloudSync.openAuthModal('signin')">
+<div class="box-auth-prompt-icon-wrap">
+<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+</svg>
+</div>
+<h3 class="box-auth-prompt-title" data-i18n="box.auth_guest_title">登入啟用寶可夢雲端倉庫</h3>
+<p class="box-auth-prompt-desc" data-i18n="box.auth_guest_desc">登入或自訂帳號註冊，即可享有電腦與手機跨裝置秒級雙向同步、即時雲端備份與完整寶可夢管理功能。</p>
+<button type="button" class="box-auth-prompt-btn cloud-auth-btn btn-primary" onclick="event.stopPropagation(); window.CloudSync && window.CloudSync.openAuthModal('signin')">
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+<polyline points="10 17 15 12 10 7"></polyline>
+<line x1="15" y1="12" x2="3" y2="12"></line>
+</svg>
+<span data-i18n="box.auth_guest_login_btn">立即登入 / 註冊帳號</span>
+</button>
+<div class="box-auth-prompt-guest-row" onclick="event.stopPropagation()">
+<button type="button" class="box-auth-guest-link" onclick="window.CloudSync && window.CloudSync.dismissBoxAuthOverlay()">以本機訪客模式暫時使用 (離線模式)</button>
+</div>
+</div>`;
+    }
+
+    const guideCard = document.getElementById("box-screenshot-guide-card");
+    if (guideCard && (!guideCard.children || guideCard.children.length === 0)) {
+      guideCard.innerHTML = isMobileH5 ? `<div class="box-guide-header">
+<div class="box-guide-title">
+<span data-i18n="box.guide_title">標準截圖示範例與必備資訊</span>
+</div>
+<button type="button" id="box-guide-toggle-btn" class="box-guide-toggle-btn" aria-expanded="false" data-i18n="box.guide_expand">展開說明</button>
+</div>
+<div id="box-guide-body" class="box-guide-body" style="display:none;">
+<div class="box-guide-thumb-col">
+<div class="box-guide-thumb-wrap" id="box-guide-thumb-wrap">
+<img src="../assets/guide/standard_screenshot_guide.png" alt="標準截圖示範例" class="box-guide-thumb-img" decoding="async">
+</div>
+</div>
+</div>` : `<div class="box-guide-header">
+<div class="box-guide-title">
+<svg class="box-guide-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="12" cy="12" r="10"></circle>
+<line x1="12" y1="16" x2="12" y2="12"></line>
+<line x1="12" y1="8" x2="12.01" y2="8"></line>
+</svg>
+<span data-i18n="box.guide_title">標準截圖示範例與必備資訊</span>
+</div>
+<button type="button" id="box-guide-toggle-btn" class="box-guide-toggle-btn" aria-expanded="true" data-i18n="box.guide_collapse">收合說明</button>
+</div>
+<div id="box-guide-body" class="box-guide-body">
+<div class="box-guide-thumb-col">
+<div class="box-guide-thumb-wrap" id="box-guide-thumb-wrap" title="點擊放大查看標準截圖範例" data-i18n-title="box.guide_click_zoom">
+<img src="assets/guide/standard_screenshot_guide.png" alt="標準截圖示範例" class="box-guide-thumb-img" decoding="async">
+<div class="box-guide-thumb-overlay">
+<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="11" cy="11" r="8"></circle>
+<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+<line x1="11" y1="8" x2="11" y2="14"></line>
+<line x1="8" y1="11" x2="14" y2="11"></line>
+</svg>
+<span data-i18n="box.guide_click_zoom">點擊放大檢視</span>
+</div>
+</div>
+<span class="box-guide-thumb-caption" data-i18n="box.guide_sample_label">官方遊戲詳細資訊全幅示範</span>
+</div>
+<div class="box-guide-info-col">
+<div class="box-guide-subtitle" data-i18n="box.guide_info_heading">標準截圖必備 5 大核心資訊 (確保 100% 辨識率)：</div>
+<div class="box-guide-items-grid">
+<div class="box-guide-item">
+<span class="box-guide-num">[1]</span>
+<div class="box-guide-item-content">
+<strong data-i18n="box.guide_item1_title">頂部資訊 (名稱與等級)</strong>
+<p data-i18n="box.guide_item1_desc">包含完整的寶可夢名稱 (如 赫拉克羅斯) 與等級 (如 Lv. 52), 文字清晰無遮蔽。</p>
+</div>
+</div>
+<div class="box-guide-item">
+<span class="box-guide-num">[2]</span>
+<div class="box-guide-item-content">
+<strong data-i18n="box.guide_item2_title">食材組合 (Lv.1 / 30 / 60)</strong>
+<p data-i18n="box.guide_item2_desc">清晰顯示三個等級之解鎖食材圖示與獲得數量 (如 甜甜蜜x1, 品鮮蘑菇x1, 甜甜蜜x4)。</p>
+</div>
+</div>
+<div class="box-guide-item">
+<span class="box-guide-num">[3]</span>
+<div class="box-guide-item-content">
+<strong data-i18n="box.guide_item3_title">主技能資訊</strong>
+<p data-i18n="box.guide_item3_desc">顯示完整主技能名稱 (如 健美 / 料理輔助S) 與目前技能等級 (如 Lv.7)。</p>
+</div>
+</div>
+<div class="box-guide-item">
+<span class="box-guide-num">[4]</span>
+<div class="box-guide-item-content">
+<strong data-i18n="box.guide_item4_title">副技能欄位 (全部 5 格)</strong>
+<p data-i18n="box.guide_item4_desc">完整露出 Lv.10 至 Lv.80 共 5 個副技能方塊按鈕, 無選單或彈窗覆蓋遮擋。</p>
+</div>
+</div>
+<div class="box-guide-item">
+<span class="box-guide-num">[5]</span>
+<div class="box-guide-item-content">
+<strong data-i18n="box.guide_item5_title">性格與能力修正</strong>
+<p data-i18n="box.guide_item5_desc">底部性格名稱 (如 慎重) 及對應的主技能發動率 / 食材發現率加減成箭頭 (▲▲ / ▼▼)。</p>
+</div>
+</div>
+</div>
+<div class="box-guide-tips">
+<span class="box-guide-tip-badge" data-i18n="box.guide_tip_badge">提示</span>
+<span data-i18n="box.guide_tip_text">請截取遊戲中「詳細資訊」完整畫面, 避開半透明浮動選單覆蓋, 即可實現高精準度秒速辨識！</span>
+</div>
+</div>
+</div>`;
+    }
+
+    const guideLightbox = document.getElementById("box-guide-lightbox-modal");
+    if (guideLightbox && (!guideLightbox.children || guideLightbox.children.length === 0)) {
+      guideLightbox.innerHTML = isMobileH5 ? `<div class="box-guide-lightbox-dialog">
+<button type="button" id="box-guide-lightbox-close" class="box-guide-lightbox-close" aria-label="關閉大圖" data-i18n-aria="common.close" data-i18n-title="common.close">✕</button>
+<img src="../assets/guide/standard_screenshot_guide.png" alt="標準截圖完整大圖" class="box-guide-lightbox-img" decoding="async">
+</div>` : `<div class="box-guide-lightbox-dialog">
+<button type="button" id="box-guide-lightbox-close" class="box-guide-lightbox-close" aria-label="關閉大圖" data-i18n-aria="common.close" data-i18n-title="common.close">✕</button>
+<img src="assets/guide/standard_screenshot_guide.png" alt="標準截圖完整大圖" class="box-guide-lightbox-img" decoding="async">
+</div>`;
+    }
+
+    const newsPanel = document.getElementById("panel-news");
+    if (newsPanel && (!newsPanel.children || newsPanel.children.length === 0)) {
+      newsPanel.innerHTML = isMobileH5 ? `<section class="controls-container mobile-controls-container">
+<div class="search-box news-search-box">
+<span class="search-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="11" cy="11" r="7"></circle>
+<line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+</svg>
+</span>
+<input type="text" id="news-search-input" class="search-input news-search-input"
+placeholder="搜尋公告標題、關鍵字、寶可夢..."
+data-i18n-placeholder="news.search_placeholder"
+data-i18n-aria="news.search_placeholder"
+aria-label="搜尋新聞公告">
+<button type="button" id="news-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋" data-i18n-title="pokedex.clear" data-i18n-aria="pokedex.clear">✕</button>
+</div>
+<div id="news-category-tags" class="news-category-tags"></div>
+<div id="news-event-timeline" class="news-timeline-container mobile-touch-scroll"></div>
+<div class="news-info-bar">
+<div id="news-count-badge" class="result-count" data-i18n="news.loading">載入最新公告中...</div>
+</div>
+</section>
+<section class="news-content-container">
+<div id="news-list-container" class="news-list-grid">
+<div class="app-loading-view">
+<div class="app-loading-spinner"></div>
+<div class="app-loading-text" data-i18n="news.loading">載入最新公告中...</div>
+</div>
+</div>
+<footer class="news-minimal-footer">
+<p class="news-footer-source" data-i18n-html="news.source_full_hint">
+由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>
+</p>
+</footer>
+</section>` : `<section class="controls-container" aria-label="News Search and Category Controls">
+<div id="news-event-timeline" class="news-timeline-container"></div>
+<div class="news-filter-card">
+<div class="news-top-bar">
+<div id="news-category-tags" class="news-category-tags">
+</div>
+<div class="search-box news-search-box">
+<span class="search-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="11" cy="11" r="7"></circle>
+<line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+</svg>
+</span>
+<input type="text" id="news-search-input" class="search-input news-search-input"
+placeholder="搜尋公告標題、關鍵字、寶可夢..."
+data-i18n-placeholder="news.search_placeholder"
+data-i18n-aria="news.search_placeholder"
+aria-label="搜尋新聞公告">
+<button type="button" id="news-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋" data-i18n-title="pokedex.clear" data-i18n-aria="pokedex.clear">✕</button>
+</div>
+</div>
+<div class="news-info-bar">
+<div id="news-count-badge" class="result-count" data-i18n="news.loading">
+載入最新官方消息中...
+</div>
+</div>
+</div>
+</section>
+<section class="news-content-container">
+<div id="news-list-container" class="news-list-grid">
+<div style="text-align:center;padding:60px;color:var(--text-muted);" data-i18n="news.loading">
+最新新聞與公告載入中...
+</div>
+</div>
+<footer class="news-minimal-footer">
+<p class="news-footer-source" data-i18n-html="news.source_full_hint">
+由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>
+</p>
+</footer>
+</section>`;
+    }
+    const subskillGroup = document.getElementById("box-subskill-group");
+    if (subskillGroup && (!subskillGroup.children || subskillGroup.children.length === 0)) {
+      subskillGroup.innerHTML = isMobileH5 ? `<div style="display:flex;justify-content:space-between;align-items:center;">
+<label class="box-form-label" data-i18n="box.modal_poke_subskills">副技能配置</label>
+<button type="button" id="box-subskill-clear-all-btn" class="box-subskill-clear-btn" data-i18n="box.modal_clear_all_subskills">✕ 清空全部</button>
+</div>
+<input type="hidden" id="modal-subskill-1" value="">
+<input type="hidden" id="modal-subskill-2" value="">
+<input type="hidden" id="modal-subskill-3" value="">
+<input type="hidden" id="modal-subskill-4" value="">
+<input type="hidden" id="modal-subskill-5" value="">
+<div class="box-subskill-slots-row" id="box-subskill-slots-row">
+<button type="button" class="box-subskill-slot-btn active" data-slot="1">
+<span class="slot-lvl-header">Lv.10</span>
+<span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
+</button>
+<button type="button" class="box-subskill-slot-btn" data-slot="2">
+<span class="slot-lvl-header">Lv.25</span>
+<span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
+</button>
+<button type="button" class="box-subskill-slot-btn" data-slot="3">
+<span class="slot-lvl-header">Lv.50</span>
+<span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
+</button>
+<button type="button" class="box-subskill-slot-btn" data-slot="4">
+<span class="slot-lvl-header">Lv.70</span>
+<span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
+</button>
+<button type="button" class="box-subskill-slot-btn" data-slot="5">
+<span class="slot-lvl-header">Lv.80</span>
+<span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
+</button>
+</div>
+<div class="box-subskill-palette" id="box-subskill-palette">
+<div class="subskill-tier-section">
+<div class="subskill-tier-label gold-label" data-i18n="box.modal_gold_skills">金色頂級技能</div>
+<div class="subskill-chips-row" id="subskill-chips-gold"></div>
+</div>
+<div class="subskill-tier-section">
+<div class="subskill-tier-label blue-label" data-i18n="box.modal_blue_skills">藍色高階技能</div>
+<div class="subskill-chips-row" id="subskill-chips-blue"></div>
+</div>
+<div class="subskill-tier-section">
+<div class="subskill-tier-label white-label" data-i18n="box.modal_white_skills">白色基礎技能</div>
+<div class="subskill-chips-row" id="subskill-chips-white"></div>
+</div>
+</div>
+` : `<div style="display:flex;justify-content:space-between;align-items:center;">
+<label class="box-form-label" data-i18n="box.modal_poke_subskills">副技能配置</label>
+<button type="button" id="box-subskill-clear-all-btn" class="box-subskill-clear-btn" data-i18n="box.modal_clear_all_subskills" data-i18n-title="box.modal_clear_all_subskills" title="清空全部副技能">✕ 清空全部</button>
+</div>
+<input type="hidden" id="modal-subskill-1" value="">
+<input type="hidden" id="modal-subskill-2" value="">
+<input type="hidden" id="modal-subskill-3" value="">
+<input type="hidden" id="modal-subskill-4" value="">
+<input type="hidden" id="modal-subskill-5" value="">
+<div class="box-subskill-slots-row" id="box-subskill-slots-row">
+<button type="button" class="box-subskill-slot-btn active" data-slot="1">
+<span class="slot-lvl-header">Lv.10</span>
+<span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
+</button>
+<button type="button" class="box-subskill-slot-btn" data-slot="2">
+<span class="slot-lvl-header">Lv.25</span>
+<span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
+</button>
+<button type="button" class="box-subskill-slot-btn" data-slot="3">
+<span class="slot-lvl-header">Lv.50</span>
+<span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
+</button>
+<button type="button" class="box-subskill-slot-btn" data-slot="4">
+<span class="slot-lvl-header">Lv.70</span>
+<span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
+</button>
+<button type="button" class="box-subskill-slot-btn" data-slot="5">
+<span class="slot-lvl-header">Lv.80</span>
+<span class="slot-val-badge slot-val-empty" data-i18n="box.subskill_locked">-- 未解鎖 --</span>
+</button>
+</div>
+<div class="box-subskill-palette" id="box-subskill-palette">
+<div class="subskill-tier-section">
+<div class="subskill-tier-label gold-label" data-i18n="box.modal_gold_skills">金色頂級技能</div>
+<div class="subskill-chips-row" id="subskill-chips-gold"></div>
+</div>
+<div class="subskill-tier-section">
+<div class="subskill-tier-label blue-label" data-i18n="box.modal_blue_skills">藍色高階技能</div>
+<div class="subskill-chips-row" id="subskill-chips-blue"></div>
+</div>
+<div class="subskill-tier-section">
+<div class="subskill-tier-label white-label" data-i18n="box.modal_white_skills">白色基礎技能</div>
+<div class="subskill-chips-row" id="subskill-chips-white"></div>
+</div>
+</div>
+`;
+    }
+
+    const ingStrip = document.getElementById("box-ing-strip-shell");
+    if (ingStrip && (!ingStrip.children || ingStrip.children.length === 0)) {
+      ingStrip.innerHTML = isMobileH5 ? `<div class="box-ing-slot-group">
+<span class="box-ing-lvl-tag" data-i18n="box.modal_ing_lv1">Lv.1</span>
+<div id="modal-ing-options-1" class="box-ing-options-list"></div>
+</div>
+<div class="box-ing-slot-group">
+<span class="box-ing-lvl-tag" data-i18n="box.modal_ing_lv30">Lv.30</span>
+<div id="modal-ing-options-2" class="box-ing-options-list"></div>
+</div>
+<div class="box-ing-slot-group">
+<span class="box-ing-lvl-tag" data-i18n="box.modal_ing_lv60">Lv.60</span>
+<div id="modal-ing-options-3" class="box-ing-options-list"></div>
+</div>` : `<div class="box-ing-slot-group">
+<span class="box-ing-lvl-tag" data-i18n="box.modal_ing_lv1">Lv.1</span>
+<div id="modal-ing-options-1" class="box-ing-options-list"></div>
+</div>
+<span class="box-ing-slot-sep">|</span>
+<div class="box-ing-slot-group">
+<span class="box-ing-lvl-tag" data-i18n="box.modal_ing_lv30">Lv.30</span>
+<div id="modal-ing-options-2" class="box-ing-options-list"></div>
+</div>
+<span class="box-ing-slot-sep">|</span>
+<div class="box-ing-slot-group">
+<span class="box-ing-lvl-tag" data-i18n="box.modal_ing_lv60">Lv.60</span>
+<div id="modal-ing-options-3" class="box-ing-options-list"></div>
+</div>`;
+    }
+
+    const potSel = document.getElementById("pot-filter-select");
+    if (potSel && (!potSel.children || potSel.children.length === 0)) {
+      potSel.innerHTML = `<option value="0" data-i18n="recipe.all">全部</option>
+<option value="35" data-i18n="recipe.pot_35">≥ 35（中階料理）</option>
+<option value="55" data-i18n="recipe.pot_55">≥ 55（中高階料理）</option>
+<option value="67" data-i18n="recipe.pot_67">≥ 67（高階大料理）</option>
+<option value="87" data-i18n="recipe.pot_87">≥ 87（特階大料理）</option>
+<option value="100" data-i18n="recipe.pot_100">≥ 100（頂級究極）</option>`;
+    }
+
+    const recSortSel = document.getElementById("recipe-sort-select");
+    if (recSortSel && (!recSortSel.children || recSortSel.children.length === 0)) {
+      recSortSel.innerHTML = `<option value="energy-desc" data-i18n="recipe.sort_energy_desc">食譜能量 ↓（高→低）</option>
+<option value="energy-asc" data-i18n="recipe.sort_energy_asc">食譜能量 ↑（低→高）</option>
+<option value="pot-asc" data-i18n="recipe.sort_pot_asc">鍋子容量 ↑（小→大）</option>
+<option value="pot-desc" data-i18n="recipe.sort_pot_desc">鍋子容量 ↓（大→小）</option>
+<option value="name-asc" data-i18n="recipe.sort_name_asc">名稱排序</option>`;
+    }
+
+    const skillLvSel = document.getElementById("modal-poke-skill-level");
+    if (skillLvSel && (!skillLvSel.children || skillLvSel.children.length === 0)) {
+      skillLvSel.innerHTML = `<option value="1">Lv. 1</option>
+<option value="2">Lv. 2</option>
+<option value="3">Lv. 3</option>
+<option value="4">Lv. 4</option>
+<option value="5">Lv. 5</option>
+<option value="6">Lv. 6</option>
+<option value="7">Lv. 7</option>`;
+    }
+
+    const boxBanner = document.getElementById("box-top-banner-shell");
+    if (boxBanner && (!boxBanner.children || boxBanner.children.length === 0)) {
+      boxBanner.innerHTML = `<div class="box-banner-text">
+<h2 class="box-banner-title" data-i18n="box.banner_title">我的寶可夢倉庫 & 截圖智能辨識</h2>
+<p class="box-banner-desc" data-i18n="box.banner_desc">支援上傳遊戲截圖自動辨識等級、食材組合、副技能與性格，亦可隨時手動錄入與編輯。</p>
+</div>
+<div class="box-banner-actions">
+<input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
+<button type="button" id="box-upload-btn" class="box-btn" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: 1px solid rgba(16, 185, 129, 0.4); font-weight: 700;" title="上傳遊戲截圖自動辨識" data-i18n-title="box.upload_screenshots" data-i18n="box.upload_screenshots">上傳截圖辨識</button>
+<button type="button" id="box-toggle-guide-btn" class="box-btn box-btn-secondary" style="display:none;" title="展開/收合 截圖拖曳與示範指引" data-i18n-title="box.toggle_guide" data-i18n="box.toggle_guide">截圖指引</button>
+<button type="button" id="box-manual-add-btn" class="box-btn box-btn-primary" data-i18n="box.add_pokemon">手動新增寶可夢</button>
+</div>`;
+    }
+
+    const boxDrop = document.getElementById("box-dropzone");
+    if (boxDrop && !isMobileH5 && (!boxDrop.children || boxDrop.children.length === 0)) {
+      boxDrop.innerHTML = `<div class="box-dropzone-inner">
+<span class="box-dropzone-icon">
+<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+<circle cx="12" cy="13" r="4"></circle>
+</svg>
+</span>
+<div class="box-dropzone-content">
+<div class="box-dropzone-title" data-i18n="box.dropzone_title">點擊或多選/批次拖曳「寶可夢資料截圖」至此，或直接按 <kbd>Ctrl+V</kbd> / <kbd>Cmd+V</kbd> 貼上</div>
+<div class="box-dropzone-sub" data-i18n="box.dropzone_sub">自動批次辨識：寶可夢名稱 · 等級 · Lv.1/30/60 食材組合 · 5 格副技能 · 性格加成 · 智能防重保護</div>
+</div>
+</div>
+<div id="box-scanner-status" class="box-scanner-status" style="display:none;"></div>`;
+    }
+
+    const boxSearchRow = document.getElementById("box-search-filter-row");
+    if (boxSearchRow && (!boxSearchRow.children || boxSearchRow.children.length === 0)) {
+      boxSearchRow.innerHTML = `<div class="search-box">
+<span class="search-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="11" cy="11" r="7"></circle>
+<line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+</svg>
+</span>
+<input type="text" id="box-search-input" class="search-input"
+placeholder="搜尋倉庫寶可夢名稱、暱稱、性格、副技能..."
+data-i18n-placeholder="box.search_placeholder"
+data-i18n-aria="box.search_placeholder"
+aria-label="搜尋個人倉庫">
+<button type="button" id="box-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋" data-i18n-title="pokedex.clear" data-i18n-aria="pokedex.clear">✕</button>
+</div>
+<div class="view-mode-toggle">
+<button id="box-toggle-grid" class="toggle-btn active" data-i18n="pokedex.view_cards">卡片</button>
+<button id="box-toggle-table" class="toggle-btn" data-i18n="pokedex.view_table">表格</button>
+</div>`;
+    }
+
+    const hiddenFooter = document.getElementById("app-hidden-footer");
+    if (hiddenFooter && (!hiddenFooter.children || hiddenFooter.children.length === 0)) {
+      hiddenFooter.innerHTML = `<p data-i18n-html="footer.copyright">
+Pokémon Sleep 寶可夢資料庫 &copy; 2026 ·
+<a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank" rel="noopener noreferrer">GitHub 原始碼</a> ·
+Powered by <a href="https://www.serebii.net/" target="_blank" rel="noopener noreferrer">Serebii.net</a>
+</p>
+<p style="margin-top:8px;color:var(--text-muted);font-size:11px;" data-i18n="footer.sync_note">
+同步功能透過 GitHub Actions 執行，點擊「同步資料」後約需 60-120 秒生效。
+需先在「設定」中填入 GitHub PAT Token。
+</p>`;
+    }
+
+    const appRecCtrl = document.getElementById("app-recipe-controls");
+    if (appRecCtrl && (!appRecCtrl.children || appRecCtrl.children.length === 0)) {
+      appRecCtrl.innerHTML = `<div class="search-filter-row">
+<div class="search-box" style="width:100%;">
+<span class="search-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="11" cy="11" r="7"></circle>
+<line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+</svg>
+</span>
+<input type="text" id="recipe-search-input" class="search-input"
+placeholder="搜尋料理名稱、食材..."
+data-i18n-placeholder="recipes.search_placeholder"
+data-i18n-aria="recipes.search_placeholder"
+aria-label="搜尋料理">
+<button type="button" id="recipe-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋" data-i18n-title="pokedex.clear" data-i18n-aria="pokedex.clear">
+<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<line x1="18" y1="6" x2="6" y2="18"></line>
+<line x1="6" y1="6" x2="18" y2="18"></line>
+</svg>
+</button>
+</div>
+</div>`;
+    }
+
+    const dockSvgs = {"pokemon":"<svg class=\"dock-svg\" viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<circle cx=\"12\" cy=\"12\" r=\"10\"></circle>\n<path d=\"M2 12h7\"></path>\n<path d=\"M15 12h7\"></path>\n<circle cx=\"12\" cy=\"12\" r=\"3\"></circle>\n</svg>","recipes":"<svg class=\"dock-svg\" viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<path d=\"M3 11h18a1 1 0 0 1 1 1v2a7 7 0 0 1-14 0v-2\"></path>\n<path d=\"M7 11V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v5\"></path>\n<line x1=\"12\" y1=\"2\" x2=\"12\" y2=\"4\"></line>\n</svg>","wiki":"<svg class=\"dock-svg\" viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<path d=\"M4 19.5A2.5 2.5 0 0 1 6.5 17H20\"></path>\n<path d=\"M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z\"></path>\n<line x1=\"8\" y1=\"6\" x2=\"16\" y2=\"6\"></line>\n<line x1=\"8\" y1=\"10\" x2=\"14\" y2=\"10\"></line>\n</svg>","box":"<svg class=\"dock-svg\" viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"></path>\n<polyline points=\"3.27 6.96 12 12.01 20.73 6.96\"></polyline>\n<line x1=\"12\" y1=\"22.08\" x2=\"12\" y2=\"12\"></line>\n</svg>","news":"<svg class=\"dock-svg\" viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<path d=\"M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1\"></path>\n<path d=\"M19 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-5v14z\"></path>\n<line x1=\"7\" y1=\"8\" x2=\"11\" y2=\"8\"></line>\n<line x1=\"7\" y1=\"12\" x2=\"11\" y2=\"12\"></line>\n<line x1=\"7\" y1=\"16\" x2=\"9\" y2=\"16\"></line>\n</svg>"};
+    if (typeof document.querySelectorAll === "function") {
+      document.querySelectorAll("[data-dock-svg]").forEach(el => {
+        const key = el.getAttribute("data-dock-svg");
+        if (dockSvgs[key] && (!el.children || el.children.length === 0)) el.innerHTML = dockSvgs[key];
+      });
+      const cSvgs = {"header":"<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<polyline points=\"23 4 23 10 17 10\"></polyline>\n<polyline points=\"1 20 1 14 7 14\"></polyline>\n<path d=\"M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15\"></path>\n</svg>","overwrite":"<svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<path d=\"M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-1.19\"/>\n</svg>","savenew":"<svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<line x1=\"12\" y1=\"5\" x2=\"12\" y2=\"19\"></line>\n<line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\"></line>\n</svg>"};
+      document.querySelectorAll("[data-conflict-svg]").forEach(el => {
+        const key = el.getAttribute("data-conflict-svg");
+        if (cSvgs[key] && (!el.children || el.children.length === 0)) el.innerHTML = cSvgs[key];
+      });
+    }
+    _shellsHydrated = true;
+  }
+  const SUPPORTED_LANGS = ['zh-TW', 'zh-CN', 'en-US'];
+
+  function initLanguage() {
+    let initialLang = DEFAULT_LANG;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_LANG);
+      if (saved && SUPPORTED_LANGS.includes(saved)) {
+        initialLang = saved;
+      }
+    } catch (e) {}
+
+    syncActiveLocale(initialLang);
+
+    if (typeof hydrateAppShells === 'function') {
+      hydrateAppShells();
+    }
+
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.setAttribute('lang', activeStrategy.docLang);
+      document.documentElement.setAttribute('data-lang', activeStrategy.dataLang);
+      const onReady = () => {
+        if (typeof hydrateAppShells === 'function') {
+          hydrateAppShells();
+        }
+        updatePageTranslations();
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', onReady);
+      } else {
+        onReady();
+      }
+    }
+  }
+
+  function getLanguage() {
+    return currentLang;
+  }
+
+  function setLanguage(lang) {
+    if (!SUPPORTED_LANGS.includes(lang)) return;
+    syncActiveLocale(lang);
+    try {
+      localStorage.setItem(STORAGE_KEY_LANG, activeStrategy.lang);
+    } catch (e) {}
+
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.setAttribute('lang', activeStrategy.docLang);
+      document.documentElement.setAttribute('data-lang', activeStrategy.dataLang);
+      updatePageTranslations();
+    }
+
+    // 通知各模組刷新
+    if (typeof window !== 'undefined') {
+      if (window.PokemonApp && typeof window.PokemonApp.render === 'function') {
+        window.PokemonApp.render();
+      }
+      if (window.RecipesApp && typeof window.RecipesApp.render === 'function') {
+        window.RecipesApp.render();
+      }
+      if (window.WikiDB && typeof window.WikiDB.renderWikiLayout === 'function') {
+        const wikiPanel = document.getElementById('panel-wiki');
+        if (wikiPanel) {
+          window.WikiDB.renderWikiLayout(wikiPanel);
+          if (wikiPanel.style && wikiPanel.style.display !== 'none' && typeof window.WikiDB.switchSubTab === 'function' && typeof window.WikiDB.getCurrentSubTab === 'function') {
+            try { window.WikiDB.switchSubTab(window.WikiDB.getCurrentSubTab()); } catch (e) {}
+          }
+          // 重新渲染後執行必要的計算（renderWikiLayout 已包含座標天梯渲染，無須重複 refreshCoordinateLadder）
+          if (typeof window.WikiDB.recalcTriggerChance === 'function') window.WikiDB.recalcTriggerChance();
+          if (typeof window.WikiDB.recalcSleepDays === 'function') window.WikiDB.recalcSleepDays();
+        }
+      } else if (window.WikiDB && typeof window.WikiDB.init === 'function') {
+        window.WikiDB.init();
+      }
+      if (window.PokemonBoxApp && typeof window.PokemonBoxApp.renderBox === 'function') {
+        window.PokemonBoxApp.renderBox();
+      }
+      if (window.NewsApp && typeof window.NewsApp.render === 'function') {
+        window.NewsApp.render();
+      }
+      if (window.AppraisalLab && typeof window.AppraisalLab.renderLab === 'function') {
+        const labCont = document.getElementById('appraisal-lab-container');
+        if (labCont) window.AppraisalLab.renderLab(labCont);
+      }
+      if (typeof CustomEvent !== 'undefined' && typeof window.dispatchEvent === 'function') {
+        window.dispatchEvent(new CustomEvent('appLanguageChanged', { detail: { lang: currentLang } }));
+      }
+    }
+  }
+
+  // ─── 全域正規化與多層級容錯查找引擎 (Universal Normalization Engine) ───
+  function normalizeSearchKey(str) {
+    if (!str || typeof str !== 'string') return '';
+    return str
+      .trim()
+      .replace(/（/g, '(')
+      .replace(/）/g, ')')
+      .replace(/【/g, '[')
+      .replace(/】/g, ']')
+      .replace(/：/g, ':')
+      .replace(/\(\s+/g, '(')
+      .replace(/\s+\)/g, ')')
+      .replace(/\[\s+/g, '[')
+      .replace(/\s+\]/g, ']')
+      .replace(/恢復/g, '回復')
+      .replace(/恢/g, '回')
+      .replace(/\s+/g, ' ');
+  }
+
+  function compactSearchKey(str) {
+    if (!str || typeof str !== 'string') return '';
+    return str.replace(/\s+/g, '').replace(/（/g, '(').replace(/）/g, ')').replace(/恢/g, '回');
+  }
+
+  function ensureDictIndex(dict) {
+    if (dict.__normIndex && dict.__compactIndex) return;
+    const normIdx = Object.create(null);
+    const compactIdx = Object.create(null);
+    for (const key in dict) {
+      if (!Object.prototype.hasOwnProperty.call(dict, key)) continue;
+      const val = dict[key];
+      const nKey = normalizeSearchKey(key);
+      if (nKey && normIdx[nKey] === undefined) normIdx[nKey] = val;
+      const cKey = compactSearchKey(key);
+      if (cKey && compactIdx[cKey] === undefined) compactIdx[cKey] = val;
+    }
+    try {
+      Object.defineProperty(dict, '__normIndex', { value: normIdx, enumerable: false, configurable: true });
+      Object.defineProperty(dict, '__compactIndex', { value: compactIdx, enumerable: false, configurable: true });
+    } catch (e) {}
+  }
+
+  function lookupBilingualDict(dict, query, lang) {
+    if (!query || !dict) return null;
+    const str = String(query).trim();
+    if (!str) return '';
+    const strategy = _getStrategy(lang);
+
+    // Level 1: 直接精確命中 (Direct Fast Match)
+    if (dict[str] !== undefined) {
+      return strategy.resolveLookupVal(dict[str], str);
+    }
+
+    // 建立或讀取 O(1) 預索引表 (Pre-indexed O(1) Lookup Maps)
+    ensureDictIndex(dict);
+
+    // Level 2: 標點符號與括號正規化比對 (O(1) Normalized Match)
+    const normTarget = normalizeSearchKey(str);
+    if (dict.__normIndex && dict.__normIndex[normTarget] !== undefined) {
+      return strategy.resolveLookupVal(dict.__normIndex[normTarget], str);
+    }
+
+    // Level 3: 緊湊無視空格比對 (O(1) Compact Match without Whitespace)
+    const compactTarget = compactSearchKey(str);
+    if (dict.__compactIndex && dict.__compactIndex[compactTarget] !== undefined) {
+      return strategy.resolveLookupVal(dict.__compactIndex[compactTarget], str);
+    }
+
+    return strategy.fallbackLookup(str);
+  }
+
+  const _I18N_FALLBACK_CAPS = /* @GAME_CONFIG_FALLBACK_START */ {"POKEMON_LEVEL_CAP":70,"RECIPE_LEVEL_CAP":70,"THEORETICAL_MAX_LEVEL":100,"ISLAND_BONUS_CAP":95,"ISLAND_BONUS_STEP":5,"RECIPE_MAX_BONUS_PCT":258,"SUBSKILL_UNLOCK_LEVELS":[10,25,50,70,80]} /* @GAME_CONFIG_FALLBACK_END */;
+
+  function _resolveDynamicCaps(str) {
+    if (typeof str !== 'string') return str;
+    if (!str.includes('{maxRecipe') && !str.includes('{maxIsland') && !str.includes('{islandStep}')) {
+      return str;
+    }
+    const gc = (typeof globalThis !== 'undefined' && globalThis.GAME_CONFIG) ||
+               (typeof window !== 'undefined' && window.GAME_CONFIG) || null;
+    const maxRecipeLv = (gc && typeof gc.getRecipeLevelCap === 'function')
+      ? gc.getRecipeLevelCap()
+      : ((gc && gc.CAPS && gc.CAPS.RECIPE_LEVEL_CAP) || _I18N_FALLBACK_CAPS.RECIPE_LEVEL_CAP || 70);
+    const maxRecipeBonus = (gc && typeof gc.getRecipeMaxBonusPct === 'function')
+      ? gc.getRecipeMaxBonusPct()
+      : ((gc && gc.CAPS && gc.CAPS.RECIPE_MAX_BONUS_PCT) || _I18N_FALLBACK_CAPS.RECIPE_MAX_BONUS_PCT || 258);
+    const maxIslandPct = (gc && typeof gc.getIslandBonusCap === 'function')
+      ? gc.getIslandBonusCap()
+      : ((gc && gc.CAPS && gc.CAPS.ISLAND_BONUS_CAP !== undefined) ? gc.CAPS.ISLAND_BONUS_CAP : _I18N_FALLBACK_CAPS.ISLAND_BONUS_CAP);
+    const islandStep = (gc && typeof gc.getIslandBonusStep === 'function')
+      ? gc.getIslandBonusStep()
+      : ((gc && gc.CAPS && gc.CAPS.ISLAND_BONUS_STEP !== undefined) ? gc.CAPS.ISLAND_BONUS_STEP : (_I18N_FALLBACK_CAPS.ISLAND_BONUS_STEP || 5));
+    const maxIslandMult = (1 + Number(maxIslandPct) / 100).toFixed(2);
+
+    return str
+      .replace(/\{maxRecipeLv\}/g, String(maxRecipeLv))
+      .replace(/\{maxRecipeBonus\}/g, String(maxRecipeBonus))
+      .replace(/\{maxIslandPct\}/g, String(maxIslandPct))
+      .replace(/\{islandStep\}/g, String(islandStep))
+      .replace(/\{maxIslandMult\}/g, String(maxIslandMult));
+  }
+
+  function t(key, paramsOrFallback, fallbackOrParams) {
+    _ensureActiveLocale();
+    let params = null;
+    let fallback = '';
+    if (paramsOrFallback && typeof paramsOrFallback === 'object') {
+      params = paramsOrFallback;
+      if (typeof fallbackOrParams === 'string') fallback = fallbackOrParams;
+    } else {
+      if (typeof paramsOrFallback === 'string') fallback = paramsOrFallback;
+      if (fallbackOrParams && typeof fallbackOrParams === 'object') params = fallbackOrParams;
+    }
+    let res = activeDict[key];
+    if (res === undefined) {
+      res = fallback ? activeStrategy.text(fallback) : key;
+    }
+    if (params) res = _interpolateParams(res, params);
+    return _resolveDynamicCaps(res);
+  }
+
+  function getTypeName(type, lang = currentLang) {
+    if (!type) return '';
+    return lookupBilingualDict(TYPE_NAMES, type, lang) || type;
+  }
+
+
+  function getIngredientName(ing, lang = currentLang) {
+    if (!ing) return '';
+    const raw = typeof ing === 'string' ? ing : (ing.name || ing.name_cn || ing.name_tw || ing.name_en || '');
+    if (!raw) return '';
+    return lookupBilingualDict(INGREDIENT_NAMES, raw, lang) || raw;
+  }
+
+  function getRecipeName(rec, lang) {
+    if (!rec) return '';
+    const strategy = _getStrategy(lang);
+    let name_cn = '';
+    let name_en = '';
+    if (typeof rec === 'object') {
+      name_cn = rec.name_cn || rec.name_tw || rec.name || '';
+      name_en = rec.name_en || '';
+    } else if (typeof rec === 'string') {
+      name_cn = rec;
+    }
+    if (!name_cn && !name_en) return '';
+
+    if (typeof window !== 'undefined' && Array.isArray(window.__RECIPES_CACHE__)) {
+      const match = window.__RECIPES_CACHE__.find(r =>
+        (name_cn && (r.name_cn === name_cn || r.name_tw === name_cn || r.name === name_cn || r.name_en === name_cn)) ||
+        (name_en && (r.name_en === name_en || r.name_cn === name_en))
+      );
+      if (match) {
+        name_cn = match.name_cn || match.name_tw || name_cn;
+        name_en = match.name_en || name_en;
+      }
+    }
+
+    return strategy.recipeFromNames(name_cn, name_en);
+  }
+
+  function getBerryName(berry, lang) {
+    if (!berry) return '';
+    return lookupBilingualDict(BERRY_NAMES, berry, lang) || berry;
+  }
+
+  function getNatureName(nat, lang) {
+    if (!nat) return '';
+    return lookupBilingualDict(NATURE_NAMES, nat, lang) || nat;
+  }
+
+  function getMainSkillName(skill, lang) {
+    if (!skill) return '';
+    const strategy = _getStrategy(lang);
+    const res = lookupBilingualDict(MAIN_SKILL_NAMES, skill, strategy.lang);
+    if (res) return res;
+
+    // 支援整段括號包覆（如 "(幫手支援S)"）與複合型括號變體（如 "能量填充S (隨機)"）
+    const trimmed = String(skill).trim();
+    const outerParen = trimmed.match(/^([(\[（【])([^()\[\]（）【】]+)([)\]）】])$/);
+    if (outerParen) {
+      return `${outerParen[1]}${getMainSkillName(outerParen[2], strategy.lang)}${outerParen[3]}`;
+    }
+    const parenMatch = trimmed.match(/^(.+?)\s*([(\[（【].+[)\]）】])$/);
+    if (parenMatch) {
+      const baseSkill = getMainSkillName(parenMatch[1], strategy.lang);
+      const suffix = strategy.text(parenMatch[2]);
+      return `${baseSkill} ${suffix}`;
+    }
+    return strategy.fallbackLookup(trimmed) || trimmed;
+  }
+
+
+  function _resolvePokemonNameEn(str) {
+    // Level 1 & 2 & 3 字典比對 (O(1))
+    const direct = lookupBilingualDict(POKEMON_NAMES, str, 'en-US');
+    if (direct) return direct;
+
+    // Level 4: 支援括號後綴（如 毒骷蛙 (ABB)、皮卡丘（萬聖節）等）
+    const parenMatch = str.match(/^(.+?)\s*([(\[（【].+[)\]）】])$/);
+    if (parenMatch) {
+      const baseName = _resolvePokemonNameEn(parenMatch[1]);
+      const suffix = _translateDynamicToEn(parenMatch[2]);
+      return `${baseName} ${suffix}`;
+    }
+
+    // Level 5: 搜尋全域陣列備援 (O(1) 預索引快取)
+    if (typeof window !== 'undefined' && Array.isArray(window.allPokemons)) {
+      if (_allPkmEnMapRef !== window.allPokemons || _allPkmEnMapLen !== window.allPokemons.length || !_allPkmEnMap) {
+        _allPkmEnMapRef = window.allPokemons;
+        _allPkmEnMapLen = window.allPokemons.length;
+        _allPkmEnMap = Object.create(null);
+        for (let i = 0; i < window.allPokemons.length; i++) {
+          const p = window.allPokemons[i];
+          if (!p || !p.name_en) continue;
+          if (p.name_cn) {
+            _allPkmEnMap[p.name_cn] = p.name_en;
+            _allPkmEnMap[normalizeSearchKey(p.name_cn)] = p.name_en;
+          }
+          if (p.name && typeof p.name === 'string') {
+            _allPkmEnMap[p.name] = p.name_en;
+          }
+        }
+      }
+      const mapped = _allPkmEnMap[str] || _allPkmEnMap[normalizeSearchKey(str)];
+      if (mapped) return mapped;
+    }
+
+    return str;
+  }
+
+  function formatCompactRegionalName(displayName) {
+    if (!displayName || typeof displayName !== 'string') return displayName || '';
+    let out = displayName.replace(
+      /([（(])\s*(阿羅拉|阿罗拉|伽勒爾|伽勒尔|洗翠|帕底亞|帕底亚)的(?:樣子|样子)\s*([）)])/g,
+      '$1$2$3'
+    );
+    out = out.replace(
+      /(\()\s*(Alola|Alolan|Galar|Galarian|Hisui|Hisuian|Paldea|Paldean)(?:\s+Form)?\s*(\))/gi,
+      function (_m, open, region, close) {
+        const lower = region.toLowerCase();
+        if (lower.startsWith('alola')) return open + 'Alola' + close;
+        if (lower.startsWith('galar')) return open + 'Galar' + close;
+        if (lower.startsWith('hisui')) return open + 'Hisui' + close;
+        if (lower.startsWith('paldea')) return open + 'Paldea' + close;
+        return _m;
+      }
+    );
+    return out;
+  }
+
+  function getPokemonName(name, lang) {
+    if (!name) return '';
+    const strategy = _getStrategy(lang);
+    const resolved = (typeof name === 'object')
+      ? strategy.pokemonFromObj(name)
+      : strategy.pokemonFromStr(String(name).trim());
+    return formatCompactRegionalName(resolved);
+  }
+
+  function getSubSkillName(subskill, lang) {
+    if (!subskill) return '';
+    const res = lookupBilingualDict(SUBSKILL_NAMES, subskill, lang);
+    return res || String(subskill).trim();
+  }
+
+
+  function translateDynamicText(text) {
+    if (!text || typeof text !== 'string') return text;
+    _ensureActiveLocale();
+    return activeStrategy.text(text);
+  }
+
 
   function updatePageTranslations() {
     if (typeof document === 'undefined' || typeof document.querySelectorAll !== 'function') return;
@@ -5227,8 +6116,6 @@ registerResources({
       });
     }
   }
-
-  initLanguage();
 
   function shortenSkillName(name) {
     if (!name) return '';
@@ -5346,6 +6233,7 @@ registerResources({
     getIngredientName, getIngredientIcon, getRecipeName, getBerryName, getNatureName,
     getPokemonName, getMainSkillName, getShortMainSkillName, shortenSkillName, getSubSkillName,
     translateDynamicText, getItemName, getIslandName, updatePageTranslations,
+    hydrateAppShells: typeof hydrateAppShells === 'function' ? hydrateAppShells : undefined,
     DICTIONARY, POKEMON_NAMES, TYPE_NAMES, SPECIALTY_NAMES, INGREDIENT_NAMES,
     INGREDIENT_ICONS, BERRY_NAMES, NATURE_NAMES, MAIN_SKILL_NAMES, SUBSKILL_NAMES, ITEM_NAMES, ISLAND_NAMES
   };
@@ -5358,6 +6246,8 @@ registerResources({
     window.getSpecialtyKey = getSpecialtyKey;
     window.updateSearchInputHighlight = updateSearchInputHighlight;
   }
+
+  initLanguage();
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = I18NExport;

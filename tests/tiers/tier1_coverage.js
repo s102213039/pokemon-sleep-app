@@ -513,9 +513,9 @@ test('Tier 1 - Feature Coverage', 'Theme Inversion Engine: 4 Inverted Theme Vari
   assert(cssContent.includes('.theme-invert-control-row'), 'styles.css must style desktop theme-invert-control-row');
   assert(cssContent.includes('.app-theme-invert-control-row'), 'styles.css must style mobile app-theme-invert-control-row');
 
-  // Verify HTML contains switches
-  assert(indexHtml.includes('id="theme-invert-switch"'), 'index.html must have theme-invert-switch');
-  assert(appHtml.includes('id="app-theme-invert-switch"'), 'app/index.html must have app-theme-invert-switch');
+  // Verify HTML or hydrated i18n shell contains switches
+  assert(indexHtml.includes('id="theme-invert-switch"') || i18nJs.includes('id="theme-invert-switch"'), 'index.html or i18n.js must have theme-invert-switch');
+  assert(appHtml.includes('id="app-theme-invert-switch"') || i18nJs.includes('id="app-theme-invert-switch"'), 'app/index.html or i18n.js must have app-theme-invert-switch');
 
   // Verify app.js contains inverted state management & storage
   assert(appJs.includes('user_theme_inverted'), 'app.js must persist user_theme_inverted in localStorage');
@@ -1208,10 +1208,15 @@ test('Tier 1 - Feature Coverage', 'Header Simplification & Box Backup in Setting
   const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
   const appHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
 
-  // Verify settings modal contains Box Backup & Restore controls in both surfaces
-  const settingsModalRegex = /<div[^>]*id=["']settings-modal["'][\s\S]*?id=["']settings-export-box-btn["'][\s\S]*?id=["']settings-import-box-input["']/;
-  assert(settingsModalRegex.test(indexHtml), 'index.html settings-modal must contain settings-export-box-btn and settings-import-box-input');
-  assert(settingsModalRegex.test(appHtml), 'app/index.html settings-modal must contain settings-export-box-btn and settings-import-box-input');
+  const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+  // Verify settings modal shell & Box Backup & Restore controls in both surfaces (HTML or hydrated i18n shell)
+  assert(/<div[^>]*id=["']settings-modal["']/.test(indexHtml), 'index.html must have settings-modal shell');
+  assert(/<div[^>]*id=["']settings-modal["']/.test(appHtml), 'app/index.html must have settings-modal shell');
+  assert((indexHtml.includes('id="settings-export-box-btn"') && indexHtml.includes('id="settings-import-box-input"')) || (i18nJs.includes('id="settings-export-box-btn"') && i18nJs.includes('id="settings-import-box-input"')),
+    'index.html or i18n.js settings-modal must contain settings-export-box-btn and settings-import-box-input');
+  assert((appHtml.includes('id="settings-export-box-btn"') && appHtml.includes('id="settings-import-box-input"')) || (i18nJs.includes('id="settings-export-box-btn"') && i18nJs.includes('id="settings-import-box-input"')),
+    'app/index.html or i18n.js settings-modal must contain settings-export-box-btn and settings-import-box-input');
 
   // Verify app/index.html header only has brand on left and settings on right (no header sync-btn outside modal)
   const appHeaderMatch = appHtml.match(/<header[^>]*class=["'][^"']*mobile-app-header[^"']*["'][\s\S]*?<\/header>/);
@@ -1266,13 +1271,14 @@ test('Tier 1 - Feature Coverage', 'H5 Recipe 1-Column Compact Card Layout Verifi
 test('Tier 1 - Feature Coverage', 'FlagsAPI National Flags Integration for Language Switcher (Desktop & Mobile)', () => {
   const desktopHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
   const mobileHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+  const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
   const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
 
-  // Both index.html and app/index.html must have TW and US flags from FlagsAPI
-  assert(desktopHtml.includes('https://flagsapi.com/TW/flat/64.png'), 'Desktop must use TW flag from flagsapi.com');
-  assert(desktopHtml.includes('https://flagsapi.com/US/flat/64.png'), 'Desktop must use US flag from flagsapi.com');
-  assert(mobileHtml.includes('https://flagsapi.com/TW/flat/64.png'), 'Mobile must use TW flag from flagsapi.com');
-  assert(mobileHtml.includes('https://flagsapi.com/US/flat/64.png'), 'Mobile must use US flag from flagsapi.com');
+  // Both index.html and app/index.html (or hydrated i18n shell) must have TW and US flags from FlagsAPI
+  assert(desktopHtml.includes('https://flagsapi.com/TW/flat/64.png') || i18nJs.includes('https://flagsapi.com/TW/flat/64.png'), 'Desktop must use TW flag from flagsapi.com');
+  assert(desktopHtml.includes('https://flagsapi.com/US/flat/64.png') || i18nJs.includes('https://flagsapi.com/US/flat/64.png'), 'Desktop must use US flag from flagsapi.com');
+  assert(mobileHtml.includes('https://flagsapi.com/TW/flat/64.png') || i18nJs.includes('https://flagsapi.com/TW/flat/64.png'), 'Mobile must use TW flag from flagsapi.com');
+  assert(mobileHtml.includes('https://flagsapi.com/US/flat/64.png') || i18nJs.includes('https://flagsapi.com/US/flat/64.png'), 'Mobile must use US flag from flagsapi.com');
 
   // styles.css must have appropriate sizing rules
   assert(css.includes('.lang-flag-icon'), 'styles.css must style .lang-flag-icon');
@@ -2347,8 +2353,16 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
     assertEquals(p330.sleep_type, '深深入眠', 'Flygon #330 sleep_type must be 深深入眠');
 
     // 4. Evaluate wiki.js in VM & verify global ISLANDS_DATA <-> data.json <-> SLEEP_STYLES_DATA parity
+    const sleepStylesRaw = JSON.stringify(sleepStylesJson);
     const ctx = {
-      window: { localStorage: { getItem: () => null, setItem: () => {} }, location: { hash: '' }, addEventListener: () => {} },
+      window: {
+        localStorage: {
+          getItem: (k) => (k === 'pksleep_cache_sleep_styles_json' ? sleepStylesRaw : null),
+          setItem: () => {}
+        },
+        location: { hash: '' },
+        addEventListener: () => {}
+      },
       document: { getElementById: () => null, querySelectorAll: () => [], addEventListener: () => {} },
       console,
       setTimeout

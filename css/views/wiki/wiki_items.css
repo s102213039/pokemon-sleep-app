@@ -1,526 +1,561 @@
+/* ==========================================================================
+   Wiki Subpanel: Items & Incense Encyclopedia (#wiki-subpanel-items)
+   Complies with Single Frame Rule, Multi-Theme Tokens, Zero Emoji Policy,
+   and Mobile H5 Touch & Zero-Scrollbar Requirements.
+   ========================================================================== */
 
-.mobile-h5-app .box-action-btn {
-  width: 24px !important;
-  height: 24px !important;
-  border-radius: 4px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 13px !important;
+/* 1. Subpanel Host Container (Single Frame Rule Compliant) */
+#wiki-subpanel-items {
+  border: none !important;
   background: transparent !important;
-  border: none !important;
-  cursor: pointer !important;
-  transition: all 0.15s ease !important;
   padding: 0 !important;
+  box-shadow: none !important;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.mobile-h5-app .box-action-btn:active {
-  transform: scale(0.9) !important;
+#wiki-subpanel-items.active {
+  display: block !important;
+  animation: fadeIn 0.25s ease forwards;
 }
 
-.mobile-h5-app .box-pr-summary-bar {
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.06)) !important;
-  border-radius: 6px !important;
-  padding: 4px 8px !important;
-  font-size: 11px !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 4px !important;
+/* 2. Control Bar (Search Input & Filter Pills) */
+.wiki-items-control-bar {
+  margin-bottom: 16px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.mobile-h5-app .box-pr-summary-label {
-  font-weight: 700 !important;
-  color: #fbbf24 !important;
-  flex-shrink: 0 !important;
+.wiki-items-search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
 }
 
-.mobile-h5-app .box-pr-summary-text {
-  color: var(--text-secondary) !important;
-  line-height: 1.25 !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
+.wiki-items-search-box {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  border-radius: 10px;
 }
 
-.mobile-h5-app .box-card-section {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 3px !important;
+.wiki-items-search-input {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 36px 0 38px;
+  background: var(--bg-card-inner, #1e293b);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: inherit;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-.mobile-h5-app .box-section-title {
-  font-size: 10.5px !important;
-  font-weight: 700 !important;
-  color: var(--text-muted) !important;
-  letter-spacing: 0.2px !important;
+.wiki-items-search-input:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
 }
 
-.mobile-h5-app .box-ing-slots {
-  display: flex !important;
-  gap: 5px !important;
-  width: 100% !important;
+.wiki-items-search-input.has-value {
+  border-color: var(--accent-blue);
 }
 
-.mobile-h5-app .box-ing-slot {
-  flex: 1 1 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 4px !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 6px !important;
-  padding: 3px 6px !important;
-  min-width: 0 !important;
+.wiki-items-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.mobile-h5-app .box-slot-tag {
-  font-size: 9.5px !important;
-  font-weight: 700 !important;
-  color: var(--text-muted) !important;
-  flex-shrink: 0 !important;
+.wiki-items-search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--border-color);
+  color: var(--text-secondary);
+  border: none;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
-.mobile-h5-app .box-slot-val {
-  display: flex !important;
-  align-items: center !important;
-  gap: 3px !important;
-  min-width: 0 !important;
+.wiki-items-search-clear:hover {
+  background: var(--accent-blue);
+  color: #ffffff;
 }
 
-.mobile-h5-app .box-slot-val .ing-icon {
-  width: 16px !important;
-  height: 16px !important;
-  object-fit: contain !important;
-  flex-shrink: 0 !important;
+.wiki-items-search-input.has-value + .wiki-items-search-clear,
+.wiki-items-search-box.has-query .wiki-items-search-clear {
+  display: flex;
 }
 
-.mobile-h5-app .box-slot-val .ing-qty {
-  font-size: 11px !important;
-  font-weight: 800 !important;
-  color: var(--text-primary) !important;
+.wiki-items-count-badge-wrapper {
+  flex-shrink: 0;
 }
 
-.mobile-h5-app .box-subskills-grid {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 5px !important;
-  width: 100% !important;
+.wiki-items-count-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  white-space: nowrap;
 }
 
-.mobile-h5-app .box-subskills-grid .box-subskill-pill:nth-child(5) {
-  grid-column: 1 / 2 !important;
+/* Dropdown Sort Select (User Rule VI: padding-right 36px, right 18px center) */
+.wiki-items-select,
+.wiki-item-sort-select {
+  height: 40px;
+  padding: 0 36px 0 14px !important;
+  background-color: var(--bg-card-inner);
+  background-position: right 18px center !important;
+  background-repeat: no-repeat;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-.mobile-h5-app .box-subskill-pill {
-  padding: 4px 6px !important;
-  border-radius: 6px !important;
-  text-align: center !important;
-  font-size: 12px !important;
-  line-height: 1.2 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 0 !important;
-  overflow: hidden !important;
+.wiki-items-select:focus,
+.wiki-item-sort-select:focus {
+  border-color: var(--accent-blue);
 }
 
-.mobile-h5-app .box-subskill-pill .subskill-name {
-  font-weight: 700 !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  width: 100% !important;
-  font-size: 12px !important;
+/* 3. Horizontal Filter Pills */
+.wiki-items-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
-.mobile-h5-app .box-card-footer {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 6px !important;
-  border-top: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.06)) !important;
-  padding-top: 5px !important;
-  margin-top: 1px !important;
+.wiki-items-filter-pills .wiki-pill-btn {
+  padding: 6px 14px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  user-select: none;
 }
 
-.mobile-h5-app .box-nature-info {
-  display: flex !important;
-  align-items: center !important;
-  gap: 4px !important;
+.wiki-items-filter-pills .wiki-pill-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-title);
+  border-color: var(--accent-blue);
 }
 
-.mobile-h5-app .box-nature-label {
-  font-size: 10.5px !important;
-  color: var(--text-muted) !important;
-  font-weight: 600 !important;
+.wiki-items-filter-pills .wiki-pill-btn.active {
+  background: var(--accent-btn-bg, var(--accent-gradient, #0284c7));
+  border-color: transparent;
+  color: var(--accent-btn-text, #ffffff);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
 }
 
-.mobile-h5-app .box-nature-badge {
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  color: var(--text-primary) !important;
+.wiki-items-filter-pills .wiki-pill-count {
+  font-size: 10.5px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  color: inherit;
 }
 
-.mobile-h5-app .box-nature-effects {
-  display: flex !important;
-  align-items: center !important;
-  gap: 4px !important;
+/* 4. Item Cards Grid (.wiki-item-card-grid) */
+.wiki-item-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 14px;
+  margin-bottom: 24px;
 }
 
-.mobile-h5-app .nature-buff {
-  font-size: 10px !important;
-  font-weight: 700 !important;
-  color: #f43f5e !important;
-  background: rgba(244, 63, 94, 0.15) !important;
-  padding: 1px 5px !important;
-  border-radius: 4px !important;
+/* 5. Individual Item Card (.wiki-item-card) */
+.wiki-item-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+  box-sizing: border-box;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 110px;
 }
 
-.mobile-h5-app .nature-debuff {
-  font-size: 10px !important;
-  font-weight: 700 !important;
-  color: #38bdf8 !important;
-  background: rgba(56, 189, 248, 0.15) !important;
-  padding: 1px 5px !important;
-  border-radius: 4px !important;
+.wiki-item-card:hover {
+  border-color: var(--accent-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  background-color: var(--bg-card-hover);
 }
 
-.mobile-h5-app .nature-neutral {
-  font-size: 10px !important;
-  color: var(--text-muted) !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  padding: 1px 5px !important;
-  border-radius: 4px !important;
+.wiki-item-card:active {
+  transform: translateY(0) scale(0.985);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* 7. 原生 App 浮動操作按鈕 (Floating Action Buttons - FAB) */
-.mobile-h5-app .box-fab-container {
-  position: fixed !important;
-  bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
-  right: 16px !important;
-  z-index: 95 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 10px !important;
-  align-items: flex-end !important;
-  pointer-events: none !important;
+/* Card Header */
+.wiki-item-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
 }
 
-/* 僅在倉庫 list 分頁時顯示，非倉庫分頁或深度研究室模式時隱藏 */
-.mobile-h5-app:not(:has(#tab-box.active)) #box-fab-container,
-.mobile-h5-app body:not(:has(#tab-box.active)) #box-fab-container,
-.mobile-h5-app body.box-lab-active #box-fab-container {
-  display: none !important;
-}
-
-.mobile-h5-app .box-fab-btn {
-  pointer-events: auto !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  height: 42px !important;
-  padding: 0 16px 0 12px !important;
-  border-radius: 21px !important;
-  font-size: 12.5px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  user-select: none !important;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  border: none !important;
-}
-
-.mobile-h5-app .box-fab-btn:active {
-  transform: scale(0.92) !important;
-}
-
-.mobile-h5-app .box-fab-scan {
-  background: linear-gradient(135deg, #6366f1, #38bdf8) !important;
-  color: #ffffff !important;
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
-}
-
-.mobile-h5-app .box-fab-add {
-  background: var(--bg-card) !important;
-  border: 1px solid var(--border-color) !important;
-  color: var(--text-primary) !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.15) !important;
-}
-
-.mobile-h5-app .box-fab-btn svg {
-  flex-shrink: 0 !important;
-}
-
-.mobile-h5-app .box-fab-btn .fab-label {
-  line-height: 1 !important;
-}
-
-/* 8. 原生 App 倉庫輕量空狀態 (Simple Clean Empty State) */
-.mobile-h5-app .box-simple-empty-state {
-  padding: 56px 20px 30px !important;
-  text-align: center !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
+.wiki-item-card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 0;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  padding: 0 !important;
+  box-sizing: border-box;
 }
 
-.mobile-h5-app .box-simple-empty-title {
-  font-size: 14.5px !important;
-  font-weight: 700 !important;
-  color: var(--text-secondary) !important;
-  margin: 0 !important;
+.wiki-item-card-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
-.mobile-h5-app .box-simple-empty-hint {
-  font-size: 12px !important;
-  color: var(--text-muted) !important;
-  margin: 0 !important;
-  line-height: 1.5 !important;
-  max-width: 280px !important;
+.wiki-item-card-title-group {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-/* 9. 深度評測室獨立子面板 */
-.mobile-h5-app .box-lab-content-container {
-  padding: 6px 10px 24px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+.wiki-item-card-name {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-title);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
 }
 
-.mobile-h5-app .appraisal-lab-standalone-panel {
-  display: block !important;
-  width: 100% !important;
+.wiki-item-card-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-/* H5 App: hide box linkage selector (navigate via table row click instead) */
-.mobile-h5-app .lab-box-linkage-group {
+/* Category Badges (Base - Borderless) */
+.wiki-item-cat-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  line-height: 1.2;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Stat Row & Value Highlight */
+.wiki-item-card-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.wiki-item-stat-badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.2;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.wiki-item-stat-number {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  line-height: 1;
+}
+
+.wiki-item-stat-unit {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.wiki-item-stat-divider {
+  opacity: 0.35;
+  font-size: 11px;
+  margin: 0 1px;
+}
+
+.wiki-item-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+/* Stat Badge Color Variants (Borderless) */
+.stat-type-biscuit {
+  background: rgba(245, 158, 11, 0.16);
+  color: #fbbf24;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.stat-type-biscuit-max {
+  background: rgba(244, 114, 182, 0.18);
+  color: #f9a8d4;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.stat-type-seed,
+.stat-type-mint {
+  background: rgba(16, 185, 129, 0.16);
+  color: #34d399;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.stat-type-candy,
+.stat-type-shard {
+  background: rgba(56, 189, 248, 0.16);
+  color: #38bdf8;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.stat-type-energy,
+.stat-type-whistle,
+.stat-type-camp,
+.stat-type-ticket {
+  background: rgba(168, 85, 247, 0.16);
+  color: #c084fc;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.stat-type-evolution {
+  background: rgba(251, 146, 60, 0.16);
+  color: #fb923c;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Stat Badge 4-Light-Theme Contrast Overrides (WCAG AA >= 4.5:1) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-biscuit,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-biscuit,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-biscuit,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-biscuit {
+  color: #92400e;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-biscuit-max,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-biscuit-max,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-biscuit-max,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-biscuit-max {
+  color: #9d174d;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-seed,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-seed,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-seed,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-seed,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-mint,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-mint,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-mint,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-mint {
+  color: #065f46;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-candy,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-candy,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-candy,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-candy,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-shard,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-shard,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-shard,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-shard {
+  color: #0369a1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-energy,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-energy,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-energy,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-energy,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-whistle,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-whistle,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-whistle,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-whistle,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-camp,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-camp,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-camp,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-camp,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-ticket,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-ticket,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-ticket,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-ticket {
+  color: #6b21a8;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .stat-type-evolution,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .stat-type-evolution,
+[data-theme="midnight"][data-theme-inverted="true"] .stat-type-evolution,
+[data-theme="onyx"][data-theme-inverted="true"] .stat-type-evolution {
+  color: #9a3412;
+}
+
+/* Card Description Preview (Hidden on Cards) */
+.wiki-item-card-desc {
   display: none !important;
 }
 
-/* 10. 設定彈窗內的備份與還原卡片 */
-.app-backup-card {
-  padding: 10px 12px !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 12px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
+/* Evolution Targets Section (Compact 28px Avatars, No Outer Border, No Dividing Line, No Name Label) */
+.wiki-item-card-evosection {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 0;
+  border-top: none !important;
+  display: flex;
+  flex-direction: column;
 }
 
-.app-backup-desc {
-  font-size: 11.5px !important;
-  color: var(--text-muted) !important;
-  margin: 0 !important;
-  line-height: 1.4 !important;
+.wiki-item-evo-chips {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 1px 0 2px 0;
 }
 
-.app-backup-btn-row {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 8px !important;
-  width: 100% !important;
+.wiki-item-evo-chips::-webkit-scrollbar {
+  display: none;
 }
 
-.app-backup-action-btn {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 6px !important;
-  padding: 9px 8px !important;
-  border-radius: 8px !important;
-  font-size: 12px !important;
-  font-weight: 700 !important;
-  border: none !important;
-  cursor: pointer !important;
-  text-align: center !important;
-  transition: all 0.15s ease !important;
+.wiki-item-evo-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  transition: transform 0.16s ease;
+  min-width: 0;
+  box-sizing: border-box;
+  cursor: pointer;
 }
 
-.app-backup-action-btn:active {
-  transform: scale(0.97) !important;
+.wiki-item-evo-chip:hover {
+  transform: scale(1.15);
+  border: none;
+  background: transparent;
 }
 
-.app-backup-action-btn.export-btn {
-  background: var(--accent-btn-bg, var(--accent-gradient, linear-gradient(135deg, #0369a1, #4f46e5))) !important;
-  color: var(--accent-btn-text, #ffffff) !important;
+.wiki-item-evo-avatar {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
+  transition: transform 0.16s ease, filter 0.16s ease;
 }
 
-.app-backup-action-btn.import-btn {
-  background: var(--bg-card, #131b2e) !important;
-  border: 1px solid var(--border-color) !important;
-  color: var(--text-primary) !important;
+.wiki-item-evo-avatar:hover {
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
 }
 
-/*  11. 亮色主題自適應 (Dawn & Emerald) */
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-subnav-bar,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-subnav-bar {
-  background: #ffffff !important;
-  border-color: #e2e8f0 !important;
+.wiki-item-evo-name {
+  display: none !important;
 }
 
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row select,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row select,
-[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row select,
-[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row select,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-trigger,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-trigger,
-[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-trigger,
-[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-trigger,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-view-toggle-chips,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-view-toggle-chips,
-[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-view-toggle-chips,
-[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-view-toggle-chips,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-card-img-wrap,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-card-img-wrap,
-[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-card-img-wrap,
-[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-card-img-wrap,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-action-btn,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-action-btn,
-[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-action-btn,
-[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-action-btn,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-pr-summary-bar,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-pr-summary-bar,
-[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-pr-summary-bar,
-[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-pr-summary-bar,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-ing-slot,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-ing-slot,
-[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-ing-slot,
-[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-ing-slot,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .app-backup-card,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .app-backup-card,
-[data-theme="midnight"][data-theme-inverted="true"] .app-backup-card,
-[data-theme="onyx"][data-theme-inverted="true"] .app-backup-card {
-  background: #f8fafc !important;
-  border-color: #e2e8f0 !important;
-  color: #0f172a !important;
+/* Empty Search Results State */
+.wiki-items-empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--bg-card-inner);
+  border: 1px dashed var(--border-color);
+  border-radius: 12px;
+  box-sizing: border-box;
 }
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-menu,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-menu,
-[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-menu,
-[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-menu {
-  background: #ffffff !important;
-  border-color: #e2e8f0 !important;
-  color: #0f172a !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-}
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item:hover,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item:hover,
-[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-item:hover,
-[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-item:hover,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item.selected,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item.selected,
-[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-item.selected,
-[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-item.selected,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item.active,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item.active,
-[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-item.active,
-[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .box-toolbar-control-row .custom-select-item.active {
-  background: #f1f5f9 !important;
-  color: #4f46e5 !important;
-}
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-card,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-card {
-  background: #ffffff !important;
-  border-color: #e2e8f0 !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
-}
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-fab-add,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-fab-add,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .app-backup-action-btn.import-btn,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .app-backup-action-btn.import-btn {
-  background: #ffffff !important;
-  border-color: #cbd5e1 !important;
-  color: #0f172a !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1) !important;
-}
-
-[data-theme="dawn"] .mobile-h5-app .box-pr-summary-label,
-[data-theme="emerald"] .mobile-h5-app .box-pr-summary-label {
-  color: #b45309 !important;
-}
-
-[data-theme="dawn"] .mobile-h5-app .nature-buff,
-[data-theme="emerald"] .mobile-h5-app .nature-buff {
-  color: #be123c !important;
-  background: #ffe4e6 !important;
-}
-
-[data-theme="dawn"] .mobile-h5-app .nature-debuff,
-[data-theme="emerald"] .mobile-h5-app .nature-debuff {
-  color: #0369a1 !important;
-  background: #e0f2fe !important;
-}
-
-/* ────────────────────────────────────────────────────────────
-    12. 原生 App 寶可夢手動新增/編輯彈窗 (Mobile Box Modal Sheet)
-   ──────────────────────────────────────────────────────────── */
-.mobile-h5-app .mobile-box-sheet {
-  position: fixed !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  max-height: 92vh !important;
-  max-height: 92dvh !important;
-  height: auto !important;
-  background: var(--bg-card, #131b2e) !important;
-  border-top-left-radius: 20px !important;
-  border-top-right-radius: 20px !important;
-  border: none !important;
-  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5) !important;
-  z-index: 1100 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  overflow: hidden !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.mobile-h5-app .mobile-box-sheet .sheet-drag-handle {
-  width: 40px !important;
-  height: 4px !important;
-  background: rgba(255, 255, 255, 0.25) !important;
-  border-radius: 999px !important;
-  margin: 8px auto 4px auto !important;
-  flex-shrink: 0 !important;
-}
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
-[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
-[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle {
-  background: rgba(0, 0, 0, 0.2) !important;
-}
-
-.mobile-h5-app #box-edit-modal .mobile-box-sheet .box-modal-header {
-  display: grid !important;
-  grid-template-columns: 60px 1fr 60px !important;
-  align-items: center !important;
-  padding: 4px 16px 10px 16px !important;
-  border: none !important;
-  background: transparent !important;
-  flex-shrink: 0 !important;
-}
-
-.mobile-h5-app #modal-appraisal-report .mobile-box-sheet .box-modal-header {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  padding: 2px 14px 4px 14px !important;
-  border: none !important;
-  background: transparent !important;
-  flex-shrink: 0 !important;
-}
-
-.mobile-h5-app #modal-appraisal-report .box-modal-header .appraisal-dual-verdict-column {
-  display: flex !important;

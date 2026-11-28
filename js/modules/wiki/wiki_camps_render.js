@@ -165,7 +165,7 @@
         : isl.image;
       return `
         <button type="button" class="island-tab-btn ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', false)" title="${islName}" aria-label="${islName}">
-          <img src="${thumbSrc}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
+          <img src="${thumbSrc}" class="island-tab-thumb" alt="${islName}" width="48" height="48" loading="lazy" decoding="async" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
           <span class="island-tab-indicator"></span>
         </button>
       `;
@@ -182,7 +182,7 @@
       return `
         <button type="button" class="island-tab-btn island-tab-ex-item ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', true)" title="${islName}" aria-label="${islName}">
           <div class="island-tab-thumb-wrapper">
-            <img src="${thumbSrc}" class="island-tab-thumb" alt="${islName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
+            <img src="${thumbSrc}" class="island-tab-thumb" alt="${islName}" width="48" height="48" loading="lazy" decoding="async" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
             <span class="island-tab-ex-tag">EX</span>
           </div>
           <span class="island-tab-indicator"></span>
@@ -215,7 +215,7 @@
         const typeLabel = window.I18N?.getTypeName?.(rawType) || (window.I18N?.text?.(rawType) ?? rawType);
         return `
           <div class="island-berry-chip island-berry-icon-only" title="${displayName} (${typeLabel})">
-            ${iconSrc ? `<img src="${iconSrc}" class="island-berry-icon" alt="${displayName}" loading="lazy" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">` : ''}
+            ${iconSrc ? `<img src="${iconSrc}" class="island-berry-icon" alt="${displayName}" width="38" height="38" loading="lazy" decoding="async" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">` : ''}
           </div>
         `;
       }).join('');
@@ -476,7 +476,7 @@
           <tr data-sleep-type="${p.sleepType || ''}">
             <td style="vertical-align:middle; text-align:center; padding:3px 4px;">
               <div class="island-pkm-item island-pkm-icon-only" title="${tooltipText}">
-                <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${tooltipText}" loading="lazy" onerror="if(typeof handlePokemonIconError==='function'){handlePokemonIconError(this);}else{this.style.opacity='0.5';}">
+                <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${tooltipText}" width="32" height="32" loading="lazy" decoding="async" onerror="if(typeof handlePokemonIconError==='function'){handlePokemonIconError(this);}else{this.style.opacity='0.5';}">
               </div>
             </td>
             <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${renderIslandSleepCell(p, 1, p.s1)}</td>
@@ -537,7 +537,7 @@
     const heroIslandTitle = isExpert ? (getLocIslandName(island) + ' EX') : getLocIslandName(island);
     return `
       <div class="island-scene-layer" aria-hidden="true">
-        <img class="island-scene-photo" src="${sceneSrc}" alt="" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
+        <img class="island-scene-photo" src="${sceneSrc}" alt="" width="2560" height="1372" decoding="async" onerror="if(typeof handleAssetImageError==='function'){handleAssetImageError(this);}">
         <div class="island-scene-fade"></div>
       </div>
       <div class="island-nav-strip">
@@ -657,7 +657,7 @@
             <thead>
               <tr>
                 ${renderIslandSortTh('pokemon', `<span>${window.I18N?.t?.('wiki.ui_pkm_col') ?? '寶可夢'}</span>`, window.I18N?.t?.('wiki.ui_island_sort_pkm_title') ?? '點選依寶可夢編號排序 (降冪 -> 升冪 -> 回復預設)', 'width:70px; text-align:center;')}
-                ${[1, 2, 3, 4].map(star => renderIslandSortTh(`s${star}`, `<span class="sleep-star-label">${star}<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, window.I18N?.t?.('wiki.ui_island_sort_star_title', { star }) ?? `點選依 ${star} 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)`, 'text-align:center;')).join('')}
+                ${[1, 2, 3, 4].map(star => renderIslandSortTh(`s${star}`, `<span class="sleep-star-label">${star}<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" width="14" height="14" decoding="async" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, window.I18N?.t?.('wiki.ui_island_sort_star_title', { star }) ?? `點選依 ${star} 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)`, 'text-align:center;')).join('')}
               </tr>
             </thead>
             <tbody>

@@ -418,7 +418,7 @@
   const recipeSearchClear    = document.getElementById('recipe-search-clear');
 
   function updateSliderFill(slider, min, max) {
-    if (!slider) return;
+    if (!slider || !slider.style || typeof slider.style.setProperty !== 'function') return;
     slider.style.setProperty('--slider-fill', (((slider.value - min) / (max - min)) * 100) + '%');
   }
 
@@ -464,8 +464,12 @@
     if (!tastyToggleBtn) return;
     if (tastyToggleBtn.type === 'checkbox') tastyToggleBtn.checked = showTasty;
     else {
-      tastyToggleBtn.classList.toggle('active', showTasty);
-      tastyToggleBtn.setAttribute('aria-checked', String(showTasty));
+      if (tastyToggleBtn.classList && typeof tastyToggleBtn.classList.toggle === 'function') {
+        tastyToggleBtn.classList.toggle('active', showTasty);
+      }
+      if (typeof tastyToggleBtn.setAttribute === 'function') {
+        tastyToggleBtn.setAttribute('aria-checked', String(showTasty));
+      }
     }
   }
 
@@ -563,13 +567,27 @@
     }
   }
 
+  let _recipesSliderRafId = null;
+  function scheduleRecipesSliderRender() {
+    if (_recipesSliderRafId !== null) return;
+    const raf = (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function')
+      ? window.requestAnimationFrame.bind(window)
+      : (fn) => setTimeout(fn, 0);
+    _recipesSliderRafId = raf(() => {
+      _recipesSliderRafId = null;
+      savePrefs();
+      render();
+    });
+  }
+
   function initSliders() {
     if (levelSlider) {
       syncLevelUI();
       levelSlider.addEventListener('input', () => {
         const caps = _getRecipesGameCaps(), parsed = parseInt(levelSlider.value, 10);
         recipeLevel = Math.min(Math.max(isNaN(parsed) ? 1 : parsed, 1), caps.RECIPE_LEVEL_CAP || 70);
-        syncLevelUI(); savePrefs(); render();
+        syncLevelUI();
+        scheduleRecipesSliderRender();
       });
     }
     if (islandSlider) {
@@ -577,21 +595,24 @@
       islandSlider.addEventListener('input', () => {
         const caps = _getRecipesGameCaps(), parsed = parseInt(islandSlider.value, 10);
         islandBonus = Math.min(Math.max(isNaN(parsed) ? 0 : parsed, 0), caps.ISLAND_BONUS_CAP !== undefined ? caps.ISLAND_BONUS_CAP : _RECIPES_FALLBACK_CAPS.ISLAND_BONUS_CAP);
-        syncIslandUI(); savePrefs(); render();
+        syncIslandUI();
+        scheduleRecipesSliderRender();
       });
     }
     if (eventSlider) {
       syncEventUI();
       eventSlider.addEventListener('input', () => {
         eventBonus = parseFloat(eventSlider.value);
-        syncEventUI(); savePrefs(); render();
+        syncEventUI();
+        scheduleRecipesSliderRender();
       });
     }
     if (potExpansionSlider) {
       syncPotExpansionUI();
       potExpansionSlider.addEventListener('input', () => {
         potExpansion = parseInt(potExpansionSlider.value, 10) || 0;
-        syncPotExpansionUI(); savePrefs(); render();
+        syncPotExpansionUI();
+        scheduleRecipesSliderRender();
       });
     }
   }
@@ -749,45 +770,79 @@
     }
   }
 
-  fetchRecipesWithFallback(
-    (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/recipes.json`,
-    `data/recipes.json`, `../data/recipes.json`, `recipes.json`,
-    `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json`
-  )
-    .then(data => {
-      allRecipes = data;
-      if (typeof window !== 'undefined') {
-        window.allRecipes = data;
-        window.__RECIPES_CACHE__ = data;
-        if (typeof window.dispatchEvent === 'function' && typeof CustomEvent === 'function') {
-          window.dispatchEvent(new CustomEvent('recipes-data-updated', { detail: data }));
+  function isRecipesPanelHidden() {
+    if (typeof document === 'undefined' || !document.getElementById) return false;
+    const panel = document.getElementById('panel-recipes');
+    return !!(panel && panel.style && panel.style.display === 'none');
+  }
+
+  let _recipesFetchStarted = false;
+  let _recipesControlsInitialized = false;
+
+  function ensureRecipesControlsInitialized() {
+    if (_recipesControlsInitialized) return;
+    _recipesControlsInitialized = true;
+    initCategoryFilters();
+    initSelectFilters();
+    initSliders();
+    initTastyToggle();
+    initIngredientPicker();
+    initPantryUI();
+    initQuickFilterPill();
+    initViewToggle();
+    initSort();
+    initSearch();
+    initRecipeSidebarEvents();
+  }
+
+  function startRecipesFetch() {
+    if (_recipesFetchStarted) return;
+    _recipesFetchStarted = true;
+    fetchRecipesWithFallback(
+      (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/recipes.json`,
+      `data/recipes.json`, `../data/recipes.json`, `recipes.json`,
+      `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json`
+    )
+      .then(data => {
+        allRecipes = data;
+        if (typeof window !== 'undefined') {
+          window.allRecipes = data;
+          window.__RECIPES_CACHE__ = data;
+          if (typeof window.dispatchEvent === 'function' && typeof CustomEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('recipes-data-updated', { detail: data }));
+          }
         }
-      }
-      initCategoryFilters();
-      initSelectFilters();
-      initSliders();
-      initTastyToggle();
-      initIngredientPicker();
-      initPantryUI();
-      initQuickFilterPill();
-      initViewToggle();
-      initSort();
-      initSearch();
-      initRecipeSidebarEvents();
-      render();
-      scheduleDynamicRecipesSync();
-    })
-    .catch(err => {
-      console.error('Error loading recipes.json:', err);
-      if (typeof window.__renderInPlaceError === 'function') {
-        window.__renderInPlaceError('recipe-content-area', window.I18N?.t?.('recipes.ui_err_load_db') ?? '料理食譜資料庫載入失敗 (recipes.json)', err);
-      } else if (contentArea) {
-        const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
-          ? window.DOMUtils.escapeHtml(err.message)
-          : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">${window.I18N?.t?.('recipes.ui_err_load_prefix') ?? '載入 recipes.json 失敗：'}${safeMsg}</div>`;
-      }
-    });
+        ensureRecipesControlsInitialized();
+        initCategoryFilters();
+        initIngredientPicker();
+        initPantryUI();
+        if (!isRecipesPanelHidden()) {
+          render();
+        }
+        scheduleDynamicRecipesSync();
+      })
+      .catch(err => {
+        console.error('Error loading recipes.json:', err);
+        if (typeof window.__renderInPlaceError === 'function') {
+          window.__renderInPlaceError('recipe-content-area', window.I18N?.t?.('recipes.ui_err_load_db') ?? '料理食譜資料庫載入失敗 (recipes.json)', err);
+        } else if (contentArea) {
+          const safeMsg = (window.DOMUtils && typeof window.DOMUtils.escapeHtml === 'function')
+            ? window.DOMUtils.escapeHtml(err.message)
+            : String(err.message).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">${window.I18N?.t?.('recipes.ui_err_load_prefix') ?? '載入 recipes.json 失敗：'}${safeMsg}</div>`;
+        }
+      });
+  }
+
+  ensureRecipesControlsInitialized();
+  if (isRecipesPanelHidden()) {
+    const deferRecipes = (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function')
+      ? (fn) => window.requestAnimationFrame(() => setTimeout(fn, 0))
+      : (fn) => setTimeout(fn, 0);
+    deferRecipes(() => startRecipesFetch());
+  } else {
+    startRecipesFetch();
+  }
 
   function getRecipeName(r) {
     if (!r) return '';

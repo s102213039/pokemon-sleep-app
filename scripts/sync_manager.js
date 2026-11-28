@@ -32,7 +32,12 @@ const NEWS_FILE = path.join(DATA_DIR, 'news.json');
 const RECIPES_FILE = path.join(DATA_DIR, 'recipes.json');
 const DATA_FILE = path.join(DATA_DIR, 'data.json');
 const MANIFEST_FILE = path.join(DATA_DIR, 'manifest.json');
-const CAMPS_DATA_FILE = path.join(ROOT_DIR, 'js', 'modules', 'wiki', 'wiki_camps_data.js');
+const CAMPS_DATA_FILES = [
+  path.join(ROOT_DIR, 'js', 'modules', 'wiki', 'wiki_camps_islands_ex.js'),
+  path.join(ROOT_DIR, 'js', 'modules', 'wiki', 'wiki_camps_islands_std.js'),
+  path.join(ROOT_DIR, 'js', 'modules', 'wiki', 'wiki_camps_config.js')
+];
+const CAMPS_DATA_FILE = CAMPS_DATA_FILES;
 const SLEEP_STYLES_JS_FILE = path.join(ROOT_DIR, 'js', 'modules', 'wiki', 'wiki_sleep_styles.js');
 
 const EVENT_ONLY_POKEMON_IDS = new Set([
@@ -708,13 +713,14 @@ function _normalizeIslandNameKey(name) {
     .replace('奇魯莉安', '奇鲁莉安');
 }
 
-function checkIslandsDataDrift(dataset, campsDataPath = CAMPS_DATA_FILE, sleepStylesJsPath = SLEEP_STYLES_JS_FILE) {
+function checkIslandsDataDrift(dataset, campsDataPath = CAMPS_DATA_FILES, sleepStylesJsPath = SLEEP_STYLES_JS_FILE) {
   const missingFromIslands = [];
   const sleepTypeMismatches = [];
   const typeMismatches = [];
   const missingFromSleepStylesFallback = [];
 
-  if (!Array.isArray(dataset) || !fs.existsSync(campsDataPath)) {
+  const campsPaths = Array.isArray(campsDataPath) ? campsDataPath : [campsDataPath];
+  if (!Array.isArray(dataset) || campsPaths.some(p => !fs.existsSync(p))) {
     return {
       pass: true,
       missingFromIslands,
@@ -724,7 +730,7 @@ function checkIslandsDataDrift(dataset, campsDataPath = CAMPS_DATA_FILE, sleepSt
     };
   }
 
-  const campsCode = fs.readFileSync(campsDataPath, 'utf8');
+  const campsCode = campsPaths.map(p => fs.readFileSync(p, 'utf8')).join('\n');
   const campsCtx = {};
   vm.createContext(campsCtx);
   vm.runInContext(campsCode + '\nthis._ISLANDS_DATA = ISLANDS_DATA;', campsCtx);
@@ -736,6 +742,15 @@ function checkIslandsDataDrift(dataset, campsDataPath = CAMPS_DATA_FILE, sleepSt
     const ssMatch = ssCode.match(/const\s+SLEEP_STYLES_DATA\s*=\s*(\{[\s\S]*?\});/);
     if (ssMatch) {
       fallbackStyles = JSON.parse(ssMatch[1]);
+    }
+  }
+  if (Object.keys(fallbackStyles).length === 0) {
+    const sleepStylesJsonPath = path.join(DATA_DIR, 'sleep_styles.json');
+    if (fs.existsSync(sleepStylesJsonPath)) {
+      const parsedSs = JSON.parse(fs.readFileSync(sleepStylesJsonPath, 'utf8'));
+      if (parsedSs && parsedSs.byName) {
+        fallbackStyles = parsedSs.byName;
+      }
     }
   }
 

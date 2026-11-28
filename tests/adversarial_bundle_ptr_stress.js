@@ -3,7 +3,7 @@
  * =========================================================================
  * Empirical Challenger Adversarial Test Suite for Pull-to-Refresh
  * Tests across:
- *   1. js/modules/pokedex/pokedex_ui.js (Source module)
+ *   1. js/modules/pokedex/pokedex_gestures.js (Source module)
  *   2. js/modules/app.js (Master bundle)
  *   3. js/modules/app.min.js (Minified production bundle)
  *
@@ -221,6 +221,12 @@ function createIsolatedTestHarness(sourcePath, isMinified = false) {
     addEventListener(evt, fn) {
       listeners[evt] = listeners[evt] || [];
       listeners[evt].push(fn);
+    },
+    removeEventListener(evt, fn) {
+      if (listeners[evt]) {
+        const idx = listeners[evt].indexOf(fn);
+        if (idx !== -1) listeners[evt].splice(idx, 1);
+      }
     }
   };
 
@@ -279,7 +285,7 @@ function createIsolatedTestHarness(sourcePath, isMinified = false) {
       cancelable: true,
       preventDefault: () => {}
     };
-    listeners.touchstart.forEach(fn => fn(evt));
+    (listeners.touchstart || []).slice().forEach(fn => fn(evt));
   }
 
   function touchMove(target, clientX, clientY, touches = null) {
@@ -289,7 +295,7 @@ function createIsolatedTestHarness(sourcePath, isMinified = false) {
       cancelable: true,
       preventDefault: () => {}
     };
-    listeners.touchmove.forEach(fn => fn(evt));
+    (listeners.touchmove || []).slice().forEach(fn => fn(evt));
   }
 
   function touchEnd() {
@@ -298,7 +304,7 @@ function createIsolatedTestHarness(sourcePath, isMinified = false) {
       cancelable: true,
       preventDefault: () => {}
     };
-    listeners.touchend.forEach(fn => fn(evt));
+    (listeners.touchend || []).slice().forEach(fn => fn(evt));
   }
 
   function touchCancel() {
@@ -307,7 +313,7 @@ function createIsolatedTestHarness(sourcePath, isMinified = false) {
       cancelable: true,
       preventDefault: () => {}
     };
-    listeners.touchcancel.forEach(fn => fn(evt));
+    (listeners.touchcancel || []).slice().forEach(fn => fn(evt));
   }
 
   return {
@@ -686,7 +692,7 @@ function runEdgeCaseSuite(artifactName, sourcePath, isMinified = false) {
 
 function runAllSuites() {
   const artifacts = [
-    { name: 'pokedex_ui.js (Source)', path: path.join(WORKSPACE_ROOT, 'js/modules/pokedex/pokedex_ui.js'), isMin: false },
+    { name: 'pokedex_gestures.js (Source)', path: path.join(WORKSPACE_ROOT, 'js/modules/pokedex/pokedex_gestures.js'), isMin: false },
     { name: 'app.js (Master Bundle)', path: path.join(WORKSPACE_ROOT, 'js/modules/app.js'), isMin: false },
     { name: 'app.min.js (Prod Bundle)', path: path.join(WORKSPACE_ROOT, 'js/modules/app.min.js'), isMin: true }
   ];

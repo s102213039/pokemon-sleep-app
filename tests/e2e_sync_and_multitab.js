@@ -764,8 +764,9 @@ function registerTier1Tests() {
   });
 
   // Feature 10: 570 Sleep Styles Goal & Pot Expansion
-  test(T, 'F10-1: Camp milestones in wiki_camps_data.js define progression up to 450+ goals', () => {
-    const campsCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_camps_data.js'), 'utf8');
+  test(T, 'F10-1: Camp milestones in wiki_camps split modules define progression up to 450+ goals', () => {
+    const campsCode = ['wiki_camps_islands_ex.js', 'wiki_camps_islands_std.js', 'wiki_camps_config.js']
+      .map(f => fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', f), 'utf8')).join('\n');
     assert(campsCode.includes('unlockGoal: 450') || campsCode.includes('450'), 'Camp goals define 450 milestone');
   });
 
@@ -983,7 +984,8 @@ function registerTier1Tests() {
   });
 
   test(T, 'F15-5: Island Camps view defines research islands and unlock goals', () => {
-    const campsCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', 'wiki_camps_data.js'), 'utf8');
+    const campsCode = ['wiki_camps_islands_ex.js', 'wiki_camps_islands_std.js', 'wiki_camps_config.js']
+      .map(f => fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki', f), 'utf8')).join('\n');
     assert(campsCode.includes('greengrass') && campsCode.includes('萌綠之島'));
   });
 }

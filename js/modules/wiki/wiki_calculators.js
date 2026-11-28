@@ -120,7 +120,7 @@
                   #${rank}
                 </div>
                 <div class="ing-rank-avatar-box ${rankClass}">
-                  <img src="${item.icon}" class="ing-rank-avatar-img" alt="${pkmDisplayName}" loading="lazy">
+                  <img src="${item.icon}" class="ing-rank-avatar-img" width="32" height="32" alt="${pkmDisplayName}" loading="lazy" decoding="async">
                 </div>
                 <span class="node-recipe-tag-inline recipe-tag-${item.recipe.toLowerCase()}">${item.recipe}</span>
               </div>
@@ -142,10 +142,10 @@
       <div class="ing-rank-dialog" onclick="event.stopPropagation()">
         <div class="ing-rank-header">
           <div class="ing-rank-title-group">
-            <img src="${ingData.icon}" class="ing-rank-header-icon" alt="${ingName}">
+            <img src="${ingData.icon}" class="ing-rank-header-icon" width="28" height="28" decoding="async" alt="${ingName}">
             <div class="ing-rank-header-text">
               <div class="ing-rank-header-title">${ingName} <span class="ing-rank-header-energy">[${window.I18N?.t?.('wiki.ui_energy_label') ?? '能量'} ${ingData.energy || ''}]</span></div>
-              <div class="ing-rank-header-sub">${dishIcon ? `<img src="${dishIcon}" class="tooltip-dish-icon" alt="" loading="lazy">` : ''}<span>${window.I18N?.t?.('wiki.ui_key_dish_colon') ?? '核心大菜：'} ${dishName} (${dishInfo.need}${window.I18N?.t?.('wiki.ui_per_meal') ?? '顆/餐'}) · ${window.I18N?.t?.('wiki.ui_ideal_energy') ?? '滿活力 (0.45x)'} · ${rankingList.length} ${window.I18N?.t?.('wiki.ui_pkm_count_suffix') ?? '隻寶可夢'}</span></div>
+              <div class="ing-rank-header-sub">${dishIcon ? `<img src="${dishIcon}" class="tooltip-dish-icon" width="24" height="24" alt="" loading="lazy" decoding="async">` : ''}<span>${window.I18N?.t?.('wiki.ui_key_dish_colon') ?? '核心大菜：'} ${dishName} (${dishInfo.need}${window.I18N?.t?.('wiki.ui_per_meal') ?? '顆/餐'}) · ${window.I18N?.t?.('wiki.ui_ideal_energy') ?? '滿活力 (0.45x)'} · ${rankingList.length} ${window.I18N?.t?.('wiki.ui_pkm_count_suffix') ?? '隻寶可夢'}</span></div>
             </div>
           </div>
           <button type="button" class="ing-rank-close-btn" onclick="window.WikiDB.closeIngredientRankingModal()" title="${window.I18N?.t?.('wiki.ui_close') ?? '關閉'}" aria-label="Close">
@@ -223,17 +223,6 @@
           `;
         }).join('');
       }
-
-      // 保留舊版相容性容器更新 (若有)
-      const dynamicContainer = document.getElementById('charge-stock-dynamic-levels');
-      if (dynamicContainer) {
-        dynamicContainer.innerHTML = vals.map((v, i) => `
-          <div class="skill-level-chip ${stackNum === 10 ? 'highlight-gold' : 'highlight-blue'}">
-            <span class="level-tag">Lv.${i + 1}</span>
-            <span class="level-val">${v.toLocaleString()} ${unit}</span>
-          </div>
-        `).join('');
-      }
     }
   }
 
@@ -273,17 +262,6 @@
             </div>
           `;
         }).join('');
-      }
-
-      // 保留舊版相容性容器更新 (若有)
-      const dynamicContainer = document.getElementById('helper-boost-dynamic-levels');
-      if (dynamicContainer) {
-        dynamicContainer.innerHTML = vals.map((v, i) => `
-          <div class="skill-level-chip highlight-blue">
-            <span class="level-tag">Lv.${i + 1}</span>
-            <span class="level-val">${v} ${unit}</span>
-          </div>
-        `).join('');
       }
     }
   }
@@ -430,7 +408,7 @@
       const bonusStr = currentIslandBonus > 0 ? (window.I18N?.t?.('wiki.ui_island_bonus_inline', { bonus: currentIslandBonus }) ?? ` +${currentIslandBonus}%島嶼`) : '';
       return `
         <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr} | ${window.I18N?.t?.('wiki.ui_base_label') ?? '基礎'}: ${energy1x} / ${window.I18N?.t?.('wiki.ui_fav_2x') ?? '順果 2x'}: ${energy2x}">
-          <img src="${b.icon}" class="value-compact-icon" alt="${bName}">
+          <img src="${b.icon}" class="value-compact-icon" width="32" height="32" loading="lazy" decoding="async" alt="${bName}">
           <span class="value-compact-energy berry-val" title="${window.I18N?.t?.('wiki.ui_base_energy_1x') ?? '基礎能量 (1x)'}"><span class="energy-multiplier-prefix">1x</span> ${energy1x}</span>
           <span class="value-compact-energy berry-val-fav" title="${window.I18N?.t?.('wiki.ui_fav_energy_2x') ?? '順果 2x 能量'}"><span class="energy-multiplier-prefix">2x</span> ${energy2x}</span>
         </div>
@@ -634,245 +612,4 @@
     if (expTypeSelect && !expTypeSelect._customized) {
       window.setupCustomSelect(expTypeSelect);
     }
-  }
-
-  // --- 綁定直接節點事件 (Direct DOM Event Listeners) ---
-  function bindAllEvents() {
-    // 1. 綁定二級子分頁切換按鈕
-    document.querySelectorAll('.wiki-subtab-btn').forEach(btn => {
-      btn.onclick = function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const tab = this.getAttribute('data-subtab');
-        switchWikiSubTab(tab);
-      };
-    });
-
-    // 2. 綁定技能類型篩選按鈕
-    document.querySelectorAll('[data-skill-cat]').forEach(btn => {
-      btn.onclick = function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const cat = this.getAttribute('data-skill-cat');
-        filterWikiSkills(cat);
-      };
-    });
-
-    // 3. 綁定食材天梯篩選按鈕
-    document.querySelectorAll('[data-ing-filter]').forEach(btn => {
-      btn.onclick = function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const ing = this.getAttribute('data-ing-filter');
-        filterWikiIngredients(ing);
-      };
-    });
-
-    // 4. 綁定蓄力次數快速切換按鈕
-    document.querySelectorAll('[data-stack-target]').forEach(btn => {
-      btn.onclick = function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const num = parseInt(this.getAttribute('data-stack-target'), 10) || 0;
-        switchChargeStock(num);
-      };
-    });
-
-    // 5. 綁定幫手加速種類快速切換按鈕
-    document.querySelectorAll('[data-boost-kind]').forEach(btn => {
-      btn.onclick = function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const num = parseInt(this.getAttribute('data-boost-kind'), 10) || 0;
-        switchHelperBoost(num);
-      };
-    });
-
-    // 6. 綁定展開/收合詳細對照表
-    document.querySelectorAll('[data-toggle-target]').forEach(btn => {
-      btn.onclick = function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const targetId = this.getAttribute('data-toggle-target');
-        toggleDetailTable(targetId);
-      };
-    });
-
-    // 7. 綁定主技能發動機率計算機表單
-    const subskillSelect = document.getElementById('calc-subskill-select');
-    if (subskillSelect) {
-      subskillSelect.onchange = recalcTriggerChance;
-      subskillSelect.addEventListener('change', recalcTriggerChance);
-    }
-
-    const natureSelect = document.getElementById('calc-nature-select');
-    if (natureSelect) {
-      natureSelect.onchange = recalcTriggerChance;
-      natureSelect.addEventListener('change', recalcTriggerChance);
-    }
-
-    // 8. 綁定睡眠天數升級計算器表單
-    const curLvInput = document.getElementById('calc-sleep-cur-lv');
-    if (curLvInput) {
-      curLvInput.oninput = handleSleepCurLvInput;
-      curLvInput.onchange = handleSleepCurLvInput;
-      curLvInput.addEventListener('focus', function () {
-        if (typeof this.select === 'function') this.select();
-      });
-      curLvInput.addEventListener('click', function () {
-        if (typeof this.select === 'function') this.select();
-      });
-    }
-
-    const targetLvInput = document.getElementById('calc-sleep-target-lv');
-    if (targetLvInput) {
-      targetLvInput.oninput = recalcSleepDays;
-      targetLvInput.onchange = recalcSleepDays;
-    }
-
-    const expSubskill = document.getElementById('calc-sleep-exp-subskill');
-    if (expSubskill) {
-      expSubskill.onchange = recalcSleepDays;
-    }
-
-    const sleepNatureSelect = document.getElementById('calc-sleep-nature-select');
-    if (sleepNatureSelect) {
-      sleepNatureSelect.onchange = recalcSleepDays;
-    }
-
-    // 9. 綁定天梯篩選側邊欄手勢右滑關閉 (Swipe Right to Close)
-    const ladderSidebar = document.getElementById('ladder-filter-sidebar');
-    if (ladderSidebar) {
-      if (typeof window.bindSidebarSwipeRightToClose === 'function') {
-        window.bindSidebarSwipeRightToClose(ladderSidebar, () => closeLadderSidebar());
-      } else {
-        let startX = 0, startY = 0, startTime = 0;
-        ladderSidebar.addEventListener('touchstart', (e) => {
-          if (!e.touches || !e.touches[0]) return;
-          startX = e.touches[0].clientX;
-          startY = e.touches[0].clientY;
-          startTime = Date.now();
-        }, { passive: true });
-        ladderSidebar.addEventListener('touchend', (e) => {
-          if (!e.changedTouches || !e.changedTouches[0]) return;
-          const diffX = e.changedTouches[0].clientX - startX;
-          const diffY = e.changedTouches[0].clientY - startY;
-          const elapsed = Date.now() - startTime;
-          if (diffX > 35 && (diffX > Math.abs(diffY) * 1.05 || (elapsed < 350 && diffX > 25))) {
-            if (!ladderSidebar.classList.contains('collapsed')) {
-              closeLadderSidebar();
-            }
-          }
-        }, { passive: true });
-      }
-    }
-
-    const skillLadderSidebar = document.getElementById('skill-ladder-filter-sidebar');
-    if (skillLadderSidebar && typeof window.bindSidebarSwipeRightToClose === 'function') {
-      window.bindSidebarSwipeRightToClose(skillLadderSidebar, () => {
-        if (window.WikiSkillLadder && typeof window.WikiSkillLadder.closeSidebar === 'function') {
-          window.WikiSkillLadder.closeSidebar();
-        } else if (typeof window.closeSkillLadderSidebar === 'function') {
-          window.closeSkillLadderSidebar();
-        }
-      });
-    }
-  }
-
-  // --- 全域事件委託備援 (Global Event Delegation Fallback) ---
-  let isDelegationBound = false;
-  function bindGlobalDelegationFallback() {
-    if (isDelegationBound) return;
-    isDelegationBound = true;
-
-    document.addEventListener('click', (e) => {
-      const subtabBtn = e.target.closest('.wiki-subtab-btn');
-      if (subtabBtn) {
-        switchWikiSubTab(subtabBtn.getAttribute('data-subtab'));
-        return;
-      }
-
-      const skillPillBtn = e.target.closest('[data-skill-cat]');
-      if (skillPillBtn) {
-        filterWikiSkills(skillPillBtn.getAttribute('data-skill-cat'));
-        return;
-      }
-
-      const ingPillBtn = e.target.closest('[data-ing-filter]');
-      if (ingPillBtn) {
-        filterWikiIngredients(ingPillBtn.getAttribute('data-ing-filter'));
-        return;
-      }
-
-      const stackChipBtn = e.target.closest('[data-stack-target]');
-      if (stackChipBtn) {
-        switchChargeStock(parseInt(stackChipBtn.getAttribute('data-stack-target'), 10) || 0);
-        return;
-      }
-
-      const ladderViewBtn = e.target.closest('[data-ladder-view]');
-      if (ladderViewBtn) {
-        switchLadderView(ladderViewBtn.getAttribute('data-ladder-view'));
-        return;
-      }
-
-      const boostKindBtn = e.target.closest('[data-boost-kind]');
-      if (boostKindBtn) {
-        switchHelperBoost(parseInt(boostKindBtn.getAttribute('data-boost-kind'), 10) || 0);
-        return;
-      }
-
-      const toggleBtn = e.target.closest('[data-toggle-target]');
-      if (toggleBtn) {
-        toggleDetailTable(toggleBtn.getAttribute('data-toggle-target'));
-        return;
-      }
-    });
-
-    document.addEventListener('change', (e) => {
-      if (e.target && (e.target.id === 'calc-subskill-select' || e.target.id === 'calc-nature-select')) {
-        recalcTriggerChance();
-      }
-      if (e.target && (e.target.id === 'calc-sleep-exp-subskill' || e.target.id === 'calc-sleep-incense' || e.target.id === 'calc-sleep-nature-select')) {
-        recalcSleepDays();
-      }
-      if (e.target && e.target.id === 'berry-favorite-toggle') {
-        toggleBerryFavorite(e.target.checked);
-      }
-      if (e.target && e.target.id === 'ladder-ing-m-toggle') {
-        toggleLadderIngM(e.target.checked);
-      }
-      if (e.target && e.target.id === 'ladder-skill-draw-toggle') {
-        toggleLadderSkillDrawExpected(e.target.checked);
-      }
-      if (e.target && e.target.id === 'ladder-speed-m-toggle') {
-        toggleLadderSpeedM(e.target.checked);
-      }
-      if (e.target && e.target.id === 'ladder-nature-ing-toggle') {
-        toggleLadderNatureIng(e.target.checked);
-      }
-      if (e.target && e.target.id === 'ladder-nature-speed-toggle') {
-        toggleLadderNatureSpeed(e.target.checked);
-      }
-    });
-
-    document.addEventListener('input', (e) => {
-      if (e.target && e.target.id === 'calc-sleep-cur-lv') {
-        handleSleepCurLvInput();
-      } else if (e.target && e.target.id === 'calc-sleep-target-lv') {
-        recalcSleepDays();
-      }
-      if (e.target && e.target.id === 'berry-level-slider') {
-        updateBerryLevel(e.target.value);
-      }
-      if (e.target && e.target.id === 'berry-island-slider') {
-        updateBerryIsland(e.target.value);
-      }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeSleepStylePopover();
-      }
-    });
   }

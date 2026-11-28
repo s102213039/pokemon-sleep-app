@@ -1,123 +1,450 @@
-  flex: 0 0 48px !important;
+/* ────────────────────────────────────────────────────────────
+    12. 原生 App 寶可夢手動新增/編輯彈窗 (Mobile Box Modal Sheet)
+   ──────────────────────────────────────────────────────────── */
+.mobile-h5-app .mobile-box-sheet {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  max-height: 92vh !important;
+  max-height: 92dvh !important;
+  height: auto !important;
+  background: var(--bg-card, #131b2e) !important;
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
+  border: none !important;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5) !important;
+  z-index: 1100 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.lab-edit-form .lab-level-compact-input {
-  width: 48px !important;
-  height: 34px !important;
-  text-align: center !important;
-  padding: 0 2px !important;
-  font-weight: 700 !important;
-  font-size: 13px !important;
+.mobile-h5-app .mobile-box-sheet .sheet-drag-handle {
+  width: 40px !important;
+  height: 4px !important;
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-radius: 999px !important;
+  margin: 8px auto 4px auto !important;
+  flex-shrink: 0 !important;
 }
 
-.lab-edit-form .flex-mainskill-compact {
-  flex: 1.35 1 auto !important;
-  min-width: 0 !important;
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle {
+  background: rgba(0, 0, 0, 0.2) !important;
 }
 
-.lab-edit-form .box-mainskill-inline-wrap {
+.mobile-h5-app #box-edit-modal .mobile-box-sheet .box-modal-header {
+  display: grid !important;
+  grid-template-columns: 60px 1fr 60px !important;
+  align-items: center !important;
+  padding: 4px 16px 10px 16px !important;
+  border: none !important;
+  background: transparent !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app #modal-appraisal-report .mobile-box-sheet .box-modal-header {
   display: flex !important;
   align-items: center !important;
-  gap: 4px !important;
-  width: 100% !important;
-  height: 34px !important;
+  justify-content: space-between !important;
+  padding: 2px 14px 4px 14px !important;
+  border: none !important;
+  background: transparent !important;
+  flex-shrink: 0 !important;
 }
 
-.lab-edit-form .box-mainskill-name-badge {
+.mobile-h5-app #modal-appraisal-report .box-modal-header .appraisal-dual-verdict-column {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  margin: 0 auto !important;
+}
+
+.mobile-h5-app #box-edit-modal .box-modal-header-cancel {
+  justify-self: start !important;
+  text-align: left !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: var(--text-secondary) !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 6px 0 !important;
+  cursor: pointer !important;
+}
+
+.mobile-h5-app #modal-appraisal-report .box-modal-header-cancel {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: var(--text-muted, #94a3b8) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2px 4px !important;
+  cursor: pointer !important;
+  min-width: 44px !important;
+  text-align: left !important;
+}
+
+#box-edit-modal .box-modal-header-confirm,
+.mobile-h5-app #box-edit-modal .box-modal-header-confirm {
+  justify-self: end !important;
+  background: var(--accent-gradient, linear-gradient(135deg, #6366f1, #38bdf8)) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
+  height: 32px !important;
+  padding: 0 14px !important;
+  border-radius: 8px !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+}
+
+#modal-appraisal-report .box-modal-header-confirm,
+.mobile-h5-app #modal-appraisal-report .box-modal-header-confirm {
+  justify-self: end !important;
+  background: transparent !important;
+  color: var(--accent-blue, #38bdf8) !important;
+  border: none !important;
+  box-shadow: none !important;
+  height: auto !important;
+  padding: 2px 4px !important;
+  border-radius: 0 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  min-width: 44px !important;
+  text-align: right !important;
+}
+
+.mobile-h5-app #modal-appraisal-report.box-modal-backdrop,
+.mobile-h5-app .appraisal-modal-backdrop.mobile-modal-backdrop {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.72) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  z-index: 1050 !important;
+  display: flex;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #modal-appraisal-report[style*="display: none"],
+.mobile-h5-app #modal-appraisal-report[style*="display:none"],
+.mobile-h5-app .appraisal-modal-backdrop[style*="display: none"],
+.mobile-h5-app .appraisal-modal-backdrop[style*="display:none"],
+#modal-appraisal-report[style*="display: none"],
+#modal-appraisal-report[style*="display:none"] {
+  display: none !important;
+}
+
+.mobile-h5-app #modal-appraisal-report .mobile-box-sheet {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  background: var(--bg-card-solid, #131d31) !important;
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
+  border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.12)) !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  box-shadow: 0 -10px 32px rgba(0, 0, 0, 0.6) !important;
+  z-index: 1100 !important;
+  max-height: 88vh !important;
+  max-height: 88dvh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .appraisal-modal-sheet-body {
   flex: 1 1 auto !important;
-  min-width: 0 !important;
-  height: 34px !important;
-  line-height: 32px !important;
-  padding: 0 5px !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  padding: 8px 14px 28px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .appraisal-h5-header-summary {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .appraisal-h5-profile-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .appraisal-ribbon-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 2px 7px !important;
   border-radius: 6px !important;
   background: rgba(56, 189, 248, 0.12) !important;
-  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
   color: #38bdf8 !important;
-  font-weight: 700 !important;
   font-size: 11px !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  text-align: center !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app .appraisal-h5-subinfo-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-top: 3px !important;
+  flex-wrap: wrap !important;
+}
+
+.mobile-h5-app .appraisal-h5-header-summary .appraisal-mainskill-row {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 4px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .appraisal-h5-header-summary .appraisal-ing-parallel-row {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 4px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .appraisal-h5-header-summary .appraisal-config-section {
+  width: 100% !important;
+  margin-top: 2px !important;
+}
+
+.mobile-h5-app .appraisal-h5-avatar-wrap {
+  position: relative !important;
+  width: 50px !important;
+  height: 50px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .appraisal-h5-avatar-wrap .appraisal-avatar-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.mobile-h5-app .appraisal-h5-avatar-wrap .appraisal-level-badge {
+  position: absolute !important;
+  bottom: -4px !important;
+  right: -4px !important;
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #f8fafc !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 1px 4px !important;
+  border-radius: 6px !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app .appraisal-h5-info-col {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+.mobile-h5-app .appraisal-h5-name-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+}
+
+.mobile-h5-app .appraisal-h5-pkm-name {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary, #ffffff) !important;
+}
+
+.mobile-h5-app .appraisal-h5-nick {
+  font-size: 12.5px !important;
+  color: var(--text-muted, #94a3b8) !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-modal-title {
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-modal-close {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 12px !important;
+  cursor: pointer !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-modal-body {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 6px 14px 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-modal-form {
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  height: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-form-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  height: auto !important;
+}
+
+.mobile-h5-app .mobile-box-sheet #modal-poke-nature + .custom-select-container,
+.mobile-h5-app .mobile-box-sheet #modal-poke-ribbon + .custom-select-container,
+.mobile-h5-app .mobile-box-sheet .box-form-group:not(.box-mainskill-group) .custom-select-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 36px !important;
+  flex: 0 0 auto !important;
   box-sizing: border-box !important;
 }
 
-.lab-edit-form .box-mainskill-inline-wrap .custom-select-container {
-  width: 56px !important;
-  min-width: 56px !important;
-  flex: 0 0 56px !important;
+.mobile-h5-app .mobile-box-sheet .custom-select-trigger {
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 10px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  font-size: 12px !important;
+  padding: 0 36px 0 10px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
 }
 
-.lab-edit-form .box-mainskill-inline-wrap .custom-select-trigger {
-  height: 34px !important;
-  min-height: 34px !important;
-  padding: 2px 13px 2px 5px !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  border-radius: 6px !important;
-}
-
-.lab-edit-form .box-mainskill-inline-wrap .custom-select-arrow {
-  right: 4px !important;
-}
-
-.lab-edit-form .box-nickname-ribbon-row {
+/* 雙欄並排表單組 (Row 1: 寶可夢名稱 + 等級) */
+.mobile-h5-app .mobile-box-sheet .box-form-row-2col {
   display: grid !important;
-  grid-template-columns: 1.2fr 1fr !important;
-  gap: 6px !important;
+  grid-template-columns: 1fr 1.2fr !important;
+  gap: 8px !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
 
-.lab-edit-form .flex-ribbon .custom-select-trigger {
-  padding-left: 6px !important;
-  padding-right: 20px !important;
-  padding-top: 3px !important;
-  padding-bottom: 3px !important;
+.mobile-h5-app .mobile-box-sheet .box-pkm-level-row {
+  grid-template-columns: 1fr 76px !important;
 }
 
-.lab-edit-form .flex-ribbon .custom-select-arrow {
-  right: 7px !important;
-}
-
-.lab-edit-form .flex-ribbon .custom-select-label {
-  gap: 4px !important;
-  font-size: 11.5px !important;
-}
-
-.lab-edit-form .flex-ribbon .custom-select-icon {
-  width: 17px !important;
-  height: 17px !important;
-}
-
-.lab-edit-form .box-pkm-level-row {
-  grid-template-columns: 1fr 72px !important;
-}
-
-.lab-edit-form .flex-level input {
+.mobile-h5-app .mobile-box-sheet .flex-level input {
   text-align: center !important;
   padding: 0 4px !important;
 }
 
-.lab-edit-form .box-form-group {
+/* 標準全寬垂直表單組 */
+.mobile-h5-app .mobile-box-sheet .box-form-group {
   display: flex !important;
   flex-direction: column !important;
-  gap: 3px !important;
+  align-items: stretch !important;
+  gap: 4px !important;
   margin-bottom: 0 !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
 
-.lab-edit-form .box-form-label {
-  font-size: 11px !important;
+.mobile-h5-app .mobile-box-sheet .box-form-label {
+  font-size: 11.5px !important;
   font-weight: 700 !important;
   color: var(--text-secondary) !important;
+  text-align: left !important;
   margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  width: 100% !important;
 }
 
-.lab-edit-form .box-form-input {
-  height: 34px !important;
-  border-radius: 8px !important;
+.pokedex-subskill-header-row .box-form-label,
+.mobile-h5-app .mobile-box-sheet .pokedex-subskill-header-row .box-form-label,
+.mobile-h5-app .mobile-box-sheet .box-form-group > div > .box-form-label {
+  width: auto !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+#pokedex-subskill-clear-all-btn,
+#box-subskill-clear-all-btn,
+#pokedex-detail-modal .box-subskill-clear-btn,
+.mobile-h5-app .mobile-box-sheet .box-subskill-clear-btn {
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  width: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-form-input,
+.mobile-h5-app .mobile-box-sheet select.box-form-select:not(.box-mainskill-select) {
+  height: 36px !important;
+  border-radius: 10px !important;
   background: var(--table-row-odd-solid, #0d1527) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
@@ -127,436 +454,103 @@
   width: 100% !important;
 }
 
-.lab-edit-form .box-form-group .custom-select-container {
+.mobile-h5-app .mobile-box-sheet select.box-form-select:not(.box-mainskill-select) {
+  padding: 0 36px 0 10px !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-nature-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
   width: 100% !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .mint-checkbox-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 11.5px !important;
+  color: var(--text-secondary) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .mint-checkbox-label input[type="checkbox"] {
+  width: 14px !important;
+  height: 14px !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+}
+
+/* 主技能列：橫向排列，徽章彈性填滿其餘寬度，等級下拉固定 76px 靠右 */
+.mobile-h5-app .mobile-box-sheet .box-mainskill-control {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  height: 36px !important;
   box-sizing: border-box !important;
 }
 
-.lab-edit-form .box-form-group .custom-select-trigger {
-  width: 100% !important;
-  height: 34px !important;
-  min-height: 34px !important;
-  border-radius: 8px !important;
-  box-sizing: border-box !important;
-  font-size: 12px !important;
-  padding-top: 4px !important;
-  padding-bottom: 4px !important;
-}
-
-.lab-edit-form .custom-select-menu {
-  top: calc(100% + 2px) !important;
-  border-radius: 8px !important;
-  padding: 3px !important;
-  max-height: 220px !important;
-  z-index: 1050 !important;
-}
-
-.lab-edit-form .custom-select-item {
-  padding: 6px 10px !important;
-  font-size: 12px !important;
-}
-
-.lab-edit-form .box-ing-strip {
-  gap: 4px !important;
-  padding: 2px 6px !important;
-}
-
-.lab-edit-form .box-ing-opt-btn {
-  width: 28px !important;
-  height: 28px !important;
-  padding: 2px !important;
-}
-
-.lab-edit-form .box-ing-opt-icon {
-  width: 22px !important;
-  height: 22px !important;
-}
-
-.lab-edit-form .box-subskill-clear-btn {
-  padding: 2px 8px !important;
-  font-size: 11px !important;
-  line-height: 16px !important;
-}
-
-.lab-edit-form .box-subskill-slots-row {
-  display: grid !important;
-  grid-template-columns: repeat(6, 1fr) !important;
-  gap: 4px !important;
-  margin-bottom: 5px !important;
-}
-
-.lab-edit-form .box-subskill-slots-row .box-subskill-slot-btn:nth-child(1),
-.lab-edit-form .box-subskill-slots-row .box-subskill-slot-btn:nth-child(2),
-.lab-edit-form .box-subskill-slots-row .box-subskill-slot-btn:nth-child(3) {
-  grid-column: span 2 !important;
-}
-
-.lab-edit-form .box-subskill-slots-row .box-subskill-slot-btn:nth-child(4),
-.lab-edit-form .box-subskill-slots-row .box-subskill-slot-btn:nth-child(5) {
-  grid-column: span 3 !important;
-}
-
-.lab-edit-form .box-subskill-slot-btn {
-  padding: 2px 2px !important;
-  min-height: 32px !important;
-}
-
-.lab-edit-form .box-subskill-slot-btn .slot-lvl-header {
-  font-size: 9.5px !important;
-}
-
-.lab-edit-form .box-subskill-slot-btn .slot-val-badge {
-  font-size: 10.5px !important;
-  padding: 1px 2px !important;
-  white-space: nowrap !important;
-}
-
-.lab-edit-form .box-subskill-palette {
-  background: var(--bg-card-inner, #0d1527) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 8px !important;
-  padding: 6px 8px !important;
-  gap: 4px !important;
-}
-
-.lab-edit-form .subskill-tier-section {
-  gap: 3px !important;
-}
-
-.lab-edit-form .subskill-tier-label {
-  font-size: 10.5px !important;
+.mobile-h5-app .mobile-box-sheet .box-mainskill-name-badge {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: 0 !important;
+  height: 36px !important;
+  line-height: 34px !important;
+  padding: 0 10px !important;
+  border-radius: 10px !important;
+  background: rgba(56, 189, 248, 0.12) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  color: var(--accent-blue, #38bdf8) !important;
+  font-size: 12.5px !important;
   font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
 }
 
-.lab-edit-form .subskill-chips-row {
-  display: grid !important;
-  grid-template-columns: repeat(4, 1fr) !important;
-  gap: 4px !important;
+.mobile-h5-app .mobile-box-sheet #modal-poke-skill-level + .custom-select-container,
+.mobile-h5-app .mobile-box-sheet .box-mainskill-control .custom-select-container {
+  width: 76px !important;
+  min-width: 76px !important;
+  max-width: 76px !important;
+  flex: 0 0 76px !important;
+  height: 36px !important;
+  box-sizing: border-box !important;
 }
 
-.lab-edit-form .box-subskill-chip {
-  padding: 4px 2px !important;
-  font-size: 11px !important;
-  height: auto !important;
-  min-height: 26px !important;
-  border-radius: 6px !important;
+.mobile-h5-app .mobile-box-sheet .box-mainskill-control .custom-select-trigger {
+  width: 76px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 0 24px 0 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
 }
 
-.lab-preview-stats-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: transparent;
-  border: none;
-  padding: 4px 0 6px 0;
+.mobile-h5-app .mobile-box-sheet .box-mainskill-control .custom-select-arrow {
+  right: 8px !important;
 }
 
-.lab-preview-mainskill-row,
-.lab-preview-nature-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12.5px;
-  flex-wrap: wrap;
+.mobile-h5-app .mobile-box-sheet select.box-mainskill-select {
+  width: 76px !important;
+  min-width: 76px !important;
+  max-width: 76px !important;
+  flex: 0 0 76px !important;
+  height: 36px !important;
+  padding: 0 24px 0 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  box-sizing: border-box !important;
 }
-
-.lab-preview-ing-chips {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.lab-preview-ing-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: var(--table-row-odd-solid, #0d1527);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 3px 8px;
-  font-size: 11.5px;
-  transition: opacity 0.2s ease;
-}
-
-.lab-preview-ing-chip.is-locked {
-  opacity: 0.45;
-  filter: grayscale(0.5);
-}
-
-.lab-preview-subskills-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
-}
-
-.lab-preview-subskills-grid .subskill-last-slot {
-  grid-column: 1 / 2;
-  width: 100%;
-  max-width: none;
-  margin: 0;
-}
-
-.lab-preview-pokemon-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.lab-preview-icon {
-  width: 42px;
-  height: 42px;
-  object-fit: contain;
-}
-
-.lab-preview-name {
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--text-primary);
-}
-
-.lab-preview-spec {
-  font-size: 11.5px;
-  color: var(--text-muted);
-}
-
-.lab-preview-verdict {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg-card-inner-subtle);
-  border: 1.5px solid var(--accent-blue);
-  padding: 4px 12px;
-  border-radius: 8px;
-}
-
-.lab-grade-char {
-  font-size: 22px;
-  font-weight: 900;
-}
-
-.lab-grade-title {
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.lab-chart-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 8px 0;
-  overflow: visible;
-}
-
-.lab-chart-container .radar-svg-chart {
-  width: 100%;
-  max-width: 480px;
-  height: auto;
-  aspect-ratio: 340 / 310;
-  display: block;
-  margin: 0 auto;
-}
-
-.mobile-h5-app .lab-chart-container {
-  padding: 4px 0;
-}
-
-.mobile-h5-app .lab-chart-container .radar-svg-chart {
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-}
-
-/* 8-Theme Radar Chart SVG Contrast (Light Themes) */
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-grid-poly,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-grid-poly,
-[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-grid-poly,
-[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-grid-poly { stroke: rgba(15, 23, 42, 0.22); }
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-grid-outer,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-grid-outer,
-[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-grid-outer,
-[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-grid-outer { fill: rgba(15, 23, 42, 0.03); stroke: rgba(15, 23, 42, 0.36); }
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-axis-line,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-axis-line,
-[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-axis-line,
-[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-axis-line { stroke: rgba(15, 23, 42, 0.22); }
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-poly,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-poly,
-[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-data-poly,
-[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-data-poly { stroke: #0284c7; }
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-poly-b,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-poly-b,
-[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-data-poly-b,
-[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-data-poly-b { stroke: #7c3aed; }
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-dot,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-data-dot,
-[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-data-dot,
-[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-data-dot { fill: #0284c7; stroke: #ffffff; }
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-dot-b,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-dot-b,
-[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-dot-b,
-[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-dot-b { fill: #7c3aed; stroke: #ffffff; }
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-label-text,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-label-text,
-[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-label-text,
-[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-label-text { fill: #0f172a; }
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-tspan,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-tspan,
-[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-score-tspan,
-[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-score-tspan,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-a,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-a,
-[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-score-a,
-[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-score-a,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-legend-a,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-legend-a,
-[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-legend-a,
-[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-legend-a { fill: #0369a1; }
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-b,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-score-b,
-[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-score-b,
-[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-score-b,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-legend-b,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .radar-svg-chart .radar-legend-b,
-[data-theme="midnight"][data-theme-inverted="true"] .radar-svg-chart .radar-legend-b,
-[data-theme="onyx"][data-theme-inverted="true"] .radar-svg-chart .radar-legend-b { fill: #7c3aed; }
-
-.lab-pros-box {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 4px;
-}
-
-.lab-bullet-item {
-  font-size: 12px;
-  color: var(--text-primary);
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  padding: 6px 10px;
-  border-radius: 6px;
-  line-height: 1.4;
-}
-
-@media (max-width: 768px) {
-  .appraisal-modal-body,
-  .appraisal-chart-flex,
-  .appraisal-lab-layout,
-  .lab-preview-chart-row,
-  .appraisal-costs-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ===============================================================
-   深度研究室 (Research Lab: Subnav, Team Builder, Comparison, Picker)
-   =============================================================== */
-
-.lab-subnav-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.lab-subnav-bar::-webkit-scrollbar {
-  display: none;
-}
-
-.lab-subtab-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 18px;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: 8px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.lab-subtab-btn:hover {
-  background: var(--bg-card-hover, rgba(56, 189, 248, 0.08));
-  color: var(--text-primary);
-  border-color: var(--accent-color, #38bdf8);
-}
-
-.lab-subtab-btn.active {
-  background: var(--accent-color, #38bdf8);
-  color: #0f172a;
-  border-color: var(--accent-color, #38bdf8);
-  font-weight: 700;
-  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.3);
-}
-
-.lab-subpanel {
-  width: 100%;
-  animation: fadeIn 0.2s ease;
-}
-
-/* 幫手組隊 (Team Builder & Simulator) */
-.lab-team-view-container,
-.lab-compare-view-container {
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-}
-
-.lab-island-selector {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 14px;
-}
-
-.lab-island-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 20px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.lab-island-pill:hover {
-  border-color: var(--accent-color, #38bdf8);
-  color: var(--text-primary);
-}
-
-.lab-island-pill.active {
-  background: rgba(56, 189, 248, 0.12);
-  border-color: var(--accent-color, #38bdf8);
-  color: var(--accent-color, #38bdf8);
-}
-
-.lab-island-berry-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: rgba(234, 179, 8, 0.12);
-  border: 1px solid rgba(234, 179, 8, 0.3);
-  border-radius: 6px;
-  padding: 2px 7px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #facc15;
-}
-

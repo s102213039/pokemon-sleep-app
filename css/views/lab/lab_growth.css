@@ -1,8 +1,5 @@
 /* ==========================================================================
    lab_growth.css — 培育與種子精算實驗室專屬樣式 (Nurture & Seed ROI Lab)
-   ==========================================================================
-   遵守 Rule 8 (Zero Emojis), Rule 9 (Single Frame Rule), Rule 10 (Zero Glyphs).
-   外層容器純淨無框 (border: none; background: transparent; padding: 0;)。
    ========================================================================== */
 
 .lab-growth-container {
@@ -96,7 +93,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .lab-growth-change-btn:hover {
@@ -197,7 +194,7 @@
   border-radius: 8px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   white-space: nowrap;
 }
 

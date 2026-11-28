@@ -385,7 +385,7 @@
         <div class="lab-growth-header-card">
           <div class="lab-growth-target-summary">
             <div class="lab-growth-avatar-wrap">
-              <img src="${avatarUrl}" class="lab-growth-avatar-img" alt="${escapeHtml(pDisplayName)}" loading="lazy">
+              <img src="${avatarUrl}" class="lab-growth-avatar-img" width="52" height="52" alt="${escapeHtml(pDisplayName)}" loading="lazy" decoding="async">
             </div>
             <div class="lab-growth-target-info">
               <div class="lab-growth-target-name-row">

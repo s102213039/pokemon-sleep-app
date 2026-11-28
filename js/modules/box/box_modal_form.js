@@ -465,7 +465,7 @@
 
         return `
           <div class="box-pkm-dropdown-item ${isSelected ? 'active' : ''}" data-id="${p.id}" data-name="${escapeHtml(p.name_cn)}">
-            <img src="${avatarUrl}" class="box-pkm-dropdown-avatar" alt="${escapeHtml(pkmDisplayName)}" loading="lazy" onerror="this.src='https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png'">
+            <img src="${avatarUrl}" class="box-pkm-dropdown-avatar" width="24" height="24" alt="${escapeHtml(pkmDisplayName)}" loading="lazy" decoding="async" onerror="this.src='https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png'">
             <div class="box-pkm-dropdown-info">
               <div class="box-pkm-dropdown-name">
                 <span>No.${p.formatted_no} ${escapeHtml(pkmDisplayName)}</span>
@@ -673,7 +673,7 @@
 
         return `
           <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" data-slot="${slot.key}" data-ing="${escapeHtml(ing.name)}" title="${escapeHtml(ingDisplayName)}" aria-label="${escapeHtml(ingDisplayName)}">
-            <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}" loading="lazy">
+            <img src="${iconUrl}" class="box-ing-opt-icon" width="20" height="20" alt="${escapeHtml(ingDisplayName)}" loading="lazy" decoding="async">
           </button>
         `;
       }).join('');

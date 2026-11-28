@@ -424,7 +424,7 @@
       layer = document.createElement('div');
       layer.className = 'island-scene-layer';
       layer.setAttribute('aria-hidden', 'true');
-      layer.innerHTML = '<img class="island-scene-photo" alt=""><div class="island-scene-fade"></div>';
+      layer.innerHTML = '<img class="island-scene-photo" width="2560" height="1372" decoding="async" alt=""><div class="island-scene-fade"></div>';
     }
     if (!layer) return null;
     if (host && layer.parentElement !== host && typeof host.insertBefore === 'function') {

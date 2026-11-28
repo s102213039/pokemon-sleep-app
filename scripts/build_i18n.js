@@ -17,6 +17,7 @@ const I18N_MODULES = [
   'i18n_dict_zh_tw.js',
   'i18n_dict_zh_cn.js',
   'i18n_dict_en_us.js',
+  'i18n_entities_items.js',
   'i18n_entities.js',
   'i18n_t2s.js',
   'i18n_resources.js',
@@ -27,6 +28,10 @@ const I18N_MODULES = [
   'res_wiki_ladder.js',
   'res_lab_core.js',
   'res_lab_team.js',
+  'i18n_icons_names.js',
+  'i18n_translate_en.js',
+  'i18n_shell_settings.js',
+  'i18n_shell_hydrate.js',
   'i18n_core.js'
 ];
 
